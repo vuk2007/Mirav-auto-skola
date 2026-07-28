@@ -1,0 +1,7010 @@
+[
+  {
+    "type": "text",
+    "text": "Kretanje vozilom unazad dozvoljeno je:",
+    "options": {
+      "a": "na kratkom dijelu puta u nepreglednoj krivini",
+      "b": "na kratkom dijelu puta u tunelu",
+      "c": "na kratkom dijelu puta"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 1,
+    "local_no": 1,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 1
+  },
+  {
+    "type": "text",
+    "text": "Na magistralnom putu van naselja, gdje nema znaka ograničenja brzine, vozač ne smije vozilom da se kreće brzinom većom od:",
+    "options": {
+      "a": "60 km/h",
+      "b": "70 km/h",
+      "c": "80 km/h"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 1,
+    "local_no": 2,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 2
+  },
+  {
+    "type": "text",
+    "text": "Pješačko ostrvo koje se nalazi na sredini kolovoza, gdje se saobraćaj odvija u oba smjera, obilazi se vozilom:",
+    "options": {
+      "a": "uvijek sa desne strane",
+      "b": "uvijek sa lijeve strane",
+      "c": "sa bilo koje strane"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 1,
+    "local_no": 3,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 3
+  },
+  {
+    "type": "text",
+    "text": "Na putu sa prvenstvom prolaza neposredno ispred raskrnice koja nije regulisana semaforom ili saobraćajnim znacima vozač:",
+    "options": {
+      "a": "može da pretiče bicikl, moped ili motocikl",
+      "b": "može da pretiče sva vozila koja zadržavaju pravac kretanja",
+      "c": "može da pretiče putnička vozila koja zadržavaju pravac kretanja"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 1,
+    "local_no": 4,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 4
+  },
+  {
+    "type": "text",
+    "text": "Prolaženje vozilom pored drugog vozila koje dolazi iz suprotnog smjera je radnja:",
+    "options": {
+      "a": "preticanja",
+      "b": "obilaženja",
+      "c": "mimoilaženja"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 1,
+    "local_no": 5,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 5
+  },
+  {
+    "type": "text",
+    "text": "Vozač je dužan da bez odlaganja ukloni sa kolovoza:",
+    "options": {
+      "a": "sve predmete koji su na kolovozu",
+      "b": "predmete i materije koji potiču sa vozila kojim upravlja",
+      "c": "sve predmete koji se nalaze na saobraćajnoj traci kojom se kreće"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 1,
+    "local_no": 6,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 6
+  },
+  {
+    "type": "text",
+    "text": "Dva prsluka sa svjetlosno reflektujućim osobinama mora imati:",
+    "options": {
+      "a": "putničko motorno vozilo",
+      "b": "četvorocikl",
+      "c": "teretno motorno vozilo"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 1,
+    "local_no": 7,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 7
+  },
+  {
+    "type": "text",
+    "text": "Vozač na putu za saobraćaj vozila u oba smjera na kojem postoje najmanje četiri saobraćajne trake:",
+    "options": {
+      "a": "mora da koristi desnu kolovoznu traku",
+      "b": "mora da koristi samo desnu saobraćajnu traku",
+      "c": "mora da koristi samo lijevu saobraćajnu traku"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 1,
+    "local_no": 8,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 8
+  },
+  {
+    "type": "text",
+    "text": "Brzina kretanja motornih vozila na putu, pod normalnim uslovima saobraćaja, ne smije da se ograniči saobraćajnim znakom ispod:",
+    "options": {
+      "a": "40 km/h",
+      "b": "50 km/h",
+      "c": "60 km/h"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 1,
+    "local_no": 9,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 9
+  },
+  {
+    "type": "text",
+    "text": "Na putu na kojem postoje dvije saobraćajne trake namijenjene za saobraćaj vozila u istom smjeru, brže kretanje vozila u jednoj traci od kretanja vozila u drugoj traci:",
+    "options": {
+      "a": "smatra se preticanjem",
+      "b": "ne smatra se preticanjem",
+      "c": "smatra se obilaženjem"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 1,
+    "local_no": 10,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 10
+  },
+  {
+    "type": "text",
+    "text": "Vozilo na motorni pogon koje na putu vuče neispravno vozilo ne smije se kretati brzinom većom od:",
+    "options": {
+      "a": "40 km/h",
+      "b": "50 km/h",
+      "c": "60 km/h"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 2,
+    "local_no": 11,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 11
+  },
+  {
+    "type": "text",
+    "text": "Saobraćajnu traku namijenjenu za kretanje vozila za javni prevoz putnika, mogu koristiti:",
+    "options": {
+      "a": "vozila pod pratnjom",
+      "b": "vozila komunalne službe",
+      "c": "putnička vozila"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 2,
+    "local_no": 12,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 12
+  },
+  {
+    "type": "text",
+    "text": "Vozač je dužan da zvučni znak upozorenja daje:",
+    "options": {
+      "a": "više puta u naizmjeničnim intervalima",
+      "b": "bez prekida u trajanju od 5 sekundi",
+      "c": "u mjeri koja je dovoljna da se drugi učesnici u saobraćaju upozore"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 2,
+    "local_no": 13,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 13
+  },
+  {
+    "type": "text",
+    "text": "Zvučni znak upozorenja vozač je dužan da upotrijebi na javnom putu:",
+    "options": {
+      "a": "pri sustizanju vozila koja se sporo kreću niz nagib",
+      "b": "kada se obilazi vozilo parkirano sa desne strane kolovoza",
+      "c": "kada se pored kolovoza nalaze djeca koja ne obraćaju pažnju na kretanje vozača"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 2,
+    "local_no": 14,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 14
+  },
+  {
+    "type": "text",
+    "text": "Uzdužni dio kolovoza namijenjen za saobraćaj vozila u jednom smjeru, sa jednom ili više saobraćajnih traka zove se:",
+    "options": {
+      "a": "saobraćajna traka",
+      "b": "kolovozna traka",
+      "c": "kolovoz"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 2,
+    "local_no": 15,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 15
+  },
+  {
+    "type": "text",
+    "text": "Kada ovlašćeni policijski službenik daje naredbe koje odstupaju od pravila saobraćaja, učesnik u saobraćaju:",
+    "options": {
+      "a": "dužan je da postupi po naredbama ovlašćenog policijskog službenika",
+      "b": "dužan je da postupi po pravilima saobraćaja",
+      "c": "nije dužan da postupi po naredbama ovlašćenog policijskog službenika"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 2,
+    "local_no": 16,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 16
+  },
+  {
+    "type": "text",
+    "text": "Ukoliko se ne prevozi u bezbjednosnom sjedištu, u motornom vozilu na prednjem sjedištu, ne smije da se prevozi dijete:",
+    "options": {
+      "a": "mlađe od 10 godina",
+      "b": "mlađe od 12 godina",
+      "c": "mlađe od 14 godina"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 2,
+    "local_no": 17,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 17
+  },
+  {
+    "type": "text",
+    "text": "Kretanje vozila unazad u uslovima smanjene vidljivosti:",
+    "options": {
+      "a": "dozvoljeno je u naselju",
+      "b": "dozvoljeno je na kratkom dijelu puta",
+      "c": "nije dozvoljeno"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 2,
+    "local_no": 18,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 18
+  },
+  {
+    "type": "text",
+    "text": "U naselju se saobraćajnim znakom motornim vozilima može dozvoliti brzina kretanja najviše do:",
+    "options": {
+      "a": "80 km/h",
+      "b": "50 km/h",
+      "c": "60 km/h"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 2,
+    "local_no": 19,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 19
+  },
+  {
+    "type": "text",
+    "text": "Kada vozač naiđe na organizovanu kolonu pješaka koja prelazi kolovoz:",
+    "options": {
+      "a": "ne smije vozilom da presijeca organizovanu kolonu pješaka",
+      "b": "smije vozilom da presijeca organizovanu kolonu pješaka uz upotrebu zvučnog znaka upozorenja",
+      "c": "smije vozilom da presjeca organizovanu kolonu pješaka, ako kolonu ne čine djeca"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 2,
+    "local_no": 20,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 20
+  },
+  {
+    "type": "text",
+    "text": "Vučenim motornim vozilom, osim vozača koji njime upravlja:",
+    "options": {
+      "a": "dozvoljen je prevoz putnika u skladu sa brojem putničkih mjesta",
+      "b": "dozvoljen je prevoz samo jednog putnika",
+      "c": "zabranjen je prevoz putnika"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 3,
+    "local_no": 21,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 21
+  },
+  {
+    "type": "text",
+    "text": "Prelaženje vozilom iz jedne u drugu saobraćajnu traku namijenjenu za saobraćaj u istom smjeru je:",
+    "options": {
+      "a": "prestrojavanje",
+      "b": "preticanje",
+      "c": "obilaženje"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 3,
+    "local_no": 22,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 22
+  },
+  {
+    "type": "text",
+    "text": "Mladi vozač i vozač početnik ne smije upravljati vozilom na autoputu brzinom većom od:",
+    "options": {
+      "a": "70 km/h",
+      "b": "100 km/h",
+      "c": "110 km/h"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 3,
+    "local_no": 23,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 23
+  },
+  {
+    "type": "text",
+    "text": "Da li je učesnik u saobraćaju dužan da postupa u skladu sa saobraćajnom signalizacijom i kad time odstupa od pravila saobraćaja:",
+    "options": {
+      "a": "nije dužan",
+      "b": "dužan je",
+      "c": "dužan je samo u naselju"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 3,
+    "local_no": 24,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 24
+  },
+  {
+    "type": "text",
+    "text": "Naglo mijenjanje brzine vozila po putu je dozvoljeno:",
+    "options": {
+      "a": "u slučaju uključivanja sa zemljanog puta na javni put",
+      "b": "u slučaju izbjegavanja neposredne opasnosti",
+      "c": "u slučaju bržeg isključivanja iz saobraćaja"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 3,
+    "local_no": 25,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 25
+  },
+  {
+    "type": "text",
+    "text": "Osim traktora, ostala vozila na motorni pogon:",
+    "options": {
+      "a": "ne smiju da vuku priključno vozilo za traktor",
+      "b": "smiju da vuku priključno vozilo za traktor",
+      "c": "ne smiju da vuku priključno vozilo za traktor, ako masa skupa vozila prelazi -500 kg"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 3,
+    "local_no": 26,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 26
+  },
+  {
+    "type": "text",
+    "text": "Vozač je dužan da upotrijebi zvučni znak upozorenja:",
+    "options": {
+      "a": "prije ulaska u tunel koji nema osvjetljenje",
+      "b": "na putu u naselja prije ulaska u raskrsnicu",
+      "c": "na putu van naselja prije nailaska u nepreglednu i uzanu krivinu"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 3,
+    "local_no": 27,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 27
+  },
+  {
+    "type": "text",
+    "text": "Vozilo na motorni pogon ne smije da vuče:",
+    "options": {
+      "a": "motocikl, moped, kao ni laki ni teški tricikl",
+      "b": "teretno vozilo",
+      "c": "putničko vozilo"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 3,
+    "local_no": 28,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 28
+  },
+  {
+    "type": "text",
+    "text": "Pješak na javnom putu van naselja:",
+    "options": {
+      "a": "ne smije se kretati desnom stranom kolovoza",
+      "b": "ne smije se kretati u koloni",
+      "c": "ne smije se kretati po kolovozu autoputa"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 3,
+    "local_no": 29,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 29
+  },
+  {
+    "type": "text",
+    "text": "Vozilo koje se kreće po šinama postavljenim na sredini kolovoza:",
+    "options": {
+      "a": "smije da se pretiče sa lijeve strane",
+      "b": "smije da se pretiče sa bilo koje strane",
+      "c": "smije da se pretiče sa desne strane"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 3,
+    "local_no": 30,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 30
+  },
+  {
+    "type": "text",
+    "text": "Da li na brzoj saobraćajnici vozač smije da vrši polukružno okretanje:",
+    "options": {
+      "a": "da, ako ne ugrožava druge učesnike u saobraćaju",
+      "b": "da, ako ima uključene sve pokazivače pravca",
+      "c": "ne smije"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 3,
+    "local_no": 31,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 31
+  },
+  {
+    "type": "text",
+    "text": "Crveno i plavo trepćuće svijetlo koja se naizmjenično pale na vozilu su svjetlosni znaci koje daju:",
+    "options": {
+      "a": "vozila sa prvenstvom prolaza",
+      "b": "vozila pod pratnjom",
+      "c": "specijalna vozila"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 4,
+    "local_no": 32,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 32
+  },
+  {
+    "type": "text",
+    "text": "Vozač vozila dok ga drugo vozilo pretiče:",
+    "options": {
+      "a": "ne smije da povećava brzinu kretanja",
+      "b": "smije da poveća brzinu kretanja",
+      "c": "ne smije da smanji brzinu kretanja"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 4,
+    "local_no": 33,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 33
+  },
+  {
+    "type": "text",
+    "text": "Okretanje vozila za 180° iz dotadašnjeg smjera kretanja radi uključivanja u suprotni saobraćajni tok je:",
+    "options": {
+      "a": "kružno okretanje",
+      "b": "lijevo skretanje",
+      "c": "polukružno okretanje"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 4,
+    "local_no": 34,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 34
+  },
+  {
+    "type": "text",
+    "text": "Mladi vozač na magistralnom putu ne smije upravljati vozilom brzinom većom od:",
+    "options": {
+      "a": "50 km/h",
+      "b": "60 km/h",
+      "c": "70 km/h"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 4,
+    "local_no": 35,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 35
+  },
+  {
+    "type": "text",
+    "text": "Noću vozаč može upotrijebiti svjetlosni znаk upozorenjа na putu u naselju, prilikom:",
+    "options": {
+      "a": "mimoilaženja sa drugim vozilom",
+      "b": "mimoilaženja sa pješakom",
+      "c": "preticanja drugog vozila"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 4,
+    "local_no": 36,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 36
+  },
+  {
+    "type": "text",
+    "text": "Na raskrsnici postoji horizontalna i svjetlosna signalizacija, vozač će postupiti prema:",
+    "options": {
+      "a": "pravilu propuštanja vozila sa desne strane",
+      "b": "značenju svjetlosne signalizacije",
+      "c": "oznakama na kolovozu"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 4,
+    "local_no": 37,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 37
+  },
+  {
+    "type": "text",
+    "text": "Mladi vozač ne smije upravljati vozilom, osim na autoputu, brzinom većom od:",
+    "options": {
+      "a": "100 km/h",
+      "b": "80 km/h",
+      "c": "70 km/h"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 4,
+    "local_no": 38,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 38
+  },
+  {
+    "type": "text",
+    "text": "Vozač koji se približava obilježenom pješačkom prelazu, mora:",
+    "options": {
+      "a": "smanjiti brzinu kretanja vozila do 30 km/h",
+      "b": "smanjiti brzinu i nastaviti kretanje sa vozilom bez obzira na saobraćajnu situaciju",
+      "c": "prilagoditi brzinu kretanja vozila tako da se u svakoj situaciji može bezbjedno zaustaviti"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 4,
+    "local_no": 39,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 39
+  },
+  {
+    "type": "text",
+    "text": "Brzina kretanja teretnog motornog vozila čija je najveća dozvoljena masa do 7 -500 kg ograničena je na:",
+    "options": {
+      "a": "80 km/h",
+      "b": "70 km/h",
+      "c": "60 km/h"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 4,
+    "local_no": 40,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 40
+  },
+  {
+    "type": "text",
+    "text": "Prekid kretanja vozila u trajanju dužem od pet minuta, osim prekida koji se vrši da bi se postupilo po znaku ili pravilu kojim se reguliše saobraćaj je:",
+    "options": {
+      "a": "zaustavljanje vozila",
+      "b": "parkiranje vozila",
+      "c": "isključenje vozila"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 4,
+    "local_no": 41,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 41
+  },
+  {
+    "type": "text",
+    "text": "Brzina kretanja autobusa u javnom gradskom prevozu putnika ograničena je do:",
+    "options": {
+      "a": "50 km/h",
+      "b": "60 km/h",
+      "c": "70 km/h"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 4,
+    "local_no": 42,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 42
+  },
+  {
+    "type": "text",
+    "text": "Vozač umjesto zvučnog znaka upozorenja noću može da upotrijebi:",
+    "options": {
+      "a": "dnevna svijetla",
+      "b": "svjetlosni znak upozorenja",
+      "c": "svijetla za maglu"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 5,
+    "local_no": 43,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 43
+  },
+  {
+    "type": "text",
+    "text": "Površina koja nije namjenjena za saobraćaj vozila, koja se nalazi na sredini kolovoza sa jednosmjernim saobraćajem, ako saobraćajnim znakom nije drugačije određeno:",
+    "options": {
+      "a": "može se obilaziti sa lijeve ili desne strane",
+      "b": "može da se obilazi samo sa desne strane",
+      "c": "može da se obilazi samo sa lijeve strane"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 5,
+    "local_no": 44,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 44
+  },
+  {
+    "type": "text",
+    "text": "Na putu za saobraćaj vozila u oba smjera na kojem postoje tri saobraćajne trake vozač:",
+    "options": {
+      "a": "smije da koristi bilo koju saobraćajnu traku",
+      "b": "ne smije da koristi saobraćajnu traku uz desnu ivicu kolovoza",
+      "c": "ne smije da koristi saobraćajnu traku uz lijevu ivicu kolovoza"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 5,
+    "local_no": 45,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 45
+  },
+  {
+    "type": "text",
+    "text": "Na raskrsnici vozač je dužan:",
+    "options": {
+      "a": "da propusti vozilo koje nailazi sa njegove lijeve strane",
+      "b": "da propusti vozilo koje nailazi sa njegove desne strane",
+      "c": "da propusti sva vozila"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 5,
+    "local_no": 46,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 46
+  },
+  {
+    "type": "text",
+    "text": "Odstojanje između vučnog i vučenog putničkog vozila, ako se vuče pomoću užeta iznosi:",
+    "options": {
+      "a": "od 1 do 2 metara",
+      "b": "od 3 do 5 metara",
+      "c": "preko 5 metara"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 5,
+    "local_no": 47,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 47
+  },
+  {
+    "type": "text",
+    "text": "U vozilu u kojem su ugrađeni sigurnosni pojasevi u toku vožnje sigurnosni pojas mora da koristi:",
+    "options": {
+      "a": "samo vozač",
+      "b": "vozač i putnici",
+      "c": "samo vozač i suvozač"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 5,
+    "local_no": 48,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 48
+  },
+  {
+    "type": "text",
+    "text": "Kad se vozilo za organizovani prevoz djece zaustavi na kolovozu radi ulaska, odnosno izlaska djece, vozač:",
+    "options": {
+      "a": "mora uključiti lijevi pokazivač pravca",
+      "b": "mora uključiti desni pokazivač pravca",
+      "c": "mora uključiti sve pokazivače pravca"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 5,
+    "local_no": 49,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 49
+  },
+  {
+    "type": "text",
+    "text": "U naselju se saobraćajnim znakom motornim vozilima može ograničiti brzina kretanja najviše do:",
+    "options": {
+      "a": "80 km/h",
+      "b": "50 km/h",
+      "c": "60 km/h"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 5,
+    "local_no": 50,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 50
+  },
+  {
+    "type": "text",
+    "text": "Vozač vozila za organizovani prevoz djece kad zaustavi vozilo na kolovozu radi ulaska-izlaska djece mora:",
+    "options": {
+      "a": "uključiti lijevi pokazivač pravca",
+      "b": "uključiti sve pokazivače pravca",
+      "c": "uključiti desni pokazivač pravca"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 5,
+    "local_no": 51,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 51
+  },
+  {
+    "type": "text",
+    "text": "Kada vozila na rаskrsnicu dolаze iz suprotnih smjerovа i skreću ulijevo mimoilaze se:",
+    "options": {
+      "a": "sa desne strane",
+      "b": "sa lijeve strane",
+      "c": "po dogovoru"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 5,
+    "local_no": 52,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 52
+  },
+  {
+    "type": "text",
+    "text": "Prilikom uključivanja u saobraćaj vozač je dužan:",
+    "options": {
+      "a": "da upotrijebi zvučni znak upozorenja i da uključi odgovarajući pokazivač pravca",
+      "b": "da uključi sve pokazivače pravca",
+      "c": "da se uvjeri da to može učiniti na bezbjedan način i da uključi odgovarajući pokazivač pravca"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 5,
+    "local_no": 53,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 53
+  },
+  {
+    "type": "text",
+    "text": "Vozilo koje se kreće po šinama postavljenim na sredini kolovoza:",
+    "options": {
+      "a": "smije da se pretiče sa desne strane",
+      "b": "smije da se pretiče sa lijeve strane",
+      "c": "ne smije da se pretiče"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 6,
+    "local_no": 54,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 54
+  },
+  {
+    "type": "text",
+    "text": "Prilikom mimoilaženja sa pješakom, vozač je dužan da:",
+    "options": {
+      "a": "drži bezbjedno rastojanje između svog vozila i pješaka",
+      "b": "sirenom upozori pješaka kako bi pješak napustio kolovoz",
+      "c": "ubrza vozilo da se što prije mimoiđe sa pješakom"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 6,
+    "local_no": 55,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 55
+  },
+  {
+    "type": "text",
+    "text": "Odstojanje između vučnog i vučenog motornog vozila, ako se vuče pomoću krute veze inosi:",
+    "options": {
+      "a": "od 3 do 5 metara",
+      "b": "preko 5 metra",
+      "c": "do 3 m"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 6,
+    "local_no": 56,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 56
+  },
+  {
+    "type": "text",
+    "text": "Prolaženje vozilom pored drugog vozila koje se ne pomjera je radnja:",
+    "options": {
+      "a": "preticanja",
+      "b": "obilaženja",
+      "c": "prestrojavanja"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 6,
+    "local_no": 57,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 57
+  },
+  {
+    "type": "text",
+    "text": "Brzina kretanja teretnog vozila sa priključnim vozilom ograničena je na:",
+    "options": {
+      "a": "60 km/h",
+      "b": "70 km/h",
+      "c": "80 km/h"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 6,
+    "local_no": 58,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 58
+  },
+  {
+    "type": "text",
+    "text": "Vozač kome je dat znak za preticanje:",
+    "options": {
+      "a": "dužan je da pomjeri svoje vozilo ka desnoj ivici kolovoza",
+      "b": "dužan je da pomjeri svoje vozilo ka razdjelnoj liniji",
+      "c": "dužan je da pomjeri vozilo ka lijevoj ivici kolovoza"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 6,
+    "local_no": 59,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 59
+  },
+  {
+    "type": "text",
+    "text": "Da li vozila pod pratnjom smiju presijecati kolonu pješaka:",
+    "options": {
+      "a": "ne, ako je kolona duža od 30 metara",
+      "b": "ne, bez obzira na dužinu kolone",
+      "c": "da, bez obzira na dužinu kolone"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 6,
+    "local_no": 60,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 60
+  },
+  {
+    "type": "text",
+    "text": "U priključnom vozilu za stanovanje – kamp-prikolici:",
+    "options": {
+      "a": "smiju se prevoziti lica",
+      "b": "ne smiju se prevoziti lica",
+      "c": "ne smije se prevoziti više od pet lica"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 6,
+    "local_no": 61,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 61
+  },
+  {
+    "type": "text",
+    "text": "Teret na motornom vozilu može da pređe najudaljeniju tačku na prednjoj strani vozila:",
+    "options": {
+      "a": "do 1,5 metara",
+      "b": "do 1 metar",
+      "c": "nije ograničeno, ali se mora označiti propisanom tablom"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 6,
+    "local_no": 62,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 62
+  },
+  {
+    "type": "text",
+    "text": "Mladi vozač je vozač:",
+    "options": {
+      "a": "koji ima manje od 12 mjeseci vozačkog iskustva",
+      "b": "do 24 godine života",
+      "c": "do 21 godinu života"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 6,
+    "local_no": 63,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 63
+  },
+  {
+    "type": "text",
+    "text": "Ako u kretanju vozilom na putu naiđete na saobraćajni znak djeca na putu postupićete tako što ćete:",
+    "options": {
+      "a": "sa naročitom opreznošću nastaviti kretanje kako bi mogli blagovremeno zaustaviti vozilo",
+      "b": "prilagoditi brzinu prema opštem ograničenju za datu dionicu puta",
+      "c": "prilagoditi brzinu vremenskim uslovima"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 6,
+    "local_no": 64,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 64
+  },
+  {
+    "type": "text",
+    "text": "Kada se vozilom krećeš pored autobusa zaustavljenog na stajalištu postupićeš tako:",
+    "options": {
+      "a": "što ćeš zaustaviti vozilo i sačekati ulaz putnika u autobus, a zatim nastaviti kretanje",
+      "b": "što ćeš uključiti sirenu i nastaviti kretanje bez dodatne pažnje na lica koja ulaze u autobus, odnosno izlaze",
+      "c": "što ću se kretati smanjenom brzinom da ne ugrožavam lica koja u autobus ulaze, odnosno izlaze"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 7,
+    "local_no": 65,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 65
+  },
+  {
+    "type": "text",
+    "text": "Vozač dok upravlja putničkim motornim vozilom u saobraćaju mora u vozilu:",
+    "options": {
+      "a": "imati najmanje dva prsluka sa reflektujućim osobinama",
+      "b": "imati prsluka sa reflektujućim osobinama koliko ima i mjesta za sjedenje",
+      "c": "imati jedan prsluk sa reflektujućim osobinama"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 7,
+    "local_no": 66,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 66
+  },
+  {
+    "type": "text",
+    "text": "Na putu u naselju na kojem brzina nije ograničena saobraćajnim znakom, vozač ne smije da se kreće brže od:",
+    "options": {
+      "a": "50 km/h",
+      "b": "60 km/h",
+      "c": "70 km/h"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 7,
+    "local_no": 67,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 67
+  },
+  {
+    "type": "text",
+    "text": "Kada se vozač uključuje vozilom sa zemljanog puta na put sa asfaltnim zastorom, potrebno je:",
+    "options": {
+      "a": "da zaustavi vozilo i ukloni blato sa točkova nakon uključenja",
+      "b": "da naizmjenično ubrza i smanji brzinu vozila nakon uključenja, kako bi blato spalo sa točkova",
+      "c": "da zaustavi vozilo i ukloni blato sa točkova prije uključenja"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 7,
+    "local_no": 68,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 68
+  },
+  {
+    "type": "text",
+    "text": "Prilikom kretanja vozilom po kolovozu vozač je dužan da vozilo drži:",
+    "options": {
+      "a": "što bliže desnoj ivici kolovoza",
+      "b": "sredinom kolovozne trake",
+      "c": "bliže razdjelnoj liniji"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 7,
+    "local_no": 69,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 69
+  },
+  {
+    "type": "text",
+    "text": "Saobraćajnu traku namijenjenu za kretanje vozila za gradski prevoz putnika mogu koristiti:",
+    "options": {
+      "a": "vozila za odvoz smeća",
+      "b": "vozila sa prevenstvom prolaza",
+      "c": "putnička vozila pri preticanju"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 7,
+    "local_no": 70,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 70
+  },
+  {
+    "type": "text",
+    "text": "Kada se iza vozila zbog spore vožnje formira kolona vozila, vozač je dužan da:",
+    "options": {
+      "a": "nastavi kretanje bez obaveze prema drugim učesnicima u saobraćaju",
+      "b": "na odgovarajućem mjestu na putu omogući vozilima da ga bezbjedno preteknu, obiđu ili prođu",
+      "c": "nastavi kretanje do prve raskrsnice sa lokalnim putem i isključi se iz saobraćaja"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 7,
+    "local_no": 71,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 71
+  },
+  {
+    "type": "text",
+    "text": "Vozač smije da zaustavi ili parkira svoje vozilo na trotoaru:",
+    "options": {
+      "a": "ako trotoar ima širinu veću od 1,6 metara",
+      "b": "ako je saobraćajnim znakom dozvoljeno, bez obzira na širinu trotoara i prolaza za pješake",
+      "c": "ako je dozvoljeno saobraćajnom signalizacijom, i ako ostane prolaz za pješake najmanje širine 1,6 metara, koji ne smije biti uz ivicu kolovoza"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 7,
+    "local_no": 72,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 72
+  },
+  {
+    "type": "text",
+    "text": "Vozilo koje se kreće po šinama postavljenim uz desnu ivicu kolovoza pretiče se:",
+    "options": {
+      "a": "sa bilo koje strane",
+      "b": "sa lijeve strane",
+      "c": "sa desne strane"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 7,
+    "local_no": 73,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 73
+  },
+  {
+    "type": "text",
+    "text": "Za vrijeme kretanja vozila unazad:",
+    "options": {
+      "a": "moraju biti uključeni svi pokazivači pravca",
+      "b": "ne moraju biti uključeni svi pokazivači pravca",
+      "c": "mora biti uključen samo desni pokazivač pravca"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 7,
+    "local_no": 74,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 74
+  },
+  {
+    "type": "text",
+    "text": "Vozačka dozvola za kategoriju B može se izdati licu koje je navršilo:",
+    "options": {
+      "a": "17 godina",
+      "b": "17 godina i 6 mjeseci",
+      "c": "18 godina"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 7,
+    "local_no": 75,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 75
+  },
+  {
+    "type": "text",
+    "text": "Vozač koji na kolovozu bez ulične rasvjete zaustavi ili parkira vozilo, noću ili u uslovima smanjene vidljivosti, mora na vozilu uključiti:",
+    "options": {
+      "a": "oborena svijetla",
+      "b": "parkirna, odnosno poziciona svijetla",
+      "c": "svijetla za maglu"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 8,
+    "local_no": 76,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 76
+  },
+  {
+    "type": "text",
+    "text": "Odstojanje na kojem učesnik u saobraćaju može jasno vidjeti kolovoz je:",
+    "options": {
+      "a": "preglednost",
+      "b": "vidno polje",
+      "c": "vidljivost"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 8,
+    "local_no": 77,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 77
+  },
+  {
+    "type": "text",
+    "text": "Za vožnju bicikla, gdje ne postoji posebna staza, odnosno traka, može da se koristi kolovoz:",
+    "options": {
+      "a": "u širini do 1 metra od desne ivice kolovoza",
+      "b": "u širini do 1,5 metara od desne ivice kolovoza",
+      "c": "u širini do 1,2 metra od desne ivice kolovoza"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 8,
+    "local_no": 78,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 78
+  },
+  {
+    "type": "text",
+    "text": "Brzina kretanja vozila na javnom putu kada prevozi opasne materije van naselja ograničena je:",
+    "options": {
+      "a": "na 60 km/h",
+      "b": "na 70 km/h",
+      "c": "na 80 km/h"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 8,
+    "local_no": 79,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 79
+  },
+  {
+    "type": "text",
+    "text": "Vozač može da se uključi vozilom u saobraćaj kada:",
+    "options": {
+      "a": "uključi zvučni signal i sve pokazivače pravca",
+      "b": "uključi samo pokazivač pravca",
+      "c": "se uvjeri da ne ometa i na propisan način obavijesti ostale učesnike"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 8,
+    "local_no": 80,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 80
+  },
+  {
+    "type": "text",
+    "text": "Kada se vozilom vrši prevoz djeteta u bezbjednosnom sjedištu:",
+    "options": {
+      "a": "dijete ne mora biti vezano sigurnosnim pojasom",
+      "b": "dijete ne mora biti vezano, ako je sjedište pričvršćeno sigurnosnim pojasom",
+      "c": "dijete mora biti vezano sigurnosnim pojasom"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 8,
+    "local_no": 81,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 81
+  },
+  {
+    "type": "text",
+    "text": "Na javnom putu gdje su kolovozne trake fizički odvojene, vozač smije vozilom da se kreće:",
+    "options": {
+      "a": "kolovoznom trakom namijenjenom za saobraćaj vozila iz suprotnog smjera",
+      "b": "desnom kolovoznom trakom",
+      "c": "lijevom i desnom kolovoznom trakom"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 8,
+    "local_no": 82,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 82
+  },
+  {
+    "type": "text",
+    "text": "Lice koje se prevozi vozilom ne smije:",
+    "options": {
+      "a": "da piše poruke na telefonskom uređaju",
+      "b": "da ometa vozača u upravljanju",
+      "c": "da koristi slušalice"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 8,
+    "local_no": 83,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 83
+  },
+  {
+    "type": "text",
+    "text": "Kad se vozilom kreće unazad vozač je:",
+    "options": {
+      "a": "dužan da propusti vozilo koje dolazi iza njegovog vozila",
+      "b": "dužan da uključi lijevi pokazivač pravca",
+      "c": "nije dužan da propusti vozilo koje dolazi iza njegovog vozila"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 8,
+    "local_no": 84,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 84
+  },
+  {
+    "type": "text",
+    "text": "Sredstvo kojim se ometa rad uređaja za mjerenje brzine kretanja vozila:",
+    "options": {
+      "a": "ne smije se koristiti na dijelu puta gdje postoji dopunska tabla radarska kontrola",
+      "b": "smije se koristiti na dijelu puta gdje ne postoji dopunska tabla radarska kontrola",
+      "c": "ne smije se koristiti i nalaziti u vozilu"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 8,
+    "local_no": 85,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 85
+  },
+  {
+    "type": "text",
+    "text": "Ako se vozač nalazi na kolovozu van svog vozila:",
+    "options": {
+      "a": "dužan je da nosi prsluk sa svjetlosno reflektujućim osobinama",
+      "b": "nije dužan da nosi prsluk sa svjetlosno reflektujućim osobinama",
+      "c": "dužan je da položajem ruku upozori ostale učesnike o svom prisustvu"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 8,
+    "local_no": 86,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 86
+  },
+  {
+    "type": "text",
+    "text": "Kada na raskrsnici vozila dolaze iz suprotnih smjerova i skreću ulijevo mimoilaze se sa:",
+    "options": {
+      "a": "desne strane",
+      "b": "lijeve strane",
+      "c": "lijeve i desne strane"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 9,
+    "local_no": 87,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 87
+  },
+  {
+    "type": "text",
+    "text": "U toku kretanja za vrijeme magle na vozilu moraju da budu uključena:",
+    "options": {
+      "a": "velika svijetla",
+      "b": "oborena svijetla",
+      "c": "pokazivači pravca"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 9,
+    "local_no": 88,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 88
+  },
+  {
+    "type": "text",
+    "text": "Vozač koji se približava raskrsnici dužan je da:",
+    "options": {
+      "a": "poveća brzinu kretanja da što brže prođe kroz raskrsnicu",
+      "b": "prilagodi vožnju uslovima saobraćaja na raskrsnici",
+      "c": "vozi brzinom koja je propisana opštim ograničenjem"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 9,
+    "local_no": 89,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 89
+  },
+  {
+    "type": "text",
+    "text": "U bezbjednosnom sjedištu mora da se prevozi dijete do:",
+    "options": {
+      "a": "7 godina",
+      "b": "6 godina",
+      "c": "5 godina"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 9,
+    "local_no": 90,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 90
+  },
+  {
+    "type": "text",
+    "text": "Na istoj osovini vozila pneumatici moraju da budu jednaki:",
+    "options": {
+      "a": "po dimenzijama, nosivosti, brzinskim karakteristikama, vrsti, konstrukciji, marki i tipu",
+      "b": "samo po merki, tipu, dimenzijama, nosivosti, vrsti i dubini šare",
+      "c": "samo po dimenzijama, marki i tipu"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 9,
+    "local_no": 91,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 91
+  },
+  {
+    "type": "text",
+    "text": "Svijetla za maglu na motornom vozilu treba da budu postavljena tako da osvjetljavaju put ispred vozila koji nije duži od:",
+    "options": {
+      "a": "15 metara",
+      "b": "30 metara",
+      "c": "35 metara"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 9,
+    "local_no": 92,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 92
+  },
+  {
+    "type": "text",
+    "text": "Naslon za glavu mora biti ugrađen na sjedištu kod kojeg sigurtosni pojas:",
+    "options": {
+      "a": "je vezan u dvije tačke",
+      "b": "nije vezan",
+      "c": "je vezan u tri tačke"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 9,
+    "local_no": 93,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 93
+  },
+  {
+    "type": "text",
+    "text": "Kad kod povrijeđenog hoćemo da zaustavimo krvarenje upotrebljavamo:",
+    "options": {
+      "a": "jod i sterilnu gazu",
+      "b": "kompresivni zavoj",
+      "c": "alkohol i sterilnu gazu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 9,
+    "local_no": 94,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 94
+  },
+  {
+    "type": "text",
+    "text": "Broj hitne pomoći je:",
+    "options": {
+      "a": "122",
+      "b": "123",
+      "c": "124"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 9,
+    "local_no": 95,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 95
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću se ispred raskrsnice",
+      "b": "propustiću vozilo koje skreće lijevo i nastaviti kretanje",
+      "c": "nastaviću kretanje pravo"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 10,
+    "local_no": 1,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q01.png",
+    "id": 96
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici dužni ste da postupate:",
+    "options": {
+      "a": "po uključenom svijetlu na semaforu",
+      "b": "po vertikalnoj saobraćajnoj signalizaciji",
+      "c": "po znaku koji daje ovlašćeni policijski službenik"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 10,
+    "local_no": 2,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q02.png",
+    "id": 97
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo ne propuštajući vozilo 1",
+      "b": "propustiću vozilo 1 i nastaviti kretanje",
+      "c": "ubrzaću kretanje i prije vozila 1 proći kroz raskrsnicu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 10,
+    "local_no": 3,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q03.png",
+    "id": 98
+  },
+  {
+    "type": "image",
+    "text": "Znak izričite naredbe u situaciji kao na slici ima značenje:",
+    "options": {
+      "a": "ukrštanje sa putem sa prvenstvom prolaza",
+      "b": "prvenstvo u odnosu na vozila iz suprotnog smjera",
+      "c": "obavezno zaustavljanje"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 10,
+    "local_no": 4,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q04.png",
+    "id": 99
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici, ako sa - vozilom 2 zadržavate pravac kretanja:",
+    "options": {
+      "a": "nastaviću kretanje bez propuštanja vozila",
+      "b": "nastaviću kretanje uz propuštanje samo vozila 1",
+      "c": "nastaviću kretanje uz propuštanje vozila 3 i 4"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 10,
+    "local_no": 5,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q05.png",
+    "id": 100
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila je:",
+    "answer_sequence": [
+      "3",
+      "4",
+      "2",
+      "1"
+    ],
+    "points": null,
+    "page": 10,
+    "local_no": 6,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q06.png",
+    "id": 101
+  },
+  {
+    "type": "image",
+    "text": "Ako je biciklista ušao u raskrsnicu na crveno svijetlo na - semaforu u smjeru svog kretanja, kao na slici:",
+    "options": {
+      "a": "propisno vrši radnju prolaska kroz raskrsnicu",
+      "b": "nepropisno jer treba da gura biciklo pored sebe",
+      "c": "nepropisno vrši radnju prolaska kroz raskrsnicu"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 10,
+    "local_no": 7,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q07.png",
+    "id": 102
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici biciklista prelazi kolovoz na:",
+    "options": {
+      "a": "obilježenoj biciklističkoj stazi",
+      "b": "obilježenoj biciklističkoj traci",
+      "c": "obilježenoj razdjelnoj liniji pješačkog prelaza"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 10,
+    "local_no": 8,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p010_q08.png",
+    "id": 103
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "propustiću putničko vozilo 3 i nastaviti kretanje",
+      "b": "propustiću tramvaj 2 i nastaviti kretanje",
+      "c": "propustiću tramvaj 2 i putničko vozilo 3, pa nastaviti kretanje"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 11,
+    "local_no": 9,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q09.png",
+    "id": 104
+  },
+  {
+    "type": "ordering",
+    "text": "Redoslijed prolaska vozila kroz raskrsnicu je:",
+    "answer_sequence": [
+      "3",
+      "1",
+      "2"
+    ],
+    "points": null,
+    "page": 11,
+    "local_no": 10,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q10.png",
+    "id": 105
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo",
+      "b": "nastaviću kretanje pravo uz propuštanje vozila 4 i 5",
+      "c": "zaustaviću vozilo"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 11,
+    "local_no": 11,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q11.png",
+    "id": 106
+  },
+  {
+    "type": "image",
+    "text": "U prikazanoj situaciji vozilo 2 će:",
+    "options": {
+      "a": "se zaustaviti i propustiti vozilo - 1",
+      "b": "nastaviti kretanje ulijevo bez propuštanja vozila 1",
+      "c": "se zaustaviti zbog znaka koji daje ovlašćeno lice"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 11,
+    "local_no": 12,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q12.png",
+    "id": 107
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici prvenstvo prolaza ima:",
+    "options": {
+      "a": "vozilo 1 u odnosu na vozilo 2",
+      "b": "vozilo 2 u odnosu na vozilo 1",
+      "c": "vozilo 1 zbog pravila desne strane"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 11,
+    "local_no": 13,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q13.png",
+    "id": 108
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila regulisan je:",
+    "options": {
+      "a": "pravilom propuštanja vozila sa desne strane",
+      "b": "pravilom propuštanja vozila sa lijeve strane",
+      "c": "vertikalnim saobraćajnim znakom ."
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 11,
+    "local_no": 14,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q14.png",
+    "id": 109
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "propustiću vozilo koje skreće ulijevo",
+      "b": "nastaviću kretanje pravo jer imam prvenstvo prolaza",
+      "c": "zaustaviću se ispred raskrsnice zbog znaka STOP"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 11,
+    "local_no": 15,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q15.png",
+    "id": 110
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici postupićete po:",
+    "options": {
+      "a": "saobraćajnom znaku STOP",
+      "b": "značenju svjetlosnih znakova na semaforu",
+      "c": "saobraćajnom pravilu ulaska u neregulisanu raskrsnicu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 11,
+    "local_no": 16,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p011_q16.png",
+    "id": 111
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila je:",
+    "answer_sequence": [
+      "1",
+      "3",
+      "2"
+    ],
+    "points": null,
+    "page": 12,
+    "local_no": 17,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q17.png",
+    "id": 112
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska kroz raskrsnicu je regulisan:",
+    "options": {
+      "a": "saobraćajnim znakom .",
+      "b": "pravilom propuštanja vozila sa desne strane",
+      "c": "horizontalnim oznakama"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 12,
+    "local_no": 18,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q18.png",
+    "id": 113
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici prilikom skretanja ulijevo treba - da:",
+    "options": {
+      "a": "nastavim kretanje bez propuštanja vozila 2, 3 i 4",
+      "b": "propustim vozila 3 i 4 .",
+      "c": "propustim vozila 2, 3 i 4 -"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 12,
+    "local_no": 19,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q19.png",
+    "id": 114
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici strelice na kolovozu (bijele boje) obilježavaju:",
+    "options": {
+      "a": "liniju usmjeravanja",
+      "b": "obavezan smjer samo za putnička vozila",
+      "c": "obavezan smjer kretanja"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 12,
+    "local_no": 20,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q20.png",
+    "id": 115
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo bez propuštanja tramvaja",
+      "b": "nastaviću kretanje pravo nakon propuštanja tramvaja",
+      "c": "uz povećanu opreznost nastaviću kretanje pravo"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 12,
+    "local_no": 21,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q21.png",
+    "id": 116
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska kroz raskrsnicu je regulisan:",
+    "options": {
+      "a": "vertikalnom signalizacijom",
+      "b": "primjenom pravila desne strane",
+      "c": "primjenom pravila prvenstva prolaza"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 12,
+    "local_no": 22,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q22.png",
+    "id": 117
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću se ispred raskrsnice i propustiti vozilo - 2",
+      "b": "nastaviću kretanje pravo uz povećanu pažnju",
+      "c": "nastaviću kretanje pravo bez propuštanja vozila 2"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 12,
+    "local_no": 23,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q23.png",
+    "id": 118
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici dopunska tabla označava:",
+    "options": {
+      "a": "nailazak na obilaznicu",
+      "b": "da se krećem po putu sa prvenstvom prolaza",
+      "c": "spajanje sa putem sa prvenstvom prolaza"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 12,
+    "local_no": 24,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p012_q24.png",
+    "id": 119
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici, kada prolazite pored vozila 2 koje se - kreće iz suprotnog smjera je radnja:",
+    "options": {
+      "a": "obilaženja",
+      "b": "mimoilaženja",
+      "c": "preticanja"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 13,
+    "local_no": 25,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q25.png",
+    "id": 120
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo ne propuštajući pješaka",
+      "b": "ubrzaću kretanje vozila i proći ispred pješaka",
+      "c": "zaustaviću se i propustiti pješaka"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 13,
+    "local_no": 26,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q26.png",
+    "id": 121
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "smijem preticati",
+      "b": "ne smijem preticati",
+      "c": "smijem preticati zbog oznaka na kolovozu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 13,
+    "local_no": 27,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q27.png",
+    "id": 122
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici neisprekidana uzdužna linija uz desnu ivicu kolovoza označava:",
+    "options": {
+      "a": "ivicu kolovoza",
+      "b": "ivičnu liniju",
+      "c": "razdjelnu liniju"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 13,
+    "local_no": 28,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q28.png",
+    "id": 123
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću se ispred raskrsnice",
+      "b": "propustiću vozila iz suprotnog smjera pa nastaviti kretanje",
+      "c": "nastaviću kretanje ne propuštajući vozila iz suprotnog smjera"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 13,
+    "local_no": 29,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q29.png",
+    "id": 124
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici biciklisti se kreću:",
+    "options": {
+      "a": "nepropisno, jer su napravili kolonu",
+      "b": "nepropisno, jer ne nose prsluk sa reflektujućim osobinama .",
+      "c": "propisno"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 13,
+    "local_no": 30,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q30.png",
+    "id": 125
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici:",
+    "options": {
+      "a": "nastaviću kretanje desno",
+      "b": "zaustaviću se ispred raskrsnice",
+      "c": "nastaviću kretanje pravo"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 13,
+    "local_no": 31,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q31.png",
+    "id": 126
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici postupićete po:",
+    "options": {
+      "a": "svjetlosnom saobraćajnom znaku",
+      "b": "vertikalnom saobraćajnom znaku",
+      "c": "horizontalnim oznakama"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 13,
+    "local_no": 32,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p013_q32.png",
+    "id": 127
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo",
+      "b": "zaustaviću vozilo",
+      "c": "nastaviću kretanje lijevo nakon prouštanja vozila 2 i 3"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 14,
+    "local_no": 33,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q33.png",
+    "id": 128
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici policijsko vozilo:",
+    "options": {
+      "a": "može da nastavi kretanje pravo",
+      "b": "mora da se zaustavi",
+      "c": "može da nastavi kretanje u bilo kojem pravcu"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 14,
+    "local_no": 34,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q34.png",
+    "id": 129
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač:",
+    "options": {
+      "a": "vozilo 1 treba da propusti vozilo 2",
+      "b": "vozilo 2 treba da ubrza kretanje i prođe ispred vozila 1",
+      "c": "vozilo 2 treba da propusti vozilo - 1"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 14,
+    "local_no": 35,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q35.png",
+    "id": 130
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo 1:",
+    "options": {
+      "a": "ne smije da se zaustavi ili parkira",
+      "b": "smije da se zaustavi",
+      "c": "smije da se zaustavi ili parkira"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 14,
+    "local_no": 36,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q36.png",
+    "id": 131
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "putničko vozilo 1 ima dozvoljen prolaz",
+      "b": "vozila 2, 3 i 4 imaju dozvoljen prolaz",
+      "c": "samo policijsko vozilo 4 ima dozvoljen prolaz"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 14,
+    "local_no": 37,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q37.png",
+    "id": 132
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici policijsko vozilo 4:",
+    "options": {
+      "a": "može da nastavi kretanje pravo",
+      "b": "mora da se zaustavi",
+      "c": "može da nastavi kretanje pravo nakon prolaska vozila 1"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 14,
+    "local_no": 38,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q38.png",
+    "id": 133
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici, ako - upravljate vozilom 1:",
+    "options": {
+      "a": "nakon propuštanja vozila 2 moram skrenuti udesno",
+      "b": "imam prvenstvo prolaza u odnosu na vozilo 2",
+      "c": "zaustaviću se ispred raskrsnice i propustiti sva vozila"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 14,
+    "local_no": 39,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q39.png",
+    "id": 134
+  },
+  {
+    "type": "image",
+    "text": "Obavezan smjer u desno, u situaciji na slici, odnosi se:",
+    "options": {
+      "a": "na teretna i priključna vozila",
+      "b": "na sva vozila osim teretna",
+      "c": "na teretna vozila"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 14,
+    "local_no": 40,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p014_q40.png",
+    "id": 135
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo kroz raskrsnicu",
+      "b": "zaustaviću se ispred raskrnice i propustiti vozilo 2",
+      "c": "zaustaviću se ispred raskrsnice i propustiti vozilo - 3"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 15,
+    "local_no": 41,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q41.png",
+    "id": 136
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila kroz raskrsnicu je:",
+    "answer_sequence": [
+      "1",
+      "2",
+      "3"
+    ],
+    "points": null,
+    "page": 15,
+    "local_no": 42,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q42.png",
+    "id": 137
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u sitaciji prikazanoj na slici, ako vozila - zadržavaju pravac kretanja, a upravljate sa vozilom 2:",
+    "options": {
+      "a": "nastaviću kretanje bez propuštanja vozila",
+      "b": "nastaviću kretanje nakon propuštanja samo vozila 3 i 4",
+      "c": "nastaviću kretanje uz propuštanje vozila 1"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 15,
+    "local_no": 43,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q43.png",
+    "id": 138
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji na slici kada vozila zadržavaju pravac kretanja redoslijed prolaska vozila je:",
+    "answer_sequence": [
+      "2",
+      "1",
+      "3",
+      "4"
+    ],
+    "points": null,
+    "page": 15,
+    "local_no": 44,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q44.png",
+    "id": 139
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje ulijevo bez zaustavljanja kroz raskrsnicu",
+      "b": "zaustaviću se ispred raskrsnice",
+      "c": "nastaviću kretanje pravo kroz raskrsnicu"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 15,
+    "local_no": 45,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q45.png",
+    "id": 140
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici upaljeno žuto svijetlo na semaforu znači:",
+    "options": {
+      "a": "zabranu prolaza samo pravo",
+      "b": "slobodan prolaz samo pravo",
+      "c": "zabranu prolaza kroz raskrsnicu"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 15,
+    "local_no": 46,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q46.png",
+    "id": 141
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici, kada - policijski službenik bočno ispruženih ruku i tijelom okrenutim prema vozilima 2 i 3 reguliše saobraćaj:",
+    "options": {
+      "a": "propustiću samo vozila 2 i 3",
+      "b": "propustiću samo vozilo 4 i nastvaiti kretanja",
+      "c": "nastaviću kretanje bez propuštanja vozila 2, 3 i 4"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 15,
+    "local_no": 47,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q47.png",
+    "id": 142
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila kojima je dozvoljen prolazak je:",
+    "answer_sequence": [
+      "1",
+      "4"
+    ],
+    "points": null,
+    "page": 15,
+    "local_no": 48,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p015_q48.png",
+    "id": 143
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje bez propuštanja vozila .",
+      "b": "neću propustiti vozilo 3",
+      "c": "propustiću vozila 2 i 3"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 16,
+    "local_no": 49,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q49.png",
+    "id": 144
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici sa vozilom 4 se:",
+    "options": {
+      "a": "mimoilazim sa desne strane",
+      "b": "mimoilazim sa lijeve strane",
+      "c": "obilazim sa desne strane"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 16,
+    "local_no": 50,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q50.png",
+    "id": 145
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću se ispred raskrsnice zbog znaka STOP",
+      "b": "nastaviću kretanje, jer zadržavam pravac",
+      "c": "zaustaviću se ispred raskrsnice zbog svijetla na semaforu"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 16,
+    "local_no": 51,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q51.png",
+    "id": 146
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici prolazak kroz raskrsnicu regulisan je:",
+    "options": {
+      "a": "svjetlosnim saobraćajnim znakom",
+      "b": "pravilom desne strane",
+      "c": "saobraćajnim znakom"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 16,
+    "local_no": 52,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q52.png",
+    "id": 147
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo jer zadržavam pravac kretanja",
+      "b": "nastaviću kretanje pravo jer ne radi semafor",
+      "c": "zaustaviću se ispred raskrsnice"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 16,
+    "local_no": 53,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q53.png",
+    "id": 148
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici dužni ste da postupate:",
+    "options": {
+      "a": "po saobraćajnim znacima",
+      "b": "po semaforu",
+      "c": "po pravilu propuštanja vozila samo sa desne strane"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 16,
+    "local_no": 54,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q54.png",
+    "id": 149
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "propustiću samo vozila koja dolaze sa desne strane",
+      "b": "propustiću samo vozila sa lijeve strane",
+      "c": "zaustaviću vozilo"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 16,
+    "local_no": 55,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q55.png",
+    "id": 150
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila kojima je dozvoljen prolazak je:",
+    "answer_sequence": [
+      "4",
+      "3"
+    ],
+    "points": null,
+    "page": 16,
+    "local_no": 56,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p016_q56.png",
+    "id": 151
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač vozila 1 treba da:",
+    "options": {
+      "a": "nastavi kretanje bez propuštanja vozila 2",
+      "b": "se zaustavi i nakon propuštanja vozila 2 nastavi kretanje .",
+      "c": "se zaustavi i prestroji u desnu saobraćajnu traku"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 17,
+    "local_no": 57,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q57.png",
+    "id": 152
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač vozila 1 postupiće po:",
+    "options": {
+      "a": "pravilu mimoilaženja vozila različitih kategorija",
+      "b": "pravilu propuštanja vozila sa desne strane",
+      "c": "vertikalnoj i horizontalnoj saobraćajnoj signalizaciji"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 17,
+    "local_no": 58,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q58.png",
+    "id": 153
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "treba da nastavim kretanje ulijevo .",
+      "b": "mogu izvršti prestrojavanje u desnu traku .",
+      "c": "bez prestrojavanja nastaviću kretanje pravo"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 17,
+    "local_no": 59,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q59.png",
+    "id": 154
+  },
+  {
+    "type": "image",
+    "text": "U prikazanoj situaciji strelice na kolovozu obelježavaju:",
+    "options": {
+      "a": "obavezan smjer kretanja ulijevo",
+      "b": "namjenu saobraćajnih traka",
+      "c": "obavezan smjer kretanja udesno"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 17,
+    "local_no": 60,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q60.png",
+    "id": 155
+  },
+  {
+    "type": "image",
+    "text": "U raskrsnici kao na slici:",
+    "options": {
+      "a": "nijesam dužan da propustim vozila u kružnom toku",
+      "b": "dužan sam da propustim samo vozila koja mi dolaze sa desne strane",
+      "c": "dužan sam da propustim sva vozila koja se kreću u kružnom toku"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 17,
+    "local_no": 61,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q61.png",
+    "id": 156
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici teretno vozilo 2:",
+    "options": {
+      "a": "propisno skreće udesno putanjom a",
+      "b": "nepropisno skreće udesno",
+      "c": "propisno skreće udesno putanjom b"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 17,
+    "local_no": 62,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q62.png",
+    "id": 157
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u sitaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću se ispred raskrsnice i propustiti vozila 4 i 2",
+      "b": "zaustaviću se ispred raskrsnice i propustiti sva vozila",
+      "c": "propustiću samo vozilo 3"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 17,
+    "local_no": 63,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q63.png",
+    "id": 158
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila kroz raskrsnicu je:",
+    "answer_sequence": [
+      "4",
+      "2",
+      "1",
+      "3"
+    ],
+    "points": null,
+    "page": 17,
+    "local_no": 64,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p017_q64.png",
+    "id": 159
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "propustiću vozilo 2 i nastaviti kretanje ulijevo",
+      "b": "nastaviću kretanje ulijevo ne propuštajući vozilo 2",
+      "c": "ubrzaću kretanje vozila i proći ispred vozila -"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 18,
+    "local_no": 65,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q65.png",
+    "id": 160
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo 2 se kreće:",
+    "options": {
+      "a": "propisno putanjom a",
+      "b": "propisno putanjom b",
+      "c": "propisno bliže desnoj ivici kolovoza"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 18,
+    "local_no": 66,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q66.png",
+    "id": 161
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo kroz raskrsnicu",
+      "b": "zaustaviću se ispred raskrsnice pa nastaviti kretanje pravo",
+      "c": "nastaviću kretanje u lijevo kroz raskrsnicu"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 18,
+    "local_no": 67,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q67.png",
+    "id": 162
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici strelice na kolovozu označavaju:",
+    "options": {
+      "a": "obavezan smjer",
+      "b": "namjenu saobraćajnih traka",
+      "c": "putokaz"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 18,
+    "local_no": 68,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q68.png",
+    "id": 163
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje ulijevo nakon propuštanja vozila 3",
+      "b": "nastaviću kretanje ulijevo bez propuštanja vozila 2 i 3",
+      "c": "zaustaviću se i propustiti vozila 2 i 3"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 18,
+    "local_no": 69,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q69.png",
+    "id": 164
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila je:",
+    "answer_sequence": [
+      "3",
+      "1",
+      "2"
+    ],
+    "points": null,
+    "page": 18,
+    "local_no": 70,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q70.png",
+    "id": 165
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo:",
+    "options": {
+      "a": "1 treba da nastavi kretanje bez propuštanja vozila 2",
+      "b": "2 treba da propusti vozilo 1 i nastavi kretanje",
+      "c": "1 treba da propusti vozilo 2 pa da nastavi kretanje"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 18,
+    "local_no": 71,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q71.png",
+    "id": 166
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač vozila 1 postupiće po:",
+    "options": {
+      "a": "pravilu propuštanja vozila samo sa desne strane",
+      "b": "pravilu prolaska kroz neregulisanu raskrsnicu",
+      "c": "saobraćajnom znakom"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 18,
+    "local_no": 72,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p018_q72.png",
+    "id": 167
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u sledećoj situaciji:",
+    "options": {
+      "a": "nastaviću kretanje pravo bez propuštanja tramvaja",
+      "b": "nastaviću kretanje pravo nakon propuštanja tramvaja",
+      "c": "zaustaviću se i propustiti tramvaj"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 19,
+    "local_no": 73,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q73.png",
+    "id": 168
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici prolazak vozila kroz raskrsnicu je regulisan:",
+    "options": {
+      "a": "vertikalnom saobraćajnom signalizacijom",
+      "b": "prednošću prolaska šinskog vozila",
+      "c": "pravilom propuštanja vozila samo sa desne strane"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 19,
+    "local_no": 74,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q74.png",
+    "id": 169
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo jer imam prvenstvo prolaza",
+      "b": "nastaviću kretanje smanjenom brzinom",
+      "c": "zaustaviću se ispred raskrsnice i propustiti vozila iz suprotnog smjera"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 19,
+    "local_no": 75,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q75.png",
+    "id": 170
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici dužni ste da postupate po:",
+    "options": {
+      "a": "svjetlosnoj saobraćajnoj signalizaciji",
+      "b": "vertikalnoj saobraćajnoj signalizaciji",
+      "c": "pravilu propuštanja vozila sa desne strane"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 19,
+    "local_no": 76,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q76.png",
+    "id": 171
+  },
+  {
+    "type": "ordering",
+    "text": "U situaciji prikazanoj na slici redoslijed prolaska vozila kroz - raskrsnicu je:",
+    "answer_sequence": [
+      "2",
+      "3",
+      "1"
+    ],
+    "points": null,
+    "page": 19,
+    "local_no": 77,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q77.png",
+    "id": 172
+  },
+  {
+    "type": "image",
+    "text": "U raskrsnici sa kružnim tokom saobraćaja, kretanje vozila vrši se:",
+    "options": {
+      "a": "u bilo kojem smjeru",
+      "b": "u smjeru kazaljke na satu",
+      "c": "u suprotnom smjeru kazaljke na satu"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 19,
+    "local_no": 78,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q78.png",
+    "id": 173
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću se i propustiti vozilo - 3",
+      "b": "nastaviću kretanje pravo iza vozila 2",
+      "c": "smanjiću brzinu kretanja i propustiti vozilo - 3"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 19,
+    "local_no": 79,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q79.png",
+    "id": 174
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vučno vozilo 3 je tegljač, a vučeno vozilo je:",
+    "options": {
+      "a": "prikolica",
+      "b": "laka prikolica",
+      "c": "poluprikolica"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 19,
+    "local_no": 80,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p019_q80.png",
+    "id": 175
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, putničko vozilo 1 skreće - ulijevo, a traktor 2 zadržava pravac kretanja. Prvenstvo prolaza ima:",
+    "options": {
+      "a": "traktor 2 jer ima uključeno žuto rotaciono svijetlo",
+      "b": "traktor 2 jer zadržava pravac kretanja",
+      "c": "putničko vozilo 1"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 20,
+    "local_no": 81,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q81.png",
+    "id": 176
+  },
+  {
+    "type": "image",
+    "text": "Za vrijeme kretanja na traktoru se može nalaziti:",
+    "options": {
+      "a": "vozač i jedno lice",
+      "b": "samo vozač",
+      "c": "vozač i dva lica"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 20,
+    "local_no": 82,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q82.png",
+    "id": 177
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici: * nastaviću kretanje pravo kroz raskrnicu jer, je na semaforu",
+    "options": {
+      "a": "zeleno svijetlo",
+      "b": "neću ući u raskrsnicu zbog gustine saobraćaja",
+      "c": "nastaviću kretanje udesno kroz raskrnicu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 20,
+    "local_no": 83,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q83.png",
+    "id": 178
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "smijem da vršim polukružno okretanje",
+      "b": "smijem da se zaustavim u raskrsnici",
+      "c": "ne smijem da vršim polukružno okretanje vozila"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 20,
+    "local_no": 84,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q84.png",
+    "id": 179
+  },
+  {
+    "type": "image",
+    "text": "Vozač putničkog vozila u situaciji kao na slici, treba da:",
+    "options": {
+      "a": "nastavi kretanje u lijevo bez propuštanja teretnog vozila",
+      "b": "nastavi kretanje pravo bez propuštanja teretnog vozila .",
+      "c": "se zaustavi ispred raskrsnice i propusti teretno vozilo"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 20,
+    "local_no": 85,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q85.png",
+    "id": 180
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač putničkog vozila postupiće po:",
+    "options": {
+      "a": "vertikalnoj saobraćajnoj signalizaciji",
+      "b": "pravilu propuštanja vozila sa desne strane",
+      "c": "pravilu propuštanja vozila veće kategorije"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 20,
+    "local_no": 86,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q86.png",
+    "id": 181
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću vozilo i propustiti pješake",
+      "b": "nastaviću kretanje ne propuštajući pješake",
+      "c": "sirenom ću upozoriti pješake i nastaviti kretanje"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 20,
+    "local_no": 87,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q87.png",
+    "id": 182
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici poprečne oznake na kolovozu označavaju:",
+    "options": {
+      "a": "pješački prelaz",
+      "b": "pješačko ostrvo",
+      "c": "stazu za pješake"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 20,
+    "local_no": 88,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p020_q88.png",
+    "id": 183
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici treba da:",
+    "options": {
+      "a": "nastavim kretanje desnom saobraćajnom trakom",
+      "b": "izvršim preticanje policijskog vozila",
+      "c": "zaustavim vozilo"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 21,
+    "local_no": 89,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q89.png",
+    "id": 184
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje ovlašćeni policijski službenik:",
+    "options": {
+      "a": "obavezujući je za sve učesnike u saobraćaju",
+      "b": "ne obavezuje kada se daje iz vozila",
+      "c": "obavezujući je samo za bicikliste"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 21,
+    "local_no": 90,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q90.png",
+    "id": 185
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo 1 pretiče biciklistu:",
+    "options": {
+      "a": "nepropisno, jer prelazi u suprotnu saobraćajnu traku",
+      "b": "nepropisno, jer ugrožava biciklistu",
+      "c": "propisno"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 21,
+    "local_no": 91,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q91.png",
+    "id": 186
+  },
+  {
+    "type": "image",
+    "text": "Vozač vozila 1 nakon preticanja dužan je:",
+    "options": {
+      "a": "da nastavi kretanje saobraćajnom trakom kojom je vršio preticanje",
+      "b": "da se vrati u svoju saobraćajnu traku i nastavi kretanje",
+      "c": "da nastavi kretanje uz lijevu ivicu kolovoza"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 21,
+    "local_no": 92,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q92.png",
+    "id": 187
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici brže kretanje vozila kojim - upravljaš od vozila 1 i 2:",
+    "options": {
+      "a": "je radnja preticanja vozila",
+      "b": "je radnja obilaženja vozila",
+      "c": "ne smatra se radnjom preticanja vozila"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 21,
+    "local_no": 93,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q93.png",
+    "id": 188
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozila 1 i 2, koja se kreću jedno iza drugog:",
+    "options": {
+      "a": "čine kolonu vozila i ne smiju se preticati",
+      "b": "čine kolonu vozila i smiju se preticati",
+      "c": "ne čine kolonu vozila"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 21,
+    "local_no": 94,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q94.png",
+    "id": 189
+  },
+  {
+    "type": "image",
+    "text": "Na poziciji prikazanoj na slici vozila 1, 2, 3 i 4:",
+    "options": {
+      "a": "ne smiju da se zaustave ili parkiraju",
+      "b": "smiju da se zaustave, ali ne i da se parkiraju",
+      "c": "smiju da se zaustave i parkiraju"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 21,
+    "local_no": 95,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q95.png",
+    "id": 190
+  },
+  {
+    "type": "image",
+    "text": "Vozač auto-taksi prevoza na ulazu, odnosno izlazu iz garaže:",
+    "options": {
+      "a": "ne smije da se zaustavi",
+      "b": "smije da se zaustavi samo za ulazak ili izlazak putnika",
+      "c": "smije da se parkira najviše 15 minuta"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 21,
+    "local_no": 96,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p021_q96.png",
+    "id": 191
+  },
+  {
+    "type": "image",
+    "text": "Radnja u kojoj se vozila 1 i 2 kreću suprotnim smjerovima kao - na slici je:",
+    "options": {
+      "a": "ukrštanje",
+      "b": "obilaženje",
+      "c": "mimoilaženje"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 22,
+    "local_no": 97,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q97.png",
+    "id": 192
+  },
+  {
+    "type": "image",
+    "text": "Teret na vozilu 2 prelazi 1,5 m najistureniju tačku na prednjoj strani vozila, a to je:",
+    "options": {
+      "a": "dozvoljeno",
+      "b": "dozvoljeno, ali mora biti označeno crvenom tablom",
+      "c": "nije dozvoljeno"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 22,
+    "local_no": 98,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q98.png",
+    "id": 193
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "ubrzaćeš kretanje kako ne bi ometao pješake",
+      "b": "nećeš propustiti pješake, jer nisu na tvojoj saobraćajnoj traci",
+      "c": "zaustavićeš vozilo i propustiti pješake"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 22,
+    "local_no": 99,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q99.png",
+    "id": 194
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici oznake na kolovozu znače da se u blizini pješačkog prelaza nalazi:",
+    "options": {
+      "a": "zona škole",
+      "b": "putokaz do škole",
+      "c": "dio kolovoza namijenjen za parkiranje školskog autobusa"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 22,
+    "local_no": 100,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q100.png",
+    "id": 195
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, na dijelu kolovoza za - dvosmjerni saobraćaj vozilo 2:",
+    "options": {
+      "a": "smije da vrši preticanje",
+      "b": "smije da vrši preticanje, ako ne ometa vozila iz suprotnog smjera",
+      "c": "ne smije da vrši preticanje"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 22,
+    "local_no": 101,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q101.png",
+    "id": 196
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici razdjelna linija označava:",
+    "options": {
+      "a": "zabranu prelaženja i gaženja preko ove linije",
+      "b": "dio kolovoza gdje je dozvoljeno gaženje ove linije",
+      "c": "dio kolovoza gdje je dozvoljeno prelaženje preko ove linije"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 22,
+    "local_no": 102,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q102.png",
+    "id": 197
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici vozilo 1 je:",
+    "options": {
+      "a": "propisno parkirano",
+      "b": "propisno zaustavljeno",
+      "c": "nepropisno zaustavljeno ili parkirano"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 22,
+    "local_no": 103,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q103.png",
+    "id": 198
+  },
+  {
+    "type": "image",
+    "text": "Na ulazu-izlazu iz dvorišta vozač:",
+    "options": {
+      "a": "smije da zaustavi vozilo",
+      "b": "ne smije da se zaustavi ili parkira vozilo",
+      "c": "smije da parkira vozilo"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 22,
+    "local_no": 104,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q104.png",
+    "id": 199
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, biciklista se kreće:",
+    "options": {
+      "a": "propisno, jer nema biciklističku traku",
+      "b": "nepropisno",
+      "c": "propisno uz lijevu ivicu kolovoza"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 22,
+    "local_no": 105,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q105.png",
+    "id": 200
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo 1 je:",
+    "options": {
+      "a": "propisno zaustavljeno",
+      "b": "propisno zaustavljeno ili parkirano",
+      "c": "nepropisno zaustavljeno ili parkirano"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 22,
+    "local_no": 106,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p022_q106.png",
+    "id": 201
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji kao na slici:",
+    "options": {
+      "a": "nastaviću kretanje pravo bez propuštanja putničkog vozila 2",
+      "b": "propustiću putničko vozulo 2 jer mi dolazi sa desne strane",
+      "c": "pomjeriću vozilo ka lijevoj ivici kolovoza"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 23,
+    "local_no": 107,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q107.png",
+    "id": 202
+  },
+  {
+    "type": "image",
+    "text": "Vozač vozila 2 prilikom skretanja ulijevo u situaciji kao na slici će:",
+    "options": {
+      "a": "nastaviti kretanje bez propuštanja vozila koja se kreću . putem na koji on nailazi",
+      "b": "nastaviti kretanje jer ima prednost u odnosu na vozilo 1",
+      "c": "zaustaviti vozilo i propustiti sva vozila koja se kreću putem na koji on nailazi"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 23,
+    "local_no": 108,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q108.png",
+    "id": 203
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "ne smijem preticati zbog oznaka na kolovozu",
+      "b": "smijem preticati",
+      "c": "smijem preticati ako ne prelazim u traku za suprotan smjer"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 23,
+    "local_no": 109,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q109.png",
+    "id": 204
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, na putu van naselja, brzina kojom možete da pretičete:",
+    "options": {
+      "a": "nije ograničena",
+      "b": "je do 80 km/h",
+      "c": "je do 20 km/h više od ograničenja"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 23,
+    "local_no": 110,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q110.png",
+    "id": 205
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, putničko vozilo 3 uključiće se - sa parkinga na kolovoz:",
+    "options": {
+      "a": "nakon propuštanja putničkog vozila 2",
+      "b": "bez propuštanja putničkog vozila 2",
+      "c": "bez obaveze prema drugim učesnicima u saobraćaju"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 23,
+    "local_no": 111,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q111.png",
+    "id": 206
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji prikazanoj na slici:",
+    "options": {
+      "a": "zaustaviću se ispred rasksnice i propustiti pješake",
+      "b": "zvučnim signalom ću upozoriti pješake i nastaviti kretanje",
+      "c": "ubrzaću kretanje kako bih prošao prije pješaka"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 23,
+    "local_no": 112,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q112.png",
+    "id": 207
+  },
+  {
+    "type": "image",
+    "text": "Vozilo 1 u situaciji prikazanoj na slici kreće se:",
+    "options": {
+      "a": "nepropisno",
+      "b": "propisno sredinom kolovoza",
+      "c": "propisno, jer je lijeva saobraćajna traka zauzeta vozilom -"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 23,
+    "local_no": 113,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q113.png",
+    "id": 208
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici putničko vozilo 2:",
+    "options": {
+      "a": "smije da se zaustavi ili parkira",
+      "b": "smije da se zaustavi",
+      "c": "ne smije da se zaustavi ili parkira"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 23,
+    "local_no": 114,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p023_q114.png",
+    "id": 209
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "smijem izvršiti preticanje putničkog vozila",
+      "b": "ne smijem, jer je kolovoz u lijevoj krivini",
+      "c": "ne smijem, jer je oznakama na kolovozu zabranjeno"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 24,
+    "local_no": 115,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q115.png",
+    "id": 210
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici razdjelna isprekidana linija:",
+    "options": {
+      "a": "razdvaja kolovoz i ne smije se prelaziti preko nje",
+      "b": "razdvaja kolovoz i smije se gaziti i prelaziti preko nje",
+      "c": "razdavaja kolovoznu traku i ne smije se prelaziti preko nje"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 24,
+    "local_no": 116,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q116.png",
+    "id": 211
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji kao na slici, kad vas pretiče - putničko vozilo 2:",
+    "options": {
+      "a": "povećaću brzinu kretanja",
+      "b": "pomjeriću vozilo ka desnoj ivici kolovoza",
+      "c": "pomjeriću vozilo ka lijevoj ivici kolovoza"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 24,
+    "local_no": 117,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q117.png",
+    "id": 212
+  },
+  {
+    "type": "image",
+    "text": "Znak izričite naredbe prikazan na slici važi:",
+    "options": {
+      "a": "do prve raskrsnice",
+      "b": "do prvog znaka obavještenja",
+      "c": "do prvog znaka opasnosti"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 24,
+    "local_no": 118,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q118.png",
+    "id": 213
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač teretnog vozila 1 treba da:",
+    "options": {
+      "a": "ubrza vozilo i nastavi kretanje ne propuštajuči pješake",
+      "b": "propusti samo pješaka označenog sa a i nastavi kretanje",
+      "c": "zaustavi se i propusti sve pješake"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 24,
+    "local_no": 119,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q119.png",
+    "id": 214
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač teretnog vozila 1 neposredno nakon prolaska pješačkog prelaza:",
+    "options": {
+      "a": "smije da se zaustavi ili parkira",
+      "b": "smije da se zaustavi",
+      "c": "ne smije da se zaustavi ili parkira"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 24,
+    "local_no": 120,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q120.png",
+    "id": 215
+  },
+  {
+    "type": "image",
+    "text": "U poziciji prikazanoj na slici putničko vozilo 1 je:",
+    "options": {
+      "a": "propisno zaustavljeno",
+      "b": "propisno zaustavljeno ili parkirano",
+      "c": "nepropisno zaustavljeno ili parkirano"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 24,
+    "local_no": 121,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q121.png",
+    "id": 216
+  },
+  {
+    "type": "image",
+    "text": "Na slici prikazani znak obavještenja je:",
+    "options": {
+      "a": "udaljenost parkinga",
+      "b": "vremensko ograničenje parkiranja",
+      "c": "parking samo u određenom vremenu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 24,
+    "local_no": 122,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p024_q122.png",
+    "id": 217
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici putničko vozilo 1:",
+    "options": {
+      "a": "smije da se parkira",
+      "b": "ne smije da se zaustavi ili parkira",
+      "c": "smije da se zaustavi"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 25,
+    "local_no": 123,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q123.png",
+    "id": 218
+  },
+  {
+    "type": "image",
+    "text": "Na kom odstojanju od obilježenog pješačkog prelaza vozač smije da se zaustavi ili parkira:",
+    "options": {
+      "a": "najmanje 10 metara",
+      "b": "najmanje 5 metara",
+      "c": "najmanje 7 metra"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 25,
+    "local_no": 124,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q124.png",
+    "id": 219
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo 2 kreće se:",
+    "options": {
+      "a": "propisno, ako ne ometa vozila iz suprotnog smjera",
+      "b": "propisno",
+      "c": "nepropisno"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 25,
+    "local_no": 125,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q125.png",
+    "id": 220
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač vozila 2 treba da:",
+    "options": {
+      "a": "se kreće što bliže razdjelnoj liniji",
+      "b": "se kreće što bliže desnoj ivici kolovoza",
+      "c": "se kreće po sredini saobraćajne trake"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 25,
+    "local_no": 126,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q126.png",
+    "id": 221
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici:",
+    "options": {
+      "a": "nastaviću kretanje lijevo kroz raskrsnicu",
+      "b": "nastaviću kretanje desno kroz raskrsnicu",
+      "c": "nastaviću kretanje pravo kroz raskrsnicu"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 25,
+    "local_no": 127,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q127.png",
+    "id": 222
+  },
+  {
+    "type": "image",
+    "text": "Horizontalne oznake na kolovozu znače:",
+    "options": {
+      "a": "namjenu saobraćajnih traka",
+      "b": "obavezan smjer",
+      "c": "linije usmjeravanja"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 25,
+    "local_no": 128,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q128.png",
+    "id": 223
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici kroz raskrnicu proći ćete:",
+    "options": {
+      "a": "putanjom 1 bez propuštanja pješaka",
+      "b": "putanjom 2 nakon propuštanja pješaka",
+      "c": "putanjom 1 nakon propuštanja pješaka"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 25,
+    "local_no": 129,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q129.png",
+    "id": 224
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici vozilo 3:",
+    "options": {
+      "a": "smije da se zaustavi",
+      "b": "ne smije da se zaustavli ili parkira",
+      "c": "smije da se zaustavi ili parkira"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 25,
+    "local_no": 130,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p025_q130.png",
+    "id": 225
+  },
+  {
+    "type": "image",
+    "text": "Putničko vozilo 2 kao na slici:",
+    "options": {
+      "a": "ne smije da se zaustavi ili parkira",
+      "b": "smije da se zaustavi i parkira",
+      "c": "smije da se zaustavi"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 26,
+    "local_no": 131,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q131.png",
+    "id": 226
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "ne smijem da se zaustavim ili parkiram",
+      "b": "smijem da se zaustavim ili parkiram",
+      "c": "ne smijem da se parkiram"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 26,
+    "local_no": 132,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q132.png",
+    "id": 227
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo 1 pretiče biciklistu:",
+    "options": {
+      "a": "propisno, jer je uključen lijevi pokazivač pravca",
+      "b": "propisno, jer nema znaka za zabranu preticanja",
+      "c": "nepropisno zbog prelaska preko neisprekidane linije ."
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 26,
+    "local_no": 133,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q133.png",
+    "id": 228
+  },
+  {
+    "type": "image",
+    "text": "Biciklista u situaciji na slici u naselju kreće se:",
+    "options": {
+      "a": "nepropisno, jer treba da se kreće trotoarom",
+      "b": "nepropisno, jer treba da nosi zaštitnu kacigu",
+      "c": "propisno uz desnu ivicu kolovoza"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 26,
+    "local_no": 134,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q134.png",
+    "id": 229
+  },
+  {
+    "type": "image",
+    "text": "U situaciji na slici, vozim teretno vozilo sa prikolicom i - mimoilazim se sa teretnim vozilom 2, zbog nedovoljne širine kolovoza za bezbjedno mimoilažnje:",
+    "options": {
+      "a": "treba da se zaustavi teretno vozilo 2 i omogući meni prolaz .",
+      "b": "treba da se zaustavim i omogućim prolazak teretn. vozilu 2 .",
+      "c": "treba da se zaustavimo i dogovorimo o redoslijedu prolaska"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 26,
+    "local_no": 135,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q135.png",
+    "id": 230
+  },
+  {
+    "type": "image",
+    "text": "Saobraćajni znak na slici znači:",
+    "options": {
+      "a": "da je kolovoz u nizbrdici do 6%",
+      "b": "da je poprečni nagib kolovoza do 6%",
+      "c": "da je kolovoz u usponu do 6%"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 26,
+    "local_no": 136,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q136.png",
+    "id": 231
+  },
+  {
+    "type": "image",
+    "text": "Kako ćete postupiti u situaciji kao na slici, kada se vozilo 2 - uključuje sa zemljanog puta na kolovoz:",
+    "options": {
+      "a": "prestrojiću se u lijevu kolovoznu traku, kako ne bih ometao vozača vozila 2 da se uključi na kolovoz",
+      "b": "nastaviću kretanje pravo bez propuštanja vozila 2",
+      "c": "zaustaviću se i omogućiti uključenje vozila 2 jer mi dolazi . sa desne strane"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 26,
+    "local_no": 137,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q137.png",
+    "id": 232
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici saobraćajni znak važi do:",
+    "options": {
+      "a": "prevoja kolovoza",
+      "b": "narednog znaka ograničenja brzine",
+      "c": "prve raskrsnice"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 26,
+    "local_no": 138,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p026_q138.png",
+    "id": 233
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici teretno vozilo 2 je:",
+    "options": {
+      "a": "zaustavljeno propisno",
+      "b": "parkirano ili zaustavljeno nepropisno",
+      "c": "parkirano ili zaustavljeno propisno"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 27,
+    "local_no": 139,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q139.png",
+    "id": 234
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici prolazeći pored vozila 2 vršiš radnju:",
+    "options": {
+      "a": "mimoilaženja",
+      "b": "prestrojavanja",
+      "c": "obilaženja"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 27,
+    "local_no": 140,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q140.png",
+    "id": 235
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici na putu za saobraćaj u oba - smjera vozač vozila 1 smije da koristi:",
+    "options": {
+      "a": "obje kolovozne trake",
+      "b": "desnu kolovoznu traku",
+      "c": "lijevu kolovoznu traku"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 27,
+    "local_no": 141,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q141.png",
+    "id": 236
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozač vozila 1 u podvožnjaku:",
+    "options": {
+      "a": "smije da se parkira",
+      "b": "ne smije da se zaustavi ili parkira",
+      "c": "smije da se zaustavi uz desnu ivicu kolovoza"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 27,
+    "local_no": 142,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q142.png",
+    "id": 237
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozilo 1:",
+    "options": {
+      "a": "smije da se pretiče",
+      "b": "ne smije da se pretiče zbog oznaka na kolovozu",
+      "c": "ne smije da se pretiče sa lijeve strane"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 27,
+    "local_no": 143,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q143.png",
+    "id": 238
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici oznake na kolovozu znače:",
+    "options": {
+      "a": "dozvoljeno preticanje iz suprotnog smjera",
+      "b": "dozvoljeno preticanje u smjeru kretanja",
+      "c": "dozvoljeno preticanje samo teretnih vozila"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 27,
+    "local_no": 144,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q144.png",
+    "id": 239
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nijesam dužan da propustim pješaka",
+      "b": "dužan sam da uključim sirenu i nastavim kretanje",
+      "c": "dužan sam da propustim pješaka"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 27,
+    "local_no": 145,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q145.png",
+    "id": 240
+  },
+  {
+    "type": "image",
+    "text": "Da bi pješak prešao kolovoz na pješačkom prelazu na bezbjedan način, kao na slici:",
+    "options": {
+      "a": "dužan je da podigne ruku, pa stupi na pješački prelaz",
+      "b": "nije dužan da se uvjeri da ometa ostale učesnike",
+      "c": "dužan je da se uvjeri da time ne ometa ostale učesnike"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 27,
+    "local_no": 146,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p027_q146.png",
+    "id": 241
+  },
+  {
+    "type": "image",
+    "text": "Vozilo 1 u poziciji prikazanoj na slici je:",
+    "options": {
+      "a": "parkirano propisno",
+      "b": "nepropisno zaustavljeno ili parkirano",
+      "c": "propisno zaustavljeno ili parkirano"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 28,
+    "local_no": 147,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q147.png",
+    "id": 242
+  },
+  {
+    "type": "image",
+    "text": "Vozilo 1 u situaciji prikazanoj na slici je:",
+    "options": {
+      "a": "na saobraćajnoj traci u smjeru kretanja",
+      "b": "na saobraćajnoj traci za suprotan smjer kretanja",
+      "c": "na obilježenom parking mjestu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 28,
+    "local_no": 148,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q148.png",
+    "id": 243
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici vozila uz desnu ivicu kolovoza - su:",
+    "options": {
+      "a": "nepropisno zaustavljena ili parkirana",
+      "b": "propisno zaustavljena ili parkirana",
+      "c": "zaustavljena propisno"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 28,
+    "local_no": 149,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q149.png",
+    "id": 244
+  },
+  {
+    "type": "image",
+    "text": "Uzdužna neisprekidana bijela linija, u situaciji kao na slici, označava:",
+    "options": {
+      "a": "ivicu kolovoza",
+      "b": "razdjelnu liniju",
+      "c": "ivičnu liniju"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 28,
+    "local_no": 150,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q150.png",
+    "id": 245
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici putničko vozilo 2:",
+    "options": {
+      "a": "polukružno se okreće u skladu sa propisima",
+      "b": "propisno skreće ulijevo",
+      "c": "nepropisno se polukružno okreće"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 28,
+    "local_no": 151,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q151.png",
+    "id": 246
+  },
+  {
+    "type": "image",
+    "text": "Uzdužna neisprekidana linija dijeli kolovoz:",
+    "options": {
+      "a": "na kolovozne trake",
+      "b": "na saobraćajne trake",
+      "c": "na dva kolovoza"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 28,
+    "local_no": 152,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q152.png",
+    "id": 247
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici biciklista se:",
+    "options": {
+      "a": "nepropisno kreće jer treba da gura biciklo pored sebe",
+      "b": "propisno kreće",
+      "c": "nepropisno kreće pješačkim prelazom"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 28,
+    "local_no": 153,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q153.png",
+    "id": 248
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, crvene široke uzdužne linije preko pješačkog prelaza označavaju:",
+    "options": {
+      "a": "biciklističke staze",
+      "b": "biciklističke trake",
+      "c": "staze za trčanje pješaka"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 28,
+    "local_no": 154,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q154.png",
+    "id": 249
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "nastaviću kretanje ne propuštatjući pješake",
+      "b": "usporiću kretanje vozila i propustiti pješake",
+      "c": "ubrzaću kretanje vozila da bih prošao ispred pješaka"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 28,
+    "local_no": 155,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q155.png",
+    "id": 250
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, kada pješaci prelaze kolovoz dužni su da:",
+    "options": {
+      "a": "kolovoz prelaze najkraćim putem",
+      "b": "kolovoz prelaze gdje je najmanje učesnika u saobraćaju .",
+      "c": "kolovoz prelaze što sporije"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 28,
+    "local_no": 156,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p028_q156.png",
+    "id": 251
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici policijsko vozilo 2 je:",
+    "options": {
+      "a": "propisno zaustavljeno ili parkirano",
+      "b": "nepropisno parkirano",
+      "c": "nepropisno zaustavljeno ili parkirano"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 29,
+    "local_no": 157,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p029_q157.png",
+    "id": 252
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici:",
+    "options": {
+      "a": "ne smijem da se zaustavim ili parkiram iza vozila 2 .",
+      "b": "smijem da se zaustavim ili parkiram iza vozila 2",
+      "c": "smijem da se parkiram pored vozila 2"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 29,
+    "local_no": 158,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p029_q158.png",
+    "id": 253
+  },
+  {
+    "type": "image",
+    "text": "U situaciji kao na slici vozač vozila 1:",
+    "options": {
+      "a": "smije da se zaustavi ili parkira",
+      "b": "ne smije da se zaustavi ili parkira",
+      "c": "ne smije da se parkira, a smije da se zaustavi"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 29,
+    "local_no": 159,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p029_q159.png",
+    "id": 254
+  },
+  {
+    "type": "image",
+    "text": "Na odstojanju manjem od pet metara ispred ili iza obilježenog pješačkog prelaza vozač sa vozilom:",
+    "options": {
+      "a": "smije da se zaustavi",
+      "b": "smije da se zaustavi ili parkira",
+      "c": "ne smije da se zaustavi ili parkira"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 29,
+    "local_no": 160,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p029_q160.png",
+    "id": 255
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "biciklistički prelaz",
+      "b": "staza za bicikliste",
+      "c": "biciklisti na putu"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 30,
+    "local_no": 1,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q01.png",
+    "id": 256
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "zabrana zaustavljanja",
+      "b": "zabrana zaustavljanja i parkiranja",
+      "c": "zabrana parkiranja"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 30,
+    "local_no": 2,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q02.png",
+    "id": 257
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "obavezan smjer",
+      "b": "put sa jednosmjernim saobraćajem",
+      "c": "dozvoljeni smjer"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 30,
+    "local_no": 3,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q03.png",
+    "id": 258
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja za vozila čija ukupna masa ne prelazi određenu masu na znaku",
+      "b": "zabrana soabraćaja za vozila čija nosivost prelazi određenu masu na znaku",
+      "c": "zabrana saobraćaja za vozila čija ukupna masa prelazi određenu masu na znaku"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 30,
+    "local_no": 4,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q04.png",
+    "id": 259
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "obavezan smjer u naznačenom vremenu",
+      "b": "obavezno skretanje ulijevo u naznačenom vremenu",
+      "c": "obavezno skretanje ulijevo u periodu od 8 časova pa do 18 časova"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 30,
+    "local_no": 5,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q05.png",
+    "id": 260
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "biciklistička traka",
+      "b": "biciklistička staza",
+      "c": "traka za kretanje biciklista"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 30,
+    "local_no": 6,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q06.png",
+    "id": 261
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana zaustavljanja vozila",
+      "b": "zaustavljena vozila na putu",
+      "c": "kolona zaustavljenih vozila"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 30,
+    "local_no": 7,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q07.png",
+    "id": 262
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "Andrejin krst sa jednim i po kolosjekom",
+      "b": "Andrejin krst sa dva ili više kolosjeka",
+      "c": "Andrejin kolosjek sa jednim ili više kolosjeka"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 30,
+    "local_no": 8,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p030_q08.png",
+    "id": 263
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "opasna dionica puta",
+      "b": "opasnost na putu",
+      "c": "opasnost od odrona u dužini od 300 m"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 31,
+    "local_no": 9,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q09.png",
+    "id": 264
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prvenstvo prolaza u odnosu na vozila iz suprotnog smjera",
+      "b": "vozila iz suprotnog smjera imaju prvenstvo prolaza",
+      "c": "prvenstvo prolaza vozila koja se kreću niz nagib"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 31,
+    "local_no": 10,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q10.png",
+    "id": 265
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "nailazak na most na autoputu",
+      "b": "autoput",
+      "c": "međunarodni put"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 31,
+    "local_no": 11,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q11.png",
+    "id": 266
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "avionska pista",
+      "b": "blizina avionske piste",
+      "c": "blizina aerodroma"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 31,
+    "local_no": 12,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q12.png",
+    "id": 267
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "predputokaz",
+      "b": "prestrojavanje vozila sa nazivima naseljenih mjesta",
+      "c": "tabla za usmjeravanje"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 31,
+    "local_no": 13,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q13.png",
+    "id": 268
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja u oba smjera",
+      "b": "zabrana saobraćaja u jednom smjeru",
+      "c": "dozvoljen saobraćaj u oba smjera"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 31,
+    "local_no": 14,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q14.png",
+    "id": 269
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja za bicikle",
+      "b": "biciklistička staza",
+      "c": "biciklisti na putu"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 31,
+    "local_no": 15,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q15.png",
+    "id": 270
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "pokretni most",
+      "b": "oštećenje na kolovozu",
+      "c": "opasan uspon"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 31,
+    "local_no": 16,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q16.png",
+    "id": 271
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prelaz puta preko željezničke pruge sa branicima ili polubranicima",
+      "b": "približavanje prelaz puta prelasku preko željezničke puta preko pruge željezničke bez branika pruge bez ili branika polubranika ili polubranika",
+      "c": "približavanje tramvajskoj pruzi"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 31,
+    "local_no": 17,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p031_q17.png",
+    "id": 272
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "najveća dozvoljena brzina",
+      "b": "obavezna brzina",
+      "c": "brzina koja se preporučuje"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 32,
+    "local_no": 18,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q18.png",
+    "id": 273
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "obavezno zaustavljanje",
+      "b": "ukrštanje sa putem sa prvenstvom prolaza",
+      "c": "ukrštanje sa sporednim putem"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 32,
+    "local_no": 19,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q19.png",
+    "id": 274
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "nailaženje na semafor",
+      "b": "nailaženje na željezničku prugu",
+      "c": "nailaženje na radove na putu"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 32,
+    "local_no": 20,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q20.png",
+    "id": 275
+  },
+  {
+    "type": "image",
+    "text": "Na slici, strelice na kolovozu služe za:",
+    "options": {
+      "a": "usmjeravanje vozila",
+      "b": "obilježavanje obaveznog smjera kretanja vozila",
+      "c": "obilježavanje namjene saobraćajnih traka"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 32,
+    "local_no": 21,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q21.png",
+    "id": 276
+  },
+  {
+    "type": "image",
+    "text": "Udvojena puna linija označava:",
+    "options": {
+      "a": "ivicu kolovoza",
+      "b": "biciklističku stazu",
+      "c": "zabranu prelaska preko te linije ili kretanja po njima"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 32,
+    "local_no": 22,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q22.png",
+    "id": 277
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana preticanja svih motornih vozila osim motocikla bez prikolice i mopeda",
+      "b": "zabrana preticanja svih motornih vozila",
+      "c": "zabrana preticanja svih motornih vozila, osim mopeda"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 32,
+    "local_no": 23,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q23.png",
+    "id": 278
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prelaz puta preko željezničke pruge bez branika",
+      "b": "prelaz puta preko željezničke pruge sa branicima ili polubranicima",
+      "c": "prelaz puta preko željezničke pruge bez branika ili polubranika"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 32,
+    "local_no": 24,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q24.png",
+    "id": 279
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prelaz za životinje na putu",
+      "b": "životinje na putu",
+      "c": "divljač na putu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 32,
+    "local_no": 25,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p032_q25.png",
+    "id": 280
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja za vozila koja ne prekoračuju određeno osovinsko opterećenje",
+      "b": "zabrana saobraćaja za vozila koja prekoračuju određeno osovinsko opterećenje",
+      "c": "zabrana saobraćaja za vozila koja ne prekoračuju nosivost označenu na znaku"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 33,
+    "local_no": 26,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q26.png",
+    "id": 281
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "put sa jednosmjernim saobraćajem za teretna i priključna vozila",
+      "b": "obavezan smjer za vrste vozila koje nijesu su date na znaku",
+      "c": "obilaznica za određene vrste vozila"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 33,
+    "local_no": 27,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q27.png",
+    "id": 282
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "kružni tok saobraćaja",
+      "b": "raskrsnica sa kružnim tokom saobraćaja",
+      "c": "kružna raskrsnica"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 33,
+    "local_no": 28,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q28.png",
+    "id": 283
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "blizinu dionice puta na kojem je snijeg",
+      "b": "blizinu dionice puta na kome se snijeg čisti mašinski",
+      "c": "blizinu dionice puta na kojem je poledica i led"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 33,
+    "local_no": 29,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q29.png",
+    "id": 284
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prvenstvo prolaza u odnosu na vozila iz suprotnog smjera",
+      "b": "prvenstvo prolaza za vozila iz suprotnog smjera",
+      "c": "saobraćaj u oba smjera"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 33,
+    "local_no": 30,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q30.png",
+    "id": 285
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prestanak najmanje dozvoljene brzine",
+      "b": "prestanak ograničenja brzine",
+      "c": "prestanak brzine koja se preporučuje"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 33,
+    "local_no": 31,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q31.png",
+    "id": 286
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "zabrana saobraćaja za motorna vozila čija širina prelazi širinu označenu na znaku",
+      "b": "zabrana saobraćaja za teretna vozila čija dužina prelazi dužinu označenu na znaku",
+      "c": "zabrana saobraćaja za teretna vozila čija širina prelazi širinu označenu na znaku"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 33,
+    "local_no": 32,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q32.png",
+    "id": 287
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana kretanja za pješake po kolovozu",
+      "b": "zabrana saobraćaja za pješake",
+      "c": "zabrana kretanja za pješake po kolovozu van naselja"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 33,
+    "local_no": 33,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p033_q33.png",
+    "id": 288
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "tabla za usmjeravanje",
+      "b": "predznak za obilazak",
+      "c": "putokaz za obilazak"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 34,
+    "local_no": 34,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q34.png",
+    "id": 289
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "putokaz za izlazak sa auto-puta",
+      "b": "naziv naseljenog mjesta",
+      "c": "naziv petlje"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 34,
+    "local_no": 35,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q35.png",
+    "id": 290
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "putokaz za naseljeno mjesto",
+      "b": "strelasti putokaz",
+      "c": "usmjeravajuća tabla za naseljeno mjesto"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 34,
+    "local_no": 36,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q36.png",
+    "id": 291
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prelazak sa dvije saobraćajne trake na jednu u istom smjeru kretanja",
+      "b": "površina na kolovozu na kojoj se dvije saobraćajne trake spajaju u jednu",
+      "c": "naizmjenično propuštanje vozila"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 34,
+    "local_no": 37,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q37.png",
+    "id": 292
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "približavanje prelazu puta preko željezničke pruge sa branicima ili polubranicima",
+      "b": "približavanje prelazu puta preko željezničke pruge",
+      "c": "približavanje prelazu preko željezničke pruge bez branika ili polubranika"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 34,
+    "local_no": 38,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q38.png",
+    "id": 293
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prevrtanje ili iskliznuće vozila",
+      "b": "klizav kolovoz",
+      "c": "led i poledica na putu"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 34,
+    "local_no": 39,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q39.png",
+    "id": 294
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "ograničenje brzine kretanja",
+      "b": "brzina koja se preporučuje",
+      "c": "najmanja dozvoljena brzina"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 34,
+    "local_no": 40,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q40.png",
+    "id": 295
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "odronjavanje kamena",
+      "b": "prštanje kamena na putu",
+      "c": "klizište na putu"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 34,
+    "local_no": 41,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p034_q41.png",
+    "id": 296
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "pokretne stepenice na udaljenosti 10 metara",
+      "b": "podzemni ili nadzemni pješački prelaz na udaljenosti 10 metara",
+      "c": "ulazak u garažu na udaljenosti do 10 metara"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 35,
+    "local_no": 42,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q42.png",
+    "id": 297
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "obavezna upotreba lanaca za snijeg",
+      "b": "opasnost od snijega",
+      "c": "opasnost od poledice"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 35,
+    "local_no": 43,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q43.png",
+    "id": 298
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja za sva motorna vozila osim za motocikle",
+      "b": "zabrana saobraćaja za motocikle",
+      "c": "zabrana saobraćaja za bicikle sa motorom"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 35,
+    "local_no": 44,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q44.png",
+    "id": 299
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "najmanje odstojanje između parkiranih vozila",
+      "b": "najmanje odstojanje između vozila",
+      "c": "potrebno rastojanje da bi se vozila mimoišla"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 35,
+    "local_no": 45,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q45.png",
+    "id": 300
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "predznak za obilazak sa desne strane",
+      "b": "pretputokaz za izlaz do određenog mjesta",
+      "c": "putokaz za prestrojavanje za kretanje do određenog mjesta"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 35,
+    "local_no": 46,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q46.png",
+    "id": 301
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "predznak za neposredno regulisanje saobraćaja na mjestu na kome se izvode radovi.",
+      "b": "regulisanje saobraćaja u raskrsnici pomoću zastavice",
+      "c": "završetak puta zbog izvođenja radova"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 35,
+    "local_no": 47,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q47.png",
+    "id": 302
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana zaustavljanja",
+      "b": "zabrana saobraćaja u jednom smjeru",
+      "c": "zabrana parkiranja"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 35,
+    "local_no": 48,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q48.png",
+    "id": 303
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "dvostruka opasna krivina ili više uzastopnih krivina od kojih je prva na desno",
+      "b": "dvostruka krivina ili više uzastopnih krivina od kojih je prva na desno",
+      "c": "dvostruka opasna krivina ili više uzastopnih krivina od kojih je prva na lijevo"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 35,
+    "local_no": 49,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q49.png",
+    "id": 304
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "najmanje dozvoljenu brzina u dužini puta od 2000 metara",
+      "b": "brzinu koja se preporučuje u dužini puta od 2000 metara",
+      "c": "najmanje dozvoljenu brzinu nakon pređenih 2000 metara"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 35,
+    "local_no": 50,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p035_q50.png",
+    "id": 305
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju zabranu saobraćaja za motorna vozila koja vuku:",
+    "options": {
+      "a": "laku prikolicu u naznačenom vremenu",
+      "b": "poluprikolicu u naznačenom vremenu",
+      "c": "priključno vozilo u naznačenom vremenu"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 36,
+    "local_no": 51,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q51.png",
+    "id": 306
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "obavezan izlaz u slučaju opasnosti",
+      "b": "udaljenost izlaza u slučaju opasnosti",
+      "c": "putokaz za pješake"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 36,
+    "local_no": 52,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q52.png",
+    "id": 307
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "početak saobraćajne trake za spora vozila",
+      "b": "završetak saobraćajne trake za spora vozila",
+      "c": "završetak saobraćajne trake za prinudno zaustavljanje"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 36,
+    "local_no": 53,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q53.png",
+    "id": 308
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja za vozila sa ceradom",
+      "b": "nailazak na neravan kolovoz",
+      "c": "zabrana saobraćaja za cistijerne"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 36,
+    "local_no": 54,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q54.png",
+    "id": 309
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "najmanja dozvoljena brzina",
+      "b": "ograničenje brzine",
+      "c": "brzina koja se preporučuje"
+    },
+    "correct": "b",
+    "points": 4,
+    "page": 36,
+    "local_no": 55,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q55.png",
+    "id": 310
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "djeca na putu",
+      "b": "zona škole",
+      "c": "staza za pješake"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 36,
+    "local_no": 56,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q56.png",
+    "id": 311
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "kamenje pršti",
+      "b": "neučvršćena bankina",
+      "c": "oštećen kolovoz"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 36,
+    "local_no": 57,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q57.png",
+    "id": 312
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja za vozila označena simbolom",
+      "b": "zabrana saobraćaja za teretna vozila",
+      "c": "dozvoljen saobraćaj za vozila označena simbolom"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 36,
+    "local_no": 58,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p036_q58.png",
+    "id": 313
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "ukrštanje puteva sa prvenstvom prolaza",
+      "b": "nailazak na put sa prvenstvom prolaza",
+      "c": "pružanje puta sa prvenstvom prolaza"
+    },
+    "correct": "c",
+    "points": 3,
+    "page": 37,
+    "local_no": 59,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q59.png",
+    "id": 314
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "raskrsnica sa kružnim tokom saobraćaja",
+      "b": "kružni tok saobraćaja",
+      "c": "obavezno polukružno okretanje"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 37,
+    "local_no": 60,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q60.png",
+    "id": 315
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "ukrštanje puteva iste važnosti",
+      "b": "obavezno zaustavljanje",
+      "c": "ukrštanje sa putem sa prvenstvom prolaza"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 37,
+    "local_no": 61,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q61.png",
+    "id": 316
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zona usporenog saobraćaja",
+      "b": "djeca na putu",
+      "c": "dječje igralište"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 37,
+    "local_no": 62,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q62.png",
+    "id": 317
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "kružna raskrsnica",
+      "b": "raskrsnica sa kružnim tokom saobraćaja",
+      "c": "kružni tok saobraćaja"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 37,
+    "local_no": 63,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q63.png",
+    "id": 318
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "radovi na putu",
+      "b": "otklanjanje odrona na putu",
+      "c": "radovi na uklanjanju kamena na putu"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 37,
+    "local_no": 64,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q64.png",
+    "id": 319
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "parkiranje na trotoaru poprečno osi kolovoza",
+      "b": "parkiranje na trotoaru upravno na podužnu osu kolovoza",
+      "c": "parkiranje na trotoaru paralelno sa podužnom osom kolovoza"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 37,
+    "local_no": 65,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q65.png",
+    "id": 320
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "broj međunarodnog puta",
+      "b": "broj regionalnog puta",
+      "c": "broj magistralnog puta"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 37,
+    "local_no": 66,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q66.png",
+    "id": 321
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "putokaz za naseljena mjesta",
+      "b": "pretputokaz za izlaz",
+      "c": "tabla za usmjeravanje"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 37,
+    "local_no": 67,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p037_q67.png",
+    "id": 322
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zajednička staza za bicikliste i pješake",
+      "b": "razdvojene staze za bicikliste i pješake",
+      "c": "zabrana saobraćaja za bicikliste i pješake"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 38,
+    "local_no": 68,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q68.png",
+    "id": 323
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana prolaza bez zaustavljanja",
+      "b": "zabrana prolaza bez zaustavljanja na carinskom prelazu",
+      "c": "zabrana prolaza zbog naplate putarine"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 38,
+    "local_no": 69,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q69.png",
+    "id": 324
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "ukrštanje sa putem sa prvenstvom prolaza",
+      "b": "ukrštanje sa sporednim putem",
+      "c": "obavezno zaustavljanje"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 38,
+    "local_no": 70,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q70.png",
+    "id": 325
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "prelaz puta preko željezničke pruge sa branicima ili polubranicima",
+      "b": "prelaz puta preko željezničke pruge bez branika ili polubranika",
+      "c": "približavanje prelazu puta preko željezničke pruge"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 38,
+    "local_no": 71,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q71.png",
+    "id": 326
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "predputokazna tabla za lijevo skretanje",
+      "b": "tabla za usmjeravanje",
+      "c": "putokazna tabla"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 38,
+    "local_no": 72,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q72.png",
+    "id": 327
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana preticanja za teretna vozila",
+      "b": "zabrana preticanja za sva motorna vozila",
+      "c": "zabrana preticanja teretnih vozila"
+    },
+    "correct": "a",
+    "points": 4,
+    "page": 38,
+    "local_no": 73,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q73.png",
+    "id": 328
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazani saobraćajni znaci koji označavaju:",
+    "options": {
+      "a": "dozvoljeno skretanje ulijevo u naznačenom vremenu",
+      "b": "zabrana polukružnog okretanja u naznačenom vremenu",
+      "c": "zabrana skretanja ulijevo u naznačenom vremenu"
+    },
+    "correct": "c",
+    "points": 4,
+    "page": 38,
+    "local_no": 74,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q74.png",
+    "id": 329
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "obavezan smjer prvo udesno, pa ulijevo i izlazak iz raskrsnice",
+      "b": "put sa jednosmjernim saobraćajem uz obavezno skretanje udesno pa ulijevo",
+      "c": "smjer kretanja vozila koje namjerava da skrene ulijevo na raskrsnici na kojoj je skretanje ulijevo zabranjeno"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 38,
+    "local_no": 75,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q75.png",
+    "id": 330
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "put sa prvenstvom prolaza",
+      "b": "završetak puta sa prvenstvom prolaza",
+      "c": "pružanje puta sa prvenstvom prolaza"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 38,
+    "local_no": 76,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p038_q76.png",
+    "id": 331
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "trolejbuska pruga",
+      "b": "tramvajska pruga",
+      "c": "šinsko vozilo na putu"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 39,
+    "local_no": 77,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p039_q77.png",
+    "id": 332
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "suženje puta sa desne strane",
+      "b": "suženje puta sa lijeve strane",
+      "c": "desna kolovozna traka nije u pravcu"
+    },
+    "correct": "a",
+    "points": 3,
+    "page": 39,
+    "local_no": 78,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p039_q78.png",
+    "id": 333
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "zabrana saobraćaja za vozila koja ne prekoračuju određenu dužinu",
+      "b": "zabrana saobraćaja za vozila koja prekoračuju određenu dužinu",
+      "c": "zabrana saobraćaja za teretna motorna vozila čija je dužina do 10 metara"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 39,
+    "local_no": 79,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p039_q79.png",
+    "id": 334
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "gradsko područje",
+      "b": "industrijska zona",
+      "c": "naseljeno mjesto"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 39,
+    "local_no": 80,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p039_q80.png",
+    "id": 335
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan saobraćajni znak:",
+    "options": {
+      "a": "traka za kretanje teretnih vozila",
+      "b": "način korišćenja saobraćajne trake",
+      "c": "obavezno kretanje teretnih vozila Nerevan kolovoz Nerevan kolovoz Nerevan kolovoz-blizina -opasne -ulegnuće opasnog prevoja puta izbočine i ulegnuća ili veće izbočine na kolovozu Zabrana saobraćaja za Zabrana polukružnog vozila koja prevoze Dvostruka krivina ili Dvostruka krivina ili okretanja opasne materije više uzastopnih krivina više uzastopnih krivina od kojih je prva nalijevo od kojih je prva nadesno Teren za kampovanje pod Bočni vjertar sa lijeve strane Saobraćajna traka za šatorima i prikolici spora vozila Divljač na putu Prestanak zabrane preticanja za teretna vozila"
+    },
+    "correct": "b",
+    "points": 3,
+    "page": 39,
+    "local_no": 81,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p039_q81.png",
+    "id": 336
+  },
+  {
+    "type": "image",
+    "text": "Svijetla na semaforu kao na slici imaju značenje:",
+    "options": {
+      "a": "skori prestanak dozvoljeng kretanja vozila u pravcu strelica",
+      "b": "skori prestanak zabrane kretanja vozaču i priprema za slobodno kretanje vozilom u pravcu strelica",
+      "c": "dozvoljeno kretanje vozaču u pravcu strelica"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 40,
+    "local_no": 1,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q01.png",
+    "id": 337
+  },
+  {
+    "type": "image",
+    "text": "Strelice koje označavaju dozvoljeni smjer kretanja su:",
+    "options": {
+      "a": "crne na zelenoj podlozi",
+      "b": "zelene boje na crnoj podlozi",
+      "c": "crvene boje na zelenoj podlozi"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 40,
+    "local_no": 2,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q02.png",
+    "id": 338
+  },
+  {
+    "type": "image",
+    "text": "Horizontalno predručena ruka, kao na slici obavezuje:",
+    "options": {
+      "a": "vozača u čijem se smjeru daje znak da zaustavi vozilo",
+      "b": "sve učesnike u saobraćaju da ubrzaju kretanje",
+      "c": "vozača u čijem smjeru se daje ovaj znak da ubrza kretanje vozila ."
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 40,
+    "local_no": 3,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q03.png",
+    "id": 339
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici:",
+    "options": {
+      "a": "može se davati samo na raskrsnici",
+      "b": "može se davati na raskrsnici i na otvorenom putu",
+      "c": "može se davati samo na otvorenom putu"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 40,
+    "local_no": 4,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q04.png",
+    "id": 340
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan graničnik koji označava dio kolovoza na kojem je:",
+    "options": {
+      "a": "zabranjen saobraćaj zbog prepreke na putu",
+      "b": "zabranjen saobraćaj zbog ulivanja sa prilaznog puta",
+      "c": "zabranjen saobraćaj zbog završetka saobraćajne trake"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 40,
+    "local_no": 5,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q05.png",
+    "id": 341
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan:",
+    "options": {
+      "a": "semafor za regulisanje obilaženja sa desne strane",
+      "b": "semafor za regulisanje prolaska šinskih vozila",
+      "c": "semafor za regulisanje promjene saobraćajne trake"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 40,
+    "local_no": 6,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q06.png",
+    "id": 342
+  },
+  {
+    "type": "image",
+    "text": "Ako policijski službenik kao na slici lagano maše rukom, to znači da vozač u čijem se smjeru daje taj znak:",
+    "options": {
+      "a": "treba da smanji brzinu kretanja",
+      "b": "treba da se zaustavi",
+      "c": "treba da ubrza kretanje"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 40,
+    "local_no": 7,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q07.png",
+    "id": 343
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici je obavezujući:",
+    "options": {
+      "a": "samo van naselja vozaču u čujem smjeru se daje taj znak",
+      "b": "za vozača u čijem smjeru se daje taj znak",
+      "c": "samo u naselju vozaču u čijem smjeru se daje taj znak"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 40,
+    "local_no": 8,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p040_q08.png",
+    "id": 344
+  },
+  {
+    "type": "image",
+    "text": "Svjetlosna strelica zelene boje označava:",
+    "options": {
+      "a": "da vozač treba da obrati pažnju na visinu vozila",
+      "b": "da vozač zaustavi vozilo",
+      "c": "da je vozaču dozvoljeno kretanje"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 41,
+    "local_no": 9,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q09.png",
+    "id": 345
+  },
+  {
+    "type": "image",
+    "text": "Svjetlosni znaci kao na slici se koriste za regulisanje:",
+    "options": {
+      "a": "saobraćaja na naplatnim rampama",
+      "b": "saobraćaja na trakama sa promjenljivim smjerom kretanja",
+      "c": "prolaska kroz tunel"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 41,
+    "local_no": 10,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q10.png",
+    "id": 346
+  },
+  {
+    "type": "image",
+    "text": "Verikalno podignuta ruka sa položajem šake policijskog službenika kao na slici znači:",
+    "options": {
+      "a": "slobodan prolaz za sva vozila",
+      "b": "slobodan prolaz za vozila koja dolaze sa boka",
+      "c": "obavezno zaustvljanje za sve učesnike"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 41,
+    "local_no": 11,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q11.png",
+    "id": 347
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici:",
+    "options": {
+      "a": "može se davati iz vozila",
+      "b": "može se davati iz vozila, ali samo sa tablicom STOP",
+      "c": "ne može se davati iz vozila"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 41,
+    "local_no": 12,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q12.png",
+    "id": 348
+  },
+  {
+    "type": "image",
+    "text": "Svjetlosni saobraćajni znak koji je dat na slici, kada se naizmjenično uključuju dva okrugla crvena svijetla znači:",
+    "options": {
+      "a": "zabranu kretanja vozaču na mjestu prelaza puta preko pruge",
+      "b": "zabranu kretanju šinskog vozila",
+      "c": "zabranu kretanja svih učesnika u saobraćaju"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 41,
+    "local_no": 13,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q13.png",
+    "id": 349
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan semafor za regulisanje kretanja:",
+    "options": {
+      "a": "bicikala samo po biciklističkim trakama",
+      "b": "bicikala i mopeda samo po biciklističkim stazama",
+      "c": "bicikala i mopeda po biciklističkim trakama"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 41,
+    "local_no": 14,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q14.png",
+    "id": 350
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik, kao na slici može se davati:",
+    "options": {
+      "a": "na raskrsnici, ali samo sa stop tablicom",
+      "b": "na rasksnici i na otvorenom putu",
+      "c": "na otvorenom putu, ali samo sa stop tablicom"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 41,
+    "local_no": 15,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q15.png",
+    "id": 351
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici znači da vozači vozila:",
+    "options": {
+      "a": "koja dolaze sa njegovih bočnih strana imaju pravo prvenstva",
+      "b": "kojima su okrenuta leđa imaju pravo prvenstva",
+      "c": "nastave kretanje u skladu sa značenjem svijetala na semaforu"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 41,
+    "local_no": 16,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q16.png",
+    "id": 352
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan kosnik koji:",
+    "options": {
+      "a": "označava traku za spora vozila",
+      "b": "označava mjesto otvaranja trake",
+      "c": "označava mjesto zatvaranja trake"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 41,
+    "local_no": 17,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p041_q17.png",
+    "id": 353
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan:",
+    "options": {
+      "a": "uređaj za regulisanje kretanja tramvaja",
+      "b": "uređaj za regulisanje kretanja pješaka",
+      "c": "uređaj za označavanje usmjerenosti kolosijeka"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 42,
+    "local_no": 18,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q18.png",
+    "id": 354
+  },
+  {
+    "type": "image",
+    "text": "Hrizontalno odručena ruka policijskog službenika, kao na slici znači da:",
+    "options": {
+      "a": "vozač tog vozila smanji brzinu kretanja",
+      "b": "vozač tog vozila uspori vozilo i nastavi kretanje ulijevo",
+      "c": "je vozač tog vozila obavezan da zaustavi vozilo"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 42,
+    "local_no": 19,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q19.png",
+    "id": 355
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici:",
+    "options": {
+      "a": "može se davati i na raskrsnici i na otvorenom putu",
+      "b": "može se davati samo u naseljenom mjestu",
+      "c": "može se davati samo na otvorenom putu"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 42,
+    "local_no": 20,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q20.png",
+    "id": 356
+  },
+  {
+    "type": "image",
+    "text": "Privremena saobraćajna signalizacija data na slici označava:",
+    "options": {
+      "a": "zapreku na putu",
+      "b": "vertikalnu zapreku",
+      "c": "usmjeravajući branik"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 42,
+    "local_no": 21,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q21.png",
+    "id": 357
+  },
+  {
+    "type": "image",
+    "text": "Prikazana svjetlosna signalizacija treba da je uključena:",
+    "options": {
+      "a": "noću i u uslovima smanjene vidljivosti",
+      "b": "ako je veliki protok saobraćaja",
+      "c": "samo na lokalnim putevima"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 42,
+    "local_no": 22,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q22.png",
+    "id": 358
+  },
+  {
+    "type": "image",
+    "text": "Položaj tijela policijskog službenika sa rukama horizontalno odručenim, znači da vozila:",
+    "options": {
+      "a": "kojima su okrenuta leđa imaju pravo prolaska",
+      "b": "koja dolaze sa njegove bočne strana imaju pravo prolaska",
+      "c": "da su svi vozači obavezni da zaustave vozilo"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 42,
+    "local_no": 23,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q23.png",
+    "id": 359
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici:",
+    "options": {
+      "a": "može se davati samo na raskrsnici",
+      "b": "može se davati i na raskrsnici i na otvorenom putu",
+      "c": "može se davati samo na otvorenom putu"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 42,
+    "local_no": 24,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q24.png",
+    "id": 360
+  },
+  {
+    "type": "image",
+    "text": "Poprečne oznake na kolovozu predstavljaju:",
+    "options": {
+      "a": "poprečnu ivicu kolovoza",
+      "b": "graničnu liniju kolovoza",
+      "c": "liniju zaustavljanja"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 42,
+    "local_no": 25,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q25.png",
+    "id": 361
+  },
+  {
+    "type": "image",
+    "text": "Ako vozila javnog gradskog prevoza koriste istu saobraćajnu traku kojom se kreću i šinska vozila, uređaj koji je prikazan na slici koristi se za regulisanje kretanja:",
+    "options": {
+      "a": "tramvaja i autobusa",
+      "b": "samo autobusa",
+      "c": "samo tramvaja"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 42,
+    "local_no": 26,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p042_q26.png",
+    "id": 362
+  },
+  {
+    "type": "image",
+    "text": "Kombinovani znak podizanje ruke i upotreba pištaljke, kao na slici, predstavlja:",
+    "options": {
+      "a": "zabranu prolaza za sve vozače",
+      "b": "slobodan prolaz za vozila koja dolaze samo sa bočne strane .",
+      "c": "zabranu prolaza za vozila koja dolaze samo sa bočne strane"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 43,
+    "local_no": 27,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q27.png",
+    "id": 363
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici:",
+    "options": {
+      "a": "ne može se davati sa pištaljkom u raskrsnici",
+      "b": "može se davati sa pištaljkom u raskrsnici",
+      "c": "ne može se davati sa STOP tablicom"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 43,
+    "local_no": 28,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q28.png",
+    "id": 364
+  },
+  {
+    "type": "image",
+    "text": "Na slici su prikazana svjetla na semaforu, a redoslijed uključenja svjetala je:",
+    "options": {
+      "a": "1-2-3-4",
+      "b": "1-4-3-2",
+      "c": "1-3-2-4"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 43,
+    "local_no": 29,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q29.png",
+    "id": 365
+  },
+  {
+    "type": "image",
+    "text": "Na semaforima sa trobojnim svijetlima:",
+    "options": {
+      "a": "zeleno svijetlo može biti trepćuće",
+      "b": "zeleno svijetlo ne može biti trepćuće",
+      "c": "zeleno svijetlo može biti uključeno sa crvenim svijetlom"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 43,
+    "local_no": 30,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q30.png",
+    "id": 366
+  },
+  {
+    "type": "image",
+    "text": "Položaj tijela policijskog službenika kao na slici, znači da vozila:",
+    "options": {
+      "a": "koja dolaze sa njegove bočne strane nemaju pravo prolaska",
+      "b": "da su svi vozači obavezni da zaustave vozilo",
+      "c": "koja dolaze sa njegove bočne strane imaju pravo prolaska"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 43,
+    "local_no": 31,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q31.png",
+    "id": 367
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici:",
+    "options": {
+      "a": "može se davati samo na raskrsnici",
+      "b": "može se davati samo na otvorenom putu",
+      "c": "može se davati i na raskrsnici i na otvorenom putu"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 43,
+    "local_no": 32,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q32.png",
+    "id": 368
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan:",
+    "options": {
+      "a": "usmjeravajući branik",
+      "b": "čeoni branik",
+      "c": "zapreka na putu"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 43,
+    "local_no": 33,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q33.png",
+    "id": 369
+  },
+  {
+    "type": "image",
+    "text": "Na slici je prikazan:",
+    "options": {
+      "a": "semafor za regulisanje kretanja svih učesnika",
+      "b": "semafor za regulisanje kretanja biciklista",
+      "c": "semafor za regulisanje kretanja pješaka"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 43,
+    "local_no": 34,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q34.png",
+    "id": 370
+  },
+  {
+    "type": "image",
+    "text": "Vetikalno podignuta ruka, kao na slici znači:",
+    "options": {
+      "a": "prestanak važenja naredbi koje daje policijski službenik",
+      "b": "zabranu prolaza za sve vozače u saobraćaju",
+      "c": "da vozila koja dolaze sa boka imaju slobodan prolaz"
+    },
+    "correct": "b",
+    "points": 2,
+    "page": 43,
+    "local_no": 35,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q35.png",
+    "id": 371
+  },
+  {
+    "type": "image",
+    "text": "Znak koji daje policijski službenik na slici:",
+    "options": {
+      "a": "može se davati samo na raskrsnici",
+      "b": "može se davati samo na otvorenom putu",
+      "c": "ne može se davati na raskrsnici"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 43,
+    "local_no": 36,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p043_q36.png",
+    "id": 372
+  },
+  {
+    "type": "image",
+    "text": "Na obilježenom stajalištu, kao na slici, smije da se zaustavi vozač:",
+    "options": {
+      "a": "putničkog vozila radi ulaska ili izlaska putnika",
+      "b": "teretnog vozila samo radi utovara ili istovara",
+      "c": "vozila za javni prevoz putnika"
+    },
+    "correct": "c",
+    "points": 2,
+    "page": 44,
+    "local_no": 37,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p044_q37.png",
+    "id": 373
+  },
+  {
+    "type": "image",
+    "text": "Uključena svijetla na semaforu, kao na slici, znače:",
+    "options": {
+      "a": "da vozač može da se kreće u pravcu strelice pri čemu ne ometa druge učesnike u saobraćaju",
+      "b": "da vozač može da se kreće u pravcu strelice ne obraćajući pažnju na druge učesnike u saobraćaju",
+      "c": "zabranjeno kretanje u smjeru označenom dopunskom zelenom strelicom"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 44,
+    "local_no": 38,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p044_q38.png",
+    "id": 374
+  },
+  {
+    "type": "image",
+    "text": "Policijski službenik daje znak iz vozila, kao na slici:",
+    "options": {
+      "a": "u skladu sa propisima",
+      "b": "suprotno propisima",
+      "c": "u skladu sa propisima samo u naseljenom mjestu"
+    },
+    "correct": "a",
+    "points": 2,
+    "page": 44,
+    "local_no": 39,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p044_q39.png",
+    "id": 375
+  },
+  {
+    "type": "image",
+    "text": "U situaciji prikazanoj na slici, znak koji daje policijski službenik vozaču znači:",
+    "options": {
+      "a": "da ubrza kretanje vozila",
+      "b": "da izvrši preticanje sa desne strane",
+      "c": "da zaustavi vozilo"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 44,
+    "local_no": 40,
+    "needs_review": false,
+    "review_reason": [],
+    "image": "p044_q40.png",
+    "id": 376
+  },
+  {
+    "type": "text",
+    "text": "Radno kočenje ne mora da ima:",
+    "options": {
+      "a": "poluprikolica sa tri osovine",
+      "b": "putničko vozilo do 750 kg sopstvene mase",
+      "c": "laka prikolica"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 44,
+    "local_no": 1,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 377
+  },
+  {
+    "type": "text",
+    "text": "Svijetlo za maglu na zadnjoj strani vozila je:",
+    "options": {
+      "a": "crvene boje",
+      "b": "žute boje",
+      "c": "bijele boje"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 44,
+    "local_no": 2,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 378
+  },
+  {
+    "type": "text",
+    "text": "Blatobrani na motornom vozilu moraju da budu postavljeni tako da pokrivaju širinu:",
+    "options": {
+      "a": "samo zadnjih točkova",
+      "b": "samo prednjih točkova",
+      "c": "svih točkova"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 44,
+    "local_no": 3,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 379
+  },
+  {
+    "type": "text",
+    "text": "Učesnika u saobraćajnoj nezgodi koji je zadobio povrede grudnog koša postavljamo:",
+    "options": {
+      "a": "u ležeći položaj",
+      "b": "na bočnu stranu",
+      "c": "u polusjedeći položaj"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 44,
+    "local_no": 4,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 380
+  },
+  {
+    "type": "text",
+    "text": "Pod opekotinom podrazumijevamo povredu nastalu od:",
+    "options": {
+      "a": "upale kože",
+      "b": "djelovanja toplote",
+      "c": "uboda črvstog predmeta"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 44,
+    "local_no": 5,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 381
+  },
+  {
+    "type": "text",
+    "text": "Pod uređajem na vozilu koji omogućava normalnu vidljivost smatra se:",
+    "options": {
+      "a": "svijetlo za maglu",
+      "b": "poziciono svijetlo",
+      "c": "vjetrobran"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 45,
+    "local_no": 6,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 382
+  },
+  {
+    "type": "text",
+    "text": "Svjetlost pokazivača pravca mora da bude:",
+    "options": {
+      "a": "žute boje",
+      "b": "bijele boje",
+      "c": "crvene boje"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 45,
+    "local_no": 7,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 383
+  },
+  {
+    "type": "text",
+    "text": "Protiv blokirajući sistem (ABS) je dio sistema za:",
+    "options": {
+      "a": "osvjetljavanje kolovoza",
+      "b": "prenos snage",
+      "c": "za kočenje"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 45,
+    "local_no": 8,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 384
+  },
+  {
+    "type": "text",
+    "text": "Pod imobilizacijom podrazumijevamo:",
+    "options": {
+      "a": "stavljanje sterilne gaze na povrijeđeni dio tijela",
+      "b": "stavljanje povrijeđenog dijela tijela u stanje mirovanja",
+      "c": "vraćanje povrijeđenog u stanje svijesti"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 45,
+    "local_no": 9,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 385
+  },
+  {
+    "type": "text",
+    "text": "Koliki je broj otkucaja srca kod normalne zdrave osobe:",
+    "options": {
+      "a": "do 60 otkucaja u jednoj sekundi",
+      "b": "60 do 80 otkucaja u jednom minutu",
+      "c": "preko 100 otkucaja u jednom minutu"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 45,
+    "local_no": 10,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 386
+  },
+  {
+    "type": "text",
+    "text": "Slobodan hod točka upravljača na vozilu na motorni pogon ne smije biti veći od:",
+    "options": {
+      "a": "20 stepeni",
+      "b": "30 stepeni",
+      "c": "40 stepeni"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 45,
+    "local_no": 11,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 387
+  },
+  {
+    "type": "text",
+    "text": "Na motornom vozilu se serijski ugrađuju:",
+    "options": {
+      "a": "radna, pomoćna i parkirna kočnica",
+      "b": "radna i pomoćna kočnica i trajni usporivač",
+      "c": "radna i parkirna kočnica i trajni usporivač"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 45,
+    "local_no": 12,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 388
+  },
+  {
+    "type": "text",
+    "text": "Najveća dozvoljena dužina motornog vozila osim autobusa je:",
+    "options": {
+      "a": "8 metara",
+      "b": "10 metara",
+      "c": "12 metara"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 45,
+    "local_no": 13,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 389
+  },
+  {
+    "type": "text",
+    "text": "Kada dodje do umora tokom vožnje potrebno je:",
+    "options": {
+      "a": "usporenim kretanjem nastaviti vožnju",
+      "b": "konzumirati energetske napitke i nastaviti vožnju",
+      "c": "napraviti pauzu za odmor"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 45,
+    "local_no": 14,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 390
+  },
+  {
+    "type": "text",
+    "text": "Krvarenje kod povrijeđenog je:",
+    "options": {
+      "a": "isticanje krvi iz krvnih sudova",
+      "b": "zatvoreni prelom podkoljenice",
+      "c": "zgrušavanje krvi u krvnom sudu"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 45,
+    "local_no": 15,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 391
+  },
+  {
+    "type": "text",
+    "text": "Od određene opreme u autobusu mora da postoje:",
+    "options": {
+      "a": "tri kutije prve pomoći",
+      "b": "dvije kutije prve pomoći",
+      "c": "jedna kutija prve pomoći"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 46,
+    "local_no": 16,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 392
+  },
+  {
+    "type": "text",
+    "text": "Pod uređajima za davanje svjetlosnih znakova ne smatraju se:",
+    "options": {
+      "a": "stop-svijetla",
+      "b": "pokazivači pravca",
+      "c": "katadiopteri"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 46,
+    "local_no": 17,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 393
+  },
+  {
+    "type": "text",
+    "text": "Parkirnu kočnicu kod vozila vozač koristi:",
+    "options": {
+      "a": "da zaustavi vozilo kada naiđe na iznenadnu prepreku",
+      "b": "da spriječi pokretanje zaustavljenog vozila",
+      "c": "da spriječi pokretanje vozila samo dok je parkirano u garaži"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 46,
+    "local_no": 18,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 394
+  },
+  {
+    "type": "text",
+    "text": "Arterijsko krvarenje kod povrijeđenog prepoznaje se po:",
+    "options": {
+      "a": "laganom isticanju krvi i zgrušavanju na povrijeđenom dijela tijela",
+      "b": "krvi u mlazevima",
+      "c": "otoku i modrim podlivima povrijeđenog dijela tijela"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 46,
+    "local_no": 19,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 395
+  },
+  {
+    "type": "text",
+    "text": "Ako je licu u saobraćajnoj nezgodi povrijeđena glava i vrat:",
+    "options": {
+      "a": "povrijeđenog što manje pomjerati",
+      "b": "postaviti ga u sjedeći položaj",
+      "c": "postaviti ga na bok u ležeći položaj"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 46,
+    "local_no": 20,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 396
+  },
+  {
+    "type": "text",
+    "text": "Sastavni dio motora sa unutrašnjim sagorijevanjem je:",
+    "options": {
+      "a": "koljenasto vratilo",
+      "b": "kardansko vratilo",
+      "c": "poluvratilo"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 46,
+    "local_no": 21,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 397
+  },
+  {
+    "type": "text",
+    "text": "Servo uređaj za upravljanje:",
+    "options": {
+      "a": "smanjuje ugao zakretanja upravljačkih točkova",
+      "b": "smanjuje ukupnu silu djelovanja vozača kod zakretanja točka upravljača i obezbjeđuje lakoću upravljanja",
+      "c": "smanjuje prečnik putanje pri skretanja vozila"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 46,
+    "local_no": 22,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 398
+  },
+  {
+    "type": "text",
+    "text": "Svijetla glavnih svjetala treba da budu:",
+    "options": {
+      "a": "bijele boje",
+      "b": "žute boje",
+      "c": "crvene boje"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 46,
+    "local_no": 23,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 399
+  },
+  {
+    "type": "text",
+    "text": "Neposredno nakon saobraćaje nezgode, lice koje je učestvovalo u saobraćajnoj nezgodi:",
+    "options": {
+      "a": "smije da konzumira alkoholno piće",
+      "b": "smije da konzumira sedative za smirenje",
+      "c": "ne smije da konzumira alkoholno piće"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 46,
+    "local_no": 24,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 400
+  },
+  {
+    "type": "text",
+    "text": "Ako je lice koje je povrijeđeno u saobraćajnoj nezgodi bez svijesti treba ga:",
+    "options": {
+      "a": "postaviti u ležeći položaj na leđa",
+      "b": "postaviti u ležeći položaj na stomak",
+      "c": "postaviti u bočni položaj"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 46,
+    "local_no": 25,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 401
+  },
+  {
+    "type": "text",
+    "text": "Pod opremom motornih i priključnih vozila ne smatra se:",
+    "options": {
+      "a": "bočni retrovizor",
+      "b": "rezervni točak",
+      "c": "rezervne sijalice"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 47,
+    "local_no": 26,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 402
+  },
+  {
+    "type": "text",
+    "text": "Svjetlost dnevnog svijetla treba da bude:",
+    "options": {
+      "a": "žute boje",
+      "b": "plave boje",
+      "c": "bijele boje"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 47,
+    "local_no": 27,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 403
+  },
+  {
+    "type": "text",
+    "text": "Minimalna dubina šare na gazećoj površini pneumatika za zimsku upotrebu treba da bude:",
+    "options": {
+      "a": "2 mm",
+      "b": "4 mm",
+      "c": "1,6 mm"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 47,
+    "local_no": 28,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 404
+  },
+  {
+    "type": "text",
+    "text": "Broj policije je:",
+    "options": {
+      "a": "124",
+      "b": "112",
+      "c": "122"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 47,
+    "local_no": 29,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 405
+  },
+  {
+    "type": "text",
+    "text": "Kod povrijeđenog lica na ranu se prvo stavlja:",
+    "options": {
+      "a": "alkohol",
+      "b": "voda",
+      "c": "sterilna gaza"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 47,
+    "local_no": 30,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 406
+  },
+  {
+    "type": "text",
+    "text": "Vozila koja imaju ugrađene brisače vjetrobrana moraju imati i:",
+    "options": {
+      "a": "sunđer za pranje stakala",
+      "b": "perače vjetrobrana",
+      "c": "uređaj za zagrijavanje vjetrobrana"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 47,
+    "local_no": 31,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 407
+  },
+  {
+    "type": "text",
+    "text": "Svjetlosni snop oborenog svijetla treba da bude:",
+    "options": {
+      "a": "izveden kao lijevi asimetrični",
+      "b": "simetričan",
+      "c": "izveden kao desni asimetrični"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 47,
+    "local_no": 32,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 408
+  },
+  {
+    "type": "text",
+    "text": "Uređaji za odvođenje i ispuštanje izduvnih gasova ne smiju da prelaze dimenzije vozila:",
+    "options": {
+      "a": "po dužini ili širini",
+      "b": "po visini",
+      "c": "više od 0,1 metar po dužini"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 47,
+    "local_no": 33,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 409
+  },
+  {
+    "type": "text",
+    "text": "Mrtvačke pjege i hladno tijelo su:",
+    "options": {
+      "a": "stanja povrijeđnog usled gubljenja svijesti zbog hladnoće",
+      "b": "sigurni znak smrti",
+      "c": "sigurni znak umora"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 47,
+    "local_no": 34,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 410
+  },
+  {
+    "type": "text",
+    "text": "Broj telefona vatrogasne službe je:",
+    "options": {
+      "a": "123",
+      "b": "122",
+      "c": "124"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 47,
+    "local_no": 35,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 411
+  },
+  {
+    "type": "text",
+    "text": "Svijetla za vožnju unazad kod motornih vozila moraju biti:",
+    "options": {
+      "a": "bijele boje",
+      "b": "crvene boje",
+      "c": "žute boje"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 48,
+    "local_no": 36,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 412
+  },
+  {
+    "type": "text",
+    "text": "Radna kočnica motornih vozila treba da djeluje:",
+    "options": {
+      "a": "na sve točkove",
+      "b": "samo na prednje točkove",
+      "c": "samo na zadnje točkove"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 48,
+    "local_no": 37,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 413
+  },
+  {
+    "type": "text",
+    "text": "Motorno vozilo koje pored sjedišta za vozača ima još najviše osam sjedišta je:",
+    "options": {
+      "a": "autobus",
+      "b": "teretno vozilo",
+      "c": "putničko vozilo"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 48,
+    "local_no": 38,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 414
+  },
+  {
+    "type": "text",
+    "text": "U pružanju prve pomoći u saobraćajnoj nezgodi ranu kod povrijeđenog:",
+    "options": {
+      "a": "treba isprati vodom",
+      "b": "treba isprati alkoholom",
+      "c": "ne treba ispirati tečnošću"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 48,
+    "local_no": 39,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 415
+  },
+  {
+    "type": "text",
+    "text": "Pod dejstvom alkohola je vozač:",
+    "options": {
+      "a": "ako se u organizmu utvrdi sadržaj alkohola veći od 0,3 g/kg",
+      "b": "ako se u organizmu utvrdi sadržaj alkohola do 0,3 g/kg",
+      "c": "ako se u organizmu utvrdi sadržaj alkohola do 0,2 g/kg"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 48,
+    "local_no": 40,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 416
+  },
+  {
+    "type": "text",
+    "text": "Sastavni dio uređaja za upravljanje je:",
+    "options": {
+      "a": "pneumatik",
+      "b": "točak upravljača",
+      "c": "amortizer"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 48,
+    "local_no": 41,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 417
+  },
+  {
+    "type": "text",
+    "text": "Sastavni dio uređaja za osvjetljavanje puta na motornim vozilima je:",
+    "options": {
+      "a": "stop svijetlo",
+      "b": "gabaritno svijetlo",
+      "c": "svijetlo za vožnju unazad"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 48,
+    "local_no": 42,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 418
+  },
+  {
+    "type": "text",
+    "text": "Sastavni dio prenosnika snage kod motornog vozila je:",
+    "options": {
+      "a": "mjenjač",
+      "b": "točak upravljača",
+      "c": "ručica parkirne kočnice"
+    },
+    "correct": "a",
+    "points": 1,
+    "page": 48,
+    "local_no": 43,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 419
+  },
+  {
+    "type": "text",
+    "text": "Prilikom imobilizacije povrijeđenog lica osnovno pravilo je:",
+    "options": {
+      "a": "imobilisati cijelo tijelo povrijeđenog",
+      "b": "imobilisati dva susjedna zgloba",
+      "c": "imobilisati samo zglob koji je najbliži povrijeđenom mjestu"
+    },
+    "correct": "b",
+    "points": 1,
+    "page": 48,
+    "local_no": 44,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 420
+  },
+  {
+    "type": "text",
+    "text": "Povrijeđeno lice koje izgubi dosta krvi ima:",
+    "options": {
+      "a": "dosta povišen krvni pritisak",
+      "b": "dosta usporen puls",
+      "c": "ubrzano i nepravilno disanje"
+    },
+    "correct": "c",
+    "points": 1,
+    "page": 48,
+    "local_no": 45,
+    "needs_review": false,
+    "review_reason": [],
+    "id": 421
+  }
+]

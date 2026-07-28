@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Dizajn tokeni — saobraćajna signalizacija.
+   Plava je primarna (uskladiti sa brendom mirav.me), žuta je akcenat
+   preuzet sa znaka „prvenstvo prolaza" (romb).
+--------------------------------------------------------------------------- */
+@theme {
+  --color-ink: #191b20;
+  --color-paper: #faf8f3;
+  --color-panel: #ffffff;
+  --color-line: #e6e1d5;
+  --color-blue: #1d4e89;
+  --color-blue-dark: #163c6b;
+  --color-blue-soft: #eaf0f8;
+  --color-yellow: #f4c300;
+  --color-red: #c8232c;
+  --color-red-soft: #fbeaeb;
+  --color-green: #2f7d33;
+  --color-green-soft: #e9f3e9;
+  --color-muted: #726b5c;
+
+  --font-display: var(--font-barlow-condensed), "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Ugrađena verzija ne crta svoju pozadinu — nasljeđuje je od roditeljske stranice. */
+  body[data-embed="true"] {
+    background-color: transparent;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  /* Fokus mora ostati jasno vidljiv na tastaturi. */
+  :focus-visible {
+    outline: 3px solid var(--color-blue);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+}
+
+@layer components {
+  /* Isprekidana „road-line" traka ispod zaglavlja. */
+  .road-line {
+    height: 6px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-ink) 0 34px,
+      transparent 34px 62px
+    );
+    opacity: 0.85;
+  }
+
+  /* Žuti romb prvenstva puta — potpisni element brenda. */
+  .diamond {
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    background-color: var(--color-yellow);
+    border: 2px solid var(--color-ink);
+    transform: rotate(45deg);
+    flex: none;
+  }
+
+  .tag {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8125rem;
+    line-height: 1;
+  }
+
+  .panel {
+    background-color: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+  }
+}
+
+/* Poštuj sistemsku postavku za smanjeno kretanje. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
