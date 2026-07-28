@@ -59,8 +59,11 @@ export default function QuestionCard({
             width={width}
             height={height}
             loading="lazy"
-            sizes="(max-width: 640px) 100vw, 480px"
-            className="h-auto w-full max-w-[480px] object-contain"
+            sizes={`(max-width: 640px) 100vw, ${width}px`}
+            // Skalira se do širine kartice, ali nikad preko prirodne veličine —
+            // inače bi se manje slike (znaci) razvukle i bile mutne.
+            style={{ maxWidth: width }}
+            className="h-auto w-full object-contain"
           />
         </div>
       )}

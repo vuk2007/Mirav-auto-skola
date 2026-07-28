@@ -53,7 +53,7 @@ nema vremensko ograničenje.
 | Putanja                  | Sadržaj                                  |
 | ------------------------ | ---------------------------------------- |
 | `public/questions.json`  | 421 pitanje                              |
-| `public/web_images/`     | 281 PNG (slike situacija i znakova)       |
+| `public/web_images/`     | 281 slika — 208 JPG (fotografije situacija) + 73 PNG (znakovi) |
 | `lib/imageSizes.ts`      | **generisano** — dimenzije svake slike    |
 
 Baza se učita na klijentu preko `fetch('/questions.json')`, pa ne opterećuje JS bundle i
@@ -65,8 +65,12 @@ kešira se kao običan statički fajl.
 npm run gen:image-sizes    # regeneriše lib/imageSizes.ts
 ```
 
-Dimenzije su potrebne `next/image` komponenti da ne bi dolazilo do pomjeranja sadržaja
-dok se slika učitava.
+Podržani su PNG i JPEG; skripta prekida rad ako nekoj slici ne može pročitati dimenzije.
+Dimenzije su potrebne `next/image` komponenti da ne bi dolazilo do pomjeranja sadržaja dok
+se slika učitava, i da se slika **nikad ne prikaže veća od svoje prirodne veličine** (inače
+bi manje slike znakova bile razvučene i mutne).
+
+Imena fajlova moraju odgovarati polju `image` u `questions.json` (uključujući ekstenziju).
 
 ### Kategorije
 
