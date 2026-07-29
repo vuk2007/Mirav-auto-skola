@@ -36,8 +36,10 @@ import type {
   Question,
   Screen,
 } from "@/lib/types";
+import { buildScenarios, type SimScenario } from "@/lib/simulator";
+import { useApp } from "./AppProvider";
 import Controls from "./Controls";
-import { useLang } from "./LangProvider";
+import SimulatorRunner from "./sim/SimulatorRunner";
 import Landing from "./Landing";
 import LiteratureModal from "./LiteratureModal";
 import ProgressBar from "./ProgressBar";
@@ -51,8 +53,8 @@ interface QuizProps {
 }
 
 export default function Quiz({ compact = false }: QuizProps) {
-  // Jezik dolazi iz konteksta da bi ga dijelio i footer stranice.
-  const { lang, setLang, t } = useLang();
+  // Jezik i „nazad na početak" dolaze iz konteksta — dijeli ih zaglavlje sa logom.
+  const { lang, setLang, t, homeNonce } = useApp();
 
   const [screen, setScreen] = useState<Screen>("landing");
   const [mode, setMode] = useState<Mode>("vjezba");
@@ -67,6 +69,7 @@ export default function Quiz({ compact = false }: QuizProps) {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [pool, setPool] = useState<Question[]>([]);
+  const [scenarios, setScenarios] = useState<SimScenario[]>([]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Map<number, Answer>>(new Map());
   const [drafts, setDrafts] = useState<Map<number, string>>(new Map());
@@ -83,6 +86,7 @@ export default function Quiz({ compact = false }: QuizProps) {
   const [literatureOpen, setLiteratureOpen] = useState(false);
 
   const isPractice = mode === "vjezba";
+  const isSimulator = mode === "simulator";
 
   // ── Učitavanje zapamćenog stanja (samo na klijentu) ───────────────────────
   // Jezik čita LangProvider; ovdje se vraćaju rezultat i sačuvana vježba.
@@ -149,6 +153,24 @@ export default function Quiz({ compact = false }: QuizProps) {
     },
     [ensureQuestions, resetSession, category],
   );
+
+  const startSimulator = useCallback(async () => {
+    setStarting(true);
+    setLoadError(null);
+    try {
+      const qs = await ensureQuestions();
+      resetSession();
+      setScenarios(buildScenarios(qs));
+      setMode("simulator");
+      setSecondsLeft(null);
+      setDeadline(null);
+      setScreen("kviz");
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Nepoznata greška.");
+    } finally {
+      setStarting(false);
+    }
+  }, [ensureQuestions, resetSession]);
 
   const startExam = useCallback(async () => {
     setStarting(true);
@@ -334,7 +356,8 @@ export default function Quiz({ compact = false }: QuizProps) {
 
   // ── Povratak na landing ───────────────────────────────────────────────────
   const backToLanding = useCallback(() => {
-    if (screen === "kviz" && !isPractice && answers.size > 0) {
+    // Potvrda samo za ispit u toku — vježba i simulator se ne gube.
+    if (screen === "kviz" && mode === "simulacija" && answers.size > 0) {
       if (!window.confirm(t.confirmLeaveExam)) return;
     }
     setSecondsLeft(null);
@@ -342,7 +365,15 @@ export default function Quiz({ compact = false }: QuizProps) {
     setScreen("landing");
     setSaved(loadPractice());
     setBest(loadBestExam());
-  }, [screen, isPractice, answers.size, t.confirmLeaveExam]);
+  }, [screen, mode, answers.size, t.confirmLeaveExam]);
+
+  // Klik na logo u zaglavlju vraća na landing, uz istu potvrdu kao dugme Nazad.
+  const backRef = useRef(backToLanding);
+  backRef.current = backToLanding;
+  useEffect(() => {
+    if (homeNonce === 0) return; // početna vrijednost, ne reaguj na montiranje
+    backRef.current();
+  }, [homeNonce]);
 
   // ── Prikaz ────────────────────────────────────────────────────────────────
   const answeredIds = useMemo(
@@ -410,13 +441,18 @@ export default function Quiz({ compact = false }: QuizProps) {
           onStartPractice={() => void startPractice(null)}
           onResumePractice={() => void startPractice(saved)}
           onStartExam={() => void startExam()}
+          onStartSimulator={() => void startSimulator()}
           saved={saved}
           best={best}
           starting={starting}
         />
       )}
 
-      {screen === "kviz" && (
+      {screen === "kviz" && isSimulator && (
+        <SimulatorRunner scenarios={scenarios} t={t} lang={lang} />
+      )}
+
+      {screen === "kviz" && !isSimulator && (
         <>
           <Controls
             mode={mode}

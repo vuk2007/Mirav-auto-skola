@@ -1,10 +1,10 @@
 "use client";
 
-import { useLang } from "./LangProvider";
+import { useApp } from "./AppProvider";
 
 /** Footer pune stranice — klijentska komponenta da bi pratio izbor jezika. */
 export default function SiteFooter() {
-  const { t } = useLang();
+  const { t } = useApp();
 
   return (
     <footer className="mt-8 border-t border-line bg-panel">

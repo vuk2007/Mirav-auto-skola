@@ -10,9 +10,14 @@
   --color-paper: #faf8f3;
   --color-panel: #ffffff;
   --color-line: #e6e1d5;
-  --color-blue: #1d4e89;
-  --color-blue-dark: #163c6b;
-  --color-blue-soft: #eaf0f8;
+  /* Usklađeno sa logotipom (azur #4080F0). Za tekst i dugmad koristi se tamnija
+     nijansa iste porodice, jer #4080F0 na bijelom ima kontrast ~3:1 — premalo za
+     tekst. #2f6fd0 daje ~4,9:1, što prolazi WCAG AA. */
+  --color-blue: #2f6fd0;
+  --color-blue-dark: #2559a8;
+  --color-blue-soft: #eaf2fe;
+  /* Svijetli akcenat iz logotipa — za hover i dekoraciju, ne za sitan tekst. */
+  --color-blue-accent: #4080f0;
   --color-yellow: #f4c300;
   --color-red: #c8232c;
   --color-red-soft: #fbeaeb;

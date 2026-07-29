@@ -14,6 +14,8 @@ korisnik klikne „Počni".
   tačan odgovor i objašnjenje (ako postoji).
 - **Literatura** — modal sa zvaničnim izvorima (gov.me), dostupan sa početnog ekrana i
   sa rezultata.
+- **Simulator raskrsnica (V1)** — treći režim: scena je fotografija iz kataloga, a kandidat
+  **tapne vozila redom kojim prolaze** umjesto da kuca brojeve. Vidi „Simulator" niže.
 - **Jezik `me`/`en`/`sq`** — crnogorski, engleski i albanski; prebacivač mijenja cio
   interfejs (uključujući footer), a sadržaj pitanja ostaje na crnogorskom uz napomenu.
 - **`/embed`** — verzija bez zaglavlja, za ugradnju u `<iframe>` na mirav.me.
@@ -218,8 +220,11 @@ components/
   ResultCard.tsx      rezultat ispita + Pregled grešaka
   LiteratureModal.tsx zvanični izvori (gov.me)
   ProgressBar.tsx     napredak
-  LangProvider.tsx    kontekst za jezik (dijele ga kviz i footer)
+  AppProvider.tsx     kontekst: jezik + „nazad na početak" (dijele ih zaglavlje i kviz)
+  BrandHeader.tsx     zaglavlje sa logom; klik vodi na landing
   SiteFooter.tsx      footer pune stranice, prati jezik
+  sim/
+    SimulatorRunner.tsx   simulator raskrsnica (V1)
   EmbedHeightReporter.tsx   postMessage sa visinom
 lib/
   types.ts            tipovi pitanja i odgovora
@@ -228,6 +233,7 @@ lib/
   storage.ts          localStorage (jezik, najbolji rezultat, nastavak vježbe)
   categories.ts       izvođenje kategorija
   questions.ts        učitavanje, miješanje, provjera odgovora, bodovanje
+  simulator.ts        scene simulatora + broj vozila po sceni (ručno popisan)
   imageSizes.ts       generisano
 scripts/
   gen-image-sizes.mjs generator dimenzija slika
@@ -245,6 +251,42 @@ cross-site tracking", privatni prozor), kviz radi normalno, samo bez pamćenja.
 Preostalo vrijeme se računa iz **apsolutnog roka**, a ne oduzimanjem po otkucaju intervala:
 browseri prigušuju `setInterval` u pozadinskim tabovima (i do jednom u minutu), pa bi
 brojanje otkucaja dalo kandidatu znatno više od 45 minuta.
+
+### Simulator raskrsnica
+
+V1 koristi postojeće `ordering` scene iz kataloga: prikaže se fotografija sa označenim
+vozilima, a kandidat tapne vozila redom kojim prolaze. Bez unosa s tastature.
+
+Broj vozila po sceni **ne može se izvesti iz podataka** — kod scena sa policajcem dio
+vozila uopšte ne prolazi, pa je `answer_sequence` kraći od broja vozila na slici (npr.
+`p015_q48` ima 4 vozila, a tačan redoslijed je `[1,4]`). Zato je broj vozila po sceni
+popisan ručno u [`lib/simulator.ts`](lib/simulator.ts), pregledom svake slike. **Ako se
+doda nova `ordering` scena, upiši je u `SCENE_VEHICLES` — inače se tiho preskače.**
+
+Trenutno je u bazi **10** `ordering` scena (spec pominje 14 — razliku treba provjeriti sa
+MIRAV-om).
+
+Sljedeći koraci iz specifikacije (nisu implementirani): SVG renderer raskrsnice sa
+programski crtanim vozilima, rule-engine za prvenstvo, animacija prolaza i ručno autorstvo
+scenarija po familijama (pravilo desne strane, glavni/sporedni put, semafor, kružni tok,
+policajac). Scenariji bi tada išli u `public/scenarios.json`, isto kao `questions.json`.
+
+### Brend
+
+Logo je [`public/mirav-logo-transparent.png`](public/mirav-logo-transparent.png) — koristi se
+**transparentna verzija na svijetloj podlozi**, jer ima blagi bijeli rub od anti-aliasing-a
+pa se ne stavlja na tamnu ili plavu pozadinu.
+
+Dostavljeni logo je raster **201×79**. Ako MIRAV/Digital Artefakt pošalju SVG ili veći PNG,
+dovoljno je zamijeniti taj fajl — putanja se referiše na jednom mjestu
+([`components/BrandHeader.tsx`](components/BrandHeader.tsx)).
+
+Boje: logotip je azur `#4080F0`. Token `--blue` je `#2f6fd0` — ista porodica, ali tamnija,
+jer `#4080F0` na bijelom daje kontrast ~3:1, premalo za tekst i dugmad; `#2f6fd0` daje
+~4,9:1 i prolazi WCAG AA. Azur je zadržan kao `--blue-accent` za dekoraciju i hover.
+
+Favicon je [`app/icon.svg`](app/icon.svg) — logotip je izdužen pa bi u kvadratnoj ikoni bio
+nečitak, umjesto njega je inicijal na brend plavoj sa žutim rombom.
 
 ### Objašnjenja i prevodi pitanja
 

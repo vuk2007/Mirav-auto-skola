@@ -43,6 +43,24 @@ export interface Dict {
   examLimitationNote: string;
   bestResult: string;
 
+  // Simulator raskrsnica
+  simTitle: string;
+  simDesc: string;
+  simStart: string;
+  simMeta: string;
+  simTask: string;
+  simNotAllPass: string;
+  simYourOrder: string;
+  simCorrectOrder: string;
+  simClear: string;
+  simNextScene: string;
+  simScene: string;
+  simVehicle: string;
+  simStreak: string;
+  simFinished: string;
+  simRestart: string;
+  simEmpty: string;
+
   // Kviz
   loading: string;
   loadErrorTitle: string;
@@ -145,6 +163,24 @@ const me: Dict = {
     "Napomena: naša baza sadrži samo pitanja sa jednim tačnim odgovorom. Zvanični ispit ima i pitanja sa više tačnih odgovora, gdje se priznaje samo potpuno tačan odgovor.",
   bestResult: "Najbolji rezultat",
 
+  simTitle: "Simulator raskrsnica",
+  simDesc:
+    "Situacije iz kataloga: tapnite vozila redom kojim prolaze. Vježba prvenstva prolaza bez kucanja brojeva.",
+  simStart: "Počni simulator",
+  simMeta: "prvenstvo prolaza",
+  simTask: "Tapnite vozila redom kojim prolaze.",
+  simNotAllPass: "Ne prolaze nužno sva vozila — tapnite samo ona koja imaju pravo prolaza.",
+  simYourOrder: "Vaš redoslijed",
+  simCorrectOrder: "Tačan redoslijed",
+  simClear: "Poništi",
+  simNextScene: "Sljedeća situacija",
+  simScene: "Situacija",
+  simVehicle: "Vozilo",
+  simStreak: "Niz",
+  simFinished: "Prošli ste sve situacije.",
+  simRestart: "Počni ispočetka",
+  simEmpty: "Nema dostupnih situacija.",
+
   loading: "Učitavanje pitanja…",
   loadErrorTitle: "Greška pri učitavanju pitanja",
   noQuestions: "Nema pitanja u izabranoj kategoriji. Izaberite drugu kategoriju.",
@@ -239,6 +275,24 @@ const en: Dict = {
     "Note: our question bank contains only single-answer questions. The official exam also includes multiple-answer questions, where only a fully correct answer counts.",
   bestResult: "Best result",
 
+  simTitle: "Intersection simulator",
+  simDesc:
+    "Real situations from the catalogue: tap the vehicles in the order they proceed. Right-of-way practice without typing numbers.",
+  simStart: "Start simulator",
+  simMeta: "right of way",
+  simTask: "Tap the vehicles in the order they proceed.",
+  simNotAllPass: "Not every vehicle necessarily proceeds — tap only those that have right of way.",
+  simYourOrder: "Your order",
+  simCorrectOrder: "Correct order",
+  simClear: "Clear",
+  simNextScene: "Next situation",
+  simScene: "Situation",
+  simVehicle: "Vehicle",
+  simStreak: "Streak",
+  simFinished: "You have been through every situation.",
+  simRestart: "Start over",
+  simEmpty: "No situations available.",
+
   loading: "Loading questions…",
   loadErrorTitle: "Could not load the questions",
   noQuestions: "No questions in the selected category. Please choose another one.",
@@ -332,6 +386,25 @@ const sq: Dict = {
   examLimitationNote:
     "Shënim: baza jonë përmban vetëm pyetje me një përgjigje të saktë. Provimi zyrtar ka edhe pyetje me disa përgjigje të sakta, ku pranohet vetëm përgjigjja plotësisht e saktë.",
   bestResult: "Rezultati më i mirë",
+
+  simTitle: "Simulator i kryqëzimeve",
+  simDesc:
+    "Situata reale nga katalogu: prekni automjetet sipas radhës së kalimit. Ushtrim i së drejtës së përparësisë pa shkruar numra.",
+  simStart: "Fillo simulatorin",
+  simMeta: "e drejta e përparësisë",
+  simTask: "Prekni automjetet sipas radhës së kalimit.",
+  simNotAllPass:
+    "Nuk kalojnë domosdoshmërisht të gjitha automjetet — prekni vetëm ato që kanë përparësi.",
+  simYourOrder: "Radha juaj",
+  simCorrectOrder: "Radha e saktë",
+  simClear: "Pastro",
+  simNextScene: "Situata tjetër",
+  simScene: "Situata",
+  simVehicle: "Automjeti",
+  simStreak: "Seri",
+  simFinished: "Keni kaluar të gjitha situatat.",
+  simRestart: "Fillo nga e para",
+  simEmpty: "Nuk ka situata në dispozicion.",
 
   loading: "Duke ngarkuar pyetjet…",
   loadErrorTitle: "Gabim gjatë ngarkimit të pyetjeve",

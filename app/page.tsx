@@ -1,19 +1,13 @@
-import LangProvider from "@/components/LangProvider";
+import AppProvider from "@/components/AppProvider";
+import BrandHeader from "@/components/BrandHeader";
 import Quiz from "@/components/Quiz";
 import SiteFooter from "@/components/SiteFooter";
 
 export default function HomePage() {
   return (
-    // Jezik obuhvata i kviz i footer, pa prebacivač mijenja cio interfejs.
-    <LangProvider>
-      <header className="bg-panel">
-        <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-5 sm:px-6">
-          <span className="diamond text-xl" aria-hidden="true" />
-          <p className="font-display text-2xl leading-none font-bold tracking-wide uppercase sm:text-3xl">
-            Auto škola <span className="text-blue">MIRAV</span>
-          </p>
-        </div>
-      </header>
+    // Jezik i „nazad na početak" obuhvataju zaglavlje, kviz i footer.
+    <AppProvider>
+      <BrandHeader />
 
       {/* Potpisni element: isprekidana traka kao oznaka na kolovozu. */}
       <div className="road-line" aria-hidden="true" />
@@ -24,6 +18,6 @@ export default function HomePage() {
       </main>
 
       <SiteFooter />
-    </LangProvider>
+    </AppProvider>
   );
 }
