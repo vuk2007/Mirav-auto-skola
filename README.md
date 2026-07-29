@@ -224,7 +224,11 @@ components/
   BrandHeader.tsx     zaglavlje sa logom; klik vodi na landing
   SiteFooter.tsx      footer pune stranice, prati jezik
   sim/
-    SimulatorRunner.tsx   simulator raskrsnica (V1)
+    SimulatorShell.tsx    izbor familije scenarija
+    DrawnRunner.tsx       crtane scene: tap u sceni, animacija, pravilo
+    IntersectionSvg.tsx   raskrsnica iz ptičje perspektive (crtana kodom)
+    VehicleSprite.tsx     vozilo iz ptičje perspektive (crtano kodom)
+    PhotoRunner.tsx       scene iz kataloga (fotografije)
   EmbedHeightReporter.tsx   postMessage sa visinom
 lib/
   types.ts            tipovi pitanja i odgovora
@@ -233,7 +237,8 @@ lib/
   storage.ts          localStorage (jezik, najbolji rezultat, nastavak vježbe)
   categories.ts       izvođenje kategorija
   questions.ts        učitavanje, miješanje, provjera odgovora, bodovanje
-  simulator.ts        scene simulatora + broj vozila po sceni (ručno popisan)
+  simulator.ts        scene iz kataloga + broj vozila po sceni (ručno popisan)
+  simScenarios.ts     crtani scenariji + solver pravila desne strane
   imageSizes.ts       generisano
 scripts/
   gen-image-sizes.mjs generator dimenzija slika
@@ -254,8 +259,32 @@ brojanje otkucaja dalo kandidatu znatno više od 45 minuta.
 
 ### Simulator raskrsnica
 
-V1 koristi postojeće `ordering` scene iz kataloga: prikaže se fotografija sa označenim
-vozilima, a kandidat tapne vozila redom kojim prolaze. Bez unosa s tastature.
+Dvije familije scenarija, biraju se karticama unutar simulatora.
+
+#### „Pravilo desne strane" — crtane scene
+
+Raskrsnica se **crta kodom** (SVG, bez ijednog asseta): kolovoz, isprekidane linije, zebre,
+trotoari i vozila. Kandidat tapne vozila **direktno u sceni**; na tačan odgovor se vozila
+animirano provezu tačnim redoslijedom, na netačan blicne crvena tačka ukrštanja i ispiše se
+pravilo.
+
+Scenariji su ručno autorski u [`lib/simScenarios.ts`](lib/simScenarios.ts) i **provjereni
+solverom**: `solveRightHand` nezavisno računa redoslijed iz lanca ustupanja
+`N → W → S → E → N`, a test poredi rezultat sa autorskim `answer`. Ako se u scenariju
+pogriješi, test pada.
+
+Svi scenariji su za sada na neregulisanoj raskrsnici sa vozilima koja zadržavaju pravac —
+tada je redoslijed jednoznačan. Solver namjerno vraća `null` za skretanja (traže dodatna
+pravila) i za **„bešavnu petlju"**: kad sva četiri kraka imaju vozilo, svako ima nekoga sa
+desne strane i pravilo samo ne rješava situaciju. Zato takav scenarij nije ni autorisan.
+
+Desna vožnja je ugrađena u geometriju: vozilo sa sjevera ide južnom smjerom u zapadnoj traci,
+sa juga sjevernim u istočnoj, i tako redom — što test i provjerava.
+
+#### „Iz kataloga" — fotografije
+
+Prikaže se postojeća fotografija sa označenim vozilima, a kandidat tapne brojeve vozila
+redom kojim prolaze. Bez unosa s tastature.
 
 Broj vozila po sceni **ne može se izvesti iz podataka** — kod scena sa policajcem dio
 vozila uopšte ne prolazi, pa je `answer_sequence` kraći od broja vozila na slici (npr.
@@ -266,10 +295,15 @@ doda nova `ordering` scena, upiši je u `SCENE_VEHICLES` — inače se tiho pres
 Trenutno je u bazi **10** `ordering` scena (spec pominje 14 — razliku treba provjeriti sa
 MIRAV-om).
 
-Sljedeći koraci iz specifikacije (nisu implementirani): SVG renderer raskrsnice sa
-programski crtanim vozilima, rule-engine za prvenstvo, animacija prolaza i ručno autorstvo
-scenarija po familijama (pravilo desne strane, glavni/sporedni put, semafor, kružni tok,
-policajac). Scenariji bi tada išli u `public/scenarios.json`, isto kao `questions.json`.
+#### Šta ostaje
+
+Solver za sada pokriva samo pravilo desne strane. Sljedeće familije iz specifikacije nisu
+implementirane: glavni/sporedni put (znaci), semafor i skretanje, kružni tok, znaci
+policijskog službenika, pješaci/biciklisti, posebna vozila. Uz njih ide i proširenje solvera
+hijerarhijom prvenstva (policajac → semafor → znaci → pravila) i podrška za skretanja.
+
+Kad broj scenarija poraste, prirodno je izmjestiti ih iz koda u `public/scenarios.json`,
+isto kao `questions.json`.
 
 ### Brend
 

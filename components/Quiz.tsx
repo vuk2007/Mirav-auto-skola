@@ -39,7 +39,7 @@ import type {
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
 import { useApp } from "./AppProvider";
 import Controls from "./Controls";
-import SimulatorRunner from "./sim/SimulatorRunner";
+import SimulatorShell from "./sim/SimulatorShell";
 import Landing from "./Landing";
 import LiteratureModal from "./LiteratureModal";
 import ProgressBar from "./ProgressBar";
@@ -449,7 +449,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       )}
 
       {screen === "kviz" && isSimulator && (
-        <SimulatorRunner scenarios={scenarios} t={t} lang={lang} />
+        <SimulatorShell photoScenarios={scenarios} t={t} lang={lang} />
       )}
 
       {screen === "kviz" && !isSimulator && (

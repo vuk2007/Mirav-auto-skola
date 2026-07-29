@@ -60,6 +60,13 @@ export interface Dict {
   simFinished: string;
   simRestart: string;
   simEmpty: string;
+  simFamilyRule: string;
+  simFamilyCatalog: string;
+  simUncontrolled: string;
+  simTapInScene: string;
+  ruleTitle: string;
+  ruleRightHand: string;
+  ruleFreeRight: string;
 
   // Kviz
   loading: string;
@@ -180,6 +187,14 @@ const me: Dict = {
   simFinished: "Prošli ste sve situacije.",
   simRestart: "Počni ispočetka",
   simEmpty: "Nema dostupnih situacija.",
+  simFamilyRule: "Pravilo desne strane",
+  simFamilyCatalog: "Iz kataloga",
+  simUncontrolled: "Raskrsnica bez znakova i semafora. Sva vozila zadržavaju pravac.",
+  simTapInScene: "Tapnite vozila na slici redom kojim prolaze.",
+  ruleTitle: "Pravilo",
+  ruleRightHand:
+    "Na raskrsnici bez znakova i semafora prvenstvo ima vozilo koje vam dolazi s desne strane.",
+  ruleFreeRight: "Prvo prolazi vozilo koje nikoga nema sa svoje desne strane.",
 
   loading: "Učitavanje pitanja…",
   loadErrorTitle: "Greška pri učitavanju pitanja",
@@ -292,6 +307,14 @@ const en: Dict = {
   simFinished: "You have been through every situation.",
   simRestart: "Start over",
   simEmpty: "No situations available.",
+  simFamilyRule: "Right-hand rule",
+  simFamilyCatalog: "From the catalogue",
+  simUncontrolled: "Uncontrolled intersection — no signs, no lights. Every vehicle goes straight.",
+  simTapInScene: "Tap the vehicles in the scene in the order they proceed.",
+  ruleTitle: "Rule",
+  ruleRightHand:
+    "At an intersection with no signs or lights, the vehicle approaching from your right has priority.",
+  ruleFreeRight: "The vehicle with nobody on its right goes first.",
 
   loading: "Loading questions…",
   loadErrorTitle: "Could not load the questions",
@@ -405,6 +428,15 @@ const sq: Dict = {
   simFinished: "Keni kaluar të gjitha situatat.",
   simRestart: "Fillo nga e para",
   simEmpty: "Nuk ka situata në dispozicion.",
+  simFamilyRule: "Rregulli i së djathtës",
+  simFamilyCatalog: "Nga katalogu",
+  simUncontrolled:
+    "Kryqëzim pa shenja dhe pa semaforë. Të gjitha automjetet vazhdojnë drejt.",
+  simTapInScene: "Prekni automjetet në skenë sipas radhës së kalimit.",
+  ruleTitle: "Rregulli",
+  ruleRightHand:
+    "Në kryqëzim pa shenja dhe pa semaforë, përparësi ka automjeti që vjen nga e djathta juaj.",
+  ruleFreeRight: "I pari kalon automjeti që nuk ka askënd në të djathtën e vet.",
 
   loading: "Duke ngarkuar pyetjet…",
   loadErrorTitle: "Gabim gjatë ngarkimit të pyetjeve",

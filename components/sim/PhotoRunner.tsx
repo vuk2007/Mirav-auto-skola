@@ -8,17 +8,17 @@ import { localizedText, shuffle } from "@/lib/questions";
 import { isOrderCorrect, type SimScenario } from "@/lib/simulator";
 import ProgressBar from "../ProgressBar";
 
-interface SimulatorRunnerProps {
+interface PhotoRunnerProps {
   scenarios: SimScenario[];
   t: Dict;
   lang: Lang;
 }
 
 /**
- * Simulator raskrsnica, V1 — scena je fotografija iz kataloga, a kandidat tapne
- * vozila redom kojim prolaze umjesto da kuca redoslijed.
+ * Familija „iz kataloga" — scena je postojeća fotografija sa označenim vozilima,
+ * a kandidat tapne vozila redom kojim prolaze umjesto da kuca redoslijed.
  */
-export default function SimulatorRunner({ scenarios, t, lang }: SimulatorRunnerProps) {
+export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
   // Redoslijed scena se izmiješa jednom, na početku sesije.
   const [order, setOrder] = useState(() => shuffle(scenarios));
   const [index, setIndex] = useState(0);
