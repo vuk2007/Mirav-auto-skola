@@ -5,6 +5,7 @@ import { filterByCategory, type Category } from "@/lib/categories";
 import {
   EXAM_MINUTES,
   EXAM_PASS_POINTS,
+  EXAM_QUOTA,
   EXAM_TOTAL_POINTS,
   EXAM_TIMER_ENABLED,
   PRACTICE_QUESTION_LIMIT,
@@ -178,7 +179,7 @@ export default function Quiz({ compact = false }: QuizProps) {
     try {
       const qs = await ensureQuestions();
       resetSession();
-      setPool(buildExam(qs, EXAM_TOTAL_POINTS));
+      setPool(buildExam(qs, EXAM_TOTAL_POINTS, EXAM_QUOTA));
       setMode("simulacija");
       if (EXAM_TIMER_ENABLED) {
         setDeadline(Date.now() + EXAM_MINUTES * 60 * 1000);

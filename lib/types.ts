@@ -5,6 +5,16 @@ export const OPTION_KEYS: readonly OptionKey[] = ["a", "b", "c"] as const;
 
 export type QuestionType = "text" | "image" | "ordering";
 
+/**
+ * Oblast po kojoj se ispit sastavlja:
+ *   I   — poznavanje propisa / teorija
+ *   II  — saobraćajni znakovi
+ *   III — raskrsnice i situacije
+ */
+export type Area = "I" | "II" | "III";
+
+export const AREAS: readonly Area[] = ["I", "II", "III"] as const;
+
 /** Polja zajednička svim pitanjima iz questions.json. */
 interface QuestionBase {
   id: number;
@@ -14,6 +24,8 @@ interface QuestionBase {
   local_no: number;
   /** Ordering pitanja imaju null → vidi `questionPoints` i DEFAULT_ORDERING_POINTS. */
   points: number | null;
+  /** Oblast iz koje pitanje dolazi — određuje sastav ispita (vidi EXAM_QUOTA). */
+  area: Area;
   needs_review: boolean;
   review_reason: string[];
   /** Ime fajla u public/web_images/, samo kod pitanja sa slikom. */

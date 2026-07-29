@@ -13,7 +13,8 @@
     "local_no": 1,
     "needs_review": false,
     "review_reason": [],
-    "id": 1
+    "id": 1,
+    "area": "I"
   },
   {
     "type": "text",
@@ -29,7 +30,8 @@
     "local_no": 2,
     "needs_review": false,
     "review_reason": [],
-    "id": 2
+    "id": 2,
+    "area": "I"
   },
   {
     "type": "text",
@@ -45,7 +47,8 @@
     "local_no": 3,
     "needs_review": false,
     "review_reason": [],
-    "id": 3
+    "id": 3,
+    "area": "I"
   },
   {
     "type": "text",
@@ -61,7 +64,8 @@
     "local_no": 4,
     "needs_review": false,
     "review_reason": [],
-    "id": 4
+    "id": 4,
+    "area": "I"
   },
   {
     "type": "text",
@@ -77,7 +81,8 @@
     "local_no": 5,
     "needs_review": false,
     "review_reason": [],
-    "id": 5
+    "id": 5,
+    "area": "I"
   },
   {
     "type": "text",
@@ -93,7 +98,8 @@
     "local_no": 6,
     "needs_review": false,
     "review_reason": [],
-    "id": 6
+    "id": 6,
+    "area": "I"
   },
   {
     "type": "text",
@@ -109,7 +115,8 @@
     "local_no": 7,
     "needs_review": false,
     "review_reason": [],
-    "id": 7
+    "id": 7,
+    "area": "I"
   },
   {
     "type": "text",
@@ -125,7 +132,8 @@
     "local_no": 8,
     "needs_review": false,
     "review_reason": [],
-    "id": 8
+    "id": 8,
+    "area": "I"
   },
   {
     "type": "text",
@@ -141,7 +149,8 @@
     "local_no": 9,
     "needs_review": false,
     "review_reason": [],
-    "id": 9
+    "id": 9,
+    "area": "I"
   },
   {
     "type": "text",
@@ -157,7 +166,8 @@
     "local_no": 10,
     "needs_review": false,
     "review_reason": [],
-    "id": 10
+    "id": 10,
+    "area": "I"
   },
   {
     "type": "text",
@@ -173,7 +183,8 @@
     "local_no": 11,
     "needs_review": false,
     "review_reason": [],
-    "id": 11
+    "id": 11,
+    "area": "I"
   },
   {
     "type": "text",
@@ -189,7 +200,8 @@
     "local_no": 12,
     "needs_review": false,
     "review_reason": [],
-    "id": 12
+    "id": 12,
+    "area": "I"
   },
   {
     "type": "text",
@@ -205,7 +217,8 @@
     "local_no": 13,
     "needs_review": false,
     "review_reason": [],
-    "id": 13
+    "id": 13,
+    "area": "I"
   },
   {
     "type": "text",
@@ -221,7 +234,8 @@
     "local_no": 14,
     "needs_review": false,
     "review_reason": [],
-    "id": 14
+    "id": 14,
+    "area": "I"
   },
   {
     "type": "text",
@@ -237,7 +251,8 @@
     "local_no": 15,
     "needs_review": false,
     "review_reason": [],
-    "id": 15
+    "id": 15,
+    "area": "I"
   },
   {
     "type": "text",
@@ -253,7 +268,8 @@
     "local_no": 16,
     "needs_review": false,
     "review_reason": [],
-    "id": 16
+    "id": 16,
+    "area": "I"
   },
   {
     "type": "text",
@@ -269,7 +285,8 @@
     "local_no": 17,
     "needs_review": false,
     "review_reason": [],
-    "id": 17
+    "id": 17,
+    "area": "I"
   },
   {
     "type": "text",
@@ -285,7 +302,8 @@
     "local_no": 18,
     "needs_review": false,
     "review_reason": [],
-    "id": 18
+    "id": 18,
+    "area": "I"
   },
   {
     "type": "text",
@@ -301,7 +319,8 @@
     "local_no": 19,
     "needs_review": false,
     "review_reason": [],
-    "id": 19
+    "id": 19,
+    "area": "I"
   },
   {
     "type": "text",
@@ -317,7 +336,8 @@
     "local_no": 20,
     "needs_review": false,
     "review_reason": [],
-    "id": 20
+    "id": 20,
+    "area": "I"
   },
   {
     "type": "text",
@@ -333,7 +353,8 @@
     "local_no": 21,
     "needs_review": false,
     "review_reason": [],
-    "id": 21
+    "id": 21,
+    "area": "I"
   },
   {
     "type": "text",
@@ -349,7 +370,8 @@
     "local_no": 22,
     "needs_review": false,
     "review_reason": [],
-    "id": 22
+    "id": 22,
+    "area": "I"
   },
   {
     "type": "text",
@@ -365,7 +387,8 @@
     "local_no": 23,
     "needs_review": false,
     "review_reason": [],
-    "id": 23
+    "id": 23,
+    "area": "I"
   },
   {
     "type": "text",
@@ -381,7 +404,8 @@
     "local_no": 24,
     "needs_review": false,
     "review_reason": [],
-    "id": 24
+    "id": 24,
+    "area": "I"
   },
   {
     "type": "text",
@@ -397,7 +421,8 @@
     "local_no": 25,
     "needs_review": false,
     "review_reason": [],
-    "id": 25
+    "id": 25,
+    "area": "I"
   },
   {
     "type": "text",
@@ -413,7 +438,8 @@
     "local_no": 26,
     "needs_review": false,
     "review_reason": [],
-    "id": 26
+    "id": 26,
+    "area": "I"
   },
   {
     "type": "text",
@@ -429,7 +455,8 @@
     "local_no": 27,
     "needs_review": false,
     "review_reason": [],
-    "id": 27
+    "id": 27,
+    "area": "I"
   },
   {
     "type": "text",
@@ -445,7 +472,8 @@
     "local_no": 28,
     "needs_review": false,
     "review_reason": [],
-    "id": 28
+    "id": 28,
+    "area": "I"
   },
   {
     "type": "text",
@@ -461,7 +489,8 @@
     "local_no": 29,
     "needs_review": false,
     "review_reason": [],
-    "id": 29
+    "id": 29,
+    "area": "I"
   },
   {
     "type": "text",
@@ -477,7 +506,8 @@
     "local_no": 30,
     "needs_review": false,
     "review_reason": [],
-    "id": 30
+    "id": 30,
+    "area": "I"
   },
   {
     "type": "text",
@@ -493,7 +523,8 @@
     "local_no": 31,
     "needs_review": false,
     "review_reason": [],
-    "id": 31
+    "id": 31,
+    "area": "I"
   },
   {
     "type": "text",
@@ -509,7 +540,8 @@
     "local_no": 32,
     "needs_review": false,
     "review_reason": [],
-    "id": 32
+    "id": 32,
+    "area": "I"
   },
   {
     "type": "text",
@@ -525,7 +557,8 @@
     "local_no": 33,
     "needs_review": false,
     "review_reason": [],
-    "id": 33
+    "id": 33,
+    "area": "I"
   },
   {
     "type": "text",
@@ -541,7 +574,8 @@
     "local_no": 34,
     "needs_review": false,
     "review_reason": [],
-    "id": 34
+    "id": 34,
+    "area": "I"
   },
   {
     "type": "text",
@@ -557,7 +591,8 @@
     "local_no": 35,
     "needs_review": false,
     "review_reason": [],
-    "id": 35
+    "id": 35,
+    "area": "I"
   },
   {
     "type": "text",
@@ -573,7 +608,8 @@
     "local_no": 36,
     "needs_review": false,
     "review_reason": [],
-    "id": 36
+    "id": 36,
+    "area": "I"
   },
   {
     "type": "text",
@@ -589,7 +625,8 @@
     "local_no": 37,
     "needs_review": false,
     "review_reason": [],
-    "id": 37
+    "id": 37,
+    "area": "I"
   },
   {
     "type": "text",
@@ -605,7 +642,8 @@
     "local_no": 38,
     "needs_review": false,
     "review_reason": [],
-    "id": 38
+    "id": 38,
+    "area": "I"
   },
   {
     "type": "text",
@@ -621,7 +659,8 @@
     "local_no": 39,
     "needs_review": false,
     "review_reason": [],
-    "id": 39
+    "id": 39,
+    "area": "I"
   },
   {
     "type": "text",
@@ -637,7 +676,8 @@
     "local_no": 40,
     "needs_review": false,
     "review_reason": [],
-    "id": 40
+    "id": 40,
+    "area": "I"
   },
   {
     "type": "text",
@@ -653,7 +693,8 @@
     "local_no": 41,
     "needs_review": false,
     "review_reason": [],
-    "id": 41
+    "id": 41,
+    "area": "I"
   },
   {
     "type": "text",
@@ -669,7 +710,8 @@
     "local_no": 42,
     "needs_review": false,
     "review_reason": [],
-    "id": 42
+    "id": 42,
+    "area": "I"
   },
   {
     "type": "text",
@@ -685,7 +727,8 @@
     "local_no": 43,
     "needs_review": false,
     "review_reason": [],
-    "id": 43
+    "id": 43,
+    "area": "I"
   },
   {
     "type": "text",
@@ -701,7 +744,8 @@
     "local_no": 44,
     "needs_review": false,
     "review_reason": [],
-    "id": 44
+    "id": 44,
+    "area": "I"
   },
   {
     "type": "text",
@@ -717,7 +761,8 @@
     "local_no": 45,
     "needs_review": false,
     "review_reason": [],
-    "id": 45
+    "id": 45,
+    "area": "I"
   },
   {
     "type": "text",
@@ -733,7 +778,8 @@
     "local_no": 46,
     "needs_review": false,
     "review_reason": [],
-    "id": 46
+    "id": 46,
+    "area": "I"
   },
   {
     "type": "text",
@@ -749,7 +795,8 @@
     "local_no": 47,
     "needs_review": false,
     "review_reason": [],
-    "id": 47
+    "id": 47,
+    "area": "I"
   },
   {
     "type": "text",
@@ -765,7 +812,8 @@
     "local_no": 48,
     "needs_review": false,
     "review_reason": [],
-    "id": 48
+    "id": 48,
+    "area": "I"
   },
   {
     "type": "text",
@@ -781,7 +829,8 @@
     "local_no": 49,
     "needs_review": false,
     "review_reason": [],
-    "id": 49
+    "id": 49,
+    "area": "I"
   },
   {
     "type": "text",
@@ -797,7 +846,8 @@
     "local_no": 50,
     "needs_review": false,
     "review_reason": [],
-    "id": 50
+    "id": 50,
+    "area": "I"
   },
   {
     "type": "text",
@@ -813,7 +863,8 @@
     "local_no": 51,
     "needs_review": false,
     "review_reason": [],
-    "id": 51
+    "id": 51,
+    "area": "I"
   },
   {
     "type": "text",
@@ -829,7 +880,8 @@
     "local_no": 52,
     "needs_review": false,
     "review_reason": [],
-    "id": 52
+    "id": 52,
+    "area": "I"
   },
   {
     "type": "text",
@@ -845,7 +897,8 @@
     "local_no": 53,
     "needs_review": false,
     "review_reason": [],
-    "id": 53
+    "id": 53,
+    "area": "I"
   },
   {
     "type": "text",
@@ -861,7 +914,8 @@
     "local_no": 54,
     "needs_review": false,
     "review_reason": [],
-    "id": 54
+    "id": 54,
+    "area": "I"
   },
   {
     "type": "text",
@@ -877,7 +931,8 @@
     "local_no": 55,
     "needs_review": false,
     "review_reason": [],
-    "id": 55
+    "id": 55,
+    "area": "I"
   },
   {
     "type": "text",
@@ -893,7 +948,8 @@
     "local_no": 56,
     "needs_review": false,
     "review_reason": [],
-    "id": 56
+    "id": 56,
+    "area": "I"
   },
   {
     "type": "text",
@@ -909,7 +965,8 @@
     "local_no": 57,
     "needs_review": false,
     "review_reason": [],
-    "id": 57
+    "id": 57,
+    "area": "I"
   },
   {
     "type": "text",
@@ -925,7 +982,8 @@
     "local_no": 58,
     "needs_review": false,
     "review_reason": [],
-    "id": 58
+    "id": 58,
+    "area": "I"
   },
   {
     "type": "text",
@@ -941,7 +999,8 @@
     "local_no": 59,
     "needs_review": false,
     "review_reason": [],
-    "id": 59
+    "id": 59,
+    "area": "I"
   },
   {
     "type": "text",
@@ -957,7 +1016,8 @@
     "local_no": 60,
     "needs_review": false,
     "review_reason": [],
-    "id": 60
+    "id": 60,
+    "area": "I"
   },
   {
     "type": "text",
@@ -973,7 +1033,8 @@
     "local_no": 61,
     "needs_review": false,
     "review_reason": [],
-    "id": 61
+    "id": 61,
+    "area": "I"
   },
   {
     "type": "text",
@@ -989,7 +1050,8 @@
     "local_no": 62,
     "needs_review": false,
     "review_reason": [],
-    "id": 62
+    "id": 62,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1005,7 +1067,8 @@
     "local_no": 63,
     "needs_review": false,
     "review_reason": [],
-    "id": 63
+    "id": 63,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1021,7 +1084,8 @@
     "local_no": 64,
     "needs_review": false,
     "review_reason": [],
-    "id": 64
+    "id": 64,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1037,7 +1101,8 @@
     "local_no": 65,
     "needs_review": false,
     "review_reason": [],
-    "id": 65
+    "id": 65,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1053,7 +1118,8 @@
     "local_no": 66,
     "needs_review": false,
     "review_reason": [],
-    "id": 66
+    "id": 66,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1069,7 +1135,8 @@
     "local_no": 67,
     "needs_review": false,
     "review_reason": [],
-    "id": 67
+    "id": 67,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1085,7 +1152,8 @@
     "local_no": 68,
     "needs_review": false,
     "review_reason": [],
-    "id": 68
+    "id": 68,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1101,7 +1169,8 @@
     "local_no": 69,
     "needs_review": false,
     "review_reason": [],
-    "id": 69
+    "id": 69,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1117,7 +1186,8 @@
     "local_no": 70,
     "needs_review": false,
     "review_reason": [],
-    "id": 70
+    "id": 70,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1133,7 +1203,8 @@
     "local_no": 71,
     "needs_review": false,
     "review_reason": [],
-    "id": 71
+    "id": 71,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1149,7 +1220,8 @@
     "local_no": 72,
     "needs_review": false,
     "review_reason": [],
-    "id": 72
+    "id": 72,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1165,7 +1237,8 @@
     "local_no": 73,
     "needs_review": false,
     "review_reason": [],
-    "id": 73
+    "id": 73,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1181,7 +1254,8 @@
     "local_no": 74,
     "needs_review": false,
     "review_reason": [],
-    "id": 74
+    "id": 74,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1197,7 +1271,8 @@
     "local_no": 75,
     "needs_review": false,
     "review_reason": [],
-    "id": 75
+    "id": 75,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1213,7 +1288,8 @@
     "local_no": 76,
     "needs_review": false,
     "review_reason": [],
-    "id": 76
+    "id": 76,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1229,7 +1305,8 @@
     "local_no": 77,
     "needs_review": false,
     "review_reason": [],
-    "id": 77
+    "id": 77,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1245,7 +1322,8 @@
     "local_no": 78,
     "needs_review": false,
     "review_reason": [],
-    "id": 78
+    "id": 78,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1261,7 +1339,8 @@
     "local_no": 79,
     "needs_review": false,
     "review_reason": [],
-    "id": 79
+    "id": 79,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1277,7 +1356,8 @@
     "local_no": 80,
     "needs_review": false,
     "review_reason": [],
-    "id": 80
+    "id": 80,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1293,7 +1373,8 @@
     "local_no": 81,
     "needs_review": false,
     "review_reason": [],
-    "id": 81
+    "id": 81,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1309,7 +1390,8 @@
     "local_no": 82,
     "needs_review": false,
     "review_reason": [],
-    "id": 82
+    "id": 82,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1325,7 +1407,8 @@
     "local_no": 83,
     "needs_review": false,
     "review_reason": [],
-    "id": 83
+    "id": 83,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1341,7 +1424,8 @@
     "local_no": 84,
     "needs_review": false,
     "review_reason": [],
-    "id": 84
+    "id": 84,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1357,7 +1441,8 @@
     "local_no": 85,
     "needs_review": false,
     "review_reason": [],
-    "id": 85
+    "id": 85,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1373,7 +1458,8 @@
     "local_no": 86,
     "needs_review": false,
     "review_reason": [],
-    "id": 86
+    "id": 86,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1389,7 +1475,8 @@
     "local_no": 87,
     "needs_review": false,
     "review_reason": [],
-    "id": 87
+    "id": 87,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1405,7 +1492,8 @@
     "local_no": 88,
     "needs_review": false,
     "review_reason": [],
-    "id": 88
+    "id": 88,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1421,7 +1509,8 @@
     "local_no": 89,
     "needs_review": false,
     "review_reason": [],
-    "id": 89
+    "id": 89,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1437,7 +1526,8 @@
     "local_no": 90,
     "needs_review": false,
     "review_reason": [],
-    "id": 90
+    "id": 90,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1453,7 +1543,8 @@
     "local_no": 91,
     "needs_review": false,
     "review_reason": [],
-    "id": 91
+    "id": 91,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1469,7 +1560,8 @@
     "local_no": 92,
     "needs_review": false,
     "review_reason": [],
-    "id": 92
+    "id": 92,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1485,7 +1577,8 @@
     "local_no": 93,
     "needs_review": false,
     "review_reason": [],
-    "id": 93
+    "id": 93,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1501,7 +1594,8 @@
     "local_no": 94,
     "needs_review": false,
     "review_reason": [],
-    "id": 94
+    "id": 94,
+    "area": "I"
   },
   {
     "type": "text",
@@ -1517,7 +1611,8 @@
     "local_no": 95,
     "needs_review": false,
     "review_reason": [],
-    "id": 95
+    "id": 95,
+    "area": "I"
   },
   {
     "type": "image",
@@ -1534,7 +1629,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q01.jpg",
-    "id": 96
+    "id": 96,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1551,7 +1647,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q02.jpg",
-    "id": 97
+    "id": 97,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1568,7 +1665,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q03.jpg",
-    "id": 98
+    "id": 98,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1585,7 +1683,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q04.jpg",
-    "id": 99
+    "id": 99,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1602,7 +1701,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q05.jpg",
-    "id": 100
+    "id": 100,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -1619,7 +1719,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q06.jpg",
-    "id": 101
+    "id": 101,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1636,7 +1737,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q07.jpg",
-    "id": 102
+    "id": 102,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1653,7 +1755,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p010_q08.jpg",
-    "id": 103
+    "id": 103,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1670,7 +1773,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q09.jpg",
-    "id": 104
+    "id": 104,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -1686,7 +1790,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q10.jpg",
-    "id": 105
+    "id": 105,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1703,7 +1808,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q11.jpg",
-    "id": 106
+    "id": 106,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1720,7 +1826,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q12.jpg",
-    "id": 107
+    "id": 107,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1737,7 +1844,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q13.jpg",
-    "id": 108
+    "id": 108,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1754,7 +1862,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q14.jpg",
-    "id": 109
+    "id": 109,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1771,7 +1880,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q15.jpg",
-    "id": 110
+    "id": 110,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1788,7 +1898,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p011_q16.jpg",
-    "id": 111
+    "id": 111,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -1804,7 +1915,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q17.jpg",
-    "id": 112
+    "id": 112,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1821,7 +1933,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q18.jpg",
-    "id": 113
+    "id": 113,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1838,7 +1951,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q19.jpg",
-    "id": 114
+    "id": 114,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1855,7 +1969,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q20.jpg",
-    "id": 115
+    "id": 115,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1872,7 +1987,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q21.jpg",
-    "id": 116
+    "id": 116,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1889,7 +2005,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q22.jpg",
-    "id": 117
+    "id": 117,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1906,7 +2023,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q23.jpg",
-    "id": 118
+    "id": 118,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1923,7 +2041,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p012_q24.jpg",
-    "id": 119
+    "id": 119,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1940,7 +2059,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q25.jpg",
-    "id": 120
+    "id": 120,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1957,7 +2077,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q26.jpg",
-    "id": 121
+    "id": 121,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1974,7 +2095,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q27.jpg",
-    "id": 122
+    "id": 122,
+    "area": "III"
   },
   {
     "type": "image",
@@ -1991,7 +2113,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q28.jpg",
-    "id": 123
+    "id": 123,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2008,7 +2131,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q29.jpg",
-    "id": 124
+    "id": 124,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2025,7 +2149,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q30.jpg",
-    "id": 125
+    "id": 125,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2042,7 +2167,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q31.jpg",
-    "id": 126
+    "id": 126,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2059,7 +2185,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p013_q32.jpg",
-    "id": 127
+    "id": 127,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2076,7 +2203,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q33.jpg",
-    "id": 128
+    "id": 128,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2093,7 +2221,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q34.jpg",
-    "id": 129
+    "id": 129,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2110,7 +2239,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q35.jpg",
-    "id": 130
+    "id": 130,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2127,7 +2257,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q36.jpg",
-    "id": 131
+    "id": 131,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2144,7 +2275,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q37.jpg",
-    "id": 132
+    "id": 132,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2161,7 +2293,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q38.jpg",
-    "id": 133
+    "id": 133,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2178,7 +2311,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q39.jpg",
-    "id": 134
+    "id": 134,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2195,7 +2329,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p014_q40.jpg",
-    "id": 135
+    "id": 135,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2212,7 +2347,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q41.jpg",
-    "id": 136
+    "id": 136,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -2228,7 +2364,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q42.jpg",
-    "id": 137
+    "id": 137,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2245,7 +2382,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q43.jpg",
-    "id": 138
+    "id": 138,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -2262,7 +2400,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q44.jpg",
-    "id": 139
+    "id": 139,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2279,7 +2418,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q45.jpg",
-    "id": 140
+    "id": 140,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2296,7 +2436,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q46.jpg",
-    "id": 141
+    "id": 141,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2313,7 +2454,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q47.jpg",
-    "id": 142
+    "id": 142,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -2328,7 +2470,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p015_q48.jpg",
-    "id": 143
+    "id": 143,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2345,7 +2488,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q49.jpg",
-    "id": 144
+    "id": 144,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2362,7 +2506,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q50.jpg",
-    "id": 145
+    "id": 145,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2379,7 +2524,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q51.jpg",
-    "id": 146
+    "id": 146,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2396,7 +2542,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q52.jpg",
-    "id": 147
+    "id": 147,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2413,7 +2560,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q53.jpg",
-    "id": 148
+    "id": 148,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2430,7 +2578,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q54.jpg",
-    "id": 149
+    "id": 149,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2447,7 +2596,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q55.jpg",
-    "id": 150
+    "id": 150,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -2462,7 +2612,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p016_q56.jpg",
-    "id": 151
+    "id": 151,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2479,7 +2630,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q57.jpg",
-    "id": 152
+    "id": 152,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2496,7 +2648,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q58.jpg",
-    "id": 153
+    "id": 153,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2513,7 +2666,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q59.jpg",
-    "id": 154
+    "id": 154,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2530,7 +2684,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q60.jpg",
-    "id": 155
+    "id": 155,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2547,7 +2702,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q61.jpg",
-    "id": 156
+    "id": 156,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2564,7 +2720,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q62.jpg",
-    "id": 157
+    "id": 157,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2581,7 +2738,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q63.jpg",
-    "id": 158
+    "id": 158,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -2598,7 +2756,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p017_q64.jpg",
-    "id": 159
+    "id": 159,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2615,7 +2774,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q65.jpg",
-    "id": 160
+    "id": 160,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2632,7 +2792,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q66.jpg",
-    "id": 161
+    "id": 161,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2649,7 +2810,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q67.jpg",
-    "id": 162
+    "id": 162,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2666,7 +2828,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q68.jpg",
-    "id": 163
+    "id": 163,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2683,7 +2846,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q69.jpg",
-    "id": 164
+    "id": 164,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -2699,7 +2863,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q70.jpg",
-    "id": 165
+    "id": 165,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2716,7 +2881,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q71.jpg",
-    "id": 166
+    "id": 166,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2733,7 +2899,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p018_q72.jpg",
-    "id": 167
+    "id": 167,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2750,7 +2917,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q73.jpg",
-    "id": 168
+    "id": 168,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2767,7 +2935,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q74.jpg",
-    "id": 169
+    "id": 169,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2784,7 +2953,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q75.jpg",
-    "id": 170
+    "id": 170,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2801,7 +2971,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q76.jpg",
-    "id": 171
+    "id": 171,
+    "area": "III"
   },
   {
     "type": "ordering",
@@ -2817,7 +2988,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q77.jpg",
-    "id": 172
+    "id": 172,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2834,7 +3006,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q78.jpg",
-    "id": 173
+    "id": 173,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2851,7 +3024,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q79.jpg",
-    "id": 174
+    "id": 174,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2868,7 +3042,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p019_q80.jpg",
-    "id": 175
+    "id": 175,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2885,7 +3060,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q81.jpg",
-    "id": 176
+    "id": 176,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2902,7 +3078,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q82.jpg",
-    "id": 177
+    "id": 177,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2919,7 +3096,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q83.jpg",
-    "id": 178
+    "id": 178,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2936,7 +3114,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q84.jpg",
-    "id": 179
+    "id": 179,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2953,7 +3132,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q85.jpg",
-    "id": 180
+    "id": 180,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2970,7 +3150,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q86.jpg",
-    "id": 181
+    "id": 181,
+    "area": "III"
   },
   {
     "type": "image",
@@ -2987,7 +3168,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q87.jpg",
-    "id": 182
+    "id": 182,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3004,7 +3186,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p020_q88.jpg",
-    "id": 183
+    "id": 183,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3021,7 +3204,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q89.jpg",
-    "id": 184
+    "id": 184,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3038,7 +3222,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q90.jpg",
-    "id": 185
+    "id": 185,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3055,7 +3240,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q91.jpg",
-    "id": 186
+    "id": 186,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3072,7 +3258,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q92.jpg",
-    "id": 187
+    "id": 187,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3089,7 +3276,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q93.jpg",
-    "id": 188
+    "id": 188,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3106,7 +3294,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q94.jpg",
-    "id": 189
+    "id": 189,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3123,7 +3312,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q95.jpg",
-    "id": 190
+    "id": 190,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3140,7 +3330,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p021_q96.jpg",
-    "id": 191
+    "id": 191,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3157,7 +3348,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q97.jpg",
-    "id": 192
+    "id": 192,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3174,7 +3366,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q98.jpg",
-    "id": 193
+    "id": 193,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3191,7 +3384,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q99.jpg",
-    "id": 194
+    "id": 194,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3208,7 +3402,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q100.jpg",
-    "id": 195
+    "id": 195,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3225,7 +3420,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q101.jpg",
-    "id": 196
+    "id": 196,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3242,7 +3438,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q102.jpg",
-    "id": 197
+    "id": 197,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3259,7 +3456,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q103.jpg",
-    "id": 198
+    "id": 198,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3276,7 +3474,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q104.jpg",
-    "id": 199
+    "id": 199,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3293,7 +3492,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q105.jpg",
-    "id": 200
+    "id": 200,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3310,7 +3510,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p022_q106.jpg",
-    "id": 201
+    "id": 201,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3327,7 +3528,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q107.jpg",
-    "id": 202
+    "id": 202,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3344,7 +3546,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q108.jpg",
-    "id": 203
+    "id": 203,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3361,7 +3564,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q109.jpg",
-    "id": 204
+    "id": 204,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3378,7 +3582,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q110.jpg",
-    "id": 205
+    "id": 205,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3395,7 +3600,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q111.jpg",
-    "id": 206
+    "id": 206,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3412,7 +3618,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q112.jpg",
-    "id": 207
+    "id": 207,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3429,7 +3636,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q113.jpg",
-    "id": 208
+    "id": 208,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3446,7 +3654,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p023_q114.jpg",
-    "id": 209
+    "id": 209,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3463,7 +3672,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q115.jpg",
-    "id": 210
+    "id": 210,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3480,7 +3690,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q116.jpg",
-    "id": 211
+    "id": 211,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3497,7 +3708,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q117.jpg",
-    "id": 212
+    "id": 212,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3514,7 +3726,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q118.jpg",
-    "id": 213
+    "id": 213,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3531,7 +3744,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q119.jpg",
-    "id": 214
+    "id": 214,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3548,7 +3762,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q120.jpg",
-    "id": 215
+    "id": 215,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3565,7 +3780,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q121.jpg",
-    "id": 216
+    "id": 216,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3582,7 +3798,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p024_q122.jpg",
-    "id": 217
+    "id": 217,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3599,7 +3816,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q123.jpg",
-    "id": 218
+    "id": 218,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3616,7 +3834,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q124.jpg",
-    "id": 219
+    "id": 219,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3633,7 +3852,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q125.jpg",
-    "id": 220
+    "id": 220,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3650,7 +3870,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q126.jpg",
-    "id": 221
+    "id": 221,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3667,7 +3888,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q127.jpg",
-    "id": 222
+    "id": 222,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3684,7 +3906,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q128.jpg",
-    "id": 223
+    "id": 223,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3701,7 +3924,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q129.jpg",
-    "id": 224
+    "id": 224,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3718,7 +3942,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p025_q130.jpg",
-    "id": 225
+    "id": 225,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3735,7 +3960,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q131.jpg",
-    "id": 226
+    "id": 226,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3752,7 +3978,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q132.jpg",
-    "id": 227
+    "id": 227,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3769,7 +3996,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q133.jpg",
-    "id": 228
+    "id": 228,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3786,7 +4014,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q134.jpg",
-    "id": 229
+    "id": 229,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3803,7 +4032,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q135.jpg",
-    "id": 230
+    "id": 230,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3820,7 +4050,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q136.png",
-    "id": 231
+    "id": 231,
+    "area": "II"
   },
   {
     "type": "image",
@@ -3837,7 +4068,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q137.jpg",
-    "id": 232
+    "id": 232,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3854,7 +4086,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p026_q138.png",
-    "id": 233
+    "id": 233,
+    "area": "II"
   },
   {
     "type": "image",
@@ -3871,7 +4104,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q139.jpg",
-    "id": 234
+    "id": 234,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3888,7 +4122,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q140.jpg",
-    "id": 235
+    "id": 235,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3905,7 +4140,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q141.jpg",
-    "id": 236
+    "id": 236,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3922,7 +4158,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q142.jpg",
-    "id": 237
+    "id": 237,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3939,7 +4176,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q143.jpg",
-    "id": 238
+    "id": 238,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3956,7 +4194,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q144.jpg",
-    "id": 239
+    "id": 239,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3973,7 +4212,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q145.jpg",
-    "id": 240
+    "id": 240,
+    "area": "III"
   },
   {
     "type": "image",
@@ -3990,7 +4230,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p027_q146.jpg",
-    "id": 241
+    "id": 241,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4007,7 +4248,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q147.jpg",
-    "id": 242
+    "id": 242,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4024,7 +4266,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q148.jpg",
-    "id": 243
+    "id": 243,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4041,7 +4284,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q149.jpg",
-    "id": 244
+    "id": 244,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4058,7 +4302,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q150.jpg",
-    "id": 245
+    "id": 245,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4075,7 +4320,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q151.jpg",
-    "id": 246
+    "id": 246,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4092,7 +4338,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q152.jpg",
-    "id": 247
+    "id": 247,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4109,7 +4356,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q153.jpg",
-    "id": 248
+    "id": 248,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4126,7 +4374,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q154.jpg",
-    "id": 249
+    "id": 249,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4143,7 +4392,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q155.jpg",
-    "id": 250
+    "id": 250,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4160,7 +4410,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p028_q156.jpg",
-    "id": 251
+    "id": 251,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4177,7 +4428,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p029_q157.jpg",
-    "id": 252
+    "id": 252,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4194,7 +4446,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p029_q158.jpg",
-    "id": 253
+    "id": 253,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4211,7 +4464,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p029_q159.jpg",
-    "id": 254
+    "id": 254,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4228,7 +4482,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p029_q160.jpg",
-    "id": 255
+    "id": 255,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4245,7 +4500,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q01.png",
-    "id": 256
+    "id": 256,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4262,7 +4518,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q02.jpg",
-    "id": 257
+    "id": 257,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4279,7 +4536,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q03.png",
-    "id": 258
+    "id": 258,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4296,7 +4554,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q04.png",
-    "id": 259
+    "id": 259,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4313,7 +4572,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q05.jpg",
-    "id": 260
+    "id": 260,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4330,7 +4590,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q06.png",
-    "id": 261
+    "id": 261,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4347,7 +4608,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q07.png",
-    "id": 262
+    "id": 262,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4364,7 +4626,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p030_q08.png",
-    "id": 263
+    "id": 263,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4381,7 +4644,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q09.png",
-    "id": 264
+    "id": 264,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4398,7 +4662,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q10.png",
-    "id": 265
+    "id": 265,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4415,7 +4680,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q11.png",
-    "id": 266
+    "id": 266,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4432,7 +4698,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q12.png",
-    "id": 267
+    "id": 267,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4449,7 +4716,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q13.png",
-    "id": 268
+    "id": 268,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4466,7 +4734,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q14.png",
-    "id": 269
+    "id": 269,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4483,7 +4752,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q15.png",
-    "id": 270
+    "id": 270,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4500,7 +4770,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q16.png",
-    "id": 271
+    "id": 271,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4517,7 +4788,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p031_q17.png",
-    "id": 272
+    "id": 272,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4534,7 +4806,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q18.png",
-    "id": 273
+    "id": 273,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4551,7 +4824,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q19.png",
-    "id": 274
+    "id": 274,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4568,7 +4842,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q20.png",
-    "id": 275
+    "id": 275,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4585,7 +4860,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q21.jpg",
-    "id": 276
+    "id": 276,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4602,7 +4878,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q22.jpg",
-    "id": 277
+    "id": 277,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4619,7 +4896,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q23.png",
-    "id": 278
+    "id": 278,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4636,7 +4914,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q24.png",
-    "id": 279
+    "id": 279,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4653,7 +4932,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p032_q25.png",
-    "id": 280
+    "id": 280,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4670,7 +4950,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q26.png",
-    "id": 281
+    "id": 281,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4687,7 +4968,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q27.png",
-    "id": 282
+    "id": 282,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4704,7 +4986,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q28.png",
-    "id": 283
+    "id": 283,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4721,7 +5004,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q29.jpg",
-    "id": 284
+    "id": 284,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4738,7 +5022,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q30.png",
-    "id": 285
+    "id": 285,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4755,7 +5040,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q31.png",
-    "id": 286
+    "id": 286,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4772,7 +5058,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q32.jpg",
-    "id": 287
+    "id": 287,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4789,7 +5076,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p033_q33.png",
-    "id": 288
+    "id": 288,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4806,7 +5094,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q34.png",
-    "id": 289
+    "id": 289,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4823,7 +5112,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q35.png",
-    "id": 290
+    "id": 290,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4840,7 +5130,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q36.png",
-    "id": 291
+    "id": 291,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4857,7 +5148,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q37.png",
-    "id": 292
+    "id": 292,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4874,7 +5166,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q38.png",
-    "id": 293
+    "id": 293,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4891,7 +5184,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q39.png",
-    "id": 294
+    "id": 294,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4908,7 +5202,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q40.png",
-    "id": 295
+    "id": 295,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4925,7 +5220,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p034_q41.png",
-    "id": 296
+    "id": 296,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4942,7 +5238,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q42.jpg",
-    "id": 297
+    "id": 297,
+    "area": "III"
   },
   {
     "type": "image",
@@ -4959,7 +5256,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q43.png",
-    "id": 298
+    "id": 298,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4976,7 +5274,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q44.png",
-    "id": 299
+    "id": 299,
+    "area": "II"
   },
   {
     "type": "image",
@@ -4993,7 +5292,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q45.png",
-    "id": 300
+    "id": 300,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5010,7 +5310,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q46.png",
-    "id": 301
+    "id": 301,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5027,7 +5328,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q47.png",
-    "id": 302
+    "id": 302,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5044,7 +5346,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q48.png",
-    "id": 303
+    "id": 303,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5061,7 +5364,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q49.png",
-    "id": 304
+    "id": 304,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5078,7 +5382,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p035_q50.jpg",
-    "id": 305
+    "id": 305,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5095,7 +5400,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q51.jpg",
-    "id": 306
+    "id": 306,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5112,7 +5418,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q52.png",
-    "id": 307
+    "id": 307,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5129,7 +5436,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q53.png",
-    "id": 308
+    "id": 308,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5146,7 +5454,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q54.png",
-    "id": 309
+    "id": 309,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5163,7 +5472,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q55.png",
-    "id": 310
+    "id": 310,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5180,7 +5490,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q56.png",
-    "id": 311
+    "id": 311,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5197,7 +5508,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q57.png",
-    "id": 312
+    "id": 312,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5214,7 +5526,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p036_q58.png",
-    "id": 313
+    "id": 313,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5231,7 +5544,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q59.png",
-    "id": 314
+    "id": 314,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5248,7 +5562,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q60.png",
-    "id": 315
+    "id": 315,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5265,7 +5580,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q61.png",
-    "id": 316
+    "id": 316,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5282,7 +5598,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q62.png",
-    "id": 317
+    "id": 317,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5299,7 +5616,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q63.png",
-    "id": 318
+    "id": 318,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5316,7 +5634,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q64.png",
-    "id": 319
+    "id": 319,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5333,7 +5652,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q65.jpg",
-    "id": 320
+    "id": 320,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5350,7 +5670,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q66.png",
-    "id": 321
+    "id": 321,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5367,7 +5688,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p037_q67.png",
-    "id": 322
+    "id": 322,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5384,7 +5706,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q68.png",
-    "id": 323
+    "id": 323,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5401,7 +5724,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q69.png",
-    "id": 324
+    "id": 324,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5418,7 +5742,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q70.png",
-    "id": 325
+    "id": 325,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5435,7 +5760,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q71.png",
-    "id": 326
+    "id": 326,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5452,7 +5778,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q72.png",
-    "id": 327
+    "id": 327,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5469,7 +5796,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q73.png",
-    "id": 328
+    "id": 328,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5486,7 +5814,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q74.jpg",
-    "id": 329
+    "id": 329,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5503,7 +5832,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q75.png",
-    "id": 330
+    "id": 330,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5520,7 +5850,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p038_q76.png",
-    "id": 331
+    "id": 331,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5537,7 +5868,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p039_q77.png",
-    "id": 332
+    "id": 332,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5554,7 +5886,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p039_q78.png",
-    "id": 333
+    "id": 333,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5571,7 +5904,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p039_q79.png",
-    "id": 334
+    "id": 334,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5588,7 +5922,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p039_q80.png",
-    "id": 335
+    "id": 335,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5605,7 +5940,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p039_q81.png",
-    "id": 336
+    "id": 336,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5622,7 +5958,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q01.jpg",
-    "id": 337
+    "id": 337,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5639,7 +5976,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q02.jpg",
-    "id": 338
+    "id": 338,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5656,7 +5994,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q03.jpg",
-    "id": 339
+    "id": 339,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5673,7 +6012,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q04.jpg",
-    "id": 340
+    "id": 340,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5690,7 +6030,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q05.jpg",
-    "id": 341
+    "id": 341,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5707,7 +6048,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q06.jpg",
-    "id": 342
+    "id": 342,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5724,7 +6066,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q07.jpg",
-    "id": 343
+    "id": 343,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5741,7 +6084,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p040_q08.jpg",
-    "id": 344
+    "id": 344,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5758,7 +6102,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q09.jpg",
-    "id": 345
+    "id": 345,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5775,7 +6120,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q10.jpg",
-    "id": 346
+    "id": 346,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5792,7 +6138,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q11.jpg",
-    "id": 347
+    "id": 347,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5809,7 +6156,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q12.jpg",
-    "id": 348
+    "id": 348,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5826,7 +6174,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q13.png",
-    "id": 349
+    "id": 349,
+    "area": "II"
   },
   {
     "type": "image",
@@ -5843,7 +6192,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q14.jpg",
-    "id": 350
+    "id": 350,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5860,7 +6210,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q15.jpg",
-    "id": 351
+    "id": 351,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5877,7 +6228,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q16.jpg",
-    "id": 352
+    "id": 352,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5894,7 +6246,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p041_q17.jpg",
-    "id": 353
+    "id": 353,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5911,7 +6264,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q18.jpg",
-    "id": 354
+    "id": 354,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5928,7 +6282,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q19.jpg",
-    "id": 355
+    "id": 355,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5945,7 +6300,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q20.jpg",
-    "id": 356
+    "id": 356,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5962,7 +6318,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q21.jpg",
-    "id": 357
+    "id": 357,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5979,7 +6336,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q22.jpg",
-    "id": 358
+    "id": 358,
+    "area": "III"
   },
   {
     "type": "image",
@@ -5996,7 +6354,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q23.jpg",
-    "id": 359
+    "id": 359,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6013,7 +6372,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q24.jpg",
-    "id": 360
+    "id": 360,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6030,7 +6390,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q25.jpg",
-    "id": 361
+    "id": 361,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6047,7 +6408,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p042_q26.jpg",
-    "id": 362
+    "id": 362,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6064,7 +6426,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q27.jpg",
-    "id": 363
+    "id": 363,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6081,7 +6444,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q28.jpg",
-    "id": 364
+    "id": 364,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6098,7 +6462,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q29.jpg",
-    "id": 365
+    "id": 365,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6115,7 +6480,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q30.jpg",
-    "id": 366
+    "id": 366,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6132,7 +6498,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q31.jpg",
-    "id": 367
+    "id": 367,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6149,7 +6516,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q32.jpg",
-    "id": 368
+    "id": 368,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6166,7 +6534,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q33.jpg",
-    "id": 369
+    "id": 369,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6183,7 +6552,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q34.jpg",
-    "id": 370
+    "id": 370,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6200,7 +6570,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q35.jpg",
-    "id": 371
+    "id": 371,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6217,7 +6588,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p043_q36.jpg",
-    "id": 372
+    "id": 372,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6234,7 +6606,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p044_q37.jpg",
-    "id": 373
+    "id": 373,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6251,7 +6624,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p044_q38.jpg",
-    "id": 374
+    "id": 374,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6268,7 +6642,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p044_q39.jpg",
-    "id": 375
+    "id": 375,
+    "area": "III"
   },
   {
     "type": "image",
@@ -6285,7 +6660,8 @@
     "needs_review": false,
     "review_reason": [],
     "image": "p044_q40.jpg",
-    "id": 376
+    "id": 376,
+    "area": "III"
   },
   {
     "type": "text",
@@ -6301,7 +6677,8 @@
     "local_no": 1,
     "needs_review": false,
     "review_reason": [],
-    "id": 377
+    "id": 377,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6317,7 +6694,8 @@
     "local_no": 2,
     "needs_review": false,
     "review_reason": [],
-    "id": 378
+    "id": 378,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6333,7 +6711,8 @@
     "local_no": 3,
     "needs_review": false,
     "review_reason": [],
-    "id": 379
+    "id": 379,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6349,7 +6728,8 @@
     "local_no": 4,
     "needs_review": false,
     "review_reason": [],
-    "id": 380
+    "id": 380,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6365,7 +6745,8 @@
     "local_no": 5,
     "needs_review": false,
     "review_reason": [],
-    "id": 381
+    "id": 381,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6381,7 +6762,8 @@
     "local_no": 6,
     "needs_review": false,
     "review_reason": [],
-    "id": 382
+    "id": 382,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6397,7 +6779,8 @@
     "local_no": 7,
     "needs_review": false,
     "review_reason": [],
-    "id": 383
+    "id": 383,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6413,7 +6796,8 @@
     "local_no": 8,
     "needs_review": false,
     "review_reason": [],
-    "id": 384
+    "id": 384,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6429,7 +6813,8 @@
     "local_no": 9,
     "needs_review": false,
     "review_reason": [],
-    "id": 385
+    "id": 385,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6445,7 +6830,8 @@
     "local_no": 10,
     "needs_review": false,
     "review_reason": [],
-    "id": 386
+    "id": 386,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6461,7 +6847,8 @@
     "local_no": 11,
     "needs_review": false,
     "review_reason": [],
-    "id": 387
+    "id": 387,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6477,7 +6864,8 @@
     "local_no": 12,
     "needs_review": false,
     "review_reason": [],
-    "id": 388
+    "id": 388,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6493,7 +6881,8 @@
     "local_no": 13,
     "needs_review": false,
     "review_reason": [],
-    "id": 389
+    "id": 389,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6509,7 +6898,8 @@
     "local_no": 14,
     "needs_review": false,
     "review_reason": [],
-    "id": 390
+    "id": 390,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6525,7 +6915,8 @@
     "local_no": 15,
     "needs_review": false,
     "review_reason": [],
-    "id": 391
+    "id": 391,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6541,7 +6932,8 @@
     "local_no": 16,
     "needs_review": false,
     "review_reason": [],
-    "id": 392
+    "id": 392,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6557,7 +6949,8 @@
     "local_no": 17,
     "needs_review": false,
     "review_reason": [],
-    "id": 393
+    "id": 393,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6573,7 +6966,8 @@
     "local_no": 18,
     "needs_review": false,
     "review_reason": [],
-    "id": 394
+    "id": 394,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6589,7 +6983,8 @@
     "local_no": 19,
     "needs_review": false,
     "review_reason": [],
-    "id": 395
+    "id": 395,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6605,7 +7000,8 @@
     "local_no": 20,
     "needs_review": false,
     "review_reason": [],
-    "id": 396
+    "id": 396,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6621,7 +7017,8 @@
     "local_no": 21,
     "needs_review": false,
     "review_reason": [],
-    "id": 397
+    "id": 397,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6637,7 +7034,8 @@
     "local_no": 22,
     "needs_review": false,
     "review_reason": [],
-    "id": 398
+    "id": 398,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6653,7 +7051,8 @@
     "local_no": 23,
     "needs_review": false,
     "review_reason": [],
-    "id": 399
+    "id": 399,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6669,7 +7068,8 @@
     "local_no": 24,
     "needs_review": false,
     "review_reason": [],
-    "id": 400
+    "id": 400,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6685,7 +7085,8 @@
     "local_no": 25,
     "needs_review": false,
     "review_reason": [],
-    "id": 401
+    "id": 401,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6701,7 +7102,8 @@
     "local_no": 26,
     "needs_review": false,
     "review_reason": [],
-    "id": 402
+    "id": 402,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6717,7 +7119,8 @@
     "local_no": 27,
     "needs_review": false,
     "review_reason": [],
-    "id": 403
+    "id": 403,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6733,7 +7136,8 @@
     "local_no": 28,
     "needs_review": false,
     "review_reason": [],
-    "id": 404
+    "id": 404,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6749,7 +7153,8 @@
     "local_no": 29,
     "needs_review": false,
     "review_reason": [],
-    "id": 405
+    "id": 405,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6765,7 +7170,8 @@
     "local_no": 30,
     "needs_review": false,
     "review_reason": [],
-    "id": 406
+    "id": 406,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6781,7 +7187,8 @@
     "local_no": 31,
     "needs_review": false,
     "review_reason": [],
-    "id": 407
+    "id": 407,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6797,7 +7204,8 @@
     "local_no": 32,
     "needs_review": false,
     "review_reason": [],
-    "id": 408
+    "id": 408,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6813,7 +7221,8 @@
     "local_no": 33,
     "needs_review": false,
     "review_reason": [],
-    "id": 409
+    "id": 409,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6829,7 +7238,8 @@
     "local_no": 34,
     "needs_review": false,
     "review_reason": [],
-    "id": 410
+    "id": 410,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6845,7 +7255,8 @@
     "local_no": 35,
     "needs_review": false,
     "review_reason": [],
-    "id": 411
+    "id": 411,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6861,7 +7272,8 @@
     "local_no": 36,
     "needs_review": false,
     "review_reason": [],
-    "id": 412
+    "id": 412,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6877,7 +7289,8 @@
     "local_no": 37,
     "needs_review": false,
     "review_reason": [],
-    "id": 413
+    "id": 413,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6893,7 +7306,8 @@
     "local_no": 38,
     "needs_review": false,
     "review_reason": [],
-    "id": 414
+    "id": 414,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6909,7 +7323,8 @@
     "local_no": 39,
     "needs_review": false,
     "review_reason": [],
-    "id": 415
+    "id": 415,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6925,7 +7340,8 @@
     "local_no": 40,
     "needs_review": false,
     "review_reason": [],
-    "id": 416
+    "id": 416,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6941,7 +7357,8 @@
     "local_no": 41,
     "needs_review": false,
     "review_reason": [],
-    "id": 417
+    "id": 417,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6957,7 +7374,8 @@
     "local_no": 42,
     "needs_review": false,
     "review_reason": [],
-    "id": 418
+    "id": 418,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6973,7 +7391,8 @@
     "local_no": 43,
     "needs_review": false,
     "review_reason": [],
-    "id": 419
+    "id": 419,
+    "area": "I"
   },
   {
     "type": "text",
@@ -6989,7 +7408,8 @@
     "local_no": 44,
     "needs_review": false,
     "review_reason": [],
-    "id": 420
+    "id": 420,
+    "area": "I"
   },
   {
     "type": "text",
@@ -7005,6 +7425,7 @@
     "local_no": 45,
     "needs_review": false,
     "review_reason": [],
-    "id": 421
+    "id": 421,
+    "area": "I"
   }
 ]

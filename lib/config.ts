@@ -21,6 +21,29 @@ export const EXAM_TOTAL_POINTS = 80;
 /** Bodova potrebno za prolaz. */
 export const EXAM_PASS_POINTS = 68; // prag: 68 od 80 bodova
 
+/**
+ * NORMA PO OBLASTIMA — test se NE izvlači ravnomjerno nasumično.
+ * Svako pitanje u questions.json ima `area`:
+ *   I = propisi/teorija, II = saobraćajni znakovi, III = raskrsnice/situacije
+ *
+ * Brojevi su ODNOS u kojem se pitanja izvlače (regionalna norma je ~2:1:1).
+ * NIJE broj pitanja na ispitu: ispit se puni dok zbir ne bude EXAM_TOTAL_POINTS,
+ * pa broj pitanja ispadne manji — vidi `buildExam` u lib/questions.ts.
+ *
+ * TODO(MIRAV): potvrditi tačnu kvotu po važećem Pravilniku (MUP CG), ili
+ *   empirijski: pokrenuti jednu zvaničnu simulaciju na eUpravi i prebrojati
+ *   koliko pitanja dolazi iz svake oblasti.
+ *   Oblast „Posljedice nepoštovanja propisa" NE dolazi na ispit.
+ *
+ * Napomena: sa bodovima iz našeg kataloga 41 pitanje po odnosu 21:10:10 daje
+ * 87–116 bodova, nikad 80. Zato odnos određuje SASTAV, a granica je 80 bodova.
+ */
+export const EXAM_QUOTA: Readonly<Record<"I" | "II" | "III", number>> = {
+  I: 21,
+  II: 10,
+  III: 10,
+};
+
 /** Trajanje ispita u minutima. */
 export const EXAM_MINUTES = 45; // 45 minuta
 

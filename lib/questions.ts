@@ -1,11 +1,13 @@
 import { DEFAULT_ORDERING_POINTS } from "./config";
 import type { Lang } from "./i18n";
-import type {
-  Answer,
-  ChoiceQuestion,
-  OptionKey,
-  OrderingQuestion,
-  Question,
+import {
+  AREAS,
+  type Answer,
+  type Area,
+  type ChoiceQuestion,
+  type OptionKey,
+  type OrderingQuestion,
+  type Question,
 } from "./types";
 
 /**
@@ -71,39 +73,102 @@ export function sample<T>(items: readonly T[], count: number): T[] {
 }
 
 /**
- * Sastavlja ispit čiji je zbir bodova TAČNO `targetPoints`.
- *
- * Broj pitanja zato nije fiksan — zavisi od toga koliko koje pitanje nosi (1–4).
- * Radi u dva koraka: prvo pokupi nasumična pitanja koja staju u preostali budžet,
- * pa ako na kraju fali 1–4 boda, dopuni jednim pitanjem tačno te vrijednosti.
- * Drugi korak je bitan: bez njega bi ispit povremeno završio sa 78 ili 79 bodova,
- * pa bi prag „68 od 80" bio netačan.
+ * Redoslijed oblasti iz kojih se redom vuku pitanja, u odnosu zadatom kvotom.
+ * Npr. za 21:10:10 niz sadrži 21 „I", 10 „II" i 10 „III", izmiješano.
  */
-export function buildExam(questions: readonly Question[], targetPoints: number): Question[] {
-  const pool = shuffle(questions);
+function areaDrawOrder(quota: Readonly<Record<Area, number>>): Area[] {
+  const seq: Area[] = [];
+  for (const area of AREAS) {
+    for (let i = 0; i < (quota[area] ?? 0); i++) seq.push(area);
+  }
+  return shuffle(seq);
+}
+
+/**
+ * Sastavlja ispit čiji je zbir bodova TAČNO `targetPoints`, poštujući pri tom
+ * odnos oblasti iz `quota`.
+ *
+ * Zašto ne fiksan broj pitanja: sa bodovima iz našeg kataloga 41 pitanje po
+ * odnosu 21:10:10 daje 87–116 bodova, nikad 80. Pošto je maksimum na ispitu 80,
+ * odnos oblasti određuje SASTAV, a punjenje staje na 80 bodova — broj pitanja
+ * zato ispadne oko 32.
+ *
+ * Radi u tri koraka:
+ *  1. redom prolazi kroz izmiješani niz oblasti i iz svake vuče pitanje koje
+ *     staje u preostali budžet,
+ *  2. ako budžet nije potrošen (kvota se iscrpila), dopunjuje iz cijele baze,
+ *  3. ako na kraju fali 1–4 boda, dodaje jedno pitanje tačno te vrijednosti.
+ * Treći korak je bitan: bez njega bi ispit povremeno završio na 78 ili 79
+ * bodova, pa bi prag „68 od 80" bio netačan.
+ */
+export function buildExam(
+  questions: readonly Question[],
+  targetPoints: number,
+  quota: Readonly<Record<Area, number>>,
+): Question[] {
+  const byArea = new Map<Area, Question[]>();
+  for (const area of AREAS) {
+    byArea.set(
+      area,
+      shuffle(questions.filter((q) => q.area === area)),
+    );
+  }
+
+  for (const area of AREAS) {
+    const have = byArea.get(area)?.length ?? 0;
+    if (have < (quota[area] ?? 0)) {
+      console.warn(
+        `Oblast ${area}: u bazi je ${have} pitanja, a kvota traži ${quota[area]}. ` +
+          `Ispit će biti dopunjen iz ostalih oblasti.`,
+      );
+    }
+  }
+
   const chosen: Question[] = [];
   const used = new Set<number>();
   let remaining = targetPoints;
 
-  for (const q of pool) {
-    if (remaining === 0) break;
-    const p = questionPoints(q);
-    if (p > remaining) continue;
+  const take = (q: Question) => {
     chosen.push(q);
     used.add(q.id);
-    remaining -= p;
+    remaining -= questionPoints(q);
+  };
+
+  // 1) Po kvoti oblasti
+  for (const area of areaDrawOrder(quota)) {
+    if (remaining === 0) break;
+    const pool = byArea.get(area) ?? [];
+    const pick = pool.find((q) => !used.has(q.id) && questionPoints(q) <= remaining);
+    if (pick) take(pick);
   }
 
-  // Dopuna: nađi neiskorišćeno pitanje koje tačno pokriva ostatak.
+  // 2) Kvota iscrpljena, a budžet nije — dopuni iz cijele baze
   if (remaining > 0) {
-    const exact = pool.find((q) => !used.has(q.id) && questionPoints(q) === remaining);
-    if (exact) {
-      chosen.push(exact);
-      remaining = 0;
+    for (const q of shuffle(questions)) {
+      if (remaining === 0) break;
+      if (used.has(q.id) || questionPoints(q) > remaining) continue;
+      take(q);
     }
   }
 
+  // 3) Tačna dopuna ostatka
+  if (remaining > 0) {
+    const exact = questions.find(
+      (q) => !used.has(q.id) && questionPoints(q) === remaining,
+    );
+    if (exact) take(exact);
+  }
+
   return shuffle(chosen);
+}
+
+/** Broj izvučenih pitanja po oblasti — koristi se za provjeru sastava. */
+export function areaBreakdown(questions: readonly Question[]): Record<Area, number> {
+  const out: Record<Area, number> = { I: 0, II: 0, III: 0 };
+  for (const q of questions) {
+    if (q.area in out) out[q.area] += 1;
+  }
+  return out;
 }
 
 /**

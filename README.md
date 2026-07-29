@@ -48,6 +48,7 @@ Svi parametri su na jednom mjestu — [`lib/config.ts`](lib/config.ts):
 | ------------------------- | -------- | --------------------------------------------------- |
 | `EXAM_TOTAL_POINTS`       | `80`     | Ukupno bodova na ispitu                              |
 | `EXAM_PASS_POINTS`        | `68`     | Bodova potrebno za prolaz                            |
+| `EXAM_QUOTA`              | `21/10/10` | Odnos oblasti I : II : III pri izvlačenju            |
 | `EXAM_MINUTES`            | `45`     | Trajanje ispita u minutima                           |
 | `DEFAULT_ORDERING_POINTS` | `4`      | Bodovi za pitanja sa redoslijedom (katalog ima `null`) |
 | `EXAM_WARNING_SECONDS`    | `300`    | Kad tajmer pređe u crveno (zadnjih 5 min)            |
@@ -56,26 +57,36 @@ Svi parametri su na jednom mjestu — [`lib/config.ts`](lib/config.ts):
 Bodovi po pitanju dolaze iz `questions.json` (`points: 1..4`); `null` (samo kod `ordering`
 pitanja) se tretira kao `DEFAULT_ORDERING_POINTS`.
 
-### Zašto broj pitanja nije fiksan
+### Sastav ispita: oblasti i bodovi
 
-Ispit se sastavlja tako da zbir bodova bude **tačno `EXAM_TOTAL_POINTS`** — vidi `buildExam`
-u [`lib/questions.ts`](lib/questions.ts). Pošto pitanja nose 1–4 boda, broj pitanja ispadne
-**24–37 (prosjek ~30)**. Bez toga bi maksimum varirao od ispita do ispita, pa prag „68 od 80"
-ne bi imao smisla.
+Svako pitanje ima `area`: **I** = propisi/teorija, **II** = saobraćajni znakovi,
+**III** = raskrsnice/situacije. U bazi: I=140, II=73, III=208.
 
-`buildExam` radi u dva koraka: pokupi nasumična pitanja koja staju u preostali budžet, pa ako
-fali 1–4 boda, dopuni jednim pitanjem tačno te vrijednosti. Drugi korak nije kozmetika — bez
-njega bi ispit povremeno završio na 78 ili 79 bodova.
+Test se **ne izvlači ravnomjerno nasumično** — `EXAM_QUOTA` zadaje odnos oblasti (21:10:10),
+a `buildExam` puni ispit dok zbir ne bude **tačno `EXAM_TOTAL_POINTS`**.
 
-> **Važno:** 80 / 68 / 45 je označeno sa `TODO(MIRAV)` u `lib/config.ts`.
-> **Prije objave MIRAV treba da potvrdi tačne brojeve po važećem Pravilniku o
-> osposobljavanju kandidata za vozače (MUP CG)**, uključujući eventualnu raspodjelu po
-> oblastima (teorija / znakovi / raskrsnice) — koja za sad nije implementirana; izbor
-> pitanja je čist random.
+> **Zašto odnos, a ne fiksnih 41 pitanje:** sa bodovima iz našeg kataloga 41 pitanje po
+> odnosu 21:10:10 daje **87–116 bodova, nikad 80** (provjereno na 4000 izvlačenja). Pošto je
+> maksimum na ispitu 80, odnos određuje **sastav**, a punjenje staje na 80 bodova — broj
+> pitanja zato ispadne **27–39 (prosjek 32)**.
 >
-> Ako je zvanično fiksan **i** broj pitanja **i** ukupan broj bodova, treba nam zvanična
-> raspodjela po bodovima (koliko pitanja od 1, 2, 3 i 4 boda) da bi oba uslova mogla važiti
-> istovremeno.
+> Ako se ispostavi da je zvanično i broj pitanja fiksan (41) i maksimum 80, znači da se
+> bodovi po pitanju u zvaničnom katalogu razlikuju od naših — to treba provjeriti sa MIRAV-om.
+
+Izmjereni sastav na 4000 ispita: **I=51,1% · II=24,1% · III=24,8%** naspram traženih
+51,2 / 24,4 / 24,4. Bez kvote bi bio 34,9 / 18,4 / 46,7 — dakle kvota stvarno mijenja izbor.
+
+`buildExam` radi u tri koraka: vuče po kvoti oblasti, dopuni iz cijele baze ako se kvota
+iscrpi prije budžeta, pa ako fali 1–4 boda doda jedno pitanje tačno te vrijednosti. Treći
+korak nije kozmetika — bez njega bi ispit povremeno završio na 78 ili 79 bodova. Ako neka
+oblast nema dovoljno pitanja, ispiše se upozorenje u konzoli i ispit se dopuni iz ostalih.
+
+> **Važno:** 80 / 68 / 45 i kvota 21:10:10 označeni su sa `TODO(MIRAV)` u `lib/config.ts`.
+> **Prije objave MIRAV treba da potvrdi tačne brojeve po važećem Pravilniku o
+> osposobljavanju kandidata za vozače (MUP CG)**, ili empirijski: pokrenuti jednu zvaničnu
+> simulaciju na eUpravi i prebrojati koliko pitanja dolazi iz svake oblasti.
+>
+> Oblast „Posljedice nepoštovanja propisa" ne dolazi na ispit i nema je u bazi.
 
 Tekstovi u interfejsu ne ponavljaju ove brojeve — izvode ih iz `config.ts`, pa promjena
 jedne konstante mijenja i prikaz.
@@ -89,7 +100,7 @@ nema vremensko ograničenje.
 
 | Putanja                  | Sadržaj                                  |
 | ------------------------ | ---------------------------------------- |
-| `public/questions.json`  | 421 pitanje                              |
+| `public/questions.json`  | 421 pitanje (sa poljem `area`: I / II / III) |
 | `public/web_images/`     | 281 slika — 208 JPG (fotografije situacija) + 73 PNG (znakovi) |
 | `lib/imageSizes.ts`      | **generisano** — dimenzije svake slike    |
 
