@@ -66,6 +66,8 @@ npm run gen:image-sizes    # regeneriše lib/imageSizes.ts
 ```
 
 Podržani su PNG i JPEG; skripta prekida rad ako nekoj slici ne može pročitati dimenzije.
+Slike se serviraju **bez Vercel optimizacije** (`images.unoptimized` u `next.config.mjs`) da
+se ne troši mjesečna kvota transformacija na Hobby planu — vidi „Deploy na Vercel".
 Dimenzije su potrebne `next/image` komponenti da ne bi dolazilo do pomjeranja sadržaja dok
 se slika učitava, i da se slika **nikad ne prikaže veća od svoje prirodne veličine** (inače
 bi manje slike znakova bile razvučene i mutne).
@@ -128,17 +130,37 @@ Ostale rute imaju `X-Frame-Options: SAMEORIGIN` i ne mogu se ugrađivati sa drug
 
 ## Deploy na Vercel
 
+Repo je povezan sa GitHub-om, pa **svaki `git push` na `main` automatski redeployuje**.
+
+Prvo postavljanje:
+
 ```bash
-npm run build
-git add -A && git commit -m "MIRAV teorijski test v1"
-git remote add origin git@github.com:<nalog>/mirav-test.git
+git remote add origin https://github.com/<nalog>/mirav-test.git
 git push -u origin main
 ```
 
-Zatim: vercel.com → **Add New Project** → importuj repo → Deploy.
-Bez GitHub-a: `npm i -g vercel && vercel` iz ovog foldera.
+Zatim na vercel.com → **Add New… → Project** → importuj repo → **Deploy**.
+Next.js se prepoznaje sam; nema env varijabli ni posebnih podešavanja.
 
-Za brendiran URL može se dodati domen `test.mirav.me` (CNAME kod DNS provajdera).
+Svaka naredna izmjena:
+
+```bash
+git add -A && git commit -m "opis izmjene"
+git push
+```
+
+### Optimizacija slika
+
+`images.unoptimized = true` u [`next.config.mjs`](next.config.mjs) — slike idu direktno sa
+CDN-a, bez `/_next/image` transformacija. Razlog: baza ima 281 sliku, a Hobby plan ima
+mjesečnu kvotu transformacija. Slike su ionako male (~60 kB) i dimenzionisane za prikaz.
+Na plaćenom planu se ta opcija može obrisati da se dobije WebP (oko 3× manji fajlovi).
+
+### Custom domen
+
+Za brendiran URL: Vercel → Project → **Settings → Domains** → dodaj `test.mirav.me`, pa kod
+DNS provajdera napravi CNAME zapis koji Vercel prikaže. Poslije toga dodaj i taj domen u
+`FRAME_ANCESTORS` ako se kviz ugrađuje sa njega.
 
 ---
 

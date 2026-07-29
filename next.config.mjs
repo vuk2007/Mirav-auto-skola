@@ -8,6 +8,14 @@ const FRAME_ANCESTORS = ["'self'", "https://mirav.me", "https://*.mirav.me"];
 const nextConfig = {
   reactStrictMode: true,
 
+  images: {
+    // Slike se serviraju kakve jesu, bez Vercel optimizacije (WebP/resize).
+    // Razlog: Hobby plan ima mjesečnu kvotu transformacija, a baza ima 281
+    // sliku; sve su ionako male (~60 kB) i dimenzionisane za prikaz.
+    // Ako se pređe na plaćeni plan, dovoljno je obrisati ovu opciju.
+    unoptimized: true,
+  },
+
   async headers() {
     return [
       {
