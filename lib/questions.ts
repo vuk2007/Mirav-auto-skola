@@ -71,6 +71,42 @@ export function sample<T>(items: readonly T[], count: number): T[] {
 }
 
 /**
+ * Sastavlja ispit čiji je zbir bodova TAČNO `targetPoints`.
+ *
+ * Broj pitanja zato nije fiksan — zavisi od toga koliko koje pitanje nosi (1–4).
+ * Radi u dva koraka: prvo pokupi nasumična pitanja koja staju u preostali budžet,
+ * pa ako na kraju fali 1–4 boda, dopuni jednim pitanjem tačno te vrijednosti.
+ * Drugi korak je bitan: bez njega bi ispit povremeno završio sa 78 ili 79 bodova,
+ * pa bi prag „68 od 80" bio netačan.
+ */
+export function buildExam(questions: readonly Question[], targetPoints: number): Question[] {
+  const pool = shuffle(questions);
+  const chosen: Question[] = [];
+  const used = new Set<number>();
+  let remaining = targetPoints;
+
+  for (const q of pool) {
+    if (remaining === 0) break;
+    const p = questionPoints(q);
+    if (p > remaining) continue;
+    chosen.push(q);
+    used.add(q.id);
+    remaining -= p;
+  }
+
+  // Dopuna: nađi neiskorišćeno pitanje koje tačno pokriva ostatak.
+  if (remaining > 0) {
+    const exact = pool.find((q) => !used.has(q.id) && questionPoints(q) === remaining);
+    if (exact) {
+      chosen.push(exact);
+      remaining = 0;
+    }
+  }
+
+  return shuffle(chosen);
+}
+
+/**
  * Vraća pitanja tačno onim redom kojim su ID-evi navedeni.
  * Koristi se za „nastavi vježbu" — bez sačuvanog redoslijeda korisnik bi se
  * vratio na isti *indeks*, ali na sasvim drugo pitanje.

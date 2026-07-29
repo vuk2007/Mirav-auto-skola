@@ -1,23 +1,28 @@
 /**
  * Parametri simulacije ispita — Crna Gora, B kategorija.
  *
- * Izvor: više crnogorskih auto-škola koje upućuju na e-Upravu navodi 41 pitanje,
- * 45 minuta i prag od 85% osvojenih bodova; bodovi po pitanju 1–4, gdje situacije
- * i raskrsnice nose najviše — što se poklapa sa našom bazom.
+ * Ispit nosi ukupno 80 bodova, a za prolaz treba 68 (što je istih 85% kao ranije,
+ * samo izraženo u bodovima). Bodovi po pitanju su 1–4, gdje situacije i raskrsnice
+ * nose najviše — što se poklapa sa našom bazom.
  *
- * TODO(MIRAV): potvrditi 41/45/85 i eventualnu raspodjelu po oblastima
+ * TODO(MIRAV): potvrditi 80/68/45 i eventualnu raspodjelu po oblastima
  *   (teorija / znakovi / raskrsnice) po važećem Pravilniku o osposobljavanju
- *   kandidata za vozače (MUP CG) prije objave.
+ *   kandidata za vozače (MUP CG) prije objave. Ako je zvanično fiksan i broj
+ *   pitanja, treba znati raspodjelu po bodovima da bi oba uslova mogla važiti.
  */
 
-/** Broj nasumičnih pitanja u simulaciji ispita. */
-export const EXAM_QUESTION_COUNT = 41; // zvanično: 41 pitanje
+/**
+ * Ukupan broj bodova na ispitu. Ispit se sastavlja tako da zbir bodova izvučenih
+ * pitanja bude TAČNO ovoliko, pa broj pitanja varira (oko 30, jer pitanja nose
+ * 1–4 boda). Vidi `buildExam` u lib/questions.ts.
+ */
+export const EXAM_TOTAL_POINTS = 80;
+
+/** Bodova potrebno za prolaz. */
+export const EXAM_PASS_POINTS = 68; // prag: 68 od 80 bodova
 
 /** Trajanje ispita u minutima. */
 export const EXAM_MINUTES = 45; // 45 minuta
-
-/** Procenat osvojenih bodova potreban za prolaz (0–100). */
-export const PASS_PERCENT = 85; // prag 85% osvojenih bodova
 
 /**
  * Bodovi za `ordering` pitanja — u katalogu nemaju bod (`points: null`), pa se

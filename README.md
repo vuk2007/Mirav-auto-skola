@@ -7,13 +7,15 @@ Na otvaranju se vidi **početni ekran** sa izborom režima — pitanja se učita
 korisnik klikne „Počni".
 
 - **Vježba** — filter po kategorijama, trenutni prikaz tačnog odgovora, neograničeno.
-- **Simulacija ispita** — 41 nasumično pitanje, tajmer 45 min sa automatskim krajem,
-  bodovanje po `points`, prolaz na 85%, navigacija po pitanjima (mreža brojeva).
+- **Simulacija ispita** — nasumična pitanja koja zajedno nose **tačno 80 bodova**, tajmer
+  45 min sa automatskim krajem, prolaz na **68 od 80 bodova**, navigacija po pitanjima
+  (mreža brojeva).
 - **Pregled grešaka** — poslije ispita, svako promašeno pitanje uz sliku, vaš odgovor,
   tačan odgovor i objašnjenje (ako postoji).
 - **Literatura** — modal sa zvaničnim izvorima (gov.me), dostupan sa početnog ekrana i
   sa rezultata.
-- **Jezik `me`/`en`** — prebacivač mijenja interfejs; sadržaj pitanja ostaje na crnogorskom.
+- **Jezik `me`/`en`/`sq`** — crnogorski, engleski i albanski; prebacivač mijenja cio
+  interfejs (uključujući footer), a sadržaj pitanja ostaje na crnogorskom uz napomenu.
 - **`/embed`** — verzija bez zaglavlja, za ugradnju u `<iframe>` na mirav.me.
 
 ---
@@ -42,22 +44,36 @@ Svi parametri su na jednom mjestu — [`lib/config.ts`](lib/config.ts):
 
 | Konstanta                 | Trenutno | Značenje                                            |
 | ------------------------- | -------- | --------------------------------------------------- |
-| `EXAM_QUESTION_COUNT`     | `41`     | Broj pitanja u simulaciji ispita                     |
+| `EXAM_TOTAL_POINTS`       | `80`     | Ukupno bodova na ispitu                              |
+| `EXAM_PASS_POINTS`        | `68`     | Bodova potrebno za prolaz                            |
 | `EXAM_MINUTES`            | `45`     | Trajanje ispita u minutima                           |
-| `PASS_PERCENT`            | `85`     | Prag za prolaz, u procentima osvojenih bodova        |
 | `DEFAULT_ORDERING_POINTS` | `4`      | Bodovi za pitanja sa redoslijedom (katalog ima `null`) |
 | `EXAM_WARNING_SECONDS`    | `300`    | Kad tajmer pređe u crveno (zadnjih 5 min)            |
 | `EXAM_TIMER_ENABLED`      | `true`   | Uključuje/isključuje tajmer                          |
 
-Bodovi po pitanju inače dolaze iz `questions.json` (`points: 1..4`); `null` (samo kod
-`ordering` pitanja) se tretira kao `DEFAULT_ORDERING_POINTS`.
+Bodovi po pitanju dolaze iz `questions.json` (`points: 1..4`); `null` (samo kod `ordering`
+pitanja) se tretira kao `DEFAULT_ORDERING_POINTS`.
 
-> **Važno:** 41 / 45 / 85 je preuzeto iz javno dostupnih izvora crnogorskih auto-škola
-> koje upućuju na e-Upravu, i označeno je sa `TODO(MIRAV)` u `lib/config.ts`.
+### Zašto broj pitanja nije fiksan
+
+Ispit se sastavlja tako da zbir bodova bude **tačno `EXAM_TOTAL_POINTS`** — vidi `buildExam`
+u [`lib/questions.ts`](lib/questions.ts). Pošto pitanja nose 1–4 boda, broj pitanja ispadne
+**24–37 (prosjek ~30)**. Bez toga bi maksimum varirao od ispita do ispita, pa prag „68 od 80"
+ne bi imao smisla.
+
+`buildExam` radi u dva koraka: pokupi nasumična pitanja koja staju u preostali budžet, pa ako
+fali 1–4 boda, dopuni jednim pitanjem tačno te vrijednosti. Drugi korak nije kozmetika — bez
+njega bi ispit povremeno završio na 78 ili 79 bodova.
+
+> **Važno:** 80 / 68 / 45 je označeno sa `TODO(MIRAV)` u `lib/config.ts`.
 > **Prije objave MIRAV treba da potvrdi tačne brojeve po važećem Pravilniku o
 > osposobljavanju kandidata za vozače (MUP CG)**, uključujući eventualnu raspodjelu po
 > oblastima (teorija / znakovi / raskrsnice) — koja za sad nije implementirana; izbor
 > pitanja je čist random.
+>
+> Ako je zvanično fiksan **i** broj pitanja **i** ukupan broj bodova, treba nam zvanična
+> raspodjela po bodovima (koliko pitanja od 1, 2, 3 i 4 boda) da bi oba uslova mogla važiti
+> istovremeno.
 
 Tekstovi u interfejsu ne ponavljaju ove brojeve — izvode ih iz `config.ts`, pa promjena
 jedne konstante mijenja i prikaz.
@@ -202,11 +218,13 @@ components/
   ResultCard.tsx      rezultat ispita + Pregled grešaka
   LiteratureModal.tsx zvanični izvori (gov.me)
   ProgressBar.tsx     napredak
+  LangProvider.tsx    kontekst za jezik (dijele ga kviz i footer)
+  SiteFooter.tsx      footer pune stranice, prati jezik
   EmbedHeightReporter.tsx   postMessage sa visinom
 lib/
   types.ts            tipovi pitanja i odgovora
-  config.ts           parametri ispita  ← ovdje se mijenja EXAM_*/PASS_*
-  i18n.ts             UI stringovi me/en
+  config.ts           parametri ispita  ← ovdje se mijenja EXAM_*
+  i18n.ts             UI stringovi me/en/sq
   storage.ts          localStorage (jezik, najbolji rezultat, nastavak vježbe)
   categories.ts       izvođenje kategorija
   questions.ts        učitavanje, miješanje, provjera odgovora, bodovanje
@@ -230,9 +248,15 @@ brojanje otkucaja dalo kandidatu znatno više od 45 minuta.
 
 ### Objašnjenja i prevodi pitanja
 
+Prevodi u `lib/i18n.ts` pokrivaju **samo interfejs**. Sama pitanja su i dalje na crnogorskom
+na sva tri jezika — kad je izabran EN ili AL, uz pitanje stoji napomena o tome.
+
 `Question` ima opciona polja `explanation`, `text_en` i `options_en`. Ona **još ne postoje**
 u `questions.json` — prikaz je pripremljen, pa se popunjavaju ručno kad se odluči za koja
-pitanja. Dok ih nema, engleski UI prikazuje pitanja na crnogorskom uz napomenu.
+pitanja. Pitanja se ne prevode automatski.
+
+Albanski je interno kod `sq` (ISO 639-1), a na prebacivaču piše `AL` jer je tako
+prepoznatljivije — mapa je `LANG_LABELS` u `lib/i18n.ts`.
 
 ---
 

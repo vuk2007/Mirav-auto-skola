@@ -1,16 +1,22 @@
 /**
- * UI stringovi (chrome) na crnogorskom i engleskom.
+ * UI stringovi (chrome) na crnogorskom, engleskom i albanskom.
  *
  * VAŽNO: prevodi se samo interfejs. Sadržaj pitanja ostaje na crnogorskom dok se
  * u questions.json ne dodaju polja `text_en` / `options_en` — vidi `localizedText`
  * u lib/questions.ts. Pitanja se ne prevode automatski.
  */
 
-export type Lang = "me" | "en";
+export type Lang = "me" | "en" | "sq";
 
-export const LANGS: readonly Lang[] = ["me", "en"] as const;
+export const LANGS: readonly Lang[] = ["me", "en", "sq"] as const;
 
 export const DEFAULT_LANG: Lang = "me";
+
+/**
+ * Oznaka na prebacivaču. Albanski je po ISO 639-1 `sq`, ali se u Crnoj Gori
+ * prepoznatljivije označava sa „AL" — otud kod jedno, a prikaz drugo.
+ */
+export const LANG_LABELS: Record<Lang, string> = { me: "ME", en: "EN", sq: "AL" };
 
 export interface Dict {
   // Zaglavlje / opšte
@@ -18,6 +24,7 @@ export interface Dict {
   close: string;
   literature: string;
   langLabel: string;
+  footerNote: string;
 
   // Landing
   landingTitle: string;
@@ -30,7 +37,7 @@ export interface Dict {
   examTitle: string;
   examDesc: string;
   examStart: string;
-  metaQuestions: string;
+  metaPoints: string;
   metaMinutes: string;
   metaPass: string;
   examLimitationNote: string;
@@ -82,6 +89,7 @@ export interface Dict {
   resultTitle: string;
   passed: string;
   failed: string;
+  /** Šablon: {n} = bodovi potrebni za prolaz, {max} = ukupno bodova. */
   passThreshold: string;
   timedOutNote: string;
   statCorrect: string;
@@ -114,6 +122,8 @@ const me: Dict = {
   close: "Zatvori",
   literature: "Literatura",
   langLabel: "Jezik",
+  footerNote:
+    "Baza pitanja služi isključivo za pripremu i vježbu. Zvanični ispit sprovodi nadležni organ.",
 
   landingTitle: "Pripremite se za teorijski ispit",
   landingLead:
@@ -128,7 +138,7 @@ const me: Dict = {
   examDesc:
     "Nasumična pitanja iz cijele baze, bez prikaza tačnog odgovora dok ispit traje. Na kraju dobijate bodove i ocjenu prolaza.",
   examStart: "Počni ispit",
-  metaQuestions: "pitanja",
+  metaPoints: "bodova",
   metaMinutes: "minuta",
   metaPass: "prag",
   examLimitationNote:
@@ -176,7 +186,7 @@ const me: Dict = {
   resultTitle: "Rezultat simulacije",
   passed: "Položeno",
   failed: "Nije položeno",
-  passThreshold: "Prag za prolaz je {n}% osvojenih bodova.",
+  passThreshold: "Za prolaz je potrebno {n} od {max} bodova.",
   timedOutNote: "Ispit je zaustavljen jer je isteklo vrijeme.",
   statCorrect: "Tačno",
   statWrong: "Netačno",
@@ -206,6 +216,8 @@ const en: Dict = {
   close: "Close",
   literature: "Sources",
   langLabel: "Language",
+  footerNote:
+    "This question bank is for practice only. The official exam is administered by the competent authority.",
 
   landingTitle: "Prepare for the theory exam",
   landingLead:
@@ -220,9 +232,9 @@ const en: Dict = {
   examDesc:
     "Random questions from the whole bank, with no correct answers revealed while the exam runs. You get your score and a pass mark at the end.",
   examStart: "Start exam",
-  metaQuestions: "questions",
+  metaPoints: "points",
   metaMinutes: "minutes",
-  metaPass: "to pass",
+  metaPass: "pass at",
   examLimitationNote:
     "Note: our question bank contains only single-answer questions. The official exam also includes multiple-answer questions, where only a fully correct answer counts.",
   bestResult: "Best result",
@@ -268,7 +280,7 @@ const en: Dict = {
   resultTitle: "Exam result",
   passed: "Passed",
   failed: "Not passed",
-  passThreshold: "You need {n}% of the available points to pass.",
+  passThreshold: "You need {n} out of {max} points to pass.",
   timedOutNote: "The exam was stopped because time ran out.",
   statCorrect: "Correct",
   statWrong: "Wrong",
@@ -293,7 +305,103 @@ const en: Dict = {
   catOrdering: "Order of passage",
 };
 
-export const STRINGS: Record<Lang, Dict> = { me, en };
+const sq: Dict = {
+  back: "Kthehu",
+  close: "Mbyll",
+  literature: "Literatura",
+  langLabel: "Gjuha",
+  footerNote:
+    "Baza e pyetjeve shërben vetëm për përgatitje dhe ushtrim. Provimin zyrtar e zhvillon organi kompetent.",
+
+  landingTitle: "Përgatituni për provimin teorik",
+  landingLead:
+    "Zgjidhni mënyrën e punës. Ushtroni pa presion, me përgjigjen e saktë të shfaqur menjëherë, ose provoni njohuritë në kushtet e provimit real.",
+  practiceTitle: "Ushtrim",
+  practiceDesc:
+    "Zgjidhni kategorinë e pyetjeve; çdo përgjigje kontrollohet menjëherë dhe shfaqet zgjidhja e saktë. Pa kohëmatës dhe pa kufizime.",
+  practiceStart: "Fillo ushtrimin",
+  practiceResume: "Vazhdo aty ku e le",
+  categoryLabel: "Kategoria",
+  examTitle: "Simulim i provimit",
+  examDesc:
+    "Pyetje të rastësishme nga e gjithë baza, pa shfaqur përgjigjen e saktë derisa zgjat provimi. Në fund merrni pikët dhe vlerësimin e kalimit.",
+  examStart: "Fillo provimin",
+  metaPoints: "pikë",
+  metaMinutes: "minuta",
+  metaPass: "pragu",
+  examLimitationNote:
+    "Shënim: baza jonë përmban vetëm pyetje me një përgjigje të saktë. Provimi zyrtar ka edhe pyetje me disa përgjigje të sakta, ku pranohet vetëm përgjigjja plotësisht e saktë.",
+  bestResult: "Rezultati më i mirë",
+
+  loading: "Duke ngarkuar pyetjet…",
+  loadErrorTitle: "Gabim gjatë ngarkimit të pyetjeve",
+  noQuestions: "Nuk ka pyetje në kategorinë e zgjedhur. Zgjidhni një tjetër.",
+  question: "Pyetja",
+  examQuestion: "Pyetja e provimit",
+  progress: "Ecuria nëpër pyetje",
+  next: "Pyetja tjetër",
+  prev: "E mëparshme",
+  newRound: "Raund i ri",
+  finishExam: "Përfundo provimin",
+  check: "Kontrollo",
+  correctAnswerLabel: "Saktë",
+  yourAnswerLabel: "Përgjigjja juaj",
+  correctFeedback: "Përgjigje e saktë",
+  wrongFeedback: "Përgjigje e gabuar",
+  remaining: "Mbetur",
+  answeredLabel: "Të përgjigjura",
+  correctLabel: "Saktë",
+  inPool: "pyetje në dispozicion",
+  explanationTitle: "Shpjegim",
+  questionsOnlyInMe: "Pyetjet janë të disponueshme në gjuhën malazeze.",
+
+  navTitle: "Pasqyra e pyetjeve",
+  navAnswered: "të përgjigjura",
+  navUnanswered: "pa përgjigje",
+  navJump: "Shko te pyetja",
+  confirmLeaveExam:
+    "Provimi është duke u zhvilluar. Nëse dilni, përgjigjet humbasin. Dëshironi të dilni?",
+
+  orderingLabel: "Radha e kalimit të automjeteve",
+  orderingHint:
+    "Shkruani numrat sipas radhës së kalimit — me vizë, me hapësirë ose pa asgjë ndërmjet.",
+  orderingEntered: "Shkruar",
+  orderingCorrectIs: "radha e saktë është",
+
+  badgeSign: "Shenjë rrugore",
+  badgeIntersection: "Kryqëzim",
+  badgeOrdering: "Radha e kalimit",
+  badgeText: "Pyetje me tekst",
+
+  resultTitle: "Rezultati i simulimit",
+  passed: "Kaluar",
+  failed: "Nuk kaloi",
+  passThreshold: "Për të kaluar nevojiten {n} nga {max} pikë.",
+  timedOutNote: "Provimi u ndal sepse koha skadoi.",
+  statCorrect: "Saktë",
+  statWrong: "Gabim",
+  statUnanswered: "Pa përgjigje",
+  statAnswered: "Të përgjigjura",
+  newExam: "Provim i ri",
+  backToStart: "Kthehu në fillim",
+  reviewTitle: "Shqyrtimi i gabimeve",
+  reviewLead: "Kaloni nëpër pyetjet që nuk i zgjidhët saktë — bashkë me përgjigjen e saktë.",
+  reviewPerfect: "Të gjitha përgjigjet janë të sakta. S'ka çfarë të përsëritet.",
+  reviewNoAnswer: "Pa përgjigje",
+  reviewWrong: "Gabim",
+
+  litTitle: "Literatura",
+  litLead: "Burimet zyrtare mbi të cilat bazohet materiali i provimit:",
+
+  catAll: "Të gjitha",
+  catText: "Me tekst",
+  catImage: "Me foto",
+  catSign: "Shenjat",
+  catIntersection: "Kryqëzimet",
+  catOrdering: "Radha e kalimit",
+};
+
+export const STRINGS: Record<Lang, Dict> = { me, en, sq };
 
 export function dict(lang: Lang): Dict {
   return STRINGS[lang];
@@ -301,10 +409,12 @@ export function dict(lang: Lang): Dict {
 
 /**
  * Množina uz broj bodova. Crnogorski: 1 bod, 2–4 boda, 5+ bodova
- * (uz izuzetak 11–14, koji idu na „bodova").
+ * (uz izuzetak 11–14, koji idu na „bodova"). Albanski koristi isti oblik
+ * („pikë") i za jedninu i za množinu.
  */
 export function pointsLabel(n: number, lang: Lang): string {
   if (lang === "en") return n === 1 ? "point" : "points";
+  if (lang === "sq") return "pikë";
   const last2 = n % 100;
   const last = n % 10;
   if (last2 >= 11 && last2 <= 14) return "bodova";
@@ -314,5 +424,5 @@ export function pointsLabel(n: number, lang: Lang): string {
 }
 
 export function isLang(value: unknown): value is Lang {
-  return value === "me" || value === "en";
+  return value === "me" || value === "en" || value === "sq";
 }

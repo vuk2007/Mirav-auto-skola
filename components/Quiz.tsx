@@ -4,13 +4,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { filterByCategory, type Category } from "@/lib/categories";
 import {
   EXAM_MINUTES,
-  EXAM_QUESTION_COUNT,
+  EXAM_PASS_POINTS,
+  EXAM_TOTAL_POINTS,
   EXAM_TIMER_ENABLED,
-  PASS_PERCENT,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
-import { DEFAULT_LANG, dict, LANGS, type Lang } from "@/lib/i18n";
+import { LANG_LABELS, LANGS } from "@/lib/i18n";
 import {
+  buildExam,
   byIds,
   isAnswerCorrect,
   loadQuestions,
@@ -21,10 +22,8 @@ import {
 import {
   clearPractice,
   loadBestExam,
-  loadLang,
   loadPractice,
   saveBestExam,
-  saveLang,
   savePractice,
   type BestExam,
   type PracticeState,
@@ -38,6 +37,7 @@ import type {
   Screen,
 } from "@/lib/types";
 import Controls from "./Controls";
+import { useLang } from "./LangProvider";
 import Landing from "./Landing";
 import LiteratureModal from "./LiteratureModal";
 import ProgressBar from "./ProgressBar";
@@ -51,8 +51,8 @@ interface QuizProps {
 }
 
 export default function Quiz({ compact = false }: QuizProps) {
-  const [lang, setLang] = useState<Lang>(DEFAULT_LANG);
-  const t = dict(lang);
+  // Jezik dolazi iz konteksta da bi ga dijelio i footer stranice.
+  const { lang, setLang, t } = useLang();
 
   const [screen, setScreen] = useState<Screen>("landing");
   const [mode, setMode] = useState<Mode>("vjezba");
@@ -85,16 +85,10 @@ export default function Quiz({ compact = false }: QuizProps) {
   const isPractice = mode === "vjezba";
 
   // ── Učitavanje zapamćenog stanja (samo na klijentu) ───────────────────────
+  // Jezik čita LangProvider; ovdje se vraćaju rezultat i sačuvana vježba.
   useEffect(() => {
-    const storedLang = loadLang();
-    if (storedLang) setLang(storedLang);
     setBest(loadBestExam());
     setSaved(loadPractice());
-  }, []);
-
-  const changeLang = useCallback((next: Lang) => {
-    setLang(next);
-    saveLang(next);
   }, []);
 
   /** Učitava bazu najviše jednom, bez obzira koliko puta se pozove. */
@@ -162,7 +156,7 @@ export default function Quiz({ compact = false }: QuizProps) {
     try {
       const qs = await ensureQuestions();
       resetSession();
-      setPool(sample(qs, EXAM_QUESTION_COUNT));
+      setPool(buildExam(qs, EXAM_TOTAL_POINTS));
       setMode("simulacija");
       if (EXAM_TIMER_ENABLED) {
         setDeadline(Date.now() + EXAM_MINUTES * 60 * 1000);
@@ -217,7 +211,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       const max = pool.reduce((s, q) => s + questionPoints(q), 0);
       const scored = pool.reduce((s, q) => s + (records.get(q.id)?.points ?? 0), 0);
       const percent = max > 0 ? Math.round((scored / max) * 100) : 0;
-      saveBestExam({ percent, scored, max, passed: percent >= PASS_PERCENT });
+      saveBestExam({ percent, scored, max, passed: scored >= EXAM_PASS_POINTS });
       setBest(loadBestExam());
       if (viaTimeout) setTimedOut(true);
       setSecondsLeft(null);
@@ -388,13 +382,13 @@ export default function Quiz({ compact = false }: QuizProps) {
             <button
               key={l}
               type="button"
-              onClick={() => changeLang(l)}
+              onClick={() => setLang(l)}
               aria-pressed={lang === l}
               className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
                 lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
               }`}
             >
-              {l}
+              {LANG_LABELS[l]}
             </button>
           ))}
         </div>
@@ -410,6 +404,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       {screen === "landing" && (
         <Landing
           t={t}
+          lang={lang}
           category={category}
           onCategoryChange={setCategory}
           onStartPractice={() => void startPractice(null)}

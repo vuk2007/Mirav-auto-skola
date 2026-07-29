@@ -7,7 +7,7 @@
  */
 
 import type { Category } from "./categories";
-import type { Lang } from "./i18n";
+import { isLang, type Lang } from "./i18n";
 
 const KEY_LANG = "mirav.lang";
 const KEY_BEST = "mirav.bestExam";
@@ -42,7 +42,7 @@ function remove(key: string): void {
 
 export function loadLang(): Lang | null {
   const value = read<unknown>(KEY_LANG);
-  return value === "me" || value === "en" ? value : null;
+  return isLang(value) ? value : null;
 }
 
 export function saveLang(lang: Lang): void {

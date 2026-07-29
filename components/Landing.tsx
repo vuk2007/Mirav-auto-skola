@@ -1,12 +1,13 @@
 "use client";
 
 import { CATEGORIES, type Category } from "@/lib/categories";
-import { EXAM_MINUTES, EXAM_QUESTION_COUNT, PASS_PERCENT } from "@/lib/config";
-import type { Dict } from "@/lib/i18n";
+import { EXAM_MINUTES, EXAM_PASS_POINTS, EXAM_TOTAL_POINTS } from "@/lib/config";
+import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import type { BestExam, PracticeState } from "@/lib/storage";
 
 interface LandingProps {
   t: Dict;
+  lang: Lang;
   category: Category;
   onCategoryChange: (c: Category) => void;
   onStartPractice: () => void;
@@ -21,6 +22,7 @@ interface LandingProps {
 
 export default function Landing({
   t,
+  lang,
   category,
   onCategoryChange,
   onStartPractice,
@@ -103,20 +105,17 @@ export default function Landing({
 
           {/* Brojevi dolaze iz lib/config.ts da tekst ne bi odlutao od stvarnih parametara. */}
           <p className="tag mb-3 text-blue">
-            {EXAM_QUESTION_COUNT} {t.metaQuestions} · {EXAM_MINUTES} {t.metaMinutes} ·{" "}
-            {t.metaPass} {PASS_PERCENT}%
+            {EXAM_TOTAL_POINTS} {t.metaPoints} · {EXAM_MINUTES} {t.metaMinutes} ·{" "}
+            {t.metaPass} {EXAM_PASS_POINTS}
           </p>
 
           {best && (
             <p className="mb-3 rounded border border-line bg-paper px-3 py-2 text-sm">
               <span className="tag text-muted">{t.bestResult}</span>{" "}
               <strong className={`font-display text-lg ${best.passed ? "text-green" : "text-red"}`}>
-                {best.percent}%
+                {best.scored} / {best.max}
               </strong>
-              <span className="text-muted">
-                {" "}
-                ({best.scored}/{best.max})
-              </span>
+              <span className="text-muted"> {pointsLabel(best.max, lang)}</span>
             </p>
           )}
 

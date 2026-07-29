@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { badgeKey } from "@/lib/categories";
-import { PASS_PERCENT } from "@/lib/config";
+import { EXAM_PASS_POINTS, EXAM_TOTAL_POINTS } from "@/lib/config";
 import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import {
@@ -38,7 +38,8 @@ export default function ResultCard({
   const maxPoints = questions.reduce((sum, q) => sum + questionPoints(q), 0);
   const scored = questions.reduce((sum, q) => sum + (records.get(q.id)?.points ?? 0), 0);
   const percent = maxPoints > 0 ? Math.round((scored / maxPoints) * 100) : 0;
-  const passed = percent >= PASS_PERCENT;
+  // Prolaz se odlucuje po BODOVIMA, ne po procentu — procenat je samo prikaz.
+  const passed = scored >= EXAM_PASS_POINTS;
 
   const correctCount = questions.filter((q) => records.get(q.id)?.correct).length;
   const answeredCount = questions.filter((q) => records.has(q.id)).length;
@@ -79,7 +80,9 @@ export default function ResultCard({
         </p>
 
         <p className="mt-3 text-sm text-muted">
-          {t.passThreshold.replace("{n}", String(PASS_PERCENT))}
+          {t.passThreshold
+            .replace("{n}", String(EXAM_PASS_POINTS))
+            .replace("{max}", String(EXAM_TOTAL_POINTS))}
           {timedOut && ` ${t.timedOutNote}`}
         </p>
 
