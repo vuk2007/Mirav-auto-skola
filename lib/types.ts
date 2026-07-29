@@ -12,12 +12,20 @@ interface QuestionBase {
   text: string;
   page: number;
   local_no: number;
-  /** Ordering pitanja imaju null → tretira se kao 1 bod (vidi `questionPoints`). */
+  /** Ordering pitanja imaju null → vidi `questionPoints` i DEFAULT_ORDERING_POINTS. */
   points: number | null;
   needs_review: boolean;
   review_reason: string[];
   /** Ime fajla u public/web_images/, samo kod pitanja sa slikom. */
   image?: string;
+  /**
+   * Objašnjenje tačnog odgovora. Ne postoji u questions.json — polje je
+   * predviđeno da se kasnije ručno popuni za najteža pitanja. Prikazuje se u
+   * Vježbi i u „Pregledu grešaka" ako postoji.
+   */
+  explanation?: string;
+  /** Engleski prevod teksta pitanja; ako nedostaje, koristi se crnogorski. */
+  text_en?: string;
 }
 
 /** Pitanje sa tri ponuđena odgovora — bez slike. */
@@ -25,6 +33,8 @@ export interface TextQuestion extends QuestionBase {
   type: "text";
   options: Record<OptionKey, string>;
   correct: OptionKey;
+  /** Engleski prevodi ponuđenih odgovora; ako nedostaju, koriste se crnogorski. */
+  options_en?: Record<OptionKey, string>;
 }
 
 /** Pitanje sa tri ponuđena odgovora — uz sliku. */
@@ -33,6 +43,7 @@ export interface ImageQuestion extends QuestionBase {
   image: string;
   options: Record<OptionKey, string>;
   correct: OptionKey;
+  options_en?: Record<OptionKey, string>;
 }
 
 /** Pitanje sa redoslijedom prolaska vozila, npr. ["3","4","2","1"]. */
@@ -59,6 +70,9 @@ export function isChoice(q: Question): q is ChoiceQuestion {
 export type Answer = { kind: "choice"; value: OptionKey } | { kind: "ordering"; value: string };
 
 export type Mode = "vjezba" | "simulacija";
+
+/** Koji je ekran aktivan — landing se vidi prvi, prije učitavanja pitanja. */
+export type Screen = "landing" | "kviz" | "rezultat";
 
 /** Status jednog pitanja u toku rješavanja. */
 export interface AnswerRecord {

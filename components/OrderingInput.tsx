@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import type { Dict } from "@/lib/i18n";
 import { formatSequence, normalizeSequence } from "@/lib/questions";
 import type { OrderingQuestion } from "@/lib/types";
 
@@ -15,6 +16,7 @@ interface OrderingInputProps {
   revealed: boolean;
   correct: boolean;
   disabled: boolean;
+  t: Dict;
 }
 
 export default function OrderingInput({
@@ -26,6 +28,7 @@ export default function OrderingInput({
   revealed,
   correct,
   disabled,
+  t,
 }: OrderingInputProps) {
   const inputId = useId();
   const hintId = useId();
@@ -38,7 +41,7 @@ export default function OrderingInput({
   return (
     <div className="space-y-3">
       <label htmlFor={inputId} className="tag block text-muted">
-        Redoslijed prolaska vozila
+        {t.orderingLabel}
       </label>
 
       <div className="flex flex-col gap-2.5 sm:flex-row">
@@ -50,7 +53,7 @@ export default function OrderingInput({
           value={value}
           disabled={disabled}
           aria-describedby={hintId}
-          placeholder={expected === 2 ? "npr. 1-4" : "npr. 3-4-2-1"}
+          placeholder={expected === 2 ? "1-4" : "3-4-2-1"}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !disabled) {
@@ -67,22 +70,24 @@ export default function OrderingInput({
             disabled={disabled || entered === 0}
             className="font-display rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue sm:flex-none"
           >
-            Provjeri
+            {t.check}
           </button>
         )}
       </div>
 
       <p id={hintId} className="text-sm text-muted">
-        Unesite {expected} {expected === 2 ? "broja" : "brojeva"} redom kojim vozila prolaze —
-        crtica, razmak ili bez razmaka (broji se samo redoslijed cifara).
+        {t.orderingHint}
         {entered > 0 && entered !== expected && (
-          <span className="text-red"> Uneseno: {entered}.</span>
+          <span className="text-red">
+            {" "}
+            {t.orderingEntered}: {entered}/{expected}.
+          </span>
         )}
       </p>
 
       {revealed && (
         <p className={`font-display text-lg font-bold ${correct ? "text-green" : "text-red"}`}>
-          {correct ? "Tačno" : "Netačno"} — tačan redoslijed je{" "}
+          {correct ? t.correctAnswerLabel : t.reviewWrong} — {t.orderingCorrectIs}{" "}
           <span className="tracking-[0.2em]">{formatSequence(question.answer_sequence)}</span>
         </p>
       )}

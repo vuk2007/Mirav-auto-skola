@@ -1,5 +1,6 @@
 "use client";
 
+import type { Dict } from "@/lib/i18n";
 import type { OptionKey } from "@/lib/types";
 
 interface OptionButtonProps {
@@ -13,6 +14,7 @@ interface OptionButtonProps {
   isCorrect: boolean;
   disabled: boolean;
   onSelect: (key: OptionKey) => void;
+  t: Dict;
 }
 
 export default function OptionButton({
@@ -23,6 +25,7 @@ export default function OptionButton({
   isCorrect,
   disabled,
   onSelect,
+  t,
 }: OptionButtonProps) {
   // Boje se pale tek kad je odgovor otkriven; do tada je vidljiv samo izbor.
   let tone = "border-line bg-panel hover:border-blue hover:bg-blue-soft";
@@ -63,10 +66,10 @@ export default function OptionButton({
       </span>
       <span className="pt-0.5 text-[0.9375rem] leading-snug sm:text-base">{text}</span>
       {revealed && isCorrect && (
-        <span className="tag ml-auto flex-none self-center text-green">Tačno</span>
+        <span className="tag ml-auto flex-none self-center text-green">{t.correctAnswerLabel}</span>
       )}
       {revealed && selected && !isCorrect && (
-        <span className="tag ml-auto flex-none self-center text-red">Vaš odgovor</span>
+        <span className="tag ml-auto flex-none self-center text-red">{t.yourAnswerLabel}</span>
       )}
     </button>
   );

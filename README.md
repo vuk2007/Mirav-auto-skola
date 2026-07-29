@@ -3,8 +3,17 @@
 Online priprema za teorijski ispit auto-škole MIRAV. Next.js (App Router) + TypeScript +
 Tailwind CSS. Radi **potpuno statički** — nema baze ni servera, pitanja i slike su lokalni fajlovi.
 
+Na otvaranju se vidi **početni ekran** sa izborom režima — pitanja se učitavaju tek kad
+korisnik klikne „Počni".
+
 - **Vježba** — filter po kategorijama, trenutni prikaz tačnog odgovora, neograničeno.
-- **Simulacija ispita** — nasumična pitanja, bodovanje, tajmer, prolaz/pad.
+- **Simulacija ispita** — 41 nasumično pitanje, tajmer 45 min sa automatskim krajem,
+  bodovanje po `points`, prolaz na 85%, navigacija po pitanjima (mreža brojeva).
+- **Pregled grešaka** — poslije ispita, svako promašeno pitanje uz sliku, vaš odgovor,
+  tačan odgovor i objašnjenje (ako postoji).
+- **Literatura** — modal sa zvaničnim izvorima (gov.me), dostupan sa početnog ekrana i
+  sa rezultata.
+- **Jezik `me`/`en`** — prebacivač mijenja interfejs; sadržaj pitanja ostaje na crnogorskom.
 - **`/embed`** — verzija bez zaglavlja, za ugradnju u `<iframe>` na mirav.me.
 
 ---
@@ -31,17 +40,27 @@ npm run typecheck # TypeScript, bez emitovanja
 
 Svi parametri su na jednom mjestu — [`lib/config.ts`](lib/config.ts):
 
-| Konstanta             | Trenutno | Značenje                                       |
-| --------------------- | -------- | ---------------------------------------------- |
-| `EXAM_QUESTION_COUNT` | `40`     | Broj pitanja u simulaciji ispita                |
-| `PASS_PERCENT`        | `85`     | Prag za prolaz, u procentima osvojenih bodova   |
-| `EXAM_MINUTES`        | `45`     | Trajanje ispita u minutima                      |
-| `EXAM_TIMER_ENABLED`  | `true`   | Uključuje/isključuje tajmer                     |
-| `ORDERING_POINTS`     | `1`      | Bodovi za pitanja sa redoslijedom (JSON ima `null`) |
+| Konstanta                 | Trenutno | Značenje                                            |
+| ------------------------- | -------- | --------------------------------------------------- |
+| `EXAM_QUESTION_COUNT`     | `41`     | Broj pitanja u simulaciji ispita                     |
+| `EXAM_MINUTES`            | `45`     | Trajanje ispita u minutima                           |
+| `PASS_PERCENT`            | `85`     | Prag za prolaz, u procentima osvojenih bodova        |
+| `DEFAULT_ORDERING_POINTS` | `4`      | Bodovi za pitanja sa redoslijedom (katalog ima `null`) |
+| `EXAM_WARNING_SECONDS`    | `300`    | Kad tajmer pređe u crveno (zadnjih 5 min)            |
+| `EXAM_TIMER_ENABLED`      | `true`   | Uključuje/isključuje tajmer                          |
 
-> **Važno:** vrijednosti su privremene i označene sa
-> `// TODO: uskladiti sa zvaničnim pravilnikom MUP-a`.
-> Prije objave provjeriti tačan broj pitanja, prag i trajanje za B kategoriju u Crnoj Gori.
+Bodovi po pitanju inače dolaze iz `questions.json` (`points: 1..4`); `null` (samo kod
+`ordering` pitanja) se tretira kao `DEFAULT_ORDERING_POINTS`.
+
+> **Važno:** 41 / 45 / 85 je preuzeto iz javno dostupnih izvora crnogorskih auto-škola
+> koje upućuju na e-Upravu, i označeno je sa `TODO(MIRAV)` u `lib/config.ts`.
+> **Prije objave MIRAV treba da potvrdi tačne brojeve po važećem Pravilniku o
+> osposobljavanju kandidata za vozače (MUP CG)**, uključujući eventualnu raspodjelu po
+> oblastima (teorija / znakovi / raskrsnice) — koja za sad nije implementirana; izbor
+> pitanja je čist random.
+
+Tekstovi u interfejsu ne ponavljaju ove brojeve — izvode ih iz `config.ts`, pa promjena
+jedne konstante mijenja i prikaz.
 
 Tajmer se isključuje sa `EXAM_TIMER_ENABLED = false` — tada se sat ne prikazuje i ispit
 nema vremensko ograničenje.
@@ -173,17 +192,22 @@ app/
   embed/page.tsx      verzija za <iframe>, bez zaglavlja
   globals.css         dizajn tokeni i pomoćne klase
 components/
-  Quiz.tsx            stanje i logika oba režima
-  Controls.tsx        režim, filter kategorija, skor, tajmer
-  QuestionCard.tsx    pitanje, slika, ponuđeni odgovori
+  Quiz.tsx            ekrani (landing/kviz/rezultat), stanje, tajmer
+  Landing.tsx         početni ekran sa izborom režima
+  Controls.tsx        filter kategorija, skor, tajmer
+  QuestionCard.tsx    pitanje, slika, ponuđeni odgovori, objašnjenje
   OptionButton.tsx    jedan ponuđeni odgovor
   OrderingInput.tsx   unos redoslijeda prolaska
-  ResultCard.tsx      rezultat ispita, prolaz/pad, pitanja za ponavljanje
+  QuestionNav.tsx     mreža brojeva pitanja (ispit)
+  ResultCard.tsx      rezultat ispita + Pregled grešaka
+  LiteratureModal.tsx zvanični izvori (gov.me)
   ProgressBar.tsx     napredak
   EmbedHeightReporter.tsx   postMessage sa visinom
 lib/
   types.ts            tipovi pitanja i odgovora
   config.ts           parametri ispita  ← ovdje se mijenja EXAM_*/PASS_*
+  i18n.ts             UI stringovi me/en
+  storage.ts          localStorage (jezik, najbolji rezultat, nastavak vježbe)
   categories.ts       izvođenje kategorija
   questions.ts        učitavanje, miješanje, provjera odgovora, bodovanje
   imageSizes.ts       generisano
@@ -191,13 +215,37 @@ scripts/
   gen-image-sizes.mjs generator dimenzija slika
 ```
 
-Stanje se drži u React hook-ovima — **bez** `localStorage`, pa ugradnja u `<iframe>` radi
-i kad su kolačići/skladište trećih strana blokirani.
+### Pamćenje
+
+`lib/storage.ts` pamti jezik, najbolji rezultat simulacije i nastavak vježbe (kategorija,
+**redoslijed pitanja** i indeks — bez sačuvanog redoslijeda „nastavi" bi vratio isti broj,
+ali drugo pitanje). Sve je u `try/catch`: ako je skladište blokirano (Safari „Prevent
+cross-site tracking", privatni prozor), kviz radi normalno, samo bez pamćenja.
+
+### Tajmer
+
+Preostalo vrijeme se računa iz **apsolutnog roka**, a ne oduzimanjem po otkucaju intervala:
+browseri prigušuju `setInterval` u pozadinskim tabovima (i do jednom u minutu), pa bi
+brojanje otkucaja dalo kandidatu znatno više od 45 minuta.
+
+### Objašnjenja i prevodi pitanja
+
+`Question` ima opciona polja `explanation`, `text_en` i `options_en`. Ona **još ne postoje**
+u `questions.json` — prikaz je pripremljen, pa se popunjavaju ručno kad se odluči za koja
+pitanja. Dok ih nema, engleski UI prikazuje pitanja na crnogorskom uz napomenu.
 
 ---
 
 ## Prije objave
 
-- [ ] Potvrditi sa MIRAV-om da smiju objaviti bazu pitanja (autorska prava).
-- [ ] Postaviti tačan broj pitanja i prag za B kategoriju u `lib/config.ts`.
+- [ ] Potvrditi sa MIRAV-om da smiju objaviti bazu pitanja (katalog je zvanični akt MUP-a;
+      modal „Literatura" ga referiše, ali to nije isto što i dozvola za objavu).
+- [ ] Potvrditi 41 / 45 / 85 i moguću raspodjelu po oblastima po važećem Pravilniku
+      MUP-a, pa upisati u `lib/config.ts`.
 - [ ] Uskladiti plavu sa brendom mirav.me (token `--color-blue` u `app/globals.css`).
+
+### Poznato ograničenje baze
+
+Izvučena pitanja su **jednoizborna** (a/b/c, jedan tačan odgovor). Zvanični ispit ima i
+pitanja sa više tačnih odgovora, gdje se priznaje samo potpuno tačan odgovor. Simulacija je
+utoliko pojednostavljena — to je i napisano korisniku na kartici „Simulacija ispita".

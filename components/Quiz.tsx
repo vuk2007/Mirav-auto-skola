@@ -6,118 +6,281 @@ import {
   EXAM_MINUTES,
   EXAM_QUESTION_COUNT,
   EXAM_TIMER_ENABLED,
+  PASS_PERCENT,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
+import { DEFAULT_LANG, dict, LANGS, type Lang } from "@/lib/i18n";
 import {
+  byIds,
   isAnswerCorrect,
   loadQuestions,
   questionPoints,
   sample,
   shuffle,
 } from "@/lib/questions";
-import type { Answer, AnswerRecord, Mode, OptionKey, Question } from "@/lib/types";
+import {
+  clearPractice,
+  loadBestExam,
+  loadLang,
+  loadPractice,
+  saveBestExam,
+  saveLang,
+  savePractice,
+  type BestExam,
+  type PracticeState,
+} from "@/lib/storage";
+import type {
+  Answer,
+  AnswerRecord,
+  Mode,
+  OptionKey,
+  Question,
+  Screen,
+} from "@/lib/types";
 import Controls from "./Controls";
+import Landing from "./Landing";
+import LiteratureModal from "./LiteratureModal";
 import ProgressBar from "./ProgressBar";
 import QuestionCard from "./QuestionCard";
+import QuestionNav from "./QuestionNav";
 import ResultCard from "./ResultCard";
 
 interface QuizProps {
-  /** Ugrađena verzija izostavlja uvodni tekst i drži razmake manjim. */
+  /** Ugrađena verzija drži razmake manjim. */
   compact?: boolean;
 }
 
 export default function Quiz({ compact = false }: QuizProps) {
-  const [allQuestions, setAllQuestions] = useState<Question[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [lang, setLang] = useState<Lang>(DEFAULT_LANG);
+  const t = dict(lang);
 
+  const [screen, setScreen] = useState<Screen>("landing");
   const [mode, setMode] = useState<Mode>("vjezba");
   const [category, setCategory] = useState<Category>("sve");
 
-  /** Pitanja tekuće sesije (vježba: izmiješana kategorija, ispit: nasumičan uzorak). */
+  /** Baza se učitava tek kad korisnik pokrene režim — landing je odmah vidljiv. */
+  const [allQuestions, setAllQuestions] = useState<Question[] | null>(null);
+  const pendingLoad = useRef<Promise<Question[]> | null>(null);
+  /** Sprječava dvostruko bodovanje ako tajmer okine dok se ekran već mijenja. */
+  const finishedOnce = useRef(false);
+  const [starting, setStarting] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   const [pool, setPool] = useState<Question[]>([]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Map<number, Answer>>(new Map());
   const [drafts, setDrafts] = useState<Map<number, string>>(new Map());
-  const [finished, setFinished] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  /** Apsolutni trenutak isteka ispita (epoch ms) — vidi efekat tajmera niže. */
+  const [deadline, setDeadline] = useState<number | null>(null);
 
   /** Kumulativni skor vježbe — preživljava premješavanje kad se krug završi. */
   const [practiceStats, setPracticeStats] = useState({ correct: 0, answered: 0 });
 
-  /** Povećava se na „Počni ispočetka" da bi se sesija ponovo izgradila. */
-  const [sessionNonce, setSessionNonce] = useState(0);
+  const [best, setBest] = useState<BestExam | null>(null);
+  const [saved, setSaved] = useState<PracticeState | null>(null);
+  const [literatureOpen, setLiteratureOpen] = useState(false);
 
-  // ── Učitavanje baze ───────────────────────────────────────────────────────
+  const isPractice = mode === "vjezba";
+
+  // ── Učitavanje zapamćenog stanja (samo na klijentu) ───────────────────────
   useEffect(() => {
-    const controller = new AbortController();
-    loadQuestions(controller.signal)
-      .then(setAllQuestions)
-      .catch((err: unknown) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        setLoadError(err instanceof Error ? err.message : "Nepoznata greška.");
-      });
-    return () => controller.abort();
+    const storedLang = loadLang();
+    if (storedLang) setLang(storedLang);
+    setBest(loadBestExam());
+    setSaved(loadPractice());
   }, []);
 
-  // ── Izgradnja sesije pri promjeni režima / kategorije / restarta ──────────
-  useEffect(() => {
-    if (!allQuestions) return;
+  const changeLang = useCallback((next: Lang) => {
+    setLang(next);
+    saveLang(next);
+  }, []);
 
-    const next =
-      mode === "simulacija"
-        ? sample(allQuestions, EXAM_QUESTION_COUNT)
-        : sample(filterByCategory(allQuestions, category), PRACTICE_QUESTION_LIMIT);
+  /** Učitava bazu najviše jednom, bez obzira koliko puta se pozove. */
+  const ensureQuestions = useCallback(async (): Promise<Question[]> => {
+    if (allQuestions) return allQuestions;
+    pendingLoad.current ??= loadQuestions();
+    const qs = await pendingLoad.current;
+    setAllQuestions(qs);
+    return qs;
+  }, [allQuestions]);
 
-    setPool(next);
+  const resetSession = useCallback(() => {
     setIndex(0);
     setAnswers(new Map());
     setDrafts(new Map());
-    setFinished(false);
     setTimedOut(false);
     setPracticeStats({ correct: 0, answered: 0 });
-    setSecondsLeft(
-      mode === "simulacija" && EXAM_TIMER_ENABLED ? EXAM_MINUTES * 60 : null,
-    );
-  }, [allQuestions, mode, category, sessionNonce]);
+    finishedOnce.current = false;
+  }, []);
+
+  // ── Pokretanje režima ─────────────────────────────────────────────────────
+  const startPractice = useCallback(
+    async (resume: PracticeState | null) => {
+      setStarting(true);
+      setLoadError(null);
+      try {
+        const qs = await ensureQuestions();
+        resetSession();
+
+        if (resume) {
+          const restored = byIds(qs, resume.ids);
+          // Ako se baza u međuvremenu promijenila, kreni iz početka.
+          if (restored.length === resume.ids.length) {
+            setCategory(resume.category);
+            setPool(restored);
+            setIndex(Math.min(resume.index, restored.length - 1));
+            setPracticeStats({ correct: resume.correct, answered: resume.answered });
+            setMode("vjezba");
+            setSecondsLeft(null);
+            setDeadline(null);
+            setScreen("kviz");
+            return;
+          }
+          clearPractice();
+          setSaved(null);
+        }
+
+        setPool(sample(filterByCategory(qs, category), PRACTICE_QUESTION_LIMIT));
+        setMode("vjezba");
+        setSecondsLeft(null);
+        setDeadline(null);
+        setScreen("kviz");
+      } catch (err) {
+        setLoadError(err instanceof Error ? err.message : "Nepoznata greška.");
+      } finally {
+        setStarting(false);
+      }
+    },
+    [ensureQuestions, resetSession, category],
+  );
+
+  const startExam = useCallback(async () => {
+    setStarting(true);
+    setLoadError(null);
+    try {
+      const qs = await ensureQuestions();
+      resetSession();
+      setPool(sample(qs, EXAM_QUESTION_COUNT));
+      setMode("simulacija");
+      if (EXAM_TIMER_ENABLED) {
+        setDeadline(Date.now() + EXAM_MINUTES * 60 * 1000);
+        setSecondsLeft(EXAM_MINUTES * 60);
+      } else {
+        setDeadline(null);
+        setSecondsLeft(null);
+      }
+      setScreen("kviz");
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Nepoznata greška.");
+    } finally {
+      setStarting(false);
+    }
+  }, [ensureQuestions, resetSession]);
+
+  // ── Promjena kategorije u toku vježbe ─────────────────────────────────────
+  const changeCategory = useCallback(
+    (next: Category) => {
+      setCategory(next);
+      if (screen === "kviz" && isPractice && allQuestions) {
+        resetSession();
+        setPool(sample(filterByCategory(allQuestions, next), PRACTICE_QUESTION_LIMIT));
+      }
+    },
+    [screen, isPractice, allQuestions, resetSession],
+  );
+
+  // ── Bodovani zapisi ───────────────────────────────────────────────────────
+  const records = useMemo(() => {
+    const map = new Map<number, AnswerRecord>();
+    for (const q of pool) {
+      const answer = answers.get(q.id);
+      if (!answer) continue;
+      const correct = isAnswerCorrect(q, answer);
+      map.set(q.id, {
+        questionId: q.id,
+        answer,
+        correct,
+        points: correct ? questionPoints(q) : 0,
+      });
+    }
+    return map;
+  }, [pool, answers]);
+
+  /** Zaključuje ispit, boduje i pamti najbolji rezultat. */
+  const finishExam = useCallback(
+    (viaTimeout: boolean) => {
+      if (finishedOnce.current) return;
+      finishedOnce.current = true;
+
+      const max = pool.reduce((s, q) => s + questionPoints(q), 0);
+      const scored = pool.reduce((s, q) => s + (records.get(q.id)?.points ?? 0), 0);
+      const percent = max > 0 ? Math.round((scored / max) * 100) : 0;
+      saveBestExam({ percent, scored, max, passed: percent >= PASS_PERCENT });
+      setBest(loadBestExam());
+      if (viaTimeout) setTimedOut(true);
+      setSecondsLeft(null);
+      setDeadline(null);
+      setScreen("rezultat");
+    },
+    [pool, records],
+  );
 
   // ── Tajmer ispita ─────────────────────────────────────────────────────────
-  const finishedRef = useRef(finished);
-  finishedRef.current = finished;
+  const finishRef = useRef(finishExam);
+  finishRef.current = finishExam;
 
+  /**
+   * Preostalo vrijeme se računa iz apsolutnog roka, a NE oduzimanjem po otkucaju
+   * intervala: browseri prigušuju setInterval u pozadinskim tabovima (i do jednom
+   * u minutu), pa bi brojanje otkucaja dalo kandidatu znatno više od 45 minuta.
+   * Ovako sat ostaje tačan i sam se ispravi kad se tab vrati u prvi plan.
+   */
   useEffect(() => {
-    if (mode !== "simulacija" || !EXAM_TIMER_ENABLED || finished || pool.length === 0) return;
+    if (screen !== "kviz" || mode !== "simulacija" || deadline === null) return;
 
-    const id = window.setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev === null) return null;
-        if (prev <= 1) {
-          window.clearInterval(id);
-          if (!finishedRef.current) {
-            setTimedOut(true);
-            setFinished(true);
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+      setSecondsLeft(remaining);
+      if (remaining === 0) finishRef.current(true);
+    };
 
-    return () => window.clearInterval(id);
-  }, [mode, finished, pool.length, sessionNonce]);
+    tick();
+    const id = window.setInterval(tick, 500);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tick();
+    };
+    document.addEventListener("visibilitychange", onVisible);
 
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [screen, mode, deadline]);
+
+  // ── Pamćenje vježbe ───────────────────────────────────────────────────────
+  useEffect(() => {
+    if (screen !== "kviz" || !isPractice || pool.length === 0) return;
+    savePractice({
+      category,
+      ids: pool.map((q) => q.id),
+      index,
+      correct: practiceStats.correct,
+      answered: practiceStats.answered,
+    });
+  }, [screen, isPractice, pool, index, category, practiceStats]);
+
+  // ── Odgovaranje ───────────────────────────────────────────────────────────
   const current = pool[index];
-  const isPractice = mode === "vjezba";
   const currentAnswer = current ? answers.get(current.id) : undefined;
   const revealed = isPractice && currentAnswer !== undefined;
   const currentCorrect =
     current && currentAnswer ? isAnswerCorrect(current, currentAnswer) : false;
 
-  /** Upisuje odgovor i, u vježbi, uvećava kumulativni skor (samo prvi put). */
   const recordAnswer = useCallback(
     (question: Question, answer: Answer) => {
       const isFirstAnswer = !answers.has(question.id);
-
       setAnswers((prev) => new Map(prev).set(question.id, answer));
 
       if (isPractice && isFirstAnswer) {
@@ -144,9 +307,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       if (!current || revealed) return;
       setDrafts((prev) => new Map(prev).set(current.id, value));
       // Na ispitu nema potvrde — unos se pamti odmah kao odgovor.
-      if (!isPractice) {
-        recordAnswer(current, { kind: "ordering", value });
-      }
+      if (!isPractice) recordAnswer(current, { kind: "ordering", value });
     },
     [current, revealed, isPractice, recordAnswer],
   );
@@ -159,9 +320,7 @@ export default function Quiz({ compact = false }: QuizProps) {
   }, [current, revealed, drafts, recordAnswer]);
 
   const goTo = useCallback(
-    (nextIndex: number) => {
-      setIndex(Math.min(Math.max(nextIndex, 0), Math.max(pool.length - 1, 0)));
-    },
+    (next: number) => setIndex(Math.min(Math.max(next, 0), Math.max(pool.length - 1, 0))),
     [pool.length],
   );
 
@@ -179,161 +338,212 @@ export default function Quiz({ compact = false }: QuizProps) {
     }
   }, [index, pool.length, isPractice]);
 
-  const handleRestart = useCallback(() => setSessionNonce((n) => n + 1), []);
-
-  const handleModeChange = useCallback((next: Mode) => setMode(next), []);
-
-  const handleCategoryChange = useCallback((next: Category) => setCategory(next), []);
-
-  /** Bodovani zapisi — grade se tek na kraju ispita. */
-  const records = useMemo(() => {
-    const map = new Map<number, AnswerRecord>();
-    for (const q of pool) {
-      const answer = answers.get(q.id);
-      if (!answer) continue;
-      const correct = isAnswerCorrect(q, answer);
-      map.set(q.id, {
-        questionId: q.id,
-        answer,
-        correct,
-        points: correct ? questionPoints(q) : 0,
-      });
+  // ── Povratak na landing ───────────────────────────────────────────────────
+  const backToLanding = useCallback(() => {
+    if (screen === "kviz" && !isPractice && answers.size > 0) {
+      if (!window.confirm(t.confirmLeaveExam)) return;
     }
-    return map;
-  }, [pool, answers]);
+    setSecondsLeft(null);
+    setDeadline(null);
+    setScreen("landing");
+    setSaved(loadPractice());
+    setBest(loadBestExam());
+  }, [screen, isPractice, answers.size, t.confirmLeaveExam]);
 
-  // ── Stanja učitavanja ─────────────────────────────────────────────────────
-  if (loadError) {
-    return (
-      <div className="panel border-t-4 border-t-red p-5">
-        <h2 className="mb-1 text-lg font-bold text-red">Greška pri učitavanju pitanja</h2>
-        <p className="text-sm text-muted">{loadError}</p>
-      </div>
-    );
-  }
-
-  if (!allQuestions) {
-    return (
-      <div className="panel p-5" aria-busy="true">
-        <p className="tag text-muted">Učitavanje pitanja…</p>
-        <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-line">
-          <div className="h-full w-1/3 animate-pulse rounded-full bg-blue" />
-        </div>
-      </div>
-    );
-  }
-
-  const answeredInExam = pool.filter((q) => answers.has(q.id)).length;
+  // ── Prikaz ────────────────────────────────────────────────────────────────
+  const answeredIds = useMemo(
+    () => new Set([...answers.keys()]),
+    [answers],
+  );
+  const answeredInPool = pool.filter((q) => answers.has(q.id)).length;
 
   return (
     <div className={compact ? "space-y-4" : "space-y-5"}>
-      <Controls
-        mode={mode}
-        onModeChange={handleModeChange}
-        category={category}
-        onCategoryChange={handleCategoryChange}
-        poolSize={pool.length}
-        correctCount={practiceStats.correct}
-        answeredCount={isPractice ? practiceStats.answered : answeredInExam}
-        secondsLeft={finished ? null : secondsLeft}
-        onRestart={handleRestart}
-      />
+      {/* Gornja traka — radi i u /embed verziji, gdje nema zaglavlja stranice. */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        {screen !== "landing" && (
+          <button
+            type="button"
+            onClick={backToLanding}
+            className="font-display rounded border-2 border-line px-3.5 py-1.5 text-base font-semibold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
+          >
+            ← {t.back}
+          </button>
+        )}
 
-      {finished ? (
+        <button
+          type="button"
+          onClick={() => setLiteratureOpen(true)}
+          className="ml-auto text-sm font-semibold text-blue underline-offset-4 hover:underline"
+        >
+          {t.literature}
+        </button>
+
+        <div
+          className="flex overflow-hidden rounded border border-line"
+          role="group"
+          aria-label={t.langLabel}
+        >
+          {LANGS.map((l) => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => changeLang(l)}
+              aria-pressed={lang === l}
+              className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
+                lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
+              }`}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loadError && (
+        <div className="panel border-t-4 border-t-red p-5">
+          <h2 className="mb-1 text-lg font-bold text-red">{t.loadErrorTitle}</h2>
+          <p className="text-sm text-muted">{loadError}</p>
+        </div>
+      )}
+
+      {screen === "landing" && (
+        <Landing
+          t={t}
+          category={category}
+          onCategoryChange={setCategory}
+          onStartPractice={() => void startPractice(null)}
+          onResumePractice={() => void startPractice(saved)}
+          onStartExam={() => void startExam()}
+          saved={saved}
+          best={best}
+          starting={starting}
+        />
+      )}
+
+      {screen === "kviz" && (
+        <>
+          <Controls
+            mode={mode}
+            category={category}
+            onCategoryChange={changeCategory}
+            poolSize={pool.length}
+            correctCount={practiceStats.correct}
+            answeredCount={isPractice ? practiceStats.answered : answeredInPool}
+            secondsLeft={secondsLeft}
+            t={t}
+          />
+
+          {pool.length === 0 ? (
+            <div className="panel p-5">
+              <p className="text-sm text-muted">{t.noQuestions}</p>
+            </div>
+          ) : current ? (
+            <>
+              <ProgressBar
+                current={index + 1}
+                total={pool.length}
+                label={`${isPractice ? t.question : t.examQuestion} ${index + 1} / ${pool.length}`}
+                ariaLabel={t.progress}
+              />
+
+              <QuestionCard
+                key={current.id}
+                question={current}
+                selected={currentAnswer?.kind === "choice" ? currentAnswer.value : null}
+                orderingValue={drafts.get(current.id) ?? ""}
+                revealed={revealed}
+                correct={currentCorrect}
+                showOrderingSubmit={isPractice}
+                onSelectOption={handleSelectOption}
+                onOrderingChange={handleOrderingChange}
+                onOrderingSubmit={handleOrderingSubmit}
+                t={t}
+                lang={lang}
+              />
+
+              <div className="flex flex-wrap items-center gap-3">
+                {!isPractice && (
+                  <button
+                    type="button"
+                    onClick={() => goTo(index - 1)}
+                    disabled={index === 0}
+                    className="font-display rounded border-2 border-line px-5 py-2.5 text-base font-semibold tracking-wide uppercase transition-colors hover:border-blue hover:text-blue disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
+                  >
+                    {t.prev}
+                  </button>
+                )}
+
+                {isPractice ? (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    disabled={!revealed}
+                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue"
+                  >
+                    {index + 1 < pool.length ? t.next : t.newRound}
+                  </button>
+                ) : index + 1 < pool.length ? (
+                  <button
+                    type="button"
+                    onClick={() => goTo(index + 1)}
+                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
+                  >
+                    {t.next}
+                  </button>
+                ) : null}
+
+                {!isPractice && (
+                  <button
+                    type="button"
+                    onClick={() => finishExam(false)}
+                    className="font-display ml-auto rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
+                  >
+                    {t.finishExam}
+                  </button>
+                )}
+
+                {isPractice && revealed && (
+                  <p
+                    className={`font-display ml-auto text-lg font-bold ${
+                      currentCorrect ? "text-green" : "text-red"
+                    }`}
+                    role="status"
+                  >
+                    {currentCorrect ? t.correctFeedback : t.wrongFeedback}
+                  </p>
+                )}
+              </div>
+
+              {/* Mreža brojeva — samo na ispitu, gdje se smije skakati po pitanjima. */}
+              {!isPractice && (
+                <QuestionNav
+                  questions={pool}
+                  answeredIds={answeredIds}
+                  currentIndex={index}
+                  onJump={goTo}
+                  t={t}
+                />
+              )}
+            </>
+          ) : null}
+        </>
+      )}
+
+      {screen === "rezultat" && (
         <ResultCard
           questions={pool}
           records={records}
           timedOut={timedOut}
-          onRestart={handleRestart}
+          onRestart={() => void startExam()}
+          onBackToLanding={backToLanding}
+          onOpenLiterature={() => setLiteratureOpen(true)}
+          t={t}
+          lang={lang}
         />
-      ) : pool.length === 0 ? (
-        <div className="panel p-5">
-          <p className="text-sm text-muted">
-            Nema pitanja u izabranoj kategoriji. Izaberite drugu kategoriju.
-          </p>
-        </div>
-      ) : current ? (
-        <>
-          <ProgressBar
-            current={index + 1}
-            total={pool.length}
-            label={
-              isPractice
-                ? `Pitanje ${index + 1} / ${pool.length}`
-                : `Ispitno pitanje ${index + 1} / ${pool.length}`
-            }
-          />
+      )}
 
-          <QuestionCard
-            key={current.id}
-            question={current}
-            selected={
-              currentAnswer?.kind === "choice" ? currentAnswer.value : null
-            }
-            orderingValue={drafts.get(current.id) ?? ""}
-            revealed={revealed}
-            correct={currentCorrect}
-            showOrderingSubmit={isPractice}
-            onSelectOption={handleSelectOption}
-            onOrderingChange={handleOrderingChange}
-            onOrderingSubmit={handleOrderingSubmit}
-          />
-
-          {/* Navigacija */}
-          <div className="flex flex-wrap items-center gap-3">
-            {!isPractice && (
-              <button
-                type="button"
-                onClick={() => goTo(index - 1)}
-                disabled={index === 0}
-                className="font-display rounded border-2 border-line px-5 py-2.5 text-base font-semibold tracking-wide uppercase transition-colors hover:border-blue hover:text-blue disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
-              >
-                Nazad
-              </button>
-            )}
-
-            {isPractice ? (
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={!revealed}
-                className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue"
-              >
-                {index + 1 < pool.length ? "Sljedeće pitanje" : "Novi krug"}
-              </button>
-            ) : index + 1 < pool.length ? (
-              <button
-                type="button"
-                onClick={() => goTo(index + 1)}
-                className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
-              >
-                Sljedeće pitanje
-              </button>
-            ) : null}
-
-            {!isPractice && (
-              <button
-                type="button"
-                onClick={() => setFinished(true)}
-                className="font-display ml-auto rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
-              >
-                Završi ispit
-              </button>
-            )}
-
-            {isPractice && revealed && (
-              <p
-                className={`font-display ml-auto text-lg font-bold ${
-                  currentCorrect ? "text-green" : "text-red"
-                }`}
-                role="status"
-              >
-                {currentCorrect ? "Tačan odgovor" : "Netačan odgovor"}
-              </p>
-            )}
-          </div>
-        </>
-      ) : null}
+      <LiteratureModal open={literatureOpen} onClose={() => setLiteratureOpen(false)} t={t} />
     </div>
   );
 }

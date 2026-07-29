@@ -1,3 +1,4 @@
+import type { Dict } from "./i18n";
 import type { Question } from "./types";
 
 /** Kategorije se izvode iz sadržaja pitanja — ne postoje kao polje u questions.json. */
@@ -27,30 +28,33 @@ export function filterByCategory(questions: Question[], category: Category): Que
   return questions.filter((q) => matchesCategory(q, category));
 }
 
-/** Kategorije redom kojim se prikazuju u filteru. */
-export const CATEGORIES: readonly { value: Category; label: string; short: string }[] = [
-  { value: "sve", label: "Sve", short: "Sve" },
-  { value: "tekst", label: "Tekstualna", short: "Tekst" },
-  { value: "slika", label: "Sa slikom", short: "Slika" },
-  { value: "znak", label: "Znaci", short: "Znaci" },
-  { value: "situacija", label: "Raskrsnice", short: "Raskrsnice" },
-  { value: "redoslijed", label: "Redoslijed", short: "Redoslijed" },
+/** Kategorije redom kojim se prikazuju u filteru; naziv se uzima iz rječnika. */
+export const CATEGORIES: readonly { value: Category; key: keyof Dict }[] = [
+  { value: "sve", key: "catAll" },
+  { value: "tekst", key: "catText" },
+  { value: "slika", key: "catImage" },
+  { value: "znak", key: "catSign" },
+  { value: "situacija", key: "catIntersection" },
+  { value: "redoslijed", key: "catOrdering" },
 ] as const;
 
-export function categoryLabel(category: Category): string {
-  return CATEGORIES.find((c) => c.value === category)?.label ?? "Sve";
+export function isCategory(value: unknown): value is Category {
+  return (
+    typeof value === "string" &&
+    CATEGORIES.some((c) => c.value === value)
+  );
 }
 
-/** Kratka oznaka kategorije za prikaz na kartici pitanja. */
-export function badgeLabel(q: Question): string {
+/** Ključ oznake kategorije za prikaz na kartici pitanja. */
+export function badgeKey(q: Question): keyof Dict {
   switch (baseCategory(q)) {
     case "znak":
-      return "Saobraćajni znak";
+      return "badgeSign";
     case "situacija":
-      return "Raskrsnica";
+      return "badgeIntersection";
     case "redoslijed":
-      return "Redoslijed prolaska";
+      return "badgeOrdering";
     case "tekst":
-      return "Tekstualno pitanje";
+      return "badgeText";
   }
 }

@@ -1,5 +1,12 @@
-import { ORDERING_POINTS } from "./config";
-import type { Answer, ChoiceQuestion, OrderingQuestion, Question } from "./types";
+import { DEFAULT_ORDERING_POINTS } from "./config";
+import type { Lang } from "./i18n";
+import type {
+  Answer,
+  ChoiceQuestion,
+  OptionKey,
+  OrderingQuestion,
+  Question,
+} from "./types";
 
 /**
  * Učitava bazu pitanja sa /questions.json (statički fajl iz public/).
@@ -18,9 +25,29 @@ export async function loadQuestions(signal?: AbortSignal): Promise<Question[]> {
   return data as Question[];
 }
 
-/** Bodovi pitanja; `ordering` u JSON-u ima null pa se koristi ORDERING_POINTS. */
+/** Bodovi pitanja; `ordering` u katalogu nema bod pa se koristi DEFAULT_ORDERING_POINTS. */
 export function questionPoints(q: Question): number {
-  return q.points ?? ORDERING_POINTS;
+  return q.points ?? DEFAULT_ORDERING_POINTS;
+}
+
+/**
+ * Tekst pitanja na traženom jeziku. Prevodi pitanja još ne postoje u
+ * questions.json, pa se pada nazad na crnogorski — vidi `hasTranslation`.
+ */
+export function localizedText(q: Question, lang: Lang): string {
+  return lang === "en" && q.text_en ? q.text_en : q.text;
+}
+
+/** Ponuđeni odgovor na traženom jeziku, uz isti fallback kao `localizedText`. */
+export function localizedOption(q: ChoiceQuestion, key: OptionKey, lang: Lang): string {
+  const en = lang === "en" ? q.options_en : undefined;
+  return en?.[key] ?? q.options[key];
+}
+
+/** Da li pitanje uopšte ima prevod na dati jezik (koristi se za napomenu u UI-u). */
+export function hasTranslation(q: Question, lang: Lang): boolean {
+  if (lang === "me") return true;
+  return Boolean(q.text_en);
 }
 
 /** Fisher–Yates — vraća novi niz, ne mijenja ulazni. */
@@ -36,11 +63,26 @@ export function shuffle<T>(items: readonly T[]): T[] {
   return out;
 }
 
-/** Nasumičan uzorak; ako je `count` 0 ili veći od dužine, vraća sve izmiješano. */
+/** Nasumičan uzorak bez ponavljanja; `count` 0 ili veći od dužine vraća sve izmiješano. */
 export function sample<T>(items: readonly T[], count: number): T[] {
   const shuffled = shuffle(items);
   if (count <= 0 || count >= shuffled.length) return shuffled;
   return shuffled.slice(0, count);
+}
+
+/**
+ * Vraća pitanja tačno onim redom kojim su ID-evi navedeni.
+ * Koristi se za „nastavi vježbu" — bez sačuvanog redoslijeda korisnik bi se
+ * vratio na isti *indeks*, ali na sasvim drugo pitanje.
+ */
+export function byIds(questions: readonly Question[], ids: readonly number[]): Question[] {
+  const map = new Map(questions.map((q) => [q.id, q]));
+  const out: Question[] = [];
+  for (const id of ids) {
+    const q = map.get(id);
+    if (q) out.push(q);
+  }
+  return out;
 }
 
 /** Ostavlja samo cifre: "3-4-2-1", "3 4 2 1", "3421" → "3421". */
@@ -73,4 +115,12 @@ export function isAnswerCorrect(q: Question, answer: Answer): boolean {
 /** Ukupan broj bodova skupa pitanja (maksimum na ispitu). */
 export function totalPoints(questions: readonly Question[]): number {
   return questions.reduce((sum, q) => sum + questionPoints(q), 0);
+}
+
+/** Formatira sekunde u mm:ss. */
+export function formatClock(seconds: number): string {
+  const safe = Math.max(seconds, 0);
+  const m = Math.floor(safe / 60);
+  const s = safe % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }

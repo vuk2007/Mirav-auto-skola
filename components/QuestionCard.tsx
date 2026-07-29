@@ -1,9 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { badgeLabel } from "@/lib/categories";
+import { badgeKey } from "@/lib/categories";
 import { imageSize } from "@/lib/imageSizes";
-import { questionPoints } from "@/lib/questions";
+import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
+import {
+  hasTranslation,
+  localizedOption,
+  localizedText,
+  questionPoints,
+} from "@/lib/questions";
 import { OPTION_KEYS, type OptionKey, type Question } from "@/lib/types";
 import OptionButton from "./OptionButton";
 import OrderingInput from "./OrderingInput";
@@ -23,6 +29,8 @@ interface QuestionCardProps {
   onSelectOption: (key: OptionKey) => void;
   onOrderingChange: (value: string) => void;
   onOrderingSubmit: () => void;
+  t: Dict;
+  lang: Lang;
 }
 
 export default function QuestionCard({
@@ -35,27 +43,35 @@ export default function QuestionCard({
   onSelectOption,
   onOrderingChange,
   onOrderingSubmit,
+  t,
+  lang,
 }: QuestionCardProps) {
   const points = questionPoints(question);
   const [width, height] = question.image ? imageSize(question.image) : [0, 0];
+  const untranslated = !hasTranslation(question, lang);
 
   return (
     <article className="panel p-4 sm:p-6">
       <header className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
         <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-        <span className="tag text-blue">{badgeLabel(question)}</span>
+        <span className="tag text-blue">{t[badgeKey(question)]}</span>
         <span className="tag ml-auto text-muted">
-          {points} {points === 1 ? "bod" : points < 5 ? "boda" : "bodova"}
+          {points} {pointsLabel(points, lang)}
         </span>
       </header>
 
-      <h2 className="mb-4 text-lg leading-snug font-bold sm:text-xl">{question.text}</h2>
+      <h2 className="mb-1 text-lg leading-snug font-bold sm:text-xl">
+        {localizedText(question, lang)}
+      </h2>
+
+      {/* Prevodi pitanja još ne postoje u bazi — reci to umjesto tihog fallbacka. */}
+      {untranslated && <p className="mb-3 text-xs text-muted">{t.questionsOnlyInMe}</p>}
 
       {question.image && (
-        <div className="mb-5 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
+        <div className="mt-4 mb-5 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
           <Image
             src={`/web_images/${question.image}`}
-            alt="Prikaz saobraćajne situacije uz pitanje"
+            alt=""
             width={width}
             height={height}
             loading="lazy"
@@ -78,6 +94,7 @@ export default function QuestionCard({
           revealed={revealed}
           correct={correct}
           disabled={revealed}
+          t={t}
         />
       ) : (
         <div className="space-y-2.5">
@@ -85,14 +102,23 @@ export default function QuestionCard({
             <OptionButton
               key={key}
               optionKey={key}
-              text={question.options[key]}
+              text={localizedOption(question, key, lang)}
               selected={selected === key}
               revealed={revealed}
               isCorrect={question.correct === key}
               disabled={revealed}
               onSelect={onSelectOption}
+              t={t}
             />
           ))}
+        </div>
+      )}
+
+      {/* Objašnjenje se prikazuje samo ako postoji u bazi — ne izmišlja se. */}
+      {revealed && question.explanation && (
+        <div className="mt-4 rounded border-l-4 border-blue bg-blue-soft p-3">
+          <p className="tag mb-1 text-blue">{t.explanationTitle}</p>
+          <p className="text-sm leading-relaxed">{question.explanation}</p>
         </div>
       )}
     </article>
