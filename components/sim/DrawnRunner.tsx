@@ -3,22 +3,60 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Dict } from "@/lib/i18n";
 import { shuffle } from "@/lib/questions";
-import { isDrawnOrderCorrect, type DrawnScenario } from "@/lib/simScenarios";
+import { isOrderCorrect, type DrawnScenario, type Family } from "@/lib/simRules";
 import ProgressBar from "../ProgressBar";
 import IntersectionSvg from "./IntersectionSvg";
 
 interface DrawnRunnerProps {
   scenarios: readonly DrawnScenario[];
+  family: Family;
+  familyLabel: string;
   t: Dict;
 }
 
 const STEP_MS = 750;
 
-/** Familija „pravilo desne strane" — scena se crta, tačan odgovor se animira. */
-export default function DrawnRunner({ scenarios, t }: DrawnRunnerProps) {
-  const [order, setOrder] = useState(() => shuffle(scenarios));
+/** Kratak opis scene, zavisi od familije. */
+function sceneNote(family: Family, t: Dict): string {
+  switch (family) {
+    case "znaci":
+      return t.simSceneSigns;
+    case "semafor":
+      return t.simSceneLights;
+    case "kruzni":
+      return t.simSceneRoundabout;
+    case "pjesaci":
+      return t.simScenePedestrian;
+    default:
+      return t.simUncontrolled;
+  }
+}
+
+/**
+ * Crtane scene simulatora. Dva tipa scenarija:
+ *  - **redoslijed** (`answer`) — kandidat tapne vozila redom kojim prolaze,
+ *  - **odluka** (`decision`) — kandidat bira „Prolazim" ili „Propuštam" za
+ *    svoje vozilo; koristi se gdje redoslijed nije poenta (kružni tok, pješaci).
+ */
+export default function DrawnRunner({
+  scenarios,
+  family,
+  familyLabel,
+  t,
+}: DrawnRunnerProps) {
+  /**
+   * NE miješati tokom rendera: `/simulator` se renderuje i na serveru, pa bi
+   * server i klijent dobili različit poredak i hidratacija bi pukla
+   * (React error #418).
+   *
+   * Zato se počinje od praznog niza i miješa u efektu — scena se pojavi već
+   * promiješana, bez vidljive zamjene poslije montiranja.
+   */
+  const [order, setOrder] = useState<readonly DrawnScenario[]>([]);
+  useEffect(() => setOrder(shuffle(scenarios)), [scenarios]);
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<number[]>([]);
+  const [choice, setChoice] = useState<"go" | "yield" | null>(null);
   const [checked, setChecked] = useState(false);
   const [correct, setCorrect] = useState(false);
   const [passed, setPassed] = useState<Set<number>>(new Set());
@@ -32,18 +70,18 @@ export default function DrawnRunner({ scenarios, t }: DrawnRunnerProps) {
   useEffect(() => clearTimers, [clearTimers]);
 
   const scenario = order[index];
+  const isDecision = scenario?.decision !== undefined;
 
-  const toggle = useCallback(
-    (id: number) => {
-      if (checked) return;
-      setPicked((prev) => (prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]));
-    },
-    [checked],
-  );
+  const reset = useCallback(() => {
+    clearTimers();
+    setPicked([]);
+    setChoice(null);
+    setChecked(false);
+    setCorrect(false);
+    setPassed(new Set());
+  }, [clearTimers]);
 
-  const check = useCallback(() => {
-    if (!scenario || checked || picked.length === 0) return;
-    const ok = isDrawnOrderCorrect(scenario, picked);
+  const score = useCallback((ok: boolean) => {
     setChecked(true);
     setCorrect(ok);
     setStats((s) => {
@@ -55,59 +93,85 @@ export default function DrawnRunner({ scenarios, t }: DrawnRunnerProps) {
         bestStreak: Math.max(s.bestStreak, streak),
       };
     });
+  }, []);
 
-    if (!ok) return;
+  const toggle = useCallback(
+    (id: number) => {
+      if (checked || isDecision) return;
+      setPicked((prev) => (prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]));
+    },
+    [checked, isDecision],
+  );
 
-    // Tačno → vozila se provezu tačnim redoslijedom. Uz „smanji kretanje"
-    // se preskače animacija i odmah se prikaže ishod.
+  const animate = useCallback((ids: readonly number[]) => {
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
-      setPassed(new Set(scenario.answer));
+      setPassed(new Set(ids));
       return;
     }
-    scenario.answer.forEach((id, i) => {
+    ids.forEach((id, i) => {
       const timer = window.setTimeout(
         () => setPassed((prev) => new Set(prev).add(id)),
         i * STEP_MS + 250,
       );
       timers.current.push(timer);
     });
-  }, [scenario, checked, picked]);
+  }, []);
+
+  const check = useCallback(() => {
+    if (!scenario || checked || picked.length === 0) return;
+    const ok = isOrderCorrect(scenario, picked);
+    score(ok);
+    if (ok && scenario.answer) animate(scenario.answer);
+  }, [scenario, checked, picked, score, animate]);
+
+  const decide = useCallback(
+    (value: "go" | "yield") => {
+      if (!scenario?.decision || checked) return;
+      setChoice(value);
+      const ok = value === scenario.decision.answer;
+      score(ok);
+      // Ako smije da prođe, provezi njegovo vozilo.
+      if (ok && value === "go") animate([scenario.decision.vehicleId]);
+    },
+    [scenario, checked, score, animate],
+  );
 
   const next = useCallback(() => {
-    clearTimers();
-    setPicked([]);
-    setChecked(false);
-    setCorrect(false);
-    setPassed(new Set());
+    reset();
     setIndex((i) => i + 1);
-  }, [clearTimers]);
-
-  const retry = useCallback(() => {
-    clearTimers();
-    setPicked([]);
-    setChecked(false);
-    setCorrect(false);
-    setPassed(new Set());
-  }, [clearTimers]);
+  }, [reset]);
 
   const restart = useCallback(() => {
-    clearTimers();
+    reset();
     setOrder(shuffle(scenarios));
     setIndex(0);
-    setPicked([]);
-    setChecked(false);
-    setCorrect(false);
-    setPassed(new Set());
     setStats({ correct: 0, answered: 0, streak: 0, bestStreak: 0 });
-  }, [scenarios, clearTimers]);
+  }, [scenarios, reset]);
+
+  if (scenarios.length === 0) {
+    return (
+      <div className="panel p-5">
+        <p className="text-sm text-muted">{t.simEmpty}</p>
+      </div>
+    );
+  }
+
+  // Miješanje se dešava u efektu; do tada nema šta da se prikaže.
+  if (order.length === 0) {
+    return (
+      <div className="panel p-5" aria-busy="true">
+        <p className="tag text-muted">{t.loading}</p>
+      </div>
+    );
+  }
 
   if (!scenario) {
     return (
       <div className="panel border-t-4 border-t-green p-5 sm:p-6" aria-live="polite">
-        <p className="tag mb-2 text-muted">{t.simFamilyRule}</p>
+        <p className="tag mb-2 text-muted">{familyLabel}</p>
         <p className="mb-3 text-lg font-bold">{t.simFinished}</p>
         <p className="mb-4">
           <span className="tag text-muted">{t.correctLabel}</span>{" "}
@@ -152,53 +216,85 @@ export default function DrawnRunner({ scenarios, t }: DrawnRunnerProps) {
       <article className="panel p-4 sm:p-6">
         <header className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
           <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-          <span className="tag text-blue">{t.simFamilyRule}</span>
+          <span className="tag text-blue">{familyLabel}</span>
         </header>
 
-        <p className="mb-4 text-sm text-muted">{t.simUncontrolled}</p>
+        <p className="mb-4 text-sm text-muted">{sceneNote(family, t)}</p>
 
         <div className="mb-4 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
           <IntersectionSvg
-            vehicles={scenario.vehicles}
+            scenario={scenario}
             picked={picked}
             passed={passed}
             disabled={checked}
             onPick={toggle}
             conflict={checked && !correct}
             vehicleLabel={t.simVehicle}
+            myVehicleId={scenario.decision?.vehicleId}
           />
         </div>
 
-        <p className="text-sm text-muted">{t.simTapInScene}</p>
-
-        <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-line pt-4">
-          <p className="text-sm">
-            <span className="tag text-muted">{t.simYourOrder}</span>{" "}
-            <span className="font-display text-xl tracking-[0.2em]">
-              {picked.length > 0 ? picked.join("-") : "—"}
-            </span>
-          </p>
-          {!checked && picked.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setPicked([])}
-              className="font-display rounded border-2 border-line px-3.5 py-1.5 text-base font-semibold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
-            >
-              {t.simClear}
-            </button>
-          )}
-        </div>
-
-        {!checked ? (
-          <button
-            type="button"
-            onClick={check}
-            disabled={picked.length === 0}
-            className="font-display mt-4 w-full rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue sm:w-auto"
-          >
-            {t.check}
-          </button>
+        {isDecision ? (
+          <>
+            <p className="text-sm text-muted">
+              {t.simDecisionTask}{" "}
+              <span className="text-ink">
+                ({t.simVehicle} {scenario.decision?.vehicleId} — {t.simYourVehicle})
+              </span>
+            </p>
+            {!checked && (
+              <div className="mt-3 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => decide("go")}
+                  className="font-display flex-1 rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark sm:flex-none"
+                >
+                  {t.simGo}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => decide("yield")}
+                  className="font-display flex-1 rounded border-2 border-blue px-6 py-3 text-lg font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white sm:flex-none"
+                >
+                  {t.simYield}
+                </button>
+              </div>
+            )}
+          </>
         ) : (
+          <>
+            <p className="text-sm text-muted">{t.simTapInScene}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-line pt-4">
+              <p className="text-sm">
+                <span className="tag text-muted">{t.simYourOrder}</span>{" "}
+                <span className="font-display text-xl tracking-[0.2em]">
+                  {picked.length > 0 ? picked.join("-") : "—"}
+                </span>
+              </p>
+              {!checked && picked.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setPicked([])}
+                  className="font-display rounded border-2 border-line px-3.5 py-1.5 text-base font-semibold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
+                >
+                  {t.simClear}
+                </button>
+              )}
+            </div>
+            {!checked && (
+              <button
+                type="button"
+                onClick={check}
+                disabled={picked.length === 0}
+                className="font-display mt-4 w-full rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue sm:w-auto"
+              >
+                {t.check}
+              </button>
+            )}
+          </>
+        )}
+
+        {checked && (
           <div
             className={`mt-4 rounded border-l-4 p-3 ${
               correct ? "border-green bg-green-soft" : "border-red bg-red-soft"
@@ -208,12 +304,24 @@ export default function DrawnRunner({ scenarios, t }: DrawnRunnerProps) {
             <p className={`font-display text-lg font-bold ${correct ? "text-green" : "text-red"}`}>
               {correct ? t.correctFeedback : t.wrongFeedback}
             </p>
-            {!correct && (
+            {!correct && scenario.answer && (
               <p className="mt-1 text-sm">
                 <span className="tag text-muted">{t.simCorrectOrder}</span>{" "}
                 <span className="font-display text-lg tracking-[0.2em]">
                   {scenario.answer.join("-")}
                 </span>
+              </p>
+            )}
+            {!correct && scenario.decision && (
+              <p className="mt-1 text-sm">
+                <span className="tag text-muted">{t.correctAnswerLabel}</span>{" "}
+                <strong>{scenario.decision.answer === "go" ? t.simGo : t.simYield}</strong>
+                {choice && (
+                  <span className="text-muted">
+                    {" "}
+                    ({t.yourAnswerLabel}: {choice === "go" ? t.simGo : t.simYield})
+                  </span>
+                )}
               </p>
             )}
             <div className="mt-2 border-t border-line/60 pt-2">
@@ -237,10 +345,10 @@ export default function DrawnRunner({ scenarios, t }: DrawnRunnerProps) {
           >
             {index + 1 < order.length ? t.simNextScene : t.simFinished}
           </button>
-          {!correct && (
+          {!correct && !isDecision && (
             <button
               type="button"
-              onClick={retry}
+              onClick={reset}
               className="font-display rounded border-2 border-line px-5 py-3 text-base font-bold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
             >
               {t.simClear}

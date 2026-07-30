@@ -62,11 +62,32 @@ export interface Dict {
   simEmpty: string;
   simFamilyRule: string;
   simFamilyCatalog: string;
+  simFamilySigns: string;
+  simFamilyLights: string;
+  simFamilyLeft: string;
+  simFamilyRoundabout: string;
+  simFamilyPedestrian: string;
   simUncontrolled: string;
+  simSceneSigns: string;
+  simSceneLights: string;
+  simSceneRoundabout: string;
+  simScenePedestrian: string;
   simTapInScene: string;
+  simDecisionTask: string;
+  simGo: string;
+  simYield: string;
+  simYourVehicle: string;
   ruleTitle: string;
   ruleRightHand: string;
   ruleFreeRight: string;
+  rulePriorityRoad: string;
+  ruleYieldSign: string;
+  ruleStopSign: string;
+  ruleLeftTurn: string;
+  ruleGreenNotFree: string;
+  ruleRedStops: string;
+  ruleRoundabout: string;
+  rulePedestrian: string;
 
   // Kviz
   loading: string;
@@ -189,12 +210,40 @@ const me: Dict = {
   simEmpty: "Nema dostupnih situacija.",
   simFamilyRule: "Pravilo desne strane",
   simFamilyCatalog: "Iz kataloga",
+  simFamilySigns: "Glavni i sporedni put",
+  simFamilyLights: "Semafor",
+  simFamilyLeft: "Skretanje ulijevo",
+  simFamilyRoundabout: "Kružni tok",
+  simFamilyPedestrian: "Pješaci",
   simUncontrolled: "Raskrsnica bez znakova i semafora. Sva vozila zadržavaju pravac.",
+  simSceneSigns: "Obratite pažnju na znakove na prilazima.",
+  simSceneLights: "Obratite pažnju na svjetlosne znakove.",
+  simSceneRoundabout: "Kružni tok. Vaše vozilo je označeno.",
+  simScenePedestrian: "Pješak je na prelazu. Vaše vozilo je označeno.",
   simTapInScene: "Tapnite vozila na slici redom kojim prolaze.",
+  simDecisionTask: "Da li prolazite ili propuštate?",
+  simGo: "Prolazim",
+  simYield: "Propuštam",
+  simYourVehicle: "vaše vozilo",
   ruleTitle: "Pravilo",
   ruleRightHand:
     "Na raskrsnici bez znakova i semafora prvenstvo ima vozilo koje vam dolazi s desne strane.",
   ruleFreeRight: "Prvo prolazi vozilo koje nikoga nema sa svoje desne strane.",
+  rulePriorityRoad:
+    "Vozila na putu s prvenstvom prolaze prije vozila sa sporednog puta, bez obzira na to sa koje strane dolaze.",
+  ruleYieldSign:
+    "Znak „ustupi prvenstvo prolaza“ znači da propuštate vozila na glavnom putu.",
+  ruleStopSign:
+    "Znak STOP obavezuje na potpuno zaustavljanje; po prvenstvu je isti kao „ustupi prvenstvo“.",
+  ruleLeftTurn:
+    "Vozilo koje skreće ulijevo propušta susretno vozilo koje ide pravo ili skreće desno.",
+  ruleGreenNotFree:
+    "Zeleno svjetlo nije bezuslovno: među vozilima na zelenom i dalje važi propuštanje pri skretanju.",
+  ruleRedStops: "Vozilo na crvenom ili žutom svjetlu se zaustavlja i ne prolazi.",
+  ruleRoundabout:
+    "Pri ulasku u kružni tok propuštate vozila koja se već kreću kroz tok.",
+  rulePedestrian:
+    "Pješaka na pješačkom prelazu preko kojeg prolazite morate propustiti.",
 
   loading: "Učitavanje pitanja…",
   loadErrorTitle: "Greška pri učitavanju pitanja",
@@ -309,12 +358,37 @@ const en: Dict = {
   simEmpty: "No situations available.",
   simFamilyRule: "Right-hand rule",
   simFamilyCatalog: "From the catalogue",
+  simFamilySigns: "Priority and side road",
+  simFamilyLights: "Traffic lights",
+  simFamilyLeft: "Turning left",
+  simFamilyRoundabout: "Roundabout",
+  simFamilyPedestrian: "Pedestrians",
   simUncontrolled: "Uncontrolled intersection — no signs, no lights. Every vehicle goes straight.",
+  simSceneSigns: "Mind the signs on each approach.",
+  simSceneLights: "Mind the traffic lights.",
+  simSceneRoundabout: "Roundabout. Your vehicle is marked.",
+  simScenePedestrian: "A pedestrian is on the crossing. Your vehicle is marked.",
   simTapInScene: "Tap the vehicles in the scene in the order they proceed.",
+  simDecisionTask: "Do you proceed or give way?",
+  simGo: "I proceed",
+  simYield: "I give way",
+  simYourVehicle: "your vehicle",
   ruleTitle: "Rule",
   ruleRightHand:
     "At an intersection with no signs or lights, the vehicle approaching from your right has priority.",
   ruleFreeRight: "The vehicle with nobody on its right goes first.",
+  rulePriorityRoad:
+    "Vehicles on the priority road go before vehicles from the side road, no matter which side they come from.",
+  ruleYieldSign: "A “give way” sign means you let vehicles on the priority road pass first.",
+  ruleStopSign:
+    "A STOP sign requires a complete stop; in terms of priority it ranks the same as “give way”.",
+  ruleLeftTurn:
+    "A vehicle turning left gives way to oncoming vehicles going straight or turning right.",
+  ruleGreenNotFree:
+    "Green is not unconditional: among vehicles on green, giving way when turning still applies.",
+  ruleRedStops: "A vehicle on red or amber stops and does not proceed.",
+  ruleRoundabout: "When entering a roundabout you give way to vehicles already circulating.",
+  rulePedestrian: "You must give way to a pedestrian on a crossing you are driving over.",
 
   loading: "Loading questions…",
   loadErrorTitle: "Could not load the questions",
@@ -430,13 +504,41 @@ const sq: Dict = {
   simEmpty: "Nuk ka situata në dispozicion.",
   simFamilyRule: "Rregulli i së djathtës",
   simFamilyCatalog: "Nga katalogu",
+  simFamilySigns: "Rrugë me përparësi dhe anësore",
+  simFamilyLights: "Semafori",
+  simFamilyLeft: "Kthimi nga e majta",
+  simFamilyRoundabout: "Rrethrrotullim",
+  simFamilyPedestrian: "Këmbësorët",
   simUncontrolled:
     "Kryqëzim pa shenja dhe pa semaforë. Të gjitha automjetet vazhdojnë drejt.",
+  simSceneSigns: "Kini parasysh shenjat në secilën hyrje.",
+  simSceneLights: "Kini parasysh dritat e semaforit.",
+  simSceneRoundabout: "Rrethrrotullim. Automjeti juaj është i shënuar.",
+  simScenePedestrian: "Një këmbësor është në vendkalim. Automjeti juaj është i shënuar.",
   simTapInScene: "Prekni automjetet në skenë sipas radhës së kalimit.",
+  simDecisionTask: "A kaloni apo i lëshoni rrugë?",
+  simGo: "Kaloj",
+  simYield: "Lëshoj rrugë",
+  simYourVehicle: "automjeti juaj",
   ruleTitle: "Rregulli",
   ruleRightHand:
     "Në kryqëzim pa shenja dhe pa semaforë, përparësi ka automjeti që vjen nga e djathta juaj.",
   ruleFreeRight: "I pari kalon automjeti që nuk ka askënd në të djathtën e vet.",
+  rulePriorityRoad:
+    "Automjetet në rrugën me përparësi kalojnë përpara atyre nga rruga anësore, pavarësisht nga cila anë vijnë.",
+  ruleYieldSign:
+    "Shenja „lësho rrugë“ do të thotë se u lëshoni rrugë automjeteve në rrugën me përparësi.",
+  ruleStopSign:
+    "Shenja STOP kërkon ndalim të plotë; për sa i takon përparësisë është njësoj si „lësho rrugë“.",
+  ruleLeftTurn:
+    "Automjeti që kthehet nga e majta lëshon rrugë automjetit përballë që vazhdon drejt ose kthehet djathtas.",
+  ruleGreenNotFree:
+    "Gjelbra nuk është e pakushtëzuar: mes automjeteve në gjelbër, lëshimi i rrugës gjatë kthimit vlen përsëri.",
+  ruleRedStops: "Automjeti në të kuqe ose të verdhë ndalon dhe nuk kalon.",
+  ruleRoundabout:
+    "Kur hyni në rrethrrotullim, lëshoni rrugë automjeteve që qarkullojnë brenda.",
+  rulePedestrian:
+    "Duhet t'i lëshoni rrugë këmbësorit në vendkalimin nëpër të cilin kaloni.",
 
   loading: "Duke ngarkuar pyetjet…",
   loadErrorTitle: "Gabim gjatë ngarkimit të pyetjeve",

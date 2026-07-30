@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Dict, Lang } from "@/lib/i18n";
 import { imageSize } from "@/lib/imageSizes";
 import { localizedText, shuffle } from "@/lib/questions";
@@ -19,8 +19,11 @@ interface PhotoRunnerProps {
  * a kandidat tapne vozila redom kojim prolaze umjesto da kuca redoslijed.
  */
 export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
-  // Redoslijed scena se izmiješa jednom, na početku sesije.
-  const [order, setOrder] = useState(() => shuffle(scenarios));
+  // Miješa se u efektu, ne tokom rendera — inače server i klijent dobiju
+  // različit poredak i hidratacija pukne (React error #418). Počinje se od
+  // praznog niza da se scena pojavi već promiješana, bez vidljive zamjene.
+  const [order, setOrder] = useState<SimScenario[]>([]);
+  useEffect(() => setOrder(shuffle(scenarios)), [scenarios]);
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<number[]>([]);
   const [checked, setChecked] = useState(false);
@@ -75,6 +78,15 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
     return (
       <div className="panel p-5">
         <p className="text-sm text-muted">{t.simEmpty}</p>
+      </div>
+    );
+  }
+
+  // Miješanje se dešava u efektu; do tada nema šta da se prikaže.
+  if (order.length === 0) {
+    return (
+      <div className="panel p-5" aria-busy="true">
+        <p className="tag text-muted">{t.loading}</p>
       </div>
     );
   }

@@ -14,8 +14,9 @@ korisnik klikne „Počni".
   tačan odgovor i objašnjenje (ako postoji).
 - **Literatura** — modal sa zvaničnim izvorima (gov.me), dostupan sa početnog ekrana i
   sa rezultata.
-- **Simulator raskrsnica (V1)** — treći režim: scena je fotografija iz kataloga, a kandidat
-  **tapne vozila redom kojim prolaze** umjesto da kuca brojeve. Vidi „Simulator" niže.
+- **Simulator raskrsnica** — treći režim i samostalna ruta `/simulator`: crtane SVG scene i
+  fotografije iz kataloga, kroz 7 familija (pravilo desne strane, glavni/sporedni put,
+  semafor, skretanje ulijevo, kružni tok, pješaci, katalog). Vidi „Simulator" niže.
 - **Jezik `me`/`en`/`sq`** — crnogorski, engleski i albanski; prebacivač mijenja cio
   interfejs (uključujući footer), a sadržaj pitanja ostaje na crnogorskom uz napomenu.
 - **`/embed`** — verzija bez zaglavlja, za ugradnju u `<iframe>` na mirav.me.
@@ -219,6 +220,9 @@ app/
   layout.tsx          fontovi (Inter, Barlow Condensed), globalni metapodaci
   page.tsx            puna stranica sa zaglavljem i footerom
   embed/page.tsx      verzija za <iframe>, bez zaglavlja
+  simulator/page.tsx        simulator kao samostalna stranica
+  embed/simulator/page.tsx  simulator za <iframe>, odvojeno od kviza
+  icon.svg / icon.png       favicon (SVG + PNG za starije Safari verzije)
   globals.css         dizajn tokeni i pomoćne klase
 components/
   Quiz.tsx            ekrani (landing/kviz/rezultat), stanje, tajmer
@@ -249,7 +253,8 @@ lib/
   categories.ts       izvođenje kategorija
   questions.ts        učitavanje, miješanje, provjera odgovora, bodovanje
   simulator.ts        scene iz kataloga + broj vozila po sceni (ručno popisan)
-  simScenarios.ts     crtani scenariji + solver pravila desne strane
+  simRules.ts         model scene + rule-engine (hijerarhija prvenstva)
+  simScenarios.ts     29 ručno autorskih scenarija, provjerenih engine-om
   imageSizes.ts       generisano
 scripts/
   gen-image-sizes.mjs generator dimenzija slika
@@ -270,27 +275,54 @@ brojanje otkucaja dalo kandidatu znatno više od 45 minuta.
 
 ### Simulator raskrsnica
 
-Dvije familije scenarija, biraju se karticama unutar simulatora.
+Dostupan je i kao samostalna ruta: **`/simulator`** (i **`/embed/simulator`** za ugradnju
+odvojeno od kviza). Familije se biraju karticama.
 
-#### „Pravilo desne strane" — crtane scene
+| Familija | Scenarija | Interakcija |
+| --- | :---: | --- |
+| Pravilo desne strane | 6 | redoslijed |
+| Glavni i sporedni put | 6 | redoslijed |
+| Semafor | 6 | redoslijed |
+| Skretanje ulijevo | 4 | redoslijed |
+| Kružni tok | 4 | odluka |
+| Pješaci | 3 | odluka |
+| Iz kataloga (fotografije) | 10 | redoslijed |
+
+#### Crtane scene
 
 Raskrsnica se **crta kodom** (SVG, bez ijednog asseta): kolovoz, isprekidane linije, zebre,
-trotoari i vozila. Kandidat tapne vozila **direktno u sceni**; na tačan odgovor se vozila
-animirano provezu tačnim redoslijedom, na netačan blicne crvena tačka ukrštanja i ispiše se
-pravilo.
+trotoari, vozila, znakovi (romb / ustupi prvenstvo / STOP), semafori, kružni tok i pješaci.
+Uz svako vozilo se crta **žuta putanja sa strelicom** — bez nje se ne vidi da vozilo skreće,
+a od namjere zavisi ko kome ustupa, pa scena ne bi bila rješiva.
 
-Scenariji su ručno autorski u [`lib/simScenarios.ts`](lib/simScenarios.ts) i **provjereni
-solverom**: `solveRightHand` nezavisno računa redoslijed iz lanca ustupanja
-`N → W → S → E → N`, a test poredi rezultat sa autorskim `answer`. Ako se u scenariju
-pogriješi, test pada.
+Dvije vrste interakcije:
 
-Svi scenariji su za sada na neregulisanoj raskrsnici sa vozilima koja zadržavaju pravac —
-tada je redoslijed jednoznačan. Solver namjerno vraća `null` za skretanja (traže dodatna
-pravila) i za **„bešavnu petlju"**: kad sva četiri kraka imaju vozilo, svako ima nekoga sa
-desne strane i pravilo samo ne rješava situaciju. Zato takav scenarij nije ni autorisan.
+- **redoslijed** — kandidat tapne vozila direktno u sceni; na tačan odgovor se vozila
+  animirano provezu tačnim redoslijedom, na netačan blicne crvena tačka ukrštanja,
+- **odluka** — „Prolazim / Propuštam" za svoje vozilo (obilježeno žutim prstenom); koristi se
+  gdje redoslijed nije poenta.
 
-Desna vožnja je ugrađena u geometriju: vozilo sa sjevera ide južnom smjerom u zapadnoj traci,
-sa juga sjevernim u istočnoj, i tako redom — što test i provjerava.
+Desna vožnja je ugrađena u geometriju: sa sjevera se ide na jug zapadnom trakom, sa juga na
+sjever istočnom, i tako redom. U kružnom toku se kruži **suprotno od kazaljke na satu**.
+
+#### Rule-engine
+
+[`lib/simRules.ts`](lib/simRules.ts) računa redoslijed po hijerarhiji prvenstva:
+**semafor → znaci → pravilo desne strane**, uz pravilo da ljevak propušta susretno vozilo
+koje ide pravo ili desno. STOP i „ustupi prvenstvo" su isti nivo prvenstva; crveno i žuto
+znače da vozilo ne prolazi.
+
+Engine je namjerno konzervativan i vraća `null` kad odgovor nije jednoznačan:
+
+- **naredbe policijskog službenika** — semantika znakova rukama nije potvrđena iz Pravilnika,
+- **više valjanih redoslijeda** — kad je u nekom koraku više vozila slobodno,
+- **„bešavna petlja"** — sva četiri kraka zauzeta na neregulisanoj raskrsnici; svako ima
+  nekoga sa desne strane i pravilo samo ne rješava situaciju.
+
+Zbog toga se autorski scenariji mogu **provjeriti**: test poredi svaki `answer` / `decision`
+sa onim što engine izračuna. Ako se ne poklope, test pada — pa scenariji ne mogu tiho
+odlutati od pravila. Ta provjera je već uhvatila jednu grešku u autorstvu (scena kod koje je
+komentar govorio da vozilo skreće, a podatak je govorio da ide pravo).
 
 #### „Iz kataloga" — fotografije
 
@@ -308,10 +340,14 @@ MIRAV-om).
 
 #### Šta ostaje
 
-Solver za sada pokriva samo pravilo desne strane. Sljedeće familije iz specifikacije nisu
-implementirane: glavni/sporedni put (znaci), semafor i skretanje, kružni tok, znaci
-policijskog službenika, pješaci/biciklisti, posebna vozila. Uz njih ide i proširenje solvera
-hijerarhijom prvenstva (policajac → semafor → znaci → pravila) i podrška za skretanja.
+- **Znaci policijskog službenika** — nisu autorisani jer semantika znakova rukama (koji krak
+  staje zavisi od položaja tijela i ruku) nije potvrđena iz Pravilnika. Pravilnik je uz to
+  jedan od izvora u modalu „Literatura", pa je provjera na dohvat ruke. Engine bi trebalo
+  proširiti da naredba policajca poništava semafor i znakove.
+- **Posebna vozila** (vozilo s pravom prvenstva, izlazak iz dvorišta) i **biciklisti**.
+- **Zvuk, bodovna tabla, beskonačni mod** iz specifikacije (bili označeni kao opciono).
+  Beskonačni mod je sada izvodljiv: engine može provjeriti nasumično generisanu scenu i
+  odbaciti one koje nisu jednoznačne.
 
 Kad broj scenarija poraste, prirodno je izmjestiti ih iz koda u `public/scenarios.json`,
 isto kao `questions.json`.

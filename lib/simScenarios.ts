@@ -1,109 +1,54 @@
 import type { Dict } from "./i18n";
+import type { DrawnScenario, Family } from "./simRules";
 
 /**
- * Crtani scenariji raskrsnice — familija „pravilo desne strane".
+ * Ručno autorski scenariji za simulator raskrsnica.
  *
- * Scena se opisuje podacima, a crta se programski (vidi components/sim/).
- * Za sada su svi scenariji na neregulisanoj raskrsnici (bez znakova i semafora)
- * i sva vozila zadržavaju pravac — tada je redoslijed jednoznačno određen
- * pravilom desne strane, pa nema prostora za spor oko tačnog odgovora.
- */
-
-export type Approach = "N" | "E" | "S" | "W";
-export type Intent = "straight" | "left" | "right";
-export type VehicleKind = "car" | "van";
-
-export interface DrawnVehicle {
-  /** Broj kojim je vozilo označeno u sceni (1..n). */
-  id: number;
-  approach: Approach;
-  intent: Intent;
-  kind: VehicleKind;
-}
-
-export interface DrawnScenario {
-  id: string;
-  family: "priority";
-  layout: "cross";
-  vehicles: DrawnVehicle[];
-  /** Tačan redoslijed prolaska (id-jevi). Autoritativan — solver ga provjerava. */
-  answer: number[];
-  /** Ključevi pravila koja se ispisuju uz rješenje. */
-  rules: (keyof Dict)[];
-}
-
-/**
- * Kome vozilo ustupa prvenstvo — vozilu sa svoje desne strane.
+ * ID-jevi vozila se dodjeljuju redom **N → E → S → W** među prisutnim kracima —
+ * to je jedino pravilo kojeg se treba držati pri dodavanju novih scena.
  *
- * Desna strana zavisi od smjera kretanja (desna vožnja):
- * vozilo sa sjevera ide na jug, pa mu je desno zapad; sa zapada ide na istok,
- * desno mu je jug; i tako u krug N → W → S → E → N.
- */
-export const YIELDS_TO: Readonly<Record<Approach, Approach>> = {
-  N: "W",
-  W: "S",
-  S: "E",
-  E: "N",
-};
-
-/**
- * Računa redoslijed prolaska po pravilu desne strane.
+ * Svaki `answer` / `decision` provjerava test protiv rule-engine-a
+ * (`lib/simRules.ts`). Ako se ne poklope, test pada — zato scenariji ne mogu
+ * tiho odlutati od pravila.
  *
- * Vrijedi samo za neregulisanu raskrsnicu na kojoj sva vozila zadržavaju pravac.
- * Vraća `null` ako se redoslijed ne može odrediti — kad sva četiri kraka imaju
- * vozilo, svako ima nekoga sa desne strane i nastaje „bešavna petlja"
- * (zaglavljeni krug), koju pravilo samo ne rješava.
+ * Šta NIJE autorisano i zašto:
+ *  - **znaci policijskog službenika**: semantika znakova rukama (koji krak staje
+ *    zavisi od položaja tijela i ruku) nije potvrđena iz Pravilnika, pa engine
+ *    to i ne podržava. Bolje bez scenarija nego sa pogrešnim.
+ *  - **četiri vozila na neregulisanoj raskrsnici**: „bešavna petlja" — svako ima
+ *    nekoga sa desne strane, pravilo samo ne rješava situaciju.
+ *  - **situacije sa više valjanih redoslijeda**: engine ih odbija, pa ih nema.
  */
-export function solveRightHand(vehicles: readonly DrawnVehicle[]): number[] | null {
-  const remaining = new Map<Approach, DrawnVehicle>();
-  for (const v of vehicles) {
-    if (v.intent !== "straight") return null; // skretanja traže dodatna pravila
-    remaining.set(v.approach, v);
-  }
 
-  const order: number[] = [];
-  while (remaining.size > 0) {
-    // Prolazi vozilo koje nikoga (više) nema sa svoje desne strane.
-    const free = [...remaining.values()].find((v) => !remaining.has(YIELDS_TO[v.approach]));
-    if (!free) return null; // bešavna petlja
-    order.push(free.id);
-    remaining.delete(free.approach);
-  }
-  return order;
-}
+const R = (...keys: (keyof Dict)[]) => keys;
 
-const RULES: (keyof Dict)[] = ["ruleFreeRight", "ruleRightHand"];
-
-/**
- * Scenariji su ručno autorski, a ID-jevi vozila se dodjeljuju redom N → E → S → W
- * među prisutnim kracima. Test provjerava da se `answer` poklapa sa `solveRightHand`.
- */
-export const DRAWN_SCENARIOS: readonly DrawnScenario[] = [
+// ── Pravilo desne strane: neregulisana raskrsnica, sva vozila idu pravo ──────
+const PRAVILO: DrawnScenario[] = [
   {
     id: "rh-2-nw",
-    family: "priority",
+    family: "pravilo",
     layout: "cross",
     vehicles: [
       { id: 1, approach: "N", intent: "straight", kind: "car" },
       { id: 2, approach: "W", intent: "straight", kind: "car" },
     ],
     answer: [2, 1],
-    rules: RULES,
+    rules: R("ruleFreeRight", "ruleRightHand"),
   },
   {
     id: "rh-2-es",
-    family: "priority",
+    family: "pravilo",
     layout: "cross",
     vehicles: [
       { id: 1, approach: "E", intent: "straight", kind: "car" },
       { id: 2, approach: "S", intent: "straight", kind: "van" },
     ],
     answer: [1, 2],
-    rules: RULES,
+    rules: R("ruleFreeRight", "ruleRightHand"),
   },
   {
     id: "rh-3-nes",
-    family: "priority",
+    family: "pravilo",
     layout: "cross",
     vehicles: [
       { id: 1, approach: "N", intent: "straight", kind: "car" },
@@ -111,11 +56,11 @@ export const DRAWN_SCENARIOS: readonly DrawnScenario[] = [
       { id: 3, approach: "S", intent: "straight", kind: "car" },
     ],
     answer: [1, 2, 3],
-    rules: RULES,
+    rules: R("ruleFreeRight", "ruleRightHand"),
   },
   {
     id: "rh-3-new",
-    family: "priority",
+    family: "pravilo",
     layout: "cross",
     vehicles: [
       { id: 1, approach: "N", intent: "straight", kind: "car" },
@@ -123,11 +68,11 @@ export const DRAWN_SCENARIOS: readonly DrawnScenario[] = [
       { id: 3, approach: "W", intent: "straight", kind: "van" },
     ],
     answer: [3, 1, 2],
-    rules: RULES,
+    rules: R("ruleFreeRight", "ruleRightHand"),
   },
   {
     id: "rh-3-esw",
-    family: "priority",
+    family: "pravilo",
     layout: "cross",
     vehicles: [
       { id: 1, approach: "E", intent: "straight", kind: "van" },
@@ -135,11 +80,11 @@ export const DRAWN_SCENARIOS: readonly DrawnScenario[] = [
       { id: 3, approach: "W", intent: "straight", kind: "car" },
     ],
     answer: [1, 2, 3],
-    rules: RULES,
+    rules: R("ruleFreeRight", "ruleRightHand"),
   },
   {
     id: "rh-3-nsw",
-    family: "priority",
+    family: "pravilo",
     layout: "cross",
     vehicles: [
       { id: 1, approach: "N", intent: "straight", kind: "van" },
@@ -147,16 +92,368 @@ export const DRAWN_SCENARIOS: readonly DrawnScenario[] = [
       { id: 3, approach: "W", intent: "straight", kind: "car" },
     ],
     answer: [2, 3, 1],
-    rules: RULES,
+    rules: R("ruleFreeRight", "ruleRightHand"),
   },
-] as const;
+];
 
-export function isDrawnOrderCorrect(
-  scenario: DrawnScenario,
-  picked: readonly number[],
-): boolean {
-  return (
-    picked.length === scenario.answer.length &&
-    picked.every((v, i) => v === scenario.answer[i])
-  );
+// ── Glavni / sporedni put: znak prvenstva (romb), ustupi prvenstvo, STOP ─────
+const ZNACI: DrawnScenario[] = [
+  {
+    id: "sg-main-ns-w",
+    family: "znaci",
+    layout: "cross",
+    approaches: {
+      N: { sign: "priority" },
+      S: { sign: "priority" },
+      W: { sign: "yield" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "car" },
+      { id: 2, approach: "W", intent: "straight", kind: "car" },
+    ],
+    answer: [1, 2],
+    rules: R("rulePriorityRoad", "ruleYieldSign"),
+  },
+  {
+    id: "sg-main-ns-e-stop",
+    family: "znaci",
+    layout: "cross",
+    approaches: {
+      N: { sign: "priority" },
+      S: { sign: "priority" },
+      E: { sign: "stop" },
+    },
+    vehicles: [
+      { id: 1, approach: "E", intent: "straight", kind: "van" },
+      { id: 2, approach: "S", intent: "straight", kind: "car" },
+    ],
+    answer: [2, 1],
+    rules: R("rulePriorityRoad", "ruleStopSign"),
+  },
+  {
+    id: "sg-main-ew-n",
+    family: "znaci",
+    layout: "cross",
+    approaches: {
+      E: { sign: "priority" },
+      W: { sign: "priority" },
+      N: { sign: "yield" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "car" },
+      { id: 2, approach: "E", intent: "straight", kind: "car" },
+      { id: 3, approach: "W", intent: "left", kind: "van" },
+    ],
+    // E i W su na glavnom putu; W skreće lijevo pa ustupa susretnom E.
+    answer: [2, 3, 1],
+    rules: R("rulePriorityRoad", "ruleLeftTurn"),
+  },
+  {
+    id: "sg-main-ns-both-e",
+    family: "znaci",
+    layout: "cross",
+    approaches: {
+      N: { sign: "priority" },
+      S: { sign: "priority" },
+      E: { sign: "yield" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "car" },
+      { id: 2, approach: "E", intent: "straight", kind: "car" },
+      { id: 3, approach: "S", intent: "left", kind: "car" },
+    ],
+    answer: [1, 3, 2],
+    rules: R("rulePriorityRoad", "ruleLeftTurn"),
+  },
+  {
+    id: "sg-main-ns-ew",
+    family: "znaci",
+    layout: "cross",
+    approaches: {
+      N: { sign: "priority" },
+      S: { sign: "priority" },
+      E: { sign: "yield" },
+      W: { sign: "yield" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "van" },
+      { id: 2, approach: "E", intent: "straight", kind: "car" },
+      { id: 3, approach: "S", intent: "left", kind: "car" },
+      { id: 4, approach: "W", intent: "left", kind: "car" },
+    ],
+    answer: [1, 3, 2, 4],
+    rules: R("rulePriorityRoad", "ruleLeftTurn"),
+  },
+  {
+    id: "sg-main-ew-s-stop",
+    family: "znaci",
+    layout: "cross",
+    approaches: {
+      E: { sign: "priority" },
+      W: { sign: "priority" },
+      S: { sign: "stop" },
+    },
+    vehicles: [
+      { id: 1, approach: "E", intent: "straight", kind: "car" },
+      { id: 2, approach: "S", intent: "straight", kind: "car" },
+      { id: 3, approach: "W", intent: "left", kind: "van" },
+    ],
+    answer: [1, 3, 2],
+    rules: R("rulePriorityRoad", "ruleStopSign", "ruleLeftTurn"),
+  },
+];
+
+// ── Semafor: zeleno nije bezuslovno; ljevak propušta susretno vozilo ─────────
+const SEMAFOR: DrawnScenario[] = [
+  {
+    id: "tl-ns-green-e-red",
+    family: "semafor",
+    layout: "cross",
+    approaches: {
+      N: { light: "green" },
+      S: { light: "green" },
+      E: { light: "red" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "car" },
+      { id: 2, approach: "E", intent: "straight", kind: "car" },
+      { id: 3, approach: "S", intent: "left", kind: "car" },
+    ],
+    answer: [1, 3],
+    rules: R("ruleGreenNotFree", "ruleLeftTurn", "ruleRedStops"),
+  },
+  {
+    id: "tl-ew-green-s-red",
+    family: "semafor",
+    layout: "cross",
+    approaches: {
+      E: { light: "green" },
+      W: { light: "green" },
+      S: { light: "red" },
+    },
+    vehicles: [
+      { id: 1, approach: "E", intent: "left", kind: "car" },
+      { id: 2, approach: "S", intent: "straight", kind: "van" },
+      { id: 3, approach: "W", intent: "straight", kind: "car" },
+    ],
+    answer: [3, 1],
+    rules: R("ruleGreenNotFree", "ruleLeftTurn", "ruleRedStops"),
+  },
+  {
+    id: "tl-ns-left",
+    family: "semafor",
+    layout: "cross",
+    approaches: {
+      N: { light: "green" },
+      S: { light: "green" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "left", kind: "car" },
+      { id: 2, approach: "S", intent: "straight", kind: "car" },
+    ],
+    answer: [2, 1],
+    rules: R("ruleGreenNotFree", "ruleLeftTurn"),
+  },
+  {
+    id: "tl-all-four",
+    family: "semafor",
+    layout: "cross",
+    approaches: {
+      N: { light: "green" },
+      S: { light: "green" },
+      E: { light: "red" },
+      W: { light: "red" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "van" },
+      { id: 2, approach: "E", intent: "straight", kind: "car" },
+      { id: 3, approach: "S", intent: "left", kind: "car" },
+      { id: 4, approach: "W", intent: "straight", kind: "car" },
+    ],
+    answer: [1, 3],
+    rules: R("ruleGreenNotFree", "ruleLeftTurn", "ruleRedStops"),
+  },
+  {
+    id: "tl-ew-left",
+    family: "semafor",
+    layout: "cross",
+    approaches: {
+      E: { light: "green" },
+      W: { light: "green" },
+    },
+    vehicles: [
+      { id: 1, approach: "E", intent: "straight", kind: "car" },
+      { id: 2, approach: "W", intent: "left", kind: "van" },
+    ],
+    answer: [1, 2],
+    rules: R("ruleGreenNotFree", "ruleLeftTurn"),
+  },
+  {
+    id: "tl-n-red",
+    family: "semafor",
+    layout: "cross",
+    approaches: {
+      N: { light: "red" },
+      E: { light: "green" },
+      W: { light: "green" },
+    },
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "car" },
+      { id: 2, approach: "E", intent: "left", kind: "car" },
+      { id: 3, approach: "W", intent: "straight", kind: "car" },
+    ],
+    answer: [3, 2],
+    rules: R("ruleGreenNotFree", "ruleLeftTurn", "ruleRedStops"),
+  },
+];
+
+// ── Skretanje ulijevo na neregulisanoj raskrsnici ────────────────────────────
+const LJEVAK: DrawnScenario[] = [
+  {
+    id: "lt-ns",
+    family: "ljevak",
+    layout: "cross",
+    vehicles: [
+      { id: 1, approach: "N", intent: "left", kind: "car" },
+      { id: 2, approach: "S", intent: "straight", kind: "car" },
+    ],
+    answer: [2, 1],
+    rules: R("ruleLeftTurn"),
+  },
+  {
+    id: "lt-ew",
+    family: "ljevak",
+    layout: "cross",
+    vehicles: [
+      { id: 1, approach: "E", intent: "left", kind: "van" },
+      { id: 2, approach: "W", intent: "straight", kind: "car" },
+    ],
+    answer: [2, 1],
+    rules: R("ruleLeftTurn"),
+  },
+  {
+    id: "lt-nsw",
+    family: "ljevak",
+    layout: "cross",
+    vehicles: [
+      { id: 1, approach: "N", intent: "left", kind: "car" },
+      { id: 2, approach: "S", intent: "straight", kind: "car" },
+      { id: 3, approach: "W", intent: "straight", kind: "van" },
+    ],
+    answer: [2, 3, 1],
+    rules: R("ruleLeftTurn", "ruleRightHand"),
+  },
+  {
+    id: "lt-nes",
+    family: "ljevak",
+    layout: "cross",
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "car" },
+      { id: 2, approach: "E", intent: "straight", kind: "car" },
+      { id: 3, approach: "S", intent: "left", kind: "van" },
+    ],
+    answer: [1, 2, 3],
+    rules: R("ruleLeftTurn", "ruleRightHand"),
+  },
+];
+
+// ── Kružni tok: odluka „prolazim / propuštam" ───────────────────────────────
+const KRUZNI: DrawnScenario[] = [
+  {
+    id: "rb-yield-1",
+    family: "kruzni",
+    layout: "roundabout",
+    vehicles: [
+      { id: 1, approach: "S", intent: "straight", kind: "car" },
+      { id: 2, approach: "W", intent: "straight", kind: "car", inRoundabout: true },
+    ],
+    decision: { vehicleId: 1, answer: "yield" },
+    rules: R("ruleRoundabout"),
+  },
+  {
+    id: "rb-go-1",
+    family: "kruzni",
+    layout: "roundabout",
+    vehicles: [{ id: 1, approach: "S", intent: "straight", kind: "car" }],
+    decision: { vehicleId: 1, answer: "go" },
+    rules: R("ruleRoundabout"),
+  },
+  {
+    id: "rb-yield-2",
+    family: "kruzni",
+    layout: "roundabout",
+    vehicles: [
+      { id: 1, approach: "N", intent: "straight", kind: "car", inRoundabout: true },
+      { id: 2, approach: "E", intent: "straight", kind: "van", inRoundabout: true },
+      { id: 3, approach: "W", intent: "straight", kind: "car" },
+    ],
+    decision: { vehicleId: 3, answer: "yield" },
+    rules: R("ruleRoundabout"),
+  },
+  {
+    id: "rb-inside",
+    family: "kruzni",
+    layout: "roundabout",
+    vehicles: [
+      { id: 1, approach: "E", intent: "straight", kind: "car", inRoundabout: true },
+      { id: 2, approach: "S", intent: "straight", kind: "car" },
+    ],
+    decision: { vehicleId: 1, answer: "go" },
+    rules: R("ruleRoundabout"),
+  },
+];
+
+// ── Pješaci: odluka „prolazim / propuštam" ─────────────────────────────────
+const PJESACI: DrawnScenario[] = [
+  {
+    id: "pd-right-turn",
+    family: "pjesaci",
+    layout: "cross",
+    vehicles: [{ id: 1, approach: "N", intent: "right", kind: "car" }],
+    pedestrians: [{ crossing: "W" }],
+    decision: { vehicleId: 1, answer: "yield" },
+    rules: R("rulePedestrian"),
+  },
+  {
+    id: "pd-left-turn",
+    family: "pjesaci",
+    layout: "cross",
+    vehicles: [{ id: 1, approach: "N", intent: "left", kind: "car" }],
+    pedestrians: [{ crossing: "E" }],
+    decision: { vehicleId: 1, answer: "yield" },
+    rules: R("rulePedestrian"),
+  },
+  {
+    id: "pd-straight-clear",
+    family: "pjesaci",
+    layout: "cross",
+    vehicles: [{ id: 1, approach: "N", intent: "straight", kind: "car" }],
+    pedestrians: [{ crossing: "E" }],
+    decision: { vehicleId: 1, answer: "go" },
+    rules: R("rulePedestrian"),
+  },
+];
+
+export const DRAWN_SCENARIOS: readonly DrawnScenario[] = [
+  ...PRAVILO,
+  ...ZNACI,
+  ...SEMAFOR,
+  ...LJEVAK,
+  ...KRUZNI,
+  ...PJESACI,
+];
+
+/** Scenariji jedne familije. */
+export function scenariosOf(family: Family): DrawnScenario[] {
+  return DRAWN_SCENARIOS.filter((s) => s.family === family);
 }
+
+/** Familije koje imaju scenarije, redom kojim se prikazuju. */
+export const FAMILIES: readonly { value: Family; labelKey: keyof Dict }[] = [
+  { value: "pravilo", labelKey: "simFamilyRule" },
+  { value: "znaci", labelKey: "simFamilySigns" },
+  { value: "semafor", labelKey: "simFamilyLights" },
+  { value: "ljevak", labelKey: "simFamilyLeft" },
+  { value: "kruzni", labelKey: "simFamilyRoundabout" },
+  { value: "pjesaci", labelKey: "simFamilyPedestrian" },
+] as const;

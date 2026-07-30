@@ -1,4 +1,4 @@
-import type { VehicleKind } from "@/lib/simScenarios";
+import type { VehicleKind } from "@/lib/simRules";
 
 interface VehicleSpriteProps {
   kind: VehicleKind;

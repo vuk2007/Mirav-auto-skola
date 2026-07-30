@@ -30,6 +30,16 @@ const nextConfig = {
         ],
       },
       {
+        // Podrute /embed (npr. /embed/simulator) moraju dobiti isto zaglavlje.
+        source: "/embed/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: `frame-ancestors ${FRAME_ANCESTORS.join(" ")};`,
+          },
+        ],
+      },
+      {
         // Sve ostale rute se ne smiju ugrađivati.
         source: "/((?!embed).*)",
         headers: [

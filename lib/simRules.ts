@@ -1,0 +1,219 @@
+import type { Dict } from "./i18n";
+
+/**
+ * Model scene i rule-engine za prvenstvo prolaza.
+ *
+ * Engine je namjerno konzervativan: kad situacija nije jednoznačna, vraća `null`
+ * umjesto da pogodi. Zahvaljujući tome se autorski `answer` može provjeriti
+ * testom — ako engine i autor ne daju isto, test pada.
+ */
+
+export type Approach = "N" | "E" | "S" | "W";
+export type Intent = "straight" | "left" | "right";
+export type VehicleKind = "car" | "van";
+export type SignKind = "priority" | "yield" | "stop";
+export type LightKind = "red" | "yellow" | "green";
+export type Layout = "cross" | "roundabout";
+
+export type Family = "pravilo" | "znaci" | "semafor" | "ljevak" | "kruzni" | "pjesaci";
+
+export interface ApproachSetup {
+  sign?: SignKind;
+  light?: LightKind;
+}
+
+export interface DrawnVehicle {
+  /** Broj kojim je vozilo označeno u sceni. */
+  id: number;
+  approach: Approach;
+  intent: Intent;
+  kind: VehicleKind;
+  /** Kružni tok: vozilo se već kreće kroz tok (ima prvenstvo nad onima koji ulaze). */
+  inRoundabout?: boolean;
+}
+
+export interface Pedestrian {
+  /** Pješak prelazi kolovoz na tom prilazu. */
+  crossing: Approach;
+}
+
+export interface DrawnScenario {
+  id: string;
+  family: Family;
+  layout: Layout;
+  approaches?: Partial<Record<Approach, ApproachSetup>>;
+  vehicles: DrawnVehicle[];
+  pedestrians?: Pedestrian[];
+  /**
+   * Scenariji redoslijeda: tačan redoslijed prolaska (id-jevi). Vozila koja ne
+   * prolaze (crveno svjetlo) se ne navode.
+   */
+  answer?: number[];
+  /**
+   * Scenariji odluke: kandidat odgovara „Prolazim" ili „Propuštam" za svoje
+   * vozilo. Koristi se kad redoslijed nije poenta (kružni tok, pješaci).
+   */
+  decision?: { vehicleId: number; answer: "go" | "yield" };
+  /** Ključevi pravila koja se ispisuju uz rješenje. */
+  rules: (keyof Dict)[];
+}
+
+/** Vozilo ustupa prvenstvo vozilu sa svoje desne strane; desna vožnja. */
+export const YIELDS_TO: Readonly<Record<Approach, Approach>> = {
+  N: "W",
+  W: "S",
+  S: "E",
+  E: "N",
+};
+
+/** Suprotan (susretni) krak. */
+export const OPPOSITE: Readonly<Record<Approach, Approach>> = {
+  N: "S",
+  S: "N",
+  E: "W",
+  W: "E",
+};
+
+/**
+ * Na koji krak vozilo izlazi. Desno je isti krak kojem se ustupa prvenstvo
+ * (`YIELDS_TO`), pravo je suprotni, a lijevo je suprotno od desnog.
+ */
+export function exitOf(approach: Approach, intent: Intent): Approach {
+  if (intent === "straight") return OPPOSITE[approach];
+  if (intent === "right") return YIELDS_TO[approach];
+  return OPPOSITE[YIELDS_TO[approach]];
+}
+
+/**
+ * Nivo prvenstva vozila: manji broj = ide ranije. `null` znači da vozilo uopšte
+ * ne prolazi (crveno svjetlo).
+ *
+ * Hijerarhija (od jače ka slabijoj): semafor → znaci → nema regulacije.
+ * Naredbe policijskog službenika NISU podržane — vidi `solveOrder`.
+ */
+function tierOf(scenario: DrawnScenario, v: DrawnVehicle): number | null {
+  if (scenario.layout === "roundabout") {
+    // U kružnom toku prvenstvo ima vozilo koje se već kreće kroz tok.
+    return v.inRoundabout ? 0 : 1;
+  }
+
+  const setup = scenario.approaches?.[v.approach];
+
+  // Semafor poništava znakove.
+  if (setup?.light) {
+    if (setup.light === "green") return 0;
+    return null; // crveno i žuto — vozilo se zaustavlja
+  }
+
+  if (setup?.sign) {
+    return setup.sign === "priority" ? 0 : 1; // yield i stop su isti nivo prvenstva
+  }
+
+  return 0; // neregulisano — svi na istom nivou, odlučuje pravilo desne strane
+}
+
+/**
+ * Računa redoslijed prolaska.
+ *
+ * Vraća `null` kad rezultat nije jednoznačan, i to namjerno u ovim slučajevima:
+ *  - naredba policijskog službenika (semantika znakova rukama nije podržana),
+ *  - u nekom koraku je više vozila slobodno (više valjanih redoslijeda),
+ *  - zaglavljeni krug („bešavna petlja" — sva četiri kraka zauzeta).
+ */
+export function solveOrder(scenario: DrawnScenario): number[] | null {
+  const passing = scenario.vehicles.filter((v) => tierOf(scenario, v) !== null);
+  if (passing.length === 0) return null;
+
+  const tier = new Map<number, number>();
+  for (const v of passing) tier.set(v.id, tierOf(scenario, v) as number);
+
+  const byApproach = new Map<Approach, DrawnVehicle>();
+  for (const v of passing) byApproach.set(v.approach, v);
+
+  const remaining = new Set(passing.map((v) => v.id));
+  const order: number[] = [];
+
+  /** Kome `v` mora da ustupi, a da taj još nije prošao. */
+  const blockers = (v: DrawnVehicle): number[] => {
+    const out: number[] = [];
+    const myTier = tier.get(v.id) as number;
+
+    // Jači nivo prvenstva prolazi prvi.
+    for (const o of passing) {
+      if (o.id === v.id || !remaining.has(o.id)) continue;
+      if ((tier.get(o.id) as number) < myTier) out.push(o.id);
+    }
+
+    // Pravilo desne strane — samo unutar istog nivoa.
+    const right = byApproach.get(YIELDS_TO[v.approach]);
+    if (right && remaining.has(right.id) && tier.get(right.id) === myTier) {
+      out.push(right.id);
+    }
+
+    // Ljevak ustupa susretnom vozilu koje ide pravo ili desno.
+    if (v.intent === "left") {
+      const onc = byApproach.get(OPPOSITE[v.approach]);
+      if (
+        onc &&
+        remaining.has(onc.id) &&
+        tier.get(onc.id) === myTier &&
+        onc.intent !== "left"
+      ) {
+        out.push(onc.id);
+      }
+    }
+
+    return out;
+  };
+
+  while (remaining.size > 0) {
+    const free = passing.filter((v) => remaining.has(v.id) && blockers(v).length === 0);
+    if (free.length === 0) return null; // zaglavljeni krug
+    if (free.length > 1) return null; // više valjanih redoslijeda — nije za vježbu
+    const next = free[0] as DrawnVehicle;
+    order.push(next.id);
+    remaining.delete(next.id);
+  }
+
+  return order;
+}
+
+/**
+ * Provjerava scenarij odluke: da li „moje" vozilo smije da prođe prvo.
+ * Vraća `null` ako se ne može odrediti.
+ */
+export function solveDecision(scenario: DrawnScenario): "go" | "yield" | null {
+  const mine = scenario.decision
+    ? scenario.vehicles.find((v) => v.id === scenario.decision?.vehicleId)
+    : undefined;
+  if (!mine) return null;
+
+  // Pješak na prelazu kojim vozilo prolazi ima prvenstvo — i na ulazu u
+  // raskrsnicu (svoj krak) i na izlazu (krak na koji se izlazi).
+  const exit = exitOf(mine.approach, mine.intent);
+  const pedOnPath = scenario.pedestrians?.some(
+    (p) => p.crossing === mine.approach || p.crossing === exit,
+  );
+  if (pedOnPath) return "yield";
+
+  if (scenario.layout === "roundabout") {
+    if (mine.inRoundabout) return "go";
+    // Ulazak u kružni tok: propušta se svako vozilo koje je već u toku.
+    return scenario.vehicles.some((v) => v.id !== mine.id && v.inRoundabout)
+      ? "yield"
+      : "go";
+  }
+
+  const order = solveOrder(scenario);
+  if (!order) return null;
+  return order[0] === mine.id ? "go" : "yield";
+}
+
+export function isOrderCorrect(
+  scenario: DrawnScenario,
+  picked: readonly number[],
+): boolean {
+  const answer = scenario.answer;
+  if (!answer) return false;
+  return picked.length === answer.length && picked.every((v, i) => v === answer[i]);
+}
