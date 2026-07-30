@@ -17,8 +17,9 @@ korisnik klikne „Počni".
 - **Simulator raskrsnica** — treći režim i samostalna ruta `/simulator`: crtane SVG scene i
   fotografije iz kataloga, kroz 7 familija (pravilo desne strane, glavni/sporedni put,
   semafor, skretanje ulijevo, kružni tok, pješaci, katalog). Vidi „Simulator" niže.
-- **Jezik `me`/`en`/`sq`** — crnogorski, engleski i albanski; prebacivač mijenja cio
-  interfejs (uključujući footer), a sadržaj pitanja ostaje na crnogorskom uz napomenu.
+- **Jezik `me`/`en`/`sq`/`ru`** — crnogorski, engleski, albanski i ruski; prebacivač mijenja
+  cio interfejs (uključujući footer). Sadržaj pitanja se prevodi odvojeno, skriptom — vidi
+  „Objašnjenja i prevodi pitanja".
 - **`/embed`** — verzija bez zaglavlja, za ugradnju u `<iframe>` na mirav.me.
 
 ---
@@ -242,22 +243,24 @@ components/
     SimulatorShell.tsx    izbor familije scenarija
     DrawnRunner.tsx       crtane scene: tap u sceni, animacija, pravilo
     IntersectionSvg.tsx   raskrsnica iz ptičje perspektive (crtana kodom)
+    RoundaboutSvg.tsx     kružni tok: prsten, ostrvo, lukovi kretanja
     VehicleSprite.tsx     vozilo iz ptičje perspektive (crtano kodom)
     PhotoRunner.tsx       scene iz kataloga (fotografije)
   EmbedHeightReporter.tsx   postMessage sa visinom
 lib/
   types.ts            tipovi pitanja i odgovora
   config.ts           parametri ispita  ← ovdje se mijenja EXAM_*
-  i18n.ts             UI stringovi me/en/sq
+  i18n.ts             UI stringovi me/en/sq/ru
   storage.ts          localStorage (jezik, najbolji rezultat, nastavak vježbe)
   categories.ts       izvođenje kategorija
   questions.ts        učitavanje, miješanje, provjera odgovora, bodovanje
   simulator.ts        scene iz kataloga + broj vozila po sceni (ručno popisan)
   simRules.ts         model scene + rule-engine (hijerarhija prvenstva)
-  simScenarios.ts     29 ručno autorskih scenarija, provjerenih engine-om
+  simScenarios.ts     31 ručno autorski scenario, provjeren engine-om
   imageSizes.ts       generisano
 scripts/
   gen-image-sizes.mjs generator dimenzija slika
+  translate.mjs       mašinski prevod pitanja na EN/RU (Claude API)
 ```
 
 ### Pamćenje
@@ -284,7 +287,7 @@ odvojeno od kviza). Familije se biraju karticama.
 | Glavni i sporedni put | 6 | redoslijed |
 | Semafor | 6 | redoslijed |
 | Skretanje ulijevo | 4 | redoslijed |
-| Kružni tok | 4 | odluka |
+| Kružni tok | 6 | odluka |
 | Pješaci | 3 | odluka |
 | Iz kataloga (fotografije) | 10 | redoslijed |
 
@@ -303,7 +306,17 @@ Dvije vrste interakcije:
   gdje redoslijed nije poenta.
 
 Desna vožnja je ugrađena u geometriju: sa sjevera se ide na jug zapadnom trakom, sa juga na
-sjever istočnom, i tako redom. U kružnom toku se kruži **suprotno od kazaljke na satu**.
+sjever istočnom, i tako redom.
+
+Kružni tok ima svoj renderer, [`RoundaboutSvg.tsx`](components/sim/RoundaboutSvg.tsx), jer je
+geometrija drugačija od raskrsnice: prsten sa centralnim ostrvom (kroz sredinu **ne** prolazi
+put), razdjelna ostrva i trouglovi „ustupi prvenstvo" na ulazima, isprekidana osa prstena.
+Vozila se kreću **po luku** prstena, **suprotno od kazaljke na satu** — vozilo koje je već u
+prstenu polazi sa svoje pozicije na osi, a vozilo koje ulazi se prvo priključi na osu iz
+ulazne trake. Otud i dva pravila koja se prikazuju: vozila u prstenu dolaze s **lijeve**
+strane (`ruleRoundaboutLeft`), a vozilo koje izlazi prije vašeg ulaza vam ne prelazi put pa ga
+ne morate propustiti (`ruleRoundaboutExit`) — to drugo se računa iz `entry`/`exit` krakova
+(`ringArcPasses` u `lib/simRules.ts`), ne pretpostavlja se.
 
 #### Rule-engine
 
@@ -371,15 +384,50 @@ nečitak, umjesto njega je inicijal na brend plavoj sa žutim rombom.
 
 ### Objašnjenja i prevodi pitanja
 
-Prevodi u `lib/i18n.ts` pokrivaju **samo interfejs**. Sama pitanja su i dalje na crnogorskom
-na sva tri jezika — kad je izabran EN ili AL, uz pitanje stoji napomena o tome.
+Dvije odvojene stvari:
 
-`Question` ima opciona polja `explanation`, `text_en` i `options_en`. Ona **još ne postoje**
-u `questions.json` — prikaz je pripremljen, pa se popunjavaju ručno kad se odluči za koja
-pitanja. Pitanja se ne prevode automatski.
+- **Interfejs** — `lib/i18n.ts`, četiri kompletna rječnika (`me`, `en`, `sq`, `ru`). Uvijek
+  postoji, ne zavisi ni od čega.
+- **Sadržaj pitanja** — opciona polja `text_en` / `options_en` / `text_ru` / `options_ru` u
+  `questions.json`. Popunjava ih `scripts/translate.mjs`. Dok ih nema, pitanje se prikazuje
+  na crnogorskom uz napomenu (`translationMissing`).
 
-Albanski je interno kod `sq` (ISO 639-1), a na prebacivaču piše `AL` jer je tako
-prepoznatljivije — mapa je `LANG_LABELS` u `lib/i18n.ts`.
+Za albanski se pitanja **ne prevode** — samo interfejs; tu napomena kaže da su pitanja
+dostupna na crnogorskom (`questionsOnlyInMe`). Albanski je interno kod `sq` (ISO 639-1), a na
+prebacivaču piše `AL` jer je tako prepoznatljivije — mapa je `LANG_LABELS`.
+
+`explanation` se i dalje popunjava ručno i namjerno: objašnjenja se ne izmišljaju, upisuju se
+samo kad postoji osnov u Pravilniku.
+
+#### Skripta za prevod
+
+```bash
+ANTHROPIC_API_KEY=... npm run translate            # en + ru, sve što nije prevedeno
+ANTHROPIC_API_KEY=... npm run translate -- --lang=ru --limit=20
+npm run translate:stats                            # pokrivenost, bez poziva API-ja
+npm run translate -- --lang=en --dry-run           # koji paketi bi išli, bez upisa
+```
+
+Ostale opcije: `--batch=N` (pitanja po zahtjevu, podrazumijevano 8), `--model=ID`
+(podrazumijevano `claude-opus-5`), `--file=PUT`.
+
+Kako je napravljena:
+
+- **Ne dira tačne odgovore.** Modelu se šalju samo `id`, `text` i `options` — `correct` i
+  `answer_sequence` ne izlaze iz skripte. Poslije svakog paketa se otisak svih tačnih
+  odgovora poredi sa stanjem prije rada; na svaku razliku skripta prekida bez upisa.
+- **Upisuje nakon svakog paketa**, pa prekid (Ctrl+C, mreža, potrošen limit) ne baca
+  obavljen posao. Ponovno pokretanje preskače prevedeno i nastavlja gdje je stalo.
+- **Odbija paket u cjelini** ako se id-jevi ne poklapaju ili nešto nedostaje — bolje
+  preskočiti paket nego upisati prevod na pogrešno pitanje. Neuspio paket se ispiše i
+  pokušava se ponovo pri sljedećem pokretanju.
+- Strukturirani izlaz (`output_config.format`) sa strogom shemom, pa parsiranje ne zavisi od
+  formata odgovora. Ordering pitanja idu u odvojene pakete jer nemaju ponuđene odgovore.
+
+> **Mašinski prevod.** Ovo je pomoć u učenju — **zvanični ispit je na crnogorskom**. Prije
+> objave prevoda izvorni govornik EN/RU mora da provjeri ključne saobraćajne termine
+> („ustupi prvenstvo prolaza", „prvenstvo prolaza", „raskrsnica", „nepregledna krivina").
+> Prevod ne mijenja tačan odgovor.
 
 ---
 
@@ -390,6 +438,10 @@ prepoznatljivije — mapa je `LANG_LABELS` u `lib/i18n.ts`.
 - [ ] Potvrditi 41 / 45 / 85 i moguću raspodjelu po oblastima po važećem Pravilniku
       MUP-a, pa upisati u `lib/config.ts`.
 - [ ] Uskladiti plavu sa brendom mirav.me (token `--color-blue` u `app/globals.css`).
+- [ ] Pokrenuti `npm run translate` (traži `ANTHROPIC_API_KEY`) — bez toga EN i RU prikazuju
+      pitanja na crnogorskom uz napomenu.
+- [ ] Dati mašinski prevod EN/RU izvornom govorniku na provjeru saobraćajnih termina prije
+      nego se prevodi objave kao gotovi.
 
 ### Poznato ograničenje baze
 

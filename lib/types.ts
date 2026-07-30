@@ -36,8 +36,12 @@ interface QuestionBase {
    * Vježbi i u „Pregledu grešaka" ako postoji.
    */
   explanation?: string;
-  /** Engleski prevod teksta pitanja; ako nedostaje, koristi se crnogorski. */
+  /**
+   * Mašinski prevodi teksta pitanja (vidi `scripts/translate.mjs`). Ako polje
+   * nedostaje, prikazuje se crnogorski original uz napomenu.
+   */
   text_en?: string;
+  text_ru?: string;
 }
 
 /** Pitanje sa tri ponuđena odgovora — bez slike. */
@@ -45,8 +49,9 @@ export interface TextQuestion extends QuestionBase {
   type: "text";
   options: Record<OptionKey, string>;
   correct: OptionKey;
-  /** Engleski prevodi ponuđenih odgovora; ako nedostaju, koriste se crnogorski. */
+  /** Prevodi ponuđenih odgovora; ako nedostaju, koriste se crnogorski. */
   options_en?: Record<OptionKey, string>;
+  options_ru?: Record<OptionKey, string>;
 }
 
 /** Pitanje sa tri ponuđena odgovora — uz sliku. */
@@ -56,6 +61,7 @@ export interface ImageQuestion extends QuestionBase {
   options: Record<OptionKey, string>;
   correct: OptionKey;
   options_en?: Record<OptionKey, string>;
+  options_ru?: Record<OptionKey, string>;
 }
 
 /** Pitanje sa redoslijedom prolaska vozila, npr. ["3","4","2","1"]. */

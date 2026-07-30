@@ -357,49 +357,86 @@ const LJEVAK: DrawnScenario[] = [
   },
 ];
 
-// ── Kružni tok: odluka „prolazim / propuštam" ───────────────────────────────
+/**
+ * Kružni tok — odluka „prolazim / propuštam".
+ *
+ * Vozila imaju `approach` (gdje su) i `exit` (gdje izlaze); putanja je luk po
+ * prstenu, suprotno kazaljci: N → W → S → E → N.
+ *
+ * Nije dovoljno reći „svako vozilo u prstenu ima prvenstvo": vozilo koje izlazi
+ * PRIJE mog kraka mi ne prelazi put. Zato scene sadrže i taj slučaj, a putanja
+ * u sceni je nacrtana pa se namjera vozila vidi.
+ */
 const KRUZNI: DrawnScenario[] = [
   {
-    id: "rb-yield-1",
+    // Vozilo u prstenu na zapadu ide do istoka — prolazi preko juga, mog ulaza.
+    id: "rb-yield-w-to-e",
     family: "kruzni",
     layout: "roundabout",
     vehicles: [
-      { id: 1, approach: "S", intent: "straight", kind: "car" },
-      { id: 2, approach: "W", intent: "straight", kind: "car", inRoundabout: true },
+      { id: 1, approach: "S", intent: "straight", kind: "car", exit: "N" },
+      { id: 2, approach: "W", intent: "straight", kind: "car", inRoundabout: true, exit: "E" },
     ],
     decision: { vehicleId: 1, answer: "yield" },
-    rules: R("ruleRoundabout"),
+    rules: R("ruleRoundabout", "ruleRoundaboutLeft"),
   },
   {
-    id: "rb-go-1",
+    // Prsten je prazan.
+    id: "rb-go-empty",
     family: "kruzni",
     layout: "roundabout",
-    vehicles: [{ id: 1, approach: "S", intent: "straight", kind: "car" }],
+    vehicles: [{ id: 1, approach: "S", intent: "straight", kind: "car", exit: "W" }],
     decision: { vehicleId: 1, answer: "go" },
     rules: R("ruleRoundabout"),
   },
   {
-    id: "rb-yield-2",
+    // Vozilo u prstenu na sjeveru izlazi na zapadu — nikad ne dođe do juga.
+    id: "rb-go-exits-before",
     family: "kruzni",
     layout: "roundabout",
     vehicles: [
-      { id: 1, approach: "N", intent: "straight", kind: "car", inRoundabout: true },
-      { id: 2, approach: "E", intent: "straight", kind: "van", inRoundabout: true },
-      { id: 3, approach: "W", intent: "straight", kind: "car" },
+      { id: 1, approach: "N", intent: "straight", kind: "car", inRoundabout: true, exit: "W" },
+      { id: 2, approach: "S", intent: "straight", kind: "car", exit: "N" },
     ],
-    decision: { vehicleId: 3, answer: "yield" },
-    rules: R("ruleRoundabout"),
+    decision: { vehicleId: 2, answer: "go" },
+    rules: R("ruleRoundaboutExit"),
   },
   {
-    id: "rb-inside",
+    // Dva vozila u prstenu; ono sa istoka prolazi preko sjevera, mog ulaza.
+    id: "rb-yield-two-inside",
     family: "kruzni",
     layout: "roundabout",
     vehicles: [
-      { id: 1, approach: "E", intent: "straight", kind: "car", inRoundabout: true },
-      { id: 2, approach: "S", intent: "straight", kind: "car" },
+      { id: 1, approach: "N", intent: "straight", kind: "car", exit: "S" },
+      { id: 2, approach: "E", intent: "straight", kind: "van", inRoundabout: true, exit: "W" },
+      { id: 3, approach: "S", intent: "straight", kind: "car", inRoundabout: true, exit: "E" },
+    ],
+    decision: { vehicleId: 1, answer: "yield" },
+    rules: R("ruleRoundabout", "ruleRoundaboutLeft"),
+  },
+  {
+    // Ja sam već u prstenu — imam prvenstvo nad onim koji ulazi.
+    id: "rb-inside-go",
+    family: "kruzni",
+    layout: "roundabout",
+    vehicles: [
+      { id: 1, approach: "E", intent: "straight", kind: "car", inRoundabout: true, exit: "N" },
+      { id: 2, approach: "S", intent: "straight", kind: "car", exit: "W" },
     ],
     decision: { vehicleId: 1, answer: "go" },
     rules: R("ruleRoundabout"),
+  },
+  {
+    // Vozilo u prstenu na istoku izlazi na sjeveru — ne dolazi do zapada.
+    id: "rb-go-e-to-n",
+    family: "kruzni",
+    layout: "roundabout",
+    vehicles: [
+      { id: 1, approach: "E", intent: "straight", kind: "van", inRoundabout: true, exit: "N" },
+      { id: 2, approach: "W", intent: "straight", kind: "car", exit: "S" },
+    ],
+    decision: { vehicleId: 2, answer: "go" },
+    rules: R("ruleRoundaboutExit"),
   },
 ];
 

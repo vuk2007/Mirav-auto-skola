@@ -25,11 +25,19 @@ export interface ApproachSetup {
 export interface DrawnVehicle {
   /** Broj kojim je vozilo označeno u sceni. */
   id: number;
+  /**
+   * Gdje se vozilo nalazi. Na krstastoj raskrsnici je to prilaz sa kojeg dolazi;
+   * u kružnom toku je to krak na čijoj je visini (ako je već u prstenu) ili krak
+   * sa kojeg ulazi.
+   */
   approach: Approach;
+  /** Namjera kretanja. U kružnom toku se ne koristi — tamo putanju daje `exit`. */
   intent: Intent;
   kind: VehicleKind;
-  /** Kružni tok: vozilo se već kreće kroz tok (ima prvenstvo nad onima koji ulaze). */
+  /** Kružni tok: vozilo se već kreće kroz prsten (ima prvenstvo nad onima koji ulaze). */
   inRoundabout?: boolean;
+  /** Kružni tok: krak na kojem vozilo izlazi iz prstena. */
+  exit?: Approach;
 }
 
 export interface Pedestrian {
@@ -82,6 +90,37 @@ export function exitOf(approach: Approach, intent: Intent): Approach {
   if (intent === "straight") return OPPOSITE[approach];
   if (intent === "right") return YIELDS_TO[approach];
   return OPPOSITE[YIELDS_TO[approach]];
+}
+
+/**
+ * Redoslijed krakova u kružnom toku, suprotno od kazaljke na satu.
+ * Desna vožnja: ulazi se skretanjem udesno, ostrvo ostaje s lijeve strane,
+ * pa se kruži N → W → S → E → N.
+ */
+export const RING_ORDER: readonly Approach[] = ["N", "W", "S", "E"] as const;
+
+function ringIndex(a: Approach): number {
+  return RING_ORDER.indexOf(a);
+}
+
+/** Koliko krakova vozilo pređe idući od `from` do `to` suprotno kazaljci. */
+export function ringSteps(from: Approach, to: Approach): number {
+  const steps = (ringIndex(to) - ringIndex(from) + 4) % 4;
+  return steps === 0 ? 4 : steps; // isti krak = puni krug
+}
+
+/**
+ * Da li vozilo koje u prstenu ide od `from` do izlaza `to` prelazi preko kraka
+ * `leg` — dakle presijeca putanju vozila koje na tom kraku ulazi.
+ *
+ * Bitno je da NIJE dovoljno reći „svako vozilo u prstenu ima prvenstvo": vozilo
+ * koje izlazi prije mog kraka mi ne prelazi put. Zato se gleda stvarni luk.
+ */
+export function ringArcPasses(from: Approach, to: Approach, leg: Approach): boolean {
+  if (from === leg) return true; // već je na mom ulazu
+  const total = ringSteps(from, to);
+  const upToLeg = (ringIndex(leg) - ringIndex(from) + 4) % 4;
+  return upToLeg <= total;
 }
 
 /**
@@ -197,11 +236,17 @@ export function solveDecision(scenario: DrawnScenario): "go" | "yield" | null {
   if (pedOnPath) return "yield";
 
   if (scenario.layout === "roundabout") {
-    if (mine.inRoundabout) return "go";
-    // Ulazak u kružni tok: propušta se svako vozilo koje je već u toku.
-    return scenario.vehicles.some((v) => v.id !== mine.id && v.inRoundabout)
-      ? "yield"
-      : "go";
+    if (mine.inRoundabout) return "go"; // već u prstenu — ima prvenstvo
+
+    // Ulazak: propušta se vozilo u prstenu čiji luk prelazi preko mog kraka.
+    // Vozilo koje izlazi prije mog ulaza mi ne prelazi put.
+    const conflict = scenario.vehicles.some((v) => {
+      if (v.id === mine.id || !v.inRoundabout) return false;
+      const to = v.exit;
+      if (!to) return true; // izlaz nepoznat — konzervativno se propušta
+      return ringArcPasses(v.approach, to, mine.approach);
+    });
+    return conflict ? "yield" : "go";
   }
 
   const order = solveOrder(scenario);

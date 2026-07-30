@@ -6,6 +6,7 @@ import { shuffle } from "@/lib/questions";
 import { isOrderCorrect, type DrawnScenario, type Family } from "@/lib/simRules";
 import ProgressBar from "../ProgressBar";
 import IntersectionSvg from "./IntersectionSvg";
+import RoundaboutSvg from "./RoundaboutSvg";
 
 interface DrawnRunnerProps {
   scenarios: readonly DrawnScenario[];
@@ -222,16 +223,30 @@ export default function DrawnRunner({
         <p className="mb-4 text-sm text-muted">{sceneNote(family, t)}</p>
 
         <div className="mb-4 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
-          <IntersectionSvg
-            scenario={scenario}
-            picked={picked}
-            passed={passed}
-            disabled={checked}
-            onPick={toggle}
-            conflict={checked && !correct}
-            vehicleLabel={t.simVehicle}
-            myVehicleId={scenario.decision?.vehicleId}
-          />
+          {/* Kružni tok ima svoju geometriju — ne crta se kao krstasta raskrsnica. */}
+          {scenario.layout === "roundabout" ? (
+            <RoundaboutSvg
+              scenario={scenario}
+              picked={picked}
+              passed={passed}
+              disabled={checked}
+              onPick={toggle}
+              conflict={checked && !correct}
+              vehicleLabel={t.simVehicle}
+              myVehicleId={scenario.decision?.vehicleId}
+            />
+          ) : (
+            <IntersectionSvg
+              scenario={scenario}
+              picked={picked}
+              passed={passed}
+              disabled={checked}
+              onPick={toggle}
+              conflict={checked && !correct}
+              vehicleLabel={t.simVehicle}
+              myVehicleId={scenario.decision?.vehicleId}
+            />
+          )}
         </div>
 
         {isDecision ? (

@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "gen:image-sizes": "node scripts/gen-image-sizes.mjs"
+    "gen:image-sizes": "node scripts/gen-image-sizes.mjs",
+    "translate": "node scripts/translate.mjs",
+    "translate:stats": "node scripts/translate.mjs --stats"
   },
   "dependencies": {
     "next": "^15.1.0",
@@ -16,6 +18,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
     "@eslint/eslintrc": "^3.3.6",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.10.0",

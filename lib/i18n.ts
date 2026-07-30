@@ -1,14 +1,16 @@
 /**
- * UI stringovi (chrome) na crnogorskom, engleskom i albanskom.
+ * UI stringovi (chrome) na crnogorskom, engleskom, albanskom i ruskom.
  *
- * VAŽNO: prevodi se samo interfejs. Sadržaj pitanja ostaje na crnogorskom dok se
- * u questions.json ne dodaju polja `text_en` / `options_en` — vidi `localizedText`
- * u lib/questions.ts. Pitanja se ne prevode automatski.
+ * VAŽNO: ovdje se prevodi samo interfejs. Sadržaj pitanja se prevodi odvojeno —
+ * poljima `text_en` / `options_en` / `text_ru` / `options_ru` u questions.json,
+ * koja popunjava `scripts/translate.mjs`. Vidi `localizedText` u lib/questions.ts.
+ * Dok tih polja nema, pitanje se prikazuje na crnogorskom uz napomenu
+ * `translationMissing`.
  */
 
-export type Lang = "me" | "en" | "sq";
+export type Lang = "me" | "en" | "sq" | "ru";
 
-export const LANGS: readonly Lang[] = ["me", "en", "sq"] as const;
+export const LANGS: readonly Lang[] = ["me", "en", "sq", "ru"] as const;
 
 export const DEFAULT_LANG: Lang = "me";
 
@@ -16,7 +18,7 @@ export const DEFAULT_LANG: Lang = "me";
  * Oznaka na prebacivaču. Albanski je po ISO 639-1 `sq`, ali se u Crnoj Gori
  * prepoznatljivije označava sa „AL" — otud kod jedno, a prikaz drugo.
  */
-export const LANG_LABELS: Record<Lang, string> = { me: "ME", en: "EN", sq: "AL" };
+export const LANG_LABELS: Record<Lang, string> = { me: "ME", en: "EN", sq: "AL", ru: "RU" };
 
 export interface Dict {
   // Zaglavlje / opšte
@@ -87,6 +89,8 @@ export interface Dict {
   ruleGreenNotFree: string;
   ruleRedStops: string;
   ruleRoundabout: string;
+  ruleRoundaboutLeft: string;
+  ruleRoundaboutExit: string;
   rulePedestrian: string;
 
   // Kviz
@@ -111,6 +115,8 @@ export interface Dict {
   inPool: string;
   explanationTitle: string;
   questionsOnlyInMe: string;
+  /** Prikazuje se kad pitanje nema prevod na izabrani jezik. */
+  translationMissing: string;
 
   // Navigacija po pitanjima
   navTitle: string;
@@ -242,6 +248,10 @@ const me: Dict = {
   ruleRedStops: "Vozilo na crvenom ili žutom svjetlu se zaustavlja i ne prolazi.",
   ruleRoundabout:
     "Pri ulasku u kružni tok propuštate vozila koja se već kreću kroz tok.",
+  ruleRoundaboutLeft:
+    "U kružnom toku se kreće suprotno od kazaljke na satu, pa vozila u prstenu dolaze s vaše lijeve strane.",
+  ruleRoundaboutExit:
+    "Vozilo koje izlazi iz kružnog toka prije vašeg ulaza ne prelazi vam put — njega ne morate propustiti.",
   rulePedestrian:
     "Pješaka na pješačkom prelazu preko kojeg prolazite morate propustiti.",
 
@@ -266,6 +276,7 @@ const me: Dict = {
   inPool: "pitanja u izboru",
   explanationTitle: "Objašnjenje",
   questionsOnlyInMe: "Pitanja su dostupna na crnogorskom.",
+  translationMissing: "Prevod nije dostupan, prikazano na crnogorskom.",
 
   navTitle: "Pregled pitanja",
   navAnswered: "odgovoreno",
@@ -388,6 +399,10 @@ const en: Dict = {
     "Green is not unconditional: among vehicles on green, giving way when turning still applies.",
   ruleRedStops: "A vehicle on red or amber stops and does not proceed.",
   ruleRoundabout: "When entering a roundabout you give way to vehicles already circulating.",
+  ruleRoundaboutLeft:
+    "Traffic in a roundabout moves anticlockwise, so circulating vehicles approach from your left.",
+  ruleRoundaboutExit:
+    "A vehicle leaving the roundabout before your entry does not cross your path — you need not give way to it.",
   rulePedestrian: "You must give way to a pedestrian on a crossing you are driving over.",
 
   loading: "Loading questions…",
@@ -411,6 +426,7 @@ const en: Dict = {
   inPool: "questions available",
   explanationTitle: "Explanation",
   questionsOnlyInMe: "The questions themselves are available in Montenegrin.",
+  translationMissing: "No translation available — shown in Montenegrin.",
 
   navTitle: "Question overview",
   navAnswered: "answered",
@@ -537,6 +553,10 @@ const sq: Dict = {
   ruleRedStops: "Automjeti në të kuqe ose të verdhë ndalon dhe nuk kalon.",
   ruleRoundabout:
     "Kur hyni në rrethrrotullim, lëshoni rrugë automjeteve që qarkullojnë brenda.",
+  ruleRoundaboutLeft:
+    "Në rrethrrotullim qarkullohet në kahun kundërorar, kështu që automjetet brenda vijnë nga e majta juaj.",
+  ruleRoundaboutExit:
+    "Automjeti që del nga rrethrrotullimi para hyrjes tuaj nuk u pret rrugën — atij nuk duhet t'i lëshoni rrugë.",
   rulePedestrian:
     "Duhet t'i lëshoni rrugë këmbësorit në vendkalimin nëpër të cilin kaloni.",
 
@@ -561,6 +581,7 @@ const sq: Dict = {
   inPool: "pyetje në dispozicion",
   explanationTitle: "Shpjegim",
   questionsOnlyInMe: "Pyetjet janë të disponueshme në gjuhën malazeze.",
+  translationMissing: "Përkthimi nuk është i disponueshëm — shfaqur në malazeze.",
 
   navTitle: "Pasqyra e pyetjeve",
   navAnswered: "të përgjigjura",
@@ -608,7 +629,164 @@ const sq: Dict = {
   catOrdering: "Radha e kalimit",
 };
 
-export const STRINGS: Record<Lang, Dict> = { me, en, sq };
+const ru: Dict = {
+  back: "Назад",
+  close: "Закрыть",
+  literature: "Источники",
+  langLabel: "Язык",
+  footerNote:
+    "База вопросов предназначена только для подготовки и тренировки. Официальный экзамен проводит компетентный орган.",
+
+  landingTitle: "Подготовьтесь к теоретическому экзамену",
+  landingLead:
+    "Выберите режим. Тренируйтесь без спешки, сразу видя правильный ответ, или проверьте знания в условиях настоящего экзамена.",
+  practiceTitle: "Тренировка",
+  practiceDesc:
+    "Вы выбираете категорию вопросов; каждый ответ проверяется сразу и показывается правильное решение. Без таймера и ограничений.",
+  practiceStart: "Начать тренировку",
+  practiceResume: "Продолжить с того же места",
+  categoryLabel: "Категория",
+  examTitle: "Симуляция экзамена",
+  examDesc:
+    "Случайные вопросы из всей базы, правильные ответы не показываются до конца экзамена. В конце вы получаете баллы и оценку прохождения.",
+  examStart: "Начать экзамен",
+  metaPoints: "баллов",
+  metaMinutes: "минут",
+  metaPass: "порог",
+  examLimitationNote:
+    "Примечание: наша база содержит только вопросы с одним правильным ответом. На официальном экзамене есть и вопросы с несколькими правильными ответами, где зачитывается только полностью верный ответ.",
+  bestResult: "Лучший результат",
+
+  simTitle: "Симулятор перекрёстков",
+  simDesc:
+    "Ситуации из каталога: нажимайте на автомобили в том порядке, в котором они проезжают. Тренировка приоритета проезда без ввода цифр.",
+  simStart: "Начать симулятор",
+  simMeta: "приоритет проезда",
+  simTask: "Нажимайте на автомобили в порядке их проезда.",
+  simNotAllPass:
+    "Проезжают не обязательно все автомобили — нажимайте только те, у которых есть право проезда.",
+  simYourOrder: "Ваш порядок",
+  simCorrectOrder: "Правильный порядок",
+  simClear: "Сбросить",
+  simNextScene: "Следующая ситуация",
+  simScene: "Ситуация",
+  simVehicle: "Автомобиль",
+  simStreak: "Серия",
+  simFinished: "Вы прошли все ситуации.",
+  simRestart: "Начать заново",
+  simEmpty: "Нет доступных ситуаций.",
+  simFamilyRule: "Правило правой руки",
+  simFamilyCatalog: "Из каталога",
+  simFamilySigns: "Главная и второстепенная дорога",
+  simFamilyLights: "Светофор",
+  simFamilyLeft: "Поворот налево",
+  simFamilyRoundabout: "Круговое движение",
+  simFamilyPedestrian: "Пешеходы",
+  simUncontrolled:
+    "Перекрёсток без знаков и светофора. Все автомобили едут прямо.",
+  simSceneSigns: "Обратите внимание на знаки на подъездах.",
+  simSceneLights: "Обратите внимание на сигналы светофора.",
+  simSceneRoundabout: "Круговое движение. Ваш автомобиль отмечен.",
+  simScenePedestrian: "Пешеход на переходе. Ваш автомобиль отмечен.",
+  simTapInScene: "Нажимайте на автомобили на рисунке в порядке их проезда.",
+  simDecisionTask: "Вы проезжаете или уступаете?",
+  simGo: "Проезжаю",
+  simYield: "Уступаю",
+  simYourVehicle: "ваш автомобиль",
+  ruleTitle: "Правило",
+  ruleRightHand:
+    "На перекрёстке без знаков и светофора приоритет имеет автомобиль, приближающийся справа.",
+  ruleFreeRight: "Первым проезжает автомобиль, у которого никого нет справа.",
+  rulePriorityRoad:
+    "Автомобили на главной дороге проезжают раньше автомобилей со второстепенной, независимо от того, с какой стороны они приближаются.",
+  ruleYieldSign:
+    "Знак «уступите дорогу» означает, что вы пропускаете автомобили на главной дороге.",
+  ruleStopSign:
+    "Знак STOP требует полной остановки; по приоритету он равен знаку «уступите дорогу».",
+  ruleLeftTurn:
+    "Автомобиль, поворачивающий налево, уступает встречному автомобилю, который едет прямо или поворачивает направо.",
+  ruleGreenNotFree:
+    "Зелёный сигнал не безусловен: между автомобилями на зелёном по-прежнему действует обязанность уступить при повороте.",
+  ruleRedStops: "Автомобиль на красный или жёлтый сигнал останавливается и не проезжает.",
+  ruleRoundabout:
+    "При въезде в круговое движение вы уступаете автомобилям, уже движущимся по кругу.",
+  ruleRoundaboutLeft:
+    "По кругу движение идёт против часовой стрелки, поэтому автомобили в кольце приближаются слева.",
+  ruleRoundaboutExit:
+    "Автомобиль, покидающий круг до вашего въезда, не пересекает вам путь — его пропускать не нужно.",
+  rulePedestrian:
+    "Пешехода на переходе, через который вы проезжаете, необходимо пропустить.",
+
+  loading: "Загрузка вопросов…",
+  loadErrorTitle: "Ошибка при загрузке вопросов",
+  noQuestions: "В выбранной категории нет вопросов. Выберите другую категорию.",
+  question: "Вопрос",
+  examQuestion: "Экзаменационный вопрос",
+  progress: "Прогресс по вопросам",
+  next: "Следующий вопрос",
+  prev: "Предыдущий",
+  newRound: "Новый круг",
+  finishExam: "Завершить экзамен",
+  check: "Проверить",
+  correctAnswerLabel: "Верно",
+  yourAnswerLabel: "Ваш ответ",
+  correctFeedback: "Правильный ответ",
+  wrongFeedback: "Неправильный ответ",
+  remaining: "Осталось",
+  answeredLabel: "Отвечено",
+  correctLabel: "Верно",
+  inPool: "вопросов в выборке",
+  explanationTitle: "Пояснение",
+  questionsOnlyInMe: "Вопросы доступны на черногорском языке.",
+  translationMissing: "Перевод недоступен — показано на черногорском.",
+
+  navTitle: "Обзор вопросов",
+  navAnswered: "отвечено",
+  navUnanswered: "без ответа",
+  navJump: "Перейти к вопросу",
+  confirmLeaveExam:
+    "Экзамен идёт. Если вы выйдете, ответы будут потеряны. Выйти?",
+
+  orderingLabel: "Порядок проезда автомобилей",
+  orderingHint:
+    "Введите номера в порядке проезда — через дефис, через пробел или без разделителей.",
+  orderingEntered: "Введено",
+  orderingCorrectIs: "правильный порядок",
+
+  badgeSign: "Дорожный знак",
+  badgeIntersection: "Перекрёсток",
+  badgeOrdering: "Порядок проезда",
+  badgeText: "Текстовый вопрос",
+
+  resultTitle: "Результат симуляции",
+  passed: "Сдано",
+  failed: "Не сдано",
+  passThreshold: "Для сдачи необходимо {n} из {max} баллов.",
+  timedOutNote: "Экзамен остановлен, так как истекло время.",
+  statCorrect: "Верно",
+  statWrong: "Неверно",
+  statUnanswered: "Без ответа",
+  statAnswered: "Отвечено",
+  newExam: "Новый экзамен",
+  backToStart: "Вернуться в начало",
+  reviewTitle: "Разбор ошибок",
+  reviewLead: "Пройдите вопросы, которые вы решили неверно — вместе с правильным ответом.",
+  reviewPerfect: "Все ответы верны. Повторять нечего.",
+  reviewNoAnswer: "Без ответа",
+  reviewWrong: "Неверно",
+
+  litTitle: "Источники",
+  litLead: "Официальные документы, на которых основан экзаменационный материал:",
+
+  catAll: "Все",
+  catText: "Текстовые",
+  catImage: "С изображением",
+  catSign: "Знаки",
+  catIntersection: "Перекрёстки",
+  catOrdering: "Порядок проезда",
+};
+
+export const STRINGS: Record<Lang, Dict> = { me, en, sq, ru };
 
 export function dict(lang: Lang): Dict {
   return STRINGS[lang];
@@ -617,13 +795,20 @@ export function dict(lang: Lang): Dict {
 /**
  * Množina uz broj bodova. Crnogorski: 1 bod, 2–4 boda, 5+ bodova
  * (uz izuzetak 11–14, koji idu na „bodova"). Albanski koristi isti oblik
- * („pikë") i za jedninu i za množinu.
+ * („pikë") i za jedninu i za množinu. Ruski ima isto pravilo kao crnogorski:
+ * 1 балл, 2–4 балла, 5+ баллов, a 11–14 idu na „баллов".
  */
 export function pointsLabel(n: number, lang: Lang): string {
   if (lang === "en") return n === 1 ? "point" : "points";
   if (lang === "sq") return "pikë";
   const last2 = n % 100;
   const last = n % 10;
+  if (lang === "ru") {
+    if (last2 >= 11 && last2 <= 14) return "баллов";
+    if (last === 1) return "балл";
+    if (last >= 2 && last <= 4) return "балла";
+    return "баллов";
+  }
   if (last2 >= 11 && last2 <= 14) return "bodova";
   if (last === 1) return "bod";
   if (last >= 2 && last <= 4) return "boda";
@@ -631,5 +816,5 @@ export function pointsLabel(n: number, lang: Lang): string {
 }
 
 export function isLang(value: unknown): value is Lang {
-  return value === "me" || value === "en" || value === "sq";
+  return value === "me" || value === "en" || value === "sq" || value === "ru";
 }

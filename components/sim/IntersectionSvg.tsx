@@ -23,16 +23,13 @@ import VehicleSprite from "./VehicleSprite";
  * (x=170), sa juga na sjever istočnom (x=230), sa zapada na istok južnom (y=230),
  * sa istoka na zapad sjevernom (y=170).
  *
- * Kružni tok: vozila u toku kruže **suprotno od kazaljke** (desna vožnja) —
- * na vrhu se kreću ka zapadu, na desnoj strani ka sjeveru i tako dalje.
+ * Kružni tok ima svoju geometriju i crta ga RoundaboutSvg.
  */
 
 const SIZE = 400;
 const C = SIZE / 2;
 const ROAD = 120;
 const EDGE = C - ROAD / 2; // 140
-const RING = 80; // poluprečnik osi kružnog toka
-const ISLAND = 46;
 
 interface Placement {
   x: number;
@@ -45,21 +42,6 @@ const CROSS_START: Record<Approach, Placement> = {
   S: { x: 230, y: 308, rot: 0 },
   W: { x: 92, y: 230, rot: 90 },
   E: { x: 308, y: 170, rot: 270 },
-};
-
-const RB_ENTRY: Record<Approach, Placement> = {
-  N: { x: 170, y: 62, rot: 180 },
-  S: { x: 230, y: 338, rot: 0 },
-  W: { x: 62, y: 230, rot: 90 },
-  E: { x: 338, y: 170, rot: 270 },
-};
-
-/** Pozicija na prstenu kružnog toka + tangentni ugao (suprotno od kazaljke). */
-const RB_RING: Record<Approach, Placement> = {
-  N: { x: C, y: C - RING, rot: 270 },
-  E: { x: C + RING, y: C, rot: 0 },
-  S: { x: C, y: C + RING, rot: 90 },
-  W: { x: C - RING, y: C, rot: 180 },
 };
 
 /** Pomjeraj kad vozilo prođe raskrsnicu (koristi se samo za animaciju). */
@@ -290,13 +272,8 @@ export default function IntersectionSvg({
   vehicleLabel,
   myVehicleId,
 }: IntersectionSvgProps) {
-  const roundabout = scenario.layout === "roundabout";
   const tappable = scenario.answer !== undefined;
-
-  const place = (v: DrawnVehicle): Placement => {
-    if (!roundabout) return CROSS_START[v.approach];
-    return v.inRoundabout ? RB_RING[v.approach] : RB_ENTRY[v.approach];
-  };
+  const place = (v: DrawnVehicle): Placement => CROSS_START[v.approach];
 
   return (
     <svg
@@ -313,31 +290,13 @@ export default function IntersectionSvg({
       <rect x={EDGE} y={0} width={ROAD} height={SIZE} fill="#7d7d78" />
       <rect x={0} y={EDGE} width={SIZE} height={ROAD} fill="#7d7d78" />
 
-      {roundabout ? (
-        <>
-          {/* kružni tok: prsten + centralno ostrvo */}
-          <circle cx={C} cy={C} r={RING + 30} fill="#7d7d78" />
-          <circle cx={C} cy={C} r={ISLAND} fill="#cfd3c8" stroke="#fff" strokeWidth={3} />
-          <circle cx={C} cy={C} r={ISLAND - 10} fill="#dfe3d8" />
-          <circle
-            cx={C}
-            cy={C}
-            r={RING + 30}
-            fill="none"
-            stroke="#fff"
-            strokeWidth={2}
-            strokeDasharray="10 10"
-            opacity={0.7}
-          />
-        </>
-      ) : (
-        <g stroke="#fff" strokeWidth={3} strokeDasharray="14 12" opacity={0.9}>
-          <line x1={C} y1={0} x2={C} y2={EDGE} />
-          <line x1={C} y1={SIZE - EDGE} x2={C} y2={SIZE} />
-          <line x1={0} y1={C} x2={EDGE} y2={C} />
-          <line x1={SIZE - EDGE} y1={C} x2={SIZE} y2={C} />
-        </g>
-      )}
+      {/* razdjelne linije — prekidaju se na raskrsnici */}
+      <g stroke="#fff" strokeWidth={3} strokeDasharray="14 12" opacity={0.9}>
+        <line x1={C} y1={0} x2={C} y2={EDGE} />
+        <line x1={C} y1={SIZE - EDGE} x2={C} y2={SIZE} />
+        <line x1={0} y1={C} x2={EDGE} y2={C} />
+        <line x1={SIZE - EDGE} y1={C} x2={SIZE} y2={C} />
+      </g>
 
       {(["N", "E", "S", "W"] as Approach[]).map((a) => (
         <Crosswalk key={a} approach={a} />
@@ -357,10 +316,9 @@ export default function IntersectionSvg({
       })}
 
       {/* Putanje vozila — pokazuju namjeru kretanja (pravo / lijevo / desno). */}
-      {!roundabout &&
-        scenario.vehicles.map((v) => (
-          <VehiclePath key={`path-${v.id}`} approach={v.approach} intent={v.intent} />
-        ))}
+      {scenario.vehicles.map((v) => (
+        <VehiclePath key={`path-${v.id}`} approach={v.approach} intent={v.intent} />
+      ))}
 
       {scenario.pedestrians?.map((p) => (
         <PedestrianFigure key={`ped-${p.crossing}`} approach={p.crossing} />

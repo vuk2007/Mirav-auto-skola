@@ -33,23 +33,28 @@ export function questionPoints(q: Question): number {
 }
 
 /**
- * Tekst pitanja na traženom jeziku. Prevodi pitanja još ne postoje u
- * questions.json, pa se pada nazad na crnogorski — vidi `hasTranslation`.
+ * Tekst pitanja na traženom jeziku. Prevode upisuje `scripts/translate.mjs` u
+ * questions.json; dok ih nema, pada se nazad na crnogorski — vidi
+ * `hasTranslation`. Za albanski prevodi pitanja ne postoje, samo interfejs.
  */
 export function localizedText(q: Question, lang: Lang): string {
-  return lang === "en" && q.text_en ? q.text_en : q.text;
+  if (lang === "en") return q.text_en ?? q.text;
+  if (lang === "ru") return q.text_ru ?? q.text;
+  return q.text;
 }
 
 /** Ponuđeni odgovor na traženom jeziku, uz isti fallback kao `localizedText`. */
 export function localizedOption(q: ChoiceQuestion, key: OptionKey, lang: Lang): string {
-  const en = lang === "en" ? q.options_en : undefined;
-  return en?.[key] ?? q.options[key];
+  const translated = lang === "en" ? q.options_en : lang === "ru" ? q.options_ru : undefined;
+  return translated?.[key] ?? q.options[key];
 }
 
 /** Da li pitanje uopšte ima prevod na dati jezik (koristi se za napomenu u UI-u). */
 export function hasTranslation(q: Question, lang: Lang): boolean {
   if (lang === "me") return true;
-  return Boolean(q.text_en);
+  if (lang === "en") return Boolean(q.text_en);
+  if (lang === "ru") return Boolean(q.text_ru);
+  return false;
 }
 
 /** Fisher–Yates — vraća novi niz, ne mijenja ulazni. */
