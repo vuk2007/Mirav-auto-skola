@@ -12,9 +12,8 @@
  */
 
 /**
- * Ukupan broj bodova na ispitu. Ispit se sastavlja tako da zbir bodova izvučenih
- * pitanja bude TAČNO ovoliko, pa broj pitanja varira (oko 30, jer pitanja nose
- * 1–4 boda). Vidi `buildExam` u lib/questions.ts.
+ * Ukupan broj bodova na ispitu. Ispit ima istovremeno TAČNO ovoliko bodova i
+ * TAČNO `EXAM_QUESTION_COUNT` pitanja — vidi `buildExam` u lib/questions.ts.
  */
 export const EXAM_TOTAL_POINTS = 80;
 
@@ -26,23 +25,32 @@ export const EXAM_PASS_POINTS = 68; // prag: 68 od 80 bodova
  * Svako pitanje u questions.json ima `area`:
  *   I = propisi/teorija, II = saobraćajni znakovi, III = raskrsnice/situacije
  *
- * Brojevi su ODNOS u kojem se pitanja izvlače (regionalna norma je ~2:1:1).
- * NIJE broj pitanja na ispitu: ispit se puni dok zbir ne bude EXAM_TOTAL_POINTS,
- * pa broj pitanja ispadne manji — vidi `buildExam` u lib/questions.ts.
+ * Brojevi su TAČAN broj pitanja iz svake oblasti (odnos ~2:1:1), a njihov zbir
+ * je broj pitanja na ispitu. Mijenja li se kvota, mijenja se i broj pitanja.
  *
  * TODO(MIRAV): potvrditi tačnu kvotu po važećem Pravilniku (MUP CG), ili
  *   empirijski: pokrenuti jednu zvaničnu simulaciju na eUpravi i prebrojati
  *   koliko pitanja dolazi iz svake oblasti.
  *   Oblast „Posljedice nepoštovanja propisa" NE dolazi na ispit.
  *
- * Napomena: sa bodovima iz našeg kataloga 41 pitanje po odnosu 21:10:10 daje
- * 87–116 bodova, nikad 80. Zato odnos određuje SASTAV, a granica je 80 bodova.
+ * Napomena o posljedici: prosjek u bazi je 1,93 (I), 2,97 (II) i 3,22 (III)
+ * boda, pa nasumičnih 20/10/10 nosi oko 100 bodova. Da bi ispit imao tačno 80,
+ * `buildExam` bira jeftinija pitanja unutar svake oblasti — pitanje od 1 boda
+ * uđe u ispit ~18 puta češće od pitanja od 4 boda. To je posljedica bodova u
+ * NAŠEM katalogu i vjerovatno znak da se oni razlikuju od zvaničnih: zvaničnih
+ * 40 pitanja / 80 bodova daje prosjek tačno 2,00, a naša baza ima 2,66.
  */
 export const EXAM_QUOTA: Readonly<Record<"I" | "II" | "III", number>> = {
-  I: 21,
+  I: 20,
   II: 10,
   III: 10,
 };
+
+/**
+ * Broj pitanja na ispitu — zbir kvote, ne zaseban broj, da se ta dva ne mogu
+ * razići. Ispit ima tačno toliko pitanja i tačno EXAM_TOTAL_POINTS bodova.
+ */
+export const EXAM_QUESTION_COUNT = EXAM_QUOTA.I + EXAM_QUOTA.II + EXAM_QUOTA.III;
 
 /** Trajanje ispita u minutima. */
 export const EXAM_MINUTES = 45; // 45 minuta

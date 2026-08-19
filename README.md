@@ -7,9 +7,9 @@ Na otvaranju se vidi **početni ekran** sa izborom režima — pitanja se učita
 korisnik klikne „Počni".
 
 - **Vježba** — filter po kategorijama, trenutni prikaz tačnog odgovora, neograničeno.
-- **Simulacija ispita** — nasumična pitanja koja zajedno nose **tačno 80 bodova**, tajmer
-  45 min sa automatskim krajem, prolaz na **68 od 80 bodova**, navigacija po pitanjima
-  (mreža brojeva).
+- **Simulacija ispita** — **tačno 40 pitanja** koja zajedno nose **tačno 80 bodova**, u
+  odnosu oblasti 20 : 10 : 10, tajmer 45 min sa automatskim krajem, prolaz na **68 od 80
+  bodova**, navigacija po pitanjima (mreža brojeva).
 - **Uputstvo prije ispita** — simulacija ne kreće dok kandidat ne pročita uslove izlaska na
   ispit i ne potvrdi to. Vidi „Uputstvo prije ispita".
 - **Pregled grešaka** — poslije ispita, svako promašeno pitanje uz sliku, vaš odgovor,
@@ -53,7 +53,8 @@ Svi parametri su na jednom mjestu — [`lib/config.ts`](lib/config.ts):
 | ------------------------- | -------- | --------------------------------------------------- |
 | `EXAM_TOTAL_POINTS`       | `80`     | Ukupno bodova na ispitu                              |
 | `EXAM_PASS_POINTS`        | `68`     | Bodova potrebno za prolaz                            |
-| `EXAM_QUOTA`              | `21/10/10` | Odnos oblasti I : II : III pri izvlačenju            |
+| `EXAM_QUOTA`              | `20/10/10` | Broj pitanja po oblastima I : II : III                |
+| `EXAM_QUESTION_COUNT`     | `40`     | Broj pitanja na ispitu — zbir kvote, nije zaseban broj |
 | `EXAM_MINUTES`            | `45`     | Trajanje ispita u minutima                           |
 | `DEFAULT_ORDERING_POINTS` | `4`      | Bodovi za pitanja sa redoslijedom (katalog ima `null`) |
 | `EXAM_WARNING_SECONDS`    | `300`    | Kad tajmer pređe u crveno (zadnjih 5 min)            |
@@ -67,26 +68,34 @@ pitanja) se tretira kao `DEFAULT_ORDERING_POINTS`.
 Svako pitanje ima `area`: **I** = propisi/teorija, **II** = saobraćajni znakovi,
 **III** = raskrsnice/situacije. U bazi: I=140, II=73, III=208.
 
-Test se **ne izvlači ravnomjerno nasumično** — `EXAM_QUOTA` zadaje odnos oblasti (21:10:10),
-a `buildExam` puni ispit dok zbir ne bude **tačno `EXAM_TOTAL_POINTS`**.
+Ispit ima **istovremeno tačno 40 pitanja i tačno 80 bodova**, uz zadat broj pitanja po
+oblasti (`EXAM_QUOTA` = 20 : 10 : 10). Oba uslova moraju važiti — nije dovoljno pogoditi jedan.
 
-> **Zašto odnos, a ne fiksnih 41 pitanje:** sa bodovima iz našeg kataloga 41 pitanje po
-> odnosu 21:10:10 daje **87–116 bodova, nikad 80** (provjereno na 4000 izvlačenja). Pošto je
-> maksimum na ispitu 80, odnos određuje **sastav**, a punjenje staje na 80 bodova — broj
-> pitanja zato ispadne **27–39 (prosjek 32)**.
+`buildExam` radi ovako:
+
+1. iz svake oblasti nasumično uzme tačno `quota[oblast]` pitanja,
+2. ako zbir bodova nije 80, radi **zamjenu unutar iste oblasti** — izabrano pitanje mijenja
+   neizabranim čija razlika u bodovima gura zbir ka cilju, ali ga ne preskače. Broj pitanja po
+   oblasti se time ne mijenja,
+3. ako u 200 zamjena ne pogodi tačno, kreće iz početka; poslije 40 pokušaja odustaje uz
+   upozorenje u konzoli (sa našom bazom se ne dešava).
+
+Provjereno na **4000 izvlačenja**: 40 pitanja i 80 bodova u **4000/4000** slučajeva, sastav
+tačno I=50,0% · II=25,0% · III=25,0%, sva 421 pitanja ulaze u opticaj, 0,56 ms po ispitu.
+
+> **Posljedica koju treba znati.** Prosjek u bazi je **1,93** (I), **2,97** (II) i **3,22**
+> (III) boda, pa nasumičnih 20/10/10 nosi **oko 100 bodova**. Da bi se stiglo na 80, zamjene
+> nužno biraju jeftinija pitanja unutar svake oblasti. Mjereno: pitanje od **1 boda uđe u
+> ispit u 27,7% ispita, a pitanje od 4 boda u 1,5%** — oko 18 puta rjeđe. Bodovna struktura
+> ispita je 1b 31,9% · 2b 40,3% · 3b 23,7% · 4b 4,1%, dok je u bazi 1b 10,9% · 2b 28,5% ·
+> 3b 35,4% · 4b 25,2%.
 >
-> Ako se ispostavi da je zvanično i broj pitanja fiksan (41) i maksimum 80, znači da se
-> bodovi po pitanju u zvaničnom katalogu razlikuju od naših — to treba provjeriti sa MIRAV-om.
+> To nije izbor algoritma nego aritmetika: 40 pitanja i 80 bodova znači prosjek **tačno
+> 2,00** boda po pitanju, a naša baza ima **2,66**. Najvjerovatnije objašnjenje je da se
+> bodovi u našem katalogu razlikuju od zvaničnih. **Ako MIRAV dostavi zvanične bodove po
+> pitanju, ovo se rješava samo od sebe** — treba samo ispraviti `points` u `questions.json`.
 
-Izmjereni sastav na 4000 ispita: **I=51,1% · II=24,1% · III=24,8%** naspram traženih
-51,2 / 24,4 / 24,4. Bez kvote bi bio 34,9 / 18,4 / 46,7 — dakle kvota stvarno mijenja izbor.
-
-`buildExam` radi u tri koraka: vuče po kvoti oblasti, dopuni iz cijele baze ako se kvota
-iscrpi prije budžeta, pa ako fali 1–4 boda doda jedno pitanje tačno te vrijednosti. Treći
-korak nije kozmetika — bez njega bi ispit povremeno završio na 78 ili 79 bodova. Ako neka
-oblast nema dovoljno pitanja, ispiše se upozorenje u konzoli i ispit se dopuni iz ostalih.
-
-> **Važno:** 80 / 68 / 45 i kvota 21:10:10 označeni su sa `TODO(MIRAV)` u `lib/config.ts`.
+> **Važno:** 80 / 68 / 45 i kvota 20:10:10 označeni su sa `TODO(MIRAV)` u `lib/config.ts`.
 > **Prije objave MIRAV treba da potvrdi tačne brojeve po važećem Pravilniku o
 > osposobljavanju kandidata za vozače (MUP CG)**, ili empirijski: pokrenuti jednu zvaničnu
 > simulaciju na eUpravi i prebrojati koliko pitanja dolazi iz svake oblasti.

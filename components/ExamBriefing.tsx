@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 
-import { EXAM_MINUTES, EXAM_PASS_POINTS, EXAM_TOTAL_POINTS } from "@/lib/config";
+import {
+  EXAM_MINUTES,
+  EXAM_PASS_POINTS,
+  EXAM_QUESTION_COUNT,
+  EXAM_TOTAL_POINTS,
+} from "@/lib/config";
 import { EXAM_BRIEFING, fillBriefing } from "@/lib/examBriefing";
 import type { Dict, Lang } from "@/lib/i18n";
 
@@ -24,7 +29,12 @@ interface ExamBriefingProps {
  */
 export default function ExamBriefing({ t, lang, onStart, starting }: ExamBriefingProps) {
   const [confirmed, setConfirmed] = useState(false);
-  const values = { minutes: EXAM_MINUTES, points: EXAM_TOTAL_POINTS, pass: EXAM_PASS_POINTS };
+  const values = {
+    count: EXAM_QUESTION_COUNT,
+    minutes: EXAM_MINUTES,
+    points: EXAM_TOTAL_POINTS,
+    pass: EXAM_PASS_POINTS,
+  };
 
   return (
     <section className="space-y-5">

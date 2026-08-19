@@ -65,6 +65,7 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
     },
     items: {
       me: [
+        "Test se sastoji od {count} pitanja.",
         "Tačan je samo jedan odgovor — nema pitanja sa više tačnih odgovora.",
         "Odgovarate klikom na kvadratić ispred odgovora; u njemu se upisuje ✕.",
         "Poslije izbora odgovora automatski prelazite na sljedeće pitanje.",
@@ -72,6 +73,7 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
         "Odgovor možete promijeniti dok test traje — vratite se na pitanje preko pregleda pitanja.",
       ],
       en: [
+        "The test consists of {count} questions.",
         "Only one answer is correct — there are no questions with several correct answers.",
         "You answer by clicking the box in front of the answer; an ✕ is written in it.",
         "After you choose an answer you move on to the next question automatically.",
@@ -79,6 +81,7 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
         "You can change an answer while the test is running — go back to the question through the question overview.",
       ],
       ru: [
+        "Тест состоит из {count} вопросов.",
         "Верным является только один ответ — вопросов с несколькими верными ответами нет.",
         "Вы отвечаете, нажимая на квадрат перед ответом; в нём появляется ✕.",
         "После выбора ответа вы автоматически переходите к следующему вопросу.",
@@ -86,6 +89,7 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
         "Ответ можно изменить, пока идёт тест — вернитесь к вопросу через обзор вопросов.",
       ],
       sq: [
+        "Testi përbëhet nga {count} pyetje.",
         "I saktë është vetëm një përgjigje — nuk ka pyetje me disa përgjigje të sakta.",
         "Përgjigjeni duke klikuar në katrorin para përgjigjes; në të shkruhet ✕.",
         "Pas zgjedhjes së përgjigjes kaloni automatikisht te pyetja tjetër.",
@@ -107,37 +111,38 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
       me: [
         "Svako pitanje nosi određeni broj bodova, a test ukupno {points} bodova.",
         "Za prolaz je potrebno najmanje {pass} od {points} bodova.",
-        "Broj pitanja nije uvijek isti — test se puni pitanjima dok zbir ne bude tačno {points} bodova.",
+        "Pitanja su raspoređena po oblastima: propisi, saobraćajni znakovi i raskrsnice.",
         "Položen teorijski dio ispita važi godinu dana od dana polaganja.",
       ],
       en: [
         "Each question carries a certain number of points, and the test carries {points} points in total.",
         "To pass you need at least {pass} out of {points} points.",
-        "The number of questions is not always the same — the test is filled with questions until the total is exactly {points} points.",
+        "The questions are distributed across areas: rules, road signs and intersections.",
         "A passed theory exam is valid for one year from the day it was taken.",
       ],
       ru: [
         "Каждый вопрос имеет определённое количество баллов, а тест в целом — {points} баллов.",
         "Для сдачи нужно не менее {pass} из {points} баллов.",
-        "Количество вопросов не всегда одинаково — тест наполняется вопросами, пока сумма не составит ровно {points} баллов.",
+        "Вопросы распределены по областям: правила, дорожные знаки и перекрёстки.",
         "Сданная теоретическая часть экзамена действительна один год со дня сдачи.",
       ],
       sq: [
         "Çdo pyetje bart një numër të caktuar pikësh, kurse testi gjithsej {points} pikë.",
         "Për të kaluar nevojiten së paku {pass} nga {points} pikë.",
-        "Numri i pyetjeve nuk është gjithmonë i njëjtë — testi mbushet me pyetje derisa shuma të jetë saktësisht {points} pikë.",
+        "Pyetjet janë të shpërndara sipas fushave: rregullat, shenjat rrugore dhe kryqëzimet.",
         "Pjesa teorike e provimit e kaluar vlen një vit nga dita e dhënies.",
       ],
     },
   },
 ];
 
-/** Zamjenjuje `{minutes}`, `{points}` i `{pass}` vrijednostima iz konfiguracije. */
+/** Zamjenjuje `{count}`, `{minutes}`, `{points}` i `{pass}` iz konfiguracije. */
 export function fillBriefing(
   text: string,
-  values: { minutes: number; points: number; pass: number },
+  values: { count: number; minutes: number; points: number; pass: number },
 ): string {
   return text
+    .replace(/\{count\}/g, String(values.count))
     .replace(/\{minutes\}/g, String(values.minutes))
     .replace(/\{points\}/g, String(values.points))
     .replace(/\{pass\}/g, String(values.pass));
