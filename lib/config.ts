@@ -94,3 +94,9 @@ export const LITERATURE: readonly { title: string; url: string }[] = [
     url: "https://www.gov.me/dokumenta/09ef4d20-93ad-4ae5-906a-58bcd82d7963",
   },
 ] as const;
+
+/**
+ * Prikaz novčane kazne uz grešku. Isključi jednim potezom ako pravna provjera
+ * iznosa nije završena — vidi napomenu na vrhu lib/penalties.ts.
+ */
+export const PENALTIES_ENABLED = true;

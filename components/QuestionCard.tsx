@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+
+import PenaltyNote, { penaltyForQuestion } from "./PenaltyNote";
 import { badgeKey } from "@/lib/categories";
 import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
@@ -49,6 +51,7 @@ export default function QuestionCard({
   const points = questionPoints(question);
   const [width, height] = question.image ? imageSize(question.image) : [0, 0];
   const untranslated = !hasTranslation(question, lang);
+  const penalty = penaltyForQuestion(question.id);
 
   return (
     <article className="panel p-4 sm:p-6">
@@ -121,6 +124,10 @@ export default function QuestionCard({
           <p className="text-sm leading-relaxed">{question.explanation}</p>
         </div>
       )}
+
+      {/* Cijena greške — samo kad je odgovor netačan i kad pitanju odgovara
+          stvaran prekršaj. Uz tačan odgovor nema šta da se naplati. */}
+      {revealed && !correct && penalty && <PenaltyNote penalty={penalty} t={t} lang={lang} />}
     </article>
   );
 }

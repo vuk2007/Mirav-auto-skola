@@ -20,6 +20,8 @@ korisnik klikne „Počni".
 - **Jezik `me`/`en`/`sq`/`ru`** — crnogorski, engleski, albanski i ruski; prebacivač mijenja
   cio interfejs (uključujući footer). Sadržaj pitanja se prevodi odvojeno, skriptom — vidi
   „Objašnjenja i prevodi pitanja".
+- **Cijena greške** — uz svaki netačan odgovor u vježbi i uz svaku grešku na ispitu piše
+  koliko bi taj prekršaj koštao po ZoBS-u, a na rezultatu stoji i zbir. Vidi „Kazne".
 - **`/embed`** — verzija bez zaglavlja, za ugradnju u `<iframe>` na mirav.me.
 
 ---
@@ -252,6 +254,8 @@ lib/
   types.ts            tipovi pitanja i odgovora
   config.ts           parametri ispita  ← ovdje se mijenja EXAM_*
   i18n.ts             UI stringovi me/en/sq/ru
+  penalties.ts        katalog kazni po ZoBS-u  ← ovdje se provjeravaju iznosi
+  penaltyMap.ts       generisano — veza pitanje → prekršaj
   storage.ts          localStorage (jezik, najbolji rezultat, nastavak vježbe)
   categories.ts       izvođenje kategorija
   questions.ts        učitavanje, miješanje, provjera odgovora, bodovanje
@@ -382,6 +386,43 @@ jer `#4080F0` na bijelom daje kontrast ~3:1, premalo za tekst i dugmad; `#2f6fd0
 
 Favicon je [`app/icon.svg`](app/icon.svg) — logotip je izdužen pa bi u kvadratnoj ikoni bio
 nečitak, umjesto njega je inicijal na brend plavoj sa žutim rombom.
+
+### Kazne
+
+Uz netačan odgovor se prikazuje koliko bi taj prekršaj koštao u stvarnom saobraćaju, a na
+ekranu rezultata i zbir za sve greške. Cilj je da „netačno" dobije težinu koju u saobraćaju
+i ima.
+
+> ⚠️ **Iznosi nijesu provjereni.** Svaki unos u [`lib/penalties.ts`](lib/penalties.ts) nosi
+> `verified: false` i polje `source`. **MIRAV ih mora provjeriti prije objave.** Do tada se
+> cijela funkcija gasi jednim potezom: `PENALTIES_ENABLED = false` u `lib/config.ts`.
+
+Odakle iznosi: kaznene odredbe ZoBS-a, **čl. 319–326** (kazne za vozače i ostale učesnike;
+čl. 315–318 se odnose na pravna lica i nijesu uzeti). Izmjene zakona stupile su na snagu
+**7. 8. 2026**, a prečišćen tekst poslije njih nije bio dostupan pri izradi — unosi koje su
+izmjene promijenile (telefon, dijete na prednjem sjedištu, crveno svjetlo) označeni su sa
+`amended: true` i nose iznos iz medijskih izvještaja, što je najslabija karika i prvo što
+treba provjeriti.
+
+Dva sloja:
+
+- [`lib/penalties.ts`](lib/penalties.ts) — katalog prekršaja: iznos (ili više nivoa, kod
+  brzine), član zakona, naziv na sva četiri jezika.
+- [`lib/penaltyMap.ts`](lib/penaltyMap.ts) — **generisano**, veza pitanje → prekršaj.
+  Pravila i ručne ispravke su u [`scripts/gen-penalty-map.mjs`](scripts/gen-penalty-map.mjs);
+  aplikacija ne radi nikakvo poklapanje po riječima, samo čita gotovu tabelu.
+
+```bash
+node scripts/gen-penalty-map.mjs --report   # raspodjela po prekršajima, bez upisa
+node scripts/gen-penalty-map.mjs            # regeneriši lib/penaltyMap.ts
+```
+
+Pokriveno je **384 od 421 pitanja**. Preostalih 37 su definicije („šta je mladi vozač"),
+uslovi za izdavanje dozvole i slično — tu prekršaj ne postoji, pa se **ne prikazuje ništa**.
+Izmišljen iznos bio bi gori od nikakvog.
+
+Brzina je jedini prekršaj sa stepenovanom kaznom, pa se prikazuju svi nivoi (do 10 km/h →
+30–100 €, preko 50 km/h → 150–1.000 €) — inače bi se izgubilo da razlika nije linearna.
 
 ### Objašnjenja i prevodi pitanja
 

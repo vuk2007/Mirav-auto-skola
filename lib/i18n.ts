@@ -118,6 +118,11 @@ export interface Dict {
   /** Prikazuje se kad pitanje nema prevod na izabrani jezik. */
   translationMissing: string;
 
+  // Kazne (vidi lib/penalties.ts)
+  penaltyTitle: string;
+  penaltyTotal: string;
+  penaltyNote: string;
+
   // Navigacija po pitanjima
   navTitle: string;
   navAnswered: string;
@@ -277,6 +282,10 @@ const me: Dict = {
   explanationTitle: "Objašnjenje",
   questionsOnlyInMe: "Pitanja su dostupna na crnogorskom.",
   translationMissing: "Prevod nije dostupan, prikazano na crnogorskom.",
+  penaltyTitle: "Koliko bi ovo koštalo u saobraćaju",
+  penaltyTotal: "Ove greške bi u saobraćaju koštale",
+  penaltyNote:
+    "Informativno, po Zakonu o bezbjednosti saobraćaja na putevima. Konačan iznos određuje nadležni organ, a uz kaznu mogu ići i kazneni bodovi.",
 
   navTitle: "Pregled pitanja",
   navAnswered: "odgovoreno",
@@ -427,6 +436,10 @@ const en: Dict = {
   explanationTitle: "Explanation",
   questionsOnlyInMe: "The questions themselves are available in Montenegrin.",
   translationMissing: "No translation available — shown in Montenegrin.",
+  penaltyTitle: "What this would cost you in traffic",
+  penaltyTotal: "In traffic, these mistakes would cost",
+  penaltyNote:
+    "For information only, under the Road Traffic Safety Act. The final amount is set by the competent authority, and penalty points may be imposed as well.",
 
   navTitle: "Question overview",
   navAnswered: "answered",
@@ -582,6 +595,10 @@ const sq: Dict = {
   explanationTitle: "Shpjegim",
   questionsOnlyInMe: "Pyetjet janë të disponueshme në gjuhën malazeze.",
   translationMissing: "Përkthimi nuk është i disponueshëm — shfaqur në malazeze.",
+  penaltyTitle: "Sa do t'ju kushtonte kjo në komunikacion",
+  penaltyTotal: "Në komunikacion, këto gabime do të kushtonin",
+  penaltyNote:
+    "Vetëm informative, sipas Ligjit për sigurinë e komunikacionit rrugor. Shumën përfundimtare e cakton organi kompetent dhe krahas gjobës mund të vijnë edhe pikë ndëshkuese.",
 
   navTitle: "Pasqyra e pyetjeve",
   navAnswered: "të përgjigjura",
@@ -739,6 +756,10 @@ const ru: Dict = {
   explanationTitle: "Пояснение",
   questionsOnlyInMe: "Вопросы доступны на черногорском языке.",
   translationMissing: "Перевод недоступен — показано на черногорском.",
+  penaltyTitle: "Во сколько это обошлось бы на дороге",
+  penaltyTotal: "На дороге эти ошибки стоили бы",
+  penaltyNote:
+    "Информационно, по Закону о безопасности дорожного движения. Окончательную сумму определяет компетентный орган, а вместе со штрафом могут быть назначены и штрафные баллы.",
 
   navTitle: "Обзор вопросов",
   navAnswered: "отвечено",
