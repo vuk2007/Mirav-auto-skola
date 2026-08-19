@@ -4,12 +4,23 @@ import Image from "next/image";
 import { useApp } from "./AppProvider";
 
 /**
- * Zaglavlje pune stranice. Logo je na svijetloj podlozi (`--paper`/bijelo) —
- * transparentna verzija ima blagi bijeli rub od anti-aliasing-a, pa se ne
- * stavlja na tamnu ili plavu podlogu.
+ * Zaglavlje pune stranice.
  *
- * Dostavljeni logo je raster 201×79. Ako MIRAV/Digital Artefakt pošalju SVG ili
- * veći PNG, dovoljno je zamijeniti public/mirav-logo-transparent.png.
+ * Logo je bijeli na plavoj, a plava je **upečena u fajl** (251×108, bez ijednog
+ * providnog piksela). Zato stoji kao pločica na svijetlom zaglavlju, a ne kao
+ * slika koja se stapa s podlogom — otud `rounded` i `overflow-hidden`, da uglovi
+ * ne budu goli pravougaonik.
+ *
+ * Visina: logo zauzima samo 56% visine platna (ostalo je margina upečena u fajl),
+ * pa pločica mora biti osjetno viša od starog logotipa da bi natpis ostao iste
+ * veličine. Otud h-12/h-14 umjesto ranijih h-9/h-10.
+ *
+ * Napomena o boji: plava u logu je #183d73 (tamna mornarska), a brend token
+ * `--blue` je #2f6fd0 (svjetlija). To su dvije različite plave i vide se jedna
+ * pored druge — vidi „Brend" u README-u.
+ *
+ * Dostavljeni logo je raster. Ako MIRAV pošalje SVG, dovoljno je zamijeniti
+ * public/mirav-logo.png i skinuti `width`/`height`.
  */
 export default function BrandHeader() {
   const { goHome, t } = useApp();
@@ -24,12 +35,12 @@ export default function BrandHeader() {
           className="flex items-center gap-3 rounded transition-opacity hover:opacity-80"
         >
           <Image
-            src="/mirav-logo-transparent.png"
+            src="/mirav-logo.png"
             alt="Auto-škola MIRAV"
-            width={201}
-            height={79}
+            width={251}
+            height={108}
             priority
-            className="h-9 w-auto sm:h-10"
+            className="h-12 w-auto rounded sm:h-14"
           />
           <span className="diamond h-3 w-3" aria-hidden="true" />
         </button>

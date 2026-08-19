@@ -372,17 +372,26 @@ isto kao `questions.json`.
 
 ### Brend
 
-Logo je [`public/mirav-logo-transparent.png`](public/mirav-logo-transparent.png) — koristi se
-**transparentna verzija na svijetloj podlozi**, jer ima blagi bijeli rub od anti-aliasing-a
-pa se ne stavlja na tamnu ili plavu pozadinu.
+Logo je [`public/mirav-logo.png`](public/mirav-logo.png) — **bijeli logotip na plavoj, i ta
+plava je upečena u fajl** (251×108, nijedan piksel nije providan). Zato stoji kao *pločica*
+na svijetlom zaglavlju, sa zaobljenim uglovima da ne bude goli pravougaonik.
 
-Dostavljeni logo je raster **201×79**. Ako MIRAV/Digital Artefakt pošalju SVG ili veći PNG,
-dovoljno je zamijeniti taj fajl — putanja se referiše na jednom mjestu
+> Ovo je obrnuto od ranije verzije, koja je bila plavi logotip na prozirnoj podlozi i zato
+> nije smjela ići na plavo. Nova verzija plavu nosi sa sobom.
+
+Visina u zaglavlju je `h-12 sm:h-14`, veća nego kod starog logotipa (`h-9 sm:h-10`), jer
+**logo zauzima samo 56% visine platna** — ostalo je margina upečena u fajl. Da je pločica
+ostala na staroj visini, sam natpis bi ispao osjetno manji nego prije.
+
+Dostavljeni logo je raster. Ako MIRAV/Digital Artefakt pošalju SVG, dovoljno je zamijeniti
+fajl i skinuti `width`/`height` — putanja se referiše na jednom mjestu
 ([`components/BrandHeader.tsx`](components/BrandHeader.tsx)).
 
-Boje: logotip je azur `#4080F0`. Token `--blue` je `#2f6fd0` — ista porodica, ali tamnija,
-jer `#4080F0` na bijelom daje kontrast ~3:1, premalo za tekst i dugmad; `#2f6fd0` daje
-~4,9:1 i prolazi WCAG AA. Azur je zadržan kao `--blue-accent` za dekoraciju i hover.
+**Dvije plave.** Plava u logu je `#183d73` (tamna mornarska), a token `--blue` je `#2f6fd0`
+(svjetlija, koristi se za dugmad, oznake i romb). Vide se jedna pored druge u zaglavlju.
+Token nije mijenjan jer je biran po kontrastu: `#2f6fd0` na bijelom daje ~4,9:1 i prolazi
+WCAG AA, dok bi `#183d73` bio nepotrebno taman za dugmad. Ako MIRAV želi da se usaglase,
+to je odluka o brendu, ne tehnička — vidi „Prije objave".
 
 Favicon je [`app/icon.svg`](app/icon.svg) — logotip je izdužen pa bi u kvadratnoj ikoni bio
 nečitak, umjesto njega je inicijal na brend plavoj sa žutim rombom.
@@ -510,7 +519,9 @@ paketa, pa prekid ne baca obavljen posao.
       modal „Literatura" ga referiše, ali to nije isto što i dozvola za objavu).
 - [ ] Potvrditi 41 / 45 / 85 i moguću raspodjelu po oblastima po važećem Pravilniku
       MUP-a, pa upisati u `lib/config.ts`.
-- [ ] Uskladiti plavu sa brendom mirav.me (token `--color-blue` u `app/globals.css`).
+- [ ] Odlučiti o dvije plave: logo nosi `#183d73`, a token `--blue` je `#2f6fd0`. Ako treba
+      da se usaglase, promijeniti `--color-blue` u `app/globals.css` i provjeriti kontrast
+      dugmadi (cilj je najmanje 4,5:1 na bijelom).
 - [ ] Pokrenuti `npm run translate` (traži `ANTHROPIC_API_KEY`) — bez toga EN i RU prikazuju
       pitanja na crnogorskom uz napomenu.
 - [ ] Dati mašinski prevod EN/RU izvornom govorniku na provjeru saobraćajnih termina prije
