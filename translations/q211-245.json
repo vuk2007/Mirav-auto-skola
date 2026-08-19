@@ -1,0 +1,937 @@
+{
+  "items": [
+    {
+      "id": 211,
+      "en": {
+        "text": "In the situation shown in the picture the broken dividing line:",
+        "options": {
+          "a": "separates the carriageway and must not be crossed",
+          "b": "separates the carriageway and may be driven over and crossed",
+          "c": "separates the carriageway lane and must not be crossed"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, прерывистая разделительная линия:",
+        "options": {
+          "a": "разделяет проезжую часть, и её нельзя пересекать",
+          "b": "разделяет проезжую часть, и на неё можно наезжать и её можно пересекать",
+          "c": "разделяет полосу проезжей части, и её нельзя пересекать"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë vija ndarëse e ndërprerë:",
+        "options": {
+          "a": "e ndan karrexhatën dhe nuk guxon të kalohet mbi të",
+          "b": "e ndan karrexhatën dhe guxon të shkelet e të kalohet mbi të",
+          "c": "e ndan brezin e karrexhatës dhe nuk guxon të kalohet mbi të"
+        }
+      }
+    },
+    {
+      "id": 212,
+      "en": {
+        "text": "How will you act in the situation as in the picture, when passenger car 2 is overtaking you:",
+        "options": {
+          "a": "I will increase my speed",
+          "b": "I will move the vehicle towards the right-hand edge of the carriageway",
+          "c": "I will move the vehicle towards the left-hand edge of the carriageway"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, как на рисунке, когда вас обгоняет легковой автомобиль 2:",
+        "options": {
+          "a": "я увеличу скорость движения",
+          "b": "я смещу транспортное средство к правому краю проезжей части",
+          "c": "я смещу транспортное средство к левому краю проезжей части"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën si në figurë, kur ju tejkalon automjeti udhëtar 2:",
+        "options": {
+          "a": "do ta rris shpejtësinë e lëvizjes",
+          "b": "do ta zhvendos automjetin drejt skajit të djathtë të karrexhatës",
+          "c": "do ta zhvendos automjetin drejt skajit të majtë të karrexhatës"
+        }
+      }
+    },
+    {
+      "id": 213,
+      "en": {
+        "text": "The mandatory sign shown in the picture is valid:",
+        "options": {
+          "a": "up to the first intersection",
+          "b": "up to the first information sign",
+          "c": "up to the first warning sign"
+        }
+      },
+      "ru": {
+        "text": "Знак предписания, показанный на рисунке, действует:",
+        "options": {
+          "a": "до первого перекрёстка",
+          "b": "до первого информационного знака",
+          "c": "до первого предупреждающего знака"
+        }
+      },
+      "sq": {
+        "text": "Shenja e urdhrit të prerë e paraqitur në figurë vlen:",
+        "options": {
+          "a": "deri te kryqëzimi i parë",
+          "b": "deri te shenja e parë e njoftimit",
+          "c": "deri te shenja e parë e rrezikut"
+        }
+      }
+    },
+    {
+      "id": 214,
+      "en": {
+        "text": "In the situation shown in the picture the driver of goods vehicle 1 should:",
+        "options": {
+          "a": "accelerate the vehicle and continue driving without giving way to the pedestrians",
+          "b": "give way only to the pedestrian marked a and continue driving",
+          "c": "stop and give way to all the pedestrians"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, водитель грузового автомобиля 1 должен:",
+        "options": {
+          "a": "ускорить транспортное средство и продолжить движение, не уступая дорогу пешеходам",
+          "b": "уступить дорогу только пешеходу, обозначенному буквой a, и продолжить движение",
+          "c": "остановиться и уступить дорогу всем пешеходам"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë shoferi i automjetit transportues 1 duhet:",
+        "options": {
+          "a": "ta shpejtojë automjetin dhe ta vazhdojë lëvizjen pa u lëshuar rrugë këmbësorëve",
+          "b": "t'i lëshojë rrugë vetëm këmbësorit të shënuar me a dhe ta vazhdojë lëvizjen",
+          "c": "të ndalet dhe t'u lëshojë rrugë të gjithë këmbësorëve"
+        }
+      }
+    },
+    {
+      "id": 215,
+      "en": {
+        "text": "In the situation shown in the picture the driver of goods vehicle 1, immediately after passing the pedestrian crossing:",
+        "options": {
+          "a": "may stop or park",
+          "b": "may stop",
+          "c": "must not stop or park"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, водитель грузового автомобиля 1 непосредственно после проезда пешеходного перехода:",
+        "options": {
+          "a": "может остановиться или припарковаться",
+          "b": "может остановиться",
+          "c": "не должен останавливаться или парковаться"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë shoferi i automjetit transportues 1, menjëherë pas kalimit të vendkalimit për këmbësorë:",
+        "options": {
+          "a": "guxon të ndalet ose të parkohet",
+          "b": "guxon të ndalet",
+          "c": "nuk guxon të ndalet ose të parkohet"
+        }
+      }
+    },
+    {
+      "id": 216,
+      "en": {
+        "text": "In the position shown in the picture passenger car 1 is:",
+        "options": {
+          "a": "stopped correctly",
+          "b": "stopped or parked correctly",
+          "c": "stopped or parked incorrectly"
+        }
+      },
+      "ru": {
+        "text": "В положении, показанном на рисунке, легковой автомобиль 1:",
+        "options": {
+          "a": "правильно остановлен",
+          "b": "правильно остановлен или припаркован",
+          "c": "неправильно остановлен или припаркован"
+        }
+      },
+      "sq": {
+        "text": "Në pozicionin e paraqitur në figurë automjeti udhëtar 1 është:",
+        "options": {
+          "a": "i ndalur rregullisht",
+          "b": "i ndalur ose i parkuar rregullisht",
+          "c": "i ndalur ose i parkuar jo rregullisht"
+        }
+      }
+    },
+    {
+      "id": 217,
+      "en": {
+        "text": "The information sign shown in the picture is:",
+        "options": {
+          "a": "the distance to a car park",
+          "b": "a time limit on parking",
+          "c": "parking only during a specified period"
+        }
+      },
+      "ru": {
+        "text": "Информационный знак, показанный на рисунке, — это:",
+        "options": {
+          "a": "расстояние до стоянки",
+          "b": "ограничение времени стоянки",
+          "c": "стоянка только в определённое время"
+        }
+      },
+      "sq": {
+        "text": "Shenja e njoftimit e paraqitur në figurë është:",
+        "options": {
+          "a": "largësia e parkingut",
+          "b": "kufizimi kohor i parkimit",
+          "c": "parkim vetëm në kohë të caktuar"
+        }
+      }
+    },
+    {
+      "id": 218,
+      "en": {
+        "text": "In the situation as in the picture passenger car 1:",
+        "options": {
+          "a": "may park",
+          "b": "must not stop or park",
+          "c": "may stop"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, как на рисунке, легковой автомобиль 1:",
+        "options": {
+          "a": "может припарковаться",
+          "b": "не должен останавливаться или парковаться",
+          "c": "может остановиться"
+        }
+      },
+      "sq": {
+        "text": "Në situatën si në figurë automjeti udhëtar 1:",
+        "options": {
+          "a": "guxon të parkohet",
+          "b": "nuk guxon të ndalet ose të parkohet",
+          "c": "guxon të ndalet"
+        }
+      }
+    },
+    {
+      "id": 219,
+      "en": {
+        "text": "At what distance from a marked pedestrian crossing may a driver stop or park:",
+        "options": {
+          "a": "at least 10 metres",
+          "b": "at least 5 metres",
+          "c": "at least 7 metres"
+        }
+      },
+      "ru": {
+        "text": "На каком расстоянии от обозначенного пешеходного перехода водитель может остановиться или припарковаться:",
+        "options": {
+          "a": "не менее 10 метров",
+          "b": "не менее 5 метров",
+          "c": "не менее 7 метров"
+        }
+      },
+      "sq": {
+        "text": "Në ç'distancë nga vendkalimi i shënuar për këmbësorë shoferi guxon të ndalet ose të parkohet:",
+        "options": {
+          "a": "së paku 10 metra",
+          "b": "së paku 5 metra",
+          "c": "së paku 7 metra"
+        }
+      }
+    },
+    {
+      "id": 220,
+      "en": {
+        "text": "In the situation shown in the picture vehicle 2 is travelling:",
+        "options": {
+          "a": "correctly, if it does not obstruct vehicles from the opposite direction",
+          "b": "correctly",
+          "c": "incorrectly"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, транспортное средство 2 движется:",
+        "options": {
+          "a": "правильно, если не мешает транспортным средствам со встречного направления",
+          "b": "правильно",
+          "c": "неправильно"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjeti 2 lëviz:",
+        "options": {
+          "a": "rregullisht, nëse nuk i pengon automjetet nga kahu i kundërt",
+          "b": "rregullisht",
+          "c": "jo rregullisht"
+        }
+      }
+    },
+    {
+      "id": 221,
+      "en": {
+        "text": "In the situation shown in the picture the driver of vehicle 2 should:",
+        "options": {
+          "a": "drive as close as possible to the dividing line",
+          "b": "drive as close as possible to the right-hand edge of the carriageway",
+          "c": "drive in the middle of the traffic lane"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, водитель транспортного средства 2 должен:",
+        "options": {
+          "a": "двигаться как можно ближе к разделительной линии",
+          "b": "двигаться как можно ближе к правому краю проезжей части",
+          "c": "двигаться посередине полосы движения"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë shoferi i automjetit 2 duhet:",
+        "options": {
+          "a": "të lëvizë sa më afër vijës ndarëse",
+          "b": "të lëvizë sa më afër skajit të djathtë të karrexhatës",
+          "c": "të lëvizë në mes të korsisë"
+        }
+      }
+    },
+    {
+      "id": 222,
+      "en": {
+        "text": "In the situation as in the picture:",
+        "options": {
+          "a": "I will continue driving to the left through the intersection",
+          "b": "I will continue driving to the right through the intersection",
+          "c": "I will continue straight ahead through the intersection"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, как на рисунке:",
+        "options": {
+          "a": "я продолжу движение налево через перекрёсток",
+          "b": "я продолжу движение направо через перекрёсток",
+          "c": "я продолжу движение прямо через перекрёсток"
+        }
+      },
+      "sq": {
+        "text": "Në situatën si në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen majtas nëpër kryqëzim",
+          "b": "do ta vazhdoj lëvizjen djathtas nëpër kryqëzim",
+          "c": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim"
+        }
+      }
+    },
+    {
+      "id": 223,
+      "en": {
+        "text": "The road markings on the carriageway mean:",
+        "options": {
+          "a": "the purpose of the traffic lanes",
+          "b": "a compulsory direction",
+          "c": "guide lines"
+        }
+      },
+      "ru": {
+        "text": "Горизонтальная разметка на проезжей части означает:",
+        "options": {
+          "a": "назначение полос движения",
+          "b": "обязательное направление",
+          "c": "линии направления движения"
+        }
+      },
+      "sq": {
+        "text": "Shenjat horizontale në karrexhatë do të thonë:",
+        "options": {
+          "a": "destinimin e korsive",
+          "b": "kahun e detyrueshëm",
+          "c": "vijat e drejtimit"
+        }
+      }
+    },
+    {
+      "id": 224,
+      "en": {
+        "text": "In the situation shown in the picture you will pass through the intersection:",
+        "options": {
+          "a": "along path 1 without giving way to the pedestrians",
+          "b": "along path 2 after giving way to the pedestrians",
+          "c": "along path 1 after giving way to the pedestrians"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, вы проедете через перекрёсток:",
+        "options": {
+          "a": "по траектории 1, не уступая дорогу пешеходам",
+          "b": "по траектории 2, уступив дорогу пешеходам",
+          "c": "по траектории 1, уступив дорогу пешеходам"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë do të kaloni nëpër kryqëzim:",
+        "options": {
+          "a": "nëpër trajektoren 1 pa u lëshuar rrugë këmbësorëve",
+          "b": "nëpër trajektoren 2 pasi t'u lëshoni rrugë këmbësorëve",
+          "c": "nëpër trajektoren 1 pasi t'u lëshoni rrugë këmbësorëve"
+        }
+      }
+    },
+    {
+      "id": 225,
+      "en": {
+        "text": "In the situation as in the picture vehicle 3:",
+        "options": {
+          "a": "may stop",
+          "b": "must not stop or park",
+          "c": "may stop or park"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, как на рисунке, транспортное средство 3:",
+        "options": {
+          "a": "может остановиться",
+          "b": "не должно останавливаться или парковаться",
+          "c": "может остановиться или припарковаться"
+        }
+      },
+      "sq": {
+        "text": "Në situatën si në figurë automjeti 3:",
+        "options": {
+          "a": "guxon të ndalet",
+          "b": "nuk guxon të ndalet ose të parkohet",
+          "c": "guxon të ndalet ose të parkohet"
+        }
+      }
+    },
+    {
+      "id": 226,
+      "en": {
+        "text": "Passenger car 2, as in the picture:",
+        "options": {
+          "a": "must not stop or park",
+          "b": "may stop and park",
+          "c": "may stop"
+        }
+      },
+      "ru": {
+        "text": "Легковой автомобиль 2, как на рисунке:",
+        "options": {
+          "a": "не должен останавливаться или парковаться",
+          "b": "может останавливаться и парковаться",
+          "c": "может остановиться"
+        }
+      },
+      "sq": {
+        "text": "Automjeti udhëtar 2, si në figurë:",
+        "options": {
+          "a": "nuk guxon të ndalet ose të parkohet",
+          "b": "guxon të ndalet dhe të parkohet",
+          "c": "guxon të ndalet"
+        }
+      }
+    },
+    {
+      "id": 227,
+      "en": {
+        "text": "In the situation shown in the picture:",
+        "options": {
+          "a": "I must not stop or park",
+          "b": "I may stop or park",
+          "c": "I must not park"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке:",
+        "options": {
+          "a": "мне не разрешается останавливаться или парковаться",
+          "b": "мне разрешается остановиться или припарковаться",
+          "c": "мне не разрешается парковаться"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "nuk guxoj të ndalem ose të parkohem",
+          "b": "guxoj të ndalem ose të parkohem",
+          "c": "nuk guxoj të parkohem"
+        }
+      }
+    },
+    {
+      "id": 228,
+      "en": {
+        "text": "In the situation shown in the picture vehicle 1 is overtaking the cyclist:",
+        "options": {
+          "a": "correctly, because the left direction indicator is switched on",
+          "b": "correctly, because there is no no-overtaking sign",
+          "c": "incorrectly, because it is crossing the unbroken line"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, транспортное средство 1 обгоняет велосипедиста:",
+        "options": {
+          "a": "правильно, потому что включён левый указатель поворота",
+          "b": "правильно, потому что нет знака запрета обгона",
+          "c": "неправильно из-за пересечения сплошной линии"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjeti 1 e tejkalon çiklistin:",
+        "options": {
+          "a": "rregullisht, sepse është i ndezur treguesi i drejtimit majtas",
+          "b": "rregullisht, sepse nuk ka shenjë për ndalim tejkalimi",
+          "c": "jo rregullisht për shkak të kalimit mbi vijën e pandërprerë"
+        }
+      }
+    },
+    {
+      "id": 229,
+      "en": {
+        "text": "The cyclist in the situation in the picture, in a built-up area, is riding:",
+        "options": {
+          "a": "incorrectly, because he should be riding on the pavement",
+          "b": "incorrectly, because he should be wearing a protective helmet",
+          "c": "correctly along the right-hand edge of the carriageway"
+        }
+      },
+      "ru": {
+        "text": "Велосипедист в ситуации на рисунке в населённом пункте движется:",
+        "options": {
+          "a": "неправильно, потому что он должен двигаться по тротуару",
+          "b": "неправильно, потому что он должен носить защитный шлем",
+          "c": "правильно вдоль правого края проезжей части"
+        }
+      },
+      "sq": {
+        "text": "Çiklisti në situatën në figurë, në vendbanim, lëviz:",
+        "options": {
+          "a": "jo rregullisht, sepse duhet të lëvizë nëpër trotuar",
+          "b": "jo rregullisht, sepse duhet të mbajë helmetë mbrojtëse",
+          "c": "rregullisht pranë skajit të djathtë të karrexhatës"
+        }
+      }
+    },
+    {
+      "id": 230,
+      "en": {
+        "text": "In the situation in the picture, I am driving a goods vehicle with a trailer and meeting goods vehicle 2; because the carriageway is not wide enough for safe meeting:",
+        "options": {
+          "a": "goods vehicle 2 should stop and let me pass",
+          "b": "I should stop and let goods vehicle 2 pass",
+          "c": "we should stop and agree on the order of passing"
+        }
+      },
+      "ru": {
+        "text": "В ситуации на рисунке я веду грузовой автомобиль с прицепом и разъезжаюсь с грузовым автомобилем 2; из-за недостаточной ширины проезжей части для безопасного разъезда:",
+        "options": {
+          "a": "должен остановиться грузовой автомобиль 2 и дать мне проезд",
+          "b": "я должен остановиться и дать проезд грузовому автомобилю 2",
+          "c": "мы должны остановиться и договориться о порядке проезда"
+        }
+      },
+      "sq": {
+        "text": "Në situatën në figurë, drejtoj automjet transportues me rimorkio dhe kaloj përballë me automjetin transportues 2; për shkak të gjerësisë së pamjaftueshme të karrexhatës për kalim të sigurt përballë:",
+        "options": {
+          "a": "duhet të ndalet automjeti transportues 2 dhe të më mundësojë kalimin",
+          "b": "duhet të ndalem dhe t'i mundësoj kalimin automjetit transportues 2",
+          "c": "duhet të ndalemi dhe të merremi vesh për radhën e kalimit"
+        }
+      }
+    },
+    {
+      "id": 231,
+      "en": {
+        "text": "The road sign in the picture means:",
+        "options": {
+          "a": "that the carriageway descends at up to 6%",
+          "b": "that the transverse slope of the carriageway is up to 6%",
+          "c": "that the carriageway ascends at up to 6%"
+        }
+      },
+      "ru": {
+        "text": "Дорожный знак на рисунке означает:",
+        "options": {
+          "a": "что проезжая часть идёт под уклон до 6%",
+          "b": "что поперечный уклон проезжей части до 6%",
+          "c": "что проезжая часть идёт на подъём до 6%"
+        }
+      },
+      "sq": {
+        "text": "Shenja rrugore në figurë do të thotë:",
+        "options": {
+          "a": "se karrexhata është në tatëpjetë deri në 6%",
+          "b": "se pjerrësia tërthore e karrexhatës është deri në 6%",
+          "c": "se karrexhata është në ngjitje deri në 6%"
+        }
+      }
+    },
+    {
+      "id": 232,
+      "en": {
+        "text": "How will you act in the situation as in the picture, when vehicle 2 is joining the carriageway from an unsurfaced road:",
+        "options": {
+          "a": "I will move into the left-hand carriageway lane so as not to obstruct the driver of vehicle 2 in joining the carriageway",
+          "b": "I will continue straight ahead without giving way to vehicle 2",
+          "c": "I will stop and allow vehicle 2 to join, because it is approaching me from the right"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, как на рисунке, когда транспортное средство 2 выезжает с грунтовой дороги на проезжую часть:",
+        "options": {
+          "a": "я перестроюсь в левую полосу проезжей части, чтобы не мешать водителю транспортного средства 2 выехать на проезжую часть",
+          "b": "я продолжу движение прямо, не уступая дорогу транспортному средству 2",
+          "c": "я остановлюсь и дам возможность транспортному средству 2 выехать, потому что оно приближается ко мне справа"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën si në figurë, kur automjeti 2 kyçet nga rruga e pashtruar në karrexhatë:",
+        "options": {
+          "a": "do të rreshtohem në brezin e majtë të karrexhatës, që të mos e pengoj shoferin e automjetit 2 të kyçet në karrexhatë",
+          "b": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit 2",
+          "c": "do të ndalem dhe do t'i mundësoj kyçjen automjetit 2 sepse më vjen nga ana e djathtë"
+        }
+      }
+    },
+    {
+      "id": 233,
+      "en": {
+        "text": "In the situation as in the picture the road sign is valid up to:",
+        "options": {
+          "a": "the crest of the carriageway",
+          "b": "the next speed limit sign",
+          "c": "the first intersection"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, как на рисунке, дорожный знак действует до:",
+        "options": {
+          "a": "перевала проезжей части",
+          "b": "следующего знака ограничения скорости",
+          "c": "первого перекрёстка"
+        }
+      },
+      "sq": {
+        "text": "Në situatën si në figurë shenja rrugore vlen deri te:",
+        "options": {
+          "a": "qafa e karrexhatës",
+          "b": "shenja e radhës e kufizimit të shpejtësisë",
+          "c": "kryqëzimi i parë"
+        }
+      }
+    },
+    {
+      "id": 234,
+      "en": {
+        "text": "In the situation shown in the picture goods vehicle 2 is:",
+        "options": {
+          "a": "stopped correctly",
+          "b": "parked or stopped incorrectly",
+          "c": "parked or stopped correctly"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, грузовой автомобиль 2:",
+        "options": {
+          "a": "остановлен правильно",
+          "b": "припаркован или остановлен неправильно",
+          "c": "припаркован или остановлен правильно"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjeti transportues 2 është:",
+        "options": {
+          "a": "i ndalur rregullisht",
+          "b": "i parkuar ose i ndalur jo rregullisht",
+          "c": "i parkuar ose i ndalur rregullisht"
+        }
+      }
+    },
+    {
+      "id": 235,
+      "en": {
+        "text": "In the situation shown in the picture, passing vehicle 2 you are performing the manoeuvre of:",
+        "options": { "a": "meeting", "b": "changing lanes", "c": "going around" }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, проезжая мимо транспортного средства 2, вы выполняете манёвр:",
+        "options": { "a": "разъезда", "b": "перестроения", "c": "объезда" }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë, duke kaluar pranë automjetit 2 kryen veprimin e:",
+        "options": { "a": "kalimit përballë", "b": "rreshtimit", "c": "anashkalimit" }
+      }
+    },
+    {
+      "id": 236,
+      "en": {
+        "text": "In the situation shown in the picture, on a road carrying two-way traffic, the driver of vehicle 1 may use:",
+        "options": {
+          "a": "both carriageway lanes",
+          "b": "the right-hand carriageway lane",
+          "c": "the left-hand carriageway lane"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, на дороге с движением в обоих направлениях водитель транспортного средства 1 может использовать:",
+        "options": {
+          "a": "обе полосы проезжей части",
+          "b": "правую полосу проезжей части",
+          "c": "левую полосу проезжей части"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë, në rrugën për komunikacion në të dy kahet, shoferi i automjetit 1 guxon të përdorë:",
+        "options": {
+          "a": "të dy brezat e karrexhatës",
+          "b": "brezin e djathtë të karrexhatës",
+          "c": "brezin e majtë të karrexhatës"
+        }
+      }
+    },
+    {
+      "id": 237,
+      "en": {
+        "text": "In the situation shown in the picture the driver of vehicle 1, in an underpass:",
+        "options": {
+          "a": "may park",
+          "b": "must not stop or park",
+          "c": "may stop along the right-hand edge of the carriageway"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, водитель транспортного средства 1 в тоннельном проезде:",
+        "options": {
+          "a": "может припарковаться",
+          "b": "не должен останавливаться или парковаться",
+          "c": "может остановиться у правого края проезжей части"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë shoferi i automjetit 1 në nënkalim:",
+        "options": {
+          "a": "guxon të parkohet",
+          "b": "nuk guxon të ndalet ose të parkohet",
+          "c": "guxon të ndalet pranë skajit të djathtë të karrexhatës"
+        }
+      }
+    },
+    {
+      "id": 238,
+      "en": {
+        "text": "In the situation shown in the picture vehicle 1:",
+        "options": {
+          "a": "may be overtaken",
+          "b": "must not be overtaken because of the road markings",
+          "c": "must not be overtaken on the left-hand side"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, транспортное средство 1:",
+        "options": {
+          "a": "разрешается обгонять",
+          "b": "не разрешается обгонять из-за разметки на проезжей части",
+          "c": "не разрешается обгонять с левой стороны"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjeti 1:",
+        "options": {
+          "a": "guxon të tejkalohet",
+          "b": "nuk guxon të tejkalohet për shkak të shenjave në karrexhatë",
+          "c": "nuk guxon të tejkalohet nga ana e majtë"
+        }
+      }
+    },
+    {
+      "id": 239,
+      "en": {
+        "text": "In the situation shown in the picture the road markings mean:",
+        "options": {
+          "a": "overtaking from the opposite direction is permitted",
+          "b": "overtaking in the direction of travel is permitted",
+          "c": "overtaking is permitted for goods vehicles only"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, разметка на проезжей части означает:",
+        "options": {
+          "a": "разрешён обгон со встречного направления",
+          "b": "разрешён обгон в направлении движения",
+          "c": "разрешён обгон только грузовых автомобилей"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë shenjat në karrexhatë do të thonë:",
+        "options": {
+          "a": "lejohet tejkalimi nga kahu i kundërt",
+          "b": "lejohet tejkalimi në kahun e lëvizjes",
+          "c": "lejohet tejkalimi vetëm i automjeteve transportuese"
+        }
+      }
+    },
+    {
+      "id": 240,
+      "en": {
+        "text": "In the situation shown in the picture:",
+        "options": {
+          "a": "I am not obliged to give way to the pedestrian",
+          "b": "I am obliged to sound the horn and continue driving",
+          "c": "I am obliged to give way to the pedestrian"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я не обязан уступать дорогу пешеходу",
+          "b": "я обязан включить звуковой сигнал и продолжить движение",
+          "c": "я обязан уступить дорогу пешеходу"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "nuk jam i detyruar t'i lëshoj rrugë këmbësorit",
+          "b": "jam i detyruar ta ndez borinë dhe ta vazhdoj lëvizjen",
+          "c": "jam i detyruar t'i lëshoj rrugë këmbësorit"
+        }
+      }
+    },
+    {
+      "id": 241,
+      "en": {
+        "text": "For a pedestrian to cross the carriageway at a pedestrian crossing safely, as in the picture:",
+        "options": {
+          "a": "he must raise his hand and then step onto the pedestrian crossing",
+          "b": "he is not obliged to make sure that he is obstructing other road users",
+          "c": "he must make sure that in doing so he is not obstructing other road users"
+        }
+      },
+      "ru": {
+        "text": "Чтобы пешеход перешёл проезжую часть по пешеходному переходу безопасным образом, как на рисунке:",
+        "options": {
+          "a": "он обязан поднять руку, а затем ступить на пешеходный переход",
+          "b": "он не обязан убедиться, что мешает остальным участникам",
+          "c": "он обязан убедиться, что этим не мешает остальным участникам"
+        }
+      },
+      "sq": {
+        "text": "Që këmbësori ta kalojë karrexhatën në vendkalimin për këmbësorë në mënyrë të sigurt, si në figurë:",
+        "options": {
+          "a": "është i detyruar ta ngrejë dorën e pastaj të hyjë në vendkalimin për këmbësorë",
+          "b": "nuk është i detyruar të sigurohet se i pengon pjesëmarrësit e tjerë",
+          "c": "është i detyruar të sigurohet se me këtë nuk i pengon pjesëmarrësit e tjerë"
+        }
+      }
+    },
+    {
+      "id": 242,
+      "en": {
+        "text": "Vehicle 1 in the position shown in the picture is:",
+        "options": {
+          "a": "parked correctly",
+          "b": "stopped or parked incorrectly",
+          "c": "stopped or parked correctly"
+        }
+      },
+      "ru": {
+        "text": "Транспортное средство 1 в положении, показанном на рисунке:",
+        "options": {
+          "a": "припарковано правильно",
+          "b": "неправильно остановлено или припарковано",
+          "c": "правильно остановлено или припарковано"
+        }
+      },
+      "sq": {
+        "text": "Automjeti 1 në pozicionin e paraqitur në figurë është:",
+        "options": {
+          "a": "i parkuar rregullisht",
+          "b": "i ndalur ose i parkuar jo rregullisht",
+          "c": "i ndalur ose i parkuar rregullisht"
+        }
+      }
+    },
+    {
+      "id": 243,
+      "en": {
+        "text": "Vehicle 1 in the situation shown in the picture is:",
+        "options": {
+          "a": "in the traffic lane in the direction of travel",
+          "b": "in the traffic lane for the opposite direction of travel",
+          "c": "in a marked parking space"
+        }
+      },
+      "ru": {
+        "text": "Транспортное средство 1 в ситуации, показанной на рисунке, находится:",
+        "options": {
+          "a": "на полосе движения в направлении движения",
+          "b": "на полосе движения для встречного направления",
+          "c": "на обозначенном парковочном месте"
+        }
+      },
+      "sq": {
+        "text": "Automjeti 1 në situatën e paraqitur në figurë është:",
+        "options": {
+          "a": "në korsinë në kahun e lëvizjes",
+          "b": "në korsinë për kahun e kundërt të lëvizjes",
+          "c": "në vendin e shënuar të parkimit"
+        }
+      }
+    },
+    {
+      "id": 244,
+      "en": {
+        "text": "In the situation shown in the picture the vehicles along the right-hand edge of the carriageway are:",
+        "options": {
+          "a": "stopped or parked incorrectly",
+          "b": "stopped or parked correctly",
+          "c": "stopped correctly"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, транспортные средства у правого края проезжей части:",
+        "options": {
+          "a": "неправильно остановлены или припаркованы",
+          "b": "правильно остановлены или припаркованы",
+          "c": "остановлены правильно"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjetet pranë skajit të djathtë të karrexhatës janë:",
+        "options": {
+          "a": "të ndalura ose të parkuara jo rregullisht",
+          "b": "të ndalura ose të parkuara rregullisht",
+          "c": "të ndalura rregullisht"
+        }
+      }
+    },
+    {
+      "id": 245,
+      "en": {
+        "text": "The unbroken white longitudinal line, in the situation as in the picture, marks:",
+        "options": {
+          "a": "the edge of the carriageway",
+          "b": "the dividing line",
+          "c": "the edge line"
+        }
+      },
+      "ru": {
+        "text": "Сплошная белая продольная линия в ситуации, как на рисунке, обозначает:",
+        "options": {
+          "a": "край проезжей части",
+          "b": "разделительную линию",
+          "c": "краевую линию"
+        }
+      },
+      "sq": {
+        "text": "Vija gjatësore e bardhë e pandërprerë, në situatën si në figurë, shënon:",
+        "options": {
+          "a": "skajin e karrexhatës",
+          "b": "vijën ndarëse",
+          "c": "vijën anësore"
+        }
+      }
+    }
+  ]
+}

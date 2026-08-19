@@ -1,0 +1,836 @@
+{
+  "items": [
+    {
+      "id": 386,
+      "en": {
+        "text": "What is the heart rate of a normal healthy person:",
+        "options": {
+          "a": "up to 60 beats in one second",
+          "b": "60 to 80 beats in one minute",
+          "c": "over 100 beats in one minute"
+        }
+      },
+      "ru": {
+        "text": "Каково число сердечных сокращений у нормального здорового человека:",
+        "options": {
+          "a": "до 60 ударов в одну секунду",
+          "b": "60 до 80 ударов в одну минуту",
+          "c": "свыше 100 ударов в одну минуту"
+        }
+      },
+      "sq": {
+        "text": "Sa është numri i rrahjeve të zemrës te një person normal i shëndoshë:",
+        "options": {
+          "a": "deri në 60 rrahje në një sekondë",
+          "b": "60 deri në 80 rrahje në një minutë",
+          "c": "mbi 100 rrahje në një minutë"
+        }
+      }
+    },
+    {
+      "id": 387,
+      "en": {
+        "text": "The free play of the steering wheel on a power-driven vehicle must not be greater than:",
+        "options": { "a": "20 degrees", "b": "30 degrees", "c": "40 degrees" }
+      },
+      "ru": {
+        "text": "Свободный ход рулевого колеса на механическом транспортном средстве не должен быть больше:",
+        "options": { "a": "20 градусов", "b": "30 градусов", "c": "40 градусов" }
+      },
+      "sq": {
+        "text": "Lëvizja e lirë e timonit në automjetin me motor nuk guxon të jetë më e madhe se:",
+        "options": { "a": "20 gradë", "b": "30 gradë", "c": "40 gradë" }
+      }
+    },
+    {
+      "id": 388,
+      "en": {
+        "text": "The brakes fitted as standard on a motor vehicle are:",
+        "options": {
+          "a": "the service, the secondary and the parking brake",
+          "b": "the service and the secondary brake and an endurance braking system",
+          "c": "the service and the parking brake and an endurance braking system"
+        }
+      },
+      "ru": {
+        "text": "На механическом транспортном средстве серийно устанавливаются:",
+        "options": {
+          "a": "рабочий, вспомогательный и стояночный тормоз",
+          "b": "рабочий и вспомогательный тормоз и износостойкая тормозная система",
+          "c": "рабочий и стояночный тормоз и износостойкая тормозная система"
+        }
+      },
+      "sq": {
+        "text": "Në automjetin me motor instalohen si standard:",
+        "options": {
+          "a": "freni i punës, ai ndihmës dhe ai i parkimit",
+          "b": "freni i punës dhe ai ndihmës dhe ngadalësuesi i qëndrueshëm",
+          "c": "freni i punës dhe ai i parkimit dhe ngadalësuesi i qëndrueshëm"
+        }
+      }
+    },
+    {
+      "id": 389,
+      "en": {
+        "text": "The maximum permitted length of a motor vehicle other than a bus is:",
+        "options": { "a": "8 metres", "b": "10 metres", "c": "12 metres" }
+      },
+      "ru": {
+        "text": "Наибольшая разрешённая длина механического транспортного средства, кроме автобуса, составляет:",
+        "options": { "a": "8 метров", "b": "10 метров", "c": "12 метров" }
+      },
+      "sq": {
+        "text": "Gjatësia më e madhe e lejuar e automjetit me motor, përveç autobusit, është:",
+        "options": { "a": "8 metra", "b": "10 metra", "c": "12 metra" }
+      }
+    },
+    {
+      "id": 390,
+      "en": {
+        "text": "When tiredness sets in during driving, it is necessary:",
+        "options": {
+          "a": "to continue driving at a reduced speed",
+          "b": "to consume energy drinks and continue driving",
+          "c": "to take a break to rest"
+        }
+      },
+      "ru": {
+        "text": "Когда во время вождения наступает усталость, необходимо:",
+        "options": {
+          "a": "продолжить движение со сниженной скоростью",
+          "b": "употребить энергетические напитки и продолжить движение",
+          "c": "сделать перерыв для отдыха"
+        }
+      },
+      "sq": {
+        "text": "Kur gjatë vozitjes vjen lodhja, është e nevojshme:",
+        "options": {
+          "a": "të vazhdohet vozitja me lëvizje të ngadalësuar",
+          "b": "të konsumohen pije energjike dhe të vazhdohet vozitja",
+          "c": "të bëhet pauzë për pushim"
+        }
+      }
+    },
+    {
+      "id": 391,
+      "en": {
+        "text": "Bleeding in an injured person is:",
+        "options": {
+          "a": "the escape of blood from the blood vessels",
+          "b": "a closed fracture of the lower leg",
+          "c": "the clotting of blood in a blood vessel"
+        }
+      },
+      "ru": {
+        "text": "Кровотечение у пострадавшего — это:",
+        "options": {
+          "a": "истечение крови из кровеносных сосудов",
+          "b": "закрытый перелом голени",
+          "c": "свёртывание крови в кровеносном сосуде"
+        }
+      },
+      "sq": {
+        "text": "Gjakderdhja te i lënduari është:",
+        "options": {
+          "a": "rrjedhja e gjakut nga enët e gjakut",
+          "b": "thyerje e mbyllur e kërcirit",
+          "c": "mpiksja e gjakut në enën e gjakut"
+        }
+      }
+    },
+    {
+      "id": 392,
+      "en": {
+        "text": "Of the prescribed equipment, a bus must carry:",
+        "options": {
+          "a": "three first-aid kits",
+          "b": "two first-aid kits",
+          "c": "one first-aid kit"
+        }
+      },
+      "ru": {
+        "text": "Из определённого оборудования в автобусе должны быть:",
+        "options": {
+          "a": "три аптечки первой помощи",
+          "b": "две аптечки первой помощи",
+          "c": "одна аптечка первой помощи"
+        }
+      },
+      "sq": {
+        "text": "Nga pajisjet e caktuara në autobus duhet të ekzistojnë:",
+        "options": {
+          "a": "tri kuti të ndihmës së parë",
+          "b": "dy kuti të ndihmës së parë",
+          "c": "një kuti e ndihmës së parë"
+        }
+      }
+    },
+    {
+      "id": 393,
+      "en": {
+        "text": "The devices that are not considered devices for giving light signals are:",
+        "options": { "a": "stop lights", "b": "direction indicators", "c": "reflectors" }
+      },
+      "ru": {
+        "text": "Устройствами для подачи световых сигналов не считаются:",
+        "options": { "a": "стоп-сигналы", "b": "указатели поворота", "c": "световозвращатели" }
+      },
+      "sq": {
+        "text": "Si pajisje për dhënien e sinjaleve ndriçuese nuk konsiderohen:",
+        "options": { "a": "dritat e frenimit", "b": "treguesit e drejtimit", "c": "katadiopterët" }
+      }
+    },
+    {
+      "id": 394,
+      "en": {
+        "text": "A driver uses the parking brake on a vehicle:",
+        "options": {
+          "a": "to stop the vehicle when he encounters a sudden obstacle",
+          "b": "to prevent a stopped vehicle from moving",
+          "c": "to prevent the vehicle from moving only while it is parked in a garage"
+        }
+      },
+      "ru": {
+        "text": "Стояночный тормоз транспортного средства водитель использует:",
+        "options": {
+          "a": "чтобы остановить транспортное средство при внезапном препятствии",
+          "b": "чтобы предотвратить движение остановленного транспортного средства",
+          "c": "чтобы предотвратить движение транспортного средства только пока оно припарковано в гараже"
+        }
+      },
+      "sq": {
+        "text": "Frenin e parkimit te automjeti shoferi e përdor:",
+        "options": {
+          "a": "për ta ndalur automjetin kur ndesh një pengesë të papritur",
+          "b": "për ta penguar lëvizjen e automjetit të ndalur",
+          "c": "për ta penguar lëvizjen e automjetit vetëm derisa është i parkuar në garazh"
+        }
+      }
+    },
+    {
+      "id": 395,
+      "en": {
+        "text": "Arterial bleeding in an injured person is recognised by:",
+        "options": {
+          "a": "slow escape of blood and clotting on the injured part of the body",
+          "b": "blood in spurts",
+          "c": "swelling and bruising of the injured part of the body"
+        }
+      },
+      "ru": {
+        "text": "Артериальное кровотечение у пострадавшего распознаётся по:",
+        "options": {
+          "a": "медленному истечению крови и свёртыванию на повреждённой части тела",
+          "b": "крови, бьющей струёй",
+          "c": "отёку и синякам на повреждённой части тела"
+        }
+      },
+      "sq": {
+        "text": "Gjakderdhja arteriale te i lënduari njihet nga:",
+        "options": {
+          "a": "rrjedhja e ngadaltë e gjakut dhe mpiksja në pjesën e lënduar të trupit",
+          "b": "gjaku në rrjedha të fuqishme",
+          "c": "ënjtja dhe mavijosjet e pjesës së lënduar të trupit"
+        }
+      }
+    },
+    {
+      "id": 396,
+      "en": {
+        "text": "If a person in a road accident has head and neck injuries:",
+        "options": {
+          "a": "move the injured person as little as possible",
+          "b": "place them in a sitting position",
+          "c": "place them on their side in a lying position"
+        }
+      },
+      "ru": {
+        "text": "Если у лица в дорожно-транспортном происшествии повреждены голова и шея:",
+        "options": {
+          "a": "пострадавшего перемещать как можно меньше",
+          "b": "поместить его в сидячее положение",
+          "c": "поместить его на бок в лежачее положение"
+        }
+      },
+      "sq": {
+        "text": "Nëse personit në aksidentin e komunikacionit i janë lënduar koka dhe qafa:",
+        "options": {
+          "a": "i lënduari të lëvizet sa më pak",
+          "b": "të vendoset në pozicion të ulur",
+          "c": "të vendoset anash në pozicion të shtrirë"
+        }
+      }
+    },
+    {
+      "id": 397,
+      "en": {
+        "text": "A component part of an internal combustion engine is:",
+        "options": {
+          "a": "the crankshaft",
+          "b": "the cardan shaft",
+          "c": "the half-shaft"
+        }
+      },
+      "ru": {
+        "text": "Составной частью двигателя внутреннего сгорания является:",
+        "options": { "a": "коленчатый вал", "b": "карданный вал", "c": "полуось" }
+      },
+      "sq": {
+        "text": "Pjesë përbërëse e motorit me djegie të brendshme është:",
+        "options": { "a": "boshti me gunga", "b": "boshti kardanik", "c": "gjysmëboshti" }
+      }
+    },
+    {
+      "id": 398,
+      "en": {
+        "text": "The power steering device:",
+        "options": {
+          "a": "reduces the steering angle of the steered wheels",
+          "b": "reduces the overall force the driver applies when turning the steering wheel and makes steering easier",
+          "c": "reduces the diameter of the path when the vehicle turns"
+        }
+      },
+      "ru": {
+        "text": "Усилитель рулевого управления:",
+        "options": {
+          "a": "уменьшает угол поворота управляемых колёс",
+          "b": "уменьшает общую силу, прилагаемую водителем при повороте рулевого колеса, и обеспечивает лёгкость управления",
+          "c": "уменьшает диаметр траектории при повороте транспортного средства"
+        }
+      },
+      "sq": {
+        "text": "Pajisja servo për drejtim:",
+        "options": {
+          "a": "e zvogëlon këndin e rrotullimit të rrotave drejtuese",
+          "b": "e zvogëlon forcën e përgjithshme të veprimit të shoferit gjatë rrotullimit të timonit dhe siguron lehtësi në drejtim",
+          "c": "e zvogëlon diametrin e trajektores gjatë kthimit të automjetit"
+        }
+      }
+    },
+    {
+      "id": 399,
+      "en": {
+        "text": "The light of the main headlights should be:",
+        "options": { "a": "white", "b": "amber", "c": "red" }
+      },
+      "ru": {
+        "text": "Свет основных фар должен быть:",
+        "options": { "a": "белого цвета", "b": "жёлтого цвета", "c": "красного цвета" }
+      },
+      "sq": {
+        "text": "Drita e fenerëve kryesorë duhet të jetë:",
+        "options": {
+          "a": "me ngjyrë të bardhë",
+          "b": "me ngjyrë të verdhë",
+          "c": "me ngjyrë të kuqe"
+        }
+      }
+    },
+    {
+      "id": 400,
+      "en": {
+        "text": "Immediately after a road accident, a person who was involved in the road accident:",
+        "options": {
+          "a": "may consume alcoholic drink",
+          "b": "may consume sedatives to calm down",
+          "c": "must not consume alcoholic drink"
+        }
+      },
+      "ru": {
+        "text": "Непосредственно после дорожно-транспортного происшествия лицо, участвовавшее в происшествии:",
+        "options": {
+          "a": "может употреблять алкогольные напитки",
+          "b": "может употреблять успокоительные средства",
+          "c": "не должно употреблять алкогольные напитки"
+        }
+      },
+      "sq": {
+        "text": "Menjëherë pas aksidentit të komunikacionit, personi që ka marrë pjesë në aksident:",
+        "options": {
+          "a": "guxon të konsumojë pije alkoolike",
+          "b": "guxon të konsumojë qetësues",
+          "c": "nuk guxon të konsumojë pije alkoolike"
+        }
+      }
+    },
+    {
+      "id": 401,
+      "en": {
+        "text": "If a person injured in a road accident is unconscious, they should be:",
+        "options": {
+          "a": "placed in a lying position on their back",
+          "b": "placed in a lying position on their stomach",
+          "c": "placed in the recovery position on their side"
+        }
+      },
+      "ru": {
+        "text": "Если лицо, пострадавшее в дорожно-транспортном происшествии, без сознания, его следует:",
+        "options": {
+          "a": "поместить в лежачее положение на спине",
+          "b": "поместить в лежачее положение на животе",
+          "c": "поместить в боковое положение"
+        }
+      },
+      "sq": {
+        "text": "Nëse personi i lënduar në aksidentin e komunikacionit është pa vetëdije, duhet:",
+        "options": {
+          "a": "të vendoset në pozicion të shtrirë në shpinë",
+          "b": "të vendoset në pozicion të shtrirë në bark",
+          "c": "të vendoset në pozicion anësor"
+        }
+      }
+    },
+    {
+      "id": 402,
+      "en": {
+        "text": "Not considered part of the equipment of motor vehicles and trailers is:",
+        "options": {
+          "a": "the side mirror",
+          "b": "the spare wheel",
+          "c": "spare bulbs"
+        }
+      },
+      "ru": {
+        "text": "К оборудованию механических транспортных средств и прицепов не относится:",
+        "options": {
+          "a": "боковое зеркало заднего вида",
+          "b": "запасное колесо",
+          "c": "запасные лампы"
+        }
+      },
+      "sq": {
+        "text": "Si pajisje e automjeteve me motor dhe e rimorkiove nuk konsiderohet:",
+        "options": {
+          "a": "pasqyra anësore",
+          "b": "rrota rezervë",
+          "c": "llambat rezervë"
+        }
+      }
+    },
+    {
+      "id": 403,
+      "en": {
+        "text": "The light of the daytime running light should be:",
+        "options": { "a": "amber", "b": "blue", "c": "white" }
+      },
+      "ru": {
+        "text": "Свет дневного ходового огня должен быть:",
+        "options": { "a": "жёлтого цвета", "b": "синего цвета", "c": "белого цвета" }
+      },
+      "sq": {
+        "text": "Drita e ditës duhet të jetë:",
+        "options": {
+          "a": "me ngjyrë të verdhë",
+          "b": "me ngjyrë të kaltër",
+          "c": "me ngjyrë të bardhë"
+        }
+      }
+    },
+    {
+      "id": 404,
+      "en": {
+        "text": "The minimum tread depth on the running surface of a tyre for winter use should be:",
+        "options": { "a": "2 mm", "b": "4 mm", "c": "1.6 mm" }
+      },
+      "ru": {
+        "text": "Минимальная глубина протектора на беговой поверхности шины для зимнего использования должна быть:",
+        "options": { "a": "2 мм", "b": "4 мм", "c": "1,6 мм" }
+      },
+      "sq": {
+        "text": "Thellësia minimale e vizatimit në sipërfaqen ecëse të gomës për përdorim dimëror duhet të jetë:",
+        "options": { "a": "2 mm", "b": "4 mm", "c": "1,6 mm" }
+      }
+    },
+    {
+      "id": 405,
+      "en": {
+        "text": "The police number is:",
+        "options": { "a": "124", "b": "112", "c": "122" }
+      },
+      "ru": {
+        "text": "Номер полиции:",
+        "options": { "a": "124", "b": "112", "c": "122" }
+      },
+      "sq": {
+        "text": "Numri i policisë është:",
+        "options": { "a": "124", "b": "112", "c": "122" }
+      }
+    },
+    {
+      "id": 406,
+      "en": {
+        "text": "On the wound of an injured person, the first thing to be applied is:",
+        "options": { "a": "alcohol", "b": "water", "c": "sterile gauze" }
+      },
+      "ru": {
+        "text": "На рану пострадавшего сначала накладывается:",
+        "options": { "a": "спирт", "b": "вода", "c": "стерильная марля" }
+      },
+      "sq": {
+        "text": "Te personi i lënduar në plagë së pari vendoset:",
+        "options": { "a": "alkool", "b": "ujë", "c": "garzë sterile" }
+      }
+    },
+    {
+      "id": 407,
+      "en": {
+        "text": "Vehicles fitted with windscreen wipers must also have:",
+        "options": {
+          "a": "a sponge for washing the glass",
+          "b": "windscreen washers",
+          "c": "a windscreen heating device"
+        }
+      },
+      "ru": {
+        "text": "Транспортные средства, на которых установлены стеклоочистители, должны иметь и:",
+        "options": {
+          "a": "губку для мытья стёкол",
+          "b": "стеклоомыватели",
+          "c": "устройство обогрева ветрового стекла"
+        }
+      },
+      "sq": {
+        "text": "Automjetet që kanë të instaluar fshirëse xhami duhet të kenë edhe:",
+        "options": {
+          "a": "sfungjer për larjen e xhamave",
+          "b": "larëse xhami",
+          "c": "pajisje për ngrohjen e xhamit të përparmë"
+        }
+      }
+    },
+    {
+      "id": 408,
+      "en": {
+        "text": "The beam of the dipped-beam headlight should be:",
+        "options": {
+          "a": "designed as left asymmetric",
+          "b": "symmetric",
+          "c": "designed as right asymmetric"
+        }
+      },
+      "ru": {
+        "text": "Световой пучок ближнего света должен быть:",
+        "options": {
+          "a": "выполнен как левый асимметричный",
+          "b": "симметричным",
+          "c": "выполнен как правый асимметричный"
+        }
+      },
+      "sq": {
+        "text": "Rrezja e dritës së shkurtër duhet të jetë:",
+        "options": {
+          "a": "e realizuar si asimetrike e majtë",
+          "b": "simetrike",
+          "c": "e realizuar si asimetrike e djathtë"
+        }
+      }
+    },
+    {
+      "id": 409,
+      "en": {
+        "text": "Devices for leading away and discharging exhaust gases must not exceed the dimensions of the vehicle:",
+        "options": {
+          "a": "in length or width",
+          "b": "in height",
+          "c": "by more than 0.1 metre in length"
+        }
+      },
+      "ru": {
+        "text": "Устройства для отвода и выпуска отработавших газов не должны выходить за габариты транспортного средства:",
+        "options": {
+          "a": "по длине или ширине",
+          "b": "по высоте",
+          "c": "более чем на 0,1 метра по длине"
+        }
+      },
+      "sq": {
+        "text": "Pajisjet për largimin dhe lëshimin e gazrave të djegura nuk guxojnë t'i kalojnë dimensionet e automjetit:",
+        "options": {
+          "a": "për nga gjatësia ose gjerësia",
+          "b": "për nga lartësia",
+          "c": "më shumë se 0,1 metër për nga gjatësia"
+        }
+      }
+    },
+    {
+      "id": 410,
+      "en": {
+        "text": "Post-mortem lividity and a cold body are:",
+        "options": {
+          "a": "conditions of an injured person due to loss of consciousness from the cold",
+          "b": "a certain sign of death",
+          "c": "a certain sign of tiredness"
+        }
+      },
+      "ru": {
+        "text": "Трупные пятна и холодное тело — это:",
+        "options": {
+          "a": "состояния пострадавшего вследствие потери сознания из-за холода",
+          "b": "достоверный признак смерти",
+          "c": "достоверный признак усталости"
+        }
+      },
+      "sq": {
+        "text": "Njollat e vdekjes dhe trupi i ftohtë janë:",
+        "options": {
+          "a": "gjendje të të lënduarit si pasojë e humbjes së vetëdijes nga i ftohti",
+          "b": "shenjë e sigurt e vdekjes",
+          "c": "shenjë e sigurt e lodhjes"
+        }
+      }
+    },
+    {
+      "id": 411,
+      "en": {
+        "text": "The telephone number of the fire service is:",
+        "options": { "a": "123", "b": "122", "c": "124" }
+      },
+      "ru": {
+        "text": "Номер телефона пожарной службы:",
+        "options": { "a": "123", "b": "122", "c": "124" }
+      },
+      "sq": {
+        "text": "Numri i telefonit i shërbimit zjarrfikës është:",
+        "options": { "a": "123", "b": "122", "c": "124" }
+      }
+    },
+    {
+      "id": 412,
+      "en": {
+        "text": "Reversing lights on motor vehicles must be:",
+        "options": { "a": "white", "b": "red", "c": "amber" }
+      },
+      "ru": {
+        "text": "Фонари заднего хода на механических транспортных средствах должны быть:",
+        "options": { "a": "белого цвета", "b": "красного цвета", "c": "жёлтого цвета" }
+      },
+      "sq": {
+        "text": "Dritat për vozitje prapa te automjetet me motor duhet të jenë:",
+        "options": {
+          "a": "me ngjyrë të bardhë",
+          "b": "me ngjyrë të kuqe",
+          "c": "me ngjyrë të verdhë"
+        }
+      }
+    },
+    {
+      "id": 413,
+      "en": {
+        "text": "The service brake of motor vehicles should act:",
+        "options": {
+          "a": "on all the wheels",
+          "b": "only on the front wheels",
+          "c": "only on the rear wheels"
+        }
+      },
+      "ru": {
+        "text": "Рабочий тормоз механических транспортных средств должен действовать:",
+        "options": {
+          "a": "на все колёса",
+          "b": "только на передние колёса",
+          "c": "только на задние колёса"
+        }
+      },
+      "sq": {
+        "text": "Freni i punës i automjeteve me motor duhet të veprojë:",
+        "options": {
+          "a": "në të gjitha rrotat",
+          "b": "vetëm në rrotat e përparme",
+          "c": "vetëm në rrotat e pasme"
+        }
+      }
+    },
+    {
+      "id": 414,
+      "en": {
+        "text": "A motor vehicle which, in addition to the driver's seat, has at most eight more seats is:",
+        "options": { "a": "a bus", "b": "a goods vehicle", "c": "a passenger car" }
+      },
+      "ru": {
+        "text": "Механическое транспортное средство, которое кроме сиденья водителя имеет ещё не более восьми сидений, — это:",
+        "options": { "a": "автобус", "b": "грузовой автомобиль", "c": "легковой автомобиль" }
+      },
+      "sq": {
+        "text": "Automjeti me motor që përveç ndenjëses së shoferit ka edhe më së shumti tetë ndenjëse është:",
+        "options": { "a": "autobus", "b": "automjet transportues", "c": "automjet udhëtar" }
+      }
+    },
+    {
+      "id": 415,
+      "en": {
+        "text": "When giving first aid at a road accident, the wound of the injured person:",
+        "options": {
+          "a": "should be rinsed with water",
+          "b": "should be rinsed with alcohol",
+          "c": "should not be rinsed with any liquid"
+        }
+      },
+      "ru": {
+        "text": "При оказании первой помощи в дорожно-транспортном происшествии рану пострадавшего:",
+        "options": {
+          "a": "следует промыть водой",
+          "b": "следует промыть спиртом",
+          "c": "не следует промывать жидкостью"
+        }
+      },
+      "sq": {
+        "text": "Gjatë dhënies së ndihmës së parë në aksidentin e komunikacionit, plaga te i lënduari:",
+        "options": {
+          "a": "duhet të lahet me ujë",
+          "b": "duhet të lahet me alkool",
+          "c": "nuk duhet të lahet me lëng"
+        }
+      }
+    },
+    {
+      "id": 416,
+      "en": {
+        "text": "A driver is under the influence of alcohol:",
+        "options": {
+          "a": "if an alcohol content greater than 0.3 g/kg is established in the body",
+          "b": "if an alcohol content of up to 0.3 g/kg is established in the body",
+          "c": "if an alcohol content of up to 0.2 g/kg is established in the body"
+        }
+      },
+      "ru": {
+        "text": "Водитель находится под воздействием алкоголя:",
+        "options": {
+          "a": "если в организме установлено содержание алкоголя более 0,3 г/кг",
+          "b": "если в организме установлено содержание алкоголя до 0,3 г/кг",
+          "c": "если в организме установлено содержание алкоголя до 0,2 г/кг"
+        }
+      },
+      "sq": {
+        "text": "Shoferi është nën veprimin e alkoolit:",
+        "options": {
+          "a": "nëse në organizëm konstatohet përmbajtje alkooli më e madhe se 0,3 g/kg",
+          "b": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,3 g/kg",
+          "c": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,2 g/kg"
+        }
+      }
+    },
+    {
+      "id": 417,
+      "en": {
+        "text": "A component part of the steering system is:",
+        "options": { "a": "the tyre", "b": "the steering wheel", "c": "the shock absorber" }
+      },
+      "ru": {
+        "text": "Составной частью рулевого управления является:",
+        "options": { "a": "шина", "b": "рулевое колесо", "c": "амортизатор" }
+      },
+      "sq": {
+        "text": "Pjesë përbërëse e pajisjes për drejtim është:",
+        "options": { "a": "goma", "b": "timoni", "c": "amortizatori" }
+      }
+    },
+    {
+      "id": 418,
+      "en": {
+        "text": "A component part of the road-lighting devices on motor vehicles is:",
+        "options": {
+          "a": "the stop light",
+          "b": "the outline marker light",
+          "c": "the reversing light"
+        }
+      },
+      "ru": {
+        "text": "Составной частью устройств для освещения дороги на механических транспортных средствах является:",
+        "options": {
+          "a": "стоп-сигнал",
+          "b": "габаритный огонь",
+          "c": "фонарь заднего хода"
+        }
+      },
+      "sq": {
+        "text": "Pjesë përbërëse e pajisjeve për ndriçimin e rrugës te automjetet me motor është:",
+        "options": {
+          "a": "drita e frenimit",
+          "b": "drita gabarite",
+          "c": "drita për vozitje prapa"
+        }
+      }
+    },
+    {
+      "id": 419,
+      "en": {
+        "text": "A component part of the power transmission on a motor vehicle is:",
+        "options": {
+          "a": "the gearbox",
+          "b": "the steering wheel",
+          "c": "the parking brake lever"
+        }
+      },
+      "ru": {
+        "text": "Составной частью трансмиссии механического транспортного средства является:",
+        "options": {
+          "a": "коробка передач",
+          "b": "рулевое колесо",
+          "c": "рычаг стояночного тормоза"
+        }
+      },
+      "sq": {
+        "text": "Pjesë përbërëse e transmetuesit të fuqisë te automjeti me motor është:",
+        "options": {
+          "a": "kambio",
+          "b": "timoni",
+          "c": "leva e frenit të parkimit"
+        }
+      }
+    },
+    {
+      "id": 420,
+      "en": {
+        "text": "When immobilising an injured person, the basic rule is:",
+        "options": {
+          "a": "to immobilise the injured person's whole body",
+          "b": "to immobilise the two adjacent joints",
+          "c": "to immobilise only the joint that is nearest to the injured place"
+        }
+      },
+      "ru": {
+        "text": "При иммобилизации пострадавшего основное правило:",
+        "options": {
+          "a": "иммобилизовать всё тело пострадавшего",
+          "b": "иммобилизовать два соседних сустава",
+          "c": "иммобилизовать только сустав, ближайший к месту повреждения"
+        }
+      },
+      "sq": {
+        "text": "Gjatë imobilizimit të personit të lënduar rregulli themelor është:",
+        "options": {
+          "a": "të imobilizohet i gjithë trupi i të lënduarit",
+          "b": "të imobilizohen dy nyjet fqinje",
+          "c": "të imobilizohet vetëm nyja që është më afër vendit të lënduar"
+        }
+      }
+    },
+    {
+      "id": 421,
+      "en": {
+        "text": "An injured person who loses a lot of blood has:",
+        "options": {
+          "a": "considerably raised blood pressure",
+          "b": "a considerably slowed pulse",
+          "c": "rapid and irregular breathing"
+        }
+      },
+      "ru": {
+        "text": "Пострадавший, потерявший много крови, имеет:",
+        "options": {
+          "a": "значительно повышенное кровяное давление",
+          "b": "значительно замедленный пульс",
+          "c": "учащённое и неправильное дыхание"
+        }
+      },
+      "sq": {
+        "text": "Personi i lënduar që humb shumë gjak ka:",
+        "options": {
+          "a": "presion gjaku dukshëm të rritur",
+          "b": "puls dukshëm të ngadalësuar",
+          "c": "frymëmarrje të shpejtuar dhe të parregullt"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,817 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "en": {
+        "text": "Reversing a vehicle is permitted:",
+        "options": {
+          "a": "over a short stretch of road on a blind bend",
+          "b": "over a short stretch of road in a tunnel",
+          "c": "over a short stretch of road"
+        }
+      },
+      "ru": {
+        "text": "Движение задним ходом разрешено:",
+        "options": {
+          "a": "на коротком участке дороги на непросматриваемом повороте",
+          "b": "на коротком участке дороги в туннеле",
+          "c": "на коротком участке дороги"
+        }
+      },
+      "sq": {
+        "text": "Lëvizja me automjet prapa lejohet:",
+        "options": {
+          "a": "në një pjesë të shkurtër të rrugës në kthesë pa dukshmëri",
+          "b": "në një pjesë të shkurtër të rrugës në tunel",
+          "c": "në një pjesë të shkurtër të rrugës"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "en": {
+        "text": "On a main road outside a built-up area, where there is no speed limit sign, a driver must not drive at a speed greater than:",
+        "options": { "a": "60 km/h", "b": "70 km/h", "c": "80 km/h" }
+      },
+      "ru": {
+        "text": "На магистральной дороге вне населённого пункта, где нет знака ограничения скорости, водитель не должен двигаться со скоростью более:",
+        "options": { "a": "60 км/ч", "b": "70 км/ч", "c": "80 км/ч" }
+      },
+      "sq": {
+        "text": "Në rrugë magjistrale jashtë vendbanimit, ku nuk ka shenjë të kufizimit të shpejtësisë, shoferi nuk guxon të lëvizë me shpejtësi më të madhe se:",
+        "options": { "a": "60 km/h", "b": "70 km/h", "c": "80 km/h" }
+      }
+    },
+    {
+      "id": 3,
+      "en": {
+        "text": "A pedestrian island in the middle of a carriageway carrying two-way traffic is passed by a vehicle:",
+        "options": {
+          "a": "always on the right-hand side",
+          "b": "always on the left-hand side",
+          "c": "on either side"
+        }
+      },
+      "ru": {
+        "text": "Пешеходный островок, расположенный посередине проезжей части, где движение осуществляется в обоих направлениях, объезжается на транспортном средстве:",
+        "options": {
+          "a": "всегда с правой стороны",
+          "b": "всегда с левой стороны",
+          "c": "с любой стороны"
+        }
+      },
+      "sq": {
+        "text": "Ishulli për këmbësorë që ndodhet në mes të karrexhatës, ku qarkullimi zhvillohet në të dy kahet, anashkalohet me automjet:",
+        "options": {
+          "a": "gjithmonë nga ana e djathtë",
+          "b": "gjithmonë nga ana e majtë",
+          "c": "nga cilado anë"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "en": {
+        "text": "On a priority road, immediately before an intersection not controlled by traffic lights or road signs, a driver:",
+        "options": {
+          "a": "may overtake a bicycle, a moped or a motorcycle",
+          "b": "may overtake all vehicles that are keeping to their direction of travel",
+          "c": "may overtake passenger cars that are keeping to their direction of travel"
+        }
+      },
+      "ru": {
+        "text": "На дороге с преимуществом проезда непосредственно перед перекрёстком, не регулируемым светофором или дорожными знаками, водитель:",
+        "options": {
+          "a": "может обгонять велосипед, мопед или мотоцикл",
+          "b": "может обгонять все транспортные средства, сохраняющие направление движения",
+          "c": "может обгонять легковые автомобили, сохраняющие направление движения"
+        }
+      },
+      "sq": {
+        "text": "Në rrugën me përparësi kalimi, menjëherë para kryqëzimit që nuk rregullohet me semafor ose me shenja rrugore, shoferi:",
+        "options": {
+          "a": "mund të tejkalojë biçikletën, mopedin ose motoçikletën",
+          "b": "mund të tejkalojë të gjitha automjetet që ruajnë kahun e lëvizjes",
+          "c": "mund të tejkalojë automjetet udhëtare që ruajnë kahun e lëvizjes"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "en": {
+        "text": "Passing a vehicle coming from the opposite direction is the manoeuvre of:",
+        "options": { "a": "overtaking", "b": "going around", "c": "meeting" }
+      },
+      "ru": {
+        "text": "Проезд транспортного средства мимо другого транспортного средства, движущегося со встречного направления, является манёвром:",
+        "options": { "a": "обгона", "b": "объезда", "c": "разъезда" }
+      },
+      "sq": {
+        "text": "Kalimi me automjet pranë një automjeti tjetër që vjen nga kahu i kundërt është veprim i:",
+        "options": { "a": "tejkalimit", "b": "anashkalimit", "c": "kalimit përballë" }
+      }
+    },
+    {
+      "id": 6,
+      "en": {
+        "text": "A driver must remove from the carriageway without delay:",
+        "options": {
+          "a": "all objects that are on the carriageway",
+          "b": "objects and substances that come from the vehicle he is driving",
+          "c": "all objects that are in the traffic lane in which he is travelling"
+        }
+      },
+      "ru": {
+        "text": "Водитель обязан без промедления убрать с проезжей части:",
+        "options": {
+          "a": "все предметы, находящиеся на проезжей части",
+          "b": "предметы и вещества, происходящие от транспортного средства, которым он управляет",
+          "c": "все предметы, находящиеся в полосе движения, по которой он движется"
+        }
+      },
+      "sq": {
+        "text": "Shoferi është i detyruar të largojë pa vonesë nga karrexhata:",
+        "options": {
+          "a": "të gjitha objektet që ndodhen në karrexhatë",
+          "b": "objektet dhe substancat që vijnë nga automjeti me të cilin drejton",
+          "c": "të gjitha objektet që ndodhen në korsinë nëpër të cilën lëviz"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "en": {
+        "text": "Two high-visibility reflective vests must be carried by:",
+        "options": {
+          "a": "a passenger motor vehicle",
+          "b": "a quadricycle",
+          "c": "a goods motor vehicle"
+        }
+      },
+      "ru": {
+        "text": "Два жилета со светоотражающими свойствами должно иметь:",
+        "options": {
+          "a": "легковое механическое транспортное средство",
+          "b": "квадрицикл",
+          "c": "грузовое механическое транспортное средство"
+        }
+      },
+      "sq": {
+        "text": "Dy jelekë me veti reflektuese të dritës duhet të ketë:",
+        "options": {
+          "a": "automjeti udhëtar me motor",
+          "b": "katërcikli",
+          "c": "automjeti transportues me motor"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "en": {
+        "text": "On a road carrying two-way traffic with at least four traffic lanes, a driver:",
+        "options": {
+          "a": "must use the right-hand carriageway lane",
+          "b": "must use only the right-hand traffic lane",
+          "c": "must use only the left-hand traffic lane"
+        }
+      },
+      "ru": {
+        "text": "На дороге с движением транспортных средств в обоих направлениях, имеющей не менее четырёх полос движения, водитель:",
+        "options": {
+          "a": "должен использовать правую полосу проезжей части",
+          "b": "должен использовать только правую полосу движения",
+          "c": "должен использовать только левую полосу движения"
+        }
+      },
+      "sq": {
+        "text": "Në rrugën për qarkullim të automjeteve në të dy kahet, në të cilën ka së paku katër korsi, shoferi:",
+        "options": {
+          "a": "duhet të përdorë brezin e djathtë të karrexhatës",
+          "b": "duhet të përdorë vetëm korsinë e djathtë",
+          "c": "duhet të përdorë vetëm korsinë e majtë"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "en": {
+        "text": "Under normal traffic conditions, the speed of motor vehicles on a road must not be limited by a road sign below:",
+        "options": { "a": "40 km/h", "b": "50 km/h", "c": "60 km/h" }
+      },
+      "ru": {
+        "text": "Скорость движения механических транспортных средств на дороге при нормальных условиях движения не должна ограничиваться дорожным знаком ниже:",
+        "options": { "a": "40 км/ч", "b": "50 км/ч", "c": "60 км/ч" }
+      },
+      "sq": {
+        "text": "Shpejtësia e lëvizjes së automjeteve me motor në rrugë, në kushte normale të qarkullimit, nuk guxon të kufizohet me shenjë rrugore nën:",
+        "options": { "a": "40 km/h", "b": "50 km/h", "c": "60 km/h" }
+      }
+    },
+    {
+      "id": 10,
+      "en": {
+        "text": "On a road with two traffic lanes intended for traffic in the same direction, vehicles in one lane moving faster than vehicles in the other lane:",
+        "options": {
+          "a": "is considered overtaking",
+          "b": "is not considered overtaking",
+          "c": "is considered going around"
+        }
+      },
+      "ru": {
+        "text": "На дороге, где имеются две полосы движения, предназначенные для движения транспортных средств в одном направлении, более быстрое движение транспортных средств в одной полосе, чем в другой:",
+        "options": {
+          "a": "считается обгоном",
+          "b": "не считается обгоном",
+          "c": "считается объездом"
+        }
+      },
+      "sq": {
+        "text": "Në rrugën ku ka dy korsi të destinuara për qarkullim të automjeteve në të njëjtin kah, lëvizja më e shpejtë e automjeteve në njërën korsi se e automjeteve në korsinë tjetër:",
+        "options": {
+          "a": "konsiderohet tejkalim",
+          "b": "nuk konsiderohet tejkalim",
+          "c": "konsiderohet anashkalim"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "en": {
+        "text": "A power-driven vehicle towing a defective vehicle on a road must not travel at a speed greater than:",
+        "options": { "a": "40 km/h", "b": "50 km/h", "c": "60 km/h" }
+      },
+      "ru": {
+        "text": "Механическое транспортное средство, буксирующее на дороге неисправное транспортное средство, не должно двигаться со скоростью более:",
+        "options": { "a": "40 км/ч", "b": "50 км/ч", "c": "60 км/ч" }
+      },
+      "sq": {
+        "text": "Automjeti me motor që tërheq në rrugë një automjet të prishur nuk guxon të lëvizë me shpejtësi më të madhe se:",
+        "options": { "a": "40 km/h", "b": "50 km/h", "c": "60 km/h" }
+      }
+    },
+    {
+      "id": 12,
+      "en": {
+        "text": "A traffic lane intended for vehicles providing public passenger transport may be used by:",
+        "options": {
+          "a": "vehicles under escort",
+          "b": "public utility service vehicles",
+          "c": "passenger cars"
+        }
+      },
+      "ru": {
+        "text": "Полосу движения, предназначенную для движения транспортных средств общественного пассажирского транспорта, могут использовать:",
+        "options": {
+          "a": "транспортные средства сопровождения",
+          "b": "транспортные средства коммунальной службы",
+          "c": "легковые автомобили"
+        }
+      },
+      "sq": {
+        "text": "Korsinë e destinuar për lëvizjen e automjeteve të transportit publik të udhëtarëve mund ta përdorin:",
+        "options": {
+          "a": "automjetet me shoqërim",
+          "b": "automjetet e shërbimit komunal",
+          "c": "automjetet udhëtare"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "en": {
+        "text": "A driver must sound the audible warning signal:",
+        "options": {
+          "a": "several times at alternating intervals",
+          "b": "continuously for 5 seconds",
+          "c": "to the extent sufficient to warn other road users"
+        }
+      },
+      "ru": {
+        "text": "Водитель обязан подавать звуковой сигнал:",
+        "options": {
+          "a": "несколько раз с переменными интервалами",
+          "b": "непрерывно в течение 5 секунд",
+          "c": "в мере, достаточной для предупреждения других участников дорожного движения"
+        }
+      },
+      "sq": {
+        "text": "Shoferi është i detyruar ta japë sinjalin zanor paralajmërues:",
+        "options": {
+          "a": "disa herë me intervale të alternuara",
+          "b": "pa ndërprerje në kohëzgjatje prej 5 sekondash",
+          "c": "në masën e mjaftueshme që pjesëmarrësit e tjerë në komunikacion të paralajmërohen"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "en": {
+        "text": "A driver must use the audible warning signal on a public road:",
+        "options": {
+          "a": "when catching up with vehicles moving slowly downhill",
+          "b": "when going around a vehicle parked on the right-hand side of the carriageway",
+          "c": "when there are children beside the carriageway who are not paying attention to the driver's movement"
+        }
+      },
+      "ru": {
+        "text": "Звуковой сигнал водитель обязан использовать на дороге общего пользования:",
+        "options": {
+          "a": "при догоне транспортных средств, медленно движущихся под уклон",
+          "b": "когда объезжает транспортное средство, припаркованное с правой стороны проезжей части",
+          "c": "когда возле проезжей части находятся дети, не обращающие внимания на движение водителя"
+        }
+      },
+      "sq": {
+        "text": "Sinjalin zanor paralajmërues shoferi është i detyruar ta përdorë në rrugë publike:",
+        "options": {
+          "a": "gjatë arritjes së automjeteve që lëvizin ngadalë tatëpjetë",
+          "b": "kur anashkalohet automjeti i parkuar në anën e djathtë të karrexhatës",
+          "c": "kur pranë karrexhatës ndodhen fëmijë që nuk i kushtojnë vëmendje lëvizjes së shoferit"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "en": {
+        "text": "The longitudinal part of a carriageway intended for traffic in one direction, with one or more traffic lanes, is called:",
+        "options": { "a": "a traffic lane", "b": "a carriageway lane", "c": "a carriageway" }
+      },
+      "ru": {
+        "text": "Продольная часть проезжей части, предназначенная для движения транспортных средств в одном направлении, с одной или несколькими полосами движения, называется:",
+        "options": { "a": "полоса движения", "b": "полоса проезжей части", "c": "проезжая часть" }
+      },
+      "sq": {
+        "text": "Pjesa gjatësore e karrexhatës e destinuar për qarkullim të automjeteve në një kah, me një ose më shumë korsi, quhet:",
+        "options": { "a": "korsi", "b": "brez i karrexhatës", "c": "karrexhatë" }
+      }
+    },
+    {
+      "id": 16,
+      "en": {
+        "text": "When an authorised police officer gives orders that depart from the traffic rules, a road user:",
+        "options": {
+          "a": "must act on the orders of the authorised police officer",
+          "b": "must act on the traffic rules",
+          "c": "is not obliged to act on the orders of the authorised police officer"
+        }
+      },
+      "ru": {
+        "text": "Когда уполномоченный сотрудник полиции подаёт распоряжения, отступающие от правил дорожного движения, участник дорожного движения:",
+        "options": {
+          "a": "обязан действовать по распоряжениям уполномоченного сотрудника полиции",
+          "b": "обязан действовать по правилам дорожного движения",
+          "c": "не обязан действовать по распоряжениям уполномоченного сотрудника полиции"
+        }
+      },
+      "sq": {
+        "text": "Kur zyrtari i autorizuar policor jep urdhra që devijojnë nga rregullat e komunikacionit, pjesëmarrësi në komunikacion:",
+        "options": {
+          "a": "është i detyruar të veprojë sipas urdhrave të zyrtarit të autorizuar policor",
+          "b": "është i detyruar të veprojë sipas rregullave të komunikacionit",
+          "c": "nuk është i detyruar të veprojë sipas urdhrave të zyrtarit të autorizuar policor"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "en": {
+        "text": "Unless it is carried in a child safety seat, a child must not be carried in the front seat of a motor vehicle if it is:",
+        "options": {
+          "a": "under 10 years of age",
+          "b": "under 12 years of age",
+          "c": "under 14 years of age"
+        }
+      },
+      "ru": {
+        "text": "Если ребёнок не перевозится в детском удерживающем кресле, на переднем сиденье механического транспортного средства не разрешается перевозить ребёнка:",
+        "options": { "a": "младше 10 лет", "b": "младше 12 лет", "c": "младше 14 лет" }
+      },
+      "sq": {
+        "text": "Nëse nuk transportohet në ndenjëse sigurie, në ndenjësen e përparme të automjetit me motor nuk guxon të transportohet fëmija:",
+        "options": { "a": "nën 10 vjeç", "b": "nën 12 vjeç", "c": "nën 14 vjeç" }
+      }
+    },
+    {
+      "id": 18,
+      "en": {
+        "text": "Reversing a vehicle in conditions of reduced visibility:",
+        "options": {
+          "a": "is permitted in a built-up area",
+          "b": "is permitted over a short stretch of road",
+          "c": "is not permitted"
+        }
+      },
+      "ru": {
+        "text": "Движение транспортного средства задним ходом в условиях ограниченной видимости:",
+        "options": {
+          "a": "разрешено в населённом пункте",
+          "b": "разрешено на коротком участке дороги",
+          "c": "не разрешено"
+        }
+      },
+      "sq": {
+        "text": "Lëvizja e automjetit prapa në kushte të dukshmërisë së kufizuar:",
+        "options": {
+          "a": "lejohet në vendbanim",
+          "b": "lejohet në një pjesë të shkurtër të rrugës",
+          "c": "nuk lejohet"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "en": {
+        "text": "In a built-up area, a road sign may permit motor vehicles a speed of at most:",
+        "options": { "a": "80 km/h", "b": "50 km/h", "c": "60 km/h" }
+      },
+      "ru": {
+        "text": "В населённом пункте дорожным знаком механическим транспортным средствам может быть разрешена скорость движения не более:",
+        "options": { "a": "80 км/ч", "b": "50 км/ч", "c": "60 км/ч" }
+      },
+      "sq": {
+        "text": "Në vendbanim, me shenjë rrugore automjeteve me motor mund t'u lejohet shpejtësia e lëvizjes më së shumti deri në:",
+        "options": { "a": "80 km/h", "b": "50 km/h", "c": "60 km/h" }
+      }
+    },
+    {
+      "id": 20,
+      "en": {
+        "text": "When a driver encounters an organised column of pedestrians crossing the carriageway:",
+        "options": {
+          "a": "he must not drive through the organised column of pedestrians",
+          "b": "he may drive through the organised column of pedestrians while sounding the audible warning signal",
+          "c": "he may drive through the organised column of pedestrians if the column is not made up of children"
+        }
+      },
+      "ru": {
+        "text": "Когда водитель встречает организованную колонну пешеходов, переходящую проезжую часть:",
+        "options": {
+          "a": "он не должен пересекать транспортным средством организованную колонну пешеходов",
+          "b": "он может пересекать транспортным средством организованную колонну пешеходов с применением звукового сигнала",
+          "c": "он может пересекать транспортным средством организованную колонну пешеходов, если колонну не составляют дети"
+        }
+      },
+      "sq": {
+        "text": "Kur shoferi ndeshet me kolonë të organizuar këmbësorësh që kalon karrexhatën:",
+        "options": {
+          "a": "nuk guxon ta presë me automjet kolonën e organizuar të këmbësorëve",
+          "b": "guxon ta presë me automjet kolonën e organizuar të këmbësorëve duke përdorur sinjalin zanor paralajmërues",
+          "c": "guxon ta presë me automjet kolonën e organizuar të këmbësorëve, nëse kolonën nuk e përbëjnë fëmijë"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "en": {
+        "text": "In a motor vehicle that is being towed, apart from the driver steering it:",
+        "options": {
+          "a": "carrying passengers is permitted up to the number of passenger seats",
+          "b": "only one passenger may be carried",
+          "c": "carrying passengers is prohibited"
+        }
+      },
+      "ru": {
+        "text": "В буксируемом механическом транспортном средстве, кроме водителя, который им управляет:",
+        "options": {
+          "a": "разрешена перевозка пассажиров в соответствии с числом пассажирских мест",
+          "b": "разрешена перевозка только одного пассажира",
+          "c": "перевозка пассажиров запрещена"
+        }
+      },
+      "sq": {
+        "text": "Në automjetin me motor që tërhiqet, përveç shoferit që e drejton:",
+        "options": {
+          "a": "lejohet transporti i udhëtarëve në përputhje me numrin e vendeve për udhëtarë",
+          "b": "lejohet transporti i vetëm një udhëtari",
+          "c": "ndalohet transporti i udhëtarëve"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "en": {
+        "text": "Moving a vehicle from one traffic lane into another intended for traffic in the same direction is:",
+        "options": { "a": "changing lanes", "b": "overtaking", "c": "going around" }
+      },
+      "ru": {
+        "text": "Переход транспортного средства из одной полосы движения в другую, предназначенную для движения в том же направлении, — это:",
+        "options": { "a": "перестроение", "b": "обгон", "c": "объезд" }
+      },
+      "sq": {
+        "text": "Kalimi me automjet nga një korsi në një korsi tjetër të destinuar për qarkullim në të njëjtin kah është:",
+        "options": { "a": "rreshtim", "b": "tejkalim", "c": "anashkalim" }
+      }
+    },
+    {
+      "id": 23,
+      "en": {
+        "text": "A young driver and a novice driver must not drive on a motorway at a speed greater than:",
+        "options": { "a": "70 km/h", "b": "100 km/h", "c": "110 km/h" }
+      },
+      "ru": {
+        "text": "Молодой водитель и начинающий водитель не должны управлять транспортным средством на автомагистрали со скоростью более:",
+        "options": { "a": "70 км/ч", "b": "100 км/ч", "c": "110 км/ч" }
+      },
+      "sq": {
+        "text": "Shoferi i ri dhe shoferi fillestar nuk guxojnë ta drejtojnë automjetin në autostradë me shpejtësi më të madhe se:",
+        "options": { "a": "70 km/h", "b": "100 km/h", "c": "110 km/h" }
+      }
+    },
+    {
+      "id": 24,
+      "en": {
+        "text": "Is a road user obliged to act in accordance with traffic signage even when this departs from the traffic rules:",
+        "options": {
+          "a": "he is not obliged",
+          "b": "he is obliged",
+          "c": "he is obliged only in a built-up area"
+        }
+      },
+      "ru": {
+        "text": "Обязан ли участник дорожного движения действовать в соответствии с дорожной сигнализацией и тогда, когда этим отступает от правил дорожного движения:",
+        "options": { "a": "не обязан", "b": "обязан", "c": "обязан только в населённом пункте" }
+      },
+      "sq": {
+        "text": "A është pjesëmarrësi në komunikacion i detyruar të veprojë në pajtim me sinjalizimin rrugor edhe kur me këtë devijon nga rregullat e komunikacionit:",
+        "options": {
+          "a": "nuk është i detyruar",
+          "b": "është i detyruar",
+          "c": "është i detyruar vetëm në vendbanim"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "en": {
+        "text": "Abruptly changing a vehicle's speed on the road is permitted:",
+        "options": {
+          "a": "when joining a public road from an unsurfaced road",
+          "b": "in order to avoid an immediate danger",
+          "c": "in order to leave the traffic flow more quickly"
+        }
+      },
+      "ru": {
+        "text": "Резкое изменение скорости транспортного средства на дороге разрешено:",
+        "options": {
+          "a": "в случае выезда с грунтовой дороги на дорогу общего пользования",
+          "b": "в случае избежания непосредственной опасности",
+          "c": "в случае более быстрого выхода из потока движения"
+        }
+      },
+      "sq": {
+        "text": "Ndryshimi i papritur i shpejtësisë së automjetit në rrugë lejohet:",
+        "options": {
+          "a": "në rastin e kyçjes nga rruga e pashtruar në rrugën publike",
+          "b": "në rastin e shmangies së rrezikut të drejtpërdrejtë",
+          "c": "në rastin e çkyçjes më të shpejtë nga qarkullimi"
+        }
+      }
+    },
+    {
+      "id": 26,
+      "en": {
+        "text": "Apart from tractors, other power-driven vehicles:",
+        "options": {
+          "a": "must not tow a tractor trailer",
+          "b": "may tow a tractor trailer",
+          "c": "must not tow a tractor trailer if the mass of the vehicle combination exceeds -500 kg"
+        }
+      },
+      "ru": {
+        "text": "Кроме тракторов, остальные механические транспортные средства:",
+        "options": {
+          "a": "не должны буксировать прицеп для трактора",
+          "b": "могут буксировать прицеп для трактора",
+          "c": "не должны буксировать прицеп для трактора, если масса состава транспортных средств превышает -500 кг"
+        }
+      },
+      "sq": {
+        "text": "Përveç traktorëve, automjetet e tjera me motor:",
+        "options": {
+          "a": "nuk guxojnë të tërheqin rimorkio traktori",
+          "b": "guxojnë të tërheqin rimorkio traktori",
+          "c": "nuk guxojnë të tërheqin rimorkio traktori, nëse masa e grupit të automjeteve tejkalon -500 kg"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "en": {
+        "text": "A driver must use the audible warning signal:",
+        "options": {
+          "a": "before entering a tunnel that has no lighting",
+          "b": "on a road in a built-up area before entering an intersection",
+          "c": "on a road outside a built-up area before approaching a blind and narrow bend"
+        }
+      },
+      "ru": {
+        "text": "Водитель обязан использовать звуковой сигнал:",
+        "options": {
+          "a": "перед въездом в туннель, не имеющий освещения",
+          "b": "на дороге в населённом пункте перед въездом на перекрёсток",
+          "c": "на дороге вне населённого пункта перед приближением к непросматриваемому и узкому повороту"
+        }
+      },
+      "sq": {
+        "text": "Shoferi është i detyruar të përdorë sinjalin zanor paralajmërues:",
+        "options": {
+          "a": "para hyrjes në tunelin që nuk ka ndriçim",
+          "b": "në rrugë në vendbanim para hyrjes në kryqëzim",
+          "c": "në rrugë jashtë vendbanimit para afrimit te kthesa pa dukshmëri dhe e ngushtë"
+        }
+      }
+    },
+    {
+      "id": 28,
+      "en": {
+        "text": "A power-driven vehicle must not tow:",
+        "options": {
+          "a": "a motorcycle, a moped, nor a light or a heavy tricycle",
+          "b": "a goods vehicle",
+          "c": "a passenger car"
+        }
+      },
+      "ru": {
+        "text": "Механическое транспортное средство не должно буксировать:",
+        "options": {
+          "a": "мотоцикл, мопед, а также лёгкий или тяжёлый трицикл",
+          "b": "грузовой автомобиль",
+          "c": "легковой автомобиль"
+        }
+      },
+      "sq": {
+        "text": "Automjeti me motor nuk guxon të tërheqë:",
+        "options": {
+          "a": "motoçikletën, mopedin, as triciklin e lehtë e as të rëndë",
+          "b": "automjetin transportues",
+          "c": "automjetin udhëtar"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "en": {
+        "text": "A pedestrian on a public road outside a built-up area:",
+        "options": {
+          "a": "must not walk along the right-hand side of the carriageway",
+          "b": "must not walk in a column",
+          "c": "must not walk on the carriageway of a motorway"
+        }
+      },
+      "ru": {
+        "text": "Пешеход на дороге общего пользования вне населённого пункта:",
+        "options": {
+          "a": "не должен двигаться по правой стороне проезжей части",
+          "b": "не должен двигаться в колонне",
+          "c": "не должен двигаться по проезжей части автомагистрали"
+        }
+      },
+      "sq": {
+        "text": "Këmbësori në rrugë publike jashtë vendbanimit:",
+        "options": {
+          "a": "nuk guxon të lëvizë nga ana e djathtë e karrexhatës",
+          "b": "nuk guxon të lëvizë në kolonë",
+          "c": "nuk guxon të lëvizë nëpër karrexhatën e autostradës"
+        }
+      }
+    },
+    {
+      "id": 30,
+      "en": {
+        "text": "A vehicle running on rails laid in the middle of the carriageway:",
+        "options": {
+          "a": "may be overtaken on the left-hand side",
+          "b": "may be overtaken on either side",
+          "c": "may be overtaken on the right-hand side"
+        }
+      },
+      "ru": {
+        "text": "Транспортное средство, движущееся по рельсам, проложенным посередине проезжей части:",
+        "options": {
+          "a": "разрешается обгонять с левой стороны",
+          "b": "разрешается обгонять с любой стороны",
+          "c": "разрешается обгонять с правой стороны"
+        }
+      },
+      "sq": {
+        "text": "Automjeti që lëviz mbi shina të vendosura në mes të karrexhatës:",
+        "options": {
+          "a": "guxon të tejkalohet nga ana e majtë",
+          "b": "guxon të tejkalohet nga cilado anë",
+          "c": "guxon të tejkalohet nga ana e djathtë"
+        }
+      }
+    },
+    {
+      "id": 31,
+      "en": {
+        "text": "May a driver make a U-turn on an expressway:",
+        "options": {
+          "a": "yes, if he does not endanger other road users",
+          "b": "yes, if all direction indicators are switched on",
+          "c": "he must not"
+        }
+      },
+      "ru": {
+        "text": "Разрешается ли водителю выполнять разворот на скоростной дороге:",
+        "options": {
+          "a": "да, если не создаёт опасности для других участников дорожного движения",
+          "b": "да, если включены все указатели поворота",
+          "c": "не разрешается"
+        }
+      },
+      "sq": {
+        "text": "A guxon shoferi të bëjë kthim gjysmërrethor në rrugë të shpejtë:",
+        "options": {
+          "a": "po, nëse nuk rrezikon pjesëmarrësit e tjerë në komunikacion",
+          "b": "po, nëse i ka të ndezur të gjithë treguesit e drejtimit",
+          "c": "nuk guxon"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "en": {
+        "text": "A red and a blue flashing light switching on alternately on a vehicle are light signals given by:",
+        "options": {
+          "a": "vehicles with right of way",
+          "b": "vehicles under escort",
+          "c": "special vehicles"
+        }
+      },
+      "ru": {
+        "text": "Красный и синий проблесковые маячки, включающиеся попеременно на транспортном средстве, — это световые сигналы, которые подают:",
+        "options": {
+          "a": "транспортные средства с преимуществом проезда",
+          "b": "транспортные средства сопровождения",
+          "c": "специальные транспортные средства"
+        }
+      },
+      "sq": {
+        "text": "Drita e kuqe dhe e kaltër vezulluese që ndizen në mënyrë të alternuar në automjet janë sinjale ndriçuese që i japin:",
+        "options": {
+          "a": "automjetet me përparësi kalimi",
+          "b": "automjetet me shoqërim",
+          "c": "automjetet speciale"
+        }
+      }
+    },
+    {
+      "id": 33,
+      "en": {
+        "text": "While another vehicle is overtaking him, the driver of a vehicle:",
+        "options": {
+          "a": "must not increase his speed",
+          "b": "may increase his speed",
+          "c": "must not reduce his speed"
+        }
+      },
+      "ru": {
+        "text": "Водитель транспортного средства, пока его обгоняет другое транспортное средство:",
+        "options": {
+          "a": "не должен увеличивать скорость движения",
+          "b": "может увеличить скорость движения",
+          "c": "не должен снижать скорость движения"
+        }
+      },
+      "sq": {
+        "text": "Shoferi i automjetit, derisa e tejkalon një automjet tjetër:",
+        "options": {
+          "a": "nuk guxon ta rrisë shpejtësinë e lëvizjes",
+          "b": "guxon ta rrisë shpejtësinë e lëvizjes",
+          "c": "nuk guxon ta zvogëlojë shpejtësinë e lëvizjes"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "en": {
+        "text": "Turning a vehicle through 180° from its previous direction of travel in order to join the opposite traffic flow is:",
+        "options": { "a": "a circular turn", "b": "a left turn", "c": "a U-turn" }
+      },
+      "ru": {
+        "text": "Поворот транспортного средства на 180° от прежнего направления движения для включения во встречный транспортный поток — это:",
+        "options": { "a": "круговой разворот", "b": "поворот налево", "c": "разворот" }
+      },
+      "sq": {
+        "text": "Kthimi i automjetit për 180° nga kahu i deritanishëm i lëvizjes për t'u kyçur në rrjedhën e kundërt të qarkullimit është:",
+        "options": { "a": "kthim rrethor", "b": "kthim majtas", "c": "kthim gjysmërrethor" }
+      }
+    },
+    {
+      "id": 35,
+      "en": {
+        "text": "A young driver must not drive on a main road at a speed greater than:",
+        "options": { "a": "50 km/h", "b": "60 km/h", "c": "70 km/h" }
+      },
+      "ru": {
+        "text": "Молодой водитель на магистральной дороге не должен управлять транспортным средством со скоростью более:",
+        "options": { "a": "50 км/ч", "b": "60 км/ч", "c": "70 км/ч" }
+      },
+      "sq": {
+        "text": "Shoferi i ri në rrugë magjistrale nuk guxon ta drejtojë automjetin me shpejtësi më të madhe se:",
+        "options": { "a": "50 km/h", "b": "60 km/h", "c": "70 km/h" }
+      }
+    }
+  ]
+}

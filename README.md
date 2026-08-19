@@ -102,7 +102,8 @@ nema vremensko ograničenje.
 
 | Putanja                  | Sadržaj                                  |
 | ------------------------ | ---------------------------------------- |
-| `public/questions.json`  | 421 pitanje (sa poljem `area`: I / II / III) |
+| `public/questions.json`  | 421 pitanje (polje `area`: I / II / III; prevodi EN / RU / AL) |
+| `translations/`          | izvor prevoda po opsezima pitanja — iz njega se sastavlja `questions.json` |
 | `public/web_images/`     | 281 slika — 208 JPG (fotografije situacija) + 73 PNG (znakovi) |
 | `lib/imageSizes.ts`      | **generisano** — dimenzije svake slike    |
 
@@ -386,48 +387,79 @@ nečitak, umjesto njega je inicijal na brend plavoj sa žutim rombom.
 
 Dvije odvojene stvari:
 
-- **Interfejs** — `lib/i18n.ts`, četiri kompletna rječnika (`me`, `en`, `sq`, `ru`). Uvijek
-  postoji, ne zavisi ni od čega.
-- **Sadržaj pitanja** — opciona polja `text_en` / `options_en` / `text_ru` / `options_ru` u
-  `questions.json`. Popunjava ih `scripts/translate.mjs`. Dok ih nema, pitanje se prikazuje
-  na crnogorskom uz napomenu (`translationMissing`).
+- **Interfejs** — `lib/i18n.ts`, četiri kompletna rječnika (`me`, `en`, `sq`, `ru`).
+- **Sadržaj pitanja** — polja `text_en` / `options_en`, `text_ru` / `options_ru`,
+  `text_sq` / `options_sq` u `questions.json`. **Sva 421 pitanja su prevedena na sva tri
+  jezika**, pa se test može u potpunosti uraditi na jeziku izabranom u gornjem desnom uglu.
 
-Za albanski se pitanja **ne prevode** — samo interfejs; tu napomena kaže da su pitanja
-dostupna na crnogorskom (`questionsOnlyInMe`). Albanski je interno kod `sq` (ISO 639-1), a na
-prebacivaču piše `AL` jer je tako prepoznatljivije — mapa je `LANG_LABELS`.
+Prevodi su **plaćeni jednom** i čuvaju se u repozitorijumu — ne generišu se pri svakom
+pokretanju. Izvor istine je direktorijum [`translations/`](translations/); `questions.json`
+se iz njega ponovo sastavlja komandom `npm run translate:apply`, bez ijednog poziva API-ja.
+
+Ako pitanje ipak nema prevod (npr. doda se novo), prikazuje se crnogorski original uz
+napomenu `translationMissing` — fallback nikad nije tih.
+
+Albanski je interno kod `sq` (ISO 639-1), a na prebacivaču piše `AL` jer je tako
+prepoznatljivije — mapa je `LANG_LABELS`.
 
 `explanation` se i dalje popunjava ručno i namjerno: objašnjenja se ne izmišljaju, upisuju se
 samo kad postoji osnov u Pravilniku.
 
-#### Skripta za prevod
+#### `translations/` i primjena
 
 ```bash
-ANTHROPIC_API_KEY=... npm run translate            # en + ru, sve što nije prevedeno
+npm run translate:apply           # upiši prevode iz translations/ u questions.json
+npm run translate:check           # samo provjeri pokrivenost i dosljednost, bez upisa
+```
+
+Format jednog fajla (`translations/qNNN-NNN.json`) drži sva tri jezika jednog pitanja jedan
+uz drugi, da se pri pregledu porede:
+
+```json
+{ "items": [
+  { "id": 1,
+    "en": { "text": "…", "options": { "a": "…", "b": "…", "c": "…" } },
+    "ru": { "text": "…", "options": { "a": "…", "b": "…", "c": "…" } },
+    "sq": { "text": "…", "options": { "a": "…", "b": "…", "c": "…" } } },
+  { "id": 101, "en": { "text": "…" }, "ru": { "text": "…" }, "sq": { "text": "…" } }
+] }
+```
+
+Ordering pitanja nemaju `options`. Jezik se smije izostaviti — upisuje se ono što postoji.
+
+[`scripts/apply-translations.mjs`](scripts/apply-translations.mjs):
+
+- **Ne dira tačne odgovore.** Otisak svih `correct` i `answer_sequence` se poredi prije i
+  poslije upisa; na svaku razliku prekida bez pisanja.
+- **Sve validira prije upisa** — nepoznat id, prazan tekst, opcije kod ordering pitanja ili
+  isti id preveden u dva fajla zaustavljaju cijelu operaciju, da baza ne ostane napola.
+- **Upozorava kad isti crnogorski izvor dobije dva različita prevoda.** To nije uvijek greška
+  (isti oblik traži drugačiji padež zavisno od predloga: „regulisan je horizontalnim
+  oznakama" vs „postupićete po horizontalnim oznakama"), pa je upozorenje, ne greška.
+
+#### Skripta za mašinski prevod (za nova pitanja)
+
+Ako se u bazu dodaju nova pitanja, [`scripts/translate.mjs`](scripts/translate.mjs) ih
+prevodi preko Claude API-ja. Troši tokene pri svakom pokretanju, pa se koristi samo za ono
+što još nije prevedeno — postojeće prevode preskače.
+
+```bash
+ANTHROPIC_API_KEY=... npm run translate             # en + ru + sq, sve neprevedeno
 ANTHROPIC_API_KEY=... npm run translate -- --lang=ru --limit=20
-npm run translate:stats                            # pokrivenost, bez poziva API-ja
-npm run translate -- --lang=en --dry-run           # koji paketi bi išli, bez upisa
+npm run translate:stats                             # pokrivenost, bez poziva API-ja
+npm run translate -- --lang=en --dry-run            # koji paketi bi išli, bez upisa
 ```
 
 Ostale opcije: `--batch=N` (pitanja po zahtjevu, podrazumijevano 8), `--model=ID`
-(podrazumijevano `claude-opus-5`), `--file=PUT`.
+(podrazumijevano `claude-opus-5`), `--file=PUT`. Modelu se šalju samo `id`, `text` i
+`options` — `correct` i `answer_sequence` ne izlaze iz skripte; upisuje se nakon svakog
+paketa, pa prekid ne baca obavljen posao.
 
-Kako je napravljena:
-
-- **Ne dira tačne odgovore.** Modelu se šalju samo `id`, `text` i `options` — `correct` i
-  `answer_sequence` ne izlaze iz skripte. Poslije svakog paketa se otisak svih tačnih
-  odgovora poredi sa stanjem prije rada; na svaku razliku skripta prekida bez upisa.
-- **Upisuje nakon svakog paketa**, pa prekid (Ctrl+C, mreža, potrošen limit) ne baca
-  obavljen posao. Ponovno pokretanje preskače prevedeno i nastavlja gdje je stalo.
-- **Odbija paket u cjelini** ako se id-jevi ne poklapaju ili nešto nedostaje — bolje
-  preskočiti paket nego upisati prevod na pogrešno pitanje. Neuspio paket se ispiše i
-  pokušava se ponovo pri sljedećem pokretanju.
-- Strukturirani izlaz (`output_config.format`) sa strogom shemom, pa parsiranje ne zavisi od
-  formata odgovora. Ordering pitanja idu u odvojene pakete jer nemaju ponuđene odgovore.
-
-> **Mašinski prevod.** Ovo je pomoć u učenju — **zvanični ispit je na crnogorskom**. Prije
-> objave prevoda izvorni govornik EN/RU mora da provjeri ključne saobraćajne termine
-> („ustupi prvenstvo prolaza", „prvenstvo prolaza", „raskrsnica", „nepregledna krivina").
-> Prevod ne mijenja tačan odgovor.
+> **Prevod je pomoćni.** **Zvanični ispit je na crnogorskom.** Prije nego se prevodi objave
+> kao gotovi, izvorni govornik EN/RU/AL treba da provjeri ključne saobraćajne termine
+> („ustupi prvenstvo prolaza", „prvenstvo prolaza", „raskrsnica", „nepregledna krivina",
+> „mimoilaženje" vs „obilaženje" vs „preticanje"). Prevod ne mijenja tačan odgovor —
+> `correct` i `answer_sequence` su nedirnuti.
 
 ---
 

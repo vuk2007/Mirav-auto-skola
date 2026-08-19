@@ -1,0 +1,884 @@
+{
+  "items": [
+    {
+      "id": 106,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will continue straight ahead",
+          "b": "I will continue straight ahead, giving way to vehicles 4 and 5",
+          "c": "I will stop the vehicle"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я продолжу движение прямо",
+          "b": "я продолжу движение прямо, уступив дорогу транспортным средствам 4 и 5",
+          "c": "я остановлю транспортное средство"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen drejt",
+          "b": "do ta vazhdoj lëvizjen drejt duke u lëshuar rrugë automjeteve 4 dhe 5",
+          "c": "do ta ndal automjetin"
+        }
+      }
+    },
+    {
+      "id": 107,
+      "en": {
+        "text": "In the situation shown, vehicle 2 will:",
+        "options": {
+          "a": "stop and give way to vehicle 1",
+          "b": "continue turning left without giving way to vehicle 1",
+          "c": "stop because of the signal given by the authorised person"
+        }
+      },
+      "ru": {
+        "text": "В показанной ситуации транспортное средство 2:",
+        "options": {
+          "a": "остановится и уступит дорогу транспортному средству 1",
+          "b": "продолжит движение налево, не уступая дорогу транспортному средству 1",
+          "c": "остановится из-за сигнала, который подаёт уполномоченное лицо"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur automjeti 2 do të:",
+        "options": {
+          "a": "ndalet dhe do t'i lëshojë rrugë automjetit 1",
+          "b": "vazhdojë lëvizjen majtas pa i lëshuar rrugë automjetit 1",
+          "c": "ndalet për shkak të sinjalit që e jep personi i autorizuar"
+        }
+      }
+    },
+    {
+      "id": 108,
+      "en": {
+        "text": "In the situation shown in the picture, right of way is held by:",
+        "options": {
+          "a": "vehicle 1 in relation to vehicle 2",
+          "b": "vehicle 2 in relation to vehicle 1",
+          "c": "vehicle 1 because of the right-hand rule"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, преимущество проезда имеет:",
+        "options": {
+          "a": "транспортное средство 1 по отношению к транспортному средству 2",
+          "b": "транспортное средство 2 по отношению к транспортному средству 1",
+          "c": "транспортное средство 1 из-за правила правой руки"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë përparësi kalimi ka:",
+        "options": {
+          "a": "automjeti 1 ndaj automjetit 2",
+          "b": "automjeti 2 ndaj automjetit 1",
+          "c": "automjeti 1 për shkak të rregullës së së djathtës"
+        }
+      }
+    },
+    {
+      "id": 109,
+      "en": {
+        "text": "In the situation shown in the picture the order in which the vehicles proceed is governed by:",
+        "options": {
+          "a": "the rule of giving way to vehicles from the right",
+          "b": "the rule of giving way to vehicles from the left",
+          "c": "a vertical road sign"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, порядок проезда транспортных средств определяется:",
+        "options": {
+          "a": "правилом пропуска транспортных средств справа",
+          "b": "правилом пропуска транспортных средств слева",
+          "c": "вертикальным дорожным знаком"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve rregullohet me:",
+        "options": {
+          "a": "rregullën e lëshimit të rrugës automjeteve nga ana e djathtë",
+          "b": "rregullën e lëshimit të rrugës automjeteve nga ana e majtë",
+          "c": "shenjë rrugore vertikale"
+        }
+      }
+    },
+    {
+      "id": 110,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will give way to the vehicle turning left",
+          "b": "I will continue straight ahead because I have right of way",
+          "c": "I will stop before the intersection because of the STOP sign"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я уступлю дорогу транспортному средству, поворачивающему налево",
+          "b": "я продолжу движение прямо, потому что имею преимущество проезда",
+          "c": "я остановлюсь перед перекрёстком из-за знака STOP"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do t'i lëshoj rrugë automjetit që kthehet majtas",
+          "b": "do ta vazhdoj lëvizjen drejt sepse kam përparësi kalimi",
+          "c": "do të ndalem para kryqëzimit për shkak të shenjës STOP"
+        }
+      }
+    },
+    {
+      "id": 111,
+      "en": {
+        "text": "In the situation shown in the picture you will act according to:",
+        "options": {
+          "a": "the STOP road sign",
+          "b": "the meaning of the light signals at the traffic lights",
+          "c": "the traffic rule for entering an uncontrolled intersection"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, вы будете действовать по:",
+        "options": {
+          "a": "дорожному знаку STOP",
+          "b": "значению световых сигналов светофора",
+          "c": "правилу движения при въезде на нерегулируемый перекрёсток"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë do të veproni sipas:",
+        "options": {
+          "a": "shenjës rrugore STOP",
+          "b": "kuptimit të sinjaleve ndriçuese në semafor",
+          "c": "rregullës së komunikacionit për hyrje në kryqëzim të parregulluar"
+        }
+      }
+    },
+    {
+      "id": 112,
+      "en": { "text": "In the situation shown in the picture the order in which the vehicles proceed is:" },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, порядок проезда транспортных средств:"
+      },
+      "sq": { "text": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:" }
+    },
+    {
+      "id": 113,
+      "en": {
+        "text": "In the situation shown in the picture the order of passage through the intersection is governed by:",
+        "options": {
+          "a": "a road sign",
+          "b": "the rule of giving way to vehicles from the right",
+          "c": "road markings"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, порядок проезда через перекрёсток определяется:",
+        "options": {
+          "a": "дорожным знаком",
+          "b": "правилом пропуска транспортных средств справа",
+          "c": "горизонтальной разметкой"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë radha e kalimit nëpër kryqëzim rregullohet me:",
+        "options": {
+          "a": "shenjë rrugore",
+          "b": "rregullën e lëshimit të rrugës automjeteve nga ana e djathtë",
+          "c": "shenja horizontale"
+        }
+      }
+    },
+    {
+      "id": 114,
+      "en": {
+        "text": "In the situation shown in the picture, when turning left you should:",
+        "options": {
+          "a": "continue driving without giving way to vehicles 2, 3 and 4",
+          "b": "give way to vehicles 3 and 4",
+          "c": "give way to vehicles 2, 3 and 4"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, при повороте налево следует:",
+        "options": {
+          "a": "продолжить движение, не уступая дорогу транспортным средствам 2, 3 и 4",
+          "b": "уступить дорогу транспортным средствам 3 и 4",
+          "c": "уступить дорогу транспортным средствам 2, 3 и 4"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë gjatë kthimit majtas duhet:",
+        "options": {
+          "a": "ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve 2, 3 dhe 4",
+          "b": "t'u lëshoj rrugë automjeteve 3 dhe 4",
+          "c": "t'u lëshoj rrugë automjeteve 2, 3 dhe 4"
+        }
+      }
+    },
+    {
+      "id": 115,
+      "en": {
+        "text": "In the situation shown in the picture the arrows on the carriageway (white) mark:",
+        "options": {
+          "a": "a guide line",
+          "b": "a compulsory direction for passenger cars only",
+          "c": "a compulsory direction of travel"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, стрелки на проезжей части (белого цвета) обозначают:",
+        "options": {
+          "a": "линию направления движения",
+          "b": "обязательное направление только для легковых автомобилей",
+          "c": "обязательное направление движения"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë shigjetat në karrexhatë (me ngjyrë të bardhë) shënojnë:",
+        "options": {
+          "a": "vijën e drejtimit",
+          "b": "kahun e detyrueshëm vetëm për automjetet udhëtare",
+          "c": "kahun e detyrueshëm të lëvizjes"
+        }
+      }
+    },
+    {
+      "id": 116,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will continue straight ahead without giving way to the tram",
+          "b": "I will continue straight ahead after giving way to the tram",
+          "c": "I will continue straight ahead with increased caution"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я продолжу движение прямо, не уступая дорогу трамваю",
+          "b": "я продолжу движение прямо после того, как уступлю дорогу трамваю",
+          "c": "с повышенной осторожностью продолжу движение прямо"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë tramvajit",
+          "b": "do ta vazhdoj lëvizjen drejt pasi t'i lëshoj rrugë tramvajit",
+          "c": "me kujdes të shtuar do ta vazhdoj lëvizjen drejt"
+        }
+      }
+    },
+    {
+      "id": 117,
+      "en": {
+        "text": "In the situation shown in the picture the order of passage through the intersection is governed by:",
+        "options": {
+          "a": "vertical signage",
+          "b": "applying the right-hand rule",
+          "c": "applying the right-of-way rule"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, порядок проезда через перекрёсток определяется:",
+        "options": {
+          "a": "вертикальной сигнализацией",
+          "b": "применением правила правой руки",
+          "c": "применением правила преимущества проезда"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë radha e kalimit nëpër kryqëzim rregullohet me:",
+        "options": {
+          "a": "sinjalizim vertikal",
+          "b": "zbatimin e rregullës së së djathtës",
+          "c": "zbatimin e rregullës së përparësisë së kalimit"
+        }
+      }
+    },
+    {
+      "id": 118,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will stop before the intersection and give way to vehicle 2",
+          "b": "I will continue straight ahead with increased attention",
+          "c": "I will continue straight ahead without giving way to vehicle 2"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я остановлюсь перед перекрёстком и уступлю дорогу транспортному средству 2",
+          "b": "я продолжу движение прямо с повышенным вниманием",
+          "c": "я продолжу движение прямо, не уступая дорогу транспортному средству 2"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 2",
+          "b": "do ta vazhdoj lëvizjen drejt me vëmendje të shtuar",
+          "c": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit 2"
+        }
+      }
+    },
+    {
+      "id": 119,
+      "en": {
+        "text": "In the situation shown in the picture the supplementary panel indicates:",
+        "options": {
+          "a": "approaching a bypass",
+          "b": "that I am travelling on a priority road",
+          "c": "joining a priority road"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, дополнительная табличка обозначает:",
+        "options": {
+          "a": "приближение к объездной дороге",
+          "b": "что я двигаюсь по дороге с преимуществом проезда",
+          "c": "примыкание к дороге с преимуществом проезда"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë tabela plotësuese tregon:",
+        "options": {
+          "a": "afrimin te rruga anësore rrethuese",
+          "b": "se po lëviz në rrugë me përparësi kalimi",
+          "c": "bashkimin me rrugën me përparësi kalimi"
+        }
+      }
+    },
+    {
+      "id": 120,
+      "en": {
+        "text": "In the situation as in the picture, when you pass vehicle 2 which is coming from the opposite direction, this is the manoeuvre of:",
+        "options": { "a": "going around", "b": "meeting", "c": "overtaking" }
+      },
+      "ru": {
+        "text": "В ситуации, как на рисунке, когда вы проезжаете мимо транспортного средства 2, движущегося со встречного направления, это манёвр:",
+        "options": { "a": "объезда", "b": "разъезда", "c": "обгона" }
+      },
+      "sq": {
+        "text": "Në situatën si në figurë, kur kaloni pranë automjetit 2 që vjen nga kahu i kundërt, ky është veprim i:",
+        "options": { "a": "anashkalimit", "b": "kalimit përballë", "c": "tejkalimit" }
+      }
+    },
+    {
+      "id": 121,
+      "en": {
+        "text": "In the situation shown in the picture:",
+        "options": {
+          "a": "I will continue straight ahead without giving way to the pedestrian",
+          "b": "I will accelerate the vehicle and pass in front of the pedestrian",
+          "c": "I will stop and give way to the pedestrian"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я продолжу движение прямо, не уступая дорогу пешеходу",
+          "b": "я ускорю движение транспортного средства и проеду перед пешеходом",
+          "c": "я остановлюсь и уступлю дорогу пешеходу"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë këmbësorit",
+          "b": "do ta shpejtoj lëvizjen e automjetit dhe do të kaloj para këmbësorit",
+          "c": "do të ndalem dhe do t'i lëshoj rrugë këmbësorit"
+        }
+      }
+    },
+    {
+      "id": 122,
+      "en": {
+        "text": "In the situation shown in the picture:",
+        "options": {
+          "a": "I may overtake",
+          "b": "I must not overtake",
+          "c": "I may overtake because of the road markings"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке:",
+        "options": {
+          "a": "мне разрешается обгонять",
+          "b": "мне не разрешается обгонять",
+          "c": "мне разрешается обгонять из-за разметки на проезжей части"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "guxoj të tejkaloj",
+          "b": "nuk guxoj të tejkaloj",
+          "c": "guxoj të tejkaloj për shkak të shenjave në karrexhatë"
+        }
+      }
+    },
+    {
+      "id": 123,
+      "en": {
+        "text": "In the situation shown in the picture the unbroken longitudinal line along the right-hand edge of the carriageway marks:",
+        "options": {
+          "a": "the edge of the carriageway",
+          "b": "the edge line",
+          "c": "the dividing line"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, сплошная продольная линия у правого края проезжей части обозначает:",
+        "options": {
+          "a": "край проезжей части",
+          "b": "краевую линию",
+          "c": "разделительную линию"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë vija gjatësore e pandërprerë pranë skajit të djathtë të karrexhatës shënon:",
+        "options": { "a": "skajin e karrexhatës", "b": "vijën anësore", "c": "vijën ndarëse" }
+      }
+    },
+    {
+      "id": 124,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will stop before the intersection",
+          "b": "I will give way to the vehicles from the opposite direction and then continue driving",
+          "c": "I will continue driving without giving way to the vehicles from the opposite direction"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я остановлюсь перед перекрёстком",
+          "b": "я уступлю дорогу транспортным средствам со встречного направления и затем продолжу движение",
+          "c": "я продолжу движение, не уступая дорогу транспортным средствам со встречного направления"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do të ndalem para kryqëzimit",
+          "b": "do t'u lëshoj rrugë automjeteve nga kahu i kundërt e pastaj do ta vazhdoj lëvizjen",
+          "c": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve nga kahu i kundërt"
+        }
+      }
+    },
+    {
+      "id": 125,
+      "en": {
+        "text": "In the situation shown in the picture the cyclists are riding:",
+        "options": {
+          "a": "incorrectly, because they have formed a column",
+          "b": "incorrectly, because they are not wearing high-visibility reflective vests",
+          "c": "correctly"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, велосипедисты двигаются:",
+        "options": {
+          "a": "неправильно, потому что они образовали колонну",
+          "b": "неправильно, потому что они не носят жилеты со светоотражающими свойствами",
+          "c": "правильно"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë çiklistët lëvizin:",
+        "options": {
+          "a": "jo rregullisht, sepse kanë formuar kolonë",
+          "b": "jo rregullisht, sepse nuk mbajnë jelek me veti reflektuese",
+          "c": "rregullisht"
+        }
+      }
+    },
+    {
+      "id": 126,
+      "en": {
+        "text": "In the situation as in the picture:",
+        "options": {
+          "a": "I will continue driving to the right",
+          "b": "I will stop before the intersection",
+          "c": "I will continue straight ahead"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, как на рисунке:",
+        "options": {
+          "a": "я продолжу движение направо",
+          "b": "я остановлюсь перед перекрёстком",
+          "c": "я продолжу движение прямо"
+        }
+      },
+      "sq": {
+        "text": "Në situatën si në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen djathtas",
+          "b": "do të ndalem para kryqëzimit",
+          "c": "do ta vazhdoj lëvizjen drejt"
+        }
+      }
+    },
+    {
+      "id": 127,
+      "en": {
+        "text": "In the situation shown in the picture you will act according to:",
+        "options": {
+          "a": "the light traffic signal",
+          "b": "the vertical road sign",
+          "c": "the road markings"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, вы будете действовать по:",
+        "options": {
+          "a": "световому дорожному сигналу",
+          "b": "вертикальному дорожному знаку",
+          "c": "горизонтальной разметке"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë do të veproni sipas:",
+        "options": {
+          "a": "shenjës ndriçuese rrugore",
+          "b": "shenjës rrugore vertikale",
+          "c": "shenjave horizontale"
+        }
+      }
+    },
+    {
+      "id": 128,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will continue straight ahead",
+          "b": "I will stop the vehicle",
+          "c": "I will continue driving to the left after giving way to vehicles 2 and 3"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я продолжу движение прямо",
+          "b": "я остановлю транспортное средство",
+          "c": "я продолжу движение налево после того, как уступлю дорогу транспортным средствам 2 и 3"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen drejt",
+          "b": "do ta ndal automjetin",
+          "c": "do ta vazhdoj lëvizjen majtas pasi t'u lëshoj rrugë automjeteve 2 dhe 3"
+        }
+      }
+    },
+    {
+      "id": 129,
+      "en": {
+        "text": "In the situation shown in the picture the police vehicle:",
+        "options": {
+          "a": "may continue straight ahead",
+          "b": "must stop",
+          "c": "may continue in any direction"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, полицейское транспортное средство:",
+        "options": {
+          "a": "может продолжить движение прямо",
+          "b": "должно остановиться",
+          "c": "может продолжить движение в любом направлении"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjeti policor:",
+        "options": {
+          "a": "mund ta vazhdojë lëvizjen drejt",
+          "b": "duhet të ndalet",
+          "c": "mund ta vazhdojë lëvizjen në cilindo drejtim"
+        }
+      }
+    },
+    {
+      "id": 130,
+      "en": {
+        "text": "In the situation shown in the picture the driver:",
+        "options": {
+          "a": "of vehicle 1 should give way to vehicle 2",
+          "b": "of vehicle 2 should accelerate and pass in front of vehicle 1",
+          "c": "of vehicle 2 should give way to vehicle 1"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, водитель:",
+        "options": {
+          "a": "транспортного средства 1 должен уступить дорогу транспортному средству 2",
+          "b": "транспортного средства 2 должен ускориться и проехать перед транспортным средством 1",
+          "c": "транспортного средства 2 должен уступить дорогу транспортному средству 1"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë shoferi:",
+        "options": {
+          "a": "i automjetit 1 duhet t'i lëshojë rrugë automjetit 2",
+          "b": "i automjetit 2 duhet ta shpejtojë lëvizjen dhe të kalojë para automjetit 1",
+          "c": "i automjetit 2 duhet t'i lëshojë rrugë automjetit 1"
+        }
+      }
+    },
+    {
+      "id": 131,
+      "en": {
+        "text": "In the situation shown in the picture vehicle 1:",
+        "options": {
+          "a": "must not stop or park",
+          "b": "may stop",
+          "c": "may stop or park"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, транспортное средство 1:",
+        "options": {
+          "a": "не должно останавливаться или парковаться",
+          "b": "может остановиться",
+          "c": "может остановиться или припарковаться"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjeti 1:",
+        "options": {
+          "a": "nuk guxon të ndalet ose të parkohet",
+          "b": "guxon të ndalet",
+          "c": "guxon të ndalet ose të parkohet"
+        }
+      }
+    },
+    {
+      "id": 132,
+      "en": {
+        "text": "In the situation shown in the picture:",
+        "options": {
+          "a": "passenger car 1 is allowed to proceed",
+          "b": "vehicles 2, 3 and 4 are allowed to proceed",
+          "c": "only police vehicle 4 is allowed to proceed"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке:",
+        "options": {
+          "a": "легковому автомобилю 1 разрешён проезд",
+          "b": "транспортным средствам 2, 3 и 4 разрешён проезд",
+          "c": "только полицейскому транспортному средству 4 разрешён проезд"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "automjeti udhëtar 1 e ka kalimin e lejuar",
+          "b": "automjetet 2, 3 dhe 4 e kanë kalimin e lejuar",
+          "c": "vetëm automjeti policor 4 e ka kalimin e lejuar"
+        }
+      }
+    },
+    {
+      "id": 133,
+      "en": {
+        "text": "In the situation shown in the picture police vehicle 4:",
+        "options": {
+          "a": "may continue straight ahead",
+          "b": "must stop",
+          "c": "may continue straight ahead after vehicle 1 has passed"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, полицейское транспортное средство 4:",
+        "options": {
+          "a": "может продолжить движение прямо",
+          "b": "должно остановиться",
+          "c": "может продолжить движение прямо после проезда транспортного средства 1"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë automjeti policor 4:",
+        "options": {
+          "a": "mund ta vazhdojë lëvizjen drejt",
+          "b": "duhet të ndalet",
+          "c": "mund ta vazhdojë lëvizjen drejt pas kalimit të automjetit 1"
+        }
+      }
+    },
+    {
+      "id": 134,
+      "en": {
+        "text": "How will you act in the situation shown in the picture, if you are driving vehicle 1:",
+        "options": {
+          "a": "after giving way to vehicle 2 I must turn right",
+          "b": "I have right of way in relation to vehicle 2",
+          "c": "I will stop before the intersection and give way to all vehicles"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке, если управляете транспортным средством 1:",
+        "options": {
+          "a": "уступив дорогу транспортному средству 2, я должен повернуть направо",
+          "b": "я имею преимущество проезда по отношению к транспортному средству 2",
+          "c": "я остановлюсь перед перекрёстком и уступлю дорогу всем транспортным средствам"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë, nëse drejtoni automjetin 1:",
+        "options": {
+          "a": "pasi t'i lëshoj rrugë automjetit 2 duhet të kthehem djathtas",
+          "b": "kam përparësi kalimi ndaj automjetit 2",
+          "c": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë të gjitha automjeteve"
+        }
+      }
+    },
+    {
+      "id": 135,
+      "en": {
+        "text": "The compulsory direction to the right, in the situation in the picture, applies:",
+        "options": {
+          "a": "to goods vehicles and trailers",
+          "b": "to all vehicles except goods vehicles",
+          "c": "to goods vehicles"
+        }
+      },
+      "ru": {
+        "text": "Обязательное направление направо в ситуации на рисунке относится:",
+        "options": {
+          "a": "к грузовым автомобилям и прицепам",
+          "b": "ко всем транспортным средствам, кроме грузовых",
+          "c": "к грузовым автомобилям"
+        }
+      },
+      "sq": {
+        "text": "Kahu i detyrueshëm djathtas, në situatën në figurë, u referohet:",
+        "options": {
+          "a": "automjeteve transportuese dhe rimorkiove",
+          "b": "të gjitha automjeteve përveç atyre transportuese",
+          "c": "automjeteve transportuese"
+        }
+      }
+    },
+    {
+      "id": 136,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will continue straight ahead through the intersection",
+          "b": "I will stop before the intersection and give way to vehicle 2",
+          "c": "I will stop before the intersection and give way to vehicle 3"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я продолжу движение прямо через перекрёсток",
+          "b": "я остановлюсь перед перекрёстком и уступлю дорогу транспортному средству 2",
+          "c": "я остановлюсь перед перекрёстком и уступлю дорогу транспортному средству 3"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim",
+          "b": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 2",
+          "c": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 3"
+        }
+      }
+    },
+    {
+      "id": 137,
+      "en": {
+        "text": "In the situation shown in the picture the order in which the vehicles pass through the intersection is:"
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, порядок проезда транспортных средств через перекрёсток:"
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është:"
+      }
+    },
+    {
+      "id": 138,
+      "en": {
+        "text": "How will you act in the situation shown in the picture, if the vehicles keep to their direction of travel and you are driving vehicle 2:",
+        "options": {
+          "a": "I will continue driving without giving way to any vehicle",
+          "b": "I will continue driving after giving way only to vehicles 3 and 4",
+          "c": "I will continue driving, giving way to vehicle 1"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке, если транспортные средства сохраняют направление движения, а вы управляете транспортным средством 2:",
+        "options": {
+          "a": "я продолжу движение, не уступая дорогу транспортным средствам",
+          "b": "я продолжу движение, уступив дорогу только транспортным средствам 3 и 4",
+          "c": "я продолжу движение, уступив дорогу транспортному средству 1"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë, nëse automjetet e ruajnë kahun e lëvizjes, e ju drejtoni automjetin 2:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve",
+          "b": "do ta vazhdoj lëvizjen pasi t'u lëshoj rrugë vetëm automjeteve 3 dhe 4",
+          "c": "do ta vazhdoj lëvizjen duke i lëshuar rrugë automjetit 1"
+        }
+      }
+    },
+    {
+      "id": 139,
+      "en": {
+        "text": "In the situation in the picture, when the vehicles keep to their direction of travel, the order in which the vehicles proceed is:"
+      },
+      "ru": {
+        "text": "В ситуации на рисунке, когда транспортные средства сохраняют направление движения, порядок их проезда:"
+      },
+      "sq": {
+        "text": "Në situatën në figurë, kur automjetet e ruajnë kahun e lëvizjes, radha e kalimit të automjeteve është:"
+      }
+    },
+    {
+      "id": 140,
+      "en": {
+        "text": "How will you act in the situation shown in the picture:",
+        "options": {
+          "a": "I will continue driving to the left through the intersection without stopping",
+          "b": "I will stop before the intersection",
+          "c": "I will continue straight ahead through the intersection"
+        }
+      },
+      "ru": {
+        "text": "Как вы поступите в ситуации, показанной на рисунке:",
+        "options": {
+          "a": "я продолжу движение налево через перекрёсток без остановки",
+          "b": "я остановлюсь перед перекрёстком",
+          "c": "я продолжу движение прямо через перекрёсток"
+        }
+      },
+      "sq": {
+        "text": "Si do të veproni në situatën e paraqitur në figurë:",
+        "options": {
+          "a": "do ta vazhdoj lëvizjen majtas nëpër kryqëzim pa u ndalur",
+          "b": "do të ndalem para kryqëzimit",
+          "c": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim"
+        }
+      }
+    }
+  ]
+}

@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "gen:image-sizes": "node scripts/gen-image-sizes.mjs",
     "translate": "node scripts/translate.mjs",
-    "translate:stats": "node scripts/translate.mjs --stats"
+    "translate:stats": "node scripts/translate.mjs --stats",
+    "translate:apply": "node scripts/apply-translations.mjs",
+    "translate:check": "node scripts/apply-translations.mjs --check"
   },
   "dependencies": {
     "next": "^15.1.0",

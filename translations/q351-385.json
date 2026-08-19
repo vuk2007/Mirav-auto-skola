@@ -1,0 +1,905 @@
+{
+  "items": [
+    {
+      "id": 351,
+      "en": {
+        "text": "The signal given by the police officer, as in the picture, may be given:",
+        "options": {
+          "a": "at an intersection, but only with a stop board",
+          "b": "at an intersection and on the open road",
+          "c": "on the open road, but only with a stop board"
+        }
+      },
+      "ru": {
+        "text": "Сигнал, который подаёт сотрудник полиции, как на рисунке, может подаваться:",
+        "options": {
+          "a": "на перекрёстке, но только с табличкой «стоп»",
+          "b": "на перекрёстке и на открытой дороге",
+          "c": "на открытой дороге, но только с табличкой «стоп»"
+        }
+      },
+      "sq": {
+        "text": "Sinjali që e jep zyrtari policor, si në figurë, mund të jepet:",
+        "options": {
+          "a": "në kryqëzim, por vetëm me tabelën stop",
+          "b": "në kryqëzim dhe në rrugë të hapur",
+          "c": "në rrugë të hapur, por vetëm me tabelën stop"
+        }
+      }
+    },
+    {
+      "id": 352,
+      "en": {
+        "text": "The signal given by the police officer in the picture means that the drivers of the vehicles:",
+        "options": {
+          "a": "approaching from his sides have right of way",
+          "b": "to which his back is turned have right of way",
+          "c": "should continue in accordance with the meaning of the lights at the traffic signals"
+        }
+      },
+      "ru": {
+        "text": "Сигнал, который подаёт сотрудник полиции на рисунке, означает, что водители транспортных средств:",
+        "options": {
+          "a": "приближающихся с его боковых сторон, имеют преимущество",
+          "b": "к которым он повёрнут спиной, имеют преимущество",
+          "c": "продолжают движение в соответствии со значением сигналов светофора"
+        }
+      },
+      "sq": {
+        "text": "Sinjali që e jep zyrtari policor në figurë do të thotë se shoferët e automjeteve:",
+        "options": {
+          "a": "që vijnë nga anët e tij anësore kanë të drejtë përparësie",
+          "b": "të cilëve u është kthyer shpina kanë të drejtë përparësie",
+          "c": "ta vazhdojnë lëvizjen në pajtim me kuptimin e dritave në semafor"
+        }
+      }
+    },
+    {
+      "id": 353,
+      "en": {
+        "text": "The picture shows a diagonal marking which:",
+        "options": {
+          "a": "marks a lane for slow vehicles",
+          "b": "marks the place where a lane opens",
+          "c": "marks the place where a lane closes"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показана косая разметка, которая:",
+        "options": {
+          "a": "обозначает полосу для медленных транспортных средств",
+          "b": "обозначает место открытия полосы",
+          "c": "обозначает место закрытия полосы"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja e pjerrët e cila:",
+        "options": {
+          "a": "shënon korsinë për automjete të ngadalta",
+          "b": "shënon vendin e hapjes së korsisë",
+          "c": "shënon vendin e mbylljes së korsisë"
+        }
+      }
+    },
+    {
+      "id": 354,
+      "en": {
+        "text": "The picture shows:",
+        "options": {
+          "a": "a device for controlling the movement of trams",
+          "b": "a device for controlling the movement of pedestrians",
+          "c": "a device for indicating the direction of the track"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показано:",
+        "options": {
+          "a": "устройство для регулирования движения трамваев",
+          "b": "устройство для регулирования движения пешеходов",
+          "c": "устройство для обозначения направления пути"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur:",
+        "options": {
+          "a": "pajisje për rregullimin e lëvizjes së tramvajëve",
+          "b": "pajisje për rregullimin e lëvizjes së këmbësorëve",
+          "c": "pajisje për shënimin e drejtimit të binarit"
+        }
+      }
+    },
+    {
+      "id": 355,
+      "en": {
+        "text": "An arm extended horizontally to the side by the police officer, as in the picture, means that:",
+        "options": {
+          "a": "the driver of that vehicle should reduce his speed",
+          "b": "the driver of that vehicle should slow the vehicle down and continue to the left",
+          "c": "the driver of that vehicle is obliged to stop the vehicle"
+        }
+      },
+      "ru": {
+        "text": "Горизонтально отведённая в сторону рука сотрудника полиции, как на рисунке, означает, что:",
+        "options": {
+          "a": "водитель этого транспортного средства снижает скорость движения",
+          "b": "водитель этого транспортного средства замедляет транспортное средство и продолжает движение налево",
+          "c": "водитель этого транспортного средства обязан остановить транспортное средство"
+        }
+      },
+      "sq": {
+        "text": "Dora e shtrirë horizontalisht anash e zyrtarit policor, si në figurë, do të thotë se:",
+        "options": {
+          "a": "shoferi i atij automjeti ta zvogëlojë shpejtësinë e lëvizjes",
+          "b": "shoferi i atij automjeti ta ngadalësojë automjetin dhe ta vazhdojë lëvizjen majtas",
+          "c": "shoferi i atij automjeti është i detyruar ta ndalë automjetin"
+        }
+      }
+    },
+    {
+      "id": 356,
+      "en": {
+        "text": "The signal given by the police officer in the picture:",
+        "options": {
+          "a": "may be given both at an intersection and on the open road",
+          "b": "may be given only in a settlement",
+          "c": "may be given only on the open road"
+        }
+      },
+      "ru": {
+        "text": "Сигнал, который подаёт сотрудник полиции на рисунке:",
+        "options": {
+          "a": "может подаваться и на перекрёстке, и на открытой дороге",
+          "b": "может подаваться только в населённом пункте",
+          "c": "может подаваться только на открытой дороге"
+        }
+      },
+      "sq": {
+        "text": "Sinjali që e jep zyrtari policor në figurë:",
+        "options": {
+          "a": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur",
+          "b": "mund të jepet vetëm në vendbanim",
+          "c": "mund të jepet vetëm në rrugë të hapur"
+        }
+      }
+    },
+    {
+      "id": 357,
+      "en": {
+        "text": "The temporary traffic signage shown in the picture indicates:",
+        "options": {
+          "a": "an obstacle on the road",
+          "b": "a vertical obstacle",
+          "c": "a guide barrier"
+        }
+      },
+      "ru": {
+        "text": "Временная дорожная сигнализация, показанная на рисунке, обозначает:",
+        "options": {
+          "a": "препятствие на дороге",
+          "b": "вертикальное препятствие",
+          "c": "направляющее ограждение"
+        }
+      },
+      "sq": {
+        "text": "Sinjalizimi i përkohshëm rrugor i dhënë në figurë shënon:",
+        "options": {
+          "a": "pengesë në rrugë",
+          "b": "pengesë vertikale",
+          "c": "barierë orientuese"
+        }
+      }
+    },
+    {
+      "id": 358,
+      "en": {
+        "text": "The light signalling shown should be switched on:",
+        "options": {
+          "a": "at night and in conditions of reduced visibility",
+          "b": "if there is a heavy flow of traffic",
+          "c": "only on local roads"
+        }
+      },
+      "ru": {
+        "text": "Показанная световая сигнализация должна быть включена:",
+        "options": {
+          "a": "ночью и в условиях ограниченной видимости",
+          "b": "если большой поток движения",
+          "c": "только на местных дорогах"
+        }
+      },
+      "sq": {
+        "text": "Sinjalizimi ndriçues i paraqitur duhet të jetë i ndezur:",
+        "options": {
+          "a": "natën dhe në kushte të dukshmërisë së kufizuar",
+          "b": "nëse ka fluks të madh të komunikacionit",
+          "c": "vetëm në rrugë lokale"
+        }
+      }
+    },
+    {
+      "id": 359,
+      "en": {
+        "text": "The position of the police officer's body with his arms extended horizontally to the sides means that the vehicles:",
+        "options": {
+          "a": "to which his back is turned have the right to proceed",
+          "b": "approaching from his side have the right to proceed",
+          "c": "that all drivers are obliged to stop the vehicle"
+        }
+      },
+      "ru": {
+        "text": "Положение корпуса сотрудника полиции с горизонтально отведёнными в стороны руками означает, что транспортные средства:",
+        "options": {
+          "a": "к которым он повёрнут спиной, имеют право проезда",
+          "b": "приближающиеся с его боковой стороны, имеют право проезда",
+          "c": "что все водители обязаны остановить транспортное средство"
+        }
+      },
+      "sq": {
+        "text": "Pozicioni i trupit të zyrtarit policor me duar të shtrira horizontalisht anash do të thotë se automjetet:",
+        "options": {
+          "a": "të cilëve u është kthyer shpina kanë të drejtë kalimi",
+          "b": "që vijnë nga ana e tij anësore kanë të drejtë kalimi",
+          "c": "se të gjithë shoferët janë të detyruar ta ndalin automjetin"
+        }
+      }
+    },
+    {
+      "id": 360,
+      "en": {
+        "text": "The signal given by the police officer in the picture:",
+        "options": {
+          "a": "may be given only at an intersection",
+          "b": "may be given both at an intersection and on the open road",
+          "c": "may be given only on the open road"
+        }
+      },
+      "ru": {
+        "text": "Сигнал, который подаёт сотрудник полиции на рисунке:",
+        "options": {
+          "a": "может подаваться только на перекрёстке",
+          "b": "может подаваться и на перекрёстке, и на открытой дороге",
+          "c": "может подаваться только на открытой дороге"
+        }
+      },
+      "sq": {
+        "text": "Sinjali që e jep zyrtari policor në figurë:",
+        "options": {
+          "a": "mund të jepet vetëm në kryqëzim",
+          "b": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur",
+          "c": "mund të jepet vetëm në rrugë të hapur"
+        }
+      }
+    },
+    {
+      "id": 361,
+      "en": {
+        "text": "Transverse markings on the carriageway represent:",
+        "options": {
+          "a": "the transverse edge of the carriageway",
+          "b": "the boundary line of the carriageway",
+          "c": "the stop line"
+        }
+      },
+      "ru": {
+        "text": "Поперечная разметка на проезжей части представляет собой:",
+        "options": {
+          "a": "поперечный край проезжей части",
+          "b": "граничную линию проезжей части",
+          "c": "стоп-линию"
+        }
+      },
+      "sq": {
+        "text": "Shenjat tërthore në karrexhatë paraqesin:",
+        "options": {
+          "a": "skajin tërthor të karrexhatës",
+          "b": "vijën kufitare të karrexhatës",
+          "c": "vijën e ndaljes"
+        }
+      }
+    },
+    {
+      "id": 362,
+      "en": {
+        "text": "If public urban transport vehicles use the same traffic lane in which rail vehicles also travel, the device shown in the picture is used for controlling the movement of:",
+        "options": { "a": "trams and buses", "b": "buses only", "c": "trams only" }
+      },
+      "ru": {
+        "text": "Если транспортные средства городского общественного транспорта используют ту же полосу движения, по которой движутся и рельсовые транспортные средства, устройство, показанное на рисунке, используется для регулирования движения:",
+        "options": {
+          "a": "трамваев и автобусов",
+          "b": "только автобусов",
+          "c": "только трамваев"
+        }
+      },
+      "sq": {
+        "text": "Nëse automjetet e transportit publik qytetës e përdorin të njëjtën korsi nëpër të cilën lëvizin edhe automjetet mbi shina, pajisja e paraqitur në figurë përdoret për rregullimin e lëvizjes së:",
+        "options": {
+          "a": "tramvajëve dhe autobusëve",
+          "b": "vetëm autobusëve",
+          "c": "vetëm tramvajëve"
+        }
+      }
+    },
+    {
+      "id": 363,
+      "en": {
+        "text": "The combined signal of raising the arm and using the whistle, as in the picture, represents:",
+        "options": {
+          "a": "a prohibition on proceeding for all drivers",
+          "b": "free passage for vehicles coming from the side only",
+          "c": "a prohibition on proceeding for vehicles coming from the side only"
+        }
+      },
+      "ru": {
+        "text": "Комбинированный сигнал поднятия руки и применения свистка, как на рисунке, представляет собой:",
+        "options": {
+          "a": "запрет проезда для всех водителей",
+          "b": "свободный проезд только для транспортных средств, приближающихся сбоку",
+          "c": "запрет проезда только для транспортных средств, приближающихся сбоку"
+        }
+      },
+      "sq": {
+        "text": "Sinjali i kombinuar i ngritjes së dorës dhe përdorimit të bilbilit, si në figurë, paraqet:",
+        "options": {
+          "a": "ndalim kalimi për të gjithë shoferët",
+          "b": "kalim të lirë vetëm për automjetet që vijnë anash",
+          "c": "ndalim kalimi vetëm për automjetet që vijnë anash"
+        }
+      }
+    },
+    {
+      "id": 364,
+      "en": {
+        "text": "The signal given by the police officer in the picture:",
+        "options": {
+          "a": "may not be given with a whistle at an intersection",
+          "b": "may be given with a whistle at an intersection",
+          "c": "may not be given with a STOP board"
+        }
+      },
+      "ru": {
+        "text": "Сигнал, который подаёт сотрудник полиции на рисунке:",
+        "options": {
+          "a": "не может подаваться со свистком на перекрёстке",
+          "b": "может подаваться со свистком на перекрёстке",
+          "c": "не может подаваться с табличкой STOP"
+        }
+      },
+      "sq": {
+        "text": "Sinjali që e jep zyrtari policor në figurë:",
+        "options": {
+          "a": "nuk mund të jepet me bilbil në kryqëzim",
+          "b": "mund të jepet me bilbil në kryqëzim",
+          "c": "nuk mund të jepet me tabelën STOP"
+        }
+      }
+    },
+    {
+      "id": 365,
+      "en": {
+        "text": "The picture shows the lights at traffic signals; the order in which the lights come on is:",
+        "options": { "a": "1-2-3-4", "b": "1-4-3-2", "c": "1-3-2-4" }
+      },
+      "ru": {
+        "text": "На рисунке показаны сигналы светофора, а порядок их включения:",
+        "options": { "a": "1-2-3-4", "b": "1-4-3-2", "c": "1-3-2-4" }
+      },
+      "sq": {
+        "text": "Në figurë janë paraqitur dritat në semafor, kurse radha e ndezjes së dritave është:",
+        "options": { "a": "1-2-3-4", "b": "1-4-3-2", "c": "1-3-2-4" }
+      }
+    },
+    {
+      "id": 366,
+      "en": {
+        "text": "At traffic signals with three-colour lights:",
+        "options": {
+          "a": "the green light may be flashing",
+          "b": "the green light may not be flashing",
+          "c": "the green light may be on together with the red light"
+        }
+      },
+      "ru": {
+        "text": "На светофорах с трёхцветными сигналами:",
+        "options": {
+          "a": "зелёный сигнал может быть мигающим",
+          "b": "зелёный сигнал не может быть мигающим",
+          "c": "зелёный сигнал может быть включён вместе с красным сигналом"
+        }
+      },
+      "sq": {
+        "text": "Në semaforët me drita trengjyrëshe:",
+        "options": {
+          "a": "drita e gjelbër mund të jetë vezulluese",
+          "b": "drita e gjelbër nuk mund të jetë vezulluese",
+          "c": "drita e gjelbër mund të jetë e ndezur bashkë me dritën e kuqe"
+        }
+      }
+    },
+    {
+      "id": 367,
+      "en": {
+        "text": "The position of the police officer's body as in the picture means that the vehicles:",
+        "options": {
+          "a": "approaching from his side do not have the right to proceed",
+          "b": "that all drivers are obliged to stop the vehicle",
+          "c": "approaching from his side have the right to proceed"
+        }
+      },
+      "ru": {
+        "text": "Положение корпуса сотрудника полиции, как на рисунке, означает, что транспортные средства:",
+        "options": {
+          "a": "приближающиеся с его боковой стороны, не имеют права проезда",
+          "b": "что все водители обязаны остановить транспортное средство",
+          "c": "приближающиеся с его боковой стороны, имеют право проезда"
+        }
+      },
+      "sq": {
+        "text": "Pozicioni i trupit të zyrtarit policor si në figurë do të thotë se automjetet:",
+        "options": {
+          "a": "që vijnë nga ana e tij anësore nuk kanë të drejtë kalimi",
+          "b": "se të gjithë shoferët janë të detyruar ta ndalin automjetin",
+          "c": "që vijnë nga ana e tij anësore kanë të drejtë kalimi"
+        }
+      }
+    },
+    {
+      "id": 368,
+      "en": {
+        "text": "The signal given by the police officer in the picture:",
+        "options": {
+          "a": "may be given only at an intersection",
+          "b": "may be given only on the open road",
+          "c": "may be given both at an intersection and on the open road"
+        }
+      },
+      "ru": {
+        "text": "Сигнал, который подаёт сотрудник полиции на рисунке:",
+        "options": {
+          "a": "может подаваться только на перекрёстке",
+          "b": "может подаваться только на открытой дороге",
+          "c": "может подаваться и на перекрёстке, и на открытой дороге"
+        }
+      },
+      "sq": {
+        "text": "Sinjali që e jep zyrtari policor në figurë:",
+        "options": {
+          "a": "mund të jepet vetëm në kryqëzim",
+          "b": "mund të jepet vetëm në rrugë të hapur",
+          "c": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur"
+        }
+      }
+    },
+    {
+      "id": 369,
+      "en": {
+        "text": "The picture shows:",
+        "options": {
+          "a": "a guide barrier",
+          "b": "a frontal barrier",
+          "c": "an obstacle on the road"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показано:",
+        "options": {
+          "a": "направляющее ограждение",
+          "b": "лобовое ограждение",
+          "c": "препятствие на дороге"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur:",
+        "options": {
+          "a": "barierë orientuese",
+          "b": "barierë ballore",
+          "c": "pengesë në rrugë"
+        }
+      }
+    },
+    {
+      "id": 370,
+      "en": {
+        "text": "The picture shows:",
+        "options": {
+          "a": "traffic lights for controlling the movement of all road users",
+          "b": "traffic lights for controlling the movement of cyclists",
+          "c": "traffic lights for controlling the movement of pedestrians"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан:",
+        "options": {
+          "a": "светофор для регулирования движения всех участников",
+          "b": "светофор для регулирования движения велосипедистов",
+          "c": "светофор для регулирования движения пешеходов"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur:",
+        "options": {
+          "a": "semafor për rregullimin e lëvizjes së të gjithë pjesëmarrësve",
+          "b": "semafor për rregullimin e lëvizjes së çiklistëve",
+          "c": "semafor për rregullimin e lëvizjes së këmbësorëve"
+        }
+      }
+    },
+    {
+      "id": 371,
+      "en": {
+        "text": "An arm raised vertically, as in the picture, means:",
+        "options": {
+          "a": "the end of the validity of the orders given by the police officer",
+          "b": "a prohibition on proceeding for all drivers in traffic",
+          "c": "that vehicles coming from the side have free passage"
+        }
+      },
+      "ru": {
+        "text": "Вертикально поднятая рука, как на рисунке, означает:",
+        "options": {
+          "a": "прекращение действия распоряжений, подаваемых сотрудником полиции",
+          "b": "запрет проезда для всех водителей в дорожном движении",
+          "c": "что транспортные средства, приближающиеся сбоку, имеют свободный проезд"
+        }
+      },
+      "sq": {
+        "text": "Dora e ngritur vertikalisht, si në figurë, do të thotë:",
+        "options": {
+          "a": "pushim i vlefshmërisë së urdhrave që i jep zyrtari policor",
+          "b": "ndalim kalimi për të gjithë shoferët në komunikacion",
+          "c": "se automjetet që vijnë anash kanë kalim të lirë"
+        }
+      }
+    },
+    {
+      "id": 372,
+      "en": {
+        "text": "The signal given by the police officer in the picture:",
+        "options": {
+          "a": "may be given only at an intersection",
+          "b": "may be given only on the open road",
+          "c": "may not be given at an intersection"
+        }
+      },
+      "ru": {
+        "text": "Сигнал, который подаёт сотрудник полиции на рисунке:",
+        "options": {
+          "a": "может подаваться только на перекрёстке",
+          "b": "может подаваться только на открытой дороге",
+          "c": "не может подаваться на перекрёстке"
+        }
+      },
+      "sq": {
+        "text": "Sinjali që e jep zyrtari policor në figurë:",
+        "options": {
+          "a": "mund të jepet vetëm në kryqëzim",
+          "b": "mund të jepet vetëm në rrugë të hapur",
+          "c": "nuk mund të jepet në kryqëzim"
+        }
+      }
+    },
+    {
+      "id": 373,
+      "en": {
+        "text": "At a marked stop, as in the picture, the driver who may stop is the driver of:",
+        "options": {
+          "a": "a passenger car, for passengers to board or alight",
+          "b": "a goods vehicle, only for loading or unloading",
+          "c": "a public passenger transport vehicle"
+        }
+      },
+      "ru": {
+        "text": "На обозначенной остановке, как на рисунке, может остановиться водитель:",
+        "options": {
+          "a": "легкового автомобиля для посадки или высадки пассажиров",
+          "b": "грузового автомобиля только для погрузки или разгрузки",
+          "c": "транспортного средства общественного пассажирского транспорта"
+        }
+      },
+      "sq": {
+        "text": "Në stacionin e shënuar, si në figurë, guxon të ndalet shoferi i:",
+        "options": {
+          "a": "automjetit udhëtar për hyrjen ose daljen e udhëtarëve",
+          "b": "automjetit transportues vetëm për ngarkim ose shkarkim",
+          "c": "automjetit të transportit publik të udhëtarëve"
+        }
+      }
+    },
+    {
+      "id": 374,
+      "en": {
+        "text": "The lights switched on at the traffic signals, as in the picture, mean:",
+        "options": {
+          "a": "that the driver may proceed in the direction of the arrow while not obstructing other road users",
+          "b": "that the driver may proceed in the direction of the arrow without paying attention to other road users",
+          "c": "movement in the direction indicated by the supplementary green arrow is prohibited"
+        }
+      },
+      "ru": {
+        "text": "Включённые сигналы светофора, как на рисунке, означают:",
+        "options": {
+          "a": "что водитель может двигаться в направлении стрелки, не создавая помех другим участникам дорожного движения",
+          "b": "что водитель может двигаться в направлении стрелки, не обращая внимания на других участников дорожного движения",
+          "c": "движение в направлении, обозначенном дополнительной зелёной стрелкой, запрещено"
+        }
+      },
+      "sq": {
+        "text": "Dritat e ndezura në semafor, si në figurë, do të thonë:",
+        "options": {
+          "a": "se shoferi mund të lëvizë në drejtim të shigjetës duke mos i penguar pjesëmarrësit e tjerë në komunikacion",
+          "b": "se shoferi mund të lëvizë në drejtim të shigjetës pa u kushtuar vëmendje pjesëmarrësve të tjerë në komunikacion",
+          "c": "lëvizja e ndaluar në kahun e shënuar me shigjetën plotësuese të gjelbër"
+        }
+      }
+    },
+    {
+      "id": 375,
+      "en": {
+        "text": "The police officer is giving a signal from a vehicle, as in the picture:",
+        "options": {
+          "a": "in accordance with the regulations",
+          "b": "contrary to the regulations",
+          "c": "in accordance with the regulations only in a settlement"
+        }
+      },
+      "ru": {
+        "text": "Сотрудник полиции подаёт сигнал из транспортного средства, как на рисунке:",
+        "options": {
+          "a": "в соответствии с правилами",
+          "b": "вопреки правилам",
+          "c": "в соответствии с правилами только в населённом пункте"
+        }
+      },
+      "sq": {
+        "text": "Zyrtari policor jep sinjal nga automjeti, si në figurë:",
+        "options": {
+          "a": "në pajtim me rregullat",
+          "b": "në kundërshtim me rregullat",
+          "c": "në pajtim me rregullat vetëm në vendbanim"
+        }
+      }
+    },
+    {
+      "id": 376,
+      "en": {
+        "text": "In the situation shown in the picture, the signal the police officer gives to the driver means:",
+        "options": {
+          "a": "that he should accelerate the vehicle",
+          "b": "that he should overtake on the right-hand side",
+          "c": "that he should stop the vehicle"
+        }
+      },
+      "ru": {
+        "text": "В ситуации, показанной на рисунке, сигнал, который сотрудник полиции подаёт водителю, означает:",
+        "options": {
+          "a": "чтобы он ускорил движение транспортного средства",
+          "b": "чтобы он выполнил обгон с правой стороны",
+          "c": "чтобы он остановил транспортное средство"
+        }
+      },
+      "sq": {
+        "text": "Në situatën e paraqitur në figurë, sinjali që zyrtari policor i jep shoferit do të thotë:",
+        "options": {
+          "a": "ta shpejtojë lëvizjen e automjetit",
+          "b": "të kryejë tejkalim nga ana e djathtë",
+          "c": "ta ndalë automjetin"
+        }
+      }
+    },
+    {
+      "id": 377,
+      "en": {
+        "text": "Service braking is not required on:",
+        "options": {
+          "a": "a semi-trailer with three axles",
+          "b": "a passenger car of up to 750 kg unladen mass",
+          "c": "a light trailer"
+        }
+      },
+      "ru": {
+        "text": "Рабочее торможение может не иметь:",
+        "options": {
+          "a": "полуприцеп с тремя осями",
+          "b": "легковой автомобиль до 750 кг собственной массы",
+          "c": "лёгкий прицеп"
+        }
+      },
+      "sq": {
+        "text": "Frenimin e punës mund të mos e ketë:",
+        "options": {
+          "a": "gjysmërimorkioja me tre boshte",
+          "b": "automjeti udhëtar deri në 750 kg masë vetjake",
+          "c": "rimorkioja e lehtë"
+        }
+      }
+    },
+    {
+      "id": 378,
+      "en": {
+        "text": "The fog light at the rear of a vehicle is:",
+        "options": { "a": "red", "b": "amber", "c": "white" }
+      },
+      "ru": {
+        "text": "Противотуманный фонарь на задней стороне транспортного средства:",
+        "options": { "a": "красного цвета", "b": "жёлтого цвета", "c": "белого цвета" }
+      },
+      "sq": {
+        "text": "Drita për mjegull në pjesën e pasme të automjetit është:",
+        "options": {
+          "a": "me ngjyrë të kuqe",
+          "b": "me ngjyrë të verdhë",
+          "c": "me ngjyrë të bardhë"
+        }
+      }
+    },
+    {
+      "id": 379,
+      "en": {
+        "text": "Mudguards on a motor vehicle must be fitted so that they cover the width of:",
+        "options": {
+          "a": "the rear wheels only",
+          "b": "the front wheels only",
+          "c": "all the wheels"
+        }
+      },
+      "ru": {
+        "text": "Крылья на механическом транспортном средстве должны быть установлены так, чтобы покрывать ширину:",
+        "options": {
+          "a": "только задних колёс",
+          "b": "только передних колёс",
+          "c": "всех колёс"
+        }
+      },
+      "sq": {
+        "text": "Mbrojtëset e baltës në automjetin me motor duhet të jenë të vendosura ashtu që ta mbulojnë gjerësinë e:",
+        "options": { "a": "vetëm rrotave të pasme", "b": "vetëm rrotave të përparme", "c": "të gjitha rrotave" }
+      }
+    },
+    {
+      "id": 380,
+      "en": {
+        "text": "A person involved in a road accident who has sustained chest injuries is placed:",
+        "options": {
+          "a": "in a lying position",
+          "b": "on their side",
+          "c": "in a half-sitting position"
+        }
+      },
+      "ru": {
+        "text": "Участника дорожно-транспортного происшествия, получившего травмы грудной клетки, укладываем:",
+        "options": {
+          "a": "в лежачее положение",
+          "b": "на бок",
+          "c": "в полусидячее положение"
+        }
+      },
+      "sq": {
+        "text": "Pjesëmarrësin në aksidentin e komunikacionit që ka pësuar lëndime të kafazit të kraharorit e vendosim:",
+        "options": {
+          "a": "në pozicion të shtrirë",
+          "b": "në anën anësore",
+          "c": "në pozicion gjysmë të ulur"
+        }
+      }
+    },
+    {
+      "id": 381,
+      "en": {
+        "text": "By a burn we mean an injury caused by:",
+        "options": {
+          "a": "inflammation of the skin",
+          "b": "the action of heat",
+          "c": "a stab from a solid object"
+        }
+      },
+      "ru": {
+        "text": "Под ожогом понимаем повреждение, возникшее от:",
+        "options": {
+          "a": "воспаления кожи",
+          "b": "воздействия тепла",
+          "c": "укола твёрдым предметом"
+        }
+      },
+      "sq": {
+        "text": "Me djegie nënkuptojmë lëndimin e shkaktuar nga:",
+        "options": {
+          "a": "inflamacioni i lëkurës",
+          "b": "veprimi i nxehtësisë",
+          "c": "shpimi nga një objekt i fortë"
+        }
+      }
+    },
+    {
+      "id": 382,
+      "en": {
+        "text": "A device on a vehicle that provides normal visibility is considered to be:",
+        "options": { "a": "the fog light", "b": "the position light", "c": "the windscreen" }
+      },
+      "ru": {
+        "text": "Устройством на транспортном средстве, обеспечивающим нормальную видимость, считается:",
+        "options": {
+          "a": "противотуманная фара",
+          "b": "габаритный огонь",
+          "c": "ветровое стекло"
+        }
+      },
+      "sq": {
+        "text": "Si pajisje në automjet që mundëson dukshmëri normale konsiderohet:",
+        "options": { "a": "drita për mjegull", "b": "drita e pozicionit", "c": "xhami i përparmë" }
+      }
+    },
+    {
+      "id": 383,
+      "en": {
+        "text": "The light of a direction indicator must be:",
+        "options": { "a": "amber", "b": "white", "c": "red" }
+      },
+      "ru": {
+        "text": "Свет указателя поворота должен быть:",
+        "options": { "a": "жёлтого цвета", "b": "белого цвета", "c": "красного цвета" }
+      },
+      "sq": {
+        "text": "Drita e treguesit të drejtimit duhet të jetë:",
+        "options": {
+          "a": "me ngjyrë të verdhë",
+          "b": "me ngjyrë të bardhë",
+          "c": "me ngjyrë të kuqe"
+        }
+      }
+    },
+    {
+      "id": 384,
+      "en": {
+        "text": "The anti-lock braking system (ABS) is part of the system for:",
+        "options": {
+          "a": "lighting the carriageway",
+          "b": "transmitting power",
+          "c": "braking"
+        }
+      },
+      "ru": {
+        "text": "Антиблокировочная система (ABS) является частью системы:",
+        "options": {
+          "a": "освещения проезжей части",
+          "b": "передачи мощности",
+          "c": "торможения"
+        }
+      },
+      "sq": {
+        "text": "Sistemi kundër bllokimit (ABS) është pjesë e sistemit për:",
+        "options": {
+          "a": "ndriçimin e karrexhatës",
+          "b": "transmetimin e fuqisë",
+          "c": "frenimin"
+        }
+      }
+    },
+    {
+      "id": 385,
+      "en": {
+        "text": "By immobilisation we mean:",
+        "options": {
+          "a": "placing sterile gauze on the injured part of the body",
+          "b": "putting the injured part of the body into a state of rest",
+          "c": "bringing the injured person back to consciousness"
+        }
+      },
+      "ru": {
+        "text": "Под иммобилизацией понимаем:",
+        "options": {
+          "a": "наложение стерильной марли на повреждённую часть тела",
+          "b": "приведение повреждённой части тела в состояние покоя",
+          "c": "возвращение пострадавшего в сознание"
+        }
+      },
+      "sq": {
+        "text": "Me imobilizim nënkuptojmë:",
+        "options": {
+          "a": "vendosjen e garzës sterile në pjesën e lënduar të trupit",
+          "b": "vendosjen e pjesës së lënduar të trupit në gjendje qetësie",
+          "c": "kthimin e të lënduarit në gjendje të vetëdijes"
+        }
+      }
+    }
+  ]
+}

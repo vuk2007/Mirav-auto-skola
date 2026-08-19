@@ -45,13 +45,14 @@ const OPTION_KEYS = ["a", "b", "c"];
 const LANGS = {
   en: { name: "English", textField: "text_en", optionsField: "options_en" },
   ru: { name: "Russian", textField: "text_ru", optionsField: "options_ru" },
+  sq: { name: "Albanian", textField: "text_sq", optionsField: "options_sq" },
 };
 
 // ── argumenti ──────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
   const out = {
-    langs: ["en", "ru"],
+    langs: ["en", "ru", "sq"],
     limit: Infinity,
     batch: DEFAULT_BATCH,
     model: DEFAULT_MODEL,

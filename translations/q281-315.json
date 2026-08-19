@@ -1,0 +1,941 @@
+{
+  "items": [
+    {
+      "id": 281,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "no entry for vehicles that do not exceed a specified axle load",
+          "b": "no entry for vehicles that exceed a specified axle load",
+          "c": "no entry for vehicles that do not exceed the load capacity indicated on the sign"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "запрещение движения транспортных средств, которые не превышают определённую осевую нагрузку",
+          "b": "запрещение движения транспортных средств, которые превышают определённую осевую нагрузку",
+          "c": "запрещение движения транспортных средств, которые не превышают грузоподъёмность, указанную на знаке"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "ndalim komunikacioni për automjetet që nuk e tejkalojnë ngarkesën e caktuar boshtore",
+          "b": "ndalim komunikacioni për automjetet që e tejkalojnë ngarkesën e caktuar boshtore",
+          "c": "ndalim komunikacioni për automjetet që nuk e tejkalojnë aftësinë mbajtëse të shënuar në shenjë"
+        }
+      }
+    },
+    {
+      "id": 282,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "one-way road for goods vehicles and trailers",
+          "b": "compulsory direction for the kinds of vehicles that are not shown on the sign",
+          "c": "diversion for certain kinds of vehicles"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "дорога с односторонним движением для грузовых автомобилей и прицепов",
+          "b": "обязательное направление для видов транспортных средств, которые не указаны на знаке",
+          "c": "объезд для определённых видов транспортных средств"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "rrugë me komunikacion njëkahësh për automjetet transportuese dhe rimorkiot",
+          "b": "kah i detyrueshëm për llojet e automjeteve që nuk janë dhënë në shenjë",
+          "c": "rrugë rrethuese për lloje të caktuara automjetesh"
+        }
+      }
+    },
+    {
+      "id": 283,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "roundabout traffic",
+          "b": "intersection with a roundabout",
+          "c": "circular intersection"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "круговое движение",
+          "b": "перекрёсток с круговым движением",
+          "c": "круговой перекрёсток"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "qarkullim rrethor",
+          "b": "kryqëzim me qarkullim rrethor",
+          "c": "kryqëzim rrethor"
+        }
+      }
+    },
+    {
+      "id": 284,
+      "en": {
+        "text": "The picture shows road signs indicating:",
+        "options": {
+          "a": "the proximity of a section of road on which there is snow",
+          "b": "the proximity of a section of road on which the snow is cleared by machine",
+          "c": "the proximity of a section of road on which there is black ice and ice"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показаны дорожные знаки, обозначающие:",
+        "options": {
+          "a": "близость участка дороги, на котором лежит снег",
+          "b": "близость участка дороги, на котором снег убирается машинами",
+          "c": "близость участка дороги, на котором гололедица и лёд"
+        }
+      },
+      "sq": {
+        "text": "Në figurë janë paraqitur shenjat rrugore që shënojnë:",
+        "options": {
+          "a": "afërsinë e pjesës së rrugës në të cilën ka borë",
+          "b": "afërsinë e pjesës së rrugës në të cilën bora pastrohet me makina",
+          "c": "afërsinë e pjesës së rrugës në të cilën ka ngricë dhe akull"
+        }
+      }
+    },
+    {
+      "id": 285,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "priority over vehicles from the opposite direction",
+          "b": "priority for vehicles from the opposite direction",
+          "c": "two-way traffic"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "преимущество проезда по отношению к транспортным средствам со встречного направления",
+          "b": "преимущество проезда для транспортных средств со встречного направления",
+          "c": "движение в обоих направлениях"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "përparësi kalimi ndaj automjeteve nga kahu i kundërt",
+          "b": "përparësi kalimi për automjetet nga kahu i kundërt",
+          "c": "komunikacion në të dy kahet"
+        }
+      }
+    },
+    {
+      "id": 286,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "end of minimum permitted speed",
+          "b": "end of speed limit",
+          "c": "end of recommended speed"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "конец наименьшей разрешённой скорости",
+          "b": "конец ограничения скорости",
+          "c": "конец рекомендуемой скорости"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "pushim i shpejtësisë më të vogël të lejuar",
+          "b": "pushim i kufizimit të shpejtësisë",
+          "c": "pushim i shpejtësisë që rekomandohet"
+        }
+      }
+    },
+    {
+      "id": 287,
+      "en": {
+        "text": "The picture shows road signs indicating:",
+        "options": {
+          "a": "no entry for motor vehicles whose width exceeds the width indicated on the sign",
+          "b": "no entry for goods vehicles whose length exceeds the length indicated on the sign",
+          "c": "no entry for goods vehicles whose width exceeds the width indicated on the sign"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показаны дорожные знаки, обозначающие:",
+        "options": {
+          "a": "запрещение движения механических транспортных средств, ширина которых превышает указанную на знаке ширину",
+          "b": "запрещение движения грузовых автомобилей, длина которых превышает указанную на знаке длину",
+          "c": "запрещение движения грузовых автомобилей, ширина которых превышает указанную на знаке ширину"
+        }
+      },
+      "sq": {
+        "text": "Në figurë janë paraqitur shenjat rrugore që shënojnë:",
+        "options": {
+          "a": "ndalim komunikacioni për automjetet me motor gjerësia e të cilave e kalon gjerësinë e shënuar në shenjë",
+          "b": "ndalim komunikacioni për automjetet transportuese gjatësia e të cilave e kalon gjatësinë e shënuar në shenjë",
+          "c": "ndalim komunikacioni për automjetet transportuese gjerësia e të cilave e kalon gjerësinë e shënuar në shenjë"
+        }
+      }
+    },
+    {
+      "id": 288,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "no walking for pedestrians on the carriageway",
+          "b": "no entry for pedestrians",
+          "c": "no walking for pedestrians on the carriageway outside a built-up area"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "запрещение движения пешеходов по проезжей части",
+          "b": "запрещение движения пешеходов",
+          "c": "запрещение движения пешеходов по проезжей части вне населённого пункта"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "ndalim i lëvizjes së këmbësorëve nëpër karrexhatë",
+          "b": "ndalim komunikacioni për këmbësorë",
+          "c": "ndalim i lëvizjes së këmbësorëve nëpër karrexhatë jashtë vendbanimit"
+        }
+      }
+    },
+    {
+      "id": 289,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "guide board",
+          "b": "advance sign for a diversion",
+          "c": "signpost for a diversion"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "щиток направления",
+          "b": "предварительный знак объезда",
+          "c": "указатель объезда"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "tabelë drejtuese",
+          "b": "parashenjë për rrugë rrethuese",
+          "c": "tabelë drejtuese për rrugë rrethuese"
+        }
+      }
+    },
+    {
+      "id": 290,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "signpost for leaving the motorway",
+          "b": "name of a settlement",
+          "c": "name of an interchange"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "указатель съезда с автомагистрали",
+          "b": "название населённого пункта",
+          "c": "название транспортной развязки"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "tabelë drejtuese për dalje nga autostrada",
+          "b": "emri i vendbanimit",
+          "c": "emri i nyjës rrugore"
+        }
+      }
+    },
+    {
+      "id": 291,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "signpost for a settlement",
+          "b": "arrow-shaped signpost",
+          "c": "guide board for a settlement"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "указатель к населённому пункту",
+          "b": "стрелочный указатель",
+          "c": "направляющий щиток к населённому пункту"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "tabelë drejtuese për vendbanim",
+          "b": "tabelë drejtuese në formë shigjete",
+          "c": "tabelë orientuese për vendbanim"
+        }
+      }
+    },
+    {
+      "id": 292,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "transition from two traffic lanes to one in the same direction of travel",
+          "b": "an area on the carriageway where two traffic lanes merge into one",
+          "c": "alternate merging of vehicles"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "переход с двух полос движения на одну в том же направлении движения",
+          "b": "площадка на проезжей части, где две полосы движения сливаются в одну",
+          "c": "поочерёдный пропуск транспортных средств"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "kalim nga dy korsi në një korsi në të njëjtin kah lëvizjeje",
+          "b": "sipërfaqe në karrexhatë ku dy korsi bashkohen në një",
+          "c": "lëshim i rrugës në mënyrë të alternuar"
+        }
+      }
+    },
+    {
+      "id": 293,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "approaching a level crossing with barriers or half-barriers",
+          "b": "approaching a level crossing",
+          "c": "approaching a level crossing without barriers or half-barriers"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "приближение к железнодорожному переезду со шлагбаумами или полушлагбаумами",
+          "b": "приближение к железнодорожному переезду",
+          "c": "приближение к переезду через железнодорожные пути без шлагбаумов или полушлагбаумов"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "afrimi te kalimi i rrugës mbi hekurudhë me bariera ose gjysmëbariera",
+          "b": "afrimi te kalimi i rrugës mbi hekurudhë",
+          "c": "afrimi te kalimi mbi hekurudhë pa bariera ose gjysmëbariera"
+        }
+      }
+    },
+    {
+      "id": 294,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "overturning or skidding of a vehicle",
+          "b": "slippery carriageway",
+          "c": "ice and black ice on the road"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "опрокидывание или занос транспортного средства",
+          "b": "скользкая проезжая часть",
+          "c": "лёд и гололедица на дороге"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "përmbysje ose rrëshqitje e automjetit",
+          "b": "karrexhatë e rrëshqitshme",
+          "c": "akull dhe ngricë në rrugë"
+        }
+      }
+    },
+    {
+      "id": 295,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "speed limit",
+          "b": "recommended speed",
+          "c": "minimum permitted speed"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "ограничение скорости движения",
+          "b": "рекомендуемая скорость",
+          "c": "наименьшая разрешённая скорость"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "kufizim i shpejtësisë së lëvizjes",
+          "b": "shpejtësi që rekomandohet",
+          "c": "shpejtësia më e vogël e lejuar"
+        }
+      }
+    },
+    {
+      "id": 296,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "falling rocks",
+          "b": "flying stones on the road",
+          "c": "landslide on the road"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "обвал камней",
+          "b": "выброс камней на дороге",
+          "c": "оползень на дороге"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "rrëshqitje gurësh",
+          "b": "hedhje gurësh në rrugë",
+          "c": "rrëshqitje dheu në rrugë"
+        }
+      }
+    },
+    {
+      "id": 297,
+      "en": {
+        "text": "The picture shows road signs indicating:",
+        "options": {
+          "a": "an escalator at a distance of 10 metres",
+          "b": "an underground or overground pedestrian crossing at a distance of 10 metres",
+          "c": "an entrance to a garage at a distance of up to 10 metres"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показаны дорожные знаки, обозначающие:",
+        "options": {
+          "a": "эскалатор на расстоянии 10 метров",
+          "b": "подземный или надземный пешеходный переход на расстоянии 10 метров",
+          "c": "въезд в гараж на расстоянии до 10 метров"
+        }
+      },
+      "sq": {
+        "text": "Në figurë janë paraqitur shenjat rrugore që shënojnë:",
+        "options": {
+          "a": "shkallë lëvizëse në largësi prej 10 metrash",
+          "b": "vendkalim nëntokësor ose mbitokësor për këmbësorë në largësi prej 10 metrash",
+          "c": "hyrje në garazh në largësi deri në 10 metra"
+        }
+      }
+    },
+    {
+      "id": 298,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "compulsory use of snow chains",
+          "b": "danger of snow",
+          "c": "danger of black ice"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "обязательное применение цепей противоскольжения",
+          "b": "опасность снега",
+          "c": "опасность гололедицы"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "përdorim i detyrueshëm i zinxhirëve për borë",
+          "b": "rrezik nga bora",
+          "c": "rrezik nga ngrica"
+        }
+      }
+    },
+    {
+      "id": 299,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "no entry for all motor vehicles except motorcycles",
+          "b": "no entry for motorcycles",
+          "c": "no entry for motorised bicycles"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "запрещение движения всех механических транспортных средств, кроме мотоциклов",
+          "b": "запрещение движения мотоциклов",
+          "c": "запрещение движения велосипедов с мотором"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "ndalim komunikacioni për të gjitha automjetet me motor përveç motoçikletave",
+          "b": "ndalim komunikacioni për motoçikleta",
+          "c": "ndalim komunikacioni për biçikleta me motor"
+        }
+      }
+    },
+    {
+      "id": 300,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "minimum distance between parked vehicles",
+          "b": "minimum distance between vehicles",
+          "c": "the distance needed for vehicles to pass each other"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "наименьшая дистанция между припаркованными транспортными средствами",
+          "b": "наименьшая дистанция между транспортными средствами",
+          "c": "расстояние, необходимое для разъезда транспортных средств"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "distanca më e vogël ndërmjet automjeteve të parkuara",
+          "b": "distanca më e vogël ndërmjet automjeteve",
+          "c": "distanca e nevojshme që automjetet të kalojnë përballë"
+        }
+      }
+    },
+    {
+      "id": 301,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "advance sign for a diversion to the right",
+          "b": "advance direction sign for an exit to a particular place",
+          "c": "signpost for lane selection towards a particular place"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "предварительный знак объезда справа",
+          "b": "предварительный указатель съезда к определённому месту",
+          "c": "указатель перестроения для движения к определённому месту"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "parashenjë për rrugë rrethuese nga ana e djathtë",
+          "b": "parashenjë drejtuese për dalje deri te një vend i caktuar",
+          "c": "tabelë drejtuese për rreshtim për lëvizje deri te një vend i caktuar"
+        }
+      }
+    },
+    {
+      "id": 302,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "advance sign for the direct control of traffic at a place where works are being carried out",
+          "b": "control of traffic at an intersection by means of a flag",
+          "c": "end of the road because works are being carried out"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "предварительный знак непосредственного регулирования движения на месте производства работ",
+          "b": "регулирование движения на перекрёстке с помощью флажка",
+          "c": "окончание дороги из-за производства работ"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "parashenjë për rregullimin e drejtpërdrejtë të komunikacionit në vendin ku kryhen punime",
+          "b": "rregullim i komunikacionit në kryqëzim me ndihmën e flamurit",
+          "c": "përfundim i rrugës për shkak të kryerjes së punimeve"
+        }
+      }
+    },
+    {
+      "id": 303,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "no stopping",
+          "b": "no entry in one direction",
+          "c": "no parking"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "запрещение остановки",
+          "b": "запрещение движения в одном направлении",
+          "c": "запрещение стоянки"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "ndalim ndaljeje",
+          "b": "ndalim komunikacioni në një kah",
+          "c": "ndalim parkimi"
+        }
+      }
+    },
+    {
+      "id": 304,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "double dangerous bend or several consecutive bends of which the first is to the right",
+          "b": "double bend or several consecutive bends of which the first is to the right",
+          "c": "double dangerous bend or several consecutive bends of which the first is to the left"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "двойной опасный поворот или несколько последовательных поворотов, первый из которых направо",
+          "b": "двойной поворот или несколько последовательных поворотов, первый из которых направо",
+          "c": "двойной опасный поворот или несколько последовательных поворотов, первый из которых налево"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "kthesë e dyfishtë e rrezikshme ose disa kthesa të njëpasnjëshme prej të cilave e para është djathtas",
+          "b": "kthesë e dyfishtë ose disa kthesa të njëpasnjëshme prej të cilave e para është djathtas",
+          "c": "kthesë e dyfishtë e rrezikshme ose disa kthesa të njëpasnjëshme prej të cilave e para është majtas"
+        }
+      }
+    },
+    {
+      "id": 305,
+      "en": {
+        "text": "The picture shows road signs indicating:",
+        "options": {
+          "a": "the minimum permitted speed over a road length of 2000 metres",
+          "b": "the recommended speed over a road length of 2000 metres",
+          "c": "the minimum permitted speed after 2000 metres have been covered"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показаны дорожные знаки, обозначающие:",
+        "options": {
+          "a": "наименьшую разрешённую скорость на протяжении дороги в 2000 метров",
+          "b": "рекомендуемую скорость на протяжении дороги в 2000 метров",
+          "c": "наименьшую разрешённую скорость после проезда 2000 метров"
+        }
+      },
+      "sq": {
+        "text": "Në figurë janë paraqitur shenjat rrugore që shënojnë:",
+        "options": {
+          "a": "shpejtësinë më të vogël të lejuar në gjatësi rruge prej 2000 metrash",
+          "b": "shpejtësinë që rekomandohet në gjatësi rruge prej 2000 metrash",
+          "c": "shpejtësinë më të vogël të lejuar pas kalimit të 2000 metrave"
+        }
+      }
+    },
+    {
+      "id": 306,
+      "en": {
+        "text": "The picture shows road signs indicating no entry for motor vehicles towing:",
+        "options": {
+          "a": "a light trailer during the period indicated",
+          "b": "a semi-trailer during the period indicated",
+          "c": "a trailer during the period indicated"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показаны дорожные знаки, обозначающие запрещение движения механических транспортных средств, буксирующих:",
+        "options": {
+          "a": "лёгкий прицеп в указанное время",
+          "b": "полуприцеп в указанное время",
+          "c": "прицеп в указанное время"
+        }
+      },
+      "sq": {
+        "text": "Në figurë janë paraqitur shenjat rrugore që shënojnë ndalim komunikacioni për automjetet me motor që tërheqin:",
+        "options": {
+          "a": "rimorkio të lehtë në kohën e shënuar",
+          "b": "gjysmërimorkio në kohën e shënuar",
+          "c": "rimorkio në kohën e shënuar"
+        }
+      }
+    },
+    {
+      "id": 307,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "compulsory emergency exit",
+          "b": "distance to an emergency exit",
+          "c": "signpost for pedestrians"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "обязательный выход в случае опасности",
+          "b": "расстояние до выхода в случае опасности",
+          "c": "указатель для пешеходов"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "dalje e detyrueshme në rast rreziku",
+          "b": "largësia e daljes në rast rreziku",
+          "c": "tabelë drejtuese për këmbësorë"
+        }
+      }
+    },
+    {
+      "id": 308,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "start of a traffic lane for slow vehicles",
+          "b": "end of a traffic lane for slow vehicles",
+          "c": "end of an emergency stopping lane"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "начало полосы движения для медленных транспортных средств",
+          "b": "конец полосы движения для медленных транспортных средств",
+          "c": "конец полосы аварийной остановки"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "fillimi i korsisë për automjete të ngadalta",
+          "b": "përfundimi i korsisë për automjete të ngadalta",
+          "c": "përfundimi i korsisë për ndalje të detyruar"
+        }
+      }
+    },
+    {
+      "id": 309,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "no entry for vehicles with a tarpaulin",
+          "b": "approaching an uneven carriageway",
+          "c": "no entry for tankers"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "запрещение движения транспортных средств с тентом",
+          "b": "приближение к неровной проезжей части",
+          "c": "запрещение движения цистерн"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "ndalim komunikacioni për automjetet me mbulesë",
+          "b": "afrimi te karrexhata e pabarabartë",
+          "c": "ndalim komunikacioni për cisterna"
+        }
+      }
+    },
+    {
+      "id": 310,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "minimum permitted speed",
+          "b": "speed limit",
+          "c": "recommended speed"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "наименьшая разрешённая скорость",
+          "b": "ограничение скорости",
+          "c": "рекомендуемая скорость"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "shpejtësia më e vogël e lejuar",
+          "b": "kufizim i shpejtësisë",
+          "c": "shpejtësi që rekomandohet"
+        }
+      }
+    },
+    {
+      "id": 311,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": { "a": "children on the road", "b": "school zone", "c": "footpath" }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": { "a": "дети на дороге", "b": "школьная зона", "c": "пешеходная дорожка" }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "fëmijë në rrugë",
+          "b": "zonë e shkollës",
+          "c": "shteg për këmbësorë"
+        }
+      }
+    },
+    {
+      "id": 312,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "flying stones",
+          "b": "soft verge",
+          "c": "damaged carriageway"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "выброс камней",
+          "b": "неукреплённая обочина",
+          "c": "повреждённая проезжая часть"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "hedhje gurësh",
+          "b": "bankinë e pastabilizuar",
+          "c": "karrexhatë e dëmtuar"
+        }
+      }
+    },
+    {
+      "id": 313,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "no entry for vehicles marked by the symbol",
+          "b": "no entry for goods vehicles",
+          "c": "entry permitted for vehicles marked by the symbol"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "запрещение движения транспортных средств, обозначенных символом",
+          "b": "запрещение движения грузовых автомобилей",
+          "c": "движение разрешено транспортным средствам, обозначенным символом"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "ndalim komunikacioni për automjetet e shënuara me simbol",
+          "b": "ndalim komunikacioni për automjetet transportuese",
+          "c": "komunikacion i lejuar për automjetet e shënuara me simbol"
+        }
+      }
+    },
+    {
+      "id": 314,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "junction of priority roads",
+          "b": "approaching a priority road",
+          "c": "course of the priority road"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "пересечение дорог с преимуществом проезда",
+          "b": "приближение к дороге с преимуществом проезда",
+          "c": "направление дороги с преимуществом проезда"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "kryqëzim i rrugëve me përparësi kalimi",
+          "b": "afrimi te rruga me përparësi kalimi",
+          "c": "shtrirja e rrugës me përparësi kalimi"
+        }
+      }
+    },
+    {
+      "id": 315,
+      "en": {
+        "text": "The road sign shown in the picture is:",
+        "options": {
+          "a": "intersection with a roundabout",
+          "b": "roundabout traffic",
+          "c": "compulsory U-turn"
+        }
+      },
+      "ru": {
+        "text": "На рисунке показан дорожный знак:",
+        "options": {
+          "a": "перекрёсток с круговым движением",
+          "b": "круговое движение",
+          "c": "обязательный разворот"
+        }
+      },
+      "sq": {
+        "text": "Në figurë është paraqitur shenja rrugore:",
+        "options": {
+          "a": "kryqëzim me qarkullim rrethor",
+          "b": "qarkullim rrethor",
+          "c": "kthim gjysmërrethor i detyrueshëm"
+        }
+      }
+    }
+  ]
+}

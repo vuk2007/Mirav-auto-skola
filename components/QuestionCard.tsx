@@ -64,16 +64,8 @@ export default function QuestionCard({
         {localizedText(question, lang)}
       </h2>
 
-      {/*
-        Fallback na crnogorski ne smije biti tih. Za EN/RU prevod postoji u bazi
-        pa je izostanak izuzetak („prevod nije dostupan"); za albanski se pitanja
-        i ne prevode, samo interfejs — pa tu ide druga formulacija.
-      */}
-      {untranslated && (
-        <p className="mb-3 text-xs text-muted">
-          {lang === "sq" ? t.questionsOnlyInMe : t.translationMissing}
-        </p>
-      )}
+      {/* Fallback na crnogorski ne smije biti tih. */}
+      {untranslated && <p className="mb-3 text-xs text-muted">{t.translationMissing}</p>}
 
       {question.image && (
         <div className="mt-4 mb-5 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
