@@ -10,6 +10,8 @@ korisnik klikne „Počni".
 - **Simulacija ispita** — nasumična pitanja koja zajedno nose **tačno 80 bodova**, tajmer
   45 min sa automatskim krajem, prolaz na **68 od 80 bodova**, navigacija po pitanjima
   (mreža brojeva).
+- **Uputstvo prije ispita** — simulacija ne kreće dok kandidat ne pročita uslove izlaska na
+  ispit i ne potvrdi to. Vidi „Uputstvo prije ispita".
 - **Pregled grešaka** — poslije ispita, svako promašeno pitanje uz sliku, vaš odgovor,
   tačan odgovor i objašnjenje (ako postoji).
 - **Literatura** — modal sa zvaničnim izvorima (gov.me), dostupan sa početnog ekrana i
@@ -17,9 +19,8 @@ korisnik klikne „Počni".
 - **Simulator raskrsnica** — treći režim i samostalna ruta `/simulator`: crtane SVG scene i
   fotografije iz kataloga, kroz 7 familija (pravilo desne strane, glavni/sporedni put,
   semafor, skretanje ulijevo, kružni tok, pješaci, katalog). Vidi „Simulator" niže.
-- **Jezik `me`/`en`/`sq`/`ru`** — crnogorski, engleski, albanski i ruski; prebacivač mijenja
-  cio interfejs (uključujući footer). Sadržaj pitanja se prevodi odvojeno, skriptom — vidi
-  „Objašnjenja i prevodi pitanja".
+- **Jezik `me`/`en`/`sq`/`ru`** — crnogorski, engleski, albanski i ruski. Prevedeni su i
+  interfejs **i sva 421 pitanja**, pa se cio test radi na izabranom jeziku.
 - **Cijena greške** — uz svaki netačan odgovor u vježbi i uz svaku grešku na ispitu piše
   koliko bi taj prekršaj koštao po ZoBS-u, a na rezultatu stoji i zbir. Vidi „Kazne".
 - **`/embed`** — verzija bez zaglavlja, za ugradnju u `<iframe>` na mirav.me.
@@ -254,6 +255,7 @@ lib/
   types.ts            tipovi pitanja i odgovora
   config.ts           parametri ispita  ← ovdje se mijenja EXAM_*
   i18n.ts             UI stringovi me/en/sq/ru
+  examBriefing.ts     uputstvo prije ispita  ← ovdje se provjeravaju tvrdnje o ispitu
   penalties.ts        katalog kazni po ZoBS-u  ← ovdje se provjeravaju iznosi
   penaltyMap.ts       generisano — veza pitanje → prekršaj
   storage.ts          localStorage (jezik, najbolji rezultat, nastavak vježbe)
@@ -395,6 +397,36 @@ to je odluka o brendu, ne tehnička — vidi „Prije objave".
 
 Favicon je [`app/icon.svg`](app/icon.svg) — logotip je izdužen pa bi u kvadratnoj ikoni bio
 nečitak, umjesto njega je inicijal na brend plavoj sa žutim rombom.
+
+### Uputstvo prije ispita
+
+Klik na „Počni ispit" ne pokreće test nego ekran uputstva
+([`components/ExamBriefing.tsx`](components/ExamBriefing.tsx)) sa tri panela: **Važno**
+(dokumenti i odjeća), **Kako se rješava test**, **Obračun poena**. Dugme „Započni test" je
+zaključano dok kandidat ne označi da je pročitao — cilj ekrana nije još jedan klik, nego da
+se uslovi izlaska na ispit stvarno pročitaju. Isti ekran ide i pred „Novi ispit" sa rezultata.
+
+Sadržaj je u [`lib/examBriefing.ts`](lib/examBriefing.ts), na sva četiri jezika. Brojevi se
+**ne prepisuju ručno** — `{minutes}`, `{points}` i `{pass}` se zamjenjuju iz `lib/config.ts`,
+pa promjena `EXAM_MINUTES` mijenja i uputstvo.
+
+> ⚠️ **TODO(MIRAV):** tvrdnje o samom ispitu — potrebna dokumenta, pravila o odjeći i rok
+> važenja položenog teorijskog dijela — preuzete su iz uobičajene prakse auto-škola i
+> **nijesu provjerene uz važeći Pravilnik**. MIRAV ih mora potvrditi ili ispraviti; dovoljno
+> je izmijeniti taj jedan fajl.
+
+### Označavanje odgovora
+
+Ispred svakog ponuđenog odgovora stoji **prazan kvadratić**; klikom se u njega upisuje **✕**
+([`components/OptionButton.tsx`](components/OptionButton.tsx)). Kvadratić ostaje bijel, a ✕ je
+u boji — popunjen kvadratić bi izgledao kao da je odgovor već ovjeren. Tačan odgovor koji
+kandidat **nije** označio ostaje prazan: zeleni okvir kaže da je tačan, a ✕ bi lagao da ga je
+izabrao.
+
+**Automatski prelazak na sljedeće pitanje radi samo na simulaciji ispita**, poslije kratke
+pauze (`AUTO_ADVANCE_MS` u `lib/config.ts`) da kandidat vidi ✕ koji je upisao. U vježbi se
+namjerno ostaje na pitanju — tamo je poenta vidjeti tačan odgovor, pa bi automatski prelazak
+sakrio upravo ono zbog čega se vježba.
 
 ### Kazne
 

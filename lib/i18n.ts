@@ -118,6 +118,13 @@ export interface Dict {
   /** Prikazuje se kad pitanje nema prevod na izabrani jezik. */
   translationMissing: string;
 
+  // Uputstvo prije ispita (vidi lib/examBriefing.ts)
+  briefingTitle: string;
+  briefingLead: string;
+  briefingConfirm: string;
+  briefingStart: string;
+  briefingDisclaimer: string;
+
   // Kazne (vidi lib/penalties.ts)
   penaltyTitle: string;
   penaltyTotal: string;
@@ -282,6 +289,12 @@ const me: Dict = {
   explanationTitle: "Objašnjenje",
   questionsOnlyInMe: "Pitanja su dostupna na crnogorskom.",
   translationMissing: "Prevod nije dostupan, prikazano na crnogorskom.",
+  briefingTitle: "Prije nego što započnete",
+  briefingLead: "Pročitajte uputstvo, pa potvrdite da ste ga pročitali.",
+  briefingConfirm: "Pročitao/la sam uputstvo",
+  briefingStart: "Započni test",
+  briefingDisclaimer:
+    "Ovo je simulacija za vježbu. Zvanični ispit sprovodi nadležni organ i podaci o uslovima izlaska na ispit su informativni — provjerite ih u auto-školi.",
   penaltyTitle: "Koliko bi ovo koštalo u saobraćaju",
   penaltyTotal: "Ove greške bi u saobraćaju koštale",
   penaltyNote:
@@ -436,6 +449,12 @@ const en: Dict = {
   explanationTitle: "Explanation",
   questionsOnlyInMe: "The questions themselves are available in Montenegrin.",
   translationMissing: "No translation available — shown in Montenegrin.",
+  briefingTitle: "Before you start",
+  briefingLead: "Read the instructions, then confirm that you have read them.",
+  briefingConfirm: "I have read the instructions",
+  briefingStart: "Start the test",
+  briefingDisclaimer:
+    "This is a practice simulation. The official exam is administered by the competent authority, and the details about sitting the exam are for information only — check them with the driving school.",
   penaltyTitle: "What this would cost you in traffic",
   penaltyTotal: "In traffic, these mistakes would cost",
   penaltyNote:
@@ -595,6 +614,12 @@ const sq: Dict = {
   explanationTitle: "Shpjegim",
   questionsOnlyInMe: "Pyetjet janë të disponueshme në gjuhën malazeze.",
   translationMissing: "Përkthimi nuk është i disponueshëm — shfaqur në malazeze.",
+  briefingTitle: "Para se të filloni",
+  briefingLead: "Lexoni udhëzimin, pastaj konfirmoni se e keni lexuar.",
+  briefingConfirm: "E kam lexuar udhëzimin",
+  briefingStart: "Fillo testin",
+  briefingDisclaimer:
+    "Ky është simulim për ushtrim. Provimin zyrtar e zhvillon organi kompetent dhe të dhënat për kushtet e daljes në provim janë informative — verifikoni ato në auto-shkollë.",
   penaltyTitle: "Sa do t'ju kushtonte kjo në komunikacion",
   penaltyTotal: "Në komunikacion, këto gabime do të kushtonin",
   penaltyNote:
@@ -756,6 +781,12 @@ const ru: Dict = {
   explanationTitle: "Пояснение",
   questionsOnlyInMe: "Вопросы доступны на черногорском языке.",
   translationMissing: "Перевод недоступен — показано на черногорском.",
+  briefingTitle: "Прежде чем начать",
+  briefingLead: "Прочитайте инструкцию, затем подтвердите, что вы её прочитали.",
+  briefingConfirm: "Я прочитал(а) инструкцию",
+  briefingStart: "Начать тест",
+  briefingDisclaimer:
+    "Это тренировочная симуляция. Официальный экзамен проводит компетентный орган, а сведения об условиях допуска к экзамену носят информационный характер — уточните их в автошколе.",
   penaltyTitle: "Во сколько это обошлось бы на дороге",
   penaltyTotal: "На дороге эти ошибки стоили бы",
   penaltyNote:

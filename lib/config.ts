@@ -100,3 +100,10 @@ export const LITERATURE: readonly { title: string; url: string }[] = [
  * iznosa nije završena — vidi napomenu na vrhu lib/penalties.ts.
  */
 export const PENALTIES_ENABLED = true;
+
+/**
+ * Koliko se zadrži na izabranom odgovoru prije automatskog prelaska na sljedeće
+ * pitanje (samo na simulaciji ispita). Bez pauze kandidat ne vidi ✕ koji je
+ * upisao; predugo i test djeluje sporo.
+ */
+export const AUTO_ADVANCE_MS = 350;

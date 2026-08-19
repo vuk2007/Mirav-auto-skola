@@ -39,13 +39,15 @@ export default function OptionButton({
     tone = "border-blue bg-blue-soft";
   }
 
-  let markerTone = "border-ink bg-panel text-ink";
+  // Kvadratić ostaje bijel, a ✕ se „upisuje" u njega — kao na papirnom testu.
+  // Popunjen kvadratić bi izgledao kao da je odgovor već ovjeren.
+  let markerTone = "border-ink bg-white text-ink";
   if (revealed && isCorrect) {
-    markerTone = "border-green bg-green text-white";
+    markerTone = "border-green bg-white text-green";
   } else if (revealed && selected && !isCorrect) {
-    markerTone = "border-red bg-red text-white";
+    markerTone = "border-red bg-white text-red";
   } else if (selected) {
-    markerTone = "border-blue bg-blue text-white";
+    markerTone = "border-blue bg-white text-blue";
   }
 
   return (
@@ -60,9 +62,12 @@ export default function OptionButton({
     >
       <span
         aria-hidden="true"
-        className={`font-display mt-px flex h-7 w-7 flex-none items-center justify-center rounded-full border-2 text-base font-bold uppercase ${markerTone}`}
+        className={`font-display mt-px flex h-7 w-7 flex-none items-center justify-center rounded-sm border-2 text-lg leading-none font-bold ${markerTone}`}
       >
-        {optionKey}
+        {/* ✕ samo tamo gdje je kandidat označio. Tačan odgovor koji nije
+            označen ostaje prazan — zeleni okvir kaže da je tačan, ✕ bi lagao
+            da ga je kandidat izabrao. */}
+        {selected ? "✕" : ""}
       </span>
       <span className="pt-0.5 text-[0.9375rem] leading-snug sm:text-base">{text}</span>
       {revealed && isCorrect && (

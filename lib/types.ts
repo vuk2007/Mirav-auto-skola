@@ -93,7 +93,7 @@ export type Answer = { kind: "choice"; value: OptionKey } | { kind: "ordering"; 
 export type Mode = "vjezba" | "simulacija" | "simulator";
 
 /** Koji je ekran aktivan — landing se vidi prvi, prije učitavanja pitanja. */
-export type Screen = "landing" | "kviz" | "rezultat";
+export type Screen = "landing" | "uputstvo" | "kviz" | "rezultat";
 
 /** Status jednog pitanja u toku rješavanja. */
 export interface AnswerRecord {

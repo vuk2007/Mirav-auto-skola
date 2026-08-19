@@ -8,6 +8,7 @@ import {
   EXAM_QUOTA,
   EXAM_TOTAL_POINTS,
   EXAM_TIMER_ENABLED,
+  AUTO_ADVANCE_MS,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
 import { LANG_LABELS, LANGS } from "@/lib/i18n";
@@ -40,6 +41,7 @@ import type {
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
 import { useApp } from "./AppProvider";
 import Controls from "./Controls";
+import ExamBriefing from "./ExamBriefing";
 import SimulatorShell from "./sim/SimulatorShell";
 import Landing from "./Landing";
 import LiteratureModal from "./LiteratureModal";
@@ -311,13 +313,38 @@ export default function Quiz({ compact = false }: QuizProps) {
     [answers, isPractice],
   );
 
+  /**
+   * Na ispitu se poslije izbora automatski prelazi na sljedeće pitanje, kao na
+   * zvaničnom testu. U vježbi se **ne** prelazi — tamo je poenta vidjeti tačan
+   * odgovor, pa bi automatski prelazak sakrio upravo ono zbog čega se vježba.
+   */
+  const advanceTimer = useRef<number | null>(null);
+
   const handleSelectOption = useCallback(
     (key: OptionKey) => {
       if (!current || revealed) return;
       recordAnswer(current, { kind: "choice", value: key });
+      if (isPractice) return;
+      if (advanceTimer.current !== null) window.clearTimeout(advanceTimer.current);
+      advanceTimer.current = window.setTimeout(() => {
+        advanceTimer.current = null;
+        // Na posljednjem pitanju se ne mrda — tu se ispit završava dugmetom.
+        setIndex((i) => (i + 1 < pool.length ? i + 1 : i));
+      }, AUTO_ADVANCE_MS);
     },
-    [current, revealed, recordAnswer],
+    [current, revealed, recordAnswer, isPractice, pool.length],
   );
+
+  // Zakazani prelazak se poništava na svakoj promjeni ekrana (kraj ispita,
+  // povratak na landing), da ne pomjeri pitanje poslije napuštanja testa.
+  useEffect(() => {
+    return () => {
+      if (advanceTimer.current !== null) {
+        window.clearTimeout(advanceTimer.current);
+        advanceTimer.current = null;
+      }
+    };
+  }, [screen]);
 
   const handleOrderingChange = useCallback(
     (value: string) => {
@@ -441,12 +468,17 @@ export default function Quiz({ compact = false }: QuizProps) {
           onCategoryChange={setCategory}
           onStartPractice={() => void startPractice(null)}
           onResumePractice={() => void startPractice(saved)}
-          onStartExam={() => void startExam()}
+          onStartExam={() => setScreen("uputstvo")}
           onStartSimulator={() => void startSimulator()}
           saved={saved}
           best={best}
           starting={starting}
         />
+      )}
+
+      {/* Uputstvo se čita prije svake simulacije — i prve i svake sljedeće. */}
+      {screen === "uputstvo" && (
+        <ExamBriefing t={t} lang={lang} onStart={() => void startExam()} starting={starting} />
       )}
 
       {screen === "kviz" && isSimulator && (
@@ -567,7 +599,7 @@ export default function Quiz({ compact = false }: QuizProps) {
           questions={pool}
           records={records}
           timedOut={timedOut}
-          onRestart={() => void startExam()}
+          onRestart={() => setScreen("uputstvo")}
           onBackToLanding={backToLanding}
           onOpenLiterature={() => setLiteratureOpen(true)}
           t={t}
