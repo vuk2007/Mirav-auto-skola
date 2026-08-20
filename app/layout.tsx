@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
 import "./globals.css";
@@ -29,7 +30,16 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="sr-ME" className={`${inter.variable} ${barlowCondensed.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/*
+          Vercel Web Analytics. Šalje podatke samo kad je deploy na Vercelu —
+          lokalno i u buildu van Vercela je bez efekta, pa ne treba uslovljavanje.
+          Stoji u korijenskom layoutu, pa pokriva i `/embed`, koji se na mirav.me
+          učitava u iframe-u; posjete kroz iframe se broje kao i ostale.
+        */}
+        <Analytics />
+      </body>
     </html>
   );
 }

@@ -213,6 +213,23 @@ git add -A && git commit -m "opis izmjene"
 git push
 ```
 
+### Web Analytics
+
+Uključena je Vercel Web Analytics — [`@vercel/analytics`](https://www.npmjs.com/package/@vercel/analytics),
+`<Analytics />` u [`app/layout.tsx`](app/layout.tsx).
+
+Stoji u korijenskom layoutu, pa pokriva sve rute uključujući `/embed`, koji se na mirav.me
+učitava u iframe-u — posjete kroz iframe se broje kao i ostale.
+
+Dvije stvari koje nijesu očigledne:
+
+- **Paket sam po sebi ne uključuje analitiku.** Treba je uključiti i u Vercel konzoli:
+  Project → Analytics → Enable. Bez toga se skripta učitava, ali podaci se ne prikupljaju.
+- **Lokalno `/_vercel/insights/script.js` vraća 404** i to je očekivano — taj fajl servira
+  Vercel, ne Next.js. Ne treba ga „popravljati" ni uslovljavati prikaz komponente.
+
+Cijena: prva strana je porasla sa ~139 kB na ~151 kB.
+
 ### Optimizacija slika
 
 `images.unoptimized = true` u [`next.config.mjs`](next.config.mjs) — slike idu direktno sa
