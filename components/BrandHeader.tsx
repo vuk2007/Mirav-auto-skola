@@ -6,21 +6,20 @@ import { useApp } from "./AppProvider";
 /**
  * Zaglavlje pune stranice.
  *
- * Logo je bijeli na plavoj, a plava je **upečena u fajl** (251×108, bez ijednog
- * providnog piksela). Zato stoji kao pločica na svijetlom zaglavlju, a ne kao
- * slika koja se stapa s podlogom — otud `rounded` i `overflow-hidden`, da uglovi
- * ne budu goli pravougaonik.
+ * Logo je tamnoplavi na **prozirnoj** podlozi (2400×686, 77% piksela prozirno),
+ * pa ide direktno na svijetlo zaglavlje — bez pločice i bez zaobljenja. Ranija
+ * verzija je plavu nosila upečenu u fajlu i zato je morala stajati kao pločica.
  *
- * Visina: logo zauzima samo 56% visine platna (ostalo je margina upečena u fajl),
- * pa pločica mora biti osjetno viša od starog logotipa da bi natpis ostao iste
- * veličine. Otud h-12/h-14 umjesto ranijih h-9/h-10.
+ * Visina: sadržaj ide od ivice do ivice platna (gornja i donja margina su 0), pa
+ * je h-9/h-10 dovoljno da natpis bude iste veličine kao ranije. Rezolucija je
+ * ~10× veća od prvog logotipa, pa je oštar i na retina ekranima.
  *
  * Napomena o boji: plava u logu je #183d73 (tamna mornarska), a brend token
  * `--blue` je #2f6fd0 (svjetlija). To su dvije različite plave i vide se jedna
  * pored druge — vidi „Brend" u README-u.
  *
- * Dostavljeni logo je raster. Ako MIRAV pošalje SVG, dovoljno je zamijeniti
- * public/mirav-logo.png i skinuti `width`/`height`.
+ * Ako MIRAV pošalje SVG, dovoljno je zamijeniti public/mirav-logo.png i skinuti
+ * `width`/`height`.
  */
 export default function BrandHeader() {
   const { goHome, t } = useApp();
@@ -37,10 +36,10 @@ export default function BrandHeader() {
           <Image
             src="/mirav-logo.png"
             alt="Auto-škola MIRAV"
-            width={251}
-            height={108}
+            width={2400}
+            height={686}
             priority
-            className="h-12 w-auto rounded sm:h-14"
+            className="h-9 w-auto sm:h-10"
           />
           <span className="diamond h-3 w-3" aria-hidden="true" />
         </button>

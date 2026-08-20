@@ -384,19 +384,22 @@ isto kao `questions.json`.
 
 ### Brend
 
-Logo je [`public/mirav-logo.png`](public/mirav-logo.png) — **bijeli logotip na plavoj, i ta
-plava je upečena u fajl** (251×108, nijedan piksel nije providan). Zato stoji kao *pločica*
-na svijetlom zaglavlju, sa zaobljenim uglovima da ne bude goli pravougaonik.
+Logo je [`public/mirav-logo.png`](public/mirav-logo.png) — tamnoplavi logotip na **prozirnoj**
+podlozi, **2400×686** (77% piksela je prozirno, nijedan bijeli). Ide direktno na svijetlo
+zaglavlje, bez pločice i bez zaobljenja.
 
-> Ovo je obrnuto od ranije verzije, koja je bila plavi logotip na prozirnoj podlozi i zato
-> nije smjela ići na plavo. Nova verzija plavu nosi sa sobom.
+> Kroz razvoj su se smjenjivale tri verzije: plavi logotip 201×79 (prozirno, ali nizak),
+> zatim bijeli na plavoj sa upečenom pozadinom 251×108 (morao je stajati kao pločica), pa
+> ova. Zato u istoriji postoje dva različita tretmana zaglavlja — mjerodavan je ovaj.
 
-Visina u zaglavlju je `h-12 sm:h-14`, veća nego kod starog logotipa (`h-9 sm:h-10`), jer
-**logo zauzima samo 56% visine platna** — ostalo je margina upečena u fajl. Da je pločica
-ostala na staroj visini, sam natpis bi ispao osjetno manji nego prije.
+Visina u zaglavlju je `h-9 sm:h-10` (36 / 40 px). Sadržaj ide od ivice do ivice platna
+(gornja i donja margina su 0), pa je to dovoljno da natpis bude iste veličine kao ranije;
+prethodna verzija je tražila 48/56 px jer je logo zauzimao samo 56% visine svog platna.
+Širina ispadne 126 / 140 px.
 
-Dostavljeni logo je raster. Ako MIRAV/Digital Artefakt pošalju SVG, dovoljno je zamijeniti
-fajl i skinuti `width`/`height` — putanja se referiše na jednom mjestu
+Rezolucija je oko **deset puta veća** od prvog logotipa, pa nema zamućenja na retina
+ekranima. Ako MIRAV pošalje SVG, dovoljno je zamijeniti fajl i skinuti `width`/`height` —
+putanja se referiše na jednom mjestu
 ([`components/BrandHeader.tsx`](components/BrandHeader.tsx)).
 
 **Dvije plave.** Plava u logu je `#183d73` (tamna mornarska), a token `--blue` je `#2f6fd0`
