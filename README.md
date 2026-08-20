@@ -115,6 +115,7 @@ nema vremensko ograničenje.
 | Putanja                  | Sadržaj                                  |
 | ------------------------ | ---------------------------------------- |
 | `public/questions.json`  | 421 pitanje (polje `area`: I / II / III; prevodi EN / RU / AL) |
+| `references/`            | spoljni izvori za provjeru (spisak kazni sa linkovima na Sl. list) |
 | `translations/`          | izvor prevoda po opsezima pitanja — iz njega se sastavlja `questions.json` |
 | `public/web_images/`     | 281 slika — 208 JPG (fotografije situacija) + 73 PNG (znakovi) |
 | `lib/imageSizes.ts`      | **generisano** — dimenzije svake slike    |
@@ -447,12 +448,36 @@ i ima.
 > `verified: false` i polje `source`. **MIRAV ih mora provjeriti prije objave.** Do tada se
 > cijela funkcija gasi jednim potezom: `PENALTIES_ENABLED = false` u `lib/config.ts`.
 
+Provjera uz drugi izvor:
+
+```bash
+node scripts/check-penalties.mjs
+```
+
+Poredi naš katalog sa [`references/kazne-zobs-2026-08.json`](references/kazne-zobs-2026-08.json)
+— spiskom sastavljenim iz medijskih izvora poslije stupanja izmjena na snagu, koji uz sebe
+nosi i linkove na primarne izvore i plan verifikacije. Trenutno: **11 poklapanja, 2 namjerna
+razilaženja, 5 stavki gdje taj spisak nema iznos, 26 naših prekršaja koje on ne pokriva.**
+
+> Poklapanje dva neprovjerena izvora **nije** potvrda tačnosti. U tom spisku je 0 od 39
+> stavki potvrđeno iz Službenog lista, kao ni kod nas.
+
+Dva namjerna razilaženja, zabilježena u polju `conflict`:
+
+- **parkiranje** — spisak navodi 100 € fiksno, ali iz prekršajnog naloga komunalne policije u
+  Podgorici. To je drugi instrument, ne zakonski raspon, pa je zadržan raspon iz zakona.
+- **pješak** — spisak daje 60–150 € samo za prelazak van obilježenog prelaza, a naš unos
+  pokriva više odredaba, pa rasponi nisu uporedivi jedan na jedan.
+
 Odakle iznosi: kaznene odredbe ZoBS-a, **čl. 319–326** (kazne za vozače i ostale učesnike;
 čl. 315–318 se odnose na pravna lica i nijesu uzeti). Izmjene zakona stupile su na snagu
 **7. 8. 2026**, a prečišćen tekst poslije njih nije bio dostupan pri izradi — unosi koje su
-izmjene promijenile (telefon, dijete na prednjem sjedištu, crveno svjetlo) označeni su sa
-`amended: true` i nose iznos iz medijskih izvještaja, što je najslabija karika i prvo što
-treba provjeriti.
+izmjene promijenile nose iznos iz medijskih izvještaja i označeni su sa `amended: true` —
+to je najslabija karika i prvo što treba provjeriti. Poslije poređenja sa referentnim
+spiskom osam iznosa je podignuto na poslije-izmjena vrijednosti (pojas, dječje sjedište,
+policijski znak, vozačka dozvola, tehnička neispravnost, bicikl, brzina do 10 km/h, crveno
+svjetlo), a dodat je i najviši nivo brzine (preko 70 u naselju / 90 van naselja =
+1.000–2.000 €). Raniji iznosi su sačuvani u polju `conflict`.
 
 Dva sloja:
 

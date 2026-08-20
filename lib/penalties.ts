@@ -42,10 +42,17 @@ export interface Penalty {
   source: string;
   /** Da li je MIRAV potvrdio iznos. Nijedan još nije. */
   verified: boolean;
+  /**
+   * Neslaganje između izvora, zabilježeno da se ne izgubi. Ne prikazuje se
+   * kandidatu — služi onome ko bude provjeravao primarni tekst.
+   * Provjerava se sa `node scripts/check-penalties.mjs`.
+   */
+  conflict?: string;
 }
 
 const ZOBS = "ZoBS, prečišćen tekst (čl. 319–326)";
 const IZMJENE = "Izmjene i dopune ZoBS-a na snazi od 7. 8. 2026 (medijski izvještaji — nije prečišćen tekst)";
+const REF = "references/kazne-zobs-2026-08.json — medijski izvori poslije 7. 8. 2026 (nije Službeni list)";
 
 /** Skraćenica: prekršaj sa jednim rasponom. */
 function one(minEur: number, maxEur: number, article: string): readonly PenaltyTier[] {
@@ -69,9 +76,9 @@ export const PENALTIES: readonly Penalty[] = [
     tiers: [
       {
         label: t("do 10 km/h", "up to 10 km/h", "до 10 км/ч", "deri në 10 km/h"),
-        minEur: 30,
-        maxEur: 100,
-        article: "čl. 324 st. 1 t. 9 / čl. 325 st. 1 t. 3",
+        minEur: 60,
+        maxEur: 120,
+        article: "čl. 324 st. 1 t. 9 / čl. 325 st. 1 t. 3 (izmijenjen)",
       },
       {
         label: t("10–20 km/h", "10–20 km/h", "10–20 км/ч", "10–20 km/h"),
@@ -92,13 +99,28 @@ export const PENALTIES: readonly Penalty[] = [
         article: "čl. 320 st. 1 t. 6",
       },
       {
-        label: t("preko 50 km/h", "over 50 km/h", "свыше 50 км/ч", "mbi 50 km/h"),
+        label: t("50–70 km/h", "50–70 km/h", "50–70 км/ч", "50–70 km/h"),
         minEur: 150,
         maxEur: 1000,
         article: "čl. 319 st. 1 t. 4",
       },
+      {
+        // Najviši nivo: uz kaznu ide i moguće oduzimanje dozvole i zatvor do
+        // 60 dana. Bez njega bi kandidat mislio da je 1.000 € plafon.
+        label: t(
+          "preko 70 u naselju / 90 van naselja",
+          "over 70 in town / 90 outside",
+          "свыше 70 в нас. пункте / 90 вне",
+          "mbi 70 në vendbanim / 90 jashtë",
+        ),
+        minEur: 1000,
+        maxEur: 2000,
+        article: "izmjene 111/2026 (član nije poznat)",
+      },
     ],
-    source: ZOBS,
+    source: `${ZOBS} + ${REF}`,
+    conflict:
+      "Referentni spisak nema iznose za 11–70 km/h; naši za te nivoe su iz teksta prije izmjena 111/2026.",
     verified: false,
   },
   {
@@ -135,9 +157,11 @@ export const PENALTIES: readonly Penalty[] = [
       "Проезд на красный сигнал",
       "Kalimi në dritën e kuqe",
     ),
-    tiers: one(300, 1000, "čl. 320 st. 1 t. 26 i 27 (izmijenjen)"),
+    tiers: one(300, 2000, "čl. 320 st. 1 t. 26 i 27 (izmijenjen)"),
     amended: true,
-    source: IZMJENE,
+    source: REF,
+    conflict:
+      "Raniji naš gornji iznos bio je 1.000 €; referentni spisak navodi 2.000 €. Oba su iz medija.",
     verified: false,
   },
   {
@@ -148,8 +172,11 @@ export const PENALTIES: readonly Penalty[] = [
       "Непристёгнутый ремень безопасности",
       "Rripi i sigurisë i palidhur",
     ),
-    tiers: one(40, 100, "čl. 324 st. 1 t. 4"),
-    source: ZOBS,
+    tiers: one(150, 400, "čl. 324 st. 1 t. 4 (izmijenjen)"),
+    amended: true,
+    source: REF,
+    conflict:
+      "Prije izmjena 111/2026 bilo je 40–100 € (čl. 324 st. 1 t. 4). Novi iznos je iz medijskih izvora, nije iz Službenog lista.",
     verified: false,
   },
   {
@@ -160,8 +187,11 @@ export const PENALTIES: readonly Penalty[] = [
       "Ребёнок до 5 лет без детского кресла",
       "Fëmija deri në 5 vjeç pa ndenjëse sigurie",
     ),
-    tiers: one(40, 100, "čl. 324 st. 1 t. 5"),
-    source: ZOBS,
+    tiers: one(150, 600, "čl. 324 st. 1 t. 5 (izmijenjen)"),
+    amended: true,
+    source: REF,
+    conflict:
+      "Prije izmjena 111/2026 bilo je 40–100 € (čl. 324 st. 1 t. 5). Novi iznos je iz medijskih izvora, nije iz Službenog lista.",
     verified: false,
   },
   {
@@ -246,6 +276,8 @@ export const PENALTIES: readonly Penalty[] = [
     ),
     tiers: one(60, 150, "čl. 323 st. 1 t. 9 i 11 (čl. 60)"),
     source: ZOBS,
+    conflict:
+      "Referentni spisak navodi 100 € fiksno, ali iz prekršajnog naloga komunalne policije u Podgorici — to je drugi instrument, ne zakonski raspon. Zato je zadržan raspon iz zakona.",
     verified: false,
   },
   {
@@ -268,8 +300,11 @@ export const PENALTIES: readonly Penalty[] = [
       "Невыполнение распоряжения сотрудника полиции",
       "Mosveprimi sipas urdhrit të zyrtarit policor",
     ),
-    tiers: one(80, 300, "čl. 321 st. 1 t. 30"),
-    source: ZOBS,
+    tiers: one(500, 2000, "čl. 321 st. 1 t. 30 (izmijenjen)"),
+    amended: true,
+    source: REF,
+    conflict:
+      "Prije izmjena 111/2026 bilo je 80–300 € (čl. 321 st. 1 t. 30). Novi iznos je iz medijskih izvora, nije iz Službenog lista.",
     verified: false,
   },
   {
@@ -340,8 +375,11 @@ export const PENALTIES: readonly Penalty[] = [
       "Транспортное средство не отвечает требованиям",
       "Automjeti nuk i plotëson kushtet e parapara",
     ),
-    tiers: one(70, 200, "čl. 322 st. 1 t. 39 (čl. 242)"),
-    source: ZOBS,
+    tiers: one(300, 1000, "čl. 322 st. 1 t. 39 (izmijenjen)"),
+    amended: true,
+    source: REF,
+    conflict:
+      "Prije izmjena 111/2026 bilo je 70–200 € (čl. 322 st. 1 t. 39). Novi iznos je iz medijskih izvora, nije iz Službenog lista.",
     verified: false,
   },
   {
@@ -376,8 +414,11 @@ export const PENALTIES: readonly Penalty[] = [
       "Езда на велосипеде с нарушением правил",
       "Vozitje jo e rregullt e biçikletës",
     ),
-    tiers: one(40, 100, "čl. 324 st. 1 t. 19 i 20"),
-    source: ZOBS,
+    tiers: one(60, 150, "čl. 324 st. 1 t. 19 i 20 (izmijenjen)"),
+    amended: true,
+    source: REF,
+    conflict:
+      "Prije izmjena 111/2026 bilo je 40–100 € (čl. 324 st. 1 t. 19 i 20). Novi iznos je iz medijskih izvora, nije iz Službenog lista.",
     verified: false,
   },
   {
@@ -390,6 +431,8 @@ export const PENALTIES: readonly Penalty[] = [
     ),
     tiers: one(40, 150, "čl. 323 st. 1 t. 18–20 / čl. 324 st. 1 t. 23–25"),
     source: ZOBS,
+    conflict:
+      "Referentni spisak daje 60–150 € samo za prelazak van obilježenog prelaza; naš unos pokriva više odredaba (čl. 323 t. 18–20 i čl. 324 t. 23–25), pa raspon nije uporediv jedan na jedan.",
     verified: false,
   },
   {
@@ -496,8 +539,11 @@ export const PENALTIES: readonly Penalty[] = [
       "Управление без действующего водительского удостоверения",
       "Drejtimi pa patentë të vlefshme",
     ),
-    tiers: one(150, 1000, "čl. 319 st. 1 t. 22 (čl. 176)"),
-    source: ZOBS,
+    tiers: one(500, 2000, "čl. 319 st. 1 t. 22 (izmijenjen)"),
+    amended: true,
+    source: REF,
+    conflict:
+      "Prije izmjena 111/2026 bilo je 150–1000 € (čl. 319 st. 1 t. 22). Novi iznos je iz medijskih izvora, nije iz Službenog lista.",
     verified: false,
   },
   {

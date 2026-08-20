@@ -1,0 +1,502 @@
+{
+  "meta": {
+    "naziv": "Kazne po Zakonu o bezbjednosti saobraćaja na putevima Crne Gore",
+    "vazi_od": "2026-08-07",
+    "valuta": "EUR",
+    "generisano": "2026-08-19",
+    "upozorenje": "NIJE PRAVNI SAVJET. Podaci ispod su vecinom iz medijskih izvora. Svaka stavka sa status != 'potvrdjeno_sluzbeni_list' mora se verifikovati protiv primarnog teksta prije upotrebe u produkciji."
+  },
+
+  "pravni_osnov": {
+    "osnovni_zakon": {
+      "naziv": "Zakon o bezbjednosti saobraćaja na putevima",
+      "sl_list": "033/12",
+      "url": "https://www.sluzbenilist.me/propisi/319139"
+    },
+    "izmjene": [
+      {
+        "sl_list": "058/2014",
+        "url": "https://www.sluzbenilist.me/propisi/224620AF-EBF5-400C-962F-16C9A3379543",
+        "napomena": "Uvela definiciju 'mladi vozač = vozač do 24 godine života' i 'vozač početnik = manje od 12 mjeseci iskustva'."
+      },
+      {
+        "sl_list": "014/17",
+        "url": "https://www.sluzbenilist.me/propisi/332090",
+        "napomena": "Odluka Ustavnog suda U-I br. 3/16"
+      },
+      {
+        "sl_list": "nepoznato",
+        "url": "https://www.sluzbenilist.me/propisi/337654",
+        "napomena": "Izmjene cija je primjena pocela 12.02.2020"
+      },
+      {
+        "sl_list": "111/2026",
+        "objavljeno": "2026-07-30",
+        "stupilo_na_snagu": "2026-08-07",
+        "registarski_broj": 1986,
+        "url": "https://www.sluzbenilist.me/propisi/396630",
+        "napomena": "AKTUELNE IZMJENE. Tekst je na sajtu dostupan samo kao slike stranica (rasterizovan PDF), nije masinski citljiv bez OCR-a."
+      }
+    ],
+    "konsolidovani_tekst": {
+      "dostupan": false,
+      "napomena": "Na dan generisanja nije pronadjen javni konsolidovani tekst koji ukljucuje izmjene 111/2026. paragraf.me i bijelopolje.co.me imaju samo starije verzije."
+    }
+  },
+
+  "status_legenda": {
+    "potvrdjeno_sluzbeni_list": "Preuzeto iz primarnog izvora, broj clana naveden.",
+    "medijski_izvor_nakon_stupanja": "Objavljeno nakon 07.08.2026, vjerovatno tacno, ali bez broja clana.",
+    "medijski_izvor_nacrt": "Iz nacrta na javnoj raspravi (2025). MOZE SE RAZLIKOVATI od usvojenog teksta.",
+    "zastarjelo": "Iz verzije zakona prije 111/2026. Ne koristiti bez provjere.",
+    "nepoznato": "Nema podataka. Popuniti iz primarnog izvora."
+  },
+
+  "kazne": [
+    {
+      "id": "brzina-01",
+      "kategorija": "brzina",
+      "prekrsaj": "Prekoracenje ogranicenja brzine do 10 km/h",
+      "min_eur": 60,
+      "max_eur": 120,
+      "razlika_naselje_vannaselje": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "brzina-02",
+      "kategorija": "brzina",
+      "prekrsaj": "Prekoracenje 11-20 km/h",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato",
+      "todo": "Prethodna verzija zakona je imala odvojene iznose za naselje i van naselja. Provjeriti da li 111/2026 zadrzava tu podjelu."
+    },
+    {
+      "id": "brzina-03",
+      "kategorija": "brzina",
+      "prekrsaj": "Prekoracenje 21-30 km/h",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato"
+    },
+    {
+      "id": "brzina-04",
+      "kategorija": "brzina",
+      "prekrsaj": "Prekoracenje 31-40 km/h",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato"
+    },
+    {
+      "id": "brzina-05",
+      "kategorija": "brzina",
+      "prekrsaj": "Prekoracenje 41-50 km/h",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato"
+    },
+    {
+      "id": "brzina-06",
+      "kategorija": "brzina",
+      "prekrsaj": "Prekoracenje 51-70 km/h",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato"
+    },
+    {
+      "id": "brzina-07",
+      "kategorija": "brzina",
+      "prekrsaj": "Prekoracenje preko 70 km/h u naselju, odnosno preko 90 km/h van naselja",
+      "min_eur": 1000,
+      "max_eur": 2000,
+      "dodatne_mjere": ["moguce oduzimanje vozacke dozvole", "moguca kazna zatvora do 60 dana"],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+
+    {
+      "id": "alkohol-01",
+      "kategorija": "alkohol_droge",
+      "prekrsaj": "Koncentracija alkohola do 0,30 promila",
+      "min_eur": 0,
+      "max_eur": 0,
+      "dodatne_mjere": [],
+      "napomena": "Dozvoljeno za opstu populaciju vozaca.",
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "alkohol-02",
+      "kategorija": "alkohol_droge",
+      "prekrsaj": "Koncentracija alkohola 0,30-0,50 promila",
+      "min_eur": 70,
+      "max_eur": 200,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "alkohol-03",
+      "kategorija": "alkohol_droge",
+      "prekrsaj": "Koncentracija alkohola 0,50-1,00 promila",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato",
+      "todo": "Medijski izvori pominju 'znatno ostrije' bez iznosa."
+    },
+    {
+      "id": "alkohol-04",
+      "kategorija": "alkohol_droge",
+      "prekrsaj": "Koncentracija alkohola preko 1,00 promila",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": ["moguca kazna zatvora do 60 dana"],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "todo": "Novcani raspon nije objavljen."
+    },
+    {
+      "id": "alkohol-05",
+      "kategorija": "alkohol_droge",
+      "prekrsaj": "Odbijanje alkotestiranja / testiranja na droge",
+      "min_eur": 600,
+      "max_eur": 2000,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "alkohol-06",
+      "kategorija": "alkohol_droge",
+      "prekrsaj": "Upravljanje vozilom pod dejstvom opojnih droga",
+      "min_eur": 300,
+      "max_eur": 2000,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+
+    {
+      "id": "tezi-01",
+      "kategorija": "najtezi_prekrsaji",
+      "prekrsaj": "Prolazak kroz crveno svjetlo",
+      "min_eur": 300,
+      "max_eur": 2000,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "tezi-02",
+      "kategorija": "najtezi_prekrsaji",
+      "prekrsaj": "Nepostupanje po znaku ovlascenog policijskog sluzbenika za zaustavljanje",
+      "min_eur": 500,
+      "max_eur": 2000,
+      "dodatne_mjere": ["moguce oduzimanje vozacke dozvole"],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "tezi-03",
+      "kategorija": "najtezi_prekrsaji",
+      "prekrsaj": "Bahata voznja",
+      "min_eur": null,
+      "max_eur": 1000,
+      "dodatne_mjere": ["moguce oduzimanje vozacke dozvole"],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "todo": "Izvor navodi 'do 1.000 eura i vise' - formulacija je nejasna, provjeriti tacan raspon."
+    },
+
+    {
+      "id": "vozilo-01",
+      "kategorija": "vozilo_dokumenta",
+      "prekrsaj": "Upravljanje neregistrovanim vozilom",
+      "min_eur": 300,
+      "max_eur": 1000,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "vozilo-02",
+      "kategorija": "vozilo_dokumenta",
+      "prekrsaj": "Upravljanje tehnicki neispravnim vozilom",
+      "min_eur": 300,
+      "max_eur": 1000,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "vozilo-03",
+      "kategorija": "vozilo_dokumenta",
+      "prekrsaj": "Upravljanje vozilom bez vozacke dozvole",
+      "min_eur": 500,
+      "max_eur": 2000,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "vozilo-04",
+      "kategorija": "vozilo_dokumenta",
+      "prekrsaj": "Vlasnik/korisnik vozila ne dostavi podatke o vozacu u roku od 8 dana",
+      "min_eur": 300,
+      "max_eur": 600,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "napomena": "Nova odredba uvedena izmjenama 111/2026."
+    },
+    {
+      "id": "vozilo-05",
+      "kategorija": "vozilo_dokumenta",
+      "prekrsaj": "Uredjaj za ometanje ili detekciju policijskih radara u vozilu",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nacrt",
+      "todo": "Pominje se u nacrtu iz 2025. Provjeriti da li je odredba usvojena i sa kojim iznosom."
+    },
+    {
+      "id": "vozilo-06",
+      "kategorija": "vozilo_dokumenta",
+      "prekrsaj": "Nepropisno zatamnjena stakla",
+      "min_eur": 150,
+      "max_eur": 1000,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "zastarjelo",
+      "napomena": "Standard: vjetrobran min 75% propustanja svjetlosti, prednja bocna min 70%. Iznos je iz opisa zakona PRIJE izmjena 111/2026.",
+      "todo": "Provjeriti da li je iznos izmijenjen."
+    },
+
+    {
+      "id": "putnici-01",
+      "kategorija": "putnici_djeca",
+      "prekrsaj": "Nevezan sigurnosni pojas",
+      "min_eur": 150,
+      "max_eur": 400,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "konflikt": "Nacrt iz 2025. je za nekoriscenje bezbjednosnih sjedista za djecu navodio 80-250 EUR. Izvori nakon stupanja navode drugacije. Razrijesiti iz primarnog teksta."
+    },
+    {
+      "id": "putnici-02",
+      "kategorija": "putnici_djeca",
+      "prekrsaj": "Koriscenje mobilnog telefona tokom upravljanja vozilom",
+      "min_eur": 150,
+      "max_eur": 400,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "napomena": "Prethodni iznos je bio 90-250 EUR."
+    },
+    {
+      "id": "putnici-03",
+      "kategorija": "putnici_djeca",
+      "prekrsaj": "Prevoz djeteta bez odgovarajuce sjedalice / nepropisan prevoz djece",
+      "min_eur": 150,
+      "max_eur": 600,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "putnici-04",
+      "kategorija": "putnici_djeca",
+      "prekrsaj": "Prevoz djeteta mladjeg od 12 godina na prednjem sjedistu",
+      "min_eur": 150,
+      "max_eur": 400,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nacrt"
+    },
+
+    {
+      "id": "mladi-01",
+      "kategorija": "mladi_vozaci",
+      "prekrsaj": "Vozac 18-21 god. upravlja vozilom u periodu od ponoci do 05:00",
+      "min_eur": 300,
+      "max_eur": 600,
+      "dodatne_mjere": ["zabrana upravljanja motornim vozilom 60 dana"],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "konflikt": "Nacrt iz 2025. je predvidjao period 23:00-06:00. Izvori nakon stupanja navode ponoc-05:00. Razrijesiti iz primarnog teksta."
+    },
+    {
+      "id": "mladi-02",
+      "kategorija": "mladi_vozaci",
+      "prekrsaj": "Vozac 18-21 god. upravlja vozilom B kategorije snage preko 80 kW bez pratnje lica sa najmanje 5 god. B dozvole",
+      "min_eur": 300,
+      "max_eur": 600,
+      "dodatne_mjere": ["zabrana upravljanja motornim vozilom 60 dana"],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "mladi-03",
+      "kategorija": "mladi_vozaci",
+      "prekrsaj": "Mladi vozac sa bilo kojom koncentracijom alkohola (nulta tolerancija)",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato",
+      "konflikt": "Definicija 'mladog vozaca' u osnovnom zakonu je 'vozac do 24 godine zivota' (uvedeno izmjenama 58/2014). Novi rezim nocne voznje i 80 kW se odnosi na 18-21. Provjeriti da li se nulta tolerancija veze za 21 ili 24 godine."
+    },
+
+    {
+      "id": "lev-01",
+      "kategorija": "laka_elektricna_vozila",
+      "prekrsaj": "Roditelj/staratelj dozvoli djetetu mladjem od 16 god. da upravlja lakim elektricnim vozilom na javnom putu",
+      "min_eur": 150,
+      "max_eur": 400,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "napomena": "Zabrana se odnosi samo na javne puteve, ne na privatne povrsine."
+    },
+    {
+      "id": "lev-02",
+      "kategorija": "laka_elektricna_vozila",
+      "prekrsaj": "Upravljanje lakim elektricnim vozilom bez fabricke nalepnice proizvodjaca",
+      "min_eur": 150,
+      "max_eur": 400,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "lev-03",
+      "kategorija": "laka_elektricna_vozila",
+      "prekrsaj": "Prevoz vise od jednog lica na lakom elektricnom vozilu ili vuca prikolice/drugog vozila",
+      "min_eur": 150,
+      "max_eur": 300,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "lev-04",
+      "kategorija": "laka_elektricna_vozila",
+      "prekrsaj": "Upravljanje bez drzanja upravljaca, pridrzavanje za drugo vozilo, prevoz tereta koji ugrozava stabilnost, koriscenje slusalica",
+      "min_eur": 80,
+      "max_eur": 250,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "lev-05",
+      "kategorija": "laka_elektricna_vozila",
+      "prekrsaj": "Kretanje lakim elektricnim vozilom po nedozvoljenim putevima",
+      "min_eur": null,
+      "max_eur": 400,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "napomena": "Primarno se mora koristiti biciklisticka staza/traka. Ako ne postoji, maloljetnici smiju na kolovoz samo gdje je ogranicenje do 30 km/h."
+    },
+    {
+      "id": "lev-06",
+      "kategorija": "laka_elektricna_vozila",
+      "prekrsaj": "Nepropisna voznja lakog elektricnog vozila (opsta odredba)",
+      "min_eur": 60,
+      "max_eur": 300,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "todo": "Vjerovatno preklapanje sa lev-03/lev-04. Razrijesiti iz primarnog teksta."
+    },
+
+    {
+      "id": "pjesaci-01",
+      "kategorija": "pjesaci_biciklisti",
+      "prekrsaj": "Prelazak kolovoza van obiljezenog pjesackog prelaza",
+      "min_eur": 60,
+      "max_eur": 150,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "pjesaci-02",
+      "kategorija": "pjesaci_biciklisti",
+      "prekrsaj": "Voznja bicikla bez svjetala",
+      "min_eur": 60,
+      "max_eur": 150,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja"
+    },
+    {
+      "id": "pjesaci-03",
+      "kategorija": "pjesaci_biciklisti",
+      "prekrsaj": "Dijete mladje od 11 god. vozi bicikl bez nadzora lica starijeg od 16 god.",
+      "min_eur": null,
+      "max_eur": null,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "nepoznato",
+      "napomena": "Starosni pragovi: samostalno na lokalnim putevima od 14 god, na magistralnim i regionalnim od 16 god."
+    },
+
+    {
+      "id": "parking-01",
+      "kategorija": "parkiranje",
+      "prekrsaj": "Nepropisno parkiranje (trotoar, prolaz)",
+      "min_eur": 100,
+      "max_eur": 100,
+      "dodatne_mjere": [],
+      "clan": null,
+      "status": "medijski_izvor_nakon_stupanja",
+      "napomena": "Iznos od 100 EUR pominje se u kontekstu prekrsajnih naloga komunalne policije u Podgorici. Nije jasno da li je fiksni iznos ili donja granica raspona."
+    }
+  ],
+
+  "sistemske_odredbe": [
+    "Ukinuto fizicko oduzimanje vozacke dozvole na licu mjesta. Ogranicenje prava na upravljanje evidentira se u posebnoj evidenciji, vozac dobija rjesenje.",
+    "Mjere se preduzimaju na osnovu kaznenih bodova iz Prekrsajne evidencije, po rjesenjima sudova za prekrsaje ili konacnim prekrsajnim nalozima.",
+    "Uvedeno pravo policije da privremeno oduzme vozilo licu pravosnazno osudjenom za teze saobracajne prekrsaje u prethodne dvije godine.",
+    "Obavezno uzimanje krvi/urina pri uvidjaju sada se odnosi samo na nezgode sa poginulim licima (ranije i na nezgode sa povrijedjenim).",
+    "Najavljeno postavljanje oko 100 stacionarnih radara."
+  ],
+
+  "uputstvo_za_verifikaciju": {
+    "cilj": "Zamijeniti sve stavke sa status != 'potvrdjeno_sluzbeni_list' podacima iz primarnog izvora i popuniti polje 'clan'.",
+    "koraci": [
+      "1. Skinuti izmjene 111/2026: https://www.sluzbenilist.me/propisi/396630 - paginirano preko ?page=N, stranice se serviraju kao slike, potreban OCR (tesseract, jezik hrv ili srp_latn).",
+      "2. Skinuti osnovni zakon 033/12: https://www.sluzbenilist.me/propisi/319139 i ranije izmjene iz pravni_osnov.izmjene.",
+      "3. Kaznene odredbe su u zavrsnom dijelu osnovnog zakona (u verziji 33/12 u opsegu oko cl. 300-330). Izmjene 111/2026 mijenjaju pojedine od njih - primijeniti ih na osnovni tekst da se dobije konsolidovana verzija.",
+      "4. Za svaku stavku popuniti 'clan', 'min_eur', 'max_eur' i postaviti status na 'potvrdjeno_sluzbeni_list'.",
+      "5. Razrijesiti sve stavke koje imaju polje 'konflikt'.",
+      "6. Dodati prekrsaje kojih nema u ovoj listi - lista je izvedena iz medijskih pregleda i NIJE potpuna."
+    ],
+    "poznate_rupe": [
+      "Cijela srednja skala prekoracenja brzine (11-70 km/h) nema iznose.",
+      "Alkohol 0,50-1,00 i preko 1,00 promila nemaju novcane iznose.",
+      "Kazneni bodovi po prekrsaju nisu uopste mapirani.",
+      "Kazne za pravna lica i odgovorna lica u pravnom licu nisu ukljucene.",
+      "Prekrsaji vezani za teretna vozila, autobuse, tahograf i vrijeme upravljanja nisu ukljuceni.",
+      "Prekrsaji vezani za saobracajnu signalizaciju, preticanje, prvenstvo prolaza i mimoilazenje nisu ukljuceni."
+    ]
+  }
+}
