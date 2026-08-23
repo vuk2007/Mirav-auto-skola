@@ -40,6 +40,7 @@ export interface Dict {
   examDesc: string;
   examStart: string;
   metaPoints: string;
+  metaQuestions: string;
   metaMinutes: string;
   metaPass: string;
   examLimitationNote: string;
@@ -145,6 +146,8 @@ export interface Dict {
 
   // Oznake kategorija
   badgeSign: string;
+  badgePolice: string;
+  badgeMarking: string;
   badgeIntersection: string;
   badgeOrdering: string;
   badgeText: string;
@@ -203,6 +206,7 @@ const me: Dict = {
     "Nasumična pitanja iz cijele baze, bez prikaza tačnog odgovora dok ispit traje. Na kraju dobijate bodove i ocjenu prolaza.",
   examStart: "Počni ispit",
   metaPoints: "bodova",
+  metaQuestions: "pitanja",
   metaMinutes: "minuta",
   metaPass: "prag",
   examLimitationNote:
@@ -312,6 +316,8 @@ const me: Dict = {
   orderingCorrectIs: "tačan redoslijed je",
 
   badgeSign: "Saobraćajni znak",
+  badgePolice: "Znak policajca",
+  badgeMarking: "Oznake na kolovozu",
   badgeIntersection: "Raskrsnica",
   badgeOrdering: "Redoslijed prolaska",
   badgeText: "Tekstualno pitanje",
@@ -366,6 +372,7 @@ const en: Dict = {
     "Random questions from the whole bank, with no correct answers revealed while the exam runs. You get your score and a pass mark at the end.",
   examStart: "Start exam",
   metaPoints: "points",
+  metaQuestions: "questions",
   metaMinutes: "minutes",
   metaPass: "pass at",
   examLimitationNote:
@@ -472,6 +479,8 @@ const en: Dict = {
   orderingCorrectIs: "the correct order is",
 
   badgeSign: "Road sign",
+  badgePolice: "Police signal",
+  badgeMarking: "Road markings",
   badgeIntersection: "Intersection",
   badgeOrdering: "Order of passage",
   badgeText: "Text question",
@@ -526,6 +535,7 @@ const sq: Dict = {
     "Pyetje të rastësishme nga e gjithë baza, pa shfaqur përgjigjen e saktë derisa zgjat provimi. Në fund merrni pikët dhe vlerësimin e kalimit.",
   examStart: "Fillo provimin",
   metaPoints: "pikë",
+  metaQuestions: "pyetje",
   metaMinutes: "minuta",
   metaPass: "pragu",
   examLimitationNote:
@@ -639,6 +649,8 @@ const sq: Dict = {
   orderingCorrectIs: "radha e saktë është",
 
   badgeSign: "Shenjë rrugore",
+  badgePolice: "Sinjali i policisë",
+  badgeMarking: "Shenjat në karrexhatë",
   badgeIntersection: "Kryqëzim",
   badgeOrdering: "Radha e kalimit",
   badgeText: "Pyetje me tekst",
@@ -693,6 +705,7 @@ const ru: Dict = {
     "Случайные вопросы из всей базы, правильные ответы не показываются до конца экзамена. В конце вы получаете баллы и оценку прохождения.",
   examStart: "Начать экзамен",
   metaPoints: "баллов",
+  metaQuestions: "вопросов",
   metaMinutes: "минут",
   metaPass: "порог",
   examLimitationNote:
@@ -806,6 +819,8 @@ const ru: Dict = {
   orderingCorrectIs: "правильный порядок",
 
   badgeSign: "Дорожный знак",
+  badgePolice: "Сигнал полицейского",
+  badgeMarking: "Разметка на дороге",
   badgeIntersection: "Перекрёсток",
   badgeOrdering: "Порядок проезда",
   badgeText: "Текстовый вопрос",

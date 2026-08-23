@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 
-import {
-  EXAM_MINUTES,
-  EXAM_PASS_POINTS,
-  EXAM_QUESTION_COUNT,
-  EXAM_TOTAL_POINTS,
-} from "@/lib/config";
+import { EXAM_MINUTES, EXAM_QUESTION_COUNT, examPassPoints } from "@/lib/config";
 import { EXAM_BRIEFING, fillBriefing } from "@/lib/examBriefing";
 import type { Dict, Lang } from "@/lib/i18n";
 
@@ -18,6 +13,11 @@ interface ExamBriefingProps {
   onStart: () => void;
   /** Učitavanje pitanja je u toku — dugme se zaključava da se ne pokrene dvaput. */
   starting: boolean;
+  /**
+   * Ukupno bodova na **ovom** testu. Ispit je već sastavljen kad se uputstvo
+   * prikaže, pa uputstvo piše stvaran broj, a ne pretpostavljen.
+   */
+  totalPoints: number;
 }
 
 /**
@@ -27,13 +27,19 @@ interface ExamBriefingProps {
  * još jedan klik na putu do testa, nego da kandidat zaista pročita šta mu treba
  * da izađe na ispit. Sadržaj je u lib/examBriefing.ts.
  */
-export default function ExamBriefing({ t, lang, onStart, starting }: ExamBriefingProps) {
+export default function ExamBriefing({
+  t,
+  lang,
+  onStart,
+  starting,
+  totalPoints,
+}: ExamBriefingProps) {
   const [confirmed, setConfirmed] = useState(false);
   const values = {
     count: EXAM_QUESTION_COUNT,
     minutes: EXAM_MINUTES,
-    points: EXAM_TOTAL_POINTS,
-    pass: EXAM_PASS_POINTS,
+    points: totalPoints,
+    pass: examPassPoints(totalPoints),
   };
 
   return (

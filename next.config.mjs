@@ -40,6 +40,13 @@ const nextConfig = {
         ],
       },
       {
+        // Interni alat za reviziju — van pretrage i kad je deploy javan.
+        // Isto stoji i u `metadata.robots` stranice; zaglavlje hvata i slučaj
+        // kad robot ne izvrši JS.
+        source: "/audit",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
+      {
         // Sve ostale rute se ne smiju ugrađivati.
         source: "/((?!embed).*)",
         headers: [

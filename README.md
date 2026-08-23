@@ -49,61 +49,105 @@ npm run typecheck # TypeScript, bez emitovanja
 
 Svi parametri su na jednom mjestu — [`lib/config.ts`](lib/config.ts):
 
-| Konstanta                 | Trenutno | Značenje                                            |
-| ------------------------- | -------- | --------------------------------------------------- |
-| `EXAM_TOTAL_POINTS`       | `80`     | Ukupno bodova na ispitu                              |
-| `EXAM_PASS_POINTS`        | `68`     | Bodova potrebno za prolaz                            |
-| `EXAM_QUOTA`              | `20/10/10` | Broj pitanja po oblastima I : II : III                |
-| `EXAM_QUESTION_COUNT`     | `40`     | Broj pitanja na ispitu — zbir kvote, nije zaseban broj |
-| `EXAM_MINUTES`            | `45`     | Trajanje ispita u minutima                           |
-| `DEFAULT_ORDERING_POINTS` | `4`      | Bodovi za pitanja sa redoslijedom (katalog ima `null`) |
-| `EXAM_WARNING_SECONDS`    | `300`    | Kad tajmer pređe u crveno (zadnjih 5 min)            |
-| `EXAM_TIMER_ENABLED`      | `true`   | Uključuje/isključuje tajmer                          |
+| Konstanta                 | Trenutno   | Značenje                                               |
+| ------------------------- | ---------- | ------------------------------------------------------ |
+| `EXAM_STRUCTURE`          | 5 segmenata | Sastav ispita — koliko pitanja iz kojeg segmenta        |
+| `EXAM_QUESTION_COUNT`     | `41`       | Broj pitanja na ispitu, uključujući podpitanja          |
+| `EXAM_PASS_PERCENT`       | `85`       | Prag za prolaz, u procentu osvojenih bodova             |
+| `EXAM_MINUTES`            | `45`       | Trajanje ispita u minutima                              |
+| `DEFAULT_ORDERING_POINTS` | `4`        | Bodovi za pitanja sa redoslijedom (katalog ima `null`)  |
+| `EXAM_WARNING_SECONDS`    | `300`      | Kad tajmer pređe u crveno (zadnjih 5 min)               |
+| `EXAM_TIMER_ENABLED`      | `true`     | Uključuje/isključuje tajmer                             |
 
 Bodovi po pitanju dolaze iz `questions.json` (`points: 1..4`); `null` (samo kod `ordering`
 pitanja) se tretira kao `DEFAULT_ORDERING_POINTS`.
 
-### Sastav ispita: oblasti i bodovi
+### Sastav ispita: segmenti i podpitanja
 
-Svako pitanje ima `area`: **I** = propisi/teorija, **II** = saobraćajni znakovi,
-**III** = raskrsnice/situacije. U bazi: I=140, II=73, III=208.
+Ispit se **ne izvlači po oblastima I/II/III**. Izvlači se po segmentima, iz polja `kind`:
 
-Ispit ima **istovremeno tačno 40 pitanja i tačno 80 bodova**, uz zadat broj pitanja po
-oblasti (`EXAM_QUOTA` = 20 : 10 : 10). Oba uslova moraju važiti — nije dovoljno pogoditi jedan.
+| Segment                       | `kind`      | Pitanja | Podpitanje |
+| ----------------------------- | ----------- | ------- | ---------- |
+| Saobraćajni znakovi           | `znak`      | 10      | ne         |
+| Teorijska (tekstualna) pitanja| `teorija`   | 20      | ne         |
+| Komanda policijskog službenika| `policajac` | 1       | **da**     |
+| Kosnik ili graničnik          | `kosnik`    | 1       | ne         |
+| Saobraćajne situacije         | `situacija` | 4       | **da**     |
 
-`buildExam` radi ovako:
+Podpitanja se broje kao zasebna pitanja: `10 + 20 + (1+1) + 1 + (4+4) = 41`.
+`assertExamStructure()` se izvršava pri učitavanju modula i **puca na buildu** ako se zbir iz
+`EXAM_STRUCTURE` razmine sa `EXAM_QUESTION_COUNT`.
 
-1. iz svake oblasti nasumično uzme tačno `quota[oblast]` pitanja,
-2. ako zbir bodova nije 80, radi **zamjenu unutar iste oblasti** — izabrano pitanje mijenja
-   neizabranim čija razlika u bodovima gura zbir ka cilju, ali ga ne preskače. Broj pitanja po
-   oblasti se time ne mijenja,
-3. ako u 200 zamjena ne pogodi tačno, kreće iz početka; poslije 40 pokušaja odustaje uz
-   upozorenje u konzoli (sa našom bazom se ne dešava).
+`buildExam` ide segment po segment: izvuče `count` nasumičnih pitanja tog `kind`-a bez
+ponavljanja i, kod segmenata sa podpitanjem, odmah iza svakog glavnog ubaci njegovo
+podpitanje. **Ako neki segment nema dovoljno pitanja, baca `ExamBuildError`** — ne dopunjava
+iz druge kategorije, jer bi ispit tako tiho izgubio traženi sastav. Redoslijed segmenata je
+redoslijed u `EXAM_STRUCTURE`; unutar segmenta je nasumičan.
 
-Provjereno na **4000 izvlačenja**: 40 pitanja i 80 bodova u **4000/4000** slučajeva, sastav
-tačno I=50,0% · II=25,0% · III=25,0%, sva 421 pitanja ulaze u opticaj, 0,56 ms po ispitu.
+U navigaciji su segmenti razdvojeni tankom linijom, a podpitanje nosi slovo uz broj svog
+glavnog pitanja (`31` i `31a`) i isprekidan okvir.
 
-> **Posljedica koju treba znati.** Prosjek u bazi je **1,93** (I), **2,97** (II) i **3,22**
-> (III) boda, pa nasumičnih 20/10/10 nosi **oko 100 bodova**. Da bi se stiglo na 80, zamjene
-> nužno biraju jeftinija pitanja unutar svake oblasti. Mjereno: pitanje od **1 boda uđe u
-> ispit u 27,7% ispita, a pitanje od 4 boda u 1,5%** — oko 18 puta rjeđe. Bodovna struktura
-> ispita je 1b 31,9% · 2b 40,3% · 3b 23,7% · 4b 4,1%, dok je u bazi 1b 10,9% · 2b 28,5% ·
-> 3b 35,4% · 4b 25,2%.
+Provjereno na **4000 izvlačenja**: 41 pitanje u **4000/4000** slučajeva, 0,02 ms po ispitu.
+
+> **Bodovi više nijesu fiksni.** Prag je procenat (`EXAM_PASS_PERCENT = 85`), a ne broj
+> bodova, jer bodovi dolaze iz baze i zbir zavisi od izvučenih pitanja. Mjereno na 4000
+> izvlačenja: **89–118 bodova, medijana 103**, prag dakle 76–101 bod. Zvanični test nosi 80
+> bodova. Naša baza daje ~103 za istih ~41 pitanje — to je **treći nezavisan pokazatelj da se
+> `points` u našem katalogu razlikuju od zvaničnih** (prosjek u bazi je 2,66 boda po pitanju,
+> a zvaničnih 80/41 daje 1,95). **Ako MIRAV dostavi zvanične bodove po pitanju, rješava se
+> samo od sebe** — treba ispraviti `points` u `questions.json`, ništa drugo.
+
+> **Dvije posljedice sastava koje treba znati:**
 >
-> To nije izbor algoritma nego aritmetika: 40 pitanja i 80 bodova znači prosjek **tačno
-> 2,00** boda po pitanju, a naša baza ima **2,66**. Najvjerovatnije objašnjenje je da se
-> bodovi u našem katalogu razlikuju od zvaničnih. **Ako MIRAV dostavi zvanične bodove po
-> pitanju, ovo se rješava samo od sebe** — treba samo ispraviti `points` u `questions.json`.
+> 1. **24 situacijska pitanja ne mogu se pojaviti na ispitu.** Segmenti `policajac` i
+>    `situacija` izvlače samo pitanja koja **imaju** podpitanje; 24 situacijska pitanja ga
+>    nemaju, pa u opticaj ulazi 397 od 421 pitanja. U vježbi su dostupna sva.
+> 2. **Segment `kosnik` ima samo 2 pitanja u bazi**, pa se svako pojavljuje na otprilike
+>    polovini ispita. Nije blokada, ali nema ni raznovrsnosti — MIRAV bi trebalo da provjeri
+>    da li katalog ima još takvih pitanja koja parser nije prepoznao.
 
-> **Važno:** 80 / 68 / 45 i kvota 20:10:10 označeni su sa `TODO(MIRAV)` u `lib/config.ts`.
-> **Prije objave MIRAV treba da potvrdi tačne brojeve po važećem Pravilniku o
-> osposobljavanju kandidata za vozače (MUP CG)**, ili empirijski: pokrenuti jednu zvaničnu
-> simulaciju na eUpravi i prebrojati koliko pitanja dolazi iz svake oblasti.
+> **Važno:** sastav, 45 minuta i prag od 85% označeni su sa `TODO(MIRAV)` u `lib/config.ts`.
+> **Prije objave MIRAV treba da ih potvrdi po važećem Pravilniku o osposobljavanju kandidata
+> za vozače (MUP CG)**, ili empirijski — pokretanjem jedne zvanične simulacije na eUpravi.
 >
 > Oblast „Posljedice nepoštovanja propisa" ne dolazi na ispit i nema je u bazi.
 
-Tekstovi u interfejsu ne ponavljaju ove brojeve — izvode ih iz `config.ts`, pa promjena
-jedne konstante mijenja i prikaz.
+### `kind` i `subOf` — kako se upisuju
+
+Oba polja su **generisana** i upisuju se u `public/questions.json`:
+
+```bash
+node scripts/gen-exam-meta.mjs --report   # ispiši raspodjelu i parove, ne diraj bazu
+node scripts/gen-exam-meta.mjs            # upiši `kind` i `subOf`
+```
+
+`kind` se određuje pravilima nad tekstom pitanja, uz `OVERRIDES` za ručne ispravke.
+Trenutna raspodjela: situacija 180 · teorija 140 · znak 77 · policajac 22 · kosnik 2.
+
+Tri stvari koje pravila rade drugačije nego što bi se očekivalo, i zašto:
+
+- **`policajac` traži „policijski službenik" ili „ovlašćeno lice", ne golo „policijsk".**
+  Golo „policijsk" pokupi i „policijsko vozilo" (id 129, 133, 252), a to su situacijska
+  pitanja o vozilu sa pravom prvenstva. Tri pitanja koja opisuju samo položaj ruke
+  („Horizontalno predručena ruka…") su u `OVERRIDES` — pravilo ih ne može uhvatiti bez da
+  pokupi i znake koje daje vozač rukom.
+- **`kosnik` traži granicu riječi** (`graničnik`). Bez nje `granič` pokupi „ograničenje
+  brzine" i pola teorije o brzinama — 18 lažnih pogodaka.
+- **`znak` prihvata i množinu.** Ranije se kategorija izvodila iz teksta pitanja, pa su
+  pitanja koja ne izgovore „saobraćajni znak" — „Na slici je prikazan:", „…znak
+  obavještenja…", graničnik, kosnik — završavala u kategoriji raskrsnica i **nosila oznaku
+  `RASKRSNICA` iako prikazuju znak**. Oznaka na kartici sada prati `kind`.
+
+`subOf` se ne pogađa iz teksta. U zvaničnom katalogu jedna slika nosi dva pitanja („kako ćete
+postupiti…" + „redoslijed prolaska…"), a parser ih je izvukao kao dva zasebna pitanja sa dva
+**bajt-identična** isječka. Par se prepoznaje po: ista strana + uzastopni `local_no` +
+identičan fajl slike. Nađen je **91 par** (182 pitanja), **nijedna trojka** i nijedno pitanje
+u dva para. Od toga 80 parova ima glavno pitanje `situacija`, 11 `policajac`.
+
+Tekstovi u interfejsu ne ponavljaju ove brojeve — izvode ih iz `config.ts` i iz stvarno
+sastavljenog testa, pa promjena jedne konstante mijenja i prikaz. Uputstvo prije ispita zato
+piše **stvaran** broj bodova tog testa: ispit se sastavlja prije nego što se uputstvo prikaže
+(`prepareExam` u [`components/Quiz.tsx`](components/Quiz.tsx)).
 
 Tajmer se isključuje sa `EXAM_TIMER_ENABLED = false` — tada se sat ne prikazuje i ispit
 nema vremensko ograničenje.
@@ -114,10 +158,11 @@ nema vremensko ograničenje.
 
 | Putanja                  | Sadržaj                                  |
 | ------------------------ | ---------------------------------------- |
-| `public/questions.json`  | 421 pitanje (polje `area`: I / II / III; prevodi EN / RU / AL) |
+| `public/questions.json`  | 421 pitanje (`area`: I/II/III, `kind`, `subOf`; prevodi EN / RU / AL) |
 | `references/`            | spoljni izvori za provjeru (spisak kazni sa linkovima na Sl. list) |
 | `translations/`          | izvor prevoda po opsezima pitanja — iz njega se sastavlja `questions.json` |
 | `public/web_images/`     | 281 slika — 208 JPG (fotografije situacija) + 73 PNG (znakovi) |
+| `_backup_web_images/`    | originali slika koje su ručno prekropovane, prije izmjene |
 | `lib/imageSizes.ts`      | **generisano** — dimenzije svake slike    |
 
 Baza se učita na klijentu preko `fetch('/questions.json')`, pa ne opterećuje JS bundle i
@@ -138,17 +183,81 @@ bi manje slike znakova bile razvučene i mutne).
 
 Imena fajlova moraju odgovarati polju `image` u `questions.json` (uključujući ekstenziju).
 
+### Isječci slika — poznate greške i revizija
+
+Slike su isječene iz zvaničnog PDF kataloga, a crop box je pravljen kao **unija grafičkih
+regiona na strani**, a ne kao figura koja pripada tačno tom pitanju. Otud tri vrste greške:
+
+1. **preliv nagore/nadolje** — u isječak upadne figura susjednog pitanja (policajac, komad
+   drugog znaka),
+2. **preliv udesno** — u isječak upadne odštampan tekst pitanja iz PDF-a („27. Na slici…"),
+3. **odsijecanje** — dopunska tabla ispod glavnog znaka nije obuhvaćena, iako pitanje glasi
+   „znaci" (množina).
+
+Ručno je popravljeno **5 potvrđenih slučajeva**; originali su u `_backup_web_images/`, imena
+fajlova nepromijenjena (reference u bazi ostaju iste):
+
+| Pitanje | Fajl            | Bilo         | Sada       | Šta je uklonjeno                      |
+| ------- | --------------- | ------------ | ---------- | ------------------------------------- |
+| 346     | `p041_q10.jpg`  | 520×746      | 512×156    | figura policajca ispod tri panela      |
+| 320     | `p037_q65.jpg`  | 184×274      | 184×264    | zeleni pravougaonik ispod dopunske table |
+| 336     | `p039_q81.png`  | 1000×314     | 227×156    | odštampan tekst pitanja 81 + tri trougla |
+| 282     | `p033_q27.png`  | 517×246      | 164×234    | odštampan tekst pitanja 27             |
+| 321     | `p037_q66.png`  | 218×102      | 218×93     | komad plavog znaka iznad E-70 table     |
+
+Isječci nijesu birani odoka: za svaku sliku je izmjeren pravougaonik mastila i pronađeni su
+bijeli pojasevi koji razdvajaju komponente, pa je granica postavljena po njima.
+
+> **Šesti slučaj se ne može popraviti isijecanjem.** Pitanje **284** (`p033_q29.jpg`,
+> „…snijeg čisti mašinski") traži znak **i** dopunsku tablu, ali tabla nije u fajlu: fajl je
+> visok 200 px, gornja ivica table počinje na 190, a sadržaj table je ispod granice fajla.
+> Pikseli ne postoje, a **izvorni PDF nije u repo-u**. Rješenje traži ponovno isijecanje iz
+> kataloga sa višim boxom — vidi „Prije objave".
+
+Poslije svake izmjene slike pokreni `npm run gen:image-sizes`.
+
+### `/audit` — revizija svih slika
+
+Ovih pet sigurno nijesu jedine greške. [`/audit`](app/audit/page.tsx) je **interni alat** koji
+u mreži prikazuje svih 281 pitanja sa slikom: sliku u punoj širini kartice, `id`, fajl, stranu,
+`local_no`, `area`, `kind`, `subOf`, bodove, tekst pitanja i sve opcije sa **vidljivo
+označenim tačnim odgovorom**.
+
+Uz svaku karticu idu tri dugmeta — `OK`, `Loš crop`, `Loš tekst/odgovor` — i polje za
+napomenu. Ponovni klik na istu ocjenu je poništava. Stanje se čuva u `localStorage`, ima
+filter (sve / nepregledano / označeno) i brojač napretka („pregledano 84/281"), pa revizija
+može da se radi u više sjedanja. `Izvezi JSON` skida `audit-report.json` sa **samo označenim**
+pitanjima:
+
+```json
+[{ "id": "q_0096", "questionId": 96, "image": "p010_q01.jpg", "page": 10,
+   "local_no": 1, "flag": "crop", "note": "viri komad drugog znaka odozgo" }]
+```
+
+Stranica **nije nigdje linkovana**, nosi `noindex, nofollow, noarchive` i kao `metadata.robots`
+i kao `X-Robots-Tag` zaglavlje u `next.config.mjs` (zaglavlje hvata i robote koji ne izvrše JS).
+
+Popravka samog parsera čeka taj izvještaj — bez njega se ne zna obrazac grešaka, pa bi
+prepravka logike isijecanja bila nagađanje.
+
 ### Kategorije
 
-Kategorije **ne postoje** u JSON-u — izvode se iz sadržaja pitanja u
-[`lib/categories.ts`](lib/categories.ts):
+Kategorije u vježbi **ne postoje** kao polje u JSON-u — izvode se u
+[`lib/categories.ts`](lib/categories.ts), sada iz polja `kind`, a ne iz teksta pitanja:
 
-| Kategorija   | Pravilo                                              | Broj |
-| ------------ | ---------------------------------------------------- | ---- |
-| `redoslijed` | `type === "ordering"`                                | 10   |
-| `znak`       | ima sliku i tekst sadrži „saobraćajni znak"          | 73   |
-| `situacija`  | ima sliku, nije znak, nije ordering                  | 198  |
-| `tekst`      | nema sliku                                           | 140  |
+| Kategorija   | Pravilo                                     | Broj |
+| ------------ | ------------------------------------------- | ---- |
+| `redoslijed` | `type === "ordering"`                       | 10   |
+| `znak`       | `kind === "znak"`                           | 77   |
+| `tekst`      | `kind === "teorija"`                        | 140  |
+| `situacija`  | ostalo (situacija, policajac, kosnik)       | 194  |
+
+Ako pitanje nema `kind` — što se dešava samo ako browser servira keširan stariji
+`questions.json`, jer fajl nema heš u imenu — pada se nazad na staro prepoznavanje po tekstu.
+
+Oznaka na kartici pitanja je **finija od filtera**: komanda policajca (`ZNAK POLICAJCA`) i
+kosnik/graničnik (`OZNAKE NA KOLOVOZU`) imaju svoje oznake iako u filteru stoje pod
+„Raskrsnice". Filter je ostao isti, oznaka samo tačnije opisuje pitanje koje kandidat gleda.
 
 Filter `slika` obuhvata sve sa slikom (znaci + raskrsnice + redoslijed = 281).
 
@@ -601,20 +710,65 @@ paketa, pa prekid ne baca obavljen posao.
 
 ## Prije objave
 
+Redom po hitnosti — prve tri stavke su jedine koje mogu dati **pogrešnu informaciju
+kandidatu**, ostalo je uglađivanje.
+
+**Tačnost sadržaja**
+
+- [ ] **Provjeriti sve iznose kazni** naspram Sl. lista 111/2026. Nijedan od 39 prekršaja
+      nema `verified: true`; oba izvora (naš i referentni spisak) su medijska. Sl. list je
+      objavljen kao slike stranica, pa treba OCR. Dok to ne bude gotovo, kazne se mogu
+      isključiti jednim potezom: `PENALTIES_ENABLED = false` u `lib/config.ts`.
+- [ ] **Pregledati vezu pitanje → prekršaj** u `lib/penaltyMap.ts` (generisan, 384/421
+      mapirano). Veza je stručna procjena, ne pravni stav.
+- [ ] **Provjeriti tvrdnje u uputstvu prije ispita** (`lib/examBriefing.ts`): dokumenti,
+      odjeća, rok važenja od godinu dana. Preuzete su iz uobičajene prakse auto-škola i
+      **nijesu provjerene uz važeći Pravilnik**.
+
+**Baza pitanja i slike**
+
+- [ ] **Popraviti sliku pitanja 284** (`p033_q29.jpg`) — dopunska tabla je izvan granica
+      fajla, pa se ne može popraviti isijecanjem. Treba ponovo isjeći iz izvornog PDF
+      kataloga sa višim boxom. Izvorni PDF nije u repo-u.
+- [ ] **Potvrditi ispravku opcije c) pitanja 272.** Tekst je pokvaren na isti način kao kod
+      336 (parser je isprepleo dvije kolone): *„približavanje prelaz puta prelasku preko
+      željezničke puta preko pruge željezničke bez branika pruge bez ili branika polubranika
+      ili polubranika"*. Ispravan tekst je **„približavanje prelasku puta preko željezničke
+      pruge bez branika ili polubranika"** — potvrđuju ga EN/RU/AL prevodi iste opcije. To je
+      **tačan odgovor** tog pitanja, pa nije popravljeno bez potvrde.
+- [ ] **Proći `/audit`** i izvesti `audit-report.json` — 281 sliku treba pogledati. Tek
+      poslije toga ima smisla dirati logiku isijecanja u parseru.
+- [ ] **Dostaviti zvanične bodove po pitanju.** Naša baza daje ispit od ~103 boda umjesto
+      zvaničnih 80 za isti broj pitanja; ispravka `points` u `questions.json` to rješava.
+- [ ] **Provjeriti ima li u katalogu još pitanja o kosniku/graničniku** — u bazi su samo 2,
+      pa se svako pojavljuje na oko polovini ispita.
+- [ ] Potvrditi sastav ispita (41 / 45 min / prag 85%) po važećem Pravilniku MUP-a, pa
+      upisati u `lib/config.ts`.
+- [ ] Odlučiti da li dodati 22 prekršaja koje referentni spisak ima a mi nemamo (droga,
+      neregistrovano vozilo, zatamnjena stakla, režim za vozače 18–21, laka elektrovozila).
+
+**Pravno i jezički**
+
 - [ ] Potvrditi sa MIRAV-om da smiju objaviti bazu pitanja (katalog je zvanični akt MUP-a;
       modal „Literatura" ga referiše, ali to nije isto što i dozvola za objavu).
-- [ ] Potvrditi 41 / 45 / 85 i moguću raspodjelu po oblastima po važećem Pravilniku
-      MUP-a, pa upisati u `lib/config.ts`.
+- [ ] Dati prevode EN/RU/AL izvornom govorniku na provjeru saobraćajnih termina. Prevodi su
+      kompletni (1263 unosa) ali **mašinski**.
+
+**Kozmetika**
+
 - [ ] Odlučiti o dvije plave: logo nosi `#183d73`, a token `--blue` je `#2f6fd0`. Ako treba
       da se usaglase, promijeniti `--color-blue` u `app/globals.css` i provjeriti kontrast
       dugmadi (cilj je najmanje 4,5:1 na bijelom).
-- [ ] Pokrenuti `npm run translate` (traži `ANTHROPIC_API_KEY`) — bez toga EN i RU prikazuju
-      pitanja na crnogorskom uz napomenu.
-- [ ] Dati mašinski prevod EN/RU izvornom govorniku na provjeru saobraćajnih termina prije
-      nego se prevodi objave kao gotovi.
+- [ ] Uključiti Web Analytics u Vercel konzoli (Project → Analytics → Enable) — paket sam po
+      sebi ne prikuplja podatke.
 
 ### Poznato ograničenje baze
 
 Izvučena pitanja su **jednoizborna** (a/b/c, jedan tačan odgovor). Zvanični ispit ima i
 pitanja sa više tačnih odgovora, gdje se priznaje samo potpuno tačan odgovor. Simulacija je
 utoliko pojednostavljena — to je i napisano korisniku na kartici „Simulacija ispita".
+
+Podpitanja jesu u bazi, ali samo tamo gdje ih je parser slučajno sačuvao kao zaseban unos sa
+istim isječkom (91 par). **24 situacijska pitanja nemaju podpitanje**, pa se ne mogu pojaviti
+na ispitu — u vježbi jesu dostupna. Ta pitanja se ne izmišljaju; ako u katalogu postoje, treba
+ih izvući iz izvornog PDF-a.

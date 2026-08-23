@@ -1,13 +1,12 @@
-import { DEFAULT_ORDERING_POINTS } from "./config";
+import { DEFAULT_ORDERING_POINTS, EXAM_QUESTION_COUNT, EXAM_STRUCTURE } from "./config";
 import type { Lang } from "./i18n";
-import {
-  AREAS,
-  type Answer,
-  type Area,
-  type ChoiceQuestion,
-  type OptionKey,
-  type OrderingQuestion,
-  type Question,
+import type {
+  Answer,
+  ChoiceQuestion,
+  OptionKey,
+  OrderingQuestion,
+  Question,
+  QuestionKind,
 } from "./types";
 
 /**
@@ -74,138 +73,106 @@ export function sample<T>(items: readonly T[], count: number): T[] {
   return shuffled.slice(0, count);
 }
 
-/** Koliko zamjena po pokušaju prije nego što se krene iz početka. */
-const SWAP_STEPS = 200;
-/** Koliko puta se kreće iz početka prije nego što se odustane. */
-const BUILD_ATTEMPTS = 40;
+/**
+ * Greška u sastavu ispita. Baca se umjesto tihe dopune iz druge kategorije:
+ * ispit koji nema traženi sastav nije simulacija ispita.
+ */
+export class ExamBuildError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ExamBuildError";
+  }
+}
+
+/** Jedno pitanje na ispitu, sa podatkom kojem segmentu pripada. */
+export interface ExamSlot {
+  question: Question;
+  /** Segment iz EXAM_STRUCTURE — po njemu se grupiše navigacija. */
+  kind: QuestionKind;
+  /** Redni broj segmenta, 0-baziran. */
+  segment: number;
+  /** Podpitanje stoji odmah iza svog glavnog pitanja i dijeli s njim sliku. */
+  isSub: boolean;
+}
 
 /**
- * Sastavlja ispit sa **tačno `sum(quota)` pitanja** i zbirom bodova **tačno
- * `targetPoints`**, poštujući broj pitanja po oblasti iz `quota`.
+ * Sastavlja simulaciju ispita po `EXAM_STRUCTURE`.
  *
- * Zašto ovako, a ne „puni dok ne dođeš do 80": ranija verzija je punila budžet
- * pa je broj pitanja ispadao 27–39. Ispit ima fiksnih 40 pitanja i 80 bodova,
- * pa oba uslova moraju važiti istovremeno.
+ * Za svaki segment redom:
+ *  - izvlači `count` nasumičnih pitanja tog `kind`-a, bez ponavljanja,
+ *  - ako je `withSub`, bira samo pitanja koja **imaju** podpitanje i odmah iza
+ *    svakog ubacuje to podpitanje,
+ *  - ako nema dovoljno pitanja, **baca `ExamBuildError`** — ne dopunjava iz
+ *    druge kategorije, jer bi tako ispit tiho izgubio traženi sastav.
  *
- * Kako radi:
- *  1. iz svake oblasti se nasumično uzme tačno `quota[oblast]` pitanja,
- *  2. ako zbir nije `targetPoints`, radi se **zamjena unutar iste oblasti** —
- *     izabrano pitanje se mijenja neizabranim čija razlika u bodovima gura zbir
- *     ka cilju, ali ga ne preskače. Broj pitanja po oblasti se time ne mijenja.
- *  3. ako se u datom broju pokušaja ne pogodi tačno, kreće se iz početka sa
- *     novim nasumičnim izborom.
- *
- * Zamjena uvijek ide korakom koji ne preskače cilj, pa se zbir monotono
- * približava — a pošto u bazi postoje pitanja od 1 i 2 boda, korak od 1 boda je
- * gotovo uvijek dostupan i postupak se zaustavlja u nekoliko zamjena.
- *
- * NAPOMENA o sastavu: prosjek u bazi je 1,93 (I), 2,97 (II) i 3,22 (III) boda,
- * pa nasumičnih 20/10/10 nosi oko 100 bodova. Da bi se stiglo na 80, zamjene
- * nužno biraju jeftinija pitanja unutar svake oblasti. To je posljedica bodova
- * u našem katalogu, ne izbora algoritma — vidi README, „Sastav ispita".
+ * Redoslijed segmenata u testu je redoslijed unosa u `EXAM_STRUCTURE`; unutar
+ * segmenta je nasumičan. Bodovi se ne podešavaju — dolaze iz baze kakvi jesu,
+ * pa ukupan broj bodova nije isti na svakom testu (prag je procenat, vidi
+ * `examPassPoints`).
  */
-export function buildExam(
-  questions: readonly Question[],
-  targetPoints: number,
-  quota: Readonly<Record<Area, number>>,
-): Question[] {
-  const byArea = new Map<Area, Question[]>();
-  for (const area of AREAS) {
-    byArea.set(
-      area,
-      questions.filter((q) => q.area === area),
+export function buildExam(questions: readonly Question[]): ExamSlot[] {
+  // Podpitanja nikad ne ulaze u izvlačenje sama za sebe.
+  const subsByMain = new Map<number, Question>();
+  for (const q of questions) {
+    if (q.subOf !== undefined) subsByMain.set(q.subOf, q);
+  }
+
+  const slots: ExamSlot[] = [];
+
+  EXAM_STRUCTURE.forEach((segment, index) => {
+    const pool = questions.filter(
+      (q) =>
+        q.kind === segment.kind &&
+        q.subOf === undefined &&
+        (!segment.withSub || subsByMain.has(q.id)),
+    );
+
+    if (pool.length < segment.count) {
+      throw new ExamBuildError(
+        `Segment „${segment.kind}"${segment.withSub ? " (sa podpitanjem)" : ""}: ` +
+          `traži ${segment.count} pitanja, a u bazi ih ima ${pool.length}. ` +
+          `Pokreni \`node scripts/gen-exam-meta.mjs --report\`.`,
+      );
+    }
+
+    for (const q of sample(pool, segment.count)) {
+      slots.push({ question: q, kind: segment.kind, segment: index, isSub: false });
+      if (!segment.withSub) continue;
+      const sub = subsByMain.get(q.id);
+      if (!sub) {
+        // Ne bi smjelo — bazen je već filtriran na pitanja sa podpitanjem.
+        throw new ExamBuildError(`Pitanje ${q.id} nema podpitanje iako je izvučeno kao par.`);
+      }
+      slots.push({ question: sub, kind: segment.kind, segment: index, isSub: true });
+    }
+  });
+
+  if (slots.length !== EXAM_QUESTION_COUNT) {
+    throw new ExamBuildError(
+      `Sastavljen ispit ima ${slots.length} pitanja, a treba ${EXAM_QUESTION_COUNT}.`,
     );
   }
 
-  for (const area of AREAS) {
-    const have = byArea.get(area)?.length ?? 0;
-    if (have < (quota[area] ?? 0)) {
-      console.warn(
-        `Oblast ${area}: u bazi je ${have} pitanja, a kvota traži ${quota[area]}. ` +
-          `Ispit će biti dopunjen iz ostalih oblasti.`,
-      );
-    }
-  }
-
-  const total = (qs: readonly Question[]) => qs.reduce((sum, q) => sum + questionPoints(q), 0);
-
-  /** Jedan pokušaj: nasumičan izbor po kvoti, pa zamjene do tačnog zbira. */
-  const attempt = (): Question[] | null => {
-    const picked = new Map<Area, Question[]>();
-    const rest = new Map<Area, Question[]>();
-    for (const area of AREAS) {
-      const pool = shuffle(byArea.get(area) ?? []);
-      const want = Math.min(quota[area] ?? 0, pool.length);
-      picked.set(area, pool.slice(0, want));
-      rest.set(area, pool.slice(want));
-    }
-
-    // Ako neka oblast nema dovoljno pitanja, manjak se nadoknađuje iz ostalih,
-    // da broj pitanja na ispitu ostane tačan.
-    const wanted = AREAS.reduce((sum, a) => sum + (quota[a] ?? 0), 0);
-    let short = wanted - AREAS.reduce((sum, a) => sum + (picked.get(a)?.length ?? 0), 0);
-    for (const area of AREAS) {
-      while (short > 0 && (rest.get(area)?.length ?? 0) > 0) {
-        picked.get(area)?.push(rest.get(area)!.shift()!);
-        short -= 1;
-      }
-    }
-
-    const flat = () => AREAS.flatMap((a) => picked.get(a) ?? []);
-
-    for (let step = 0; step < SWAP_STEPS; step++) {
-      const diff = targetPoints - total(flat());
-      if (diff === 0) return flat();
-
-      // Sve zamjene koje guraju zbir ka cilju bez preskakanja. Bira se
-      // nasumična, ne najveća — inače bi ispit uvijek imao ista pitanja.
-      const moves: { area: Area; outIndex: number; inIndex: number }[] = [];
-      for (const area of AREAS) {
-        const inside = picked.get(area) ?? [];
-        const outside = rest.get(area) ?? [];
-        for (let i = 0; i < inside.length; i++) {
-          for (let j = 0; j < outside.length; j++) {
-            const delta = questionPoints(outside[j]!) - questionPoints(inside[i]!);
-            if (delta === 0) continue;
-            if (diff > 0 ? delta > 0 && delta <= diff : delta < 0 && delta >= diff) {
-              moves.push({ area, outIndex: i, inIndex: j });
-            }
-          }
-        }
-      }
-      if (moves.length === 0) return null;
-
-      const move = moves[Math.floor(Math.random() * moves.length)]!;
-      const inside = picked.get(move.area)!;
-      const outside = rest.get(move.area)!;
-      const swapped = inside[move.outIndex]!;
-      inside[move.outIndex] = outside[move.inIndex]!;
-      outside[move.inIndex] = swapped;
-    }
-    return null;
-  };
-
-  for (let tries = 0; tries < BUILD_ATTEMPTS; tries++) {
-    const built = attempt();
-    if (built) return shuffle(built);
-  }
-
-  // Ne bi smjelo da se desi sa našom bazom, ali bolje glasno nego tiho pogrešno.
-  console.warn(
-    `Nije sastavljen ispit od ${AREAS.reduce((s, a) => s + (quota[a] ?? 0), 0)} pitanja ` +
-      `sa tačno ${targetPoints} bodova. Provjerite kvotu i bodove u bazi.`,
-  );
-  const fallback = AREAS.flatMap((a) => shuffle(byArea.get(a) ?? []).slice(0, quota[a] ?? 0));
-  return shuffle(fallback);
+  return slots;
 }
 
-/** Broj izvučenih pitanja po oblasti — koristi se za provjeru sastava. */
-export function areaBreakdown(questions: readonly Question[]): Record<Area, number> {
-  const out: Record<Area, number> = { I: 0, II: 0, III: 0 };
-  for (const q of questions) {
-    if (q.area in out) out[q.area] += 1;
-  }
+/** Broj izvučenih pitanja po segmentu — koristi se u provjerama. */
+export function kindBreakdown(questions: readonly Question[]): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const q of questions) out[q.kind] = (out[q.kind] ?? 0) + 1;
   return out;
+}
+
+/**
+ * Oznaka pitanja u navigaciji: podpitanje nosi slovo uz broj glavnog pitanja
+ * („15" i „15a"), da kandidat vidi da idu u paru.
+ */
+export function slotLabel(slots: readonly ExamSlot[], index: number): string {
+  let main = 0;
+  for (let i = 0; i <= index; i++) {
+    if (!slots[i]?.isSub) main += 1;
+  }
+  return slots[index]?.isSub ? `${main}a` : String(main);
 }
 
 /**

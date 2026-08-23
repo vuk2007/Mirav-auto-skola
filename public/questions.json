@@ -32,7 +32,8 @@
       "a": "në një pjesë të shkurtër të rrugës në kthesë pa dukshmëri",
       "b": "në një pjesë të shkurtër të rrugës në tunel",
       "c": "në një pjesë të shkurtër të rrugës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -67,7 +68,8 @@
       "a": "60 km/h",
       "b": "70 km/h",
       "c": "80 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -102,7 +104,8 @@
       "a": "gjithmonë nga ana e djathtë",
       "b": "gjithmonë nga ana e majtë",
       "c": "nga cilado anë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -137,7 +140,8 @@
       "a": "mund të tejkalojë biçikletën, mopedin ose motoçikletën",
       "b": "mund të tejkalojë të gjitha automjetet që ruajnë kahun e lëvizjes",
       "c": "mund të tejkalojë automjetet udhëtare që ruajnë kahun e lëvizjes"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -172,7 +176,8 @@
       "a": "tejkalimit",
       "b": "anashkalimit",
       "c": "kalimit përballë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -207,7 +212,8 @@
       "a": "të gjitha objektet që ndodhen në karrexhatë",
       "b": "objektet dhe substancat që vijnë nga automjeti me të cilin drejton",
       "c": "të gjitha objektet që ndodhen në korsinë nëpër të cilën lëviz"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -242,7 +248,8 @@
       "a": "automjeti udhëtar me motor",
       "b": "katërcikli",
       "c": "automjeti transportues me motor"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -277,7 +284,8 @@
       "a": "duhet të përdorë brezin e djathtë të karrexhatës",
       "b": "duhet të përdorë vetëm korsinë e djathtë",
       "c": "duhet të përdorë vetëm korsinë e majtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -312,7 +320,8 @@
       "a": "40 km/h",
       "b": "50 km/h",
       "c": "60 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -347,7 +356,8 @@
       "a": "konsiderohet tejkalim",
       "b": "nuk konsiderohet tejkalim",
       "c": "konsiderohet anashkalim"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -382,7 +392,8 @@
       "a": "40 km/h",
       "b": "50 km/h",
       "c": "60 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -417,7 +428,8 @@
       "a": "automjetet me shoqërim",
       "b": "automjetet e shërbimit komunal",
       "c": "automjetet udhëtare"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -452,7 +464,8 @@
       "a": "disa herë me intervale të alternuara",
       "b": "pa ndërprerje në kohëzgjatje prej 5 sekondash",
       "c": "në masën e mjaftueshme që pjesëmarrësit e tjerë në komunikacion të paralajmërohen"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -487,7 +500,8 @@
       "a": "gjatë arritjes së automjeteve që lëvizin ngadalë tatëpjetë",
       "b": "kur anashkalohet automjeti i parkuar në anën e djathtë të karrexhatës",
       "c": "kur pranë karrexhatës ndodhen fëmijë që nuk i kushtojnë vëmendje lëvizjes së shoferit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -522,7 +536,8 @@
       "a": "korsi",
       "b": "brez i karrexhatës",
       "c": "karrexhatë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -557,7 +572,8 @@
       "a": "është i detyruar të veprojë sipas urdhrave të zyrtarit të autorizuar policor",
       "b": "është i detyruar të veprojë sipas rregullave të komunikacionit",
       "c": "nuk është i detyruar të veprojë sipas urdhrave të zyrtarit të autorizuar policor"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -592,7 +608,8 @@
       "a": "nën 10 vjeç",
       "b": "nën 12 vjeç",
       "c": "nën 14 vjeç"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -627,7 +644,8 @@
       "a": "lejohet në vendbanim",
       "b": "lejohet në një pjesë të shkurtër të rrugës",
       "c": "nuk lejohet"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -662,7 +680,8 @@
       "a": "80 km/h",
       "b": "50 km/h",
       "c": "60 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -697,7 +716,8 @@
       "a": "nuk guxon ta presë me automjet kolonën e organizuar të këmbësorëve",
       "b": "guxon ta presë me automjet kolonën e organizuar të këmbësorëve duke përdorur sinjalin zanor paralajmërues",
       "c": "guxon ta presë me automjet kolonën e organizuar të këmbësorëve, nëse kolonën nuk e përbëjnë fëmijë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -732,7 +752,8 @@
       "a": "lejohet transporti i udhëtarëve në përputhje me numrin e vendeve për udhëtarë",
       "b": "lejohet transporti i vetëm një udhëtari",
       "c": "ndalohet transporti i udhëtarëve"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -767,7 +788,8 @@
       "a": "rreshtim",
       "b": "tejkalim",
       "c": "anashkalim"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -802,7 +824,8 @@
       "a": "70 km/h",
       "b": "100 km/h",
       "c": "110 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -837,7 +860,8 @@
       "a": "nuk është i detyruar",
       "b": "është i detyruar",
       "c": "është i detyruar vetëm në vendbanim"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -872,7 +896,8 @@
       "a": "në rastin e kyçjes nga rruga e pashtruar në rrugën publike",
       "b": "në rastin e shmangies së rrezikut të drejtpërdrejtë",
       "c": "në rastin e çkyçjes më të shpejtë nga qarkullimi"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -907,7 +932,8 @@
       "a": "nuk guxojnë të tërheqin rimorkio traktori",
       "b": "guxojnë të tërheqin rimorkio traktori",
       "c": "nuk guxojnë të tërheqin rimorkio traktori, nëse masa e grupit të automjeteve tejkalon -500 kg"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -942,7 +968,8 @@
       "a": "para hyrjes në tunelin që nuk ka ndriçim",
       "b": "në rrugë në vendbanim para hyrjes në kryqëzim",
       "c": "në rrugë jashtë vendbanimit para afrimit te kthesa pa dukshmëri dhe e ngushtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -977,7 +1004,8 @@
       "a": "motoçikletën, mopedin, as triciklin e lehtë e as të rëndë",
       "b": "automjetin transportues",
       "c": "automjetin udhëtar"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1012,7 +1040,8 @@
       "a": "nuk guxon të lëvizë nga ana e djathtë e karrexhatës",
       "b": "nuk guxon të lëvizë në kolonë",
       "c": "nuk guxon të lëvizë nëpër karrexhatën e autostradës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1047,7 +1076,8 @@
       "a": "guxon të tejkalohet nga ana e majtë",
       "b": "guxon të tejkalohet nga cilado anë",
       "c": "guxon të tejkalohet nga ana e djathtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1082,7 +1112,8 @@
       "a": "po, nëse nuk rrezikon pjesëmarrësit e tjerë në komunikacion",
       "b": "po, nëse i ka të ndezur të gjithë treguesit e drejtimit",
       "c": "nuk guxon"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1117,7 +1148,8 @@
       "a": "automjetet me përparësi kalimi",
       "b": "automjetet me shoqërim",
       "c": "automjetet speciale"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1152,7 +1184,8 @@
       "a": "nuk guxon ta rrisë shpejtësinë e lëvizjes",
       "b": "guxon ta rrisë shpejtësinë e lëvizjes",
       "c": "nuk guxon ta zvogëlojë shpejtësinë e lëvizjes"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1187,7 +1220,8 @@
       "a": "kthim rrethor",
       "b": "kthim majtas",
       "c": "kthim gjysmërrethor"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1222,7 +1256,8 @@
       "a": "50 km/h",
       "b": "60 km/h",
       "c": "70 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1257,7 +1292,8 @@
       "a": "kalimit përballë me një automjet tjetër",
       "b": "kalimit përballë me një këmbësor",
       "c": "tejkalimit të një automjeti tjetër"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1292,7 +1328,8 @@
       "a": "rregullës së lëshimit të rrugës automjeteve nga ana e djathtë",
       "b": "kuptimit të sinjalizimit ndriçues",
       "c": "shenjave në karrexhatë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1327,7 +1364,8 @@
       "a": "100 km/h",
       "b": "80 km/h",
       "c": "70 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1362,7 +1400,8 @@
       "a": "ta zvogëlojë shpejtësinë e lëvizjes së automjetit deri në 30 km/h",
       "b": "ta zvogëlojë shpejtësinë dhe të vazhdojë lëvizjen pavarësisht nga situata në komunikacion",
       "c": "ta përshtatë shpejtësinë e lëvizjes së automjetit ashtu që në çdo situatë të mund të ndalojë në mënyrë të sigurt"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1397,7 +1436,8 @@
       "a": "80 km/h",
       "b": "70 km/h",
       "c": "60 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1432,7 +1472,8 @@
       "a": "ndalja e automjetit",
       "b": "parkimi i automjetit",
       "c": "çkyçja e automjetit nga komunikacioni"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1467,7 +1508,8 @@
       "a": "50 km/h",
       "b": "60 km/h",
       "c": "70 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1502,7 +1544,8 @@
       "a": "dritat e ditës",
       "b": "sinjalin ndriçues paralajmërues",
       "c": "dritat për mjegull"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1537,7 +1580,8 @@
       "a": "mund të anashkalohet nga ana e majtë ose e djathtë",
       "b": "mund të anashkalohet vetëm nga ana e djathtë",
       "c": "mund të anashkalohet vetëm nga ana e majtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1572,7 +1616,8 @@
       "a": "guxon të përdorë cilëndo korsi",
       "b": "nuk guxon të përdorë korsinë pranë skajit të djathtë të karrexhatës",
       "c": "nuk guxon të përdorë korsinë pranë skajit të majtë të karrexhatës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1607,7 +1652,8 @@
       "a": "t'i lëshojë rrugë automjetit që vjen nga ana e tij e majtë",
       "b": "t'i lëshojë rrugë automjetit që vjen nga ana e tij e djathtë",
       "c": "t'u lëshojë rrugë të gjitha automjeteve"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1642,7 +1688,8 @@
       "a": "nga 1 deri në 2 metra",
       "b": "nga 3 deri në 5 metra",
       "c": "mbi 5 metra"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1677,7 +1724,8 @@
       "a": "vetëm shoferi",
       "b": "shoferi dhe udhëtarët",
       "c": "vetëm shoferi dhe bashkudhëtari"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1712,7 +1760,8 @@
       "a": "duhet të ndezë treguesin e drejtimit majtas",
       "b": "duhet të ndezë treguesin e drejtimit djathtas",
       "c": "duhet të ndezë të gjithë treguesit e drejtimit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1747,7 +1796,8 @@
       "a": "80 km/h",
       "b": "50 km/h",
       "c": "60 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1782,7 +1832,8 @@
       "a": "të ndezë treguesin e drejtimit majtas",
       "b": "të ndezë të gjithë treguesit e drejtimit",
       "c": "të ndezë treguesin e drejtimit djathtas"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1817,7 +1868,8 @@
       "a": "nga ana e djathtë",
       "b": "nga ana e majtë",
       "c": "sipas marrëveshjes"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1852,7 +1904,8 @@
       "a": "të përdorë sinjalin zanor paralajmërues dhe të ndezë treguesin përkatës të drejtimit",
       "b": "të ndezë të gjithë treguesit e drejtimit",
       "c": "të sigurohet se këtë mund ta bëjë në mënyrë të sigurt dhe të ndezë treguesin përkatës të drejtimit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1887,7 +1940,8 @@
       "a": "guxon të tejkalohet nga ana e djathtë",
       "b": "guxon të tejkalohet nga ana e majtë",
       "c": "nuk guxon të tejkalohet"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1922,7 +1976,8 @@
       "a": "të mbajë distancë të sigurt ndërmjet automjetit të tij dhe këmbësorit",
       "b": "ta paralajmërojë këmbësorin me borí që këmbësori ta lëshojë karrexhatën",
       "c": "ta shpejtojë automjetin që sa më shpejt të kalojë pranë këmbësorit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1957,7 +2012,8 @@
       "a": "nga 3 deri në 5 metra",
       "b": "mbi 5 metra",
       "c": "deri në 3 m"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -1992,7 +2048,8 @@
       "a": "tejkalimit",
       "b": "anashkalimit",
       "c": "rreshtimit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2027,7 +2084,8 @@
       "a": "60 km/h",
       "b": "70 km/h",
       "c": "80 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2062,7 +2120,8 @@
       "a": "është i detyruar ta zhvendosë automjetin e tij drejt skajit të djathtë të karrexhatës",
       "b": "është i detyruar ta zhvendosë automjetin e tij drejt vijës ndarëse",
       "c": "është i detyruar ta zhvendosë automjetin drejt skajit të majtë të karrexhatës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2097,7 +2156,8 @@
       "a": "jo, nëse kolona është më e gjatë se 30 metra",
       "b": "jo, pavarësisht nga gjatësia e kolonës",
       "c": "po, pavarësisht nga gjatësia e kolonës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2132,7 +2192,8 @@
       "a": "guxojnë të transportohen persona",
       "b": "nuk guxojnë të transportohen persona",
       "c": "nuk guxojnë të transportohen më shumë se pesë persona"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2167,7 +2228,8 @@
       "a": "deri në 1,5 metra",
       "b": "deri në 1 metër",
       "c": "nuk është e kufizuar, por duhet të shënohet me tabelën e paraparë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2202,7 +2264,8 @@
       "a": "që ka më pak se 12 muaj përvojë në vozitje",
       "b": "deri në 24 vjeç",
       "c": "deri në 21 vjeç"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2237,7 +2300,8 @@
       "a": "me kujdes të veçantë do ta vazhdoni lëvizjen që të mund ta ndalni automjetin me kohë",
       "b": "do ta përshtatni shpejtësinë sipas kufizimit të përgjithshëm për atë pjesë të rrugës",
       "c": "do ta përshtatni shpejtësinë sipas kushteve atmosferike"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2272,7 +2336,8 @@
       "a": "do ta ndalni automjetin dhe do të prisni hyrjen e udhëtarëve në autobus, e pastaj do ta vazhdoni lëvizjen",
       "b": "do ta ndizni borinë dhe do ta vazhdoni lëvizjen pa vëmendje shtesë ndaj personave që hyjnë në autobus, përkatësisht dalin",
       "c": "do të lëvizni me shpejtësi të zvogëluar që të mos i rrezikoni personat që hyjnë në autobus, përkatësisht dalin"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2307,7 +2372,8 @@
       "a": "së paku dy jelekë me veti reflektuese",
       "b": "aq jelekë me veti reflektuese sa ka edhe vende për ulje",
       "c": "një jelek me veti reflektuese"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2342,7 +2408,8 @@
       "a": "50 km/h",
       "b": "60 km/h",
       "c": "70 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2377,7 +2444,8 @@
       "a": "ta ndalë automjetin dhe ta heqë baltën nga rrotat pas kyçjes",
       "b": "ta shpejtojë dhe ta ngadalësojë automjetin në mënyrë të alternuar pas kyçjes, që balta të bjerë nga rrotat",
       "c": "ta ndalë automjetin dhe ta heqë baltën nga rrotat para kyçjes"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2412,7 +2480,8 @@
       "a": "sa më afër skajit të djathtë të karrexhatës",
       "b": "në mes të brezit të karrexhatës",
       "c": "më afër vijës ndarëse"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2447,7 +2516,8 @@
       "a": "automjetet për heqjen e mbeturinave",
       "b": "automjetet me përparësi kalimi",
       "c": "automjetet udhëtare gjatë tejkalimit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2482,7 +2552,8 @@
       "a": "ta vazhdojë lëvizjen pa detyrim ndaj pjesëmarrësve të tjerë në komunikacion",
       "b": "në vendin e përshtatshëm në rrugë t'u mundësojë automjeteve ta tejkalojnë, ta anashkalojnë ose të kalojnë pranë tij në mënyrë të sigurt",
       "c": "ta vazhdojë lëvizjen deri te kryqëzimi i parë me rrugë lokale dhe të çkyçet nga komunikacioni"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2517,7 +2588,8 @@
       "a": "nëse trotuari ka gjerësi më shumë se 1,6 metra",
       "b": "nëse është e lejuar me shenjë rrugore, pavarësisht nga gjerësia e trotuarit dhe e kalimit për këmbësorë",
       "c": "nëse është e lejuar me sinjalizim rrugor dhe nëse mbetet kalim për këmbësorë me gjerësi së paku 1,6 metra, i cili nuk guxon të jetë pranë skajit të karrexhatës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2552,7 +2624,8 @@
       "a": "nga cilado anë",
       "b": "nga ana e majtë",
       "c": "nga ana e djathtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2587,7 +2660,8 @@
       "a": "duhet të jenë të ndezur të gjithë treguesit e drejtimit",
       "b": "nuk është e domosdoshme të jenë të ndezur të gjithë treguesit e drejtimit",
       "c": "duhet të jetë i ndezur vetëm treguesi i drejtimit djathtas"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2622,7 +2696,8 @@
       "a": "17 vjet",
       "b": "17 vjet e 6 muaj",
       "c": "18 vjet"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2657,7 +2732,8 @@
       "a": "dritat e shkurtra",
       "b": "dritat e parkimit, përkatësisht dritat e pozicionit",
       "c": "dritat për mjegull"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2692,7 +2768,8 @@
       "a": "shikueshmëria",
       "b": "fusha e shikimit",
       "c": "dukshmëria"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2727,7 +2804,8 @@
       "a": "në gjerësi deri në 1 metër nga skaji i djathtë i karrexhatës",
       "b": "në gjerësi deri në 1,5 metra nga skaji i djathtë i karrexhatës",
       "c": "në gjerësi deri në 1,2 metra nga skaji i djathtë i karrexhatës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2762,7 +2840,8 @@
       "a": "në 60 km/h",
       "b": "në 70 km/h",
       "c": "në 80 km/h"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2797,7 +2876,8 @@
       "a": "ndez sinjalin zanor dhe të gjithë treguesit e drejtimit",
       "b": "ndez vetëm treguesin e drejtimit",
       "c": "sigurohet se nuk pengon dhe në mënyrën e paraparë i njofton pjesëmarrësit e tjerë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2832,7 +2912,8 @@
       "a": "fëmija nuk është i detyruar të jetë i lidhur me rrip sigurie",
       "b": "fëmija nuk është i detyruar të jetë i lidhur, nëse ndenjësja është e fiksuar me rrip sigurie",
       "c": "fëmija duhet të jetë i lidhur me rrip sigurie"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2867,7 +2948,8 @@
       "a": "në brezin e karrexhatës të destinuar për qarkullim të automjeteve nga kahu i kundërt",
       "b": "në brezin e djathtë të karrexhatës",
       "c": "në brezin e majtë dhe të djathtë të karrexhatës"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2902,7 +2984,8 @@
       "a": "të shkruajë mesazhe në pajisjen telefonike",
       "b": "ta pengojë shoferin në drejtimin e automjetit",
       "c": "të përdorë kufje"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2937,7 +3020,8 @@
       "a": "i detyruar t'i lëshojë rrugë automjetit që vjen pas automjetit të tij",
       "b": "i detyruar ta ndezë treguesin e drejtimit majtas",
       "c": "nuk është i detyruar t'i lëshojë rrugë automjetit që vjen pas automjetit të tij"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -2972,7 +3056,8 @@
       "a": "nuk guxon të përdoret në pjesën e rrugës ku ekziston tabela plotësuese kontroll me radar",
       "b": "guxon të përdoret në pjesën e rrugës ku nuk ekziston tabela plotësuese kontroll me radar",
       "c": "nuk guxon as të përdoret as të gjendet në automjet"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3007,7 +3092,8 @@
       "a": "është i detyruar të mbajë jelek me veti reflektuese të dritës",
       "b": "nuk është i detyruar të mbajë jelek me veti reflektuese të dritës",
       "c": "është i detyruar t'i paralajmërojë pjesëmarrësit e tjerë për praninë e tij me pozicionin e duarve"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3042,7 +3128,8 @@
       "a": "ana e djathtë",
       "b": "ana e majtë",
       "c": "ana e majtë dhe e djathtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3077,7 +3164,8 @@
       "a": "dritat e gjata",
       "b": "dritat e shkurtra",
       "c": "treguesit e drejtimit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3112,7 +3200,8 @@
       "a": "ta rrisë shpejtësinë e lëvizjes që sa më shpejt të kalojë nëpër kryqëzim",
       "b": "ta përshtatë vozitjen me kushtet e komunikacionit në kryqëzim",
       "c": "të vozitë me shpejtësinë e paraparë me kufizimin e përgjithshëm"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3147,7 +3236,8 @@
       "a": "7 vjeç",
       "b": "6 vjeç",
       "c": "5 vjeç"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3182,7 +3272,8 @@
       "a": "sipas dimensioneve, aftësisë mbajtëse, karakteristikave të shpejtësisë, llojit, konstruksionit, markës dhe tipit",
       "b": "vetëm sipas markës, tipit, dimensioneve, aftësisë mbajtëse, llojit dhe thellësisë së vizatimit",
       "c": "vetëm sipas dimensioneve, markës dhe tipit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3217,7 +3308,8 @@
       "a": "15 metra",
       "b": "30 metra",
       "c": "35 metra"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3252,7 +3344,8 @@
       "a": "është i lidhur në dy pika",
       "b": "nuk është i lidhur",
       "c": "është i lidhur në tri pika"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3287,7 +3380,8 @@
       "a": "jod dhe garzë sterile",
       "b": "fashë kompresive",
       "c": "alkool dhe garzë sterile"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -3322,7 +3416,8 @@
       "a": "122",
       "b": "123",
       "c": "124"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "image",
@@ -3358,7 +3453,8 @@
       "a": "do të ndalem para kryqëzimit",
       "b": "do t'i lëshoj rrugë automjetit që kthehet majtas dhe do ta vazhdoj lëvizjen",
       "c": "do ta vazhdoj lëvizjen drejt"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3394,7 +3490,9 @@
       "a": "sipas dritës së ndezur në semafor",
       "b": "sipas sinjalizimit rrugor vertikal",
       "c": "sipas sinjalit që e jep zyrtari i autorizuar policor"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 96
   },
   {
     "type": "image",
@@ -3430,7 +3528,8 @@
       "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit 1",
       "b": "do t'i lëshoj rrugë automjetit 1 dhe do ta vazhdoj lëvizjen",
       "c": "do ta shpejtoj lëvizjen dhe do të kaloj nëpër kryqëzim para automjetit 1"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3466,7 +3565,9 @@
       "a": "kryqëzim me rrugë me përparësi kalimi",
       "b": "përparësi ndaj automjeteve nga kahu i kundërt",
       "c": "ndalje e detyrueshme"
-    }
+    },
+    "kind": "znak",
+    "subOf": 98
   },
   {
     "type": "image",
@@ -3502,7 +3603,8 @@
       "a": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve",
       "b": "do ta vazhdoj lëvizjen duke i lëshuar rrugë vetëm automjetit 1",
       "c": "do ta vazhdoj lëvizjen duke u lëshuar rrugë automjeteve 3 dhe 4"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "ordering",
@@ -3523,7 +3625,9 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles proceed is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:",
+    "kind": "situacija",
+    "subOf": 100
   },
   {
     "type": "image",
@@ -3559,7 +3663,8 @@
       "a": "e kryen rregullisht veprimin e kalimit nëpër kryqëzim",
       "b": "jo rregullisht, sepse duhet ta shtyjë biçikletën pranë vetes",
       "c": "e kryen jo rregullisht veprimin e kalimit nëpër kryqëzim"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3595,7 +3700,9 @@
       "a": "shtegun e shënuar për biçikleta",
       "b": "korsinë e shënuar për biçikleta",
       "c": "vijën ndarëse të shënuar të vendkalimit për këmbësorë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 102
   },
   {
     "type": "image",
@@ -3631,7 +3738,8 @@
       "a": "do t'i lëshoj rrugë automjetit udhëtar 3 dhe do ta vazhdoj lëvizjen",
       "b": "do t'i lëshoj rrugë tramvajit 2 dhe do ta vazhdoj lëvizjen",
       "c": "do t'i lëshoj rrugë tramvajit 2 dhe automjetit udhëtar 3, e pastaj do ta vazhdoj lëvizjen"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "ordering",
@@ -3651,7 +3759,9 @@
     "area": "III",
     "text_en": "The order in which the vehicles pass through the intersection is:",
     "text_ru": "Порядок проезда транспортных средств через перекрёсток:",
-    "text_sq": "Radha e kalimit të automjeteve nëpër kryqëzim është:"
+    "text_sq": "Radha e kalimit të automjeteve nëpër kryqëzim është:",
+    "kind": "situacija",
+    "subOf": 104
   },
   {
     "type": "image",
@@ -3687,7 +3797,8 @@
       "a": "do ta vazhdoj lëvizjen drejt",
       "b": "do ta vazhdoj lëvizjen drejt duke u lëshuar rrugë automjeteve 4 dhe 5",
       "c": "do ta ndal automjetin"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3723,7 +3834,9 @@
       "a": "ndalet dhe do t'i lëshojë rrugë automjetit 1",
       "b": "vazhdojë lëvizjen majtas pa i lëshuar rrugë automjetit 1",
       "c": "ndalet për shkak të sinjalit që e jep personi i autorizuar"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 106
   },
   {
     "type": "image",
@@ -3759,7 +3872,8 @@
       "a": "automjeti 1 ndaj automjetit 2",
       "b": "automjeti 2 ndaj automjetit 1",
       "c": "automjeti 1 për shkak të rregullës së së djathtës"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3795,7 +3909,9 @@
       "a": "rregullën e lëshimit të rrugës automjeteve nga ana e djathtë",
       "b": "rregullën e lëshimit të rrugës automjeteve nga ana e majtë",
       "c": "shenjë rrugore vertikale"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 108
   },
   {
     "type": "image",
@@ -3831,7 +3947,8 @@
       "a": "do t'i lëshoj rrugë automjetit që kthehet majtas",
       "b": "do ta vazhdoj lëvizjen drejt sepse kam përparësi kalimi",
       "c": "do të ndalem para kryqëzimit për shkak të shenjës STOP"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3867,7 +3984,9 @@
       "a": "shenjës rrugore STOP",
       "b": "kuptimit të sinjaleve ndriçuese në semafor",
       "c": "rregullës së komunikacionit për hyrje në kryqëzim të parregulluar"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 110
   },
   {
     "type": "ordering",
@@ -3887,7 +4006,8 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles proceed is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:",
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3923,7 +4043,9 @@
       "a": "shenjë rrugore",
       "b": "rregullën e lëshimit të rrugës automjeteve nga ana e djathtë",
       "c": "shenja horizontale"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 112
   },
   {
     "type": "image",
@@ -3959,7 +4081,8 @@
       "a": "ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve 2, 3 dhe 4",
       "b": "t'u lëshoj rrugë automjeteve 3 dhe 4",
       "c": "t'u lëshoj rrugë automjeteve 2, 3 dhe 4"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -3995,7 +4118,9 @@
       "a": "vijën e drejtimit",
       "b": "kahun e detyrueshëm vetëm për automjetet udhëtare",
       "c": "kahun e detyrueshëm të lëvizjes"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 114
   },
   {
     "type": "image",
@@ -4031,7 +4156,8 @@
       "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë tramvajit",
       "b": "do ta vazhdoj lëvizjen drejt pasi t'i lëshoj rrugë tramvajit",
       "c": "me kujdes të shtuar do ta vazhdoj lëvizjen drejt"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4067,7 +4193,9 @@
       "a": "sinjalizim vertikal",
       "b": "zbatimin e rregullës së së djathtës",
       "c": "zbatimin e rregullës së përparësisë së kalimit"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 116
   },
   {
     "type": "image",
@@ -4103,7 +4231,8 @@
       "a": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 2",
       "b": "do ta vazhdoj lëvizjen drejt me vëmendje të shtuar",
       "c": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit 2"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4139,7 +4268,9 @@
       "a": "afrimin te rruga anësore rrethuese",
       "b": "se po lëviz në rrugë me përparësi kalimi",
       "c": "bashkimin me rrugën me përparësi kalimi"
-    }
+    },
+    "kind": "znak",
+    "subOf": 118
   },
   {
     "type": "image",
@@ -4175,7 +4306,8 @@
       "a": "anashkalimit",
       "b": "kalimit përballë",
       "c": "tejkalimit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4211,7 +4343,9 @@
       "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë këmbësorit",
       "b": "do ta shpejtoj lëvizjen e automjetit dhe do të kaloj para këmbësorit",
       "c": "do të ndalem dhe do t'i lëshoj rrugë këmbësorit"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 120
   },
   {
     "type": "image",
@@ -4247,7 +4381,8 @@
       "a": "guxoj të tejkaloj",
       "b": "nuk guxoj të tejkaloj",
       "c": "guxoj të tejkaloj për shkak të shenjave në karrexhatë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4283,7 +4418,9 @@
       "a": "skajin e karrexhatës",
       "b": "vijën anësore",
       "c": "vijën ndarëse"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 122
   },
   {
     "type": "image",
@@ -4319,7 +4456,8 @@
       "a": "do të ndalem para kryqëzimit",
       "b": "do t'u lëshoj rrugë automjeteve nga kahu i kundërt e pastaj do ta vazhdoj lëvizjen",
       "c": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve nga kahu i kundërt"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4355,7 +4493,9 @@
       "a": "jo rregullisht, sepse kanë formuar kolonë",
       "b": "jo rregullisht, sepse nuk mbajnë jelek me veti reflektuese",
       "c": "rregullisht"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 124
   },
   {
     "type": "image",
@@ -4391,7 +4531,8 @@
       "a": "do ta vazhdoj lëvizjen djathtas",
       "b": "do të ndalem para kryqëzimit",
       "c": "do ta vazhdoj lëvizjen drejt"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4427,7 +4568,9 @@
       "a": "shenjës ndriçuese rrugore",
       "b": "shenjës rrugore vertikale",
       "c": "shenjave horizontale"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 126
   },
   {
     "type": "image",
@@ -4463,7 +4606,8 @@
       "a": "do ta vazhdoj lëvizjen drejt",
       "b": "do ta ndal automjetin",
       "c": "do ta vazhdoj lëvizjen majtas pasi t'u lëshoj rrugë automjeteve 2 dhe 3"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4499,7 +4643,9 @@
       "a": "mund ta vazhdojë lëvizjen drejt",
       "b": "duhet të ndalet",
       "c": "mund ta vazhdojë lëvizjen në cilindo drejtim"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 128
   },
   {
     "type": "image",
@@ -4535,7 +4681,8 @@
       "a": "i automjetit 1 duhet t'i lëshojë rrugë automjetit 2",
       "b": "i automjetit 2 duhet ta shpejtojë lëvizjen dhe të kalojë para automjetit 1",
       "c": "i automjetit 2 duhet t'i lëshojë rrugë automjetit 1"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4571,7 +4718,9 @@
       "a": "nuk guxon të ndalet ose të parkohet",
       "b": "guxon të ndalet",
       "c": "guxon të ndalet ose të parkohet"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 130
   },
   {
     "type": "image",
@@ -4607,7 +4756,8 @@
       "a": "automjeti udhëtar 1 e ka kalimin e lejuar",
       "b": "automjetet 2, 3 dhe 4 e kanë kalimin e lejuar",
       "c": "vetëm automjeti policor 4 e ka kalimin e lejuar"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4643,7 +4793,9 @@
       "a": "mund ta vazhdojë lëvizjen drejt",
       "b": "duhet të ndalet",
       "c": "mund ta vazhdojë lëvizjen drejt pas kalimit të automjetit 1"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 132
   },
   {
     "type": "image",
@@ -4679,7 +4831,8 @@
       "a": "pasi t'i lëshoj rrugë automjetit 2 duhet të kthehem djathtas",
       "b": "kam përparësi kalimi ndaj automjetit 2",
       "c": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë të gjitha automjeteve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4715,7 +4868,9 @@
       "a": "automjeteve transportuese dhe rimorkiove",
       "b": "të gjitha automjeteve përveç atyre transportuese",
       "c": "automjeteve transportuese"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 134
   },
   {
     "type": "image",
@@ -4751,7 +4906,8 @@
       "a": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim",
       "b": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 2",
       "c": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 3"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "ordering",
@@ -4771,7 +4927,9 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles pass through the intersection is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств через перекрёсток:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është:",
+    "kind": "situacija",
+    "subOf": 136
   },
   {
     "type": "image",
@@ -4807,7 +4965,8 @@
       "a": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve",
       "b": "do ta vazhdoj lëvizjen pasi t'u lëshoj rrugë vetëm automjeteve 3 dhe 4",
       "c": "do ta vazhdoj lëvizjen duke i lëshuar rrugë automjetit 1"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "ordering",
@@ -4828,7 +4987,9 @@
     "area": "III",
     "text_en": "In the situation in the picture, when the vehicles keep to their direction of travel, the order in which the vehicles proceed is:",
     "text_ru": "В ситуации на рисунке, когда транспортные средства сохраняют направление движения, порядок их проезда:",
-    "text_sq": "Në situatën në figurë, kur automjetet e ruajnë kahun e lëvizjes, radha e kalimit të automjeteve është:"
+    "text_sq": "Në situatën në figurë, kur automjetet e ruajnë kahun e lëvizjes, radha e kalimit të automjeteve është:",
+    "kind": "situacija",
+    "subOf": 138
   },
   {
     "type": "image",
@@ -4864,7 +5025,8 @@
       "a": "do ta vazhdoj lëvizjen majtas nëpër kryqëzim pa u ndalur",
       "b": "do të ndalem para kryqëzimit",
       "c": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -4900,7 +5062,9 @@
       "a": "ndalim i kalimit vetëm drejt",
       "b": "kalim i lirë vetëm drejt",
       "c": "ndalim i kalimit nëpër kryqëzim"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 140
   },
   {
     "type": "image",
@@ -4936,7 +5100,8 @@
       "a": "do t'u lëshoj rrugë vetëm automjeteve 2 dhe 3",
       "b": "do t'i lëshoj rrugë vetëm automjetit 4 dhe do ta vazhdoj lëvizjen",
       "c": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve 2, 3 dhe 4"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "ordering",
@@ -4955,7 +5120,9 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles that are allowed to proceed pass is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств, которым разрешён проезд:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve të cilave u lejohet kalimi është:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve të cilave u lejohet kalimi është:",
+    "kind": "situacija",
+    "subOf": 142
   },
   {
     "type": "image",
@@ -4991,7 +5158,8 @@
       "a": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve",
       "b": "nuk do t'i lëshoj rrugë automjetit 3",
       "c": "do t'u lëshoj rrugë automjeteve 2 dhe 3"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5027,7 +5195,9 @@
       "a": "kaloj përballë nga ana e djathtë",
       "b": "kaloj përballë nga ana e majtë",
       "c": "e anashkaloj nga ana e djathtë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 144
   },
   {
     "type": "image",
@@ -5063,7 +5233,8 @@
       "a": "do të ndalem para kryqëzimit për shkak të shenjës STOP",
       "b": "do ta vazhdoj lëvizjen, sepse e ruaj kahun",
       "c": "do të ndalem para kryqëzimit për shkak të dritës në semafor"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5099,7 +5270,9 @@
       "a": "shenjë ndriçuese rrugore",
       "b": "rregullën e së djathtës",
       "c": "shenjë rrugore"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 146
   },
   {
     "type": "image",
@@ -5135,7 +5308,8 @@
       "a": "do ta vazhdoj lëvizjen drejt sepse e ruaj kahun e lëvizjes",
       "b": "do ta vazhdoj lëvizjen drejt sepse semafori nuk punon",
       "c": "do të ndalem para kryqëzimit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5171,7 +5345,9 @@
       "a": "sipas shenjave rrugore",
       "b": "sipas semaforit",
       "c": "sipas rregullës së lëshimit të rrugës automjeteve vetëm nga ana e djathtë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 148
   },
   {
     "type": "image",
@@ -5207,7 +5383,8 @@
       "a": "do t'u lëshoj rrugë vetëm automjeteve që vijnë nga ana e djathtë",
       "b": "do t'u lëshoj rrugë vetëm automjeteve nga ana e majtë",
       "c": "do ta ndal automjetin"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "ordering",
@@ -5226,7 +5403,9 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles that are allowed to proceed pass is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств, которым разрешён проезд:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve të cilave u lejohet kalimi është:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve të cilave u lejohet kalimi është:",
+    "kind": "situacija",
+    "subOf": 150
   },
   {
     "type": "image",
@@ -5262,7 +5441,8 @@
       "a": "ta vazhdojë lëvizjen pa i lëshuar rrugë automjetit 2",
       "b": "të ndalet dhe pasi t'i lëshojë rrugë automjetit 2 ta vazhdojë lëvizjen",
       "c": "të ndalet dhe të rreshtohet në korsinë e djathtë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5298,7 +5478,9 @@
       "a": "rregullës së kalimit përballë të automjeteve të kategorive të ndryshme",
       "b": "rregullës së lëshimit të rrugës automjeteve nga ana e djathtë",
       "c": "sinjalizimit rrugor vertikal dhe horizontal"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 152
   },
   {
     "type": "image",
@@ -5334,7 +5516,8 @@
       "a": "duhet ta vazhdoj lëvizjen majtas",
       "b": "mund të rreshtohem në korsinë e djathtë",
       "c": "pa u rreshtuar do ta vazhdoj lëvizjen drejt"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5370,7 +5553,9 @@
       "a": "kahun e detyrueshëm të lëvizjes majtas",
       "b": "destinimin e korsive",
       "c": "kahun e detyrueshëm të lëvizjes djathtas"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 154
   },
   {
     "type": "image",
@@ -5406,7 +5591,8 @@
       "a": "nuk jam i detyruar t'u lëshoj rrugë automjeteve në rrethrrotullim",
       "b": "jam i detyruar t'u lëshoj rrugë vetëm automjeteve që më vijnë nga ana e djathtë",
       "c": "jam i detyruar t'u lëshoj rrugë të gjitha automjeteve që lëvizin në rrethrrotullim"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5442,7 +5628,9 @@
       "a": "kthehet rregullisht djathtas nëpër trajektoren a",
       "b": "kthehet jo rregullisht djathtas",
       "c": "kthehet rregullisht djathtas nëpër trajektoren b"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 156
   },
   {
     "type": "image",
@@ -5478,7 +5666,8 @@
       "a": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë automjeteve 4 dhe 2",
       "b": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë të gjitha automjeteve",
       "c": "do t'i lëshoj rrugë vetëm automjetit 3"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "ordering",
@@ -5499,7 +5688,9 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles pass through the intersection is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств через перекрёсток:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është:",
+    "kind": "situacija",
+    "subOf": 158
   },
   {
     "type": "image",
@@ -5535,7 +5726,8 @@
       "a": "do t'i lëshoj rrugë automjetit 2 dhe do ta vazhdoj lëvizjen majtas",
       "b": "do ta vazhdoj lëvizjen majtas pa i lëshuar rrugë automjetit 2",
       "c": "do ta shpejtoj lëvizjen e automjetit dhe do të kaloj para automjetit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5571,7 +5763,9 @@
       "a": "rregullisht nëpër trajektoren a",
       "b": "rregullisht nëpër trajektoren b",
       "c": "rregullisht më afër skajit të djathtë të karrexhatës"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 160
   },
   {
     "type": "image",
@@ -5607,7 +5801,8 @@
       "a": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim",
       "b": "do të ndalem para kryqëzimit e pastaj do ta vazhdoj lëvizjen drejt",
       "c": "do ta vazhdoj lëvizjen majtas nëpër kryqëzim"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5643,7 +5838,9 @@
       "a": "kahun e detyrueshëm",
       "b": "destinimin e korsive",
       "c": "tabelën e drejtimit"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 162
   },
   {
     "type": "image",
@@ -5679,7 +5876,8 @@
       "a": "do ta vazhdoj lëvizjen majtas pasi t'i lëshoj rrugë automjetit 3",
       "b": "do ta vazhdoj lëvizjen majtas pa u lëshuar rrugë automjeteve 2 dhe 3",
       "c": "do të ndalem dhe do t'u lëshoj rrugë automjeteve 2 dhe 3"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "ordering",
@@ -5699,7 +5897,9 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles proceed is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:",
+    "kind": "situacija",
+    "subOf": 164
   },
   {
     "type": "image",
@@ -5735,7 +5935,8 @@
       "a": "1 duhet ta vazhdojë lëvizjen pa i lëshuar rrugë automjetit 2",
       "b": "2 duhet t'i lëshojë rrugë automjetit 1 dhe ta vazhdojë lëvizjen",
       "c": "1 duhet t'i lëshojë rrugë automjetit 2 e pastaj ta vazhdojë lëvizjen"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5771,7 +5972,9 @@
       "a": "rregullës së lëshimit të rrugës automjeteve vetëm nga ana e djathtë",
       "b": "rregullës së kalimit nëpër kryqëzim të parregulluar",
       "c": "shenjës rrugore"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 166
   },
   {
     "type": "image",
@@ -5807,7 +6010,8 @@
       "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë tramvajit",
       "b": "do ta vazhdoj lëvizjen drejt pasi t'i lëshoj rrugë tramvajit",
       "c": "do të ndalem dhe do t'i lëshoj rrugë tramvajit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5843,7 +6047,9 @@
       "a": "sinjalizim rrugor vertikal",
       "b": "përparësinë e kalimit të automjetit mbi shina",
       "c": "rregullën e lëshimit të rrugës automjeteve vetëm nga ana e djathtë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 168
   },
   {
     "type": "image",
@@ -5879,7 +6085,8 @@
       "a": "do ta vazhdoj lëvizjen drejt sepse kam përparësi kalimi",
       "b": "do ta vazhdoj lëvizjen me shpejtësi të zvogëluar",
       "c": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë automjeteve nga kahu i kundërt"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5915,7 +6122,9 @@
       "a": "sinjalizimit ndriçues rrugor",
       "b": "sinjalizimit rrugor vertikal",
       "c": "rregullës së lëshimit të rrugës automjeteve nga ana e djathtë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 170
   },
   {
     "type": "ordering",
@@ -5935,7 +6144,8 @@
     "area": "III",
     "text_en": "In the situation shown in the picture the order in which the vehicles pass through the intersection is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств через перекрёсток следующий:",
-    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është kjo:"
+    "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është kjo:",
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -5971,7 +6181,9 @@
       "a": "në cilindo kah",
       "b": "në kahun e akrepave të orës",
       "c": "në kahun e kundërt të akrepave të orës"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 172
   },
   {
     "type": "image",
@@ -6007,7 +6219,8 @@
       "a": "do të ndalem dhe do t'i lëshoj rrugë automjetit 3",
       "b": "do ta vazhdoj lëvizjen drejt pas automjetit 2",
       "c": "do ta zvogëloj shpejtësinë e lëvizjes dhe do t'i lëshoj rrugë automjetit 3"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6043,7 +6256,9 @@
       "a": "rimorkio",
       "b": "rimorkio e lehtë",
       "c": "gjysmërimorkio"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 174
   },
   {
     "type": "image",
@@ -6079,7 +6294,8 @@
       "a": "traktori 2 sepse e ka të ndezur dritën rrotulluese të verdhë",
       "b": "traktori 2 sepse e ruan kahun e lëvizjes",
       "c": "automjeti udhëtar 1"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6115,7 +6331,9 @@
       "a": "shoferi dhe një person",
       "b": "vetëm shoferi",
       "c": "shoferi dhe dy persona"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 176
   },
   {
     "type": "image",
@@ -6151,7 +6369,8 @@
       "a": "drita e gjelbër",
       "b": "nuk do të hyj në kryqëzim për shkak të dendësisë së komunikacionit",
       "c": "do ta vazhdoj lëvizjen djathtas nëpër kryqëzim"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6187,7 +6406,9 @@
       "a": "guxoj të bëj kthim gjysmërrethor",
       "b": "guxoj të ndalem në kryqëzim",
       "c": "nuk guxoj të bëj kthim gjysmërrethor me automjetin"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 178
   },
   {
     "type": "image",
@@ -6223,7 +6444,8 @@
       "a": "ta vazhdojë lëvizjen majtas pa i lëshuar rrugë automjetit transportues",
       "b": "ta vazhdojë lëvizjen drejt pa i lëshuar rrugë automjetit transportues",
       "c": "të ndalet para kryqëzimit dhe t'i lëshojë rrugë automjetit transportues"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6259,7 +6481,9 @@
       "a": "sinjalizimit rrugor vertikal",
       "b": "rregullës së lëshimit të rrugës automjeteve nga ana e djathtë",
       "c": "rregullës së lëshimit të rrugës automjeteve të kategorisë më të madhe"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 180
   },
   {
     "type": "image",
@@ -6295,7 +6519,8 @@
       "a": "do ta ndal automjetin dhe do t'u lëshoj rrugë këmbësorëve",
       "b": "do ta vazhdoj lëvizjen pa u lëshuar rrugë këmbësorëve",
       "c": "do t'i paralajmëroj këmbësorët me borí dhe do ta vazhdoj lëvizjen"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6331,7 +6556,9 @@
       "a": "vendkalimin për këmbësorë",
       "b": "ishullin për këmbësorë",
       "c": "shtegun për këmbësorë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 182
   },
   {
     "type": "image",
@@ -6367,7 +6594,8 @@
       "a": "ta vazhdoj lëvizjen në korsinë e djathtë",
       "b": "ta tejkaloj automjetin policor",
       "c": "ta ndal automjetin"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6403,7 +6631,9 @@
       "a": "është i detyrueshëm për të gjithë pjesëmarrësit në komunikacion",
       "b": "nuk është i detyrueshëm kur jepet nga automjeti",
       "c": "është i detyrueshëm vetëm për çiklistët"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 184
   },
   {
     "type": "image",
@@ -6439,7 +6669,8 @@
       "a": "jo rregullisht, sepse kalon në korsinë e kundërt",
       "b": "jo rregullisht, sepse e rrezikon çiklistin",
       "c": "rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6475,7 +6706,9 @@
       "a": "ta vazhdojë lëvizjen në korsinë në të cilën e ka kryer tejkalimin",
       "b": "të kthehet në korsinë e vet dhe ta vazhdojë lëvizjen",
       "c": "ta vazhdojë lëvizjen pranë skajit të majtë të karrexhatës"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 186
   },
   {
     "type": "image",
@@ -6511,7 +6744,8 @@
       "a": "është veprim i tejkalimit të automjetit",
       "b": "është veprim i anashkalimit të automjetit",
       "c": "nuk konsiderohet veprim i tejkalimit të automjetit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6547,7 +6781,9 @@
       "a": "formojnë kolonë automjetesh dhe nuk guxojnë të tejkalohen",
       "b": "formojnë kolonë automjetesh dhe guxojnë të tejkalohen",
       "c": "nuk formojnë kolonë automjetesh"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 188
   },
   {
     "type": "image",
@@ -6583,7 +6819,8 @@
       "a": "nuk guxojnë të ndalen ose të parkohen",
       "b": "guxojnë të ndalen, por jo edhe të parkohen",
       "c": "guxojnë të ndalen dhe të parkohen"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6619,7 +6856,9 @@
       "a": "nuk guxon të ndalet",
       "b": "guxon të ndalet vetëm për hyrjen ose daljen e udhëtarëve",
       "c": "guxon të parkohet më së shumti 15 minuta"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 190
   },
   {
     "type": "image",
@@ -6655,7 +6894,8 @@
       "a": "kryqëzim",
       "b": "anashkalim",
       "c": "kalim përballë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6691,7 +6931,9 @@
       "a": "e lejuar",
       "b": "e lejuar, por duhet të shënohet me tabelë të kuqe",
       "c": "nuk është e lejuar"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 192
   },
   {
     "type": "image",
@@ -6727,7 +6969,8 @@
       "a": "do ta shpejtosh lëvizjen që të mos i pengosh këmbësorët",
       "b": "nuk do t'u lëshosh rrugë këmbësorëve, sepse nuk janë në korsinë tënde",
       "c": "do ta ndalësh automjetin dhe do t'u lëshosh rrugë këmbësorëve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6763,7 +7006,9 @@
       "a": "zona e shkollës",
       "b": "tabela drejtuese deri te shkolla",
       "c": "pjesa e karrexhatës e destinuar për parkimin e autobusit shkollor"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 194
   },
   {
     "type": "image",
@@ -6799,7 +7044,8 @@
       "a": "guxon të kryejë tejkalim",
       "b": "guxon të kryejë tejkalim, nëse nuk i pengon automjetet nga kahu i kundërt",
       "c": "nuk guxon të kryejë tejkalim"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6835,7 +7081,9 @@
       "a": "ndalimin e kalimit dhe të shkeljes së kësaj vije",
       "b": "pjesën e karrexhatës ku lejohet shkelja e kësaj vije",
       "c": "pjesën e karrexhatës ku lejohet kalimi mbi këtë vijë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 196
   },
   {
     "type": "image",
@@ -6871,7 +7119,8 @@
       "a": "i parkuar rregullisht",
       "b": "i ndalur rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6907,7 +7156,9 @@
       "a": "guxon ta ndalë automjetin",
       "b": "nuk guxon ta ndalë ose ta parkojë automjetin",
       "c": "guxon ta parkojë automjetin"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 198
   },
   {
     "type": "image",
@@ -6943,7 +7194,8 @@
       "a": "rregullisht, sepse nuk ka korsi për biçikleta",
       "b": "jo rregullisht",
       "c": "rregullisht pranë skajit të majtë të karrexhatës"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -6979,7 +7231,9 @@
       "a": "i ndalur rregullisht",
       "b": "i ndalur ose i parkuar rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 200
   },
   {
     "type": "image",
@@ -7015,7 +7269,8 @@
       "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit udhëtar 2",
       "b": "do t'i lëshoj rrugë automjetit udhëtar 2 sepse më vjen nga ana e djathtë",
       "c": "do ta zhvendos automjetin drejt skajit të majtë të karrexhatës"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7051,7 +7306,9 @@
       "a": "vazhdojë lëvizjen pa u lëshuar rrugë automjeteve që lëvizin në rrugën në të cilën ai del",
       "b": "vazhdojë lëvizjen sepse ka përparësi ndaj automjetit 1",
       "c": "ndalë automjetin dhe t'u lëshojë rrugë të gjitha automjeteve që lëvizin në rrugën në të cilën ai del"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 202
   },
   {
     "type": "image",
@@ -7087,7 +7344,8 @@
       "a": "nuk guxoj të tejkaloj për shkak të shenjave në karrexhatë",
       "b": "guxoj të tejkaloj",
       "c": "guxoj të tejkaloj nëse nuk kaloj në korsinë e kahut të kundërt"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7123,7 +7381,9 @@
       "a": "nuk është e kufizuar",
       "b": "është deri në 80 km/h",
       "c": "është deri në 20 km/h mbi kufizimin"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 204
   },
   {
     "type": "image",
@@ -7159,7 +7419,8 @@
       "a": "pasi t'i lëshojë rrugë automjetit udhëtar 2",
       "b": "pa i lëshuar rrugë automjetit udhëtar 2",
       "c": "pa detyrim ndaj pjesëmarrësve të tjerë në komunikacion"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7195,7 +7456,9 @@
       "a": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë këmbësorëve",
       "b": "do t'i paralajmëroj këmbësorët me sinjal zanor dhe do ta vazhdoj lëvizjen",
       "c": "do ta shpejtoj lëvizjen që të kaloj para këmbësorëve"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 206
   },
   {
     "type": "image",
@@ -7231,7 +7494,8 @@
       "a": "jo rregullisht",
       "b": "rregullisht në mes të karrexhatës",
       "c": "rregullisht, sepse korsia e majtë është e zënë nga një automjet"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7267,7 +7531,9 @@
       "a": "guxon të ndalet ose të parkohet",
       "b": "guxon të ndalet",
       "c": "nuk guxon të ndalet ose të parkohet"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 208
   },
   {
     "type": "image",
@@ -7303,7 +7569,8 @@
       "a": "guxoj ta tejkaloj automjetin udhëtar",
       "b": "nuk guxoj, sepse karrexhata është në kthesë të majtë",
       "c": "nuk guxoj, sepse është e ndaluar me shenjat në karrexhatë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7339,7 +7606,9 @@
       "a": "e ndan karrexhatën dhe nuk guxon të kalohet mbi të",
       "b": "e ndan karrexhatën dhe guxon të shkelet e të kalohet mbi të",
       "c": "e ndan brezin e karrexhatës dhe nuk guxon të kalohet mbi të"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 210
   },
   {
     "type": "image",
@@ -7375,7 +7644,8 @@
       "a": "do ta rris shpejtësinë e lëvizjes",
       "b": "do ta zhvendos automjetin drejt skajit të djathtë të karrexhatës",
       "c": "do ta zhvendos automjetin drejt skajit të majtë të karrexhatës"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7411,7 +7681,9 @@
       "a": "deri te kryqëzimi i parë",
       "b": "deri te shenja e parë e njoftimit",
       "c": "deri te shenja e parë e rrezikut"
-    }
+    },
+    "kind": "znak",
+    "subOf": 212
   },
   {
     "type": "image",
@@ -7447,7 +7719,8 @@
       "a": "ta shpejtojë automjetin dhe ta vazhdojë lëvizjen pa u lëshuar rrugë këmbësorëve",
       "b": "t'i lëshojë rrugë vetëm këmbësorit të shënuar me a dhe ta vazhdojë lëvizjen",
       "c": "të ndalet dhe t'u lëshojë rrugë të gjithë këmbësorëve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7483,7 +7756,9 @@
       "a": "guxon të ndalet ose të parkohet",
       "b": "guxon të ndalet",
       "c": "nuk guxon të ndalet ose të parkohet"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 214
   },
   {
     "type": "image",
@@ -7519,7 +7794,8 @@
       "a": "i ndalur rregullisht",
       "b": "i ndalur ose i parkuar rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7555,7 +7831,9 @@
       "a": "largësia e parkingut",
       "b": "kufizimi kohor i parkimit",
       "c": "parkim vetëm në kohë të caktuar"
-    }
+    },
+    "kind": "znak",
+    "subOf": 216
   },
   {
     "type": "image",
@@ -7591,7 +7869,8 @@
       "a": "guxon të parkohet",
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "guxon të ndalet"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7627,7 +7906,9 @@
       "a": "së paku 10 metra",
       "b": "së paku 5 metra",
       "c": "së paku 7 metra"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 218
   },
   {
     "type": "image",
@@ -7663,7 +7944,8 @@
       "a": "rregullisht, nëse nuk i pengon automjetet nga kahu i kundërt",
       "b": "rregullisht",
       "c": "jo rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7699,7 +7981,9 @@
       "a": "të lëvizë sa më afër vijës ndarëse",
       "b": "të lëvizë sa më afër skajit të djathtë të karrexhatës",
       "c": "të lëvizë në mes të korsisë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 220
   },
   {
     "type": "image",
@@ -7735,7 +8019,8 @@
       "a": "do ta vazhdoj lëvizjen majtas nëpër kryqëzim",
       "b": "do ta vazhdoj lëvizjen djathtas nëpër kryqëzim",
       "c": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7771,7 +8056,9 @@
       "a": "destinimin e korsive",
       "b": "kahun e detyrueshëm",
       "c": "vijat e drejtimit"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 222
   },
   {
     "type": "image",
@@ -7807,7 +8094,8 @@
       "a": "nëpër trajektoren 1 pa u lëshuar rrugë këmbësorëve",
       "b": "nëpër trajektoren 2 pasi t'u lëshoni rrugë këmbësorëve",
       "c": "nëpër trajektoren 1 pasi t'u lëshoni rrugë këmbësorëve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7843,7 +8131,9 @@
       "a": "guxon të ndalet",
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "guxon të ndalet ose të parkohet"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 224
   },
   {
     "type": "image",
@@ -7879,7 +8169,8 @@
       "a": "nuk guxon të ndalet ose të parkohet",
       "b": "guxon të ndalet dhe të parkohet",
       "c": "guxon të ndalet"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7915,7 +8206,9 @@
       "a": "nuk guxoj të ndalem ose të parkohem",
       "b": "guxoj të ndalem ose të parkohem",
       "c": "nuk guxoj të parkohem"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 226
   },
   {
     "type": "image",
@@ -7951,7 +8244,8 @@
       "a": "rregullisht, sepse është i ndezur treguesi i drejtimit majtas",
       "b": "rregullisht, sepse nuk ka shenjë për ndalim tejkalimi",
       "c": "jo rregullisht për shkak të kalimit mbi vijën e pandërprerë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -7987,7 +8281,9 @@
       "a": "jo rregullisht, sepse duhet të lëvizë nëpër trotuar",
       "b": "jo rregullisht, sepse duhet të mbajë helmetë mbrojtëse",
       "c": "rregullisht pranë skajit të djathtë të karrexhatës"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 228
   },
   {
     "type": "image",
@@ -8023,7 +8319,8 @@
       "a": "duhet të ndalet automjeti transportues 2 dhe të më mundësojë kalimin",
       "b": "duhet të ndalem dhe t'i mundësoj kalimin automjetit transportues 2",
       "c": "duhet të ndalemi dhe të merremi vesh për radhën e kalimit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8059,7 +8356,8 @@
       "a": "se karrexhata është në tatëpjetë deri në 6%",
       "b": "se pjerrësia tërthore e karrexhatës është deri në 6%",
       "c": "se karrexhata është në ngjitje deri në 6%"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -8095,7 +8393,8 @@
       "a": "do të rreshtohem në brezin e majtë të karrexhatës, që të mos e pengoj shoferin e automjetit 2 të kyçet në karrexhatë",
       "b": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit 2",
       "c": "do të ndalem dhe do t'i mundësoj kyçjen automjetit 2 sepse më vjen nga ana e djathtë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8131,7 +8430,8 @@
       "a": "qafa e karrexhatës",
       "b": "shenja e radhës e kufizimit të shpejtësisë",
       "c": "kryqëzimi i parë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -8167,7 +8467,8 @@
       "a": "i ndalur rregullisht",
       "b": "i parkuar ose i ndalur jo rregullisht",
       "c": "i parkuar ose i ndalur rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8203,7 +8504,9 @@
       "a": "kalimit përballë",
       "b": "rreshtimit",
       "c": "anashkalimit"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 234
   },
   {
     "type": "image",
@@ -8239,7 +8542,8 @@
       "a": "të dy brezat e karrexhatës",
       "b": "brezin e djathtë të karrexhatës",
       "c": "brezin e majtë të karrexhatës"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8275,7 +8579,9 @@
       "a": "guxon të parkohet",
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "guxon të ndalet pranë skajit të djathtë të karrexhatës"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 236
   },
   {
     "type": "image",
@@ -8311,7 +8617,8 @@
       "a": "guxon të tejkalohet",
       "b": "nuk guxon të tejkalohet për shkak të shenjave në karrexhatë",
       "c": "nuk guxon të tejkalohet nga ana e majtë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8347,7 +8654,9 @@
       "a": "lejohet tejkalimi nga kahu i kundërt",
       "b": "lejohet tejkalimi në kahun e lëvizjes",
       "c": "lejohet tejkalimi vetëm i automjeteve transportuese"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 238
   },
   {
     "type": "image",
@@ -8383,7 +8692,8 @@
       "a": "nuk jam i detyruar t'i lëshoj rrugë këmbësorit",
       "b": "jam i detyruar ta ndez borinë dhe ta vazhdoj lëvizjen",
       "c": "jam i detyruar t'i lëshoj rrugë këmbësorit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8419,7 +8729,9 @@
       "a": "është i detyruar ta ngrejë dorën e pastaj të hyjë në vendkalimin për këmbësorë",
       "b": "nuk është i detyruar të sigurohet se i pengon pjesëmarrësit e tjerë",
       "c": "është i detyruar të sigurohet se me këtë nuk i pengon pjesëmarrësit e tjerë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 240
   },
   {
     "type": "image",
@@ -8455,7 +8767,8 @@
       "a": "i parkuar rregullisht",
       "b": "i ndalur ose i parkuar jo rregullisht",
       "c": "i ndalur ose i parkuar rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8491,7 +8804,9 @@
       "a": "në korsinë në kahun e lëvizjes",
       "b": "në korsinë për kahun e kundërt të lëvizjes",
       "c": "në vendin e shënuar të parkimit"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 242
   },
   {
     "type": "image",
@@ -8527,7 +8842,8 @@
       "a": "të ndalura ose të parkuara jo rregullisht",
       "b": "të ndalura ose të parkuara rregullisht",
       "c": "të ndalura rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8563,7 +8879,9 @@
       "a": "skajin e karrexhatës",
       "b": "vijën ndarëse",
       "c": "vijën anësore"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 244
   },
   {
     "type": "image",
@@ -8599,7 +8917,8 @@
       "a": "bën kthim gjysmërrethor në pajtim me rregullat",
       "b": "kthehet rregullisht majtas",
       "c": "bën kthim gjysmërrethor jo rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8635,7 +8954,9 @@
       "a": "në breza të karrexhatës",
       "b": "në korsi",
       "c": "në dy karrexhata"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 246
   },
   {
     "type": "image",
@@ -8671,7 +8992,8 @@
       "a": "lëviz jo rregullisht sepse duhet ta shtyjë biçikletën pranë vetes",
       "b": "lëviz rregullisht",
       "c": "lëviz jo rregullisht nëpër vendkalimin për këmbësorë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8707,7 +9029,9 @@
       "a": "shtigjet për biçikleta",
       "b": "korsitë për biçikleta",
       "c": "shtigjet për vrapim të këmbësorëve"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 248
   },
   {
     "type": "image",
@@ -8743,7 +9067,8 @@
       "a": "do ta vazhdoj lëvizjen pa u lëshuar rrugë këmbësorëve",
       "b": "do ta ngadalësoj lëvizjen e automjetit dhe do t'u lëshoj rrugë këmbësorëve",
       "c": "do ta shpejtoj lëvizjen e automjetit që të kaloj para këmbësorëve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8779,7 +9104,9 @@
       "a": "ta kalojnë karrexhatën rrugës më të shkurtër",
       "b": "ta kalojnë karrexhatën aty ku ka më së paku pjesëmarrës në komunikacion",
       "c": "ta kalojnë karrexhatën sa më ngadalë"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 250
   },
   {
     "type": "image",
@@ -8815,7 +9142,8 @@
       "a": "i ndalur ose i parkuar rregullisht",
       "b": "i parkuar jo rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8851,7 +9179,9 @@
       "a": "nuk guxoj të ndalem ose të parkohem pas automjetit 2",
       "b": "guxoj të ndalem ose të parkohem pas automjetit 2",
       "c": "guxoj të parkohem pranë automjetit 2"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 252
   },
   {
     "type": "image",
@@ -8887,7 +9217,8 @@
       "a": "guxon të ndalet ose të parkohet",
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "nuk guxon të parkohet, por guxon të ndalet"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -8923,7 +9254,9 @@
       "a": "guxon të ndalet",
       "b": "guxon të ndalet ose të parkohet",
       "c": "nuk guxon të ndalet ose të parkohet"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 254
   },
   {
     "type": "image",
@@ -8959,7 +9292,8 @@
       "a": "vendkalim për biçikleta",
       "b": "shteg për çiklistë",
       "c": "çiklistë në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -8995,7 +9329,8 @@
       "a": "ndalim ndaljeje",
       "b": "ndalim ndaljeje dhe parkimi",
       "c": "ndalim parkimi"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -9031,7 +9366,8 @@
       "a": "kah i detyrueshëm",
       "b": "rrugë me komunikacion njëkahësh",
       "c": "kah i lejuar"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9067,7 +9403,8 @@
       "a": "ndalim komunikacioni për automjetet masa e përgjithshme e të cilave nuk e kalon masën e caktuar në shenjë",
       "b": "ndalim komunikacioni për automjetet aftësia mbajtëse e të cilave e kalon masën e caktuar në shenjë",
       "c": "ndalim komunikacioni për automjetet masa e përgjithshme e të cilave e kalon masën e caktuar në shenjë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9103,7 +9440,8 @@
       "a": "kah të detyrueshëm në kohën e shënuar",
       "b": "kthim të detyrueshëm majtas në kohën e shënuar",
       "c": "kthim të detyrueshëm majtas në periudhën prej orës 8 deri në orën 18"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -9139,7 +9477,8 @@
       "a": "korsi për biçikleta",
       "b": "shteg për biçikleta",
       "c": "korsi për lëvizjen e çiklistëve"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9175,7 +9514,8 @@
       "a": "ndalim ndaljeje të automjeteve",
       "b": "automjete të ndalura në rrugë",
       "c": "kolonë automjetesh të ndalura"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9211,7 +9551,8 @@
       "a": "kryqi i Shën Andreas me një binar e gjysmë",
       "b": "kryqi i Shën Andreas me dy ose më shumë binarë",
       "c": "binari i Andreas me një ose më shumë binarë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9247,7 +9588,8 @@
       "a": "pjesë e rrezikshme e rrugës",
       "b": "rrezik në rrugë",
       "c": "rrezik nga rrëshqitja e gurëve në gjatësi prej 300 m"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9283,7 +9625,8 @@
       "a": "përparësi kalimi ndaj automjeteve nga kahu i kundërt",
       "b": "automjetet nga kahu i kundërt kanë përparësi kalimi",
       "c": "përparësi kalimi e automjeteve që lëvizin tatëpjetë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9319,7 +9662,8 @@
       "a": "afrimi te ura në autostradë",
       "b": "autostradë",
       "c": "rrugë ndërkombëtare"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9355,7 +9699,8 @@
       "a": "pistë aeroplanësh",
       "b": "afërsi e pistës së aeroplanëve",
       "c": "afërsi e aeroportit"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9391,7 +9736,8 @@
       "a": "parashenjë drejtuese",
       "b": "rreshtim i automjeteve me emrat e vendbanimeve",
       "c": "tabelë drejtuese"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9427,7 +9773,8 @@
       "a": "ndalim komunikacioni në të dy kahet",
       "b": "ndalim komunikacioni në një kah",
       "c": "komunikacion i lejuar në të dy kahet"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9463,7 +9810,8 @@
       "a": "ndalim komunikacioni për biçikleta",
       "b": "shteg për biçikleta",
       "c": "çiklistë në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9499,7 +9847,8 @@
       "a": "urë e lëvizshme",
       "b": "dëmtim në karrexhatë",
       "c": "ngjitje e rrezikshme"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9535,7 +9884,8 @@
       "a": "kalim i rrugës mbi hekurudhë me bariera ose gjysmëbariera",
       "b": "afrimi te kalimi i rrugës mbi hekurudhë pa bariera ose gjysmëbariera",
       "c": "afrimi te hekurudha e tramvajit"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9571,7 +9921,8 @@
       "a": "shpejtësia më e madhe e lejuar",
       "b": "shpejtësi e detyrueshme",
       "c": "shpejtësi që rekomandohet"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9607,7 +9958,8 @@
       "a": "ndalje e detyrueshme",
       "b": "kryqëzim me rrugë me përparësi kalimi",
       "c": "kryqëzim me rrugë anësore"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9643,7 +9995,8 @@
       "a": "afrimi te semafori",
       "b": "afrimi te hekurudha",
       "c": "afrimi te punimet në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9679,7 +10032,8 @@
       "a": "drejtimin e automjeteve",
       "b": "shënimin e kahut të detyrueshëm të lëvizjes së automjeteve",
       "c": "shënimin e destinimit të korsive"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -9715,7 +10069,8 @@
       "a": "skajin e karrexhatës",
       "b": "shtegun për biçikleta",
       "c": "ndalimin e kalimit mbi atë vijë ose të lëvizjes nëpër to"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -9751,7 +10106,8 @@
       "a": "ndalim tejkalimi për të gjitha automjetet me motor përveç motoçikletës pa rimorkio dhe mopedit",
       "b": "ndalim tejkalimi për të gjitha automjetet me motor",
       "c": "ndalim tejkalimi për të gjitha automjetet me motor, përveç mopedëve"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9787,7 +10143,8 @@
       "a": "kalim i rrugës mbi hekurudhë pa bariera",
       "b": "kalim i rrugës mbi hekurudhë me bariera ose gjysmëbariera",
       "c": "kalim i rrugës mbi hekurudhë pa bariera ose gjysmëbariera"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9823,7 +10180,8 @@
       "a": "vendkalim për kafshë në rrugë",
       "b": "kafshë në rrugë",
       "c": "kafshë të egra në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9859,7 +10217,8 @@
       "a": "ndalim komunikacioni për automjetet që nuk e tejkalojnë ngarkesën e caktuar boshtore",
       "b": "ndalim komunikacioni për automjetet që e tejkalojnë ngarkesën e caktuar boshtore",
       "c": "ndalim komunikacioni për automjetet që nuk e tejkalojnë aftësinë mbajtëse të shënuar në shenjë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9895,7 +10254,8 @@
       "a": "rrugë me komunikacion njëkahësh për automjetet transportuese dhe rimorkiot",
       "b": "kah i detyrueshëm për llojet e automjeteve që nuk janë dhënë në shenjë",
       "c": "rrugë rrethuese për lloje të caktuara automjetesh"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9931,7 +10291,8 @@
       "a": "qarkullim rrethor",
       "b": "kryqëzim me qarkullim rrethor",
       "c": "kryqëzim rrethor"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -9967,7 +10328,8 @@
       "a": "afërsinë e pjesës së rrugës në të cilën ka borë",
       "b": "afërsinë e pjesës së rrugës në të cilën bora pastrohet me makina",
       "c": "afërsinë e pjesës së rrugës në të cilën ka ngricë dhe akull"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -10003,7 +10365,8 @@
       "a": "përparësi kalimi ndaj automjeteve nga kahu i kundërt",
       "b": "përparësi kalimi për automjetet nga kahu i kundërt",
       "c": "komunikacion në të dy kahet"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10039,7 +10402,8 @@
       "a": "pushim i shpejtësisë më të vogël të lejuar",
       "b": "pushim i kufizimit të shpejtësisë",
       "c": "pushim i shpejtësisë që rekomandohet"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10075,7 +10439,8 @@
       "a": "ndalim komunikacioni për automjetet me motor gjerësia e të cilave e kalon gjerësinë e shënuar në shenjë",
       "b": "ndalim komunikacioni për automjetet transportuese gjatësia e të cilave e kalon gjatësinë e shënuar në shenjë",
       "c": "ndalim komunikacioni për automjetet transportuese gjerësia e të cilave e kalon gjerësinë e shënuar në shenjë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -10111,7 +10476,8 @@
       "a": "ndalim i lëvizjes së këmbësorëve nëpër karrexhatë",
       "b": "ndalim komunikacioni për këmbësorë",
       "c": "ndalim i lëvizjes së këmbësorëve nëpër karrexhatë jashtë vendbanimit"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10147,7 +10513,8 @@
       "a": "tabelë drejtuese",
       "b": "parashenjë për rrugë rrethuese",
       "c": "tabelë drejtuese për rrugë rrethuese"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10183,7 +10550,8 @@
       "a": "tabelë drejtuese për dalje nga autostrada",
       "b": "emri i vendbanimit",
       "c": "emri i nyjës rrugore"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10219,7 +10587,8 @@
       "a": "tabelë drejtuese për vendbanim",
       "b": "tabelë drejtuese në formë shigjete",
       "c": "tabelë orientuese për vendbanim"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10255,7 +10624,8 @@
       "a": "kalim nga dy korsi në një korsi në të njëjtin kah lëvizjeje",
       "b": "sipërfaqe në karrexhatë ku dy korsi bashkohen në një",
       "c": "lëshim i rrugës në mënyrë të alternuar"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10291,7 +10661,8 @@
       "a": "afrimi te kalimi i rrugës mbi hekurudhë me bariera ose gjysmëbariera",
       "b": "afrimi te kalimi i rrugës mbi hekurudhë",
       "c": "afrimi te kalimi mbi hekurudhë pa bariera ose gjysmëbariera"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10327,7 +10698,8 @@
       "a": "përmbysje ose rrëshqitje e automjetit",
       "b": "karrexhatë e rrëshqitshme",
       "c": "akull dhe ngricë në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10363,7 +10735,8 @@
       "a": "kufizim i shpejtësisë së lëvizjes",
       "b": "shpejtësi që rekomandohet",
       "c": "shpejtësia më e vogël e lejuar"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10399,7 +10772,8 @@
       "a": "rrëshqitje gurësh",
       "b": "hedhje gurësh në rrugë",
       "c": "rrëshqitje dheu në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10435,7 +10809,8 @@
       "a": "shkallë lëvizëse në largësi prej 10 metrash",
       "b": "vendkalim nëntokësor ose mbitokësor për këmbësorë në largësi prej 10 metrash",
       "c": "hyrje në garazh në largësi deri në 10 metra"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -10471,7 +10846,8 @@
       "a": "përdorim i detyrueshëm i zinxhirëve për borë",
       "b": "rrezik nga bora",
       "c": "rrezik nga ngrica"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10507,7 +10883,8 @@
       "a": "ndalim komunikacioni për të gjitha automjetet me motor përveç motoçikletave",
       "b": "ndalim komunikacioni për motoçikleta",
       "c": "ndalim komunikacioni për biçikleta me motor"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10543,7 +10920,8 @@
       "a": "distanca më e vogël ndërmjet automjeteve të parkuara",
       "b": "distanca më e vogël ndërmjet automjeteve",
       "c": "distanca e nevojshme që automjetet të kalojnë përballë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10579,7 +10957,8 @@
       "a": "parashenjë për rrugë rrethuese nga ana e djathtë",
       "b": "parashenjë drejtuese për dalje deri te një vend i caktuar",
       "c": "tabelë drejtuese për rreshtim për lëvizje deri te një vend i caktuar"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10615,7 +10994,8 @@
       "a": "parashenjë për rregullimin e drejtpërdrejtë të komunikacionit në vendin ku kryhen punime",
       "b": "rregullim i komunikacionit në kryqëzim me ndihmën e flamurit",
       "c": "përfundim i rrugës për shkak të kryerjes së punimeve"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10651,7 +11031,8 @@
       "a": "ndalim ndaljeje",
       "b": "ndalim komunikacioni në një kah",
       "c": "ndalim parkimi"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10687,7 +11068,8 @@
       "a": "kthesë e dyfishtë e rrezikshme ose disa kthesa të njëpasnjëshme prej të cilave e para është djathtas",
       "b": "kthesë e dyfishtë ose disa kthesa të njëpasnjëshme prej të cilave e para është djathtas",
       "c": "kthesë e dyfishtë e rrezikshme ose disa kthesa të njëpasnjëshme prej të cilave e para është majtas"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10723,7 +11105,8 @@
       "a": "shpejtësinë më të vogël të lejuar në gjatësi rruge prej 2000 metrash",
       "b": "shpejtësinë që rekomandohet në gjatësi rruge prej 2000 metrash",
       "c": "shpejtësinë më të vogël të lejuar pas kalimit të 2000 metrave"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -10759,7 +11142,8 @@
       "a": "rimorkio të lehtë në kohën e shënuar",
       "b": "gjysmërimorkio në kohën e shënuar",
       "c": "rimorkio në kohën e shënuar"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -10795,7 +11179,8 @@
       "a": "dalje e detyrueshme në rast rreziku",
       "b": "largësia e daljes në rast rreziku",
       "c": "tabelë drejtuese për këmbësorë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10831,7 +11216,8 @@
       "a": "fillimi i korsisë për automjete të ngadalta",
       "b": "përfundimi i korsisë për automjete të ngadalta",
       "c": "përfundimi i korsisë për ndalje të detyruar"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10867,7 +11253,8 @@
       "a": "ndalim komunikacioni për automjetet me mbulesë",
       "b": "afrimi te karrexhata e pabarabartë",
       "c": "ndalim komunikacioni për cisterna"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10903,7 +11290,8 @@
       "a": "shpejtësia më e vogël e lejuar",
       "b": "kufizim i shpejtësisë",
       "c": "shpejtësi që rekomandohet"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10939,7 +11327,8 @@
       "a": "fëmijë në rrugë",
       "b": "zonë e shkollës",
       "c": "shteg për këmbësorë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -10975,7 +11364,8 @@
       "a": "hedhje gurësh",
       "b": "bankinë e pastabilizuar",
       "c": "karrexhatë e dëmtuar"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11011,7 +11401,8 @@
       "a": "ndalim komunikacioni për automjetet e shënuara me simbol",
       "b": "ndalim komunikacioni për automjetet transportuese",
       "c": "komunikacion i lejuar për automjetet e shënuara me simbol"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11047,7 +11438,8 @@
       "a": "kryqëzim i rrugëve me përparësi kalimi",
       "b": "afrimi te rruga me përparësi kalimi",
       "c": "shtrirja e rrugës me përparësi kalimi"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11083,7 +11475,8 @@
       "a": "kryqëzim me qarkullim rrethor",
       "b": "qarkullim rrethor",
       "c": "kthim gjysmërrethor i detyrueshëm"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11119,7 +11512,8 @@
       "a": "kryqëzim i rrugëve me rëndësi të njëjtë",
       "b": "ndalje e detyrueshme",
       "c": "kryqëzim me rrugë me përparësi kalimi"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11155,7 +11549,8 @@
       "a": "zonë e komunikacionit të ngadalësuar",
       "b": "fëmijë në rrugë",
       "c": "shesh lojërash për fëmijë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11191,7 +11586,8 @@
       "a": "kryqëzim rrethor",
       "b": "kryqëzim me qarkullim rrethor",
       "c": "qarkullim rrethor"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11227,7 +11623,8 @@
       "a": "punime në rrugë",
       "b": "largim i rrëshqitjes së gurëve në rrugë",
       "c": "punime për heqjen e gurëve në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11263,7 +11660,8 @@
       "a": "parkim në trotuar tërthor boshtit të karrexhatës",
       "b": "parkim në trotuar pingul me boshtin gjatësor të karrexhatës",
       "c": "parkim në trotuar paralel me boshtin gjatësor të karrexhatës"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -11299,7 +11697,8 @@
       "a": "numri i rrugës ndërkombëtare",
       "b": "numri i rrugës rajonale",
       "c": "numri i rrugës magjistrale"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11335,7 +11734,8 @@
       "a": "tabelë drejtuese për vendbanime",
       "b": "parashenjë drejtuese për dalje",
       "c": "tabelë drejtuese"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11371,7 +11771,8 @@
       "a": "shteg i përbashkët për çiklistë dhe këmbësorë",
       "b": "shtigje të ndara për çiklistë dhe këmbësorë",
       "c": "ndalim komunikacioni për çiklistë dhe këmbësorë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11407,7 +11808,8 @@
       "a": "ndalim kalimi pa u ndalur",
       "b": "ndalim kalimi pa u ndalur në pikën doganore",
       "c": "ndalim kalimi për shkak të pagesës së rrugës"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11443,7 +11845,8 @@
       "a": "kryqëzim me rrugë me përparësi kalimi",
       "b": "kryqëzim me rrugë anësore",
       "c": "ndalje e detyrueshme"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11479,7 +11882,8 @@
       "a": "kalim i rrugës mbi hekurudhë me bariera ose gjysmëbariera",
       "b": "kalim i rrugës mbi hekurudhë pa bariera ose gjysmëbariera",
       "c": "afrimi te kalimi i rrugës mbi hekurudhë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11515,7 +11919,8 @@
       "a": "tabelë paradrejtuese për kthim majtas",
       "b": "tabelë drejtuese",
       "c": "tabelë treguese e drejtimit"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11551,7 +11956,8 @@
       "a": "ndalim tejkalimi për automjetet transportuese",
       "b": "ndalim tejkalimi për të gjitha automjetet me motor",
       "c": "ndalim i tejkalimit të automjeteve transportuese"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11587,7 +11993,8 @@
       "a": "kthim i lejuar majtas në kohën e shënuar",
       "b": "ndalim i kthimit gjysmërrethor në kohën e shënuar",
       "c": "ndalim i kthimit majtas në kohën e shënuar"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -11623,7 +12030,8 @@
       "a": "kah i detyrueshëm së pari djathtas, pastaj majtas dhe dalje nga kryqëzimi",
       "b": "rrugë me komunikacion njëkahësh me kthim të detyrueshëm djathtas e pastaj majtas",
       "c": "kahu i lëvizjes së automjetit që synon të kthehet majtas në kryqëzimin ku kthimi majtas është i ndaluar"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11659,7 +12067,8 @@
       "a": "rrugë me përparësi kalimi",
       "b": "përfundim i rrugës me përparësi kalimi",
       "c": "shtrirja e rrugës me përparësi kalimi"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11695,7 +12104,8 @@
       "a": "linjë trolejbusi",
       "b": "hekurudhë tramvaji",
       "c": "automjet mbi shina në rrugë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11731,7 +12141,8 @@
       "a": "ngushtim i rrugës nga ana e djathtë",
       "b": "ngushtim i rrugës nga ana e majtë",
       "c": "brezi i djathtë i karrexhatës nuk është i drejtë"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11767,7 +12178,8 @@
       "a": "ndalim komunikacioni për automjetet që nuk e tejkalojnë një gjatësi të caktuar",
       "b": "ndalim komunikacioni për automjetet që e tejkalojnë një gjatësi të caktuar",
       "c": "ndalim komunikacioni për automjetet transportuese me motor gjatësia e të cilave është deri në 10 metra"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11803,7 +12215,8 @@
       "a": "zonë qytetëse",
       "b": "zonë industriale",
       "c": "vendbanim"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11811,7 +12224,7 @@
     "options": {
       "a": "traka za kretanje teretnih vozila",
       "b": "način korišćenja saobraćajne trake",
-      "c": "obavezno kretanje teretnih vozila Nerevan kolovoz Nerevan kolovoz Nerevan kolovoz-blizina -opasne -ulegnuće opasnog prevoja puta izbočine i ulegnuća ili veće izbočine na kolovozu Zabrana saobraćaja za Zabrana polukružnog vozila koja prevoze Dvostruka krivina ili Dvostruka krivina ili okretanja opasne materije više uzastopnih krivina više uzastopnih krivina od kojih je prva nalijevo od kojih je prva nadesno Teren za kampovanje pod Bočni vjertar sa lijeve strane Saobraćajna traka za šatorima i prikolici spora vozila Divljač na putu Prestanak zabrane preticanja za teretna vozila"
+      "c": "obavezno kretanje teretnih vozila"
     },
     "correct": "b",
     "points": 3,
@@ -11839,7 +12252,8 @@
       "a": "korsi për lëvizjen e automjeteve transportuese",
       "b": "mënyra e shfrytëzimit të korsisë",
       "c": "lëvizje e detyrueshme e automjeteve transportuese"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -11875,7 +12289,8 @@
       "a": "pushim i afërt i lëvizjes së lejuar të automjeteve në drejtim të shigjetave",
       "b": "pushim i afërt i ndalimit të lëvizjes për shoferin dhe përgatitje për lëvizje të lirë me automjet në drejtim të shigjetave",
       "c": "lëvizje e lejuar për shoferin në drejtim të shigjetave"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -11911,7 +12326,9 @@
       "a": "të zeza në sfond të gjelbër",
       "b": "me ngjyrë të gjelbër në sfond të zi",
       "c": "me ngjyrë të kuqe në sfond të gjelbër"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 337
   },
   {
     "type": "image",
@@ -11947,7 +12364,8 @@
       "a": "shoferin në kahun e të cilit jepet sinjali ta ndalë automjetin",
       "b": "të gjithë pjesëmarrësit në komunikacion ta shpejtojnë lëvizjen",
       "c": "shoferin në kahun e të cilit jepet ky sinjal ta shpejtojë lëvizjen e automjetit"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -11983,7 +12401,9 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet në kryqëzim dhe në rrugë të hapur",
       "c": "mund të jepet vetëm në rrugë të hapur"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 339
   },
   {
     "type": "image",
@@ -12019,7 +12439,8 @@
       "a": "komunikacioni është i ndaluar për shkak të pengesës në rrugë",
       "b": "komunikacioni është i ndaluar për shkak të derdhjes nga rruga hyrëse",
       "c": "komunikacioni është i ndaluar për shkak të përfundimit të korsisë"
-    }
+    },
+    "kind": "kosnik"
   },
   {
     "type": "image",
@@ -12055,7 +12476,8 @@
       "a": "semafor për rregullimin e anashkalimit nga ana e djathtë",
       "b": "semafor për rregullimin e kalimit të automjeteve mbi shina",
       "c": "semafor për rregullimin e ndryshimit të korsisë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12091,7 +12513,8 @@
       "a": "duhet ta zvogëlojë shpejtësinë e lëvizjes",
       "b": "duhet të ndalet",
       "c": "duhet ta shpejtojë lëvizjen"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -12127,7 +12550,9 @@
       "a": "vetëm jashtë vendbanimit për shoferin në kahun e të cilit jepet ai sinjal",
       "b": "për shoferin në kahun e të cilit jepet ai sinjal",
       "c": "vetëm në vendbanim për shoferin në kahun e të cilit jepet ai sinjal"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 343
   },
   {
     "type": "image",
@@ -12163,7 +12588,8 @@
       "a": "se shoferi duhet t'i kushtojë vëmendje lartësisë së automjetit",
       "b": "se shoferi duhet ta ndalë automjetin",
       "c": "se shoferit i lejohet lëvizja"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12199,7 +12625,8 @@
       "a": "komunikacionit në rampat e pagesës",
       "b": "komunikacionit në korsitë me kah të ndryshueshëm lëvizjeje",
       "c": "kalimit nëpër tunel"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12235,7 +12662,8 @@
       "a": "kalim i lirë për të gjitha automjetet",
       "b": "kalim i lirë për automjetet që vijnë anash",
       "c": "ndalje e detyrueshme për të gjithë pjesëmarrësit"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -12271,7 +12699,9 @@
       "a": "mund të jepet nga automjeti",
       "b": "mund të jepet nga automjeti, por vetëm me tabelën STOP",
       "c": "nuk mund të jepet nga automjeti"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 347
   },
   {
     "type": "image",
@@ -12307,7 +12737,8 @@
       "a": "ndalim i lëvizjes për shoferin në vendin e kalimit të rrugës mbi hekurudhë",
       "b": "ndalim i lëvizjes për automjetin mbi shina",
       "c": "ndalim i lëvizjes së të gjithë pjesëmarrësve në komunikacion"
-    }
+    },
+    "kind": "znak"
   },
   {
     "type": "image",
@@ -12343,7 +12774,8 @@
       "a": "biçikletave vetëm nëpër korsitë për biçikleta",
       "b": "biçikletave dhe mopedëve vetëm nëpër shtigjet për biçikleta",
       "c": "biçikletave dhe mopedëve nëpër korsitë për biçikleta"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12379,7 +12811,8 @@
       "a": "në kryqëzim, por vetëm me tabelën stop",
       "b": "në kryqëzim dhe në rrugë të hapur",
       "c": "në rrugë të hapur, por vetëm me tabelën stop"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -12415,7 +12848,9 @@
       "a": "që vijnë nga anët e tij anësore kanë të drejtë përparësie",
       "b": "të cilëve u është kthyer shpina kanë të drejtë përparësie",
       "c": "ta vazhdojnë lëvizjen në pajtim me kuptimin e dritave në semafor"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 351
   },
   {
     "type": "image",
@@ -12451,7 +12886,8 @@
       "a": "shënon korsinë për automjete të ngadalta",
       "b": "shënon vendin e hapjes së korsisë",
       "c": "shënon vendin e mbylljes së korsisë"
-    }
+    },
+    "kind": "kosnik"
   },
   {
     "type": "image",
@@ -12487,7 +12923,8 @@
       "a": "pajisje për rregullimin e lëvizjes së tramvajëve",
       "b": "pajisje për rregullimin e lëvizjes së këmbësorëve",
       "c": "pajisje për shënimin e drejtimit të binarit"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12523,7 +12960,8 @@
       "a": "shoferi i atij automjeti ta zvogëlojë shpejtësinë e lëvizjes",
       "b": "shoferi i atij automjeti ta ngadalësojë automjetin dhe ta vazhdojë lëvizjen majtas",
       "c": "shoferi i atij automjeti është i detyruar ta ndalë automjetin"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -12559,7 +12997,9 @@
       "a": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur",
       "b": "mund të jepet vetëm në vendbanim",
       "c": "mund të jepet vetëm në rrugë të hapur"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 355
   },
   {
     "type": "image",
@@ -12595,7 +13035,8 @@
       "a": "pengesë në rrugë",
       "b": "pengesë vertikale",
       "c": "barierë orientuese"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12631,7 +13072,9 @@
       "a": "natën dhe në kushte të dukshmërisë së kufizuar",
       "b": "nëse ka fluks të madh të komunikacionit",
       "c": "vetëm në rrugë lokale"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 357
   },
   {
     "type": "image",
@@ -12667,7 +13110,8 @@
       "a": "të cilëve u është kthyer shpina kanë të drejtë kalimi",
       "b": "që vijnë nga ana e tij anësore kanë të drejtë kalimi",
       "c": "se të gjithë shoferët janë të detyruar ta ndalin automjetin"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -12703,7 +13147,9 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur",
       "c": "mund të jepet vetëm në rrugë të hapur"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 359
   },
   {
     "type": "image",
@@ -12739,7 +13185,8 @@
       "a": "skajin tërthor të karrexhatës",
       "b": "vijën kufitare të karrexhatës",
       "c": "vijën e ndaljes"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12775,7 +13222,8 @@
       "a": "tramvajëve dhe autobusëve",
       "b": "vetëm autobusëve",
       "c": "vetëm tramvajëve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12811,7 +13259,8 @@
       "a": "ndalim kalimi për të gjithë shoferët",
       "b": "kalim të lirë vetëm për automjetet që vijnë anash",
       "c": "ndalim kalimi vetëm për automjetet që vijnë anash"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -12847,7 +13296,9 @@
       "a": "nuk mund të jepet me bilbil në kryqëzim",
       "b": "mund të jepet me bilbil në kryqëzim",
       "c": "nuk mund të jepet me tabelën STOP"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 363
   },
   {
     "type": "image",
@@ -12883,7 +13334,8 @@
       "a": "1-2-3-4",
       "b": "1-4-3-2",
       "c": "1-3-2-4"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -12919,7 +13371,9 @@
       "a": "drita e gjelbër mund të jetë vezulluese",
       "b": "drita e gjelbër nuk mund të jetë vezulluese",
       "c": "drita e gjelbër mund të jetë e ndezur bashkë me dritën e kuqe"
-    }
+    },
+    "kind": "situacija",
+    "subOf": 365
   },
   {
     "type": "image",
@@ -12955,7 +13409,8 @@
       "a": "që vijnë nga ana e tij anësore nuk kanë të drejtë kalimi",
       "b": "se të gjithë shoferët janë të detyruar ta ndalin automjetin",
       "c": "që vijnë nga ana e tij anësore kanë të drejtë kalimi"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -12991,7 +13446,9 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet vetëm në rrugë të hapur",
       "c": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 367
   },
   {
     "type": "image",
@@ -13027,7 +13484,8 @@
       "a": "barierë orientuese",
       "b": "barierë ballore",
       "c": "pengesë në rrugë"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -13063,7 +13521,8 @@
       "a": "semafor për rregullimin e lëvizjes së të gjithë pjesëmarrësve",
       "b": "semafor për rregullimin e lëvizjes së çiklistëve",
       "c": "semafor për rregullimin e lëvizjes së këmbësorëve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -13099,7 +13558,8 @@
       "a": "pushim i vlefshmërisë së urdhrave që i jep zyrtari policor",
       "b": "ndalim kalimi për të gjithë shoferët në komunikacion",
       "c": "se automjetet që vijnë anash kanë kalim të lirë"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -13135,7 +13595,9 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet vetëm në rrugë të hapur",
       "c": "nuk mund të jepet në kryqëzim"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 371
   },
   {
     "type": "image",
@@ -13171,7 +13633,8 @@
       "a": "automjetit udhëtar për hyrjen ose daljen e udhëtarëve",
       "b": "automjetit transportues vetëm për ngarkim ose shkarkim",
       "c": "automjetit të transportit publik të udhëtarëve"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -13207,7 +13670,8 @@
       "a": "se shoferi mund të lëvizë në drejtim të shigjetës duke mos i penguar pjesëmarrësit e tjerë në komunikacion",
       "b": "se shoferi mund të lëvizë në drejtim të shigjetës pa u kushtuar vëmendje pjesëmarrësve të tjerë në komunikacion",
       "c": "lëvizja e ndaluar në kahun e shënuar me shigjetën plotësuese të gjelbër"
-    }
+    },
+    "kind": "situacija"
   },
   {
     "type": "image",
@@ -13243,7 +13707,8 @@
       "a": "në pajtim me rregullat",
       "b": "në kundërshtim me rregullat",
       "c": "në pajtim me rregullat vetëm në vendbanim"
-    }
+    },
+    "kind": "policajac"
   },
   {
     "type": "image",
@@ -13279,7 +13744,9 @@
       "a": "ta shpejtojë lëvizjen e automjetit",
       "b": "të kryejë tejkalim nga ana e djathtë",
       "c": "ta ndalë automjetin"
-    }
+    },
+    "kind": "policajac",
+    "subOf": 375
   },
   {
     "type": "text",
@@ -13314,7 +13781,8 @@
       "a": "gjysmërimorkioja me tre boshte",
       "b": "automjeti udhëtar deri në 750 kg masë vetjake",
       "c": "rimorkioja e lehtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13349,7 +13817,8 @@
       "a": "me ngjyrë të kuqe",
       "b": "me ngjyrë të verdhë",
       "c": "me ngjyrë të bardhë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13384,7 +13853,8 @@
       "a": "vetëm rrotave të pasme",
       "b": "vetëm rrotave të përparme",
       "c": "të gjitha rrotave"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13419,7 +13889,8 @@
       "a": "në pozicion të shtrirë",
       "b": "në anën anësore",
       "c": "në pozicion gjysmë të ulur"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13454,7 +13925,8 @@
       "a": "inflamacioni i lëkurës",
       "b": "veprimi i nxehtësisë",
       "c": "shpimi nga një objekt i fortë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13489,7 +13961,8 @@
       "a": "drita për mjegull",
       "b": "drita e pozicionit",
       "c": "xhami i përparmë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13524,7 +13997,8 @@
       "a": "me ngjyrë të verdhë",
       "b": "me ngjyrë të bardhë",
       "c": "me ngjyrë të kuqe"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13559,7 +14033,8 @@
       "a": "ndriçimin e karrexhatës",
       "b": "transmetimin e fuqisë",
       "c": "frenimin"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13594,7 +14069,8 @@
       "a": "vendosjen e garzës sterile në pjesën e lënduar të trupit",
       "b": "vendosjen e pjesës së lënduar të trupit në gjendje qetësie",
       "c": "kthimin e të lënduarit në gjendje të vetëdijes"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13629,7 +14105,8 @@
       "a": "deri në 60 rrahje në një sekondë",
       "b": "60 deri në 80 rrahje në një minutë",
       "c": "mbi 100 rrahje në një minutë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13664,7 +14141,8 @@
       "a": "20 gradë",
       "b": "30 gradë",
       "c": "40 gradë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13699,7 +14177,8 @@
       "a": "freni i punës, ai ndihmës dhe ai i parkimit",
       "b": "freni i punës dhe ai ndihmës dhe ngadalësuesi i qëndrueshëm",
       "c": "freni i punës dhe ai i parkimit dhe ngadalësuesi i qëndrueshëm"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13734,7 +14213,8 @@
       "a": "8 metra",
       "b": "10 metra",
       "c": "12 metra"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13769,7 +14249,8 @@
       "a": "të vazhdohet vozitja me lëvizje të ngadalësuar",
       "b": "të konsumohen pije energjike dhe të vazhdohet vozitja",
       "c": "të bëhet pauzë për pushim"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13804,7 +14285,8 @@
       "a": "rrjedhja e gjakut nga enët e gjakut",
       "b": "thyerje e mbyllur e kërcirit",
       "c": "mpiksja e gjakut në enën e gjakut"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13839,7 +14321,8 @@
       "a": "tri kuti të ndihmës së parë",
       "b": "dy kuti të ndihmës së parë",
       "c": "një kuti e ndihmës së parë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13874,7 +14357,8 @@
       "a": "dritat e frenimit",
       "b": "treguesit e drejtimit",
       "c": "katadiopterët"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13909,7 +14393,8 @@
       "a": "për ta ndalur automjetin kur ndesh një pengesë të papritur",
       "b": "për ta penguar lëvizjen e automjetit të ndalur",
       "c": "për ta penguar lëvizjen e automjetit vetëm derisa është i parkuar në garazh"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13944,7 +14429,8 @@
       "a": "rrjedhja e ngadaltë e gjakut dhe mpiksja në pjesën e lënduar të trupit",
       "b": "gjaku në rrjedha të fuqishme",
       "c": "ënjtja dhe mavijosjet e pjesës së lënduar të trupit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -13979,7 +14465,8 @@
       "a": "i lënduari të lëvizet sa më pak",
       "b": "të vendoset në pozicion të ulur",
       "c": "të vendoset anash në pozicion të shtrirë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14014,7 +14501,8 @@
       "a": "boshti me gunga",
       "b": "boshti kardanik",
       "c": "gjysmëboshti"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14049,7 +14537,8 @@
       "a": "e zvogëlon këndin e rrotullimit të rrotave drejtuese",
       "b": "e zvogëlon forcën e përgjithshme të veprimit të shoferit gjatë rrotullimit të timonit dhe siguron lehtësi në drejtim",
       "c": "e zvogëlon diametrin e trajektores gjatë kthimit të automjetit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14084,7 +14573,8 @@
       "a": "me ngjyrë të bardhë",
       "b": "me ngjyrë të verdhë",
       "c": "me ngjyrë të kuqe"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14119,7 +14609,8 @@
       "a": "guxon të konsumojë pije alkoolike",
       "b": "guxon të konsumojë qetësues",
       "c": "nuk guxon të konsumojë pije alkoolike"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14154,7 +14645,8 @@
       "a": "të vendoset në pozicion të shtrirë në shpinë",
       "b": "të vendoset në pozicion të shtrirë në bark",
       "c": "të vendoset në pozicion anësor"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14189,7 +14681,8 @@
       "a": "pasqyra anësore",
       "b": "rrota rezervë",
       "c": "llambat rezervë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14224,7 +14717,8 @@
       "a": "me ngjyrë të verdhë",
       "b": "me ngjyrë të kaltër",
       "c": "me ngjyrë të bardhë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14259,7 +14753,8 @@
       "a": "2 mm",
       "b": "4 mm",
       "c": "1,6 mm"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14294,7 +14789,8 @@
       "a": "124",
       "b": "112",
       "c": "122"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14329,7 +14825,8 @@
       "a": "alkool",
       "b": "ujë",
       "c": "garzë sterile"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14364,7 +14861,8 @@
       "a": "sfungjer për larjen e xhamave",
       "b": "larëse xhami",
       "c": "pajisje për ngrohjen e xhamit të përparmë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14399,7 +14897,8 @@
       "a": "e realizuar si asimetrike e majtë",
       "b": "simetrike",
       "c": "e realizuar si asimetrike e djathtë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14434,7 +14933,8 @@
       "a": "për nga gjatësia ose gjerësia",
       "b": "për nga lartësia",
       "c": "më shumë se 0,1 metër për nga gjatësia"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14469,7 +14969,8 @@
       "a": "gjendje të të lënduarit si pasojë e humbjes së vetëdijes nga i ftohti",
       "b": "shenjë e sigurt e vdekjes",
       "c": "shenjë e sigurt e lodhjes"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14504,7 +15005,8 @@
       "a": "123",
       "b": "122",
       "c": "124"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14539,7 +15041,8 @@
       "a": "me ngjyrë të bardhë",
       "b": "me ngjyrë të kuqe",
       "c": "me ngjyrë të verdhë"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14574,7 +15077,8 @@
       "a": "në të gjitha rrotat",
       "b": "vetëm në rrotat e përparme",
       "c": "vetëm në rrotat e pasme"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14609,7 +15113,8 @@
       "a": "autobus",
       "b": "automjet transportues",
       "c": "automjet udhëtar"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14644,7 +15149,8 @@
       "a": "duhet të lahet me ujë",
       "b": "duhet të lahet me alkool",
       "c": "nuk duhet të lahet me lëng"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14679,7 +15185,8 @@
       "a": "nëse në organizëm konstatohet përmbajtje alkooli më e madhe se 0,3 g/kg",
       "b": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,3 g/kg",
       "c": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,2 g/kg"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14714,7 +15221,8 @@
       "a": "goma",
       "b": "timoni",
       "c": "amortizatori"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14749,7 +15257,8 @@
       "a": "drita e frenimit",
       "b": "drita gabarite",
       "c": "drita për vozitje prapa"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14784,7 +15293,8 @@
       "a": "kambio",
       "b": "timoni",
       "c": "leva e frenit të parkimit"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14819,7 +15329,8 @@
       "a": "të imobilizohet i gjithë trupi i të lënduarit",
       "b": "të imobilizohen dy nyjet fqinje",
       "c": "të imobilizohet vetëm nyja që është më afër vendit të lënduar"
-    }
+    },
+    "kind": "teorija"
   },
   {
     "type": "text",
@@ -14854,6 +15365,7 @@
       "a": "presion gjaku dukshëm të rritur",
       "b": "puls dukshëm të ngadalësuar",
       "c": "frymëmarrje të shpejtuar dhe të parregullt"
-    }
+    },
+    "kind": "teorija"
   }
 ]

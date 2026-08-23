@@ -15,6 +15,25 @@ export type Area = "I" | "II" | "III";
 
 export const AREAS: readonly Area[] = ["I", "II", "III"] as const;
 
+/**
+ * Vrsta pitanja po sastavu ispita — polje `kind` u questions.json, upisuje ga
+ * `scripts/gen-exam-meta.mjs`.
+ *
+ * NEZAVISNO je od `area`: `area` (I/II/III) određuje kategorije u vježbi, a
+ * `kind` segmente simulacije ispita (vidi EXAM_STRUCTURE u lib/config.ts).
+ * Isto pitanje može biti `area: "III"` i `kind: "policajac"`.
+ */
+export type QuestionKind = "znak" | "teorija" | "policajac" | "kosnik" | "situacija" | "ostalo";
+
+export const QUESTION_KINDS: readonly QuestionKind[] = [
+  "znak",
+  "teorija",
+  "policajac",
+  "kosnik",
+  "situacija",
+  "ostalo",
+] as const;
+
 /** Polja zajednička svim pitanjima iz questions.json. */
 interface QuestionBase {
   id: number;
@@ -24,8 +43,16 @@ interface QuestionBase {
   local_no: number;
   /** Ordering pitanja imaju null → vidi `questionPoints` i DEFAULT_ORDERING_POINTS. */
   points: number | null;
-  /** Oblast iz koje pitanje dolazi — određuje sastav ispita (vidi EXAM_QUOTA). */
+  /** Oblast iz koje pitanje dolazi — određuje kategorije u vježbi. */
   area: Area;
+  /** Vrsta pitanja — određuje segment ispita (vidi EXAM_STRUCTURE). */
+  kind: QuestionKind;
+  /**
+   * Kod podpitanja: id glavnog pitanja sa kojim dijeli sliku. Podpitanje na
+   * ispitu uvijek stoji odmah iza svog glavnog pitanja i nikad se ne izvlači
+   * samo za sebe.
+   */
+  subOf?: number;
   needs_review: boolean;
   review_reason: string[];
   /** Ime fajla u public/web_images/, samo kod pitanja sa slikom. */

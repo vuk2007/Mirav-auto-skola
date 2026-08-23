@@ -4,7 +4,7 @@ import Image from "next/image";
 import PenaltyNote, { penaltyForQuestion } from "./PenaltyNote";
 import { formatEur, sumPenalties } from "@/lib/penalties";
 import { badgeKey } from "@/lib/categories";
-import { EXAM_PASS_POINTS, EXAM_TOTAL_POINTS } from "@/lib/config";
+import { examPassPoints } from "@/lib/config";
 import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import {
@@ -41,7 +41,10 @@ export default function ResultCard({
   const scored = questions.reduce((sum, q) => sum + (records.get(q.id)?.points ?? 0), 0);
   const percent = maxPoints > 0 ? Math.round((scored / maxPoints) * 100) : 0;
   // Prolaz se odlucuje po BODOVIMA, ne po procentu — procenat je samo prikaz.
-  const passed = scored >= EXAM_PASS_POINTS;
+  // Prag je procenat ukupnih bodova OVOG testa: bodovi dolaze iz baze, pa
+  // ukupan zbir nije isti na svakom izvlačenju.
+  const passPoints = examPassPoints(maxPoints);
+  const passed = scored >= passPoints;
 
   const correctCount = questions.filter((q) => records.get(q.id)?.correct).length;
   const answeredCount = questions.filter((q) => records.has(q.id)).length;
@@ -91,8 +94,8 @@ export default function ResultCard({
 
         <p className="mt-3 text-sm text-muted">
           {t.passThreshold
-            .replace("{n}", String(EXAM_PASS_POINTS))
-            .replace("{max}", String(EXAM_TOTAL_POINTS))}
+            .replace("{n}", String(passPoints))
+            .replace("{max}", String(maxPoints))}
           {timedOut && ` ${t.timedOutNote}`}
         </p>
 

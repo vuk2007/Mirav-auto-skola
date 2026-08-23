@@ -4,10 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { filterByCategory, type Category } from "@/lib/categories";
 import {
   EXAM_MINUTES,
-  EXAM_PASS_POINTS,
-  EXAM_QUOTA,
-  EXAM_TOTAL_POINTS,
   EXAM_TIMER_ENABLED,
+  examPassPoints,
   AUTO_ADVANCE_MS,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
@@ -15,11 +13,14 @@ import { LANG_LABELS, LANGS } from "@/lib/i18n";
 import {
   buildExam,
   byIds,
+  ExamBuildError,
+  type ExamSlot,
   isAnswerCorrect,
   loadQuestions,
   questionPoints,
   sample,
   shuffle,
+  totalPoints,
 } from "@/lib/questions";
 import {
   clearPractice,
@@ -72,6 +73,12 @@ export default function Quiz({ compact = false }: QuizProps) {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [pool, setPool] = useState<Question[]>([]);
+  /**
+   * Sastav ispita — po jedan unos za svako pitanje, sa segmentom i oznakom da
+   * li je podpitanje. `pool` ostaje ravan niz pitanja da vježba i simulator ne
+   * moraju znati ništa o segmentima.
+   */
+  const [examSlots, setExamSlots] = useState<ExamSlot[]>([]);
   const [scenarios, setScenarios] = useState<SimScenario[]>([]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Map<number, Answer>>(new Map());
@@ -109,6 +116,7 @@ export default function Quiz({ compact = false }: QuizProps) {
 
   const resetSession = useCallback(() => {
     setIndex(0);
+    setExamSlots([]);
     setAnswers(new Map());
     setDrafts(new Map());
     setTimedOut(false);
@@ -175,28 +183,48 @@ export default function Quiz({ compact = false }: QuizProps) {
     }
   }, [ensureQuestions, resetSession]);
 
-  const startExam = useCallback(async () => {
+  /**
+   * Sastavlja ispit i vodi na uputstvo. Test se izvlači **prije** uputstva da bi
+   * uputstvo moglo pisati stvaran broj bodova ovog testa — bodovi dolaze iz
+   * baze pa ukupan zbir nije isti na svakom testu.
+   */
+  const prepareExam = useCallback(async () => {
     setStarting(true);
     setLoadError(null);
     try {
       const qs = await ensureQuestions();
       resetSession();
-      setPool(buildExam(qs, EXAM_TOTAL_POINTS, EXAM_QUOTA));
+      const slots = buildExam(qs);
+      setExamSlots(slots);
+      setPool(slots.map((slot) => slot.question));
       setMode("simulacija");
-      if (EXAM_TIMER_ENABLED) {
-        setDeadline(Date.now() + EXAM_MINUTES * 60 * 1000);
-        setSecondsLeft(EXAM_MINUTES * 60);
-      } else {
-        setDeadline(null);
-        setSecondsLeft(null);
-      }
-      setScreen("kviz");
+      setSecondsLeft(null);
+      setDeadline(null);
+      setScreen("uputstvo");
     } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "Nepoznata greška.");
+      setLoadError(
+        err instanceof ExamBuildError
+          ? `Ispit nije moguće sastaviti: ${err.message}`
+          : err instanceof Error
+            ? err.message
+            : "Nepoznata greška.",
+      );
     } finally {
       setStarting(false);
     }
   }, [ensureQuestions, resetSession]);
+
+  /** Pokreće već sastavljen ispit — zove se sa uputstva, poslije potvrde. */
+  const startExam = useCallback(() => {
+    if (EXAM_TIMER_ENABLED) {
+      setDeadline(Date.now() + EXAM_MINUTES * 60 * 1000);
+      setSecondsLeft(EXAM_MINUTES * 60);
+    } else {
+      setDeadline(null);
+      setSecondsLeft(null);
+    }
+    setScreen("kviz");
+  }, []);
 
   // ── Promjena kategorije u toku vježbe ─────────────────────────────────────
   const changeCategory = useCallback(
@@ -236,7 +264,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       const max = pool.reduce((s, q) => s + questionPoints(q), 0);
       const scored = pool.reduce((s, q) => s + (records.get(q.id)?.points ?? 0), 0);
       const percent = max > 0 ? Math.round((scored / max) * 100) : 0;
-      saveBestExam({ percent, scored, max, passed: scored >= EXAM_PASS_POINTS });
+      saveBestExam({ percent, scored, max, passed: scored >= examPassPoints(max) });
       setBest(loadBestExam());
       if (viaTimeout) setTimedOut(true);
       setSecondsLeft(null);
@@ -468,7 +496,7 @@ export default function Quiz({ compact = false }: QuizProps) {
           onCategoryChange={setCategory}
           onStartPractice={() => void startPractice(null)}
           onResumePractice={() => void startPractice(saved)}
-          onStartExam={() => setScreen("uputstvo")}
+          onStartExam={() => void prepareExam()}
           onStartSimulator={() => void startSimulator()}
           saved={saved}
           best={best}
@@ -478,7 +506,13 @@ export default function Quiz({ compact = false }: QuizProps) {
 
       {/* Uputstvo se čita prije svake simulacije — i prve i svake sljedeće. */}
       {screen === "uputstvo" && (
-        <ExamBriefing t={t} lang={lang} onStart={() => void startExam()} starting={starting} />
+        <ExamBriefing
+          t={t}
+          lang={lang}
+          onStart={startExam}
+          starting={starting}
+          totalPoints={totalPoints(pool)}
+        />
       )}
 
       {screen === "kviz" && isSimulator && (
@@ -583,6 +617,7 @@ export default function Quiz({ compact = false }: QuizProps) {
               {!isPractice && (
                 <QuestionNav
                   questions={pool}
+                  slots={examSlots}
                   answeredIds={answeredIds}
                   currentIndex={index}
                   onJump={goTo}
@@ -599,7 +634,7 @@ export default function Quiz({ compact = false }: QuizProps) {
           questions={pool}
           records={records}
           timedOut={timedOut}
-          onRestart={() => setScreen("uputstvo")}
+          onRestart={() => void prepareExam()}
           onBackToLanding={backToLanding}
           onOpenLiterature={() => setLiteratureOpen(true)}
           t={t}

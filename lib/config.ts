@@ -1,56 +1,72 @@
 /**
  * Parametri simulacije ispita — Crna Gora, B kategorija.
  *
- * Ispit nosi ukupno 80 bodova, a za prolaz treba 68 (što je istih 85% kao ranije,
- * samo izraženo u bodovima). Bodovi po pitanju su 1–4, gdje situacije i raskrsnice
- * nose najviše — što se poklapa sa našom bazom.
- *
- * TODO(MIRAV): potvrditi 80/68/45 i eventualnu raspodjelu po oblastima
- *   (teorija / znakovi / raskrsnice) po važećem Pravilniku o osposobljavanju
- *   kandidata za vozače (MUP CG) prije objave. Ako je zvanično fiksan i broj
- *   pitanja, treba znati raspodjelu po bodovima da bi oba uslova mogla važiti.
+ * Ispit se NE izvlači po oblastima I/II/III nego po segmentima (`kind`), onako
+ * kako je sastavljen zvanični test. Polje `area` u bazi ostaje netaknuto i dalje
+ * se koristi u vježbi.
  */
+
+import type { QuestionKind } from "./types";
 
 /**
- * Ukupan broj bodova na ispitu. Ispit ima istovremeno TAČNO ovoliko bodova i
- * TAČNO `EXAM_QUESTION_COUNT` pitanja — vidi `buildExam` u lib/questions.ts.
+ * SASTAV ISPITA — koliko pitanja iz kojeg segmenta, i da li segment nosi
+ * podpitanje.
+ *
+ * `withSub: true` znači da se uz svako izvučeno pitanje odmah iza njega
+ * postavlja i njegovo podpitanje (`subOf` u bazi) — to je par koji u zvaničnom
+ * katalogu dijeli jednu sliku („kako ćete postupiti…" + „redoslijed prolaska…").
+ * Podpitanje se broji kao zasebno pitanje.
+ *
+ * Redoslijed unosa je i redoslijed segmenata u testu.
+ *
+ * TODO(MIRAV): potvrditi sastav uz važeći Pravilnik (MUP CG).
  */
-export const EXAM_TOTAL_POINTS = 80;
-
-/** Bodova potrebno za prolaz. */
-export const EXAM_PASS_POINTS = 68; // prag: 68 od 80 bodova
-
-/**
- * NORMA PO OBLASTIMA — test se NE izvlači ravnomjerno nasumično.
- * Svako pitanje u questions.json ima `area`:
- *   I = propisi/teorija, II = saobraćajni znakovi, III = raskrsnice/situacije
- *
- * Brojevi su TAČAN broj pitanja iz svake oblasti (odnos ~2:1:1), a njihov zbir
- * je broj pitanja na ispitu. Mijenja li se kvota, mijenja se i broj pitanja.
- *
- * TODO(MIRAV): potvrditi tačnu kvotu po važećem Pravilniku (MUP CG), ili
- *   empirijski: pokrenuti jednu zvaničnu simulaciju na eUpravi i prebrojati
- *   koliko pitanja dolazi iz svake oblasti.
- *   Oblast „Posljedice nepoštovanja propisa" NE dolazi na ispit.
- *
- * Napomena o posljedici: prosjek u bazi je 1,93 (I), 2,97 (II) i 3,22 (III)
- * boda, pa nasumičnih 20/10/10 nosi oko 100 bodova. Da bi ispit imao tačno 80,
- * `buildExam` bira jeftinija pitanja unutar svake oblasti — pitanje od 1 boda
- * uđe u ispit ~18 puta češće od pitanja od 4 boda. To je posljedica bodova u
- * NAŠEM katalogu i vjerovatno znak da se oni razlikuju od zvaničnih: zvaničnih
- * 40 pitanja / 80 bodova daje prosjek tačno 2,00, a naša baza ima 2,66.
- */
-export const EXAM_QUOTA: Readonly<Record<"I" | "II" | "III", number>> = {
-  I: 20,
-  II: 10,
-  III: 10,
-};
+export const EXAM_STRUCTURE = [
+  { kind: "znak", count: 10, withSub: false },
+  { kind: "teorija", count: 20, withSub: false },
+  { kind: "policajac", count: 1, withSub: true },
+  { kind: "kosnik", count: 1, withSub: false },
+  { kind: "situacija", count: 4, withSub: true },
+] as const satisfies readonly { kind: QuestionKind; count: number; withSub: boolean }[];
 
 /**
- * Broj pitanja na ispitu — zbir kvote, ne zaseban broj, da se ta dva ne mogu
- * razići. Ispit ima tačno toliko pitanja i tačno EXAM_TOTAL_POINTS bodova.
+ * Ukupan broj pitanja na ispitu, uključujući podpitanja: 10 + 20 + (1+1) + 1 +
+ * (4+4) = 41. Poklapa se sa zvaničnim brojem pitanja.
+ *
+ * Napisan je kao konstanta a ne izveden zbroj da bi bio provjerljiv naspram
+ * zvaničnog broja — `assertExamStructure()` ispod puca ako se razminu.
  */
-export const EXAM_QUESTION_COUNT = EXAM_QUOTA.I + EXAM_QUOTA.II + EXAM_QUOTA.III;
+export const EXAM_QUESTION_COUNT = 41;
+
+/**
+ * Puca ako `EXAM_STRUCTURE` i `EXAM_QUESTION_COUNT` ne daju isti broj. Zove se
+ * odmah pri učitavanju modula, pa greška u sastavu pada na buildu (stranice se
+ * prerenderuju), a ne tiho u browseru kandidata.
+ */
+export function assertExamStructure(): void {
+  const sum = EXAM_STRUCTURE.reduce((n, seg) => n + seg.count * (seg.withSub ? 2 : 1), 0);
+  if (sum !== EXAM_QUESTION_COUNT) {
+    throw new Error(
+      `EXAM_STRUCTURE daje ${sum} pitanja, a EXAM_QUESTION_COUNT je ${EXAM_QUESTION_COUNT}. ` +
+        `Uskladi lib/config.ts.`,
+    );
+  }
+}
+assertExamStructure();
+
+/**
+ * Prag za prolaz, u procentu osvojenih bodova.
+ *
+ * Bodovi po pitanju dolaze iz baze (1–4), pa ukupan broj bodova zavisi od toga
+ * koja su pitanja izvučena i nije isti na svakom testu. Zato je prag procenat,
+ * a ne fiksan broj bodova — vidi `examPassPoints`.
+ */
+export const EXAM_PASS_PERCENT = 85;
+
+/** Koliko bodova treba za prolaz na testu koji ukupno nosi `total` bodova. */
+export function examPassPoints(total: number): number {
+  return Math.ceil((total * EXAM_PASS_PERCENT) / 100);
+}
 
 /** Trajanje ispita u minutima. */
 export const EXAM_MINUTES = 45; // 45 minuta

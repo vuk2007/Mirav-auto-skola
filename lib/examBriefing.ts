@@ -6,9 +6,10 @@
  * **nijesu provjerene uz važeći Pravilnik**. MIRAV ih mora potvrditi ili
  * ispraviti prije objave — ovo je jedini fajl koji za to treba dirati.
  *
- * Brojevi se ne prepisuju ručno: `{minutes}`, `{points}` i `{pass}` se
- * zamjenjuju vrijednostima iz lib/config.ts pri prikazu, pa promjena
- * EXAM_MINUTES ili EXAM_PASS_POINTS automatski mijenja i uputstvo.
+ * Brojevi se ne prepisuju ručno: `{count}` i `{minutes}` dolaze iz lib/config.ts,
+ * a `{points}` i `{pass}` iz **stvarno sastavljenog testa** — bodovi po pitanju
+ * dolaze iz baze, pa ukupan zbir nije isti na svakom izvlačenju. Zato se ispit
+ * sastavlja prije nego što se uputstvo prikaže (vidi `prepareExam` u Quiz.tsx).
  */
 
 import type { Lang } from "./i18n";
@@ -111,25 +112,29 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
       me: [
         "Svako pitanje nosi određeni broj bodova, a test ukupno {points} bodova.",
         "Za prolaz je potrebno najmanje {pass} od {points} bodova.",
-        "Pitanja su raspoređena po oblastima: propisi, saobraćajni znakovi i raskrsnice.",
+        "Sastav testa: 10 saobraćajnih znakova, 20 teorijskih pitanja, komanda policijskog službenika, kosnik ili graničnik i 4 saobraćajne situacije.",
+        "Uz komandu policajca i uz svaku situaciju ide i podpitanje uz istu sliku — u pregledu pitanja nosi slovo (npr. 32 i 32a).",
         "Položen teorijski dio ispita važi godinu dana od dana polaganja.",
       ],
       en: [
         "Each question carries a certain number of points, and the test carries {points} points in total.",
         "To pass you need at least {pass} out of {points} points.",
-        "The questions are distributed across areas: rules, road signs and intersections.",
+        "Test composition: 10 road signs, 20 theory questions, one police officer signal, one chevron or delineator, and 4 traffic situations.",
+        "The police signal and each situation come with a follow-up question on the same picture — in the question overview it carries a letter (e.g. 32 and 32a).",
         "A passed theory exam is valid for one year from the day it was taken.",
       ],
       ru: [
         "Каждый вопрос имеет определённое количество баллов, а тест в целом — {points} баллов.",
         "Для сдачи нужно не менее {pass} из {points} баллов.",
-        "Вопросы распределены по областям: правила, дорожные знаки и перекрёстки.",
+        "Состав теста: 10 дорожных знаков, 20 теоретических вопросов, сигнал сотрудника полиции, косник или ограничитель и 4 дорожные ситуации.",
+        "К сигналу полицейского и к каждой ситуации идёт дополнительный вопрос по той же картинке — в обзоре вопросов он отмечен буквой (например, 32 и 32a).",
         "Сданная теоретическая часть экзамена действительна один год со дня сдачи.",
       ],
       sq: [
         "Çdo pyetje bart një numër të caktuar pikësh, kurse testi gjithsej {points} pikë.",
         "Për të kaluar nevojiten së paku {pass} nga {points} pikë.",
-        "Pyetjet janë të shpërndara sipas fushave: rregullat, shenjat rrugore dhe kryqëzimet.",
+        "Përbërja e testit: 10 shenja rrugore, 20 pyetje teorike, një sinjal i punonjësit të policisë, një kosnik ose kufizues dhe 4 situata në komunikacion.",
+        "Sinjali i policisë dhe çdo situatë kanë edhe një nënpyetje me të njëjtën figurë — në pasqyrën e pyetjeve mban shkronjë (p.sh. 32 dhe 32a).",
         "Pjesa teorike e provimit e kaluar vlen një vit nga dita e dhënies.",
       ],
     },
