@@ -1,0 +1,34 @@
+(node:1884) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Vuk/Desktop/MIRAV/.tmpbuild/config.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Vuk\Desktop\MIRAV\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+==============================================================================
+3.3  BODOVANJE  (prag 85%)
+==============================================================================
+PASS  svi tačni → 100%, položeno
+PASS  svi netačni → 0%, pad
+PASS  neodgovoreno ostaje u imeniocu: 84/100 = 84%, a ne 100%
+PASS  84 od 100 pada (neodgovoreno ne diže procenat)
+PASS  granica prolaza tačna za svih 41 mogućih zbirova
+PASS  examPassPoints(100) = 85 (85% od 100)
+PASS  85/100 = tačno 85,0% → POLOŽENO (dokaz da je >= a ne >)
+PASS  84/100 = 84,0% → PAD
+PASS  nijedan rezultat ispod 85% ne prolazi (Math.ceil je konzervativan)
+
+prikazani procenat ≥85% a rezultat PAD: 19 kombinacija
+   71/84 = 84.52% → prikazuje se „85%" uz „PAO"  (prag je 72)
+   72/85 = 84.71% → prikazuje se „85%" uz „PAO"  (prag je 73)
+   73/86 = 84.88% → prikazuje se „85%" uz „PAO"  (prag je 74)
+   77/91 = 84.62% → prikazuje se „85%" uz „PAO"  (prag je 78)
+   78/92 = 84.78% → prikazuje se „85%" uz „PAO"  (prag je 79)
+   79/93 = 84.95% → prikazuje se „85%" uz „PAO"  (prag je 80)
+   82/97 = 84.54% → prikazuje se „85%" uz „PAO"  (prag je 83)
+   83/98 = 84.69% → prikazuje se „85%" uz „PAO"  (prag je 84)
+   84/99 = 84.85% → prikazuje se „85%" uz „PAO"  (prag je 85)
+   88/104 = 84.62% → prikazuje se „85%" uz „PAO"  (prag je 89)
+   89/105 = 84.76% → prikazuje se „85%" uz „PAO"  (prag je 90)
+   90/106 = 84.91% → prikazuje se „85%" uz „PAO"  (prag je 91)
+FAIL  prikazani procenat nikad ne protivrječi ishodu (19 slučajeva)
+PASS  procenat ide od bodova (20%), ne od broja pitanja (49%)
+
+3.3 PALO: 1  (10 provjera)

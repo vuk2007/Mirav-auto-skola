@@ -8,7 +8,7 @@ Nalaz bez dokaza ne vrijedi — uz svaki ide izlaz komande, id pitanja ili putan
 | 0 — priprema | 0 | 0 | 1 |
 | 1 — baza | **0** | **6** | 0 |
 | 2 — slike | **0** | **3** | 0 |
-| 3 — logika ispita | — | — | — |
+| 3 — logika ispita | **0** | **1** | 0 |
 | 4 — browser | — | — | — |
 | 5 — sadržaj i pravo | — | — | — |
 
@@ -291,6 +291,136 @@ poslije prolaska kroz svih 41 pitanje:    21 slika, 930 kB
 
 Cio ispit povuče **manje od 1 MB**, ne 16 MB. Nije nalaz. `next/image` dobija `width` i
 `height` iz `lib/imageSizes.ts`, pa nema skakanja sadržaja.
+
+---
+
+## Faza 3 — Logika ispita
+
+Skripte: `qa/fuzz_ispit.mjs` (3.1, 3.2), `qa/bodovanje.mjs` (3.3), `qa/faza3_browser.mjs` i
+`qa/faza3_pregled.mjs` (3.4, 3.5) · izlazi: `qa/faza3-*.log` · **P0: 0 · P1: 1 · P2: 0**
+
+Fuzz i bodovanje pozivaju **stvarni** `buildExam` i `examPassPoints` iz `lib/`, ne kopiju
+logike. Browser testovi koriste Playwright `page.clock`, pa se 45 minuta prevrti bez čekanja.
+
+### QA-3-1 · P1 · Prikazani procenat može pisati „85%" uz „PAO"
+
+Prolaz se računa ispravno, prikaz ne. `components/ResultCard.tsx`, redovi 42 i 47:
+
+```ts
+const percent    = Math.round((scored / maxPoints) * 100);   // <- zaokruzuje NAGORE
+const passPoints = examPassPoints(maxPoints);                // <- Math.ceil, konzervativno
+const passed     = scored >= passPoints;
+```
+
+Kandidat sa 84,62% vidi veliko **„85%"** i ispod njega **„PAO"**. Ne izgleda kao granica,
+izgleda kao greška aplikacije. Nađeno **19 kombinacija** u opsegu zbirova koji se stvarno
+javljaju:
+
+```
+71/84  = 84.52% -> prikazuje „85%" uz „PAO"  (prag je 72)
+77/91  = 84.62% -> prikazuje „85%" uz „PAO"  (prag je 78)
+84/99  = 84.85% -> prikazuje „85%" uz „PAO"  (prag je 85)
+88/104 = 84.62% -> prikazuje „85%" uz „PAO"  (prag je 89)
+90/106 = 84.91% -> prikazuje „85%" uz „PAO"  (prag je 91)
+... ukupno 19
+```
+
+**Popravka:** `Math.floor` umjesto `Math.round` za prikaz. Prikaz tada nikad ne tvrdi više
+nego što je osvojeno, a 100% ostaje 100%. Jedna riječ, ne dira bodovanje.
+
+**Sama logika prolaza je ispravna** i to je zasebno provjereno — vidi niže.
+
+### Provjereno i čisto
+
+**3.1 — fuzz, 500 izvlačenja, 0 grešaka** (`qa/faza3-fuzz.log`):
+
+```
+grešaka: 0
+očekivani segmenti: znak:10 teorija:20 policajac:2 kosnik:1 situacija:8
+vrijeme po ispitu: 0,120 ms
+```
+
+U svakom od 500 izvlačenja potvrđeno: tačno 41 pitanje · segmenti u zadatom redoslijedu i
+tačnoj veličini · **svako podpitanje odmah iza svog glavnog i dijeli s njim sliku** (poređeno
+po sadržaju fajla, jer su isječci zasebni fajlovi) · nijedno pitanje se ne ponavlja u istom
+testu · svako glavno pitanje u segmentu `withSub` stvarno ima podpitanje.
+
+**Bodovi nijesu fiksni** i to je namjerno — dolaze iz baze: min 90, medijana 102, max 116,
+prosjek 102,3. Prag se računa od maksimuma **tog** testa (77–99 bodova).
+
+**3.2 — pokrivenost:**
+
+```
+kind         u bazi  dostupno  izvlaci se  sansa/ispit   vidjeno
+znak             77        73          10        13.7%    77/77
+teorija         140       140          20        14.3%  140/140
+policajac        22        11           1         9.1%    22/22
+kosnik            2         2           1        50.0%      2/2
+situacija       180        80           4         5.0%  156/180
+```
+
+397 od 421 pitanja ikad izvučeno. 24 nikad — **sva su `situacija` bez podpitanja**, pa po
+konstrukciji ne mogu ući (segment `situacija` izvlači samo pitanja koja imaju podpitanje).
+Već zapisano u README-u; fuzz to sada nezavisno potvrđuje brojkom.
+
+Ponavljanje: isto pitanje otprilike svaki 7. ispit kod znakova i teorije, svaki 11. kod
+policajca, svaki 20. kod situacija — i **svaki 2. kod `kosnik`a**, jer ih ima samo dva. To je
+jedina kategorija ispod praga od 6 iz plana; već je zapisano kao stavka za MIRAV.
+
+**3.3 — bodovanje, 10 provjera prošlo** (`qa/faza3-bodovanje.log`):
+
+- svi tačni -> 100%, položeno · svi netačni -> 0%, pad
+- **neodgovoreno se broji kao 0 bodova, ne izbacuje se iz imenioca**: 84/100 = 84%, a ne 100%
+- **granica je tačna za svih 41 mogućih zbirova**: prag prolazi, prag-1 pada
+- **koristi se `>=`, ne `>`**: 85/100 = tačno 85,0% -> POLOŽENO, 84/100 -> PAD
+- **nijedan rezultat ispod 85% ne prolazi** — provjereno iscrpno, svaki mogući skor za svaki
+  mogući zbir. `Math.ceil` u `examPassPoints` je konzervativan u pravom smjeru
+- procenat ide od **bodova**, ne od broja pitanja (20% naspram 49% na istom primjeru)
+
+**Ordering pitanja se boduju „sve ili ništa"** — 10 pitanja, svako 4 boda
+(`points: null` -> `DEFAULT_ORDERING_POINTS`). Djelimično tačan niz nosi **0 bodova**:
+
+```
+"3-4-2-1"  -> TACNO (pun broj bodova)      "3-4-1-2"  -> NETACNO (0 bodova)
+"3421"     -> TACNO                        "3-4"      -> NETACNO (0 bodova)
+"3 4 2 1"  -> TACNO                        ""         -> NETACNO (0 bodova)
+```
+
+Format unosa je slobodan (crtice, razmaci, bez ičega), sadržaj strog. To odgovara zvaničnom
+ispitu, gdje se priznaje samo potpuno tačan redoslijed.
+
+**3.4 — tajmer, 13 provjera prošlo:**
+
+- kreće od 45:00, poslije 2 minuta pokazuje 43:00
+- **navigacija kroz pitanja ne resetuje tajmer**
+- **računa se iz apsolutnog roka, ne brojanjem otkucaja.** Provjereno tako što je
+  `window.setInterval` onesposobljen (simulacija prigušenog taba na mobile Safariju), sat
+  pomjeren 10 minuta i poslan `visibilitychange` — aplikacija pokaže **35:00**, dakle ni
+  sekunde poklonjenog vremena. Ovo je izričit kriterijum za puštanje iz plana.
+- na 0 se **sama predaje**, tajmer staje, u test se ne može vratiti, rezultat kaže da je
+  vrijeme isteklo
+- **dvoklik na „Završi ispit" ne predaje dvaput** i ne baca JS grešku
+
+**3.5 — prikaz, 12 provjera prošlo:**
+
+- **simulacija ne otkriva tačnost** — provjereno na 8 uzastopnih pitanja, nijedno ne procuri
+- vježba prikazuje „Tačan odgovor"/„Netačan odgovor" i označava koji je tačan
+- **pregled grešaka, oba ekstrema:**
+  - svih 41 tačno -> **100%, POLOŽENO**, pregled prazan uz poruku „Sva pitanja su tačna. Nema
+    šta da se ponavlja."
+  - svih 41 netačno -> **0%, PAD**, pregled lista **svih 41**, sa 21 slikom, izabranim
+    odgovorom (41x) i tačnim odgovorom (84x)
+
+### Ponašanje koje traži vašu odluku, ne popravku
+
+**Osvježavanje stranice usred ispita gubi ispit** — vraća na početnu, bez upozorenja.
+Izmjereno, nije nagađano. Tajmer i odgovori se ne čuvaju (`localStorage` se koristi samo za
+vježbu i najbolji rezultat).
+
+Vaš stav iz plana je „čuvati stanje, ali NE resetovati tajmer" — to je izvodljivo i slaže se
+sa postojećom arhitekturom (rok je već apsolutan `deadline`, pa bi se sačuvao kao broj).
+**Nije urađeno jer je ovo revizija.** Dugme „nazad" u browseru izvodi iz testa, ali bez JS
+greške.
 
 ---
 

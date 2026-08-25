@@ -1,0 +1,39 @@
+(node:36196) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Vuk/Desktop/MIRAV/.tmpbuild/questions.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\Vuk\Desktop\MIRAV\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+==============================================================================
+3.1  FUZZ — 500 IZVLAČENJA
+==============================================================================
+grešaka: 0
+očekivani segmenti: znak:10 teorija:20 policajac:2 kosnik:1 situacija:8
+vrijeme po ispitu: 0.120 ms
+
+bodovi po testu NIJESU fiksni (dolaze iz baze):
+   min 90  p25 99  medijana 102  p75 105  max 116  prosjek 102.3
+   prag 85% tog testa: 77–99 bodova
+
+==============================================================================
+3.2  POKRIVENOST BAZE KROZ 500 IZVLAČENJA
+==============================================================================
+različitih pitanja ikad izvučeno: 397 od 421
+nikad izvučeno: 24
+   po kategoriji: {"situacija":24}
+   od toga bez podpitanja (zato i ne mogu ući): 24
+
+kind         u bazi  dostupno  izvlači se  šansa/ispit   viđeno
+----------------------------------------------------------------
+znak             77        73          10        13.7%    77/77
+teorija         140       140          20        14.3%  140/140
+policajac        22        11           1         9.1%    22/22
+kosnik            2         2           1        50.0%      2/2
+situacija       180        80           4         5.0%  156/180
+
+ponavljanje — koliko kandidat mora odraditi ispita da vidi isto pitanje:
+   znak        73 dostupnih / 10 po ispitu → isto pitanje otprilike svaki 7.3. ispit
+   teorija     140 dostupnih / 20 po ispitu → isto pitanje otprilike svaki 7.0. ispit
+   policajac   11 dostupnih / 1 po ispitu → isto pitanje otprilike svaki 11.0. ispit
+   kosnik      2 dostupnih / 1 po ispitu → isto pitanje otprilike svaki 2.0. ispit  ⚠️ ISPOD 6 — kandidat ih nauči napamet
+   situacija   80 dostupnih / 4 po ispitu → isto pitanje otprilike svaki 20.0. ispit
+
+3.1 BEZ GREŠAKA
