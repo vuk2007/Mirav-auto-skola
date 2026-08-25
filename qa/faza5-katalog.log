@@ -1,0 +1,65 @@
+iz kataloga izvučeno: 939 pitanja sa tačno tri opcije
+naša baza: 411 pitanja sa izborom (od 421)
+
+==============================================================================
+REZULTAT POREĐENJA
+==============================================================================
+pitanje i sve tri opcije se poklapaju sa katalogom:  394
+pitanje nađeno, ali se opcija razlikuje:             5
+pitanje uopšte nije nađeno u katalogu:               12
+
+── OPCIJE KOJE SE RAZLIKUJU OD KATALOGA ──────────────────────────────────────
+
+id=141  (slicnost opcija 0.84)  U situaciji prikazanoj na slici upaljeno žuto svijetlo na semaforu znači:
+   c) [0.53] mi:      zabranu prolaza kroz raskrsnicu
+            katalog: zabranu prolaza kroz raskrsnicu Kako ete postupiti u situaciji prikazanoj na slici, kada
+
+id=175  (slicnost opcija 0.77)  U situaciji prikazanoj na slici vučno vozilo 3 je tegljač, a vučeno vozilo je:
+   c) [0.32] mi:      poluprikolica
+            katalog: poluprikolica U situaciji prikazanoj na slici, putnicko vozilo 1 skree
+
+id=229  (slicnost opcija 0.84)  Biciklista u situaciji na slici u naselju kreće se:
+   c) [0.52] mi:      propisno uz desnu ivicu kolovoza
+            katalog: propisno uz desnu ivicu kolovoza U situaciji na slici, vozim teretno vozilo sa prikolicom i
+
+id=272  (slicnost opcija 0.87)  Na slici je prikazan saobraćajni znak:
+   b) [0.61] mi:      približavanje prelaz puta prelasku preko željezničke puta preko pruge željezničke bez branika pruge 
+            katalog: prelaz puta preko zeljeznicke pruge bez branika ili polubranika
+
+id=421  (slicnost opcija 0.78)  Povrijeđeno lice koje izgubi dosta krvi ima:
+   c) [0.33] mi:      ubrzano i nepravilno disanje
+            katalog: ubrzano i nepravilno disanje MINISTRIA E ARSIMIT KATALOGU I PYETJEVE T� PROVIMIT P�R KALIMIN E PJES�
+
+── PITANJA KOJIH NEMA U KATALOGU ─────────────────────────────────────────────
+   id= 90  U bezbjednosnom sjedištu mora da se prevozi dijete do:
+   id= 91  Na istoj osovini vozila pneumatici moraju da budu jednaki:
+   id= 92  Svijetla za maglu na motornom vozilu treba da budu postavljena tako da osvjetljavaju put ispred 
+   id= 93  Naslon za glavu mora biti ugrađen na sjedištu kod kojeg sigurtosni pojas:
+   id= 94  Kad kod povrijeđenog hoćemo da zaustavimo krvarenje upotrebljavamo:
+   id= 95  Broj hitne pomoći je:
+   id=142  Kako ćete postupiti u situaciji prikazanoj na slici, kada - policijski službenik bočno ispruženi
+   id=176  U situaciji prikazanoj na slici, putničko vozilo 1 skreće - ulijevo, a traktor 2 zadržava pravac
+   id=178  Kako ćete postupiti u situaciji prikazanoj na slici: * nastaviću kretanje pravo kroz raskrnicu j
+   id=230  U situaciji na slici, vozim teretno vozilo sa prikolicom i - mimoilazim se sa teretnim vozilom 2
+   id=362  Ako vozila javnog gradskog prevoza koriste istu saobraćajnu traku kojom se kreću i šinska vozila
+   id=363  Kombinovani znak podizanje ruke i upotreba pištaljke, kao na slici, predstavlja:
+
+==============================================================================
+TIPFELERI IZ FAZE 1 — jesu li u zvaničnom katalogu?
+==============================================================================
+   raskrnice        JESTE u katalogu — greška je zvanična
+   prevenstvom      JESTE u katalogu — greška je zvanična
+   proustanja       JESTE u katalogu — greška je zvanična
+   sitaciji         JESTE u katalogu — greška je zvanična
+   izvrsti          JESTE u katalogu — greška je zvanična
+   vozulo           JESTE u katalogu — greška je zvanična
+   rasksnice        JESTE u katalogu — greška je zvanična
+   propustatjuci    nije u katalogu — greška je naša
+   cujem            JESTE u katalogu — greška je zvanična
+   verikalno        JESTE u katalogu — greška je zvanična
+   zaustvljanje     JESTE u katalogu — greška je zvanična
+   rasksnici        JESTE u katalogu — greška je zvanična
+   hrizontalno      JESTE u katalogu — greška je zvanična
+   povrijednog      nije u katalogu — greška je naša
+
+poklapanje po kategorijama: {'teorija': 133, 'situacija': 163, 'znak': 76, 'policajac': 20, 'kosnik': 2}

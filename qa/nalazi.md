@@ -10,7 +10,7 @@ Nalaz bez dokaza ne vrijedi — uz svaki ide izlaz komande, id pitanja ili putan
 | 2 — slike | **0** | **3** | 0 |
 | 3 — logika ispita | **0** | **1** | 0 |
 | 4 — browser | **0** | **2** | 1 |
-| 5 — sadržaj i pravo | — | — | — |
+| 5 — sadržaj i pravo | **1** | **3** | 0 |
 
 ---
 
@@ -545,6 +545,197 @@ niz visina poslije učitavanja slike:       [1071, 1081, 823, 1095]
   tekstualni opis bio ili prazna obećanja ili odavanje odgovora.
 - **offline usred ispita radi**: baza je već u memoriji, pa se test nastavlja, odgovori se
   bilježe i **rezultat se izračuna bez mreže**. Nula JS grešaka.
+
+---
+
+## Faza 5 — Sadržaj i pravna strana
+
+Skripte: `qa/uporedi_katalog.py`, `qa/uzorak_za_instruktora.py` · izlaz: `qa/faza5-katalog.log`
+· **P0: 1 · P1: 3 · P2: 0**
+
+**Zvanični katalog je skinut i upoređen sa našom bazom.** Nije bio u repo-u, ali je javno
+dostupan preko linka koji već stoji u modalu „Literatura":
+
+```
+https://wapi.gov.me/download/c4096c73-e71d-4b03-931b-a8809c971772?version=1.0
+KATALOG ISPITNIH PITANJA ZA POLAGANJE TEORIJSKOG DIJELA VOZACKOG ISPITA
+Ministarstvo prosvjete, Podgorica, maj 2023.  ·  20,8 MB  ·  214 strana
+```
+
+Dokument je **dvojezičan**: strane 1–49 crnogorski, od 50. albanski (`KATALOGU I PYETJEVE`).
+Crnogorski dio ima **414 pitanja**, naša baza ima **421**.
+
+### QA-5-1 · **P0** · Šest pitanja ne postoji u zvaničnom katalogu
+
+Pitanja **id 90–95** ne nalaze se nigdje u 214 strana kataloga. Nije riječ o razlici u
+formulaciji — ključne riječi imaju **nula pojava u cijelom dokumentu**:
+
+| id | Pitanje | Pretraga u katalogu |
+| -- | ------- | ------------------- |
+| 90 | U bezbjednosnom sjedištu mora da se prevozi dijete do: | `mora da se prevozi dijete do` — 0 |
+| 91 | Na istoj osovini vozila pneumatici moraju da budu jednaki: | `pneumatici` — 0, `osovini` — 0 |
+| 92 | Svijetla za maglu na motornom vozilu treba da budu postavljena… | `Svijetla za maglu na motornom` — 0 |
+| 93 | Naslon za glavu mora biti ugrađen na sjedištu kod kojeg… | `naslon` — 0 |
+| 94 | Kad kod povrijeđenog hoćemo da zaustavimo krvarenje… | `zaustavimo krvarenje` — 0 |
+| 95 | Broj hitne pomoći je: | `hitne pomo` — 0 |
+
+Blok je **uzastopan** (naša strana 9, `local_no` 90–95) i staje tačno tamo gdje se naš broj
+pitanja razilazi sa katalogom (421 naspram 414). Pitanja 87, 88 i 89 sa iste strane **jesu**
+u katalogu.
+
+**Zašto P0:** to je sadržaj bez poznatog izvora koji se prikazuje kandidatu kao gradivo za
+zvanični ispit. Pitanje 93 uz to ima i tipfeler kojeg nema u katalogu (`sigurtosni`), što
+dodatno govori da nije prepisano iz njega.
+
+**Ne treba ih brisati napamet** — možda potiču iz starijeg ili novijeg izdanja kataloga.
+MIRAV mora utvrditi porijeklo: ako se ne može potvrditi, izbaciti ih iz baze.
+
+### QA-5-2 · P1 · Katalog daje drugačiji tekst za pokvarenu opciju pitanja 272
+
+Ranije prijavljeno (QA-1-5) uz predlog rekonstrukcije. **Katalog je sada presudio i moj
+predlog je bio pogrešan:**
+
+```
+mi:       „približavanje prelaz puta prelasku preko željezničke puta preko pruge
+           željezničke bez branika pruge bez ili branika polubranika ili polubranika"
+moj raniji predlog: „približavanje prelasku puta preko željezničke pruge bez branika…"
+KATALOG:  „prelaz puta preko željezničke pruge bez branika ili polubranika"
+```
+
+Riječi „približavanje" **nema** — nju sam pogrešno izveo iz engleskog prevoda („approaching
+a level crossing"), koji je i sam napravljen od pokvarenog izvornika. Mjerodavan je katalog.
+
+To je **tačan odgovor** tog pitanja, pa se popravlja tekstom iz kataloga, a i prevodi EN/RU/AL
+za tu opciju treba da se ponove.
+
+### QA-5-3 · P1 · Ugrađena verzija (`/embed`) nema disclaimer tamo gdje treba
+
+`/embed` je verzija koju kandidati stvarno koriste na mirav.me. Izmjereno u browseru:
+
+```
+ruta               početna   uputstvo   u ispitu   rezultat
+/                  ima       ima        ima        ima
+/embed             NEMA      ima        NEMA       NEMA
+/simulator         ima        —          —          —
+/embed/simulator   NEMA       —          —          —
+```
+
+Kandidat koji riješi test i vidi „POLOŽENO"/„PAO" **nikad ne pročita** da „baza služi
+isključivo za pripremu i vježbu, a zvanični ispit sprovodi nadležni organ" — a to je trenutak
+kad je najvažnije da to pročita.
+
+Razlog je što `app/embed/page.tsx` namjerno izostavlja `SiteFooter` (ugrađena verzija je bez
+zaglavlja i podnožja). **Moguće je da mirav.me nosi tu napomenu oko iframe-a** — to MIRAV
+treba da potvrdi; ako ne nosi, napomenu vratiti bar na ekran rezultata.
+
+### QA-5-4 · P1 · `/audit` nije zatvoren za javnost
+
+Kriterijum za puštanje traži da `/audit` bude **iza env flag-a** i sa `noindex`. Stanje:
+
+- ✅ `noindex, nofollow, noarchive` — i kao `metadata.robots` i kao `X-Robots-Tag` zaglavlje
+- ✅ nigdje nije linkovan
+- ❌ **nema env flag-a** — ko upiše adresu, otvara je
+
+Stranica na jednom mjestu prikazuje **svih 281 pitanja sa slikom i sa zeleno označenim tačnim
+odgovorom**. Isti odgovori se vide i u vježbi, ali jedan po jedan; ovdje su svi odjednom.
+
+**Predlog:** usloviti prikaz sa `NEXT_PUBLIC_ENABLE_AUDIT === "1"`, pa je stranica dostupna
+samo na pregledu (preview) gdje je promjenljiva postavljena.
+
+### Provjereno i čisto
+
+**5.1 — poređenje sa zvaničnim katalogom** (`qa/faza5-katalog.log`):
+
+```
+iz kataloga izvučeno:                                939 pitanja (oba jezika)
+pitanje i sve tri opcije se poklapaju sa katalogom:  394 od 411
+pitanje nađeno, ali se opcija razlikuje:               5
+pitanje uopšte nije nađeno:                           12
+```
+
+Od 5 razlika u opcijama **samo je jedna stvarna** (id 272, gore). Ostale četiri — 141, 175,
+229, 421 — su artefakt **mog** parsera kataloga: u `pdftotext` izlazu tekst sljedećeg pitanja
+nastavlja se u istom redu, pa se zalijepi za posljednju opciju. Naš tekst je uredan prefiks.
+Isto važi za 6 od 12 „nenađenih" (142, 176, 178, 230, 362, 363) — provjereno pojedinačno,
+sva su u katalogu.
+
+**Ostaje 394 potvrđenih + 11 objašnjenih + 6 kojih nema = 411.**
+
+**Dvanaest od četrnaest „tipfelera" iz faze 1 su u ZVANIČNOM katalogu:**
+
+```
+raskrnice      JESTE u katalogu       propustatjuci  nije — greška je naša
+prevenstvom    JESTE u katalogu       povrijednog    nije — greška je naša
+proustanja     JESTE u katalogu
+sitaciji       JESTE u katalogu
+izvrsti        JESTE u katalogu
+vozulo         JESTE u katalogu
+rasksnice      JESTE u katalogu
+cujem          JESTE u katalogu
+verikalno      JESTE u katalogu
+zaustvljanje   JESTE u katalogu
+rasksnici      JESTE u katalogu
+hrizontalno    JESTE u katalogu
+```
+
+**Ovo mijenja nalaz QA-1-2.** Tih dvanaest **ne treba popravljati** — aplikacija treba da
+prikazuje ono što piše u zvaničnom katalogu, jer kandidat isti tekst vidi i na ispitu.
+Popravljaju se samo dva: `propuštatjući` → `propuštajući` (id 250) i `povrijeđnog` →
+`povrijeđenog` (id 410).
+
+**Uzorak za instruktora** je generisan pošto katalog nema odgovore:
+`qa/uzorak-za-instruktora.md`, **60 pitanja**, stratifikovano po vrsti (teorija 23, situacija
+22, znak 11, policajac 3, kosnik 1), sa fiksnim sjemenom pa je ponovljiv. Svih 7 rizičnih
+pitanja (90–95 i 272) je **obavezno uključeno i posebno označeno**.
+
+**5.2 — literatura i kazne:**
+
+Sva **5 linkova iz modala „Literatura" vraćaju 200** i vode na tačan dokument — provjereni su
+naslovi, ne samo statusi:
+
+| Link | Naslov na gov.me |
+| ---- | ---------------- |
+| Katalog | KATALOG ISPITNIH PITANJA ZA POLAGANJE TEORIJSKOG DIJELA VOZAČKOG ISPITA |
+| ZoBS | Zakon o bezbjednosti saobraćaja na putevima |
+| Signalizacija | Pravilnik o saobraćajnoj signalizaciji |
+| Znaci policajca | Pravilnik o bližem izgledu i načinu davanja znakova… ovlašćeni policijski službenik |
+| Uslovi za vozila | Pravilnik o bližim uslovima koje moraju da ispunjavaju vozila… |
+
+Kazne — stanje nepromijenjeno i **već zapisano u README-u**:
+
+```
+prekršaja ukupno: 39   verified: true: 0   verified: false: 39
+označeno amended (izmjene 111/2026): 9
+sa zabilježenim neslaganjem izvora:  10
+u referentnom spisku potvrđeno iz Službenog lista: 0 od 39
+```
+
+Nijedan iznos se ne prikazuje kao činjenica — uz svaki stoji „informativno, konačan iznos
+određuje nadležni organ", a cijela funkcija se gasi sa `PENALTIES_ENABLED = false`.
+
+**5.3 — podaci i objava:**
+
+Aplikacija čuva **samo u `localStorage`, samo na uređaju korisnika**, i ništa od toga ne
+napušta browser:
+
+```
+mirav.lang       izabrani jezik
+mirav.bestExam   najbolji rezultat (procenat, bodovi, položio/pao, datum)
+mirav.practice   dokle se stiglo u vježbi
+mirav.audit.v1   samo na /audit, ocjene revizije
+```
+
+Nema kolačića, nema `sessionStorage`, nema `indexedDB`, nema slanja na server. Jedina spoljna
+usluga je **Vercel Web Analytics** — bez kolačića, bez identifikatora korisnika; šalje
+posjetu (adresa stranice, referer, gruba geolokacija po zemlji, tip uređaja). Nema polja u
+koje korisnik unosi ime, e-poštu ili bilo šta lično.
+
+### Nova prilika koju je otkrilo poređenje
+
+Katalog sadrži i **zvaničnu albansku verziju** (strane 50+, `KATALOGU I PYETJEVE T� PROVIMIT`).
+Naši albanski prevodi su **mašinski**. Umjesto slanja mašinskog prevoda na lekturu, albanska
+pitanja se mogu preuzeti iz zvaničnog izvora — isti dokument, ista numeracija. To bi zatvorilo
+i stavku „dati prevode izvornom govorniku" za albanski.
 
 ---
 
