@@ -1,0 +1,82 @@
+
+==============================================================================
+360x640 mali Android
+==============================================================================
+PASS  landing: bez vodoravnog preliva (0px)
+PASS  landing: nijedan element ne viri
+PASS  ispit (pitanje sa slikom): bez preliva (0px)
+PASS  slika ne prelazi svoj okvir (181/294)
+PASS  najduža opcija (230 znakova) se prelama, ne siječe
+PASS  ispit (najduža opcija): bez preliva (0px)
+FAIL  odgovori i glavna dugmad su bar 44px visoki: „1" 32x32px, „2" 32x32px, „3" 32x32px
+FAIL  sporedne kontrole su bar 44px visoke: „← Nazad" 40x87px, „Literatura" 20x65px, „ME" 28x34px, „EN" 28x33px, „AL" 28x33px, „RU" 28x33px
+PASS  traka napretka ide do 41 (aria-valuemax = 41)
+PASS  brojač prati izabrano pitanje (na 9. aria-valuenow = 9)
+PASS  natpis uz traku pokazuje 9 / 41
+PASS  procenat uz traku odgovara položaju (22%)
+PASS  rezultat: bez preliva (0px)
+PASS  rezultat: nijedna slika u pregledu ne prelazi okvir
+PASS  rezultat: nijedan element ne viri
+PASS  bez JS grešaka
+
+==============================================================================
+390x844 iPhone
+==============================================================================
+PASS  landing: bez vodoravnog preliva (0px)
+PASS  landing: nijedan element ne viri
+PASS  ispit (pitanje sa slikom): bez preliva (0px)
+PASS  slika ne prelazi svoj okvir (225/324)
+PASS  najduža opcija (240 znakova) se prelama, ne siječe
+PASS  ispit (najduža opcija): bez preliva (0px)
+FAIL  odgovori i glavna dugmad su bar 44px visoki: „1" 32x32px, „2" 32x32px, „3" 32x32px
+FAIL  sporedne kontrole su bar 44px visoke: „← Nazad" 40x87px, „Literatura" 20x65px, „ME" 28x34px, „EN" 28x33px, „AL" 28x33px, „RU" 28x33px
+PASS  traka napretka ide do 41 (aria-valuemax = 41)
+PASS  brojač prati izabrano pitanje (na 9. aria-valuenow = 9)
+PASS  natpis uz traku pokazuje 9 / 41
+PASS  procenat uz traku odgovara položaju (22%)
+PASS  rezultat: bez preliva (0px)
+PASS  rezultat: nijedna slika u pregledu ne prelazi okvir
+PASS  rezultat: nijedan element ne viri
+PASS  bez JS grešaka
+
+==============================================================================
+820x1180 iPad
+==============================================================================
+PASS  landing: bez vodoravnog preliva (0px)
+PASS  landing: nijedan element ne viri
+PASS  ispit (pitanje sa slikom): bez preliva (0px)
+PASS  slika ne prelazi svoj okvir (161/670)
+PASS  najduža opcija (204 znakova) se prelama, ne siječe
+PASS  ispit (najduža opcija): bez preliva (0px)
+FAIL  odgovori i glavna dugmad su bar 44px visoki: „1" 32x32px, „2" 32x32px, „3" 32x32px
+FAIL  sporedne kontrole su bar 44px visoke: „← Nazad" 40x87px, „Literatura" 20x65px, „ME" 28x34px, „EN" 28x33px, „AL" 28x33px, „RU" 28x33px
+PASS  traka napretka ide do 41 (aria-valuemax = 41)
+PASS  brojač prati izabrano pitanje (na 2. aria-valuenow = 2)
+PASS  natpis uz traku pokazuje 2 / 41
+PASS  procenat uz traku odgovara položaju (5%)
+PASS  rezultat: bez preliva (0px)
+PASS  rezultat: nijedna slika u pregledu ne prelazi okvir
+PASS  rezultat: nijedan element ne viri
+PASS  bez JS grešaka
+
+==============================================================================
+1440x900 desktop
+==============================================================================
+PASS  landing: bez vodoravnog preliva (0px)
+PASS  landing: nijedan element ne viri
+PASS  ispit (pitanje sa slikom): bez preliva (0px)
+PASS  slika ne prelazi svoj okvir (225/670)
+PASS  najduža opcija (272 znakova) se prelama, ne siječe
+PASS  ispit (najduža opcija): bez preliva (0px)
+FAIL  odgovori i glavna dugmad su bar 44px visoki: „1" 32x32px, „2" 32x32px, „3" 32x32px
+FAIL  sporedne kontrole su bar 44px visoke: „← Nazad" 40x87px, „Literatura" 20x65px, „ME" 28x34px, „EN" 28x33px, „AL" 28x33px, „RU" 28x33px
+PASS  traka napretka ide do 41 (aria-valuemax = 41)
+PASS  brojač prati izabrano pitanje (na 30. aria-valuenow = 30)
+PASS  natpis uz traku pokazuje 30 / 41
+PASS  procenat uz traku odgovara položaju (73%)
+PASS  rezultat: bez preliva (0px)
+PASS  rezultat: nijedna slika u pregledu ne prelazi okvir
+PASS  rezultat: nijedan element ne viri
+PASS  bez JS grešaka
+
+PALO: 8  (56 provjera)

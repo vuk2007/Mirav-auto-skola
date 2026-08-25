@@ -1,0 +1,40 @@
+==============================================================================
+4.3  /embed U PRAVOM IFRAME-U
+==============================================================================
+PASS  roditelj dobija poruku o visini pri učitavanju (1 poruka)
+      prva poruka: {"type":"mirav-quiz-height","height":694}
+PASS  visina se javlja i pri promjeni ekrana (694 → 1054 px)
+PASS  visina se javlja pri promjeni pitanja: bez slike (#11) → sa slikom (#1), 840 → 1054 px, 1 nova poruka
+PASS  slika u iframe-u se iscrtala
+PASS  poslije učitavanja slike stiže još poruka o visini (zadnje: [1105,1071,840,1054])
+PASS  nema duplog skrola — sadržaj (1054px) stane u iframe (1054px), višak 0px
+PASS  nema JS grešaka na roditeljskoj stranici
+
+==============================================================================
+4.4  MREŽA
+==============================================================================
+PASS  poslije DOMContentLoaded ekran nije prazan (1.5 s)
+PASS  dugme „Počni vježbu" postane upotrebljivo (16.1 s)
+      Slow 3G: DOMContentLoaded 1.5 s · load 10.0 s · dugme radi 16.1 s
+      razmak u kojem je dugme vidljivo ali ne radi: ~14.5 s
+PASS  dok se baza ucitava ekran nije prazan — pise: "← NAZAD
+Literatura
+ME
+EN
+AL
+RU
+KATEGORIJA
+Sve
+Tekstualna
+Sa "
+      do prvog pitanja jos 0.0 s (baza je 600 kB), ukupno 16.1 s
+PASS  prvo pitanje stigne ispod 60 s poslije klika (0.0 s)
+PASS  neuspjelo učitavanje slike ne baca JS grešku
+PASS  neuspjela slika ne razbija raspored (preliv 0px)
+PASS  pitanje ostaje upotrebljivo — sve tri opcije su tu (3)
+      alt tekst slike: "" — prazan je namjerno (slika je sadržaj pitanja, ne ukras)
+PASS  ispit se nastavlja i bez mreže (baza je već u memoriji)
+PASS  rezultat se izračuna i offline
+PASS  offline ne baca JS grešku
+
+SVE PROSLO  (17 provjera)

@@ -1,0 +1,54 @@
+
+==============================================================================
+WebKit (Safari / iOS)
+==============================================================================
+PASS  landing se učitava
+PASS  vježba: odgovor se bilježi i prikazuje se povratna informacija
+PASS  ispit: 41 pitanje u navigaciji
+PASS  tajmer otkucava (45:00 → 44:58)
+PASS  rezultat se prikazuje
+PASS  sve slike u pregledu su se iscrtale (19 slika)
+PASS  nula JS grešaka
+PASS  nula error/warning poruka u konzoli
+PASS  nula neuspjelih zahtjeva
+
+==============================================================================
+Chromium (Chrome Android)
+==============================================================================
+PASS  landing se učitava
+PASS  vježba: odgovor se bilježi i prikazuje se povratna informacija
+PASS  ispit: 41 pitanje u navigaciji
+PASS  tajmer otkucava (45:00 → 44:58)
+PASS  rezultat se prikazuje
+PASS  sve slike u pregledu su se iscrtale (18 slika)
+PASS  nula JS grešaka
+PASS  nula error/warning poruka u konzoli
+PASS  nula neuspjelih zahtjeva
+
+==============================================================================
+Chromium (Chrome desktop)
+==============================================================================
+PASS  landing se učitava
+PASS  vježba: odgovor se bilježi i prikazuje se povratna informacija
+PASS  ispit: 41 pitanje u navigaciji
+PASS  tajmer otkucava (45:00 → 44:58)
+PASS  rezultat se prikazuje
+PASS  sve slike u pregledu su se iscrtale (17 slika)
+PASS  nula JS grešaka
+PASS  nula error/warning poruka u konzoli
+PASS  nula neuspjelih zahtjeva
+
+==============================================================================
+Firefox (desktop)
+==============================================================================
+PASS  landing se učitava
+PASS  vježba: odgovor se bilježi i prikazuje se povratna informacija
+PASS  ispit: 41 pitanje u navigaciji
+PASS  tajmer otkucava (45:00 → 44:58)
+PASS  rezultat se prikazuje
+PASS  sve slike u pregledu su se iscrtale (21 slika)
+PASS  nula JS grešaka
+PASS  nula error/warning poruka u konzoli
+PASS  nula neuspjelih zahtjeva
+
+SVE PROSLO  (36 provjera)

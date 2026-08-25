@@ -9,7 +9,7 @@ Nalaz bez dokaza ne vrijedi — uz svaki ide izlaz komande, id pitanja ili putan
 | 1 — baza | **0** | **6** | 0 |
 | 2 — slike | **0** | **3** | 0 |
 | 3 — logika ispita | **0** | **1** | 0 |
-| 4 — browser | — | — | — |
+| 4 — browser | **0** | **2** | 1 |
 | 5 — sadržaj i pravo | — | — | — |
 
 ---
@@ -411,16 +411,140 @@ ispitu, gdje se priznaje samo potpuno tačan redoslijed.
   - svih 41 netačno -> **0%, PAD**, pregled lista **svih 41**, sa 21 slikom, izabranim
     odgovorom (41x) i tačnim odgovorom (84x)
 
-### Ponašanje koje traži vašu odluku, ne popravku
+### Ponašanje o kojem je odlučeno — ostaje kako jeste
 
 **Osvježavanje stranice usred ispita gubi ispit** — vraća na početnu, bez upozorenja.
-Izmjereno, nije nagađano. Tajmer i odgovori se ne čuvaju (`localStorage` se koristi samo za
-vježbu i najbolji rezultat).
+Izmjereno, nije nagađano. Tajmer i odgovori se ne čuvaju; `localStorage` se koristi samo za
+vježbu i za **najbolji rezultat završenog ispita**.
 
-Vaš stav iz plana je „čuvati stanje, ali NE resetovati tajmer" — to je izvodljivo i slaže se
-sa postojećom arhitekturom (rok je već apsolutan `deadline`, pa bi se sačuvao kao broj).
-**Nije urađeno jer je ovo revizija.** Dugme „nazad" u browseru izvodi iz testa, ali bez JS
-greške.
+**ODLUKA (MIRAV): ostaje postojeće ponašanje.** Pamti se samo najbolji rezultat završenog
+testa; ispit u toku se namjerno ne čuva. To je i bliže pravom ispitu — nema „vrati me nazad
+gdje sam stao". Stavka je zatvorena, ne ide u popravke.
+
+Dugme „nazad" u browseru izvodi iz testa, ali bez JS greške.
+
+---
+
+## Faza 4 — Ponašanje u browseru
+
+Skripte: `qa/faza4_rezolucije.mjs`, `qa/faza4_browseri.mjs`, `qa/faza4_embed_mreza.mjs` ·
+izlazi: `qa/faza4-*.log` · **P0: 0 · P1: 2 · P2: 1**
+
+Sve je testirano stvarno, ništa nije pretpostavljeno. Mjeri se ono što se da izmjeriti
+(preliv u pikselima, `scrollHeight` naspram `clientHeight`, `naturalWidth`, `aria-valuenow`,
+broj `postMessage` poruka), a ne „izgleda dobro".
+
+### QA-4-1 · P1 · Na Slow 3G dugmad su vidljiva 1,5 s, a rade tek na 16 s
+
+Izmjereno na 390x844 uz Chrome DevTools Slow 3G (400 kbit/s, 400 ms latencije):
+
+```
+DOMContentLoaded            1,5 s   <- stranica se vidi, dugmad izgledaju spremno
+load                       10,0 s
+dugme „Počni vježbu" radi  16,0 s   <- tek sada React reaguje na klik
+-----------------------------------
+mrtvi razmak               ~14,6 s
+```
+
+Skoro petnaest sekundi kandidat gleda dugme „POČNI VJEŽBU", pritiska ga i **ništa se ne
+dešava**. Nema ni spinera, ni onemogućenog stanja, ni poruke. Na sporoj vezi to izgleda kao
+da je aplikacija pokvarena, a ne kao da se učitava.
+
+Nađeno tako što je prva verzija testa kliknula baš u taj razmak i test je „pao" — dok se
+nije izmjerilo šta se stvarno dešava.
+
+**Predlog:** dugmad na početnoj označiti kao neaktivna dok se ne hidrira, ili prikazati
+kratku poruku „učitavanje…". Poslije hidracije prvo pitanje stiže odmah, pa je problem samo
+u tom prozoru.
+
+### QA-4-2 · P1 · Mreža brojeva pitanja ima dodirne mete 32x32 px
+
+Preporuka za dodir je najmanje 44x44 px. Mreža „Pregled pitanja" je **32x32 px** na svim
+rezolucijama, a kandidat je koristi cijelo vrijeme da skače kroz test — to nije sporedna
+kontrola. Na 360 px širine dugmad su i gusto poređana.
+
+```
+odgovori i glavna dugmad (Sljedeće, Prethodno, Završi):  svi >= 44px   u redu
+mreža brojeva pitanja („1", „2", ... „36a"):             32x32px       ispod praga
+```
+
+**Predlog:** `h-9 w-9` (36 px) uz veći razmak, ili `h-11 w-11` (44 px) na mobilnom.
+
+### QA-4-3 · P2 · Sporedne kontrole ispod praga za dodir
+
+```
+„← Nazad"     40x87 px
+„Literatura"  20x65 px   <- najmanje
+„ME/EN/AL/RU" 28x33 px
+```
+
+Dodiruju se jednom ili dvaput po sesiji, pa je uticaj mali — ali „Literatura" na 20 px je
+teško pogoditi palcem. Nije blokada.
+
+### Provjereno i čisto
+
+**4.1 — četiri rezolucije, 56 provjera** (`qa/faza4-rezolucije.log`).
+Na 360x640, 390x844, 820x1180 i 1440x900, na sva tri ekrana (početna, ispit, rezultat):
+
+- **vodoravni preliv je 0 px svuda** — ni na jednoj rezoluciji, ni na jednom ekranu
+- nijedan element ne viri izvan širine prozora
+- **slika nikad ne prelazi svoj okvir** (npr. 225/294 na 360 px, 225/670 na desktopu)
+- **najduža opcija se prelama, ne siječe** — provjereno tako što se u svakom ispitu potraži
+  pitanje sa najdužim opcijama (164-272 znakova) pa se mjeri `scrollHeight` naspram
+  `clientHeight` kod elemenata sa `overflow: hidden`
+- odgovori i glavna dugmad su svi >= 44 px visoki
+- **brojač i traka napretka su tačni**: `aria-valuemax` je 41, `aria-valuenow` prati izabrano
+  pitanje, natpis piše „n / 41", a procenat odgovara položaju
+- nula JS grešaka na svim rezolucijama
+
+**4.2 — četiri motora, 36 provjera** (`qa/faza4-browseri.log`):
+
+| Motor | Rezolucija | Ishod |
+| ----- | ---------- | ----- |
+| **WebKit** (Safari / iOS) | 390x844 | sve prošlo |
+| Chromium (Chrome Android) | 412x915 | sve prošlo |
+| Chromium (Chrome desktop) | 1440x900 | sve prošlo |
+| Firefox (Gecko) | 1440x900 | sve prošlo |
+
+U svakom motoru prođen je **cio tok**: početna -> vježba (odgovor + povratna informacija) ->
+ispit (41 pitanje, tajmer stvarno otkucava u realnom vremenu) -> rezultat. Uz to:
+
+- **nula JS grešaka, nula error/warning poruka u konzoli, nula neuspjelih zahtjeva** u sva
+  četiri motora. Ovo zatvara kriterijum „nula grešaka u konzoli na Safari iOS i Chrome
+  Android".
+- sve slike u pregledu grešaka se stvarno iscrtaju (`naturalWidth > 0` poslije skrolovanja —
+  slike su `lazy`, pa se bez skrola mjeri pogrešno)
+
+Jedini 404 koji se javlja je `/_vercel/insights/script.js` — Vercel Analytics ne postoji
+lokalno, što je već zapisano u README-u. Filtriran je po URL-u iz `console.location()`, jer
+tekst poruke ne sadrži adresu.
+
+**4.3 — `/embed` u pravom iframe-u, 7 provjera** (`qa/faza4-embed-mreza.log`).
+Roditeljska stranica se servira sa **istog porijekla**, jer `frame-ancestors` dozvoljava samo
+`'self'` i `mirav.me` — `about:blank` roditelj bi bio blokiran i test bi lažno pao.
+
+```
+prva poruka: {"type":"mirav-quiz-height","height":694}
+promjena ekrana (početna -> ispit):        694 -> 1095 px
+promjena pitanja (bez slike -> sa slikom): 823 -> 1095 px, stigla nova poruka
+niz visina poslije učitavanja slike:       [1071, 1081, 823, 1095]
+```
+
+- **visina se javlja i POSLIJE učitavanja slike** — to je najčešći bug kod iframe ugradnje
+  (slika stigne poslije prve poruke i visina ostane pogrešna). Ovdje stiže još poruka.
+- **nema duplog skrola**: sadržaj 1095 px, iframe 1095 px, višak **0 px**
+- nema JS grešaka na roditeljskoj stranici
+
+**4.4 — mreža, 10 provjera:**
+
+- **Slow 3G**: poslije DOMContentLoaded (1,5 s) ekran **nije prazan** — vidi se zaglavlje,
+  filteri kategorija i dugmad. Poslije hidracije prvo pitanje stiže odmah. (Problem je samo
+  mrtvi razmak — QA-4-1.)
+- **slika koja se ne učita ne razbija ništa**: nula JS grešaka, preliv 0 px, sve tri opcije
+  ostaju upotrebljive. `alt` je namjerno prazan — slika je sadržaj pitanja, ne ukras, pa bi
+  tekstualni opis bio ili prazna obećanja ili odavanje odgovora.
+- **offline usred ispita radi**: baza je već u memoriji, pa se test nastavlja, odgovori se
+  bilježe i **rezultat se izračuna bez mreže**. Nula JS grešaka.
 
 ---
 
