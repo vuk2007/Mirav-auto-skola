@@ -138,6 +138,9 @@ Tri stvari koje pravila rade drugačije nego što bi se očekivalo, i zašto:
   obavještenja…", graničnik, kosnik — završavala u kategoriji raskrsnica i **nosila oznaku
   `RASKRSNICA` iako prikazuju znak**. Oznaka na kartici sada prati `kind`.
 
+`firstAid` se upisuje istom skriptom; `--report` ispisuje spisak svih 17 pitanja da se može
+pregledati red po red.
+
 `subOf` se ne pogađa iz teksta. U zvaničnom katalogu jedna slika nosi dva pitanja („kako ćete
 postupiti…" + „redoslijed prolaska…"), a parser ih je izvukao kao dva zasebna pitanja sa dva
 **bajt-identična** isječka. Par se prepoznaje po: ista strana + uzastopni `local_no` +
@@ -252,8 +255,30 @@ Kategorije u vježbi **ne postoje** kao polje u JSON-u — izvode se u
 | `tekst`      | `kind === "teorija"`                        | 140  |
 | `situacija`  | ostalo (situacija, policajac, kosnik)       | 194  |
 
+Uz njih idu dva **poprečna** filtera koja presijecaju sve kategorije, jer pitanje o znaku
+jeste i pitanje sa slikom, a pitanje o prvoj pomoći jeste i tekstualno pitanje:
+
+| Filter        | Pravilo               | Broj |
+| ------------- | --------------------- | ---- |
+| `slika`       | ima sliku             | 281  |
+| `prva-pomoc`  | `firstAid === true`   | 17   |
+
 Ako pitanje nema `kind` — što se dešava samo ako browser servira keširan stariji
 `questions.json`, jer fajl nema heš u imenu — pada se nazad na staro prepoznavanje po tekstu.
+
+**Prva pomoć je samo filter u vježbi, ne segment ispita.** Polje `firstAid` je nezavisno od
+`kind`: tih 17 pitanja ostaju `teorija` i i dalje ulaze u teorijski segment ispita, kao i na
+pravom ispitu. Da su izdvojena u zaseban `kind`, nikad ne bi došla na simulaciju — a dolaze.
+
+U katalogu nijesu u jednom bloku: na stranama 44–48 su izmiješana sa pitanjima o uređajima
+na vozilu (id 380 prva pomoć, 382 vidljivost, 385 prva pomoć, 387 upravljač…), pa se
+prepoznaju po sadržaju. Dva pitanja koja pravilo pokupi, a **namjerno su isključena** kroz
+`FIRST_AID_OVERRIDES` u `scripts/gen-exam-meta.mjs`:
+
+- **392** „Od određene opreme u autobusu…" — broj kutija prve pomoći je pitanje o opremi
+  vozila, ne o pružanju pomoći.
+- **390** „Kada dođe do umora tokom vožnje…" — higijena vožnje. **Granično**: ako MIRAV
+  smatra da spada u medicinski dio, dovoljno je promijeniti `false` u `true`.
 
 Oznaka na kartici pitanja je **finija od filtera**: komanda policajca (`ZNAK POLICAJCA`) i
 kosnik/graničnik (`OZNAKE NA KOLOVOZU`) imaju svoje oznake iako u filteru stoje pod

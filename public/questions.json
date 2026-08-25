@@ -3381,7 +3381,8 @@
       "b": "fashë kompresive",
       "c": "alkool dhe garzë sterile"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -3417,7 +3418,8 @@
       "b": "123",
       "c": "124"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "image",
@@ -13890,7 +13892,8 @@
       "b": "në anën anësore",
       "c": "në pozicion gjysmë të ulur"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -13926,7 +13929,8 @@
       "b": "veprimi i nxehtësisë",
       "c": "shpimi nga një objekt i fortë"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14070,7 +14074,8 @@
       "b": "vendosjen e pjesës së lënduar të trupit në gjendje qetësie",
       "c": "kthimin e të lënduarit në gjendje të vetëdijes"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14106,7 +14111,8 @@
       "b": "60 deri në 80 rrahje në një minutë",
       "c": "mbi 100 rrahje në një minutë"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14286,7 +14292,8 @@
       "b": "thyerje e mbyllur e kërcirit",
       "c": "mpiksja e gjakut në enën e gjakut"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14430,7 +14437,8 @@
       "b": "gjaku në rrjedha të fuqishme",
       "c": "ënjtja dhe mavijosjet e pjesës së lënduar të trupit"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14466,7 +14474,8 @@
       "b": "të vendoset në pozicion të ulur",
       "c": "të vendoset anash në pozicion të shtrirë"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14646,7 +14655,8 @@
       "b": "të vendoset në pozicion të shtrirë në bark",
       "c": "të vendoset në pozicion anësor"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14790,7 +14800,8 @@
       "b": "112",
       "c": "122"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14826,7 +14837,8 @@
       "b": "ujë",
       "c": "garzë sterile"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -14970,7 +14982,8 @@
       "b": "shenjë e sigurt e vdekjes",
       "c": "shenjë e sigurt e lodhjes"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -15006,7 +15019,8 @@
       "b": "122",
       "c": "124"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -15150,7 +15164,8 @@
       "b": "duhet të lahet me alkool",
       "c": "nuk duhet të lahet me lëng"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -15330,7 +15345,8 @@
       "b": "të imobilizohen dy nyjet fqinje",
       "c": "të imobilizohet vetëm nyja që është më afër vendit të lënduar"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   },
   {
     "type": "text",
@@ -15366,6 +15382,7 @@
       "b": "puls dukshëm të ngadalësuar",
       "c": "frymëmarrje të shpejtuar dhe të parregullt"
     },
-    "kind": "teorija"
+    "kind": "teorija",
+    "firstAid": true
   }
 ]

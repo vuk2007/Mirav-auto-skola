@@ -150,6 +150,7 @@ export interface Dict {
   badgeMarking: string;
   badgeIntersection: string;
   badgeOrdering: string;
+  badgeFirstAid: string;
   badgeText: string;
 
   // Rezultat
@@ -182,6 +183,7 @@ export interface Dict {
   catSign: string;
   catIntersection: string;
   catOrdering: string;
+  catFirstAid: string;
 }
 
 const me: Dict = {
@@ -320,6 +322,7 @@ const me: Dict = {
   badgeMarking: "Oznake na kolovozu",
   badgeIntersection: "Raskrsnica",
   badgeOrdering: "Redoslijed prolaska",
+  badgeFirstAid: "Prva pomoć",
   badgeText: "Tekstualno pitanje",
 
   resultTitle: "Rezultat simulacije",
@@ -348,6 +351,7 @@ const me: Dict = {
   catSign: "Znaci",
   catIntersection: "Raskrsnice",
   catOrdering: "Redoslijed",
+  catFirstAid: "Prva pomoć",
 };
 
 const en: Dict = {
@@ -483,6 +487,7 @@ const en: Dict = {
   badgeMarking: "Road markings",
   badgeIntersection: "Intersection",
   badgeOrdering: "Order of passage",
+  badgeFirstAid: "First aid",
   badgeText: "Text question",
 
   resultTitle: "Exam result",
@@ -511,6 +516,7 @@ const en: Dict = {
   catSign: "Signs",
   catIntersection: "Intersections",
   catOrdering: "Order of passage",
+  catFirstAid: "First aid",
 };
 
 const sq: Dict = {
@@ -653,6 +659,7 @@ const sq: Dict = {
   badgeMarking: "Shenjat në karrexhatë",
   badgeIntersection: "Kryqëzim",
   badgeOrdering: "Radha e kalimit",
+  badgeFirstAid: "Ndihma e parë",
   badgeText: "Pyetje me tekst",
 
   resultTitle: "Rezultati i simulimit",
@@ -681,6 +688,7 @@ const sq: Dict = {
   catSign: "Shenjat",
   catIntersection: "Kryqëzimet",
   catOrdering: "Radha e kalimit",
+  catFirstAid: "Ndihma e parë",
 };
 
 const ru: Dict = {
@@ -823,6 +831,7 @@ const ru: Dict = {
   badgeMarking: "Разметка на дороге",
   badgeIntersection: "Перекрёсток",
   badgeOrdering: "Порядок проезда",
+  badgeFirstAid: "Первая помощь",
   badgeText: "Текстовый вопрос",
 
   resultTitle: "Результат симуляции",
@@ -851,6 +860,7 @@ const ru: Dict = {
   catSign: "Знаки",
   catIntersection: "Перекрёстки",
   catOrdering: "Порядок проезда",
+  catFirstAid: "Первая помощь",
 };
 
 export const STRINGS: Record<Lang, Dict> = { me, en, sq, ru };

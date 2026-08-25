@@ -1,0 +1,10 @@
+bbe20b5 Isjecci slika, polje kind/subOf i novi sastav ispita
+08db2e1 Vercel Web Analytics
+442eb32 Logo: prozirna navy verzija u punoj rezoluciji
+c1a7eab Uskladjeni iznosi kazni sa referentnim spiskom
+d6f63c8 Ispit ima tacno 40 pitanja i tacno 80 bodova
+52d090e Uputstvo prije ispita i kvadratic sa X uz odgovore
+d4a5620 Novi logo auto-skole
+d5aa31c Cijena greske: koliko bi prekrsaj kostao po ZoBS-u
+3287fdd Prevod svih 421 pitanja na EN, RU i AL
+e2188a2 Kruzni tok, ruski jezik i skripta za prevod pitanja

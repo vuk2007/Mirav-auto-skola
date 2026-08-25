@@ -1,0 +1,189 @@
+
+==============================================================================
+1.1  SHEMA I OBAVEZNA POLJA
+==============================================================================
+pitanja: 421
+nedostaje polje:     nijedno
+prazno/None polje:   nijedno
+points van 1–4 ili nije int: 10  (od toga ordering sa null: 10)
+   ordering sa points=null: [101, 105, 112, 137, 139, 143, 151, 159, 165, 172]
+   → namjerno; lib/config.ts DEFAULT_ORDERING_POINTS = 4 ih boduje
+nepoznat type: nijedan
+nepoznat kind: nijedan
+
+raspodjela:
+  type: {'text': 140, 'image': 271, 'ordering': 10}
+  area: {'I': 140, 'III': 208, 'II': 73}
+  kind: {'teorija': 140, 'situacija': 180, 'znak': 77, 'policajac': 22, 'kosnik': 2}
+
+==============================================================================
+1.2  IDENTITET I DUPLIKATI
+==============================================================================
+duplirani id: nijedan
+grupa sa istim tekstom: 17
+  isti tekst + iste opcije + ISTI tačan odgovor (pravi duplikat): 0
+  isti tekst + iste opcije + RAZLIČIT tačan odgovor (konflikt):   0
+  isti tekst, ali različite opcije (uredu — različita pitanja):   17
+
+ista slika na više pitanja: 0
+
+==============================================================================
+1.3  ODGOVORI
+==============================================================================
+tačan odgovor van skupa opcija: nijedan
+prazna opcija: nijedna
+pitanja sa dvije identične opcije: 0
+broj opcija po pitanju: {3: 411}
+
+raspodjela tačnog odgovora (prag: svaka pozicija 25–42%):
+  SVE          n=411   a=120 ( 29.2%)  b=142 ( 34.5%)  c=149 ( 36.3%)   u opsegu
+  kosnik       n=  2   a=  0 (  0.0%)  b=  1 ( 50.0%)  c=  1 ( 50.0%)   uzorak premali za ocjenu (<30)
+  policajac    n= 22   a=  7 ( 31.8%)  b=  7 ( 31.8%)  c=  8 ( 36.4%)   uzorak premali za ocjenu (<30)
+  situacija    n=170   a= 48 ( 28.2%)  b= 57 ( 33.5%)  c= 65 ( 38.2%)   u opsegu
+  teorija      n=140   a= 43 ( 30.7%)  b= 43 ( 30.7%)  c= 54 ( 38.6%)   u opsegu
+  znak         n= 77   a= 22 ( 28.6%)  b= 34 ( 44.2%)  c= 21 ( 27.3%)   ODSTUPA: b
+
+==============================================================================
+1.4  OSTACI PARSIRANJA (OCR SMEĆE)
+==============================================================================
+
+opcija duža od 120 znakova: 2
+   id= 72 opt c   142  ako je dozvoljeno saobraćajnom signalizacijom, i ako ostane prolaz za pješake najm
+   id=272 opt b   143  približavanje prelaz puta prelasku preko željezničke puta preko pruge željezničke 
+
+tekst pitanja duži od 200 znakova: 0
+
+počinje brojem i tačkom (numeracija iz PDF-a): 0
+
+počinje oznakom opcije a)/b)/c): 0
+
+tri ili više tačaka (linija za popunjavanje): 0
+
+dvostruki razmak: 0
+
+razmak prije interpunkcije: 18
+   id=109 opt c    33  vertikalnim saobraćajnim znakom .
+   id=113 opt a    21  saobraćajnim znakom .
+   id=114 opt b    24  propustim vozila 3 i 4 .
+   id=125 opt b    59  nepropisno, jer ne nose prsluk sa reflektujućim osobinama .
+   id=144 opt a    43  nastaviću kretanje bez propuštanja vozila .
+   id=152 opt b    59  se zaustavi i nakon propuštanja vozila 2 nastavi kretanje .
+   id=154 opt a    36  treba da nastavim kretanje ulijevo .
+   id=154 opt b    43  mogu izvršti prestrojavanje u desnu traku .
+   id=180 opt b    56  nastavi kretanje pravo bez propuštanja teretnog vozila .
+   id=203 opt a    82  nastaviti kretanje bez propuštanja vozila koja se kreću . putem na koji on nailazi
+   id=228 opt c    53  nepropisno zbog prelaska preko neisprekidane linije .
+   id=230 opt a    61  treba da se zaustavi teretno vozilo 2 i omogući meni prolaz .
+   … i još 6
+
+meki crtica (soft hyphen U+00AD): 0
+
+prelom reda unutar polja: 0
+
+zalijepljene riječi (malaVELIKA): 0
+
+nezatvorena crtica sa razmacima ( - ): 24
+   id=100 text     99  Kako ćete postupiti u situaciji prikazanoj na slici, ako sa - vozilom 2 zadržavate
+   id=102 text    106  Ako je biciklista ušao u raskrsnicu na crveno svijetlo na - semaforu u smjeru svog
+   id=107 opt a    37  se zaustaviti i propustiti vozilo - 1
+   id=114 text     70  U situaciji prikazanoj na slici prilikom skretanja ulijevo treba - da:
+   id=118 opt a    55  zaustaviću se ispred raskrsnice i propustiti vozilo - 2
+   id=120 text    102  U situaciji kao na slici, kada prolazite pored vozila 2 koje se - kreće iz suprotn
+   id=130 opt c    37  vozilo 2 treba da propusti vozilo - 1
+   id=134 text     80  Kako ćete postupiti u situaciji prikazanoj na slici, ako - upravljate vozilom 1:
+   id=136 opt c    55  zaustaviću se ispred raskrsnice i propustiti vozilo - 3
+   id=138 text    119  Kako ćete postupiti u sitaciji prikazanoj na slici, ako vozila - zadržavaju pravac
+   id=142 text    163  Kako ćete postupiti u situaciji prikazanoj na slici, kada - policijski službenik b
+   id=172 text     80  U situaciji prikazanoj na slici redoslijed prolaska vozila kroz - raskrsnicu je:
+   … i još 12
+
+rijeci koje se javljaju jednom, a jednim potezom postaju cesta rijec: 26
+   id=  4 text   'raskrnice' -> 'raskrsnice' (ta se javlja 20x)
+   id= 32 text   'plavo' -> 'pravo' (ta se javlja 40x)
+   id= 39 text   'pješačkom' -> 'pješakom' (ta se javlja 3x)
+   id= 43 text   'umjesto' -> 'mjesto' (ta se javlja 5x)
+   id= 52 text   'dolаze' -> 'dolaze' (ta se javlja 11x)
+   id= 52 text   'rаskrsnicu' -> 'raskrsnicu' (ta se javlja 26x)
+   id= 52 text   'skreću' -> 'kreću' (ta se javlja 9x)
+   id= 70 opt b  'prevenstvom' -> 'prvenstvom' (ta se javlja 14x)
+   id= 91 opt b  'dubini' -> 'dužini' (ta se javlja 5x)
+   id=128 opt c  'prouštanja' -> 'propuštanja' (ta se javlja 39x)
+   id=138 text   'sitaciji' -> 'situaciji' (ta se javlja 137x)
+   id=202 opt b  'vozulo' -> 'vozilo' (ta se javlja 128x)
+   id=207 opt a  'rasksnice' -> 'raskrsnice' (ta se javlja 20x)
+   id=228 opt c  'prelaska' -> 'prolaska' (ta se javlja 26x)
+   id=245 text   'bijela' -> 'dijela' (ta se javlja 3x)
+   id=246 opt a  'okreće' -> 'kreće' (ta se javlja 23x)
+   id=250 opt a  'propuštatjući' -> 'propuštajući' (ta se javlja 5x)
+   id=292 opt a  'prelazak' -> 'prolazak' (ta se javlja 5x)
+   id=329 opt b  'okretanja' -> 'kretanja' (ta se javlja 61x)
+   id=344 opt a  'čujem' -> 'čijem' (ta se javlja 5x)
+   id=347 opt c  'zaustvljanje' -> 'zaustavljanje' (ta se javlja 6x)
+   id=351 opt b  'rasksnici' -> 'raskrsnici' (ta se javlja 22x)
+   id=365 text   'svjetla' -> 'svijetla' (ta se javlja 17x)
+   id=394 opt b  'pokretanje' -> 'okretanje' (ta se javlja 7x)
+   id=404 text   'dubina' -> 'dužina' (ta se javlja 3x)
+   id=410 opt a  'povrijeđnog' -> 'povrijeđenog' (ta se javlja 11x)
+
+rijeci sa mijesanim pismom (latinica + cirilica): 6
+   id= 36 text   'vozаč'  cirilicno: 'а' (U+0430)
+   id= 36 text   'znаk'  cirilicno: 'а' (U+0430)
+   id= 36 text   'upozorenjа'  cirilicno: 'а' (U+0430)
+   id= 52 text   'rаskrsnicu'  cirilicno: 'а' (U+0430)
+   id= 52 text   'dolаze'  cirilicno: 'а' (U+0430)
+   id= 52 text   'smjerovа'  cirilicno: 'а' (U+0430)
+
+==============================================================================
+1.5  JEZIK I DIJAKRITIKA (crnogorski zapis)
+==============================================================================
+pitanja čiji tekst sadrži č/ć/š/ž/đ: 345/421 (81.9%)
+riječi bez dijakritike: 0
+
+mojibake: 0
+ekavski oblici u ijekavskom tekstu: 0
+
+==============================================================================
+1.6  PREVODI (umjesto poređenja banaka — vidi napomenu na vrhu)
+==============================================================================
+jezik   ima tekst  ima opcije  prazan tekst  prazna opcija  isto kao ME  drugi ključevi
+en            421         411             0              0            0               0
+ru            421         411             0              0            0               0
+sq            421         411             0              0            0               0
+
+pitanja sa izborom: 411 — svako mora imati options_en/ru/sq
+ruski tekst bez ijednog ćiriličnog znaka: 0
+
+==============================================================================
+SAŽETAK FAZE 1
+==============================================================================
+P0: 0   P1: 6   P2: 0
+
+  P1  Raspodjela tačnog odgovora po poziciji odstupa od 25–42%
+  P1  Ostatak parsiranja: opcija duža od 120 znakova (2)
+  P1  Ostatak parsiranja: razmak prije interpunkcije (18)
+  P1  Ostatak parsiranja: nezatvorena crtica sa razmacima ( - ) (24)
+  P1  Vjerovatni tipfeleri u tekstu (26)
+  P1  Cirilicni znak unutar latinicne rijeci (6)
+
+provjereno i čisto: 21 stavki
+  ✓ Sva obavezna polja postoje i nijesu prazna — 421 pitanja
+  ✓ points je 1–4 svuda osim kod ordering pitanja — 10 ordering pitanja ima null, što DEFAULT_ORDERING_POINTS pokriva
+  ✓ type i kind su iz poznatog skupa
+  ✓ Svi id-evi jedinstveni — 421 pitanja
+  ✓ Nema pravih duplikata pitanja
+  ✓ Svaka slika pripada tačno jednom pitanju — 281 fajlova
+  ✓ Tačan odgovor uvijek postoji među opcijama — 411 pitanja sa izborom
+  ✓ Nema praznih opcija
+  ✓ Nijedno pitanje nema dvije identične opcije
+  ✓ Nema pogodaka: tekst pitanja duži od 200 znakova
+  ✓ Nema pogodaka: počinje brojem i tačkom (numeracija iz PDF-a)
+  ✓ Nema pogodaka: počinje oznakom opcije a)/b)/c)
+  ✓ Nema pogodaka: tri ili više tačaka (linija za popunjavanje)
+  ✓ Nema pogodaka: dvostruki razmak
+  ✓ Nema pogodaka: meki crtica (soft hyphen U+00AD)
+  ✓ Nema pogodaka: prelom reda unutar polja
+  ✓ Nema pogodaka: zalijepljene riječi (malaVELIKA)
+  ✓ Nema riječi sa izgubljenom dijakritikom (provjereno 14 obrazaca)
+  ✓ Nema mojibake artefakata — provjereno 10 obrazaca
+  ✓ Nema ekavskih oblika (provjereno 12 obrazaca)
+  ✓ Svaki ruski prevod sadrži ćirilicu

@@ -48,6 +48,13 @@ interface QuestionBase {
   /** Vrsta pitanja — određuje segment ispita (vidi EXAM_STRUCTURE). */
   kind: QuestionKind;
   /**
+   * Pitanje o prvoj pomoći. NEZAVISNO od `kind`: ta pitanja ostaju `teorija` i
+   * i dalje ulaze u teorijski segment ispita, kao i na pravom ispitu. Polje
+   * postoji samo da bi vježba imala zaseban filter „Prva pomoć".
+   * Upisuje ga `scripts/gen-exam-meta.mjs`.
+   */
+  firstAid?: boolean;
+  /**
    * Kod podpitanja: id glavnog pitanja sa kojim dijeli sliku. Podpitanje na
    * ispitu uvijek stoji odmah iza svog glavnog pitanja i nikad se ne izvlači
    * samo za sebe.

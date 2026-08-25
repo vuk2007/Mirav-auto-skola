@@ -2,7 +2,14 @@ import type { Dict } from "./i18n";
 import type { Question } from "./types";
 
 /** Kategorije se izvode iz sadržaja pitanja — ne postoje kao polje u questions.json. */
-export type Category = "sve" | "tekst" | "slika" | "znak" | "situacija" | "redoslijed";
+export type Category =
+  | "sve"
+  | "tekst"
+  | "slika"
+  | "znak"
+  | "situacija"
+  | "redoslijed"
+  | "prva-pomoc";
 
 /**
  * Rezervno prepoznavanje znakova — koristi se samo ako pitanje nema polje
@@ -22,7 +29,7 @@ const ZNAK_RE = /saobra[cć]ajni\s+znak/i;
  * graničnik, kosnik — završavala u kategoriji raskrsnica i nosila pogrešnu
  * oznaku na kartici.
  */
-export function baseCategory(q: Question): Exclude<Category, "sve" | "slika"> {
+export function baseCategory(q: Question): Exclude<Category, "sve" | "slika" | "prva-pomoc"> {
   if (q.type === "ordering") return "redoslijed";
   if (!q.kind) return !q.image ? "tekst" : ZNAK_RE.test(q.text) ? "znak" : "situacija";
   if (q.kind === "znak") return "znak";
@@ -30,10 +37,18 @@ export function baseCategory(q: Question): Exclude<Category, "sve" | "slika"> {
   return "situacija"; // policajac, kosnik, situacija, ostalo
 }
 
-/** Da li pitanje pripada izabranom filteru. `slika` obuhvata sve sa slikom. */
+/**
+ * Da li pitanje pripada izabranom filteru.
+ *
+ * `slika` i `prva-pomoc` su **poprečni** filteri — ne pripadaju nizu međusobno
+ * isključivih kategorija koje vraća `baseCategory`, nego presijecaju sve. Pitanje
+ * o prvoj pomoći je istovremeno i `tekst`, isto kao što je pitanje o znaku
+ * istovremeno i `slika`.
+ */
 export function matchesCategory(q: Question, category: Category): boolean {
   if (category === "sve") return true;
   if (category === "slika") return Boolean(q.image);
+  if (category === "prva-pomoc") return Boolean(q.firstAid);
   return baseCategory(q) === category;
 }
 
@@ -49,6 +64,7 @@ export const CATEGORIES: readonly { value: Category; key: keyof Dict }[] = [
   { value: "znak", key: "catSign" },
   { value: "situacija", key: "catIntersection" },
   { value: "redoslijed", key: "catOrdering" },
+  { value: "prva-pomoc", key: "catFirstAid" },
 ] as const;
 
 export function isCategory(value: unknown): value is Category {
@@ -66,6 +82,7 @@ export function isCategory(value: unknown): value is Category {
  * je bio, oznaka samo tačnije opisuje pitanje koje kandidat gleda.
  */
 export function badgeKey(q: Question): keyof Dict {
+  if (q.firstAid) return "badgeFirstAid";
   if (q.type !== "ordering") {
     if (q.kind === "policajac") return "badgePolice";
     if (q.kind === "kosnik") return "badgeMarking";

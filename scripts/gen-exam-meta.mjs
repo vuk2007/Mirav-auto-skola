@@ -10,6 +10,10 @@
  * NEZAVISAN je od `area` (I/II/III). `area` ostaje kakav jeste i koristi se u
  * vježbi; `kind` određuje segmente ispita (EXAM_STRUCTURE u lib/config.ts).
  *
+ * `firstAid` označava pitanja o prvoj pomoći. Ono NE dira `kind` — ta pitanja
+ * ostaju `teorija` i i dalje ulaze u teorijski segment ispita, kao i na pravom
+ * ispitu. Služi samo kao zaseban filter u vježbi.
+ *
  * `subOf` je id glavnog pitanja kod podpitanja. U zvaničnom katalogu jedna
  * slika nosi dva pitanja („kako ćete postupiti…" + „redoslijed prolaska…"), a
  * parser ih je izvukao kao dva zasebna pitanja sa dva identična isječka. Par se
@@ -30,6 +34,27 @@ import process from "node:process";
 const QUESTIONS = path.join("public", "questions.json");
 const IMAGES = path.join("public", "web_images");
 const report = process.argv.includes("--report");
+
+/**
+ * Pitanja o prvoj pomoći — zaseban filter u vježbi (kategorija „Prva pomoć").
+ *
+ * Prepoznaju se po sadržaju, jer u katalogu nijesu u jednom bloku: na stranama
+ * 44–48 su izmiješana sa pitanjima o uređajima na vozilu (id 380 prva pomoć,
+ * 382 vidljivost, 385 prva pomoć, 387 upravljač…).
+ */
+const FIRST_AID_RE =
+  /prv[aeouy]\w* pomoć|povrijeđen|povred|opekotin|imobilizac|krvarenj|krvari|otkucaj\w* srca|mrtvačk|bez svijesti|hitne pomoći|broj policije|vatrogasn/i;
+
+/**
+ * Izuzeci od `FIRST_AID_RE` — pravilo ih pokupi, a ne pripadaju.
+ * `true` bi značilo obrnuto: dodaj pitanje koje pravilo ne hvata.
+ */
+const FIRST_AID_OVERRIDES = {
+  392: false, // „Od određene opreme u autobusu…" — broj kutija prve pomoći je
+  //           pitanje o opremi vozila, ne o pružanju pomoći.
+  390: false, // „Kada dođe do umora tokom vožnje…" — higijena vožnje. Granično;
+  //           ako MIRAV smatra da spada u medicinski dio, promijeni u `true`.
+};
 
 /** Ručne ispravke — imaju prednost nad pravilima. */
 const OVERRIDES = {
@@ -70,6 +95,13 @@ function optText(q) {
   return q.options ? Object.values(q.options).join(" ") : "";
 }
 
+function firstAidFor(q) {
+  if (Object.prototype.hasOwnProperty.call(FIRST_AID_OVERRIDES, q.id)) {
+    return FIRST_AID_OVERRIDES[q.id];
+  }
+  return FIRST_AID_RE.test(`${q.text} ${optText(q)}`);
+}
+
 function kindFor(q) {
   if (Object.prototype.hasOwnProperty.call(OVERRIDES, q.id)) return OVERRIDES[q.id];
   for (const [kind, test] of RULES) if (test(q)) return kind;
@@ -79,7 +111,11 @@ function kindFor(q) {
 const raw = fs.readFileSync(QUESTIONS, "utf8");
 const crlf = raw.includes("\r\n");
 const questions = JSON.parse(raw);
-for (const q of questions) q.kind = kindFor(q);
+for (const q of questions) {
+  q.kind = kindFor(q);
+  if (firstAidFor(q)) q.firstAid = true;
+  else delete q.firstAid;
+}
 
 // ── uparivanje glavno pitanje + podpitanje ────────────────────────────────
 const digest = new Map();
@@ -132,6 +168,12 @@ for (const [k, need] of Object.entries(NEED)) {
   );
 }
 if (blocked) console.log("\n  ⚠️  BLOKADA: bar jedna kategorija nema dovoljno pitanja.");
+
+const prvaPomoc = questions.filter((q) => q.firstAid);
+console.log(`\nPrva pomoc: ${prvaPomoc.length} pitanja (zaseban filter u vjezbi, \`kind\` ostaje netaknut)`);
+for (const q of prvaPomoc) {
+  console.log(`  id=${String(q.id).padStart(3)} str.${q.page}/${q.local_no} ${q.kind.padEnd(10)} ${q.text.slice(0, 66)}`);
+}
 
 console.log(`\nParova glavno+podpitanje: ${pairs.length} (${pairs.length * 2} pitanja od ${questions.length})`);
 const pairMains = new Map();
