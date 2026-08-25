@@ -7,7 +7,7 @@ Nalaz bez dokaza ne vrijedi — uz svaki ide izlaz komande, id pitanja ili putan
 | ---- | -- | -- | -- |
 | 0 — priprema | 0 | 0 | 1 |
 | 1 — baza | **0** | **6** | 0 |
-| 2 — slike | — | — | — |
+| 2 — slike | **0** | **3** | 0 |
 | 3 — logika ispita | — | — | — |
 | 4 — browser | — | — | — |
 | 5 — sadržaj i pravo | — | — | — |
@@ -190,6 +190,107 @@ sa promijenjenim redoslijedom opcija: 0
 Pitanje se identifikuje po **skupu tekstova opcija**, ne po tekstu pitanja — 70 pitanja ima
 isti tekst, pa bi traženje po tekstu vezalo pogrešno pitanje (na tome mi je prva verzija
 testa dala lažan nalaz).
+
+---
+
+## Faza 2 — Slike
+
+Skripte: `qa/ocr_slike.py` (OCR, keš u `qa/ocr.json`) i `qa/check_slike.py` · izlaz:
+`qa/faza2.log` · **P0: 0 · P1: 3 · P2: 0**
+
+**OCR nije trebalo instalirati sistemski.** Umjesto Tesseracta (koji traži admin prava)
+korišćen je `rapidocr-onnxruntime` — čist `pip install --user`, modeli se skidaju sami.
+Provjeren je na kontrolnom uzorku: iz `_backup_web_images/p039_q81.png` (original, ima
+odštampan tekst) pročita *„81. Na slici je prikazan saobracajni znak: a) traka za kretanje
+teretnih vozila"*, a iz popravljene verzije ne pročita ništa. ~1,5 s po slici, 281 slika.
+
+### QA-2-1 · P1 · `p038_q74.jpg` (pitanje 329) — plava traka upada odozdo
+
+Znak „zabrana skretanja ulijevo" + dopunska tabla „od 17 – 05 h", a **ispod table je komad
+plavog znaka** iz susjedne grafike. Isti tip greške kao pet već popravljenih.
+
+**Dokaz:** `qa/faza2.log`, 2.3 „sadržaj dodiruje donju ivicu" · uvećanje donjih 40 px
+potvrđuje plavu traku preko cijele širine.
+
+**Popravka:** rez po donjoj ivici dopunske table. Bezbjedno — pikseli postoje.
+
+### QA-2-2 · P1 · `p043_q29.jpg` i `p043_q30.jpg` (pitanja 365, 366) — odsječeni brojevi 1–4
+
+Slika prikazuje četiri semafora, a **oznake `1 2 3 4` ispod njih su presječene po vrhu
+cifara**. Pitanje 365 glasi „redoslijed uključenja svjetala je:" sa odgovorima `1-2-3-4`,
+`1-4-3-2`, `1-3-2-4` — dakle **odgovor se poziva na brojeve koje kandidat jedva vidi**.
+
+Tačan odgovor kod 365 je `1-3-2-4`, a oznake teku slijeva nadesno, pa se odgovor može
+izvesti i bez njih. Zato P1, a ne P0 — ali je pitanje bespotrebno teško.
+
+**Popravka:** rez sa ~15 px više visine. Pikseli postoje u fajlu.
+
+### QA-2-3 · P1 · `p033_q29.jpg` (pitanje 284) — dopunska tabla izvan granica fajla
+
+Već zapisano u README-u pod „Prije objave"; ovdje se ponavlja jer je nalaz revizije. Detektor
+ga nezavisno potvrđuje kroz dvije provjere: „sadržaj dodiruje donju ivicu" i „pitanje traži
+više znakova, a slika ima jednu komponentu".
+
+**Ovo je jedina slika koja se NE može popraviti isijecanjem** — treba ponovno izvlačenje iz
+izvornog PDF kataloga, kojeg nema u repo-u.
+
+### Prijavljeno automatski, provjereno ručno — **nije** greška
+
+Da se ne provjerava dvaput: sljedeće je detektor označio, a pregled je pokazao da je uredno.
+
+| Slika | Zašto je označena | Nalaz pregleda |
+| ----- | ----------------- | -------------- |
+| `p040_q05.jpg` (341) | 3,6:1 široka | jedan crtež graničnika — legitimno |
+| `p041_q09.jpg` (345) | 3,2:1 široka | tri svjetlosna panela u nizu — legitimno |
+| `p041_q10.jpg` (346) | 3,3:1 široka | tri panela, **naš rez iz prošlog kruga** — ispravno |
+| `p041_q17.jpg` (353) | 3,8:1 široka | crtež kosnika — legitimno |
+| `p044_q37.jpg` (373) | 5,2:1 široka | oznaka BUS stajališta na kolovozu — legitimno |
+| `p037_q65.jpg` (320) | dodiruje donju ivicu | **naš rez**, 2 px margine ispod table — ispravno |
+| `p030_q02.jpg` (257) | „znaci" a jedna komponenta | jedan kombinovani znak („zabrana zaustavljanja **i** parkiranja") — množina je formulacija kataloga |
+| `p035_q42.jpg` (297) | „znaci" a jedna komponenta | znak **i** tabla „10 m" postoje; dodiruju se, pa ih brojač spaja |
+
+### Dvije moje provjere su bile pogrešno podešene — ispravljene prije prijave
+
+1. **Brojač komponenti** je tražio bijeli pojas širi od 15% visine. Znak i dopunska tabla su
+   razdvojeni sa ~4 px na 264 px (1,5%), pa je test prijavio 10 pitanja kao „nema dopunsku
+   tablu" iako je devet uredno ima. Zamijenjeno pravim 2D povezivanjem
+   (`scipy.ndimage.label`) uz zatvaranje pukotina — palo sa 10 na 3, i ta tri su ručno
+   provjerena.
+2. Grubi prag (>15%) je zadržan, ali **samo** za otkrivanje preliva — to je drugo pitanje od
+   „ima li znak dopunsku tablu" i traži drugu mjeru.
+
+### Provjereno i čisto
+
+- **svih 281 slika prošlo OCR — nijedna ne sadrži odštampan tekst iz kataloga.** Ovo je
+  najvrjedniji rezultat faze: dva slučaja iz prošlog kruga („27." i „81.") bila su jedina.
+- svaka slika iz baze postoji na disku; nema siročića; nijedan fajl nije prazan niti se ne
+  otvara (281/281)
+- nijedna slika nema tri ili više odvojenih komponenti (kandidat za preliv)
+- nijedna slika nema bijelu marginu preko 25%
+- svako pitanje `kind=znak` ima sliku; nijedno `type=text` pitanje nema sliku
+- 185 slika sadrži nekakav tekst, ali sve su to natpisi na samim znakovima (STOP, E-70,
+  ograničenja brzine) — legitimno
+
+### Težina i učitavanje (2.5)
+
+```
+ukupno 16,36 MB u 281 fajlu (prosjek 60 kB)
+  .jpg  208 fajlova  13,64 MB
+  .png   73 fajla     2,72 MB
+najveći: p026_q138.png 337 kB · p026_q136.png 212 kB · ostali ≤ 108 kB
+20 najvećih = 2,33 MB (14% ukupno)
+```
+
+**Slike se učitavaju po pitanju, ne unaprijed** — `loading="lazy"` u `QuestionCard.tsx`,
+nigdje nema `preload`/`prefetch`. Izmjereno u browseru na 390 px:
+
+```
+poslije učitavanja prvog pitanja ispita:   1 slika,  27 kB
+poslije prolaska kroz svih 41 pitanje:    21 slika, 930 kB
+```
+
+Cio ispit povuče **manje od 1 MB**, ne 16 MB. Nije nalaz. `next/image` dobija `width` i
+`height` iz `lib/imageSizes.ts`, pa nema skakanja sadržaja.
 
 ---
 

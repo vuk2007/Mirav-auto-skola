@@ -1,0 +1,101 @@
+
+==============================================================================
+2.1  REFERENCE I FAJLOVI
+==============================================================================
+referencirano iz baze: 281   na disku: 281
+referencirano a NEMA na disku: 0
+na disku a NIJE referencirano (siročići): 0
+fajlova od 0 bajta: 0
+fajlova koje Pillow ne može da otvori: 0
+
+==============================================================================
+2.2  OCR — TEKST UNUTAR SLIKE
+==============================================================================
+OCR rezultata: 281 / 281 slika
+sumnjivih slika: 0
+fajl                 zn  razlog / pročitani tekst
+
+slika sa bilo kakvim pročitanim tekstom: 185 (natpisi na znakovima su legitimni: STOP, E-70, ograničenja brzine…)
+
+==============================================================================
+2.3  GEOMETRIJSKE SUMNJE
+==============================================================================
+odnos stranica preko 3:1 ili 1:3 — 5
+   p040_q05.jpg      594×167     3.6:1 široka
+   p041_q09.jpg      520×165     3.2:1 široka
+   p041_q10.jpg      512×156     3.3:1 široka
+   p041_q17.jpg      557×147     3.8:1 široka
+   p044_q37.jpg      560×107     5.2:1 široka
+
+tri ili više komponenti razdvojenih bijelim pojasom >15% visine — 0
+
+sadržaj dodiruje donju ivicu (moguće odsječeno) — 5
+   p033_q29.jpg      225×200
+   p037_q65.jpg      184×264
+   p038_q74.jpg      225×286
+   p043_q29.jpg      494×265
+   p043_q30.jpg      494×265
+
+bijela margina preko 25% sa neke strane — 0
+
+==============================================================================
+2.4  SLIKA I PITANJE SE POKLAPAJU
+==============================================================================
+pitanja kind=znak bez slike: nijedno
+pitanja type=text sa slikom: nijedno
+
+pitanja u mnozini (znaci / znakovi): 10
+   od toga sa slikom koja ima samo jednu komponentu: 3
+   id=257 p030_q02.jpg      225×226     1 komp.  Na slici su prikazani saobraćajni znaci koji označavaju:
+   id=284 p033_q29.jpg      225×200     1 komp.  Na slici su prikazani saobraćajni znaci koji označavaju:
+   id=297 p035_q42.jpg      141×257     1 komp.  Na slici su prikazani saobraćajni znaci koji označavaju:
+
+==============================================================================
+2.5  TEŽINA
+==============================================================================
+ukupno: 16.36 MB u 281 fajlova (prosjek 60 kB)
+   .jpg   208 fajlova    13.64 MB
+   .png    73 fajlova     2.72 MB
+
+20 najvećih:
+   p026_q138.png         337 kB   698×528  RGB
+   p026_q136.png         212 kB   701×402  RGB
+   p025_q127.jpg         108 kB   701×529  RGB
+   p025_q128.jpg         108 kB   701×529  RGB
+   p011_q09.jpg          104 kB   700×529  RGB
+   p011_q10.jpg          104 kB   700×529  RGB
+   p014_q35.jpg          103 kB   701×471  RGB
+   p014_q36.jpg          103 kB   701×471  RGB
+   p015_q41.jpg          102 kB   700×472  RGB
+   p015_q42.jpg          102 kB   700×472  RGB
+   p018_q69.jpg          101 kB   701×468  RGB
+   p018_q70.jpg          101 kB   701×468  RGB
+   p010_q03.jpg          100 kB   701×529  RGB
+   p010_q04.jpg          100 kB   701×529  RGB
+   p012_q17.jpg          100 kB   701×468  RGB
+   p012_q18.jpg          100 kB   701×468  RGB
+   p019_q73.jpg           99 kB   701×531  RGB
+   p019_q74.jpg           99 kB   701×531  RGB
+   p015_q45.jpg           99 kB   700×529  RGB
+   p015_q46.jpg           99 kB   700×529  RGB
+
+zbir 20 najvećih: 2.33 MB (14% ukupne težine)
+
+==============================================================================
+SAŽETAK FAZE 2
+==============================================================================
+P0: 0   P1: 3   P2: 0
+
+  P1  Sumnjiv odnos stranica (5)
+  P1  Sadržaj dodiruje donju ivicu — moguće odsječeno (5)
+  P1  Pitanje traži više znakova, a slika ima jednu komponentu (3)
+
+provjereno i čisto: 8 stavki
+  ✓ Svaka slika iz baze postoji na disku — 281 fajlova
+  ✓ Nema siročića — svaki fajl je referenciran
+  ✓ Sve slike se otvaraju i nijedna nije prazna — 281 fajlova
+  ✓ Nijedna slika ne sadrži odštampan tekst pitanja — OCR preko 281 slika
+  ✓ Nijedna slika nema tri ili više odvojenih komponenti
+  ✓ Nijedna slika nema bijelu marginu preko 25%
+  ✓ Svako pitanje kind=znak ima sliku
+  ✓ Nijedno type=text pitanje nema sliku

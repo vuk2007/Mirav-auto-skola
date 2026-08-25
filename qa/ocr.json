@@ -1,0 +1,1126 @@
+{
+ "p010_q01.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p010_q02.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p010_q03.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p010_q04.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p010_q05.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p010_q06.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p010_q07.jpg": {
+  "text": "PD",
+  "boxes": 1
+ },
+ "p010_q08.jpg": {
+  "text": "PD",
+  "boxes": 1
+ },
+ "p011_q09.jpg": {
+  "text": "2 3 A",
+  "boxes": 3
+ },
+ "p011_q10.jpg": {
+  "text": "2 3 A",
+  "boxes": 3
+ },
+ "p011_q11.jpg": {
+  "text": "oke 3 5 2",
+  "boxes": 4
+ },
+ "p011_q12.jpg": {
+  "text": "oke 3 5 2",
+  "boxes": 4
+ },
+ "p011_q13.jpg": {
+  "text": "1 2",
+  "boxes": 2
+ },
+ "p011_q14.jpg": {
+  "text": "1 2",
+  "boxes": 2
+ },
+ "p011_q15.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p011_q16.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p012_q17.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p012_q18.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p012_q19.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p012_q20.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p012_q21.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p012_q22.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p012_q23.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p012_q24.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p013_q25.jpg": {
+  "text": "2 f",
+  "boxes": 2
+ },
+ "p013_q26.jpg": {
+  "text": "2 f",
+  "boxes": 2
+ },
+ "p013_q27.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p013_q28.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p013_q29.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p013_q30.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p013_q31.jpg": {
+  "text": "STOP 2",
+  "boxes": 2
+ },
+ "p013_q32.jpg": {
+  "text": "STOP 2",
+  "boxes": 2
+ },
+ "p014_q33.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p014_q34.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p014_q35.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p014_q36.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p014_q37.jpg": {
+  "text": "3 2 1",
+  "boxes": 3
+ },
+ "p014_q38.jpg": {
+  "text": "3 2 1",
+  "boxes": 3
+ },
+ "p014_q39.jpg": {
+  "text": "IH 2",
+  "boxes": 2
+ },
+ "p014_q40.jpg": {
+  "text": "IH 2",
+  "boxes": 2
+ },
+ "p015_q41.jpg": {
+  "text": "3",
+  "boxes": 1
+ },
+ "p015_q42.jpg": {
+  "text": "3",
+  "boxes": 1
+ },
+ "p015_q43.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p015_q44.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p015_q45.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p015_q46.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p015_q47.jpg": {
+  "text": "STOP 2 3",
+  "boxes": 3
+ },
+ "p015_q48.jpg": {
+  "text": "STOP 2 3",
+  "boxes": 3
+ },
+ "p016_q49.jpg": {
+  "text": "3 2 4 1",
+  "boxes": 4
+ },
+ "p016_q50.jpg": {
+  "text": "3 2 4 1",
+  "boxes": 4
+ },
+ "p016_q51.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p016_q52.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p016_q53.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p016_q54.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p016_q55.jpg": {
+  "text": "3 4 2",
+  "boxes": 3
+ },
+ "p016_q56.jpg": {
+  "text": "3 4 2",
+  "boxes": 3
+ },
+ "p017_q57.jpg": {
+  "text": "Cetinje Niksic 2",
+  "boxes": 3
+ },
+ "p017_q58.jpg": {
+  "text": "Cetinje Niksic 2",
+  "boxes": 3
+ },
+ "p017_q59.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p017_q60.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p017_q61.jpg": {
+  "text": "2 b a ← 1",
+  "boxes": 5
+ },
+ "p017_q62.jpg": {
+  "text": "2 b a ← 1",
+  "boxes": 5
+ },
+ "p017_q63.jpg": {
+  "text": "STOP 3 1",
+  "boxes": 3
+ },
+ "p017_q64.jpg": {
+  "text": "STOP 3 1",
+  "boxes": 3
+ },
+ "p018_q65.jpg": {
+  "text": "2 a b",
+  "boxes": 3
+ },
+ "p018_q66.jpg": {
+  "text": "2 a b",
+  "boxes": 3
+ },
+ "p018_q67.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p018_q68.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p018_q69.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p018_q70.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p018_q71.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p018_q72.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p019_q73.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p019_q74.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p019_q75.jpg": {
+  "text": "STOP 2",
+  "boxes": 2
+ },
+ "p019_q76.jpg": {
+  "text": "STOP 2",
+  "boxes": 2
+ },
+ "p019_q77.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p019_q78.jpg": {
+  "text": "3 2",
+  "boxes": 2
+ },
+ "p019_q79.jpg": {
+  "text": "STOP 3",
+  "boxes": 2
+ },
+ "p019_q80.jpg": {
+  "text": "STOP 3",
+  "boxes": 2
+ },
+ "p020_q81.jpg": {
+  "text": "2 30",
+  "boxes": 2
+ },
+ "p020_q82.jpg": {
+  "text": "2 30",
+  "boxes": 2
+ },
+ "p020_q83.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p020_q84.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p020_q85.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p020_q86.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p020_q87.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p020_q88.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p021_q89.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p021_q90.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p021_q91.jpg": {
+  "text": "0",
+  "boxes": 1
+ },
+ "p021_q92.jpg": {
+  "text": "0",
+  "boxes": 1
+ },
+ "p021_q93.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p021_q94.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p021_q95.jpg": {
+  "text": "GARAZA GARAZA GARAZA GARAZA 3 4",
+  "boxes": 6
+ },
+ "p021_q96.jpg": {
+  "text": "GARAZA GARAZA GARAZA GARAZA 3 4",
+  "boxes": 6
+ },
+ "p022_q100.jpg": {
+  "text": "SKOL",
+  "boxes": 1
+ },
+ "p022_q101.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p022_q102.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p022_q103.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p022_q104.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p022_q105.jpg": {
+  "text": "1",
+  "boxes": 1
+ },
+ "p022_q106.jpg": {
+  "text": "1",
+  "boxes": 1
+ },
+ "p022_q97.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p022_q98.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p022_q99.jpg": {
+  "text": "SKOL",
+  "boxes": 1
+ },
+ "p023_q107.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p023_q108.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p023_q109.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p023_q110.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p023_q111.jpg": {
+  "text": "3 2 1",
+  "boxes": 3
+ },
+ "p023_q112.jpg": {
+  "text": "3 2 1",
+  "boxes": 3
+ },
+ "p023_q113.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p023_q114.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p024_q115.jpg": {
+  "text": "←",
+  "boxes": 1
+ },
+ "p024_q116.jpg": {
+  "text": "←",
+  "boxes": 1
+ },
+ "p024_q117.jpg": {
+  "text": "50 2 merta 1",
+  "boxes": 4
+ },
+ "p024_q118.jpg": {
+  "text": "50 2 merta 1",
+  "boxes": 4
+ },
+ "p024_q119.jpg": {
+  "text": "商 a g",
+  "boxes": 3
+ },
+ "p024_q120.jpg": {
+  "text": "商 a g",
+  "boxes": 3
+ },
+ "p024_q121.jpg": {
+  "text": "P 1",
+  "boxes": 2
+ },
+ "p024_q122.jpg": {
+  "text": "P 1",
+  "boxes": 2
+ },
+ "p025_q123.jpg": {
+  "text": "7ml",
+  "boxes": 1
+ },
+ "p025_q124.jpg": {
+  "text": "7ml",
+  "boxes": 1
+ },
+ "p025_q125.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p025_q126.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p025_q127.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p025_q128.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p025_q129.jpg": {
+  "text": "1 3 2",
+  "boxes": 3
+ },
+ "p025_q130.jpg": {
+  "text": "1 3 2",
+  "boxes": 3
+ },
+ "p026_q131.jpg": {
+  "text": "30 2 16 m",
+  "boxes": 3
+ },
+ "p026_q132.jpg": {
+  "text": "30 2 16 m",
+  "boxes": 3
+ },
+ "p026_q133.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p026_q134.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p026_q135.jpg": {
+  "text": "6% 2 1",
+  "boxes": 3
+ },
+ "p026_q136.png": {
+  "text": "6% 2 1",
+  "boxes": 3
+ },
+ "p026_q137.jpg": {
+  "text": "50 2",
+  "boxes": 2
+ },
+ "p026_q138.png": {
+  "text": "50 2",
+  "boxes": 2
+ },
+ "p027_q139.jpg": {
+  "text": "2 福 1",
+  "boxes": 3
+ },
+ "p027_q140.jpg": {
+  "text": "2 福 1",
+  "boxes": 3
+ },
+ "p027_q141.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p027_q142.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p027_q143.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p027_q144.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p027_q145.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p027_q146.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p028_q147.jpg": {
+  "text": "1",
+  "boxes": 1
+ },
+ "p028_q148.jpg": {
+  "text": "1",
+  "boxes": 1
+ },
+ "p028_q149.jpg": {
+  "text": "2.2m",
+  "boxes": 1
+ },
+ "p028_q150.jpg": {
+  "text": "2.2m",
+  "boxes": 1
+ },
+ "p028_q151.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p028_q152.jpg": {
+  "text": "2",
+  "boxes": 1
+ },
+ "p028_q153.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p028_q154.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p028_q155.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p028_q156.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p029_q157.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p029_q158.jpg": {
+  "text": "2 1",
+  "boxes": 2
+ },
+ "p029_q159.jpg": {
+  "text": "7ml",
+  "boxes": 1
+ },
+ "p029_q160.jpg": {
+  "text": "7ml",
+  "boxes": 1
+ },
+ "p030_q01.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p030_q02.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p030_q03.png": {
+  "text": "←",
+  "boxes": 1
+ },
+ "p030_q04.png": {
+  "text": "7T",
+  "boxes": 1
+ },
+ "p030_q05.jpg": {
+  "text": "od18-08h",
+  "boxes": 1
+ },
+ "p030_q06.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p030_q07.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p030_q08.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p031_q09.png": {
+  "text": "Opasnost! 300 m",
+  "boxes": 3
+ },
+ "p031_q10.png": {
+  "text": "+↑",
+  "boxes": 1
+ },
+ "p031_q11.png": {
+  "text": "八",
+  "boxes": 1
+ },
+ "p031_q12.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p031_q13.png": {
+  "text": "Ulcinj Bar Podgorica Cetinje",
+  "boxes": 4
+ },
+ "p031_q14.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p031_q15.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p031_q16.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p031_q17.png": {
+  "text": "A",
+  "boxes": 1
+ },
+ "p032_q18.png": {
+  "text": "80",
+  "boxes": 1
+ },
+ "p032_q19.png": {
+  "text": "D",
+  "boxes": 1
+ },
+ "p032_q20.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p032_q21.jpg": {
+  "text": "V ↑",
+  "boxes": 2
+ },
+ "p032_q22.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p032_q23.png": {
+  "text": "11",
+  "boxes": 1
+ },
+ "p032_q24.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p032_q25.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p033_q26.png": {
+  "text": "11+",
+  "boxes": 1
+ },
+ "p033_q27.png": {
+  "text": "←",
+  "boxes": 1
+ },
+ "p033_q28.png": {
+  "text": "Bar Tivar Centar Skadar Qender Shokder",
+  "boxes": 6
+ },
+ "p033_q29.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p033_q30.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p033_q31.png": {
+  "text": "40",
+  "boxes": 1
+ },
+ "p033_q32.jpg": {
+  "text": "2m",
+  "boxes": 1
+ },
+ "p033_q33.png": {
+  "text": "天",
+  "boxes": 1
+ },
+ "p034_q34.png": {
+  "text": "Podgorica Virpazar Petrovac",
+  "boxes": 3
+ },
+ "p034_q35.png": {
+  "text": "Y Matesevo 1500m",
+  "boxes": 3
+ },
+ "p034_q36.png": {
+  "text": "Podgorica Cetinje",
+  "boxes": 2
+ },
+ "p034_q37.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p034_q38.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p034_q39.png": {
+  "text": "1",
+  "boxes": 1
+ },
+ "p034_q40.png": {
+  "text": "40",
+  "boxes": 1
+ },
+ "p034_q41.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p035_q42.jpg": {
+  "text": "1 10m",
+  "boxes": 2
+ },
+ "p035_q43.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p035_q44.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p035_q45.png": {
+  "text": "100m",
+  "boxes": 1
+ },
+ "p035_q46.png": {
+  "text": "Podgorica Cetinje Budva E-65 M-2.3",
+  "boxes": 5
+ },
+ "p035_q47.png": {
+  "text": "200m",
+  "boxes": 1
+ },
+ "p035_q48.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p035_q49.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p035_q50.jpg": {
+  "text": "40 2000m↑",
+  "boxes": 2
+ },
+ "p036_q51.jpg": {
+  "text": "od 18 - 08 h",
+  "boxes": 1
+ },
+ "p036_q52.png": {
+  "text": "150m",
+  "boxes": 1
+ },
+ "p036_q53.png": {
+  "text": "30 ←",
+  "boxes": 2
+ },
+ "p036_q54.png": {
+  "text": "ITI",
+  "boxes": 1
+ },
+ "p036_q55.png": {
+  "text": "40",
+  "boxes": 1
+ },
+ "p036_q56.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p036_q57.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p036_q58.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p037_q59.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p037_q60.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p037_q61.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p037_q62.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p037_q63.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p037_q64.png": {
+  "text": "A",
+  "boxes": 1
+ },
+ "p037_q65.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p037_q66.png": {
+  "text": "E 70",
+  "boxes": 2
+ },
+ "p037_q67.png": {
+  "text": "Bijelo Polje Berane Rozaje",
+  "boxes": 4
+ },
+ "p038_q68.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p038_q69.png": {
+  "text": "STOP POLICIJA",
+  "boxes": 2
+ },
+ "p038_q70.png": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p038_q71.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p038_q72.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p038_q73.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p038_q74.jpg": {
+  "text": "od 17 - 05 h",
+  "boxes": 1
+ },
+ "p038_q75.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p038_q76.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p039_q77.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p039_q78.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p039_q79.png": {
+  "text": "←10m→",
+  "boxes": 1
+ },
+ "p039_q80.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p039_q81.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p040_q01.jpg": {
+  "text": "?",
+  "boxes": 1
+ },
+ "p040_q02.jpg": {
+  "text": "?",
+  "boxes": 1
+ },
+ "p040_q03.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p040_q04.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p040_q05.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p040_q06.jpg": {
+  "text": "Q",
+  "boxes": 1
+ },
+ "p040_q07.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p040_q08.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p041_q09.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p041_q10.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p041_q11.jpg": {
+  "text": "文",
+  "boxes": 1
+ },
+ "p041_q12.jpg": {
+  "text": "文",
+  "boxes": 1
+ },
+ "p041_q13.png": {
+  "text": "",
+  "boxes": 0
+ },
+ "p041_q14.jpg": {
+  "text": "福",
+  "boxes": 1
+ },
+ "p041_q15.jpg": {
+  "text": "电",
+  "boxes": 1
+ },
+ "p041_q16.jpg": {
+  "text": "电",
+  "boxes": 1
+ },
+ "p041_q17.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p042_q18.jpg": {
+  "text": "一",
+  "boxes": 1
+ },
+ "p042_q19.jpg": {
+  "text": "文",
+  "boxes": 1
+ },
+ "p042_q20.jpg": {
+  "text": "文",
+  "boxes": 1
+ },
+ "p042_q21.jpg": {
+  "text": ">>>>>>",
+  "boxes": 1
+ },
+ "p042_q22.jpg": {
+  "text": ">>>>>>",
+  "boxes": 1
+ },
+ "p042_q23.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p042_q24.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p042_q25.jpg": {
+  "text": "STOP",
+  "boxes": 1
+ },
+ "p042_q26.jpg": {
+  "text": "0 O",
+  "boxes": 2
+ },
+ "p043_q27.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p043_q28.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p043_q29.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p043_q30.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p043_q31.jpg": {
+  "text": "京 ®",
+  "boxes": 2
+ },
+ "p043_q32.jpg": {
+  "text": "京 ®",
+  "boxes": 2
+ },
+ "p043_q33.jpg": {
+  "text": "K",
+  "boxes": 1
+ },
+ "p043_q34.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p043_q35.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p043_q36.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p044_q37.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p044_q38.jpg": {
+  "text": "→",
+  "boxes": 1
+ },
+ "p044_q39.jpg": {
+  "text": "",
+  "boxes": 0
+ },
+ "p044_q40.jpg": {
+  "text": "",
+  "boxes": 0
+ }
+}
