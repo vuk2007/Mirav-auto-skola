@@ -733,6 +733,33 @@ paketa, pa prekid ne baca obavljen posao.
 
 ---
 
+## Revizija (QA)
+
+Puna revizija u šest faza je u [`qa/`](qa/). **Zbirni izvještaj:
+[`qa/izvjestaj.md`](qa/izvjestaj.md)** — sažetak, svi nalazi sa dokazima, metrike i
+preporučeni redoslijed popravki. Detalji po fazama: [`qa/nalazi.md`](qa/nalazi.md).
+
+Stanje: **1 P0, 15 P1, 2 P2 — ne pušta se.** P0 je da šest pitanja (id 90–95) ne postoji u
+zvaničnom katalogu MUP-a. Logika ispita, bodovanje i tajmer su provjereni i čisti.
+
+Provjere se ponavljaju komandama:
+
+```bash
+python qa/check_baza.py                 # integritet baze
+python qa/ocr_slike.py                  # OCR preko slika (sporo, kešira se)
+python qa/check_slike.py                # slike: reference, geometrija, težina
+node   qa/fuzz_ispit.mjs                # 500 izvlačenja ispita
+node   qa/bodovanje.mjs                 # bodovanje i granica prolaza
+python qa/uporedi_katalog.py katalog.txt   # poređenje sa zvaničnim katalogom
+python qa/uzorak_za_instruktora.py      # uzorak od 60 pitanja na potpis
+```
+
+Browser provjere (`qa/faza3_*.mjs`, `qa/faza4_*.mjs`) traže pokrenut `npx next start` i
+Playwright sa instaliranim motorima (`npx playwright install firefox webkit`).
+
+OCR ne traži sistemsku instalaciju — koristi se `rapidocr-onnxruntime` preko
+`pip install --user`, ne Tesseract.
+
 ## Prije objave
 
 Redom po hitnosti — prve tri stavke su jedine koje mogu dati **pogrešnu informaciju
