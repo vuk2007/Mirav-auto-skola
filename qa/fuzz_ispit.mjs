@@ -13,7 +13,6 @@ import { EXAM_STRUCTURE, EXAM_QUESTION_COUNT, EXAM_PASS_PERCENT, examPassPoints 
 
 const N = 500;
 const qs = JSON.parse(fs.readFileSync("public/questions.json", "utf8"));
-const byId = new Map(qs.map((q) => [q.id, q]));
 
 // Isječci parova su ZASEBNI fajlovi identičnog sadržaja — poredi se sadržaj, ne ime.
 const md5 = (f) => crypto.createHash("md5").update(fs.readFileSync("public/web_images/" + f)).digest("hex");

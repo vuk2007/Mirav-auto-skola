@@ -17,7 +17,7 @@ const MIN_DODIR = 44; // preporuka za visinu dodirne mete
 
 const b = await chromium.launch();
 let pass = 0, fail = 0;
-const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
+const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
 
 const nav = (p) => p.locator("section[aria-label]").filter({ has: p.locator("ol") }).last();
 

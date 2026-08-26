@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 
-import PenaltyNote, { penaltyForQuestion } from "./PenaltyNote";
+import { PenaltyForQuestion } from "./PenaltyLoader";
 import { badgeKey } from "@/lib/categories";
+import { PENALTIES_ENABLED } from "@/lib/config";
 import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import {
@@ -51,7 +52,6 @@ export default function QuestionCard({
   const points = questionPoints(question);
   const [width, height] = question.image ? imageSize(question.image) : [0, 0];
   const untranslated = !hasTranslation(question, lang);
-  const penalty = penaltyForQuestion(question.id);
 
   return (
     <article className="panel p-4 sm:p-6">
@@ -127,7 +127,10 @@ export default function QuestionCard({
 
       {/* Cijena greške — samo kad je odgovor netačan i kad pitanju odgovara
           stvaran prekršaj. Uz tačan odgovor nema šta da se naplati. */}
-      {revealed && !correct && penalty && <PenaltyNote penalty={penalty} t={t} lang={lang} />}
+      {/* Kazna se traži sa mreže tek ovdje, i samo ako je prikaz uključen. */}
+      {revealed && !correct && PENALTIES_ENABLED && (
+        <PenaltyForQuestion questionId={question.id} t={t} lang={lang} />
+      )}
     </article>
   );
 }

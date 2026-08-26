@@ -10,7 +10,7 @@
 import { EXAM_PASS_PERCENT, examPassPoints } from "../.tmpbuild/config.js";
 
 let pass = 0, fail = 0;
-const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
+const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
 
 const prosao = (scored, max) => scored >= examPassPoints(max);
 const procenat = (scored, max) => (max > 0 ? Math.round((scored / max) * 100) : 0);

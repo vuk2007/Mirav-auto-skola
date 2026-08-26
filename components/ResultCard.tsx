@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import PenaltyNote, { penaltyForQuestion } from "./PenaltyNote";
-import { formatEur, sumPenalties } from "@/lib/penalties";
+import { PenaltyForQuestion, PenaltyTotal } from "./PenaltyLoader";
 import { badgeKey } from "@/lib/categories";
-import { examPassPoints } from "@/lib/config";
+import { examPassPoints, PENALTIES_ENABLED } from "@/lib/config";
 import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import {
@@ -52,13 +51,6 @@ export default function ResultCard({
   const unanswered = questions.filter((q) => !records.has(q.id));
   const toReview = [...wrong, ...unanswered];
 
-  // Zbir onoga što bi ove greške koštale u stvarnom saobraćaju. Broje se samo
-  // greške kojima odgovara stvaran prekršaj — otud i `penaltyCount`, da se ne
-  // tvrdi da je zbir za sve greške kad nije.
-  const reviewPenalties = toReview
-    .map((q) => penaltyForQuestion(q.id))
-    .filter((p): p is NonNullable<typeof p> => p !== null);
-  const penaltyTotal = sumPenalties(reviewPenalties.map((p) => p.id));
 
   return (
     <div className="space-y-5">
@@ -155,16 +147,10 @@ export default function ResultCard({
           <>
             <p className="mb-4 text-sm text-muted">{t.reviewLead}</p>
 
-            {reviewPenalties.length > 0 && (
-              <div className="mb-5 rounded border-l-4 border-blue bg-blue-soft p-3 sm:p-4">
-                <p className="font-display mb-1 text-xs font-bold tracking-wide text-blue uppercase">
-                  {t.penaltyTotal}
-                </p>
-                <p className="font-display text-2xl font-bold">
-                  {formatEur(penaltyTotal.minEur, penaltyTotal.maxEur)}
-                </p>
-                <p className="mt-1 text-xs text-muted">{t.penaltyNote}</p>
-              </div>
+            {/* Zbir cijene grešaka; komponenta sama izostane ako nijedna greška
+                nema odgovarajući prekršaj. */}
+            {PENALTIES_ENABLED && (
+              <PenaltyTotal questionIds={toReview.map((q) => q.id)} t={t} />
             )}
             <ol className="space-y-5">
               {toReview.map((q) => {
@@ -247,13 +233,8 @@ export default function ResultCard({
                     )}
 
                     {/* Cijena ove greške; izostaje kad pitanju ne odgovara prekršaj. */}
-                    {penaltyForQuestion(q.id) !== null && (
-                      <PenaltyNote
-                        penalty={penaltyForQuestion(q.id)!}
-                        t={t}
-                        lang={lang}
-                        compact
-                      />
+                    {PENALTIES_ENABLED && (
+                      <PenaltyForQuestion questionId={q.id} t={t} lang={lang} compact />
                     )}
 
                     {/* Objašnjenje se prikazuje samo ako postoji u bazi. */}

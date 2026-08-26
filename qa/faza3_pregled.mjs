@@ -7,7 +7,7 @@ const qs = JSON.parse(fs.readFileSync("C:/Users/Vuk/Desktop/MIRAV/public/questio
 const URL = "http://localhost:3000/";
 const b = await chromium.launch();
 let pass = 0, fail = 0;
-const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
+const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
 
 const nav = (p) => p.locator("section[aria-label]").filter({ has: p.locator("ol") }).last();
 

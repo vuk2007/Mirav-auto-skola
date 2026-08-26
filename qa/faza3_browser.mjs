@@ -4,7 +4,7 @@ import { chromium } from "playwright";
 
 const b = await chromium.launch();
 let pass = 0, fail = 0;
-const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
+const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
 const info = (m) => console.log("      " + m);
 
 const URL = "http://localhost:3000/";
@@ -167,7 +167,6 @@ console.log("\n" + "=".repeat(78) + "\n3.5  PRIKAZ\n" + "=".repeat(78));
   // svi tačni
   const p = await b.newPage();
   const qs = JSON.parse(await (await fetch(URL + "questions.json")).text());
-  const byId = new Map(qs.map((q) => [q.id, q]));
   await uIspit(p);
   const n = await nav(p).locator("ol button").count();
   for (let i = 0; i < n; i++) {
@@ -190,7 +189,6 @@ console.log("\n" + "=".repeat(78) + "\n3.5  PRIKAZ\n" + "=".repeat(78));
   const pct = rez.match(/(\d+)%/)?.[1];
   info(`sva pitanja sa izborom odgovorena tačno → ${pct}% (ordering ostaje neodgovoren)`);
   ok(/PREGLED|greš/i.test(rez) || true, "rezultat sadrži pregled");
-  void byId;
   await p.close();
 }
 

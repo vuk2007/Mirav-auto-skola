@@ -120,10 +120,18 @@ export const LITERATURE: readonly { title: string; url: string }[] = [
 ] as const;
 
 /**
- * Prikaz novčane kazne uz grešku. Isključi jednim potezom ako pravna provjera
- * iznosa nije završena — vidi napomenu na vrhu lib/penalties.ts.
+ * Prikaz novčane kazne uz grešku.
+ *
+ * **Podrazumijevano ISKLJUČENO.** Iznosi u `lib/penalties.ts` su parsirani
+ * automatski i nijedan nije potvrdio čovjek (0 od 39 — vidi `qa/izvjestaj.md`).
+ * Dok instruktorka ne prođe kroz pitanja i ne potvrdi kazne, ništa se ne
+ * prikazuje kandidatu.
+ *
+ * Pali se sa `NEXT_PUBLIC_KAZNE_ENABLED=true` u okruženju. Promjenljiva se
+ * ugrađuje u build, pa poslije njene izmjene treba ponovo deployovati.
+ * Ako nije postavljena, vrijednost je `false` — bezbjedno podrazumijevano.
  */
-export const PENALTIES_ENABLED = true;
+export const PENALTIES_ENABLED = process.env.NEXT_PUBLIC_KAZNE_ENABLED === "true";
 
 /**
  * Koliko se zadrži na izabranom odgovoru prije automatskog prelaska na sljedeće

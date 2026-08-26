@@ -2,7 +2,7 @@
 import { chromium } from "playwright";
 const BASE = "http://localhost:3000";
 let pass = 0, fail = 0;
-const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
+const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? "PASS  " : "FAIL  ") + m); };
 const info = (m) => console.log("      " + m);
 const b = await chromium.launch();
 // ════════════════════════════════════════════════════════════════════════════
