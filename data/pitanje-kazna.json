@@ -1,0 +1,2107 @@
+{
+  "1": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "2": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "3": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "4": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "5": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "6": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "7": {
+    "kazna_id": "prsluk",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "8": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "9": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "10": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "11": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "12": {
+    "kazna_id": "prevoz-lica",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "13": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "14": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "15": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "16": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "17": {
+    "kazna_id": "dijete-naprijed",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "18": {
+    "kazna_id": "unazad",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "19": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "20": {
+    "kazna_id": "kolona-pjesaka",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "21": {
+    "kazna_id": "prevoz-lica",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "22": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "23": {
+    "kazna_id": "autoput",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "24": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "25": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "26": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "27": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "28": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "29": {
+    "kazna_id": "autoput",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "30": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "31": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "32": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "33": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "34": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "35": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "36": {
+    "kazna_id": "pjesak",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "37": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "38": {
+    "kazna_id": "autoput",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "39": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "40": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "41": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "42": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "43": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "44": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "45": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "46": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "47": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "48": {
+    "kazna_id": "pojas",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "49": {
+    "kazna_id": "prevoz-lica",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "50": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "51": {
+    "kazna_id": "prevoz-lica",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "52": {
+    "kazna_id": "mimoilazenje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "53": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "54": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "55": {
+    "kazna_id": "pjesak",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "56": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "57": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "58": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "59": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "60": {
+    "kazna_id": "kolona-pjesaka",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "61": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "62": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "63": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "64": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "65": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "66": {
+    "kazna_id": "prsluk",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "67": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "68": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "69": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "70": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "71": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "72": {
+    "kazna_id": "pjesak",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "73": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "74": {
+    "kazna_id": "unazad",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "75": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "76": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "77": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "78": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "79": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "80": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "81": {
+    "kazna_id": "dijete-sjediste",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "82": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "83": {
+    "kazna_id": "ometanje-vozaca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "84": {
+    "kazna_id": "unazad",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "85": {
+    "kazna_id": "radar-ometac",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "86": {
+    "kazna_id": "prsluk",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "87": {
+    "kazna_id": "mimoilazenje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "88": {
+    "kazna_id": "svjetla",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "89": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "90": {
+    "kazna_id": "dijete-sjediste",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "91": {
+    "kazna_id": "teret",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "92": {
+    "kazna_id": "svjetla",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "93": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "94": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "95": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "96": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "97": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "98": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "99": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "100": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "101": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "102": {
+    "kazna_id": "crveno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "103": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "104": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "105": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "106": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "107": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "108": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "109": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "110": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "111": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "112": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "113": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "114": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "115": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "116": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "117": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "118": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "119": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "120": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "121": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "122": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "123": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "124": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "125": {
+    "kazna_id": "prsluk",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "126": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "127": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "128": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "129": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "130": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "131": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "132": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "133": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "134": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "135": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "136": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "137": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "138": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "139": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "140": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "141": {
+    "kazna_id": "crveno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "142": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "143": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "144": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "145": {
+    "kazna_id": "mimoilazenje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "146": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "147": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "148": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "149": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "150": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "151": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "152": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "153": {
+    "kazna_id": "mimoilazenje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "154": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "155": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "156": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "157": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "158": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "159": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "160": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "161": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "162": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "163": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "164": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "165": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "166": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "167": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "168": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "169": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "170": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "171": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "172": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "173": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "174": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "175": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "176": {
+    "kazna_id": "svjetla",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "177": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "178": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "179": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "180": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "181": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "182": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "183": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "184": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "185": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "186": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "187": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "188": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "189": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "190": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "191": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "192": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "193": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "194": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "195": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "196": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "197": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "198": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "199": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "200": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "201": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "202": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "203": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "204": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "205": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "206": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "207": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "208": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "209": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "210": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "211": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "212": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "213": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "214": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "215": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "216": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "217": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "218": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "219": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "220": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "221": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "222": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "223": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "224": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "225": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "226": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "227": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "228": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "229": {
+    "kazna_id": "kaciga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "230": {
+    "kazna_id": "mimoilazenje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "231": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "232": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "233": {
+    "kazna_id": "preticanje-opasno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "234": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "235": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "236": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "237": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "238": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "239": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "240": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "241": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "242": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "243": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "244": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "245": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "246": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "247": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "248": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "249": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "250": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "251": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "252": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "253": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "254": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "255": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "256": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "257": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "258": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "259": {
+    "kazna_id": "teret",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "260": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "261": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "262": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "263": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "264": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "265": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "266": {
+    "kazna_id": "autoput",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "267": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "268": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "269": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "270": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "271": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "272": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "273": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "274": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "275": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "276": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "277": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "278": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "279": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "280": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "281": {
+    "kazna_id": "teret",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "282": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "283": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "284": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "285": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "286": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "287": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "288": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "289": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "290": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "291": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "292": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "293": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "294": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "295": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "296": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "297": {
+    "kazna_id": "pjesacki-prelaz",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "298": {
+    "kazna_id": "zimska-oprema",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "299": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "300": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "301": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "302": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "303": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "304": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "305": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "306": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "307": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "308": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "309": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "310": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "311": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "312": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "313": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "314": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "315": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "316": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "317": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "318": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "319": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "320": {
+    "kazna_id": "pjesak",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "321": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "322": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "323": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "324": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "325": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "326": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "327": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "328": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "329": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "330": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "331": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "332": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "333": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "334": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "335": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "336": {
+    "kazna_id": "preticanje-opasno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "337": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "338": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "339": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "340": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "341": {
+    "kazna_id": "desna-strana",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "342": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "343": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "344": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "345": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "346": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "347": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "348": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "349": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "350": {
+    "kazna_id": "biciklista",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "351": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "352": {
+    "kazna_id": "prvenstvo",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "353": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "354": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "355": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "356": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "357": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "358": {
+    "kazna_id": "svjetla",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "359": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "360": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "361": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "362": {
+    "kazna_id": "pruga",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "363": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "364": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "365": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "366": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "367": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "368": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "369": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "370": {
+    "kazna_id": "pjesak",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "371": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "372": {
+    "kazna_id": "policija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "373": {
+    "kazna_id": "parkiranje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "374": {
+    "kazna_id": "signalizacija",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "375": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "376": {
+    "kazna_id": "preticanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "377": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "378": {
+    "kazna_id": "svjetla",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "379": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "380": {
+    "kazna_id": "nezgoda",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "381": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "382": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "383": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "384": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "385": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "386": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "387": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "388": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "389": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "390": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "391": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "392": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "393": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "394": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "395": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "396": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "397": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "398": {
+    "kazna_id": "skretanje",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "399": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "400": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "401": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "402": {
+    "kazna_id": "vuca",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "403": {
+    "kazna_id": "svjetla",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "404": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "405": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "406": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "407": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "408": {
+    "kazna_id": "svjetla",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "409": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "410": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "411": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "412": {
+    "kazna_id": "unazad",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "413": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "414": {
+    "kazna_id": null,
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "415": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "416": {
+    "kazna_id": "alkohol",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "417": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "418": {
+    "kazna_id": "unazad",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "419": {
+    "kazna_id": "vozilo-neispravno",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "420": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  },
+  "421": {
+    "kazna_id": "prva-pomoc",
+    "bez_kazne": false,
+    "pregledano": false
+  }
+}

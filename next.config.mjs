@@ -47,6 +47,12 @@ const nextConfig = {
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
       },
       {
+        // Editor kazni — isto van pretrage. Ruta je 404 kad je flag isključen,
+        // ali zaglavlje mora stajati i kad je uključen, dok traje unos.
+        source: "/admin/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
+      {
         // Sve ostale rute se ne smiju ugrađivati.
         source: "/((?!embed).*)",
         headers: [
