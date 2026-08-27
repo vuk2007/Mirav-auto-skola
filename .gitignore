@@ -10,3 +10,6 @@ next-env.d.ts
 
 # privremeni prevod TS-a za QA skripte (qa/fuzz_ispit.mjs, qa/bodovanje.mjs)
 .tmpbuild/
+
+# generise se pri svakom buildu iz data/kazne.json (samo potvrdjene kazne)
+data/javno/

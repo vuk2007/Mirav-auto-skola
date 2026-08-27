@@ -1,6 +1,6 @@
 {
   "1": {
-    "kazna_id": null,
+    "kazna_id": "unazad",
     "bez_kazne": false,
     "pregledano": false
   },
@@ -470,7 +470,7 @@
     "pregledano": false
   },
   "95": {
-    "kazna_id": null,
+    "kazna_id": "prva-pomoc",
     "bez_kazne": false,
     "pregledano": false
   },

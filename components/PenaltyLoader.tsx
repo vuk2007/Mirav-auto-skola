@@ -23,7 +23,7 @@ export const PenaltyForQuestion = dynamic(
   { ssr: false },
 );
 
-export const PenaltyTotal = dynamic(
-  () => import("./PenaltyNote").then((m) => m.PenaltyTotal),
-  { ssr: false },
-);
+
+export const LinkKazne = dynamic(() => import("./PenaltyNote").then((m) => m.LinkKazne), {
+  ssr: false,
+});

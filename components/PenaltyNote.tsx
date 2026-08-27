@@ -1,30 +1,51 @@
 /**
- * „Koliko bi ovo koštalo u saobraćaju" — uz netačan odgovor.
+ * „Kazna za ovaj prekršaj" — uz pitanje.
  *
- * Prikazuje se samo kad pitanju odgovara stvaran prekršaj (vidi lib/penaltyMap.ts);
- * kod definicija, prve pomoći i sličnih pitanja se ne prikazuje ništa, jer tu
- * kazna ne postoji i izmišljen iznos bi bio gori od nikakvog.
+ * Podaci dolaze iz `data/kazne.json` i `data/pitanje-kazna.json`, koje popunjava
+ * instruktorka kroz `/admin/kazne`. Prikazuje se **samo** kazna sa statusom
+ * `potvrdjeno`; nepotvrđena ne postoji za kandidata.
+ *
+ * Ovaj fajl se učitava dinamički (vidi `PenaltyLoader.tsx`), pa dok je prikaz
+ * kazni isključen podaci ne putuju korisniku uopšte.
+ *
+ * JEZIK: `naslov` i `objasnjenje` postoje samo na crnogorskom — instruktorka ih
+ * piše jednom, a shema nema polja za prevode. U ostalim jezicima UI-ja tekst
+ * kazne ostaje crnogorski, uz kratku napomenu da je tako.
  */
 
-import type { Dict, Lang } from "@/lib/i18n";
-import { formatEur, penaltyById, penaltyRange, sumPenalties, type Penalty } from "@/lib/penalties";
-import { penaltyIdForQuestion } from "@/lib/penaltyMap";
+"use client";
 
-/** Kazna za pitanje, ili `null`. Interno — vidi `PenaltyForQuestion` ispod. */
-function penaltyForQuestion(questionId: number): Penalty | null {
-  const id = penaltyIdForQuestion(questionId);
-  return id ? (penaltyById(id) ?? null) : null;
-}
+import { useState } from "react";
+import biblioteka from "@/data/javno/kazne.json";
+import vezaPodaci from "@/data/javno/pitanje-kazna.json";
+import type { Dict, Lang } from "@/lib/i18n";
+import { formatIznos, type BibliotekaKazni, type Kazna } from "@/lib/kazne";
+
+// `data/javno/` sadrži SAMO potvrđene kazne — pravi ga
+// `scripts/gen-kazne-javne.mjs` prije svakog builda. Uvoz punog `data/kazne.json`
+// bi u bundle unio i nepotvrđene, koje kandidat ne smije ni da primi.
+const BIBLIOTEKA = biblioteka as BibliotekaKazni;
+const VEZA = vezaPodaci as Record<string, string>;
+
+const POTVRDJENE = new Map(BIBLIOTEKA.kazne.map((k) => [k.id, k]));
 
 /**
- * Kazna za jedno pitanje — sama traži podatak i sama odlučuje da li se prikazuje.
+ * Kazna za pitanje, ili `null`.
  *
- * Zašto ovako, a ne da pozivalac dohvati kaznu pa je proslijedi: dok je prikaz
- * kazni isključen, `QuestionCard` i `ResultCard` ne smiju ni da uvezu
- * `lib/penalties.ts`, jer bi podaci završili u bundle-u i putovali korisniku i
- * kad se ne prikazuju. Sve što dodiruje podatke živi u ovom fajlu, koji se
- * učitava dinamički — vidi `components/PenaltyLoader.tsx`.
+ * `null` je odgovor u tri različita slučaja, i to je namjerno isto: pitanje nije
+ * pregledano, instruktorka je rekla da nema prekršaja, ili je kazna još
+ * nepotvrđena. Kandidatu u sva tri slučaja ne treba prikazati ništa.
  */
+export function kaznaZaPitanje(questionId: number): Kazna | null {
+  const id = VEZA[String(questionId)];
+  return id ? (POTVRDJENE.get(id) ?? null) : null;
+}
+
+/** Ima li uopšte ijedne potvrđene kazne — koristi ga spisak kazni. */
+export function imaPotvrdjenih(): boolean {
+  return POTVRDJENE.size > 0;
+}
+
 export function PenaltyForQuestion({
   questionId,
   t,
@@ -36,80 +57,67 @@ export function PenaltyForQuestion({
   lang: Lang;
   compact?: boolean;
 }) {
-  const penalty = penaltyForQuestion(questionId);
-  if (!penalty) return null;
-  return <PenaltyNote penalty={penalty} t={t} lang={lang} compact={compact} />;
-}
+  const [otvoreno, setOtvoreno] = useState(!compact);
+  const kazna = kaznaZaPitanje(questionId);
+  if (!kazna) return null;
 
-/** Zbir kazni za spisak promašenih pitanja; ništa ako nijedno nema prekršaj. */
-export function PenaltyTotal({ questionIds, t }: { questionIds: readonly number[]; t: Dict }) {
-  const kazne = questionIds
-    .map((id) => penaltyForQuestion(id))
-    .filter((x): x is Penalty => x !== null);
-  if (kazne.length === 0) return null;
-  const zbir = sumPenalties(kazne.map((x) => x.id));
+  const sankcije = [
+    formatIznos(kazna.iznos_min, kazna.iznos_max),
+    kazna.kazneni_poeni != null ? `${kazna.kazneni_poeni} kaznenih poena` : null,
+    kazna.zabrana_upravljanja,
+  ].filter((x): x is string => Boolean(x) && x !== "—");
+
   return (
-    <div className="mb-5 rounded border-l-4 border-blue bg-blue-soft p-3 sm:p-4">
-      <p className="font-display mb-1 text-xs font-bold tracking-wide text-blue uppercase">
-        {t.penaltyTotal}
-      </p>
-      <p className="font-display text-2xl font-bold">{formatEur(zbir.minEur, zbir.maxEur)}</p>
-      <p className="mt-1 text-xs text-muted">{t.penaltyNote}</p>
-    </div>
+    <aside className="mt-4 rounded border-l-4 border-blue bg-panel">
+      <button
+        type="button"
+        onClick={() => setOtvoreno((x) => !x)}
+        aria-expanded={otvoreno}
+        className="flex w-full items-center gap-2 p-3 text-left sm:p-4"
+      >
+        <span className="font-display text-xs font-bold tracking-wide text-blue uppercase">
+          {t.penaltyTitle}
+        </span>
+        <span className="font-display ml-auto text-sm font-bold">{sankcije[0]}</span>
+        <span aria-hidden="true" className="text-muted">
+          {otvoreno ? "−" : "+"}
+        </span>
+      </button>
+
+      {otvoreno && (
+        <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+          <p className="font-semibold">{kazna.naslov}</p>
+
+          <p className="font-display mt-1 text-xl font-bold">{sankcije.join(" · ")}</p>
+
+          {kazna.objasnjenje && <p className="mt-2 text-sm">{kazna.objasnjenje}</p>}
+
+          <p className="mt-2 text-xs text-muted">
+            {kazna.clan}
+            {kazna.izvor && ` · ${kazna.izvor}`}
+          </p>
+          <p className="mt-1 text-xs text-muted">{t.penaltyNote}</p>
+
+          {lang !== "me" && (
+            <p className="mt-1 text-xs text-muted">{t.penaltyLanguageNote}</p>
+          )}
+        </div>
+      )}
+    </aside>
   );
 }
 
-interface PenaltyNoteProps {
-  penalty: Penalty;
-  t: Dict;
-  lang: Lang;
-  /** Kompaktan oblik za listu grešaka na rezultatu — bez naslova i napomene. */
-  compact?: boolean;
-}
-
-export default function PenaltyNote({ penalty, t, lang, compact = false }: PenaltyNoteProps) {
-  const range = penaltyRange(penalty);
-  const multi = penalty.tiers.length > 1;
-
-  if (compact) {
-    return (
-      <p className="mt-2 text-sm">
-        <span className="font-display font-bold text-blue">{formatEur(range.minEur, range.maxEur)}</span>{" "}
-        <span className="text-muted">— {penalty.label[lang]}</span>
-      </p>
-    );
-  }
-
+/**
+ * Link ka spisku kazni. Stoji u ovom modulu, a ne u navigaciji, iz istog
+ * razloga kao i sve ostalo ovdje: da se podaci o kaznama ne povlače dok je
+ * prikaz isključen. Link izostaje i kad nema nijedne potvrđene kazne — vodio
+ * bi na stranicu koja je tada 404.
+ */
+export function LinkKazne({ t }: { t: Dict }) {
+  if (!imaPotvrdjenih()) return null;
   return (
-    <aside className="mt-4 rounded border-l-4 border-blue bg-panel p-3 sm:p-4">
-      <p className="font-display mb-1 text-xs font-bold tracking-wide text-blue uppercase">
-        {t.penaltyTitle}
-      </p>
-
-      <p className="mb-1">
-        <span className="font-display text-xl font-bold">
-          {formatEur(range.minEur, range.maxEur)}
-        </span>{" "}
-        <span className="text-muted">— {penalty.label[lang]}</span>
-      </p>
-
-      {/* Kod brzine kazna raste stepenasto — jedan raspon bi sakrio da preko
-          50 km/h košta deset puta više nego do 10 km/h. */}
-      {multi && (
-        <ul className="mt-2 space-y-0.5 text-sm">
-          {penalty.tiers.map((tier) => (
-            <li key={tier.article} className="flex gap-2">
-              <span className="w-28 shrink-0 text-muted">{tier.label?.[lang]}</span>
-              <span className="font-semibold">{formatEur(tier.minEur, tier.maxEur)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <p className="mt-2 text-xs text-muted">
-        {penalty.tiers.map((x) => x.article).join(" · ")}
-      </p>
-      <p className="mt-1 text-xs text-muted">{t.penaltyNote}</p>
-    </aside>
+    <a href="/kazne" className="text-sm font-semibold text-blue underline-offset-4 hover:underline">
+      {t.penaltyListTitle}
+    </a>
   );
 }

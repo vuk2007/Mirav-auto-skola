@@ -130,6 +130,12 @@ export interface Dict {
   penaltyTitle: string;
   penaltyTotal: string;
   penaltyNote: string;
+  penaltyLanguageNote: string;
+  penaltyListTitle: string;
+  penaltyListLead: string;
+  penaltyListSearch: string;
+  penaltyListEmpty: string;
+  penaltyListChecked: string;
 
   // Navigacija po pitanjima
   navTitle: string;
@@ -305,6 +311,12 @@ const me: Dict = {
   penaltyTotal: "Ove greške bi u saobraćaju koštale",
   penaltyNote:
     "Informativno, po Zakonu o bezbjednosti saobraćaja na putevima. Konačan iznos određuje nadležni organ, a uz kaznu mogu ići i kazneni bodovi.",
+  penaltyLanguageNote: "Tekst kazne je na crnogorskom — potvrđuje ga instruktor auto-škole.",
+  penaltyListTitle: "Kazne",
+  penaltyListLead: "Novčane kazne po Zakonu o bezbjednosti saobraćaja na putevima. Iznosi su informativni — mjerodavan je važeći zakon i odluka nadležnog organa.",
+  penaltyListSearch: "Traži kaznu",
+  penaltyListEmpty: "Nema kazne koja odgovara pretrazi.",
+  penaltyListChecked: "Posljednja provjera:",
 
   navTitle: "Pregled pitanja",
   navAnswered: "odgovoreno",
@@ -470,6 +482,12 @@ const en: Dict = {
   penaltyTotal: "In traffic, these mistakes would cost",
   penaltyNote:
     "For information only, under the Road Traffic Safety Act. The final amount is set by the competent authority, and penalty points may be imposed as well.",
+  penaltyLanguageNote: "The penalty text is in Montenegrin — it is confirmed by a driving instructor.",
+  penaltyListTitle: "Penalties",
+  penaltyListLead: "Fines under the Road Traffic Safety Act. The amounts are informative — the law in force and the decision of the competent authority prevail.",
+  penaltyListSearch: "Search penalties",
+  penaltyListEmpty: "No penalty matches your search.",
+  penaltyListChecked: "Last checked:",
 
   navTitle: "Question overview",
   navAnswered: "answered",
@@ -640,6 +658,12 @@ const sq: Dict = {
   penaltyTotal: "Në komunikacion, këto gabime do të kushtonin",
   penaltyNote:
     "Vetëm informative, sipas Ligjit për sigurinë e komunikacionit rrugor. Shumën përfundimtare e cakton organi kompetent dhe krahas gjobës mund të vijnë edhe pikë ndëshkuese.",
+  penaltyLanguageNote: "Teksti i dënimit është në malazezisht — e konfirmon instruktori i autoshkollës.",
+  penaltyListTitle: "Dënimet",
+  penaltyListLead: "Gjobat sipas Ligjit për sigurinë e komunikacionit rrugor. Shumat janë informative — vlen ligji në fuqi dhe vendimi i organit kompetent.",
+  penaltyListSearch: "Kërko dënim",
+  penaltyListEmpty: "Asnjë dënim nuk përputhet me kërkimin.",
+  penaltyListChecked: "Kontrolluar së fundmi:",
 
   navTitle: "Pasqyra e pyetjeve",
   navAnswered: "të përgjigjura",
@@ -812,6 +836,12 @@ const ru: Dict = {
   penaltyTotal: "На дороге эти ошибки стоили бы",
   penaltyNote:
     "Информационно, по Закону о безопасности дорожного движения. Окончательную сумму определяет компетентный орган, а вместе со штрафом могут быть назначены и штрафные баллы.",
+  penaltyLanguageNote: "Текст штрафа на черногорском — его подтверждает инструктор автошколы.",
+  penaltyListTitle: "Штрафы",
+  penaltyListLead: "Денежные штрафы по Закону о безопасности дорожного движения. Суммы информативны — решающими являются действующий закон и решение компетентного органа.",
+  penaltyListSearch: "Поиск штрафа",
+  penaltyListEmpty: "Нет штрафа, соответствующего поиску.",
+  penaltyListChecked: "Последняя проверка:",
 
   navTitle: "Обзор вопросов",
   navAnswered: "отвечено",

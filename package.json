@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/gen-kazne-javne.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "gen:image-sizes": "node scripts/gen-image-sizes.mjs",
+    "gen:kazne": "node scripts/gen-kazne-javne.mjs",
     "translate": "node scripts/translate.mjs",
     "translate:stats": "node scripts/translate.mjs --stats",
     "translate:apply": "node scripts/apply-translations.mjs",

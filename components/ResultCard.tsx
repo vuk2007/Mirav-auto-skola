@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { PenaltyForQuestion, PenaltyTotal } from "./PenaltyLoader";
+import { PenaltyForQuestion } from "./PenaltyLoader";
 import { badgeKey } from "@/lib/categories";
 import { examPassPoints, PENALTIES_ENABLED } from "@/lib/config";
 import { imageSize } from "@/lib/imageSizes";
@@ -147,11 +147,6 @@ export default function ResultCard({
           <>
             <p className="mb-4 text-sm text-muted">{t.reviewLead}</p>
 
-            {/* Zbir cijene grešaka; komponenta sama izostane ako nijedna greška
-                nema odgovarajući prekršaj. */}
-            {PENALTIES_ENABLED && (
-              <PenaltyTotal questionIds={toReview.map((q) => q.id)} t={t} />
-            )}
             <ol className="space-y-5">
               {toReview.map((q) => {
                 const rec = records.get(q.id);

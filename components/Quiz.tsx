@@ -6,6 +6,7 @@ import {
   EXAM_MINUTES,
   EXAM_TIMER_ENABLED,
   examPassPoints,
+  PENALTIES_ENABLED,
   AUTO_ADVANCE_MS,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
@@ -42,6 +43,7 @@ import type {
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
 import { useApp } from "./AppProvider";
 import Controls from "./Controls";
+import { LinkKazne } from "./PenaltyLoader";
 import ExamBriefing from "./ExamBriefing";
 import SimulatorShell from "./sim/SimulatorShell";
 import Landing from "./Landing";
@@ -452,13 +454,18 @@ export default function Quiz({ compact = false }: QuizProps) {
           </button>
         )}
 
-        <button
-          type="button"
-          onClick={() => setLiteratureOpen(true)}
-          className="ml-auto text-sm font-semibold text-blue underline-offset-4 hover:underline"
-        >
-          {t.literature}
-        </button>
+        {/* Spisak kazni; link izostaje kad je prikaz isključen ili kad nema
+            nijedne potvrđene kazne. */}
+        <div className="ml-auto flex items-center gap-4">
+          {PENALTIES_ENABLED && <LinkKazne t={t} />}
+          <button
+            type="button"
+            onClick={() => setLiteratureOpen(true)}
+            className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
+          >
+            {t.literature}
+          </button>
+        </div>
 
         <div
           className="flex overflow-hidden rounded border border-line"

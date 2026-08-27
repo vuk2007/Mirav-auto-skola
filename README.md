@@ -594,64 +594,72 @@ sakrio upravo ono zbog čega se vježba.
 
 ### Kazne
 
-Uz netačan odgovor se prikazuje koliko bi taj prekršaj koštao u stvarnom saobraćaju, a na
-ekranu rezultata i zbir za sve greške. Cilj je da „netačno" dobije težinu koju u saobraćaju
-i ima.
+Kazna se prikazuje uz pitanje, tamo gdje kandidatu koristi. **Kazne su
+zajednička biblioteka, a pitanje na nju samo pokazuje** — tekst kazne se nikad
+ne kuca u pitanje. Dvadesetak pitanja o brzini pokazuje na isti unos, pa izmjena
+tog unosa mijenja svih dvadeset odjednom.
 
-> ⚠️ **Iznosi nijesu provjereni.** Svaki unos u [`lib/penalties.ts`](lib/penalties.ts) nosi
-> `verified: false` i polje `source`. **MIRAV ih mora provjeriti prije objave.** Do tada se
-> cijela funkcija gasi jednim potezom: `PENALTIES_ENABLED = false` u `lib/config.ts`.
+| Fajl | Sadržaj |
+| ---- | ------- |
+| `data/kazne.json` | biblioteka kazni — sve, i potvrđene i nepotvrđene |
+| `data/pitanje-kazna.json` | veza pitanje → kazna, sa stanjem pregleda |
+| `data/javno/` | **generisano** — samo potvrđene; iz ovoga čita prikaz |
+| `lib/kazne.ts` | tipovi, pravila potvrde, upozorenja |
 
-Provjera uz drugi izvor:
+Veza je u **zasebnom** fajlu, ne u `questions.json`, jer se `questions.json` može
+ponovo generisati iz PDF-a — a rad instruktorke ne smije da nestane pri tome.
+Provjereno: `node scripts/gen-exam-meta.mjs` ne dira `data/`.
+
+**Tri stanja pitanja se ne miješaju:** *nepregledano* (još se nije stiglo do
+njega), *bez kazne* (pogledano, nema prekršaja), *ima kaznu*. Samo
+`pregledano: false` znači da posao nije završen.
+
+#### Zašto postoji `data/javno/`
+
+`scripts/gen-kazne-javne.mjs` prije svakog builda (`prebuild`) izdvaja **samo
+potvrđene** kazne. Bez toga bi uvoz punog `data/kazne.json` unio u bundle i
+nepotvrđene — sa praznim ili neprovjerenim iznosima — i one bi putovale
+korisniku iako se ne iscrtavaju. Uhvaćeno testom: naslov nepotvrđene kazne se
+našao u komadu koda koji browser stvarno povuče.
+
+Iz istog razloga se cijeli prikaz učitava **dinamički**
+([`components/PenaltyLoader.tsx`](components/PenaltyLoader.tsx)) — dok je
+`NEXT_PUBLIC_KAZNE_ENABLED=false`, taj komad se ni ne traži sa mreže.
+
+#### Gdje se prikazuje
+
+| Ekran | Kazna |
+| ----- | ----- |
+| Vježba, poslije odgovora | **da** |
+| Pregled grešaka poslije simulacije | **da** (sklopljeno) |
+| Tokom simulacije ispita | **ne** — kao ni na pravom ispitu |
+| `/kazne` | spisak svih potvrđenih, grupisan po kategoriji |
+
+`/kazne` vraća **404** u dva slučaja: kad je prikaz isključen i kad nema
+nijedne potvrđene kazne. Prazna stranica bi rekla da nešto postoji a ne radi.
+
+**Jezik:** `naslov` i `objasnjenje` postoje samo na crnogorskom — shema nema
+polja za prevode. U EN/RU/AL tekst kazne ostaje crnogorski, uz napomenu.
+
+#### Unos i izmjena
+
+Editor je na `/admin/kazne`, iza `NEXT_PUBLIC_ADMIN_ENABLED` i lozinke
+(`ADMIN_PASSWORD`, provjerava se na serveru). Uputstvo za osobu koja nije
+programer: **[`docs/kazne-azuriranje.md`](docs/kazne-azuriranje.md)**.
 
 ```bash
-node scripts/check-penalties.mjs
+node scripts/migriraj-kazne.mjs   # jednokratno: stari katalog -> nova shema
+npm run gen:kazne                 # data/javno/ (radi se i sam pri buildu)
 ```
 
-Poredi naš katalog sa [`references/kazne-zobs-2026-08.json`](references/kazne-zobs-2026-08.json)
-— spiskom sastavljenim iz medijskih izvora poslije stupanja izmjena na snagu, koji uz sebe
-nosi i linkove na primarne izvore i plan verifikacije. Trenutno: **11 poklapanja, 2 namjerna
-razilaženja, 5 stavki gdje taj spisak nema iznos, 26 naših prekršaja koje on ne pokriva.**
+Migracija je iznose ostavila **prazne**, a stare vrijednosti prebacila u
+`napomena` kao „ranija vrijednost (neprovjereno)". Da su prepisane u polja za
+iznos, kroz sto unosa bi se samo kliktalo „potvrdi" na brojeve koje niko nije
+provjerio — a to je problem koji se rješava.
 
-> Poklapanje dva neprovjerena izvora **nije** potvrda tačnosti. U tom spisku je 0 od 39
-> stavki potvrđeno iz Službenog lista, kao ni kod nas.
-
-Dva namjerna razilaženja, zabilježena u polju `conflict`:
-
-- **parkiranje** — spisak navodi 100 € fiksno, ali iz prekršajnog naloga komunalne policije u
-  Podgorici. To je drugi instrument, ne zakonski raspon, pa je zadržan raspon iz zakona.
-- **pješak** — spisak daje 60–150 € samo za prelazak van obilježenog prelaza, a naš unos
-  pokriva više odredaba, pa rasponi nisu uporedivi jedan na jedan.
-
-Odakle iznosi: kaznene odredbe ZoBS-a, **čl. 319–326** (kazne za vozače i ostale učesnike;
-čl. 315–318 se odnose na pravna lica i nijesu uzeti). Izmjene zakona stupile su na snagu
-**7. 8. 2026**, a prečišćen tekst poslije njih nije bio dostupan pri izradi — unosi koje su
-izmjene promijenile nose iznos iz medijskih izvještaja i označeni su sa `amended: true` —
-to je najslabija karika i prvo što treba provjeriti. Poslije poređenja sa referentnim
-spiskom osam iznosa je podignuto na poslije-izmjena vrijednosti (pojas, dječje sjedište,
-policijski znak, vozačka dozvola, tehnička neispravnost, bicikl, brzina do 10 km/h, crveno
-svjetlo), a dodat je i najviši nivo brzine (preko 70 u naselju / 90 van naselja =
-1.000–2.000 €). Raniji iznosi su sačuvani u polju `conflict`.
-
-Dva sloja:
-
-- [`lib/penalties.ts`](lib/penalties.ts) — katalog prekršaja: iznos (ili više nivoa, kod
-  brzine), član zakona, naziv na sva četiri jezika.
-- [`lib/penaltyMap.ts`](lib/penaltyMap.ts) — **generisano**, veza pitanje → prekršaj.
-  Pravila i ručne ispravke su u [`scripts/gen-penalty-map.mjs`](scripts/gen-penalty-map.mjs);
-  aplikacija ne radi nikakvo poklapanje po riječima, samo čita gotovu tabelu.
-
-```bash
-node scripts/gen-penalty-map.mjs --report   # raspodjela po prekršajima, bez upisa
-node scripts/gen-penalty-map.mjs            # regeneriši lib/penaltyMap.ts
-```
-
-Pokriveno je **384 od 421 pitanja**. Preostalih 37 su definicije („šta je mladi vozač"),
-uslovi za izdavanje dozvole i slično — tu prekršaj ne postoji, pa se **ne prikazuje ništa**.
-Izmišljen iznos bio bi gori od nikakvog.
-
-Brzina je jedini prekršaj sa stepenovanom kaznom, pa se prikazuju svi nivoi (do 10 km/h →
-30–100 €, preko 50 km/h → 150–1.000 €) — inače bi se izgubilo da razlika nije linearna.
+> **Stanje:** 0 od 44 kazni potvrđeno, 0 od 421 pitanja pregledano. Dok se to ne
+> promijeni, `NEXT_PUBLIC_KAZNE_ENABLED` ostaje `false` i kandidat ne vidi
+> nijednu kaznu.
 
 ### Objašnjenja i prevodi pitanja
 
