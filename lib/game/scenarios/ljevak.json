@@ -1,0 +1,27 @@
+{
+  "id": "ljevak",
+  "intersection": "cross-none",
+  "difficulty": 3,
+  "player": {
+    "arm": "N",
+    "intent": "left",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "S",
+      "intent": "straight",
+      "spawnAt": [
+        3.0,
+        3.6
+      ],
+      "speed": 10
+    }
+  ],
+  "explanation": {
+    "me": "Skrecete ulijevo i presijecate putanju vozila koje vam dolazi u susret. Vozilo koje ide pravo ima prednost — propustate ga, pa skrecete.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}

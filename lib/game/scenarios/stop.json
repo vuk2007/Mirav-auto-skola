@@ -1,0 +1,27 @@
+{
+  "id": "stop",
+  "intersection": "cross-stop-ew",
+  "difficulty": 2,
+  "player": {
+    "arm": "W",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "S",
+      "intent": "straight",
+      "spawnAt": [
+        3.5,
+        4.1
+      ],
+      "speed": 11
+    }
+  ],
+  "explanation": {
+    "me": "Znak STOP trazi POTPUNO zaustavljanje na stop-liniji, cak i kad je put slobodan. Tek poslije zaustavljanja propustate vozila sa glavnog puta i krecete.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "glavni-put",
+  "intersection": "cross-priority-ns",
+  "difficulty": 1,
+  "player": {
+    "arm": "N",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "W",
+      "intent": "straight",
+      "spawnAt": [
+        2.9,
+        3.5
+      ],
+      "speed": 9
+    }
+  ],
+  "explanation": {
+    "me": "Vi ste na glavnom putu i imate prednost. Vozilo sa sporednog puta duzno je da vas propusti — nastavljate normalno, bez usporavanja.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "desna-ustupi",
+  "intersection": "cross-none",
+  "difficulty": 1,
+  "player": {
+    "arm": "N",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "W",
+      "intent": "straight",
+      "spawnAt": [
+        3.2,
+        3.8
+      ],
+      "speed": 10
+    }
+  ],
+  "explanation": {
+    "me": "Raskrsnica nije regulisana ni znakom ni semaforom, pa vazi pravilo desne strane. Vozilo dolazi sa vase desne strane — propustate ga, pa nastavljate.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}

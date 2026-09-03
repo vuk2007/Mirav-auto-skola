@@ -1,0 +1,27 @@
+{
+  "id": "izlomljeni-glavni",
+  "intersection": "cross-priority-bent-ne",
+  "difficulty": 3,
+  "player": {
+    "arm": "S",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "N",
+      "intent": "left",
+      "spawnAt": [
+        2.6,
+        3.2
+      ],
+      "speed": 9
+    }
+  ],
+  "explanation": {
+    "me": "Glavni put se ovdje lomi: ulazi sa sjevera i izlazi na istok. Iako vi idete pravo, vas krak je sporedan — duzni ste da propustite vozilo koje prati glavni put, i onda kad ono skrece.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}

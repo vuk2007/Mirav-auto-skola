@@ -124,31 +124,102 @@ export function ringArcPasses(from: Approach, to: Approach, leg: Approach): bool
 }
 
 /**
- * Nivo prvenstva vozila: manji broj = ide ranije. `null` znači da vozilo uopšte
- * ne prolazi (crveno svjetlo).
+ * Regulacija kraka svedena na jedan pojam, nezavisno od toga ko pita.
+ *
+ * Postoje dva korisnika ovih pravila: statični simulator (`DrawnScenario`) i
+ * igra „Prođi raskrsnicu" (`IntersectionTemplate`). Modeli su im različiti, ali
+ * pravila prvenstva su ista, pa se oba svode na ovaj tip i zovu `whoYields`.
+ */
+export type EffectiveControl =
+  | "priority"
+  | "yield"
+  | "stop"
+  | "none"
+  | "green"
+  | "yellow"
+  | "red";
+
+/** Jedna strana u poređenju prvenstva. */
+export interface YieldParty {
+  approach: Approach;
+  intent: Intent;
+  control: EffectiveControl;
+}
+
+/**
+ * Nivo prvenstva: manji broj = ide ranije. `null` znači da vozilo uopšte ne
+ * prolazi (crveno ili žuto svjetlo).
  *
  * Hijerarhija (od jače ka slabijoj): semafor → znaci → nema regulacije.
- * Naredbe policijskog službenika NISU podržane — vidi `solveOrder`.
+ * `yield` i `stop` su NAMJERNO isti nivo — razlikuju se po ponašanju (STOP traži
+ * potpuno zaustavljanje), ne po prvenstvu.
  */
+export function priorityTier(control: EffectiveControl): number | null {
+  switch (control) {
+    case "green":
+      return 0;
+    case "red":
+    case "yellow":
+      return null;
+    case "priority":
+      return 0;
+    case "yield":
+    case "stop":
+      return 1;
+    case "none":
+      return 0;
+  }
+}
+
+/**
+ * Ko od dvojice ustupa prvenstvo. Vraća `"a"`, `"b"`, ili `null` kad se putanje
+ * ne sudaraju po pravilima (npr. oba skreću lijevo iz suprotnih krakova).
+ *
+ * Ovo je jedina tačka u kojoj se odlučuje o prvenstvu — i `solveOrder` i NPC
+ * logika u igri je zovu, da pravila ne mogu da se raziđu na dva mjesta.
+ */
+export function whoYields(a: YieldParty, b: YieldParty): "a" | "b" | null {
+  const ta = priorityTier(a.control);
+  const tb = priorityTier(b.control);
+
+  // Vozilo koje uopšte ne prolazi (crveno) ustupa svakome ko prolazi.
+  if (ta === null && tb === null) return null;
+  if (ta === null) return "a";
+  if (tb === null) return "b";
+
+  if (ta !== tb) return ta > tb ? "a" : "b";
+
+  // Isti nivo — odlučuju pravilo desne strane pa ljevak.
+  if (YIELDS_TO[a.approach] === b.approach) return "a";
+  if (YIELDS_TO[b.approach] === a.approach) return "b";
+
+  if (a.intent === "left" && b.approach === OPPOSITE[a.approach] && b.intent !== "left") {
+    return "a";
+  }
+  if (b.intent === "left" && a.approach === OPPOSITE[b.approach] && a.intent !== "left") {
+    return "b";
+  }
+
+  return null;
+}
+
+/**
+ * Nivo prvenstva vozila u sceni statičnog simulatora.
+ * Tanak omotač oko `priorityTier` — vidi tamo.
+ */
+function controlOf(scenario: DrawnScenario, v: DrawnVehicle): EffectiveControl {
+  const setup = scenario.approaches?.[v.approach];
+  if (setup?.light) return setup.light; // semafor poništava znakove
+  if (setup?.sign) return setup.sign;
+  return "none";
+}
+
 function tierOf(scenario: DrawnScenario, v: DrawnVehicle): number | null {
   if (scenario.layout === "roundabout") {
     // U kružnom toku prvenstvo ima vozilo koje se već kreće kroz tok.
     return v.inRoundabout ? 0 : 1;
   }
-
-  const setup = scenario.approaches?.[v.approach];
-
-  // Semafor poništava znakove.
-  if (setup?.light) {
-    if (setup.light === "green") return 0;
-    return null; // crveno i žuto — vozilo se zaustavlja
-  }
-
-  if (setup?.sign) {
-    return setup.sign === "priority" ? 0 : 1; // yield i stop su isti nivo prvenstva
-  }
-
-  return 0; // neregulisano — svi na istom nivou, odlučuje pravilo desne strane
+  return priorityTier(controlOf(scenario, v));
 }
 
 /**
@@ -172,38 +243,27 @@ export function solveOrder(scenario: DrawnScenario): number[] | null {
   const remaining = new Set(passing.map((v) => v.id));
   const order: number[] = [];
 
-  /** Kome `v` mora da ustupi, a da taj još nije prošao. */
+  /**
+   * Kome `v` mora da ustupi, a da taj još nije prošao.
+   *
+   * Pravila se NE ponavljaju ovdje — sva odluka je u `whoYields`, da statični
+   * simulator i igra ne mogu da se raziđu.
+   */
+  const party = (v: DrawnVehicle): YieldParty => ({
+    approach: v.approach,
+    intent: v.intent,
+    control: controlOf(scenario, v),
+  });
+
   const blockers = (v: DrawnVehicle): number[] => {
     const out: number[] = [];
-    const myTier = tier.get(v.id) as number;
-
-    // Jači nivo prvenstva prolazi prvi.
     for (const o of passing) {
       if (o.id === v.id || !remaining.has(o.id)) continue;
-      if ((tier.get(o.id) as number) < myTier) out.push(o.id);
+      if (whoYields(party(v), party(o)) === "a") out.push(o.id);
     }
-
-    // Pravilo desne strane — samo unutar istog nivoa.
-    const right = byApproach.get(YIELDS_TO[v.approach]);
-    if (right && remaining.has(right.id) && tier.get(right.id) === myTier) {
-      out.push(right.id);
-    }
-
-    // Ljevak ustupa susretnom vozilu koje ide pravo ili desno.
-    if (v.intent === "left") {
-      const onc = byApproach.get(OPPOSITE[v.approach]);
-      if (
-        onc &&
-        remaining.has(onc.id) &&
-        tier.get(onc.id) === myTier &&
-        onc.intent !== "left"
-      ) {
-        out.push(onc.id);
-      }
-    }
-
     return out;
   };
+  void byApproach;
 
   while (remaining.size > 0) {
     const free = passing.filter((v) => remaining.has(v.id) && blockers(v).length === 0);

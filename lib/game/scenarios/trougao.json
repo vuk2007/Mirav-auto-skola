@@ -1,0 +1,27 @@
+{
+  "id": "trougao",
+  "intersection": "cross-priority-ns",
+  "difficulty": 1,
+  "player": {
+    "arm": "E",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "N",
+      "intent": "straight",
+      "spawnAt": [
+        3.5,
+        4.1
+      ],
+      "speed": 11
+    }
+  ],
+  "explanation": {
+    "me": "Na vasem kraku je znak „ustupi prvenstvo prolaza“ (trougao). Ne morate stati ako je put slobodan, ali morate propustiti sva vozila sa glavnog puta.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}

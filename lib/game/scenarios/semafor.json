@@ -1,0 +1,28 @@
+{
+  "id": "semafor",
+  "intersection": "cross-lights",
+  "difficulty": 2,
+  "lightStartPhase": 2,
+  "player": {
+    "arm": "N",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "E",
+      "intent": "straight",
+      "spawnAt": [
+        0.3,
+        0.9
+      ],
+      "speed": 11
+    }
+  ],
+  "explanation": {
+    "me": "Na vasem kraku je crveno svjetlo. Zaustavljate se prije stop-linije i cekate zeleno. Ulazak na crveno ili na zuto kad ste mogli bezbjedno stati je prekrsaj.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}

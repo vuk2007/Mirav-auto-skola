@@ -1,0 +1,27 @@
+{
+  "id": "desna-imas-prednost",
+  "intersection": "cross-none",
+  "difficulty": 1,
+  "player": {
+    "arm": "W",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "N",
+      "intent": "straight",
+      "spawnAt": [
+        2.7,
+        3.3
+      ],
+      "speed": 10
+    }
+  ],
+  "explanation": {
+    "me": "Neregulisana raskrsnica. Vozilo dolazi sa vase lijeve strane — vi imate prednost. Prolazite bez zaustavljanja; nepotrebno stajanje zadrzava saobracaj i takodje je greska.",
+    "en": "TODO",
+    "sq": "TODO",
+    "ru": "TODO"
+  }
+}
