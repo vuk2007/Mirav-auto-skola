@@ -97,12 +97,14 @@ export interface Dict {
   // Igra „Prođi raskrsnicu" (vidi lib/game/)
   gameTitle: string;
   gameLead: string;
+  gameDesc: string;
+  gameMeta: string;
+  gameOpen: string;
   gameStart: string;
   gameRetry: string;
   gameSpeed: string;
   gameTime: string;
   gameQuality: string;
-  gamePickTitle: string;
   gamePickLead: string;
   gameDifficulty: string;
   gameStatusPassed: string;
@@ -338,11 +340,14 @@ const me: Dict = {
   gameLead:
     "Vozilo ide zadatom putanjom — vi držite samo gas i kočnicu. Cilj je proći bez ijednog prekršaja: nikome ne oduzeti prednost, stati gdje se mora i ne zadržavati saobraćaj kad prednost imate vi.",
   gameStart: "Kreni",
+  gameDesc:
+    "Vozite kroz raskrsnicu u realnom vremenu — držite gas i kočnicu i prođite bez ijednog prekršaja. Četrnaest situacija: prvenstvo, znaci, semafor, pješaci, policajac.",
+  gameMeta: "tajming i prvenstvo",
+  gameOpen: "Otvori igru",
   gameRetry: "Pokušaj ponovo",
   gameSpeed: "Brzina",
   gameTime: "Vrijeme",
   gameQuality: "Iznad idealnog vremena",
-  gamePickTitle: "Izaberite situaciju",
   gamePickLead:
     "Svaka situacija vježba jedno pravilo. Prolazak se pamti na ovom uređaju, pa možete nastaviti kasnije.",
   gameDifficulty: "Težina",
@@ -569,11 +574,14 @@ const en: Dict = {
   gameLead:
     "The car follows a fixed path — you only control the throttle and the brake. The goal is to get through without a single violation: never take someone's right of way, stop where you must, and do not hold up traffic when the right of way is yours.",
   gameStart: "Go",
+  gameDesc:
+    "Drive through the intersection in real time — hold the throttle and the brake and get through without a single violation. Fourteen situations: right of way, signs, lights, pedestrians, a police officer.",
+  gameMeta: "timing and right of way",
+  gameOpen: "Open the game",
   gameRetry: "Try again",
   gameSpeed: "Speed",
   gameTime: "Time",
   gameQuality: "Above the ideal time",
-  gamePickTitle: "Choose a situation",
   gamePickLead:
     "Each situation drills one rule. Your progress is kept on this device, so you can carry on later.",
   gameDifficulty: "Difficulty",
@@ -805,11 +813,14 @@ const sq: Dict = {
   gameLead:
     "Automjeti ndjek një trajektore të dhënë — ju kontrolloni vetëm gazin dhe frenat. Qëllimi është të kaloni pa asnjë shkelje: të mos i merrni përparësinë askujt, të ndaloni aty ku duhet dhe të mos e pengoni trafikun kur përparësia është e juaja.",
   gameStart: "Nis",
+  gameDesc:
+    "Ngisni nëpër kryqëzim në kohë reale — mbani gazin dhe frenat dhe kaloni pa asnjë shkelje. Katërmbëdhjetë situata: përparësia, shenjat, semafori, këmbësorët, polici.",
+  gameMeta: "koha dhe përparësia",
+  gameOpen: "Hap lojën",
   gameRetry: "Provo përsëri",
   gameSpeed: "Shpejtësia",
   gameTime: "Koha",
   gameQuality: "Mbi kohën ideale",
-  gamePickTitle: "Zgjidhni një situatë",
   gamePickLead:
     "Secila situatë ushtron një rregull. Ecuria ruhet në këtë pajisje, kështu që mund të vazhdoni më vonë.",
   gameDifficulty: "Vështirësia",
@@ -1043,11 +1054,14 @@ const ru: Dict = {
   gameLead:
     "Автомобиль едет по заданной траектории — вы управляете только газом и тормозом. Задача — проехать без единого нарушения: никому не создать помеху, остановиться там, где положено, и не задерживать движение, когда преимущество у вас.",
   gameStart: "Поехали",
+  gameDesc:
+    "Проезд перекрёстка в реальном времени — управляйте газом и тормозом и проедьте без единого нарушения. Четырнадцать ситуаций: преимущество, знаки, светофор, пешеходы, регулировщик.",
+  gameMeta: "тайминг и преимущество",
+  gameOpen: "Открыть игру",
   gameRetry: "Ещё раз",
   gameSpeed: "Скорость",
   gameTime: "Время",
   gameQuality: "Сверх идеального времени",
-  gamePickTitle: "Выберите ситуацию",
   gamePickLead:
     "Каждая ситуация отрабатывает одно правило. Результат сохраняется на этом устройстве, так что можно продолжить позже.",
   gameDifficulty: "Сложность",

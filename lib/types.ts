@@ -124,7 +124,11 @@ export function isChoice(q: Question): q is ChoiceQuestion {
 /** Odgovor kandidata: ključ opcije, ili uneseni redoslijed kod `ordering` pitanja. */
 export type Answer = { kind: "choice"; value: OptionKey } | { kind: "ordering"; value: string };
 
-export type Mode = "vjezba" | "simulacija" | "simulator";
+/**
+ * Režim rada. `simulator` je statična vježba redoslijeda, `igra` je vožnja kroz
+ * raskrsnicu u realnom vremenu (vidi `lib/game/`).
+ */
+export type Mode = "vjezba" | "simulacija" | "simulator" | "igra";
 
 /** Koji je ekran aktivan — landing se vidi prvi, prije učitavanja pitanja. */
 export type Screen = "landing" | "uputstvo" | "kviz" | "rezultat";

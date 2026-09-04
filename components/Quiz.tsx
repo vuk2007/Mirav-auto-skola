@@ -46,6 +46,7 @@ import Controls from "./Controls";
 import { LinkKazne } from "./PenaltyLoader";
 import ExamBriefing from "./ExamBriefing";
 import SimulatorShell from "./sim/SimulatorShell";
+import { GamePage } from "./game/GameLoader";
 import Landing from "./Landing";
 import LiteratureModal from "./LiteratureModal";
 import ProgressBar from "./ProgressBar";
@@ -99,6 +100,7 @@ export default function Quiz({ compact = false }: QuizProps) {
 
   const isPractice = mode === "vjezba";
   const isSimulator = mode === "simulator";
+  const isGame = mode === "igra";
 
   // ── Učitavanje zapamćenog stanja (samo na klijentu) ───────────────────────
   // Jezik čita LangProvider; ovdje se vraćaju rezultat i sačuvana vježba.
@@ -184,6 +186,19 @@ export default function Quiz({ compact = false }: QuizProps) {
       setStarting(false);
     }
   }, [ensureQuestions, resetSession]);
+
+  /**
+   * Igra ne treba bazu pitanja — raskrsnice i scenariji su u kodu, pa se ekran
+   * mijenja odmah, bez učitavanja i bez `starting`.
+   */
+  const startGame = useCallback(() => {
+    setLoadError(null);
+    resetSession();
+    setMode("igra");
+    setSecondsLeft(null);
+    setDeadline(null);
+    setScreen("kviz");
+  }, [resetSession]);
 
   /**
    * Sastavlja ispit i vodi na uputstvo. Test se izvlači **prije** uputstva da bi
@@ -505,6 +520,7 @@ export default function Quiz({ compact = false }: QuizProps) {
           onResumePractice={() => void startPractice(saved)}
           onStartExam={() => void prepareExam()}
           onStartSimulator={() => void startSimulator()}
+          onStartGame={startGame}
           saved={saved}
           best={best}
           starting={starting}
@@ -526,7 +542,9 @@ export default function Quiz({ compact = false }: QuizProps) {
         <SimulatorShell photoScenarios={scenarios} t={t} lang={lang} />
       )}
 
-      {screen === "kviz" && !isSimulator && (
+      {screen === "kviz" && isGame && <GamePage showLanguage={false} />}
+
+      {screen === "kviz" && !isSimulator && !isGame && (
         <>
           <Controls
             mode={mode}

@@ -16,7 +16,7 @@ import ScenarioPicker from "./ScenarioPicker";
  * Alternativa bi bila da se spisak ne crta dok se ne učita — to bi značilo
  * prazan ekran na svakom otvaranju, zbog podatka koji je čista dekoracija.
  */
-export default function GamePage() {
+export default function GamePage({ showLanguage = true }: { showLanguage?: boolean }) {
   const { lang, setLang, t } = useApp();
   const [progress, setProgress] = useState<GameProgressMap>({});
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -42,27 +42,31 @@ export default function GamePage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <div
-          className="flex overflow-hidden rounded border border-line"
-          role="group"
-          aria-label={t.langLabel}
-        >
-          {LANGS.map((l) => (
-            <button
-              key={l}
-              type="button"
-              onClick={() => setLang(l)}
-              aria-pressed={lang === l}
-              className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
-                lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
-              }`}
-            >
-              {LANG_LABELS[l]}
-            </button>
-          ))}
+      {/* Unutar kviza prebacivač jezika već stoji u gornjoj traci, pa se ovdje
+          izostavlja — dva ista prebacivača jedan iznad drugog samo zbunjuju. */}
+      {showLanguage && (
+        <div className="flex justify-end">
+          <div
+            className="flex overflow-hidden rounded border border-line"
+            role="group"
+            aria-label={t.langLabel}
+          >
+            {LANGS.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLang(l)}
+                aria-pressed={lang === l}
+                className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
+                  lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
+                }`}
+              >
+                {LANG_LABELS[l]}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {active ? (
         <GameScreen

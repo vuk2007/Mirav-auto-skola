@@ -14,6 +14,7 @@ interface LandingProps {
   onResumePractice: () => void;
   onStartExam: () => void;
   onStartSimulator: () => void;
+  onStartGame: () => void;
   /** Sačuvana vježba, ako postoji — nudi „Nastavi gdje si stao". */
   saved: PracticeState | null;
   best: BestExam | null;
@@ -30,6 +31,7 @@ export default function Landing({
   onResumePractice,
   onStartExam,
   onStartSimulator,
+  onStartGame,
   saved,
   best,
   starting,
@@ -157,6 +159,26 @@ export default function Landing({
           className="font-display rounded border-2 border-blue px-6 py-3 text-lg font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white disabled:opacity-50 sm:flex-none"
         >
           {t.simStart}
+        </button>
+      </section>
+
+      {/* ── Igra „Prođi raskrsnicu" ──────────────────────────────── */}
+      <section className="panel flex flex-col gap-4 border-t-4 border-t-green p-5 sm:flex-row sm:items-center">
+        <div className="flex-1">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
+            <h2 className="text-xl font-bold">{t.gameTitle}</h2>
+            <span className="tag ml-1 text-muted">{t.gameMeta}</span>
+          </div>
+          <p className="text-sm text-muted">{t.gameDesc}</p>
+        </div>
+        <button
+          type="button"
+          onClick={onStartGame}
+          disabled={starting}
+          className="font-display rounded border-2 border-green px-6 py-3 text-lg font-bold tracking-wide text-green uppercase transition-colors hover:bg-green hover:text-white disabled:opacity-50 sm:flex-none"
+        >
+          {t.gameOpen}
         </button>
       </section>
 

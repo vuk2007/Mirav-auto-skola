@@ -1,0 +1,24 @@
+{
+  "motor": "chromium-desktop",
+  "karticaNa_/": true,
+  "karticaNa_/embed": true,
+  "igraUBundluPrijeKlika": false,
+  "otvorenSpisak": true,
+  "brojSituacija": 14,
+  "jedanPrebacivacJezika": true,
+  "odigrana": true,
+  "nazadNaNaslovnu": true,
+  "greske": []
+}
+{
+  "motor": "webkit-mobile",
+  "karticaNa_/": true,
+  "karticaNa_/embed": true,
+  "igraUBundluPrijeKlika": false,
+  "otvorenSpisak": true,
+  "brojSituacija": 14,
+  "jedanPrebacivacJezika": true,
+  "odigrana": true,
+  "nazadNaNaslovnu": true,
+  "greske": []
+}
