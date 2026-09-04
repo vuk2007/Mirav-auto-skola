@@ -169,7 +169,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
     templateId: tpl.id,
     vehicles,
     phaseIndex: scenario.lightStartPhase ?? 0,
-    phaseT: 0,
+    phaseT: scenario.lightStartT ?? 0,
     events: [],
     violations: [],
     outcome: "running",
@@ -206,8 +206,15 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
   if (control === "stop" && me.stopHeld < STOP_DWELL && me.s < mePath.stopLineS) {
     limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
   }
-  if ((control === "red" || control === "yellow") && me.s < mePath.stopLineS) {
-    limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
+  // Semafor. Na žuto se staje SAMO ako se stigne bezbjedno stati — isti prag
+  // (`YELLOW_COMMIT_TTC`) po kojem se sudi i igraču. Da NPC koči na svako žuto,
+  // sudio bi mu se drugi aršin nego čovjeku, a uz to bi kočio jače nego što
+  // vozilo može i završio nasred raskrsnice.
+  if (me.s < mePath.stopLineS) {
+    const staje =
+      control === "red" ||
+      (control === "yellow" && timeTo(me, mePath.stopLineS) >= YELLOW_COMMIT_TTC);
+    if (staje) limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
   }
 
   // Vozilo ispred u istoj traci.

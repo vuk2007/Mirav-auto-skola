@@ -116,6 +116,9 @@ export interface Dict {
   gameBack: string;
   gameNextScenario: string;
   gameRuleTitle: string;
+  gameLightRed: string;
+  gameLightYellow: string;
+  gameLightGreen: string;
   ruleObstruction: string;
   ruleSpeeding: string;
   gameThrottle: string;
@@ -347,6 +350,9 @@ const me: Dict = {
   gameBack: "Druga situacija",
   gameNextScenario: "Sljedeća situacija",
   gameRuleTitle: "Pravilo",
+  gameLightRed: "Crveno",
+  gameLightYellow: "Žuto",
+  gameLightGreen: "Zeleno",
   ruleObstruction:
     "Kad imate prednost i put je slobodan, dužni ste da nastavite. Nepotrebno stajanje na raskrsnici zadržava saobraćaj i samo po sebi je prekršaj.",
   ruleSpeeding:
@@ -566,6 +572,9 @@ const en: Dict = {
   gameBack: "Another situation",
   gameNextScenario: "Next situation",
   gameRuleTitle: "Rule",
+  gameLightRed: "Red",
+  gameLightYellow: "Amber",
+  gameLightGreen: "Green",
   ruleObstruction:
     "When the right of way is yours and the road is clear, you are required to proceed. Stopping needlessly at an intersection holds up traffic and is an offence in itself.",
   ruleSpeeding:
@@ -790,6 +799,9 @@ const sq: Dict = {
   gameBack: "Situatë tjetër",
   gameNextScenario: "Situata tjetër",
   gameRuleTitle: "Rregulli",
+  gameLightRed: "E kuqe",
+  gameLightYellow: "E verdhë",
+  gameLightGreen: "E gjelbër",
   ruleObstruction:
     "Kur përparësia është e juaja dhe rruga është e lirë, jeni i detyruar të vazhdoni. Ndalimi i panevojshëm në kryqëzim e pengon trafikun dhe në vetvete është shkelje.",
   ruleSpeeding:
@@ -1016,6 +1028,9 @@ const ru: Dict = {
   gameBack: "Другая ситуация",
   gameNextScenario: "Следующая ситуация",
   gameRuleTitle: "Правило",
+  gameLightRed: "Красный",
+  gameLightYellow: "Жёлтый",
+  gameLightGreen: "Зелёный",
   ruleObstruction:
     "Когда преимущество у вас и дорога свободна, вы обязаны продолжить движение. Ненужная остановка на перекрёстке задерживает движение и сама по себе является нарушением.",
   ruleSpeeding:

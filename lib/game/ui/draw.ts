@@ -22,7 +22,7 @@ import {
   VIEW_HALF,
 } from "../sim/config";
 import { headingAt, pointAt } from "../sim/geometry";
-import { compile, lightFor, OUTBOUND, TEMPLATES } from "../sim/intersection";
+import { compile, lightCountdown, lightFor, OUTBOUND, TEMPLATES } from "../sim/intersection";
 import type { Arm, ArmId, IntersectionTemplate, Path, Point, Vehicle, World } from "../sim/types";
 import { renderS, type Driver } from "./runner";
 
@@ -499,13 +499,22 @@ function brakingNow(runner: Driver, veh: Vehicle): boolean {
 }
 
 /** Znak/semafor na kraku igrača — HUD ga prikazuje kao ikonu. */
-export function playerControl(world: World): { kind: string; light: string | null } {
+export function playerControl(world: World): {
+  kind: string;
+  light: string | null;
+  /** Sekundi do promjene svjetla; `null` kad nema semafora. */
+  countdown: number | null;
+} {
   const tpl = TEMPLATES[world.templateId];
   const player = world.vehicles.find((x) => x.kind === "player");
   const a = tpl?.arms.find((x) => x.id === (player?.arm as ArmId));
-  if (!tpl || !a) return { kind: "none", light: null };
+  if (!tpl || !a) return { kind: "none", light: null, countdown: null };
   if (a.control.kind === "light") {
-    return { kind: "light", light: lightFor(tpl, world.phaseIndex, a.control.phaseGroup) };
+    return {
+      kind: "light",
+      light: lightFor(tpl, world.phaseIndex, a.control.phaseGroup),
+      countdown: lightCountdown(tpl, world.phaseIndex, world.phaseT, a.control.phaseGroup),
+    };
   }
-  return { kind: a.control.kind, light: null };
+  return { kind: a.control.kind, light: null, countdown: null };
 }

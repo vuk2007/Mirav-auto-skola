@@ -8,7 +8,8 @@
     "sq": "Semafori — drita e kuqe",
     "ru": "Светофор — красный сигнал"
   },
-  "lightStartPhase": 2,
+  "lightStartPhase": 3,
+  "lightStartT": 6,
   "player": {
     "arm": "N",
     "intent": "straight",

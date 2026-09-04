@@ -13,9 +13,12 @@ import type { Scenario } from "./types";
  * pravi prekršaj" bi pao iz naizgled nejasnog razloga. Zato se prozor mjeri, i
  * mjerenje je ovdje da bi buduća izmjena scenarija pala odmah.
  *
- * `semafor` je izuzet: tamo igrač čeka na crveno, pa se sa NPC-om i ne sreće.
+ * Izuzeti su scenariji u kojima igrač ispravno čeka na crveno: tamo se sa NPC-om
+ * i ne sreće, pa mjerenje „kad se sretnu" nema smisla — vrijeme polaska diktira
+ * semafor, a ne trenutak nastanka drugog vozila.
  */
-const TEMPIRANI = SCENARIOS.filter((s) => s.id !== "semafor");
+const CEKA_NA_CRVENO = ["semafor", "semafor-zuto"];
+const TEMPIRANI = SCENARIOS.filter((s) => !CEKA_NA_CRVENO.includes(s.id));
 
 /** Koliko izmjereni idealni trenutak smije da odstupa od zadatog prozora [s]. */
 const TOLERANCIJA = 1.5;

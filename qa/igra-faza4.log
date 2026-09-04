@@ -1,0 +1,61 @@
+{
+  "brojSituacija": 10,
+  "imaNoveNaslove": {
+    "ljevak": true,
+    "zuto": true
+  },
+  "semaforPrijeStarta": {
+    "boja": "CRVENO",
+    "odbrojava": 11
+  },
+  "semaforBoje": [
+    "CRVENO",
+    "ZELENO",
+    "ŽUTO"
+  ],
+  "crvenoOdbrojavaOpada": true,
+  "crvenoOdbrojavanje": [
+    11,
+    10,
+    9,
+    8,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1,
+    19,
+    18,
+    17,
+    16,
+    15,
+    14,
+    13,
+    12,
+    11,
+    10
+  ],
+  "punGas": {
+    "Semafor — crveno svjetlo": {
+      "ishod": "pao",
+      "prekrsaji": [
+        "Prolazak na crveno svjetlo"
+      ]
+    },
+    "Zeleno ne znači slobodno": {
+      "ishod": "pao",
+      "prekrsaji": [
+        "Oduzeto prvenstvo prolaza"
+      ]
+    },
+    "Žuto na prilazu": {
+      "ishod": "pao",
+      "prekrsaji": [
+        "Prolazak na crveno svjetlo"
+      ]
+    }
+  },
+  "greske": []
+}

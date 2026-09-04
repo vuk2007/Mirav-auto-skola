@@ -1,0 +1,35 @@
+{
+  "id": "semafor-zuto",
+  "intersection": "cross-lights-kratki",
+  "difficulty": 3,
+  "title": {
+    "me": "Žuto na prilazu",
+    "en": "Amber on the approach",
+    "sq": "E verdha në afrim",
+    "ru": "Жёлтый на подъезде"
+  },
+  "lightStartPhase": 0,
+  "lightStartT": 4.5,
+  "player": {
+    "arm": "N",
+    "intent": "straight",
+    "spawnDistance": 42
+  },
+  "npcs": [
+    {
+      "arm": "W",
+      "intent": "straight",
+      "spawnAt": [
+        5.0,
+        5.6
+      ],
+      "speed": 11
+    }
+  ],
+  "explanation": {
+    "me": "Žuto se upalilo dok ste još bili dovoljno daleko da bezbjedno stanete — u tom slučaju se staje. Prolazak se dozvoljava samo kad je zaustavljanje opasnije od nastavka, dakle kad ste već tik pred linijom.",
+    "en": "The light turned amber while you were still far enough to stop safely — in that case you stop. Going on is allowed only when stopping would be more dangerous than continuing, that is when you are already right at the line.",
+    "sq": "Drita u bë e verdhë kur ju ishit ende mjaftueshëm larg për të ndaluar në mënyrë të sigurt — në atë rast ndalohet. Kalimi lejohet vetëm kur ndalimi do të ishte më i rrezikshëm se vazhdimi, pra kur jeni tashmë fare pranë vijës.",
+    "ru": "Жёлтый загорелся, когда вы были ещё достаточно далеко, чтобы безопасно остановиться, — в этом случае нужно остановиться. Проезд допустим, только когда остановка опаснее продолжения движения, то есть когда вы уже вплотную у линии."
+  }
+}

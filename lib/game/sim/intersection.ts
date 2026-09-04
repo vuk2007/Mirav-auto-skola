@@ -297,11 +297,47 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
       arm("S", { kind: "light", phaseGroup: "NS" }),
       arm("W", { kind: "light", phaseGroup: "EW" }),
     ],
+    /**
+     * Ciklus od 34 s. Poslije svakog žutog ide međufaza u kojoj su SVI na
+     * crvenom: vozilo koje je legalno ušlo na žuto mora da stigne da isprazni
+     * raskrsnicu prije nego što poprečni pravac dobije zeleno. Bez te međufaze
+     * program pravi sudare koji nijesu ničija greška.
+     */
     lightProgram: [
       { green: ["NS"], duration: 12 },
       { green: [], yellow: ["NS"], duration: 3 },
+      { green: [], duration: 2 },
       { green: ["EW"], duration: 12 },
       { green: [], yellow: ["EW"], duration: 3 },
+      { green: [], duration: 2 },
+    ],
+    geometry,
+  },
+
+  /**
+   * Isti raspored krakova, kraći ciklus (24 s umjesto 34).
+   *
+   * Postoji zbog scenarija u kojem je poenta odluka na žuto: kad se ta odluka
+   * jednom donese ispravno, sve poslije nje je čekanje. Na velikoj raskrsnici
+   * to čekanje traje dvadesetak sekundi i vježba se pretvori u buljenje u
+   * ekran. Program je podatak, pa je manja raskrsnica poštenije rješenje od
+   * izuzetka u kodu.
+   */
+  "cross-lights-kratki": {
+    id: "cross-lights-kratki",
+    arms: [
+      arm("N", { kind: "light", phaseGroup: "NS" }),
+      arm("E", { kind: "light", phaseGroup: "EW" }),
+      arm("S", { kind: "light", phaseGroup: "NS" }),
+      arm("W", { kind: "light", phaseGroup: "EW" }),
+    ],
+    lightProgram: [
+      { green: ["NS"], duration: 8 },
+      { green: [], yellow: ["NS"], duration: 3 },
+      { green: [], duration: 2 },
+      { green: ["EW"], duration: 6 },
+      { green: [], yellow: ["EW"], duration: 3 },
+      { green: [], duration: 2 },
     ],
     geometry,
   },
@@ -318,4 +354,33 @@ export function lightFor(
   if (phase.green.includes(group)) return "green";
   if (phase.yellow?.includes(group)) return "yellow";
   return "red";
+}
+
+/**
+ * Koliko sekundi do promjene svjetla za datu grupu.
+ *
+ * Ne gleda se samo tekuća faza: crveno za jedan pravac traje kroz nekoliko
+ * faza programa (žuto poprečnog, međufaza, pa njegovo zeleno), pa bi „preostalo
+ * u ovoj fazi" bio pogrešan broj. Ide se unaprijed dok se boja ne promijeni.
+ */
+export function lightCountdown(
+  tpl: IntersectionTemplate,
+  phaseIndex: number,
+  phaseT: number,
+  group: string,
+): number | null {
+  const program = tpl.lightProgram;
+  if (!program || program.length === 0) return null;
+  const sada = lightFor(tpl, phaseIndex, group);
+  const tekuca = program[phaseIndex];
+  if (!tekuca) return null;
+
+  let preostalo = Math.max(0, tekuca.duration - phaseT);
+  for (let k = 1; k <= program.length; k++) {
+    const i = (phaseIndex + k) % program.length;
+    if (lightFor(tpl, i, group) !== sada) return preostalo;
+    preostalo += program[i]!.duration;
+  }
+  // Boja se ne mijenja u cijelom ciklusu — nema šta da se odbrojava.
+  return null;
 }

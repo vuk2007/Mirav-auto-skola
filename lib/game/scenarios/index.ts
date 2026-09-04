@@ -14,6 +14,8 @@ import glavniPut from "./glavni-put.json";
 import izlomljeniGlavni from "./izlomljeni-glavni.json";
 import ljevak from "./ljevak.json";
 import semafor from "./semafor.json";
+import semaforLjevak from "./semafor-ljevak.json";
+import semaforZuto from "./semafor-zuto.json";
 import stop from "./stop.json";
 import trougao from "./trougao.json";
 import type { Scenario } from "../sim/types";
@@ -27,6 +29,8 @@ export const SCENARIOS: readonly Scenario[] = [
   izlomljeniGlavni,
   semafor,
   ljevak,
+  semaforLjevak,
+  semaforZuto,
   // JSON ne nosi literalne tipove (npr. `spawnAt` je `number[]`, a treba
   // `[number, number]`), pa se oblik provjerava testom umjesto kompajlerom.
 ] as unknown as Scenario[];
@@ -47,4 +51,8 @@ export const PLAYER_MUST_YIELD: readonly string[] = [
   "izlomljeni-glavni",
   "semafor",
   "ljevak",
+  "semafor-ljevak",
+  // Ovdje je prekršaj `redLight`, ne oduzeto prvenstvo — spisak pokriva oba,
+  // vidi test „bot koji samo gasi".
+  "semafor-zuto",
 ];

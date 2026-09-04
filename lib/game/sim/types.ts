@@ -131,6 +131,14 @@ export interface Scenario {
   player: { arm: ArmId; intent: Intent; spawnDistance: number };
   npcs: ScenarioNpc[];
   lightStartPhase?: number;
+  /**
+   * Koliko je već proteklo u početnoj fazi semafora [s].
+   *
+   * Bez ovoga scenario može da počne samo na početku faze, pa se „žuto te
+   * zateklo na prilazu" ne može ni napraviti: zeleno traje dvanaest sekundi, a
+   * igrač do linije stigne za sedam.
+   */
+  lightStartT?: number;
   difficulty: 1 | 2 | 3;
   vMax?: number;
   /**

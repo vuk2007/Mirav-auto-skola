@@ -20,6 +20,12 @@ const LIGHT_COLOR: Record<string, string> = {
   green: "bg-green",
 };
 
+const LIGHT_LABEL: Record<string, "gameLightRed" | "gameLightYellow" | "gameLightGreen"> = {
+  red: "gameLightRed",
+  yellow: "gameLightYellow",
+  green: "gameLightGreen",
+};
+
 interface GameScreenProps {
   scenario: Scenario;
   /** Nazad na spisak situacija. */
@@ -124,7 +130,15 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
                 }`}
                 aria-hidden="true"
               />
-              {t.simFamilyLights}
+              {t[LIGHT_LABEL[control.light ?? "red"] ?? "gameLightRed"]}
+              {/* Odbrojava se SAMO crveno. Koliko se još čeka nije dio zadatka
+                  i bespotrebno je pogađati; koliko još traje zeleno jeste dio
+                  zadatka, pa bi odbrojavanje ukinulo odluku na žuto. */}
+              {control.light === "red" && control.countdown !== null && (
+                <span className="font-body text-xs font-normal normal-case opacity-70">
+                  {Math.ceil(control.countdown)} s
+                </span>
+              )}
             </span>
           ) : (
             t[CONTROL_LABEL[control.kind] ?? "gameSignNone"]
