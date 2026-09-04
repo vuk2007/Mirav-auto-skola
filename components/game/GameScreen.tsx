@@ -104,7 +104,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
     [phase, outcome, scenario, seed],
   );
 
-  const control = playerControl(runner.world);
+  const control = playerControl(runner.world, scenario.officer);
   const violations = runner.world.violations;
   const flagged = violations.find((v) => v.otherVehicleId)?.otherVehicleId ?? null;
   const explanation = scenario.explanation[lang] ?? scenario.explanation.me ?? "";
@@ -122,7 +122,20 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           ← {t.gameBack}
         </button>
         <span className="font-display ml-auto rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
-          {control.kind === "light" ? (
+          {control.kind === "officer" ? (
+            <span className="flex items-center gap-1.5">
+              <span
+                className={`inline-block h-2.5 w-2.5 rounded-full ${
+                  control.officerAllows ? "bg-green" : "bg-red"
+                }`}
+                aria-hidden="true"
+              />
+              {t.gameSignOfficer}
+              <span className="font-body text-xs font-normal normal-case opacity-70">
+                {control.officerAllows ? t.gameOfficerGo : t.gameOfficerStop}
+              </span>
+            </span>
+          ) : control.kind === "light" ? (
             <span className="flex items-center gap-1.5">
               <span
                 className={`inline-block h-2.5 w-2.5 rounded-full ${
@@ -168,6 +181,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           onHud={setHud}
           onFinish={finish}
           flagVehicleId={phase === "over" ? flagged : null}
+          officer={scenario.officer ?? null}
           label={`${title} — ${t[TASK_LABEL[scenario.player.intent]]}`}
         />
 
@@ -243,6 +257,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
                         violation={v}
                         world={runner.world}
                         control={control.light ?? control.kind}
+                        officerActive={Boolean(scenario.officer)}
                         t={t}
                         lang={lang}
                       />

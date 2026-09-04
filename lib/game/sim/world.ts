@@ -35,7 +35,14 @@ import {
   YELLOW_COMMIT_TTC,
 } from "./config";
 import { headingAt, pointAt, polygonsOverlap, rectCorners, rng } from "./geometry";
-import { compile, lightFor, TEMPLATES } from "./intersection";
+import {
+  compile,
+  crosswalkSpans,
+  lightFor,
+  pedestrianOnRoad,
+  pedestrianSpan,
+  TEMPLATES,
+} from "./intersection";
 import type {
   ArmId,
   ConflictPoint,
@@ -43,7 +50,9 @@ import type {
   Input,
   IntersectionTemplate,
   Path,
+  Pedestrian,
   Scenario,
+  ScenarioOfficer,
   Vehicle,
   Violation,
   World,
@@ -65,6 +74,8 @@ export const PENALTY_REF: Readonly<Record<Violation["type"], string | null>> = {
   collision: "nezgoda",
   obstruction: "ometanje-vozaca",
   speeding: null, // stepenovano po brzini — bira se tek kad kazne budu potvrđene
+  pedestrian: "pjesacki-prelaz",
+  officer: "policija",
 };
 
 // ── pomoćne ────────────────────────────────────────────────────────────────
@@ -85,13 +96,51 @@ function controlToEffective(
   }
 }
 
-function armControl(tpl: IntersectionTemplate, armId: ArmId, phaseIndex: number): EffectiveControl {
-  const a = tpl.arms.find((x) => x.id === armId);
-  return a ? controlToEffective(a.control, tpl, phaseIndex) : "none";
+/**
+ * Regulacija kraka, uz naredbu policajca ako je ima.
+ *
+ * Policajac poništava i znak i semafor — zato se provjerava prvi i zato se
+ * `tpl` uopšte ne gleda kad je prisutan. Semafor i dalje radi svoj program i
+ * dalje se crta; samo prestaje da odlučuje.
+ */
+function armControl(ctx: Regulacija, armId: ArmId, phaseIndex: number): EffectiveControl {
+  if (ctx.officerAllow) return ctx.officerAllow.includes(armId) ? "green" : "red";
+  const a = ctx.tpl.arms.find((x) => x.id === armId);
+  return a ? controlToEffective(a.control, ctx.tpl, phaseIndex) : "none";
 }
 
-function party(v: Vehicle, tpl: IntersectionTemplate, phaseIndex: number): YieldParty {
-  return { approach: v.arm, intent: v.intent, control: armControl(tpl, v.arm, phaseIndex) };
+/** Ono što je za odluku o prvenstvu dovoljno znati o raskrsnici. */
+interface Regulacija {
+  tpl: IntersectionTemplate;
+  /** Krakovi koje policajac trenutno propušta; `null` kad policajca nema. */
+  officerAllow: ArmId[] | null;
+}
+
+function party(ctx: Regulacija, v: Vehicle, phaseIndex: number): YieldParty {
+  return {
+    approach: v.arm,
+    intent: v.intent,
+    control: armControl(ctx, v.arm, phaseIndex),
+    emergency: v.emergency,
+  };
+}
+
+/**
+ * Koje krakove policajac propušta u trenutku `t`.
+ *
+ * Čista funkcija vremena: naredba se ponavlja ciklično i ne pamti se u stanju
+ * svijeta. Zato snimak i ponavljanje ne moraju da nose nijedno dodatno polje.
+ */
+export function officerAllow(officer: ScenarioOfficer | undefined, t: number): ArmId[] | null {
+  if (!officer || officer.phases.length === 0) return null;
+  const ciklus = officer.phases.reduce((a, f) => a + f.duration, 0);
+  if (ciklus <= 0) return officer.phases[0]!.allow;
+  let x = t % ciklus;
+  for (const faza of officer.phases) {
+    if (x < faza.duration) return faza.allow;
+    x -= faza.duration;
+  }
+  return officer.phases[officer.phases.length - 1]!.allow;
 }
 
 /** Koliko sekundi vozilu treba da stigne do `s`; `Infinity` ako stoji. */
@@ -160,7 +209,23 @@ export function createWorld(scenario: Scenario, seed: number): World {
       stopHeld: 0,
       done: false,
       spawnT: t,
+      emergency: n.emergency,
     });
+  });
+
+  // Pješaci kreću sa trotoara i idu poprečno preko kolovoza.
+  const pedestrians: Pedestrian[] = (scenario.pedestrians ?? []).map((ped, i) => {
+    const [lo, hi] = ped.spawnAt;
+    const span = pedestrianSpan(tpl, ped.arm);
+    return {
+      id: `ped${i + 1}`,
+      arm: ped.arm,
+      u: -ped.dir * span,
+      dir: ped.dir,
+      speed: ped.speed,
+      spawnT: lo + rand() * (hi - lo),
+      done: false,
+    };
   });
 
   return {
@@ -168,6 +233,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
     scenarioId: scenario.id,
     templateId: tpl.id,
     vehicles,
+    pedestrians,
     phaseIndex: scenario.lightStartPhase ?? 0,
     phaseT: scenario.lightStartT ?? 0,
     events: [],
@@ -180,8 +246,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
 
 // ── jedan korak ─────────────────────────────────────────────────────────────
 
-interface Ctx {
-  tpl: IntersectionTemplate;
+interface Ctx extends Regulacija {
   paths: Map<string, Path>;
   conflicts: Map<string, ConflictPoint[]>;
   vMax: number;
@@ -190,7 +255,13 @@ interface Ctx {
 function ctxFor(world: World, scenario: Scenario): Ctx {
   const tpl = TEMPLATES[world.templateId]!;
   const c = compile(tpl);
-  return { tpl, paths: c.paths, conflicts: c.conflicts, vMax: scenario.vMax ?? V_MAX_DEFAULT };
+  return {
+    tpl,
+    officerAllow: officerAllow(scenario.officer, world.t),
+    paths: c.paths,
+    conflicts: c.conflicts,
+    vMax: scenario.vMax ?? V_MAX_DEFAULT,
+  };
 }
 
 /**
@@ -201,7 +272,7 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
   let limit = Infinity;
 
   // STOP znak: potpuno zaustavljanje na liniji, pa nastavak po pravilima.
-  const control = armControl(ctx.tpl, me.arm, world.phaseIndex);
+  const control = armControl(ctx, me.arm, world.phaseIndex);
   // Cilja se ISPRED linije, ne na nju — vidi `STOP_MARGIN`.
   if (control === "stop" && me.stopHeld < STOP_DWELL && me.s < mePath.stopLineS) {
     limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
@@ -210,12 +281,18 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
   // (`YELLOW_COMMIT_TTC`) po kojem se sudi i igraču. Da NPC koči na svako žuto,
   // sudio bi mu se drugi aršin nego čovjeku, a uz to bi kočio jače nego što
   // vozilo može i završio nasred raskrsnice.
-  if (me.s < mePath.stopLineS) {
+  //
+  // Vozilo pod pratnjom se ovdje ne zaustavlja: ono prolazi i na crveno, uz
+  // obavezu da se uvjeri da može bezbjedno. Ostali mu ustupaju kroz `whoYields`.
+  if (me.s < mePath.stopLineS && !me.emergency) {
     const staje =
       control === "red" ||
       (control === "yellow" && timeTo(me, mePath.stopLineS) >= YELLOW_COMMIT_TTC);
     if (staje) limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
   }
+
+  // Pješak na prelazu preko kojeg prolazim — staje se prije prelaza.
+  limit = Math.min(limit, pedestrianLimit(world, ctx, me, mePath));
 
   // Vozilo ispred u istoj traci.
   for (const o of world.vehicles) {
@@ -233,8 +310,8 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
 
       const oPath = ctx.paths.get(o.pathId)!;
       const decision = whoYields(
-        party(me, ctx.tpl, world.phaseIndex),
-        party(o, ctx.tpl, world.phaseIndex),
+        party(ctx, me, world.phaseIndex),
+        party(ctx, o, world.phaseIndex),
       );
       if (decision !== "a") continue; // ja imam prednost ili se ne tičemo
 
@@ -250,6 +327,29 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
     }
   }
 
+  return limit;
+}
+
+/**
+ * Do kojeg `s` se smije ići zbog pješaka na prelazu ispred.
+ *
+ * Prelaz blokira dok je pješak NA KOLOVOZU, bez obzira na to koju polovinu je
+ * prešao. Prolazak iza pješaka je u praksi čest, ali polazniku se uči sigurnija
+ * verzija — i ista ona koju već primjenjuje statični simulator.
+ */
+function pedestrianLimit(world: World, ctx: Ctx, v: Vehicle, path: Path): number {
+  let limit = Infinity;
+  for (const span of crosswalkSpans(ctx.tpl, path)) {
+    if (span.to < v.s) continue; // prelaz je iza nas
+    const zauzet = world.pedestrians.some(
+      (p) =>
+        !p.done &&
+        world.t >= p.spawnT &&
+        p.arm === span.arm &&
+        pedestrianOnRoad(ctx.tpl, p),
+    );
+    if (zauzet) limit = Math.min(limit, span.from - GAP);
+  }
   return limit;
 }
 
@@ -286,14 +386,14 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   // ── semafor ───────────────────────────────────────────────────────────────
   const program = ctx.tpl.lightProgram;
   if (program && program.length > 0) {
-    const before = armControl(ctx.tpl, scenario.player.arm, world.phaseIndex);
+    const before = armControl(ctx, scenario.player.arm, world.phaseIndex);
     world.phaseT += DT;
     const dur = program[world.phaseIndex]!.duration;
     if (world.phaseT >= dur) {
       world.phaseT -= dur;
       world.phaseIndex = (world.phaseIndex + 1) % program.length;
     }
-    const after = armControl(ctx.tpl, scenario.player.arm, world.phaseIndex);
+    const after = armControl(ctx, scenario.player.arm, world.phaseIndex);
     // Trenutak kad se upali žuto: ako je igrač bio preblizu liniji da bezbjedno
     // stane, prolazak mu se ne računa kao prekršaj.
     if (before === "green" && after === "yellow") {
@@ -302,6 +402,13 @@ export function step(world: World, scenario: Scenario, input: Input): void {
       world.yellowCommitted = timeTo(p, path.stopLineS) < YELLOW_COMMIT_TTC;
     }
     if (after === "green") world.yellowCommitted = false;
+  }
+
+  // ── pješaci ───────────────────────────────────────────────────────────────
+  for (const ped of world.pedestrians) {
+    if (ped.done || world.t < ped.spawnT) continue;
+    ped.u += ped.dir * ped.speed * DT;
+    if (Math.abs(ped.u) >= pedestrianSpan(ctx.tpl, ped.arm)) ped.done = true;
   }
 
   const player = world.vehicles.find((x) => x.id === PLAYER_ID)!;
@@ -369,8 +476,8 @@ function blamePlayer(
     if (!playerNear) continue;
     // Kriv je samo ako je NPC imao prednost.
     const decision = whoYields(
-      party(npc, ctx.tpl, world.phaseIndex),
-      party(player, ctx.tpl, world.phaseIndex),
+      party(ctx, npc, world.phaseIndex),
+      party(ctx, player, world.phaseIndex),
     );
     if (decision === "b") return true;
   }
@@ -393,7 +500,7 @@ function detectViolations(
   sBefore: number,
 ): void {
   if (player.done) return;
-  const control = armControl(ctx.tpl, player.arm, world.phaseIndex);
+  const control = armControl(ctx, player.arm, world.phaseIndex);
   const crossedStopLine = sBefore < path.stopLineS && player.s >= path.stopLineS;
 
   // ── STOP znak ─────────────────────────────────────────────────────────────
@@ -405,14 +512,49 @@ function detectViolations(
     });
   }
 
+  // ── naredba policajca ─────────────────────────────────────────────────────
+  // Kad je policajac na raskrsnici, on je taj koji zabranjuje prolaz, pa i
+  // prekršaj mora tako da se zove: „prošao na crveno" bi bilo netačno, jer
+  // svjetlo u tom trenutku može biti i zeleno.
+  if (crossedStopLine && ctx.officerAllow && control === "red") {
+    add(world, {
+      type: "officer",
+      t: world.t,
+      details: "Prošao iako policajac zaustavlja saobraćaj sa tog pravca.",
+    });
+    world.outcome = "failed";
+    return;
+  }
+
   // ── crveno svjetlo ────────────────────────────────────────────────────────
-  if (crossedStopLine && (control === "red" || (control === "yellow" && !world.yellowCommitted))) {
+  if (
+    crossedStopLine &&
+    !ctx.officerAllow &&
+    (control === "red" || (control === "yellow" && !world.yellowCommitted))
+  ) {
     add(world, {
       type: "redLight",
       t: world.t,
       details: control === "red" ? "Ušao na crveno svjetlo." : "Ušao na žuto, a mogao je stati.",
     });
     world.outcome = "failed";
+  }
+
+  // ── pješak na prelazu ─────────────────────────────────────────────────────
+  for (const span of crosswalkSpans(ctx.tpl, path)) {
+    // Prekršaj je ULAZAK na prelaz dok je pješak na kolovozu, a ne blizina.
+    if (sBefore >= span.from || player.s < span.from) continue;
+    const ped = world.pedestrians.find(
+      (x) => !x.done && world.t >= x.spawnT && x.arm === span.arm && pedestrianOnRoad(ctx.tpl, x),
+    );
+    if (!ped) continue;
+    add(world, {
+      type: "pedestrian",
+      t: world.t,
+      details: "Ušao na pješački prelaz dok je pješak na kolovozu.",
+    });
+    world.outcome = "failed";
+    return;
   }
 
   // ── sudar ─────────────────────────────────────────────────────────────────
@@ -450,8 +592,8 @@ function detectViolations(
       if (o.id === player.id || o.done || world.t < o.spawnT || o.pathId !== c.pathB) continue;
       if (o.s > c.sB + o.length) continue; // već prošao
       const decision = whoYields(
-        party(player, ctx.tpl, world.phaseIndex),
-        party(o, ctx.tpl, world.phaseIndex),
+        party(ctx, player, world.phaseIndex),
+        party(ctx, o, world.phaseIndex),
       );
       if (decision !== "a") continue;
       if (timeTo(o, c.sB) < TTC_THRESHOLD || inBox(o, ctx.paths.get(o.pathId)!)) {
@@ -499,6 +641,10 @@ function detectViolations(
  * fizički zauzima konfliktnu tačku na njegovoj putanji.
  */
 function pathBlocked(world: World, ctx: Ctx, player: Vehicle, path: Path): boolean {
+  // Pješak na prelazu ispred je razlog da se stoji — čekanje tada nije
+  // zadržavanje saobraćaja nego propisno ustupanje.
+  if (Number.isFinite(pedestrianLimit(world, ctx, player, path))) return true;
+
   for (const c of ctx.conflicts.get(path.id) ?? []) {
     if (c.sA < player.s) continue;
     for (const o of world.vehicles) {
@@ -512,8 +658,8 @@ function pathBlocked(world: World, ctx: Ctx, player: Vehicle, path: Path): boole
       if (inBox(o, oPath)) return true;
 
       const decision = whoYields(
-        party(player, ctx.tpl, world.phaseIndex),
-        party(o, ctx.tpl, world.phaseIndex),
+        party(ctx, player, world.phaseIndex),
+        party(ctx, o, world.phaseIndex),
       );
       if (decision === "a" && timeTo(o, c.sB) < TTC_THRESHOLD) return true;
     }

@@ -16,6 +16,10 @@ import ljevak from "./ljevak.json";
 import semafor from "./semafor.json";
 import semaforLjevak from "./semafor-ljevak.json";
 import semaforZuto from "./semafor-zuto.json";
+import pjesaci from "./pjesaci.json";
+import policajacPropusta from "./policajac-propusta.json";
+import policajacZaustavlja from "./policajac-zaustavlja.json";
+import hitna from "./hitna.json";
 import stop from "./stop.json";
 import trougao from "./trougao.json";
 import type { Scenario } from "../sim/types";
@@ -31,6 +35,10 @@ export const SCENARIOS: readonly Scenario[] = [
   ljevak,
   semaforLjevak,
   semaforZuto,
+  pjesaci,
+  hitna,
+  policajacPropusta,
+  policajacZaustavlja,
   // JSON ne nosi literalne tipove (npr. `spawnAt` je `number[]`, a treba
   // `[number, number]`), pa se oblik provjerava testom umjesto kompajlerom.
 ] as unknown as Scenario[];
@@ -55,4 +63,8 @@ export const PLAYER_MUST_YIELD: readonly string[] = [
   // Ovdje je prekršaj `redLight`, ne oduzeto prvenstvo — spisak pokriva oba,
   // vidi test „bot koji samo gasi".
   "semafor-zuto",
+  // Pješak na prelazu i naredba policajca su takođe „nemaš pravo proći".
+  "pjesaci",
+  "hitna",
+  "policajac-zaustavlja",
 ];

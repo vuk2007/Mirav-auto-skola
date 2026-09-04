@@ -144,6 +144,14 @@ export interface YieldParty {
   approach: Approach;
   intent: Intent;
   control: EffectiveControl;
+  /**
+   * Vozilo pod pratnjom ili sa pravom prvenstva (rotacija i sirena).
+   *
+   * Nije vrsta regulacije kraka nego osobina vozila, pa stoji ovdje, a ne u
+   * `EffectiveControl`: isti krak u istom trenutku može imati i obično vozilo
+   * i vozilo pod pratnjom, i ona se ne sude isto.
+   */
+  emergency?: boolean;
 }
 
 /**
@@ -179,6 +187,10 @@ export function priorityTier(control: EffectiveControl): number | null {
  * logika u igri je zovu, da pravila ne mogu da se raziđu na dva mjesta.
  */
 export function whoYields(a: YieldParty, b: YieldParty): "a" | "b" | null {
+  // Vozilo pod pratnjom ima prvenstvo nad svima, bez obzira na znakove i
+  // semafor — zato se provjerava prije nivoa regulacije, a ne unutar njega.
+  if (Boolean(a.emergency) !== Boolean(b.emergency)) return a.emergency ? "b" : "a";
+
   const ta = priorityTier(a.control);
   const tb = priorityTier(b.control);
 

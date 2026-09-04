@@ -384,3 +384,66 @@ export function lightCountdown(
   // Boja se ne mijenja u cijelom ciklusu — nema šta da se odbrojava.
   return null;
 }
+
+// ── Geometrija koju dijele simulacija i crtanje ─────────────────────────────
+//
+// Ovi brojevi moraju biti isti na oba mjesta: ako simulacija misli da je prelaz
+// jedno, a crtanje ga nacrta drugdje, igrač ustupa pješaku kojeg ne vidi.
+
+/** Pola širine kolovoza jednog kraka [m]: po jedna traka u svakom smjeru. */
+export const roadHalf = (tpl: IntersectionTemplate, a: Arm): number =>
+  tpl.geometry.laneWidth * a.lanes;
+
+/** Dokle seže tijelo raskrsnice od centra [m] — tu se kolovozi ukrštaju. */
+export function junctionHalf(tpl: IntersectionTemplate): number {
+  return Math.max(...tpl.arms.map((a) => roadHalf(tpl, a)));
+}
+
+/** Rastojanje stop-linije od centra [m]; prati `Path.stopLineS`. */
+export const stopLineAt = (tpl: IntersectionTemplate): number => tpl.geometry.size / 2;
+
+/** Širina pješačkog prelaza [m]: prostor između stop-linije i ukrštanja. */
+export const crosswalkWidth = (tpl: IntersectionTemplate): number =>
+  stopLineAt(tpl) - junctionHalf(tpl);
+
+/**
+ * Djelovi putanje koji leže na pješačkom prelazu.
+ *
+ * Putanja prelazi najviše dva prelaza: onaj na svom kraku (prije ulaska) i onaj
+ * na izlaznom kraku (poslije skretanja). Kod skretanja se ide po luku, pa je
+ * dužina duž putanje malo veća od širine prelaza — razlika je ispod pola metra
+ * i ne mijenja ništa u odluci „ima li pješaka na prelazu".
+ */
+export function crosswalkSpans(
+  tpl: IntersectionTemplate,
+  path: Path,
+): { arm: ArmId; from: number; to: number }[] {
+  const w = crosswalkWidth(tpl);
+  const out: { arm: ArmId; from: number; to: number }[] = [];
+  const ulaz = tpl.arms.find((a) => a.id === path.arm);
+  if (ulaz?.hasCrosswalk) out.push({ arm: path.arm, from: path.stopLineS, to: path.stopLineS + w });
+  const izlaz = tpl.arms.find((a) => a.id === path.exitArm);
+  if (izlaz?.hasCrosswalk) out.push({ arm: path.exitArm, from: path.boxExitS - w, to: path.boxExitS });
+  return out;
+}
+
+/** Gdje pješak stoji u svijetu; `u` je odmak od ose kraka. */
+export function pedestrianPos(tpl: IntersectionTemplate, armId: ArmId, u: number): Point {
+  const out = OUTBOUND[armId];
+  const d = (junctionHalf(tpl) + stopLineAt(tpl)) / 2;
+  const bok = right(out);
+  return { x: out.x * d + bok.x * u, y: out.y * d + bok.y * u };
+}
+
+/** Dokle pješak ide: kreće sa trotoara, prelazi kolovoz i silazi na drugi trotoar. */
+export function pedestrianSpan(tpl: IntersectionTemplate, armId: ArmId): number {
+  const a = tpl.arms.find((x) => x.id === armId);
+  return (a ? roadHalf(tpl, a) : tpl.geometry.laneWidth) + 1.4;
+}
+
+/** Da li je pješak na kolovozu — dok jeste, prelaz nije slobodan. */
+export function pedestrianOnRoad(tpl: IntersectionTemplate, p: { arm: ArmId; u: number }): boolean {
+  const a = tpl.arms.find((x) => x.id === p.arm);
+  const half = a ? roadHalf(tpl, a) : tpl.geometry.laneWidth;
+  return Math.abs(p.u) <= half;
+}

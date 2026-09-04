@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { HUD_HZ } from "@/lib/game/sim/config";
-import type { Input, Outcome } from "@/lib/game/sim/types";
+import type { Input, Outcome, ScenarioOfficer } from "@/lib/game/sim/types";
 import { drawScene } from "@/lib/game/ui/draw";
 import type { Driver } from "@/lib/game/ui/runner";
 
@@ -20,6 +20,8 @@ interface GameCanvasProps {
   onFinish: (outcome: Outcome) => void;
   /** Vozilo koje treba istaći crveno kad se scenario prekine. */
   flagVehicleId: string | null;
+  /** Policajac je dio scenarija, pa ga platno dobija spolja. */
+  officer: ScenarioOfficer | null;
   label: string;
 }
 
@@ -37,6 +39,7 @@ export default function GameCanvas({
   onHud,
   onFinish,
   flagVehicleId,
+  officer,
   label,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -46,10 +49,12 @@ export default function GameCanvas({
   const onFinishRef = useRef(onFinish);
   const runningRef = useRef(running);
   const flagRef = useRef(flagVehicleId);
+  const officerRef = useRef(officer);
   onHudRef.current = onHud;
   onFinishRef.current = onFinish;
   runningRef.current = running;
   flagRef.current = flagVehicleId;
+  officerRef.current = officer;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -89,6 +94,7 @@ export default function GameCanvas({
       drawScene(ctx, runner, cssW, cssH, {
         playerBraking: inputRef.current.brake > 0,
         flagVehicleId: flagRef.current,
+        officer: officerRef.current,
       });
 
       if (now - lastHud > 1000 / HUD_HZ) {

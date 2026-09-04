@@ -1,0 +1,34 @@
+{
+  "id": "pjesaci",
+  "intersection": "cross-none",
+  "difficulty": 2,
+  "title": {
+    "me": "Pješak na prelazu pri skretanju",
+    "en": "Pedestrian on the crossing as you turn",
+    "sq": "Këmbësor në vendkalim gjatë kthesës",
+    "ru": "Пешеход на переходе при повороте"
+  },
+  "player": {
+    "arm": "N",
+    "intent": "right",
+    "spawnDistance": 42
+  },
+  "npcs": [],
+  "pedestrians": [
+    {
+      "arm": "W",
+      "dir": 1,
+      "spawnAt": [
+        4.6,
+        5.2
+      ],
+      "speed": 1.3
+    }
+  ],
+  "explanation": {
+    "me": "Skrećete desno i prelazite pješački prelaz na ulici u koju ulazite. Pješaka koji je na tom prelazu morate propustiti — sačekate da siđe sa kolovoza, pa nastavite.",
+    "en": "You are turning right and crossing the pedestrian crossing on the street you are entering. You must give way to the pedestrian on it — wait until they are off the roadway, then carry on.",
+    "sq": "Ju ktheheni djathtas dhe kaloni vendkalimin e këmbësorëve në rrugën ku po hyni. Këmbësorin që është në të duhet ta lini të kalojë — prisni derisa të dalë nga karrexhata, pastaj vazhdoni.",
+    "ru": "Вы поворачиваете направо и пересекаете пешеходный переход на улице, в которую въезжаете. Пешехода на нём вы обязаны пропустить — дождитесь, пока он сойдёт с проезжей части, затем продолжайте."
+  }
+}

@@ -17,6 +17,8 @@ export const VIOLATION_LABEL: Readonly<Record<ViolationType, keyof Dict>> = {
   collision: "vioCollision",
   obstruction: "vioObstruction",
   speeding: "vioSpeeding",
+  pedestrian: "vioPedestrian",
+  officer: "vioOfficer",
 };
 
 export const TASK_LABEL: Readonly<Record<Intent, keyof Dict>> = {
@@ -50,6 +52,8 @@ export function ruleKeyFor(opts: {
   playerArm: Approach;
   playerIntent: Intent;
   otherArm: Approach | null;
+  /** Da li je vozilo kojem je oduzeta prednost bilo pod pratnjom. */
+  otherEmergency?: boolean;
 }): keyof Dict {
   switch (opts.type) {
     case "redLight":
@@ -60,11 +64,17 @@ export function ruleKeyFor(opts: {
       return "ruleObstruction";
     case "speeding":
       return "ruleSpeeding";
+    case "pedestrian":
+      return "rulePedestrian";
+    case "officer":
+      return "ruleOfficer";
     default:
       break;
   }
 
   // `rightOfWay` i `collision` — pravilo zavisi od situacije.
+  // Vozilo pod pratnjom je jače od svega ostalog, pa se gleda prvo.
+  if (opts.otherEmergency) return "ruleEmergency";
   if (opts.playerIntent === "left" && opts.otherArm === OPPOSITE[opts.playerArm]) {
     return "ruleLeftTurn";
   }

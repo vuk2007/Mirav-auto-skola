@@ -4,7 +4,7 @@ import { flooringBot, perfectBot, run } from "./bots";
 import { DT } from "./config";
 import { compile, lightCountdown, lightFor, TEMPLATES } from "./intersection";
 import type { Scenario } from "./types";
-import { createWorld, PLAYER_ID, step } from "./world";
+import { createWorld, officerAllow, PLAYER_ID, step } from "./world";
 
 const SA_SEMAFOROM = Object.values(TEMPLATES).filter(
   (t) => (t.lightProgram?.length ?? 0) > 0,
@@ -93,7 +93,7 @@ describe("odbrojavanje", () => {
 
 describe("vozila i semafor", () => {
   for (const s of SCENARIJI_SA_SEMAFOROM) {
-    it(`${s.id}: nijedan NPC ne prelazi stop-liniju na crveno`, () => {
+    it(`${s.id}: nijedan NPC ne prelazi stop-liniju bez prava prolaza`, () => {
       const tpl = TEMPLATES[s.intersection]!;
       const { paths } = compile(tpl);
       for (const seed of [1, 7, 42]) {
@@ -101,18 +101,27 @@ describe("vozila i semafor", () => {
         const prije = new Map(world.vehicles.map((v) => [v.id, v.s]));
         for (let i = 0; i < 4000 && world.outcome === "running"; i++) {
           const faza = world.phaseIndex;
+          const naredba = officerAllow(s.officer, world.t);
           step(world, s, perfectBot(world, s));
           for (const v of world.vehicles) {
             if (v.kind !== "npc" || world.t < v.spawnT) continue;
             const path = paths.get(v.pathId)!;
             const bio = prije.get(v.id) ?? 0;
             if (bio < path.stopLineS && v.s >= path.stopLineS) {
-              const arm = tpl.arms.find((a) => a.id === v.arm)!;
-              const boja =
-                arm.control.kind === "light"
-                  ? lightFor(tpl, faza, arm.control.phaseGroup)
-                  : "green";
-              expect(boja, `${s.id}/${seed}: ${v.id} prešao liniju na ${boja}`).not.toBe("red");
+              // Kad je policajac na raskrsnici, pravo prolaza daje ON, a ne
+              // semafor — vozilo tada smije preko linije i na crveno svjetlo.
+              // Vozilo pod pratnjom prolazi u oba slučaja.
+              const smije = naredba
+                ? naredba.includes(v.arm) || v.emergency
+                : (() => {
+                    const arm = tpl.arms.find((a) => a.id === v.arm)!;
+                    const boja =
+                      arm.control.kind === "light"
+                        ? lightFor(tpl, faza, arm.control.phaseGroup)
+                        : "green";
+                    return boja !== "red" || Boolean(v.emergency);
+                  })();
+              expect(smije, `${s.id}/${seed}: ${v.id} prešao liniju bez prava`).toBe(true);
             }
             prije.set(v.id, v.s);
           }

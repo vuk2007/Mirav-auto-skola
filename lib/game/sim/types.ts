@@ -113,6 +113,27 @@ export interface Vehicle {
   done: boolean;
   /** Tren u kojem vozilo ulazi u simulaciju [s]. Prije toga ga nema. */
   spawnT: number;
+  /** Vozilo pod pratnjom — rotacija i sirena. Prvenstvo nad svima. */
+  emergency?: boolean;
+}
+
+/**
+ * Pješak na prelazu jednog kraka.
+ *
+ * Kreće se poprečno na kolovoz, pa mu je pozicija jedan broj: `u` je odmak od
+ * ose kraka [m]. Van kolovoza je bezopasan; dok je na njemu, vozilo koje prelazi
+ * taj prelaz mora da ga propusti.
+ */
+export interface Pedestrian {
+  id: string;
+  arm: ArmId;
+  /** Odmak od ose kraka [m]. Kreće se od `-start` ka `+start` ili obrnuto. */
+  u: number;
+  /** Smjer kretanja duž prelaza. */
+  dir: 1 | -1;
+  speed: number;
+  spawnT: number;
+  done: boolean;
 }
 
 // ── Scenario ────────────────────────────────────────────────────────────────
@@ -123,6 +144,36 @@ export interface ScenarioNpc {
   /** Opseg sekundi u kojem vozilo nastaje; bira se po sjemenu. */
   spawnAt: [number, number];
   speed: number;
+  /** Vozilo pod pratnjom — prolazi i na crveno, svi mu ustupaju. */
+  emergency?: boolean;
+}
+
+export interface ScenarioPedestrian {
+  arm: ArmId;
+  /** Sa koje strane kreće: `-1` sa lijeve ivice gledano niz krak, `1` sa desne. */
+  dir: 1 | -1;
+  spawnAt: [number, number];
+  /** Brzina hoda [m/s]; oko 1,3 za odraslu osobu. */
+  speed: number;
+}
+
+/**
+ * Naredba policijskog službenika.
+ *
+ * Policajac nije dio raskrsnice nego okolnosti tog trenutka, pa stoji u
+ * scenariju, a ne u šablonu.
+ *
+ * `allow` su krakovi kojima je u toj fazi dozvoljen prolaz; svi ostali stoje.
+ * Uvijek su to dva nasuprotna kraka, jer policajac raširenim rukama propušta
+ * jedan pravac — a to je i jedino što se sa slike može pročitati. Semantika
+ * ostalih znakova rukama nije modelovana i namjerno se ne pretpostavlja.
+ *
+ * Faze se ponavljaju ciklično i zavise samo od vremena, pa u stanju svijeta ne
+ * ostavljaju ništa — ponavljanje snimka ih dobija tačnim bez ijednog dodatnog
+ * polja.
+ */
+export interface ScenarioOfficer {
+  phases: { allow: ArmId[]; duration: number }[];
 }
 
 export interface Scenario {
@@ -130,6 +181,8 @@ export interface Scenario {
   intersection: string;
   player: { arm: ArmId; intent: Intent; spawnDistance: number };
   npcs: ScenarioNpc[];
+  pedestrians?: ScenarioPedestrian[];
+  officer?: ScenarioOfficer;
   lightStartPhase?: number;
   /**
    * Koliko je već proteklo u početnoj fazi semafora [s].
@@ -161,7 +214,9 @@ export type ViolationType =
   | "redLight"
   | "collision"
   | "obstruction"
-  | "speeding";
+  | "speeding"
+  | "pedestrian"
+  | "officer";
 
 export interface Violation {
   type: ViolationType;
@@ -189,6 +244,7 @@ export interface World {
   scenarioId: string;
   templateId: string;
   vehicles: Vehicle[];
+  pedestrians: Pedestrian[];
   /** Indeks tekuće faze semafora i koliko je u njoj proteklo. */
   phaseIndex: number;
   phaseT: number;

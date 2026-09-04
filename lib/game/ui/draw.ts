@@ -22,8 +22,30 @@ import {
   VIEW_HALF,
 } from "../sim/config";
 import { headingAt, pointAt } from "../sim/geometry";
-import { compile, lightCountdown, lightFor, OUTBOUND, TEMPLATES } from "../sim/intersection";
-import type { Arm, ArmId, IntersectionTemplate, Path, Point, Vehicle, World } from "../sim/types";
+import {
+  compile,
+  crosswalkWidth,
+  junctionHalf,
+  lightCountdown,
+  lightFor,
+  OUTBOUND,
+  pedestrianPos,
+  roadHalf,
+  stopLineAt,
+  TEMPLATES,
+} from "../sim/intersection";
+import type {
+  Arm,
+  ArmId,
+  IntersectionTemplate,
+  Path,
+  Pedestrian,
+  Point,
+  ScenarioOfficer,
+  Vehicle,
+  World,
+} from "../sim/types";
+import { officerAllow } from "../sim/world";
 import { renderS, type Driver } from "./runner";
 
 /** Boje su iste kao tokeni u `app/globals.css` — scena mora da liči na sajt. */
@@ -39,6 +61,9 @@ export const PALETTE = {
   blue: "#2f6fd0",
   npc: ["#c8232c", "#2f7d33", "#726b5c", "#8a5a2b"],
   lampOff: "#2a2a2a",
+  emergency: "#f2f2f0",
+  beacon: "#1f5fd0",
+  officer: "#123a6d",
 } as const;
 
 export interface View {
@@ -104,17 +129,9 @@ function fillPoly(ctx: CanvasRenderingContext2D, v: View, pts: readonly Point[],
 
 // ── Raskrsnica ──────────────────────────────────────────────────────────────
 
-/** Pola širine kolovoza [m]: po jedna traka u svakom smjeru. */
-const roadHalf = (tpl: IntersectionTemplate, arm: Arm): number =>
-  tpl.geometry.laneWidth * arm.lanes;
-
-/** Dokle seže tijelo raskrsnice — tu se kolovozi ukrštaju. */
-function junctionHalf(tpl: IntersectionTemplate): number {
-  return Math.max(...tpl.arms.map((a) => roadHalf(tpl, a)));
-}
-
-/** Rastojanje stop-linije od centra [m] — mora da prati `Path.stopLineS`. */
-const stopLineAt = (tpl: IntersectionTemplate): number => tpl.geometry.size / 2;
+// Geometrija kolovoza, prelaza i stop-linije dolazi iz `intersection.ts`, gdje
+// je koristi i simulacija. Da je ovdje svoja kopija, pješak bi mogao da bude
+// nacrtan na jednom mjestu, a da simulacija računa da je na drugom.
 
 function drawRoads(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionTemplate): void {
   const reach = VIEW_HALF * 1.5; // preko ivice ekrana, da nema šava
@@ -166,16 +183,12 @@ function drawMarkings(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionT
 
     if (a.hasCrosswalk) {
       // Zebra između tijela raskrsnice i stop-linije.
+      const sirina = crosswalkWidth(tpl);
       const bars = 5;
       for (let i = 0; i < bars; i++) {
-        const t = j + ((line - j) * (i + 0.25)) / bars;
+        const t = j + (sirina * (i + 0.25)) / bars;
         const c = mul(out, t);
-        fillPoly(
-          ctx,
-          v,
-          worldRect(c, out, (line - j) / (bars * 1.9), half * 2),
-          PALETTE.paint,
-        );
+        fillPoly(ctx, v, worldRect(c, out, sirina / (bars * 1.9), half * 2), PALETTE.paint);
       }
     }
 
@@ -330,7 +343,12 @@ function drawVehicle(
   pos: Point,
   heading: Point,
   color: string,
-  opts: { braking: boolean; blink: "left" | "right" | null; highlight: string | null },
+  opts: {
+    braking: boolean;
+    blink: "left" | "right" | null;
+    highlight: string | null;
+    beacon: boolean;
+  },
 ): void {
   // Na uskom ekranu 4,4 m ispadne oko petnaest piksela; ispod toga se vozilo
   // crta uvećano, jer je čitljivost preča od razmjere.
@@ -368,6 +386,17 @@ function drawVehicle(
   ctx.fillStyle = opts.braking ? "#ff3b30" : "rgba(0,0,0,0.35)";
   ctx.fillRect(-lenPx / 2, -widPx * 0.42, lenPx * 0.1, widPx * 0.22);
   ctx.fillRect(-lenPx / 2, widPx * 0.2, lenPx * 0.1, widPx * 0.22);
+
+  if (opts.beacon) {
+    // Rotacija na krovu — trepće brže od pokazivača pravca, kao i u stvarnosti.
+    ctx.fillStyle = PALETTE.beacon;
+    ctx.beginPath();
+    ctx.arc(0, 0, Math.max(2.5, widPx * 0.3), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = PALETTE.paint;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
 
   if (opts.blink) {
     // Pokazivač pravca: NPC namjera se drukčije ne vidi, a od nje zavisi
@@ -423,6 +452,82 @@ function drawEdgeMarker(
   ctx.globalAlpha = 1;
 }
 
+/** Pješak iz ptičje perspektive — glava, tijelo, dvije noge. */
+function drawPedestrian(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  tpl: IntersectionTemplate,
+  ped: Pedestrian,
+): void {
+  const p = px(v, pedestrianPos(tpl, ped.arm, ped.u));
+  // Čovjek je pola metra širok, što je na ovoj razmjeri tri piksela — crta se
+  // uvećano, iz istog razloga kao i vozila (vidi `MIN_CAR_PX`).
+  const r = Math.max(4.5, 0.55 * v.scale);
+
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  // Bijeli obrub: pješak je siva figura na sivom asfaltu i bez njega se gubi.
+  ctx.beginPath();
+  ctx.arc(0, 0, r * 1.9, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255,255,255,0.55)";
+  ctx.fill();
+
+  ctx.fillStyle = PALETTE.ink;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillRect(-r * 1.5, -r * 0.35, r * 3, r * 0.7);
+  ctx.restore();
+}
+
+/**
+ * Policajac na sredini raskrsnice, sa rukama duž pravca koji propušta.
+ *
+ * Nije ukras: raširene ruke znače da vozila koja mu dolaze sprijeda i otpozadi
+ * stoje, a ona sa strane prolaze. Zato ruke pokazuju baš ka krakovima kojima je
+ * prolaz dozvoljen — polaznik može da pročita naredbu sa slike.
+ */
+function drawOfficer(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  allow: readonly ArmId[],
+): void {
+  const c = px(v, { x: 0, y: 0 });
+  // Namjerno krupnije od stvarnih razmjera: naredba se čita sa raširenih ruku,
+  // a čovjek u prirodnoj veličini je ovdje desetak piksela.
+  const r = Math.max(6, 0.75 * v.scale);
+  const dozvoljen = allow[0];
+  const osa = dozvoljen ? OUTBOUND[dozvoljen] : { x: 1, y: 0 };
+
+  ctx.save();
+  ctx.translate(c.x, c.y);
+  ctx.rotate(Math.atan2(osa.y, osa.x));
+
+  // Svijetla podloga — tamna figura na tamnom asfaltu se inače ne vidi.
+  ctx.beginPath();
+  ctx.arc(0, 0, r * 1.6, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255,255,255,0.6)";
+  ctx.fill();
+
+  // ruke duž propuštenog pravca
+  ctx.strokeStyle = PALETTE.officer;
+  ctx.lineWidth = Math.max(2.5, r * 0.5);
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(-r * 3, 0);
+  ctx.lineTo(r * 3, 0);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.fillStyle = PALETTE.officer;
+  ctx.fill();
+  ctx.strokeStyle = PALETTE.paint;
+  ctx.lineWidth = Math.max(1, r * 0.28);
+  ctx.stroke();
+  ctx.restore();
+}
+
 // ── Scena ───────────────────────────────────────────────────────────────────
 
 export interface DrawOptions {
@@ -430,6 +535,8 @@ export interface DrawOptions {
   flagVehicleId?: string | null;
   /** Da li igrač trenutno koči — stop svjetla se ne mogu izvesti iz stanja. */
   playerBraking?: boolean;
+  /** Policajac je dio scenarija, ne raskrsnice — zato stiže spolja. */
+  officer?: ScenarioOfficer | null;
 }
 
 /** Nacrtaj cijelu scenu — svejedno je da li se vozi ili se ponavlja snimak. */
@@ -460,6 +567,14 @@ export function drawScene(
 
   drawControls(ctx, v, tpl, world.phaseIndex);
 
+  for (const ped of world.pedestrians) {
+    if (ped.done || world.t < ped.spawnT) continue;
+    drawPedestrian(ctx, v, tpl, ped);
+  }
+
+  const naredba = officerAllow(opts.officer ?? undefined, world.t);
+  if (naredba) drawOfficer(ctx, v, naredba);
+
   const blinkOn = Math.floor(world.t * BLINK_HZ * 2) % 2 === 0;
   // Boja NPC-a se veže za redosljed u scenariju, a ne za redosljed crtanja —
   // inače bi vozilo promijenilo boju čim neko ispred njega izađe.
@@ -477,7 +592,9 @@ export function drawScene(
     const isPlayer = veh.kind === "player";
     const color = isPlayer
       ? PALETTE.blue
-      : PALETTE.npc[(npcOrder.get(veh.id) ?? 0) % PALETTE.npc.length]!;
+      : veh.emergency
+        ? PALETTE.emergency
+        : PALETTE.npc[(npcOrder.get(veh.id) ?? 0) % PALETTE.npc.length]!;
 
     if (Math.abs(pos.x) > VIEW_HALF || Math.abs(pos.y) > VIEW_HALF) {
       if (!isPlayer) drawEdgeMarker(ctx, v, pos, heading, color);
@@ -487,6 +604,7 @@ export function drawScene(
     drawVehicle(ctx, v, pos, heading, color, {
       braking: isPlayer ? Boolean(opts.playerBraking) : brakingNow(runner, veh),
       blink: veh.indicator && blinkOn ? veh.indicator : null,
+      beacon: Boolean(veh.emergency) && Math.floor(world.t * BLINK_HZ * 4) % 2 === 0,
       highlight: opts.flagVehicleId === veh.id ? PALETTE.red : isPlayer ? PALETTE.paint : null,
     });
   }
@@ -499,22 +617,38 @@ function brakingNow(runner: Driver, veh: Vehicle): boolean {
 }
 
 /** Znak/semafor na kraku igrača — HUD ga prikazuje kao ikonu. */
-export function playerControl(world: World): {
+export function playerControl(
+  world: World,
+  officer?: ScenarioOfficer | null,
+): {
   kind: string;
   light: string | null;
   /** Sekundi do promjene svjetla; `null` kad nema semafora. */
   countdown: number | null;
+  /** Da li policajac propušta krak igrača; `null` kad policajca nema. */
+  officerAllows: boolean | null;
 } {
   const tpl = TEMPLATES[world.templateId];
   const player = world.vehicles.find((x) => x.kind === "player");
   const a = tpl?.arms.find((x) => x.id === (player?.arm as ArmId));
-  if (!tpl || !a) return { kind: "none", light: null, countdown: null };
+  // Policajac poništava i znak i semafor, pa se gleda prije njih.
+  const naredba = officerAllow(officer ?? undefined, world.t);
+  if (naredba && player) {
+    return {
+      kind: "officer",
+      light: null,
+      countdown: null,
+      officerAllows: naredba.includes(player.arm),
+    };
+  }
+  if (!tpl || !a) return { kind: "none", light: null, countdown: null, officerAllows: null };
   if (a.control.kind === "light") {
     return {
       kind: "light",
       light: lightFor(tpl, world.phaseIndex, a.control.phaseGroup),
       countdown: lightCountdown(tpl, world.phaseIndex, world.phaseT, a.control.phaseGroup),
+      officerAllows: null,
     };
   }
-  return { kind: a.control.kind, light: null, countdown: null };
+  return { kind: a.control.kind, light: null, countdown: null, officerAllows: null };
 }

@@ -12,6 +12,8 @@ interface ViolationCardProps {
   world: World;
   /** Znak/svjetlo na kraku igrača u trenutku prekršaja. */
   control: string;
+  /** Da li je saobraćaj regulisao policajac — mijenja koje pravilo objašnjava. */
+  officerActive: boolean;
   t: Dict;
   lang: Lang;
 }
@@ -27,6 +29,7 @@ export default function ViolationCard({
   violation,
   world,
   control,
+  officerActive,
   t,
   lang,
 }: ViolationCardProps) {
@@ -37,10 +40,13 @@ export default function ViolationCard({
 
   const ruleKey = ruleKeyFor({
     type: violation.type,
-    control,
+    // Kad reguliše policajac, znak i svjetlo ne odlučuju ni o pravilu koje se
+    // ispisuje — inače bi kartica objašnjavala semafor koji tu ne važi.
+    control: officerActive ? "officer" : control,
     playerArm: (player?.arm ?? "N") as Approach,
     playerIntent: player?.intent ?? "straight",
     otherArm: (other?.arm as Approach | undefined) ?? null,
+    otherEmergency: Boolean(other?.emergency),
   });
 
   return (

@@ -50,6 +50,10 @@ export const perfectBot: Bot = (world, scenario) => {
   const probe: World = {
     ...world,
     vehicles: world.vehicles.map((v) => (v.id === PLAYER_ID ? { ...v, kind: "npc" as const } : { ...v })),
+    // Pješaci se MORAJU kopirati: `step` ih pomjera u mjestu, pa bi ih proba
+    // gurnula jednom više po koraku i pješak bi hodao dvostruko brže nego što
+    // ga igrač vidi.
+    pedestrians: world.pedestrians.map((p) => ({ ...p })),
     events: [],
     violations: [],
   };

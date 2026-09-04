@@ -18,7 +18,15 @@ import type { Scenario } from "./types";
  * semafor, a ne trenutak nastanka drugog vozila.
  */
 const CEKA_NA_CRVENO = ["semafor", "semafor-zuto"];
-const TEMPIRANI = SCENARIOS.filter((s) => !CEKA_NA_CRVENO.includes(s.id));
+const TEMPIRANI = SCENARIOS.filter(
+  (s) =>
+    !CEKA_NA_CRVENO.includes(s.id) &&
+    // Bez NPC-a nema ni susreta koji bi se tempirao (scenario sa pješakom).
+    s.npcs.length > 0 &&
+    // Kad reguliše policajac, trenutak polaska diktira njegova naredba, a ne
+    // to kad drugo vozilo naiđe.
+    !s.officer,
+);
 
 /** Koliko izmjereni idealni trenutak smije da odstupa od zadatog prozora [s]. */
 const TOLERANCIJA = 1.5;

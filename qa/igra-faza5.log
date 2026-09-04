@@ -1,0 +1,48 @@
+{
+  "motor": "chromium-desktop",
+  "brojSituacija": 14,
+  "punGas": {
+    "Pješak na prelazu pri skretanju": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaPravilo": true
+    },
+    "Vozilo pod pratnjom": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaPravilo": true
+    },
+    "Policajac vas zaustavlja na zeleno": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaPravilo": true
+    }
+  },
+  "hudPolicajac": "POLICAJAC\nprolaz",
+  "propustaIshod": "prosao",
+  "greske": []
+}
+{
+  "motor": "webkit-mobile",
+  "brojSituacija": 14,
+  "punGas": {
+    "Pješak na prelazu pri skretanju": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaPravilo": true
+    },
+    "Vozilo pod pratnjom": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaPravilo": true
+    },
+    "Policajac vas zaustavlja na zeleno": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaPravilo": true
+    }
+  },
+  "hudPolicajac": "POLICAJAC\nprolaz",
+  "propustaIshod": "prosao",
+  "greske": []
+}

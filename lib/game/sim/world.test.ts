@@ -99,11 +99,23 @@ describe("savršen bot prolazi svaki scenario", () => {
 
 describe("bot koji samo gasi", () => {
   for (const s of SCENARIOS.filter((x) => PLAYER_MUST_YIELD.includes(x.id))) {
-    it(`${s.id}: prijavljuje oduzeto prvenstvo, sudar ili prolazak na crveno`, () => {
+    it(`${s.id}: prijavljuje prekršaj zbog ulaska bez prava prolaza`, () => {
       const { world } = run(s, flooringBot);
       const tipovi = world.violations.map((v) => v.type);
+      // Sve su to načini da se uđe u raskrsnicu bez prava: oduzeta prednost,
+      // sudar, crveno, STOP, pješak na prelazu, naredba policajca. Ono što se
+      // NE prihvata je `obstruction` i `speeding` — oni bi značili da je bot
+      // negdje stao ili prebrzao, a ne da je ušao kad nije smio.
       expect(
-        tipovi.some((t) => t === "rightOfWay" || t === "collision" || t === "redLight" || t === "stopSign"),
+        tipovi.some(
+          (t) =>
+            t === "rightOfWay" ||
+            t === "collision" ||
+            t === "redLight" ||
+            t === "stopSign" ||
+            t === "pedestrian" ||
+            t === "officer",
+        ),
         `${s.id} nije prijavio nijedan prekršaj: ${JSON.stringify(tipovi)}`,
       ).toBe(true);
     });

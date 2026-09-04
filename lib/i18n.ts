@@ -119,6 +119,13 @@ export interface Dict {
   gameLightRed: string;
   gameLightYellow: string;
   gameLightGreen: string;
+  vioPedestrian: string;
+  vioOfficer: string;
+  gameSignOfficer: string;
+  gameOfficerGo: string;
+  gameOfficerStop: string;
+  ruleOfficer: string;
+  ruleEmergency: string;
   ruleObstruction: string;
   ruleSpeeding: string;
   gameThrottle: string;
@@ -353,6 +360,15 @@ const me: Dict = {
   gameLightRed: "Crveno",
   gameLightYellow: "Žuto",
   gameLightGreen: "Zeleno",
+  vioPedestrian: "Nepropuštanje pješaka na prelazu",
+  vioOfficer: "Nepostupanje po naredbi policajca",
+  gameSignOfficer: "Policajac",
+  gameOfficerGo: "prolaz",
+  gameOfficerStop: "stop",
+  ruleOfficer:
+    "Naredba policijskog službenika jača je i od znakova i od semafora. Kad policajac reguliše saobraćaj, svjetlo na semaforu se ne poštuje.",
+  ruleEmergency:
+    "Vozilu pod pratnjom i vozilu sa uključenim rotacionim svjetlom i sirenom ustupa se prvenstvo bez obzira na znakove i semafor.",
   ruleObstruction:
     "Kad imate prednost i put je slobodan, dužni ste da nastavite. Nepotrebno stajanje na raskrsnici zadržava saobraćaj i samo po sebi je prekršaj.",
   ruleSpeeding:
@@ -575,6 +591,15 @@ const en: Dict = {
   gameLightRed: "Red",
   gameLightYellow: "Amber",
   gameLightGreen: "Green",
+  vioPedestrian: "Failure to give way to a pedestrian",
+  vioOfficer: "Failure to obey a police officer",
+  gameSignOfficer: "Officer",
+  gameOfficerGo: "go",
+  gameOfficerStop: "stop",
+  ruleOfficer:
+    "An order given by a police officer overrides both signs and traffic lights. When an officer is directing traffic, the signal is not to be obeyed.",
+  ruleEmergency:
+    "An emergency vehicle with its beacon and siren on has the right of way regardless of signs and traffic lights.",
   ruleObstruction:
     "When the right of way is yours and the road is clear, you are required to proceed. Stopping needlessly at an intersection holds up traffic and is an offence in itself.",
   ruleSpeeding:
@@ -802,6 +827,15 @@ const sq: Dict = {
   gameLightRed: "E kuqe",
   gameLightYellow: "E verdhë",
   gameLightGreen: "E gjelbër",
+  vioPedestrian: "Mosdhënie e përparësisë këmbësorit",
+  vioOfficer: "Moszbatim i urdhrit të policit",
+  gameSignOfficer: "Polici",
+  gameOfficerGo: "kalim",
+  gameOfficerStop: "ndal",
+  ruleOfficer:
+    "Urdhri i punonjësit të policisë është më i fortë edhe se shenjat edhe se semafori. Kur policia rregullon trafikun, drita e semaforit nuk zbatohet.",
+  ruleEmergency:
+    "Automjetit me përparësi, me dritën rrotulluese dhe sirenën të ndezura, i jepet përparësia pavarësisht shenjave dhe semaforit.",
   ruleObstruction:
     "Kur përparësia është e juaja dhe rruga është e lirë, jeni i detyruar të vazhdoni. Ndalimi i panevojshëm në kryqëzim e pengon trafikun dhe në vetvete është shkelje.",
   ruleSpeeding:
@@ -1031,6 +1065,15 @@ const ru: Dict = {
   gameLightRed: "Красный",
   gameLightYellow: "Жёлтый",
   gameLightGreen: "Зелёный",
+  vioPedestrian: "Непредоставление преимущества пешеходу",
+  vioOfficer: "Невыполнение указания сотрудника полиции",
+  gameSignOfficer: "Регулировщик",
+  gameOfficerGo: "проезд",
+  gameOfficerStop: "стоп",
+  ruleOfficer:
+    "Указание сотрудника полиции имеет преимущество и над знаками, и над светофором. Когда движением управляет регулировщик, сигнал светофора не выполняется.",
+  ruleEmergency:
+    "Транспортному средству с включённым проблесковым маячком и сиреной уступают дорогу независимо от знаков и светофора.",
   ruleObstruction:
     "Когда преимущество у вас и дорога свободна, вы обязаны продолжить движение. Ненужная остановка на перекрёстке задерживает движение и сама по себе является нарушением.",
   ruleSpeeding:
