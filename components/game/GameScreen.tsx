@@ -1,15 +1,16 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { idealTime } from "@/lib/game/sim/bots";
 import type { Outcome, Scenario } from "@/lib/game/sim/types";
 import { playerControl } from "@/lib/game/ui/draw";
-import { CONTROL_LABEL, TASK_LABEL, VIOLATION_LABEL } from "@/lib/game/ui/labels";
-import { createRunner } from "@/lib/game/ui/runner";
+import { CONTROL_LABEL, TASK_LABEL } from "@/lib/game/ui/labels";
+import { createPlayback, createRunner, type Playback } from "@/lib/game/ui/runner";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
+import ViolationCard from "./ViolationCard";
 
 type Phase = "brief" | "play" | "over";
 
@@ -19,8 +20,18 @@ const LIGHT_COLOR: Record<string, string> = {
   green: "bg-green",
 };
 
+interface GameScreenProps {
+  scenario: Scenario;
+  /** Nazad na spisak situacija. */
+  onBack: () => void;
+  /** Sljedeća situacija, ako je ima. */
+  onNext: (() => void) | null;
+  /** Javlja ishod pokušaja da bi se upisao u napredak. */
+  onResult: (passed: boolean, time: number) => void;
+}
+
 /** Jedan scenario od početnog ekrana do rezultata. */
-export default function GameScreen({ scenario }: { scenario: Scenario }) {
+export default function GameScreen({ scenario, onBack, onNext, onResult }: GameScreenProps) {
   const { lang, t } = useApp();
   const pedals = usePedals();
 
@@ -28,34 +39,57 @@ export default function GameScreen({ scenario }: { scenario: Scenario }) {
   const [seed, setSeed] = useState(1);
   const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0 });
   const [outcome, setOutcome] = useState<Outcome>("running");
+  const [playback, setPlayback] = useState<Playback | null>(null);
+  const [replayDone, setReplayDone] = useState(false);
+  /** Rezultat se upisuje jednom po pokušaju, i to iz efekta, ne iz crtanja. */
+  const reported = useRef<string | null>(null);
 
   // Novo sjeme znači i novi pokušaj: `createRunner` pravi svjež svijet, a
   // `GameCanvas` na promjenu pokretača ponovo pokreće petlju.
   const runner = useMemo(() => createRunner(scenario, seed), [scenario, seed]);
 
-  const start = useCallback(() => {
+  const begin = useCallback(() => {
     pedals.release();
+    setPlayback(null);
+    setReplayDone(false);
     setHud({ speedKmh: 0, t: 0 });
     setOutcome("running");
     setPhase("play");
   }, [pedals]);
 
   const retry = useCallback(() => {
-    pedals.release();
     setSeed((s) => s + 1);
-    setHud({ speedKmh: 0, t: 0 });
-    setOutcome("running");
-    setPhase("play");
-  }, [pedals]);
+    begin();
+  }, [begin]);
 
   const finish = useCallback(
     (result: Outcome) => {
+      // Isto se javlja i sa ponavljanja snimka kad ono stigne do prekršaja;
+      // tada nema novog rezultata, samo se dugme opet otključa.
+      if (playback) {
+        setReplayDone(true);
+        return;
+      }
       pedals.release();
       setOutcome(result);
       setPhase("over");
     },
-    [pedals],
+    [pedals, playback],
   );
+
+  // Upis u napredak: efekat, da se ne bi desio usred crtanja kadra.
+  useEffect(() => {
+    if (phase !== "over" || outcome === "running") return;
+    const key = `${scenario.id}:${seed}`;
+    if (reported.current === key) return;
+    reported.current = key;
+    onResult(outcome === "passed", runner.world.t);
+  }, [phase, outcome, scenario.id, seed, runner, onResult]);
+
+  const replay = useCallback(() => {
+    setReplayDone(false);
+    setPlayback(createPlayback(runner));
+  }, [runner]);
 
   // Kvalitet prolaska = koliko je igrač bio sporiji od savršenog vozača.
   // Računa se tek kad scenario prođe, jer je to pun prolaz simulacije.
@@ -67,17 +101,21 @@ export default function GameScreen({ scenario }: { scenario: Scenario }) {
   const control = playerControl(runner.world);
   const violations = runner.world.violations;
   const flagged = violations.find((v) => v.otherVehicleId)?.otherVehicleId ?? null;
-  // Prevodi objašnjenja još nijesu urađeni — dok stoji „TODO", prikazuje se
-  // crnogorski umjesto praznog polja.
-  const translated = scenario.explanation[lang];
-  const explanation =
-    translated && translated !== "TODO" ? translated : (scenario.explanation.me ?? "");
+  const explanation = scenario.explanation[lang] ?? scenario.explanation.me ?? "";
+  const title = scenario.title[lang] ?? scenario.title.me ?? "";
+  const replaying = playback !== null && !replayDone;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <h1 className="text-xl font-bold sm:text-2xl">{t.gameTitle}</h1>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
+        >
+          ← {t.gameBack}
+        </button>
+        <span className="font-display ml-auto rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
           {control.kind === "light" ? (
             <span className="flex items-center gap-1.5">
               <span
@@ -94,29 +132,43 @@ export default function GameScreen({ scenario }: { scenario: Scenario }) {
         </span>
       </div>
 
-      <p className="text-sm text-muted">{t[TASK_LABEL[scenario.player.intent]]}</p>
+      <div>
+        <h1 className="text-xl font-bold sm:text-2xl">{title}</h1>
+        <p className="mt-0.5 text-sm text-muted">{t[TASK_LABEL[scenario.player.intent]]}</p>
+      </div>
 
       {/* Platno je kvadrat, ali ne smije da bude više od ekrana: na 1440×900
           je puna širina od 768 px gurala pedale ispod prevoja, pa se do gasa
-          moralo skrolovati. Visina je zato ograničena, a kvadrat centriran. */}
-      <div className="relative mx-auto w-full max-w-[min(100%,58vh)]">
+          moralo skrolovati. Visina je zato ograničena, a kvadrat centriran.
+          Na ekranu rezultata se dodatno smanjuje, da kartica sa prekršajem
+          stane bez skrolovanja — scena je tada zamrznuta pa ništa ne gubi. */}
+      <div
+        className={`relative mx-auto w-full ${
+          phase === "over" ? "max-w-[min(100%,42vh)]" : "max-w-[min(100%,58vh)]"
+        }`}
+      >
         <GameCanvas
-          runner={runner}
+          runner={playback ?? runner}
           inputRef={pedals.inputRef}
-          running={phase === "play"}
+          running={phase === "play" || playback !== null}
           onHud={setHud}
           onFinish={finish}
           flagVehicleId={phase === "over" ? flagged : null}
-          label={`${t.gameTitle} — ${t[TASK_LABEL[scenario.player.intent]]}`}
+          label={`${title} — ${t[TASK_LABEL[scenario.player.intent]]}`}
         />
 
-        {phase === "play" && (
+        {(phase === "play" || playback) && (
           <div className="pointer-events-none absolute top-2 left-2 flex gap-2">
             <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
             <Hud label={t.gameTime} value={`${hud.t.toFixed(1)} s`} />
           </div>
         )}
 
+        {replaying && (
+          <div className="font-display pointer-events-none absolute top-2 right-2 rounded bg-ink/80 px-2 py-1 text-xs font-bold tracking-wide text-white uppercase">
+            {t.gameReplaying}
+          </div>
+        )}
       </div>
 
       {/* Kartica stoji ISPOD platna, ne preko njega: na prekršaj se vozilo
@@ -139,7 +191,7 @@ export default function GameScreen({ scenario }: { scenario: Scenario }) {
               <p className="text-sm text-muted">{t.gameLead}</p>
               <button
                 type="button"
-                onClick={start}
+                onClick={begin}
                 className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
               >
                 {t.gameStart}
@@ -155,17 +207,31 @@ export default function GameScreen({ scenario }: { scenario: Scenario }) {
                 {outcome === "passed" ? t.gamePassed : t.gameFailed}
               </p>
 
+              <p className="mt-1 text-sm text-muted">
+                {t.gameTime}: {runner.world.t.toFixed(1)} s
+                {ideal !== null && (
+                  <>
+                    {" · "}
+                    {t.gameQuality}: {Math.max(0, runner.world.t - ideal).toFixed(1)} s
+                  </>
+                )}
+              </p>
+
               {violations.length > 0 && (
                 <>
-                  <p className="mt-2 text-xs font-semibold tracking-wide text-muted uppercase">
+                  <p className="mt-3 text-xs font-semibold tracking-wide text-muted uppercase">
                     {t.gameViolationsTitle}
                   </p>
-                  <ul className="mt-1 space-y-1">
+                  <ul className="mt-1 space-y-2">
                     {violations.map((v) => (
-                      <li key={v.type} className="rounded bg-red-soft px-2 py-1 text-sm">
-                        <span className="font-semibold">{t[VIOLATION_LABEL[v.type]]}</span>{" "}
-                        <span className="text-muted">{v.details}</span>
-                      </li>
+                      <ViolationCard
+                        key={v.type}
+                        violation={v}
+                        world={runner.world}
+                        control={control.light ?? control.kind}
+                        t={t}
+                        lang={lang}
+                      />
                     ))}
                   </ul>
                 </>
@@ -180,23 +246,33 @@ export default function GameScreen({ scenario }: { scenario: Scenario }) {
                 </>
               )}
 
-              <p className="mt-3 text-sm text-muted">
-                {t.gameTime}: {runner.world.t.toFixed(1)} s
-                {ideal !== null && (
-                  <>
-                    {" · "}
-                    {t.gameQuality}: {Math.max(0, runner.world.t - ideal).toFixed(1)} s
-                  </>
-                )}
-              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={replay}
+                  disabled={replaying}
+                  className="font-display flex-1 rounded border-2 border-line bg-panel px-3 py-2.5 text-base font-bold tracking-wide uppercase hover:border-blue disabled:opacity-50"
+                >
+                  {t.gameReplay}
+                </button>
+                <button
+                  type="button"
+                  onClick={retry}
+                  className="font-display flex-1 rounded border-2 border-blue bg-blue px-3 py-2.5 text-base font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
+                >
+                  {t.gameRetry}
+                </button>
+              </div>
 
-              <button
-                type="button"
-                onClick={retry}
-                className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
-              >
-                {t.gameRetry}
-              </button>
+              {outcome === "passed" && onNext && (
+                <button
+                  type="button"
+                  onClick={onNext}
+                  className="font-display mt-2 w-full rounded border-2 border-green bg-green px-3 py-2.5 text-base font-bold tracking-wide text-white uppercase"
+                >
+                  {t.gameNextScenario} →
+                </button>
+              )}
             </>
           )}
         </div>

@@ -1,9 +1,9 @@
 // Igra „Prođi raskrsnicu", faza 2 — provjera u pregledaču.
 //
-// Pokretanje: `npx next start -p 3100` u jednom terminalu, pa u drugom
-// `NODE_PATH=<gdje-je-playwright>/node_modules node qa/igra_faza2.mjs`.
-// Playwright namjerno NIJE zavisnost projekta — instalira se zasebno, kao i za
-// ostale skripte u ovom folderu.
+// Pokretanje: `npx next start -p 3100` u jednom terminalu, pa u drugom se ova
+// skripta kopira u folder u kojem je `npm i playwright` već urađen i pokrene
+// odatle. NODE_PATH ovdje ne pomaže — ESM ga ne gleda. Playwright namjerno NIJE
+// zavisnost projekta, kao ni za ostale skripte u ovom folderu.
 //
 // Provjerava: da se platno stvarno iscrtava, da gas radi i sa tastature i sa
 // dugmeta, da pun gas od starta oduzme prvenstvo, da čekanje pa polazak prolazi

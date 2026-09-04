@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { HUD_HZ } from "@/lib/game/sim/config";
 import type { Input, Outcome } from "@/lib/game/sim/types";
 import { drawScene } from "@/lib/game/ui/draw";
-import type { Runner } from "@/lib/game/ui/runner";
+import type { Driver } from "@/lib/game/ui/runner";
 
 export interface HudState {
   speedKmh: number;
@@ -12,7 +12,7 @@ export interface HudState {
 }
 
 interface GameCanvasProps {
-  runner: Runner;
+  runner: Driver;
   inputRef: React.RefObject<Input>;
   /** Dok je `false`, scena se crta ali se vrijeme ne pomjera. */
   running: boolean;

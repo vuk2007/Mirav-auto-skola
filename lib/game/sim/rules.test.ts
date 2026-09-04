@@ -12,6 +12,7 @@ import {
   type YieldParty,
 } from "@/lib/simRules";
 import { SCENARIOS } from "@/lib/game/scenarios";
+import { LANGS } from "@/lib/i18n";
 
 const p = (approach: Approach, intent: Intent, control: EffectiveControl): YieldParty => ({
   approach,
@@ -154,6 +155,15 @@ describe("scenariji igre", () => {
       // i tako je i završila na ekranu. Ostatak sajta piše pravopisno, pa mora i
       // ovo: tekst bez ijednog našeg slova je gotovo sigurno nedovršen.
       expect(me!, `${s.id}: objašnjenje je bez dijakritika`).toMatch(/[čćžšđ]/);
+
+      // Naslov i objašnjenje moraju postojati na sva četiri jezika. „TODO" je
+      // bio privremeni ispis iz faze 1 i ne smije da se vrati kroz novi scenario.
+      for (const lang of LANGS) {
+        expect(s.title[lang], `${s.id}: nema naslov na ${lang}`).toBeTruthy();
+        expect(s.explanation[lang], `${s.id}: nema objašnjenje na ${lang}`).toBeTruthy();
+        expect(s.title[lang]).not.toBe("TODO");
+        expect(s.explanation[lang]).not.toBe("TODO");
+      }
     }
   });
 });

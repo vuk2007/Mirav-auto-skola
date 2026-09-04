@@ -2,6 +2,12 @@
   "id": "izlomljeni-glavni",
   "intersection": "cross-priority-bent-ne",
   "difficulty": 3,
+  "title": {
+    "me": "Izlomljen glavni put",
+    "en": "Priority road that bends",
+    "sq": "Rrugë me përparësi që thyhet",
+    "ru": "Главная дорога, меняющая направление"
+  },
   "player": {
     "arm": "S",
     "intent": "straight",
@@ -20,8 +26,8 @@
   ],
   "explanation": {
     "me": "Glavni put se ovdje lomi: ulazi sa sjevera i izlazi na istok. Iako vi idete pravo, vaš krak je sporedan — dužni ste da propustite vozilo koje prati glavni put, i onda kad ono skreće.",
-    "en": "TODO",
-    "sq": "TODO",
-    "ru": "TODO"
+    "en": "Here the priority road bends: it enters from the north and leaves to the east. Even though you are going straight, your approach is the side road — you must let the vehicle following the priority road pass, including when it turns.",
+    "sq": "Këtu rruga me përparësi thyhet: hyn nga veriu dhe del nga lindja. Edhe pse ju vazhdoni drejt, krahu juaj është dytësor — jeni i detyruar ta lini të kalojë automjetin që ndjek rrugën me përparësi, edhe kur ai kthehet.",
+    "ru": "Здесь главная дорога меняет направление: входит с севера и уходит на восток. Хотя вы едете прямо, ваш подъезд второстепенный — вы обязаны пропустить автомобиль, следующий по главной дороге, в том числе когда он поворачивает."
   }
 }

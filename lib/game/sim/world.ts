@@ -52,8 +52,13 @@ import { whoYields, type EffectiveControl, type YieldParty } from "@/lib/simRule
 
 export const PLAYER_ID = "player";
 
-/** Veza prekršaja i stavke iz kataloga kazni (`data/kazne.json`). */
-const PENALTY_REF: Readonly<Record<Violation["type"], string | null>> = {
+/**
+ * Veza prekršaja i stavke iz kataloga kazni (`data/kazne.json`).
+ *
+ * Izvezeno zbog testa: pogrešan slug se ne primijeti nikako drugačije — kartica
+ * kazne bi jednostavno ostala prazna i onda kad instruktorka kaznu potvrdi.
+ */
+export const PENALTY_REF: Readonly<Record<Violation["type"], string | null>> = {
   rightOfWay: "prvenstvo",
   stopSign: "signalizacija",
   redLight: "crveno",

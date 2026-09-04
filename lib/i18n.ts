@@ -102,6 +102,22 @@ export interface Dict {
   gameSpeed: string;
   gameTime: string;
   gameQuality: string;
+  gamePickTitle: string;
+  gamePickLead: string;
+  gameDifficulty: string;
+  gameStatusPassed: string;
+  gameStatusFailed: string;
+  gameStatusNew: string;
+  gameBestTime: string;
+  gameAttempts: string;
+  gameProgress: string;
+  gameReplay: string;
+  gameReplaying: string;
+  gameBack: string;
+  gameNextScenario: string;
+  gameRuleTitle: string;
+  ruleObstruction: string;
+  ruleSpeeding: string;
   gameThrottle: string;
   gameBrake: string;
   gameKeyHint: string;
@@ -316,6 +332,25 @@ const me: Dict = {
   gameSpeed: "Brzina",
   gameTime: "Vrijeme",
   gameQuality: "Iznad idealnog vremena",
+  gamePickTitle: "Izaberite situaciju",
+  gamePickLead:
+    "Svaka situacija vježba jedno pravilo. Prolazak se pamti na ovom uređaju, pa možete nastaviti kasnije.",
+  gameDifficulty: "Težina",
+  gameStatusPassed: "Prošli",
+  gameStatusFailed: "Niste prošli",
+  gameStatusNew: "Nije pokušano",
+  gameBestTime: "Najbolje",
+  gameAttempts: "pokušaja",
+  gameProgress: "Prošli ste {n} od {max}",
+  gameReplay: "Ponovi zadnjih 5 s",
+  gameReplaying: "Ponavljanje",
+  gameBack: "Druga situacija",
+  gameNextScenario: "Sljedeća situacija",
+  gameRuleTitle: "Pravilo",
+  ruleObstruction:
+    "Kad imate prednost i put je slobodan, dužni ste da nastavite. Nepotrebno stajanje na raskrsnici zadržava saobraćaj i samo po sebi je prekršaj.",
+  ruleSpeeding:
+    "Brzina se prilagođava ograničenju i uslovima. Prekoračenje na prilazu raskrsnici skraćuje put kočenja i oduzima vrijeme za odluku.",
   gameThrottle: "Gas",
   gameBrake: "Kočnica",
   gameKeyHint: "Na tastaturi: strelica gore je gas, strelica dolje kočnica.",
@@ -516,6 +551,25 @@ const en: Dict = {
   gameSpeed: "Speed",
   gameTime: "Time",
   gameQuality: "Above the ideal time",
+  gamePickTitle: "Choose a situation",
+  gamePickLead:
+    "Each situation drills one rule. Your progress is kept on this device, so you can carry on later.",
+  gameDifficulty: "Difficulty",
+  gameStatusPassed: "Cleared",
+  gameStatusFailed: "Not cleared",
+  gameStatusNew: "Not attempted",
+  gameBestTime: "Best",
+  gameAttempts: "attempts",
+  gameProgress: "You have cleared {n} of {max}",
+  gameReplay: "Replay the last 5 s",
+  gameReplaying: "Replay",
+  gameBack: "Another situation",
+  gameNextScenario: "Next situation",
+  gameRuleTitle: "Rule",
+  ruleObstruction:
+    "When the right of way is yours and the road is clear, you are required to proceed. Stopping needlessly at an intersection holds up traffic and is an offence in itself.",
+  ruleSpeeding:
+    "Speed must match the limit and the conditions. Exceeding it on the approach to an intersection shortens your braking distance and the time you have to decide.",
   gameThrottle: "Throttle",
   gameBrake: "Brake",
   gameKeyHint: "On a keyboard: arrow up is throttle, arrow down is brake.",
@@ -721,6 +775,25 @@ const sq: Dict = {
   gameSpeed: "Shpejtësia",
   gameTime: "Koha",
   gameQuality: "Mbi kohën ideale",
+  gamePickTitle: "Zgjidhni një situatë",
+  gamePickLead:
+    "Secila situatë ushtron një rregull. Ecuria ruhet në këtë pajisje, kështu që mund të vazhdoni më vonë.",
+  gameDifficulty: "Vështirësia",
+  gameStatusPassed: "Kaluar",
+  gameStatusFailed: "Nuk kaloi",
+  gameStatusNew: "Pa provuar",
+  gameBestTime: "Më e mira",
+  gameAttempts: "përpjekje",
+  gameProgress: "Keni kaluar {n} nga {max}",
+  gameReplay: "Përsërit 5 sekondat e fundit",
+  gameReplaying: "Përsëritje",
+  gameBack: "Situatë tjetër",
+  gameNextScenario: "Situata tjetër",
+  gameRuleTitle: "Rregulli",
+  ruleObstruction:
+    "Kur përparësia është e juaja dhe rruga është e lirë, jeni i detyruar të vazhdoni. Ndalimi i panevojshëm në kryqëzim e pengon trafikun dhe në vetvete është shkelje.",
+  ruleSpeeding:
+    "Shpejtësia përshtatet me kufirin dhe me kushtet. Tejkalimi në afrim të kryqëzimit e shkurton rrugën e frenimit dhe kohën për të vendosur.",
   gameThrottle: "Gazi",
   gameBrake: "Frenat",
   gameKeyHint: "Në tastierë: shigjeta lart është gazi, shigjeta poshtë është frena.",
@@ -928,6 +1001,25 @@ const ru: Dict = {
   gameSpeed: "Скорость",
   gameTime: "Время",
   gameQuality: "Сверх идеального времени",
+  gamePickTitle: "Выберите ситуацию",
+  gamePickLead:
+    "Каждая ситуация отрабатывает одно правило. Результат сохраняется на этом устройстве, так что можно продолжить позже.",
+  gameDifficulty: "Сложность",
+  gameStatusPassed: "Пройдено",
+  gameStatusFailed: "Не пройдено",
+  gameStatusNew: "Не пробовали",
+  gameBestTime: "Лучшее",
+  gameAttempts: "попыток",
+  gameProgress: "Пройдено {n} из {max}",
+  gameReplay: "Повтор последних 5 с",
+  gameReplaying: "Повтор",
+  gameBack: "Другая ситуация",
+  gameNextScenario: "Следующая ситуация",
+  gameRuleTitle: "Правило",
+  ruleObstruction:
+    "Когда преимущество у вас и дорога свободна, вы обязаны продолжить движение. Ненужная остановка на перекрёстке задерживает движение и сама по себе является нарушением.",
+  ruleSpeeding:
+    "Скорость выбирается по ограничению и условиям. Превышение на подъезде к перекрёстку сокращает тормозной путь и время на принятие решения.",
   gameThrottle: "Газ",
   gameBrake: "Тормоз",
   gameKeyHint: "На клавиатуре: стрелка вверх — газ, стрелка вниз — тормоз.",

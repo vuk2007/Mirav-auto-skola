@@ -27,3 +27,9 @@ export const PenaltyForQuestion = dynamic(
 export const LinkKazne = dynamic(() => import("./PenaltyNote").then((m) => m.LinkKazne), {
   ssr: false,
 });
+
+/** Ulaz za igru „Prođi raskrsnicu" — vidi `PenaltyForRef` u PenaltyNote.tsx. */
+export const PenaltyForRef = dynamic(
+  () => import("./PenaltyNote").then((m) => m.PenaltyForRef),
+  { ssr: false },
+);

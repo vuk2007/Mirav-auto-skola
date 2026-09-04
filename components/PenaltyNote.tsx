@@ -1,12 +1,14 @@
 /**
- * „Kazna za ovaj prekršaj" — uz pitanje.
+ * „Kazna za ovaj prekršaj" — uz pitanje i uz prekršaj u igri.
  *
  * Podaci dolaze iz `data/kazne.json` i `data/pitanje-kazna.json`, koje popunjava
  * instruktorka kroz `/admin/kazne`. Prikazuje se **samo** kazna sa statusom
  * `potvrdjeno`; nepotvrđena ne postoji za kandidata.
  *
  * Ovaj fajl se učitava dinamički (vidi `PenaltyLoader.tsx`), pa dok je prikaz
- * kazni isključen podaci ne putuju korisniku uopšte.
+ * kazni isključen podaci ne putuju korisniku uopšte. Zato i ulaz za igru stoji
+ * ovdje, a ne u zasebnom fajlu: sve što dodiruje biblioteku kazni mora ostati u
+ * istom, dinamički učitanom komadu.
  *
  * JEZIK: `naslov` i `objasnjenje` postoje samo na crnogorskom — instruktorka ih
  * piše jednom, a shema nema polja za prevode. U ostalim jezicima UI-ja tekst
@@ -41,25 +43,29 @@ export function kaznaZaPitanje(questionId: number): Kazna | null {
   return id ? (POTVRDJENE.get(id) ?? null) : null;
 }
 
+/** Kazna po id-u iz biblioteke — tako je traži igra, preko `Violation.penaltyRef`. */
+export function kaznaPoId(id: string): Kazna | null {
+  return POTVRDJENE.get(id) ?? null;
+}
+
 /** Ima li uopšte ijedne potvrđene kazne — koristi ga spisak kazni. */
 export function imaPotvrdjenih(): boolean {
   return POTVRDJENE.size > 0;
 }
 
-export function PenaltyForQuestion({
-  questionId,
+/** Prikaz jedne kazne. Jedan izgled za kviz i za igru — namjerno. */
+function KaznaKartica({
+  kazna,
   t,
   lang,
-  compact = false,
+  compact,
 }: {
-  questionId: number;
+  kazna: Kazna;
   t: Dict;
   lang: Lang;
-  compact?: boolean;
+  compact: boolean;
 }) {
   const [otvoreno, setOtvoreno] = useState(!compact);
-  const kazna = kaznaZaPitanje(questionId);
-  if (!kazna) return null;
 
   const sankcije = [
     formatIznos(kazna.iznos_min, kazna.iznos_max),
@@ -98,13 +104,50 @@ export function PenaltyForQuestion({
           </p>
           <p className="mt-1 text-xs text-muted">{t.penaltyNote}</p>
 
-          {lang !== "me" && (
-            <p className="mt-1 text-xs text-muted">{t.penaltyLanguageNote}</p>
-          )}
+          {lang !== "me" && <p className="mt-1 text-xs text-muted">{t.penaltyLanguageNote}</p>}
         </div>
       )}
     </aside>
   );
+}
+
+export function PenaltyForQuestion({
+  questionId,
+  t,
+  lang,
+  compact = false,
+}: {
+  questionId: number;
+  t: Dict;
+  lang: Lang;
+  compact?: boolean;
+}) {
+  const kazna = kaznaZaPitanje(questionId);
+  if (!kazna) return null;
+  return <KaznaKartica kazna={kazna} t={t} lang={lang} compact={compact} />;
+}
+
+/**
+ * Kazna za prekršaj u igri („Prođi raskrsnicu").
+ *
+ * Igra ne zna ništa o biblioteci kazni — nosi samo `penaltyRef`, slug iz
+ * `data/kazne.json`. Dok instruktorka tu kaznu ne potvrdi, kartica se ne
+ * prikazuje, a prekršaj se i dalje objašnjava pravilom.
+ */
+export function PenaltyForRef({
+  penaltyRef,
+  t,
+  lang,
+  compact = true,
+}: {
+  penaltyRef: string | null;
+  t: Dict;
+  lang: Lang;
+  compact?: boolean;
+}) {
+  const kazna = penaltyRef ? kaznaPoId(penaltyRef) : null;
+  if (!kazna) return null;
+  return <KaznaKartica kazna={kazna} t={t} lang={lang} compact={compact} />;
 }
 
 /**

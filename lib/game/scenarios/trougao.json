@@ -2,6 +2,12 @@
   "id": "trougao",
   "intersection": "cross-priority-ns",
   "difficulty": 1,
+  "title": {
+    "me": "Znak „ustupi prvenstvo prolaza“",
+    "en": "Give-way sign",
+    "sq": "Shenja „jepi përparësi“",
+    "ru": "Знак «уступите дорогу»"
+  },
   "player": {
     "arm": "E",
     "intent": "straight",
@@ -20,8 +26,8 @@
   ],
   "explanation": {
     "me": "Na vašem kraku je znak „ustupi prvenstvo prolaza“ (trougao). Ne morate stati ako je put slobodan, ali morate propustiti sva vozila sa glavnog puta.",
-    "en": "TODO",
-    "sq": "TODO",
-    "ru": "TODO"
+    "en": "Your approach carries the give-way sign (the triangle). You need not stop if the road is clear, but you must let every vehicle on the priority road pass.",
+    "sq": "Në krahun tuaj është shenja „jepi përparësi“ (trekëndëshi). Nuk jeni i detyruar të ndaloni nëse rruga është e lirë, por duhet t'i lini të kalojnë të gjitha automjetet nga rruga me përparësi.",
+    "ru": "На вашем подъезде стоит знак «уступите дорогу» (треугольник). Останавливаться не обязательно, если дорога свободна, но пропустить все транспортные средства с главной дороги вы обязаны."
   }
 }

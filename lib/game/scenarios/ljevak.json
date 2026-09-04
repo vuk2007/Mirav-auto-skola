@@ -2,6 +2,12 @@
   "id": "ljevak",
   "intersection": "cross-none",
   "difficulty": 3,
+  "title": {
+    "me": "Skretanje ulijevo pred susretnim vozilom",
+    "en": "Turning left across oncoming traffic",
+    "sq": "Kthim majtas përpara trafikut përballë",
+    "ru": "Поворот налево перед встречным"
+  },
   "player": {
     "arm": "N",
     "intent": "left",
@@ -20,8 +26,8 @@
   ],
   "explanation": {
     "me": "Skrećete ulijevo i presijecate putanju vozila koje vam dolazi u susret. Vozilo koje ide pravo ima prednost — propuštate ga, pa skrećete.",
-    "en": "TODO",
-    "sq": "TODO",
-    "ru": "TODO"
+    "en": "You are turning left and crossing the path of an oncoming vehicle. The vehicle going straight has priority — let it pass, then turn.",
+    "sq": "Ju ktheheni majtas dhe i prisni rrugën automjetit që vjen përballë. Automjeti që vazhdon drejt ka përparësi — lëreni të kalojë, pastaj kthehuni.",
+    "ru": "Вы поворачиваете налево и пересекаете путь встречного автомобиля. Автомобиль, едущий прямо, имеет преимущество — пропустите его, затем поворачивайте."
   }
 }

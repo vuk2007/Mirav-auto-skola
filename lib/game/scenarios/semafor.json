@@ -2,6 +2,12 @@
   "id": "semafor",
   "intersection": "cross-lights",
   "difficulty": 2,
+  "title": {
+    "me": "Semafor — crveno svjetlo",
+    "en": "Traffic lights — red",
+    "sq": "Semafori — drita e kuqe",
+    "ru": "Светофор — красный сигнал"
+  },
   "lightStartPhase": 2,
   "player": {
     "arm": "N",
@@ -21,8 +27,8 @@
   ],
   "explanation": {
     "me": "Na vašem kraku je crveno svjetlo. Zaustavljate se prije stop-linije i čekate zeleno. Ulazak na crveno, ili na žuto kad ste mogli bezbjedno stati, jeste prekršaj.",
-    "en": "TODO",
-    "sq": "TODO",
-    "ru": "TODO"
+    "en": "Your approach has a red light. Stop before the stop line and wait for green. Entering on red — or on amber when you could have stopped safely — is a violation.",
+    "sq": "Në krahun tuaj është drita e kuqe. Ndaloni para vijës së ndalimit dhe prisni të gjelbrën. Hyrja në të kuqe, ose në të verdhë kur mund të ndalonit në mënyrë të sigurt, është shkelje.",
+    "ru": "На вашем подъезде красный сигнал. Остановитесь перед стоп-линией и дождитесь зелёного. Выезд на красный — или на жёлтый, когда вы могли безопасно остановиться, — нарушение."
   }
 }

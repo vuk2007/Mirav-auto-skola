@@ -12,6 +12,7 @@ import { isLang, type Lang } from "./i18n";
 const KEY_LANG = "mirav.lang";
 const KEY_BEST = "mirav.bestExam";
 const KEY_PRACTICE = "mirav.practice";
+const KEY_GAME = "mirav.game";
 
 function read<T>(key: string): T | null {
   try {
@@ -125,4 +126,53 @@ export function savePractice(state: PracticeState): void {
 
 export function clearPractice(): void {
   remove(KEY_PRACTICE);
+}
+
+// ── Napredak u igri „Prođi raskrsnicu" ──────────────────────────────────────
+
+export interface GameProgress {
+  /** Da li je scenario ikad prošao bez ijednog prekršaja. */
+  passed: boolean;
+  /** Najbolje vrijeme prolaska [s]; `null` dok nije prošao. */
+  bestTime: number | null;
+  attempts: number;
+}
+
+export type GameProgressMap = Record<string, GameProgress>;
+
+export function loadGameProgress(): GameProgressMap {
+  const v = read<unknown>(KEY_GAME);
+  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
+  const out: GameProgressMap = {};
+  for (const [id, raw] of Object.entries(v as Record<string, unknown>)) {
+    if (!raw || typeof raw !== "object") continue;
+    const r = raw as Partial<GameProgress>;
+    out[id] = {
+      passed: Boolean(r.passed),
+      bestTime: typeof r.bestTime === "number" ? r.bestTime : null,
+      attempts: typeof r.attempts === "number" ? r.attempts : 0,
+    };
+  }
+  return out;
+}
+
+/**
+ * Upisuje ishod jednog pokušaja.
+ *
+ * `passed` se nikad ne gasi: jednom položen scenario ostaje položen, kao i
+ * najbolje vrijeme. Kandidat vježba, a ne polaže — brisanje uspjeha zbog
+ * lošijeg pokušaja bi ga samo odvraćalo od ponavljanja.
+ */
+export function saveGameAttempt(id: string, passed: boolean, time: number): GameProgressMap {
+  const all = loadGameProgress();
+  const prev = all[id] ?? { passed: false, bestTime: null, attempts: 0 };
+  const next: GameProgress = {
+    passed: prev.passed || passed,
+    bestTime: passed ? Math.min(prev.bestTime ?? Infinity, time) : prev.bestTime,
+    attempts: prev.attempts + 1,
+  };
+  if (next.bestTime !== null && !Number.isFinite(next.bestTime)) next.bestTime = null;
+  const updated = { ...all, [id]: next };
+  write(KEY_GAME, updated);
+  return updated;
 }

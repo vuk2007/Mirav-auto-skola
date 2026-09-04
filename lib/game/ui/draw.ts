@@ -24,7 +24,7 @@ import {
 import { headingAt, pointAt } from "../sim/geometry";
 import { compile, lightFor, OUTBOUND, TEMPLATES } from "../sim/intersection";
 import type { Arm, ArmId, IntersectionTemplate, Path, Point, Vehicle, World } from "../sim/types";
-import { renderS, type Runner } from "./runner";
+import { renderS, type Driver } from "./runner";
 
 /** Boje su iste kao tokeni u `app/globals.css` — scena mora da liči na sajt. */
 export const PALETTE = {
@@ -432,10 +432,10 @@ export interface DrawOptions {
   playerBraking?: boolean;
 }
 
-/** Nacrtaj cijelu scenu iz stanja pokretača. */
+/** Nacrtaj cijelu scenu — svejedno je da li se vozi ili se ponavlja snimak. */
 export function drawScene(
   ctx: CanvasRenderingContext2D,
-  runner: Runner,
+  runner: Driver,
   widthPx: number,
   heightPx: number,
   opts: DrawOptions = {},
@@ -493,7 +493,7 @@ export function drawScene(
 }
 
 /** NPC koči ako mu je brzina pala u odnosu na prethodni korak. */
-function brakingNow(runner: Runner, veh: Vehicle): boolean {
+function brakingNow(runner: Driver, veh: Vehicle): boolean {
   const p = runner.prev.get(veh.id);
   return p !== undefined && veh.v < p.v - 0.02;
 }

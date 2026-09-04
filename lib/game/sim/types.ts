@@ -133,6 +133,14 @@ export interface Scenario {
   lightStartPhase?: number;
   difficulty: 1 | 2 | 3;
   vMax?: number;
+  /**
+   * Naziv i objašnjenje po jeziku.
+   *
+   * Ovo NE ide u `lib/i18n.ts` iako je tekst za korisnika: to je sadržaj
+   * scenarija, kao i putanja ili težina, pa mora da putuje zajedno sa njim.
+   * Kad se doda deveti scenario, dovoljan je jedan fajl — bez diranja rječnika.
+   */
+  title: Record<string, string>;
   /** Tekst tačnog rješenja po jeziku. */
   explanation: Record<string, string>;
 }
