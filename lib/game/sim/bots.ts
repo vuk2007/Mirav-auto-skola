@@ -91,3 +91,15 @@ export function run(scenario: Scenario, bot: Bot, seed = 1): RunResult {
 export function idealTime(scenario: Scenario, seed = 1): number {
   return run(scenario, perfectBot, seed).time;
 }
+
+/**
+ * Vozač sa dvije pedale i ničim između — gas do `brakeFrom`, kočnica do
+ * `brakeTo`, pa opet gas.
+ *
+ * Igrač na ekranu nema klizač: dugme je pritisnuto ili nije. Zato scenario koji
+ * može da položi samo `perfectBot` (koji dozira gas) nije stvarno rješiv. Ovim
+ * botom se to provjerava — vidi `playable.test.ts`.
+ */
+export function bangBangBot(brakeFrom: number, brakeTo: number): Bot {
+  return (world) => (world.t >= brakeFrom && world.t < brakeTo ? STOP : GAS);
+}

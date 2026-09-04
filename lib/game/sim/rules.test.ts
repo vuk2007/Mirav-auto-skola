@@ -150,6 +150,10 @@ describe("scenariji igre", () => {
       const me = s.explanation.me;
       expect(me, `${s.id} nema objasnjenje na crnogorskom`).toBeTruthy();
       expect(me!.length).toBeGreaterThan(40);
+      // Prva verzija ovih tekstova je bila bez dijakritika („vazi", „propustate")
+      // i tako je i završila na ekranu. Ostatak sajta piše pravopisno, pa mora i
+      // ovo: tekst bez ijednog našeg slova je gotovo sigurno nedovršen.
+      expect(me!, `${s.id}: objašnjenje je bez dijakritika`).toMatch(/[čćžšđ]/);
     }
   });
 });

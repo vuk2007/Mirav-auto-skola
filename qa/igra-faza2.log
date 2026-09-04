@@ -1,0 +1,75 @@
+{
+  "motor": "chromium-desktop",
+  "platno": {
+    "boja": 31,
+    "w": 522,
+    "h": 522
+  },
+  "brzinaTastaturaKmh": 10,
+  "gasDoKraja": {
+    "ishod": "pao",
+    "prekrsaji": [
+      "Oduzeto prvenstvo prolaza"
+    ]
+  },
+  "gasVidljivBezSkrola": true,
+  "brzinaDodirKmh": 8,
+  "cekajPaKreni": {
+    "ishod": "prosao",
+    "prekrsaji": []
+  },
+  "greske": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "error: Refused to execute script from 'http://localhost:3100/_vercel/insights/script.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+  ]
+}
+{
+  "motor": "chromium-mobile",
+  "platno": {
+    "boja": 27,
+    "w": 358,
+    "h": 358
+  },
+  "brzinaTastaturaKmh": 10,
+  "gasDoKraja": {
+    "ishod": "pao",
+    "prekrsaji": [
+      "Oduzeto prvenstvo prolaza"
+    ]
+  },
+  "gasVidljivBezSkrola": true,
+  "brzinaDodirKmh": 9,
+  "cekajPaKreni": {
+    "ishod": "prosao",
+    "prekrsaji": []
+  },
+  "greske": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "error: Refused to execute script from 'http://localhost:3100/_vercel/insights/script.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+  ]
+}
+{
+  "motor": "webkit-mobile",
+  "platno": {
+    "boja": 26,
+    "w": 358,
+    "h": 358
+  },
+  "brzinaTastaturaKmh": 10,
+  "gasDoKraja": {
+    "ishod": "pao",
+    "prekrsaji": [
+      "Oduzeto prvenstvo prolaza"
+    ]
+  },
+  "gasVidljivBezSkrola": true,
+  "brzinaDodirKmh": 8,
+  "cekajPaKreni": {
+    "ishod": "prosao",
+    "prekrsaji": []
+  },
+  "greske": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "error: Refused to execute http://localhost:3100/_vercel/insights/script.js as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type."
+  ]
+}

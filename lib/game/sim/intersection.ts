@@ -25,7 +25,7 @@ import type {
 import { exitOf } from "@/lib/simRules";
 
 /** Smjer u kojem se vozilo kreće kad ULAZI sa datog kraka (ka centru). */
-const INBOUND: Readonly<Record<ArmId, Point>> = {
+export const INBOUND: Readonly<Record<ArmId, Point>> = {
   N: { x: 0, y: 1 }, // sa sjevera ide na jug
   S: { x: 0, y: -1 },
   E: { x: -1, y: 0 },
@@ -33,7 +33,7 @@ const INBOUND: Readonly<Record<ArmId, Point>> = {
 };
 
 /** Smjer u kojem se vozilo kreće kad IZLAZI kroz dati krak (od centra). */
-const OUTBOUND: Readonly<Record<ArmId, Point>> = {
+export const OUTBOUND: Readonly<Record<ArmId, Point>> = {
   N: { x: 0, y: -1 },
   S: { x: 0, y: 1 },
   E: { x: 1, y: 0 },

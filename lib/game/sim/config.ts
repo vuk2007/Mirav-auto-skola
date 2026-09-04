@@ -134,3 +134,35 @@ export const SNAPSHOT_INTERVAL = 1;
 
 /** Poslije ovoliko sekundi se scenario prekida — zaštita od beskonačne petlje. */
 export const MAX_SCENARIO_SECONDS = 120;
+
+// ── Prikaz ──────────────────────────────────────────────────────────────────
+
+/**
+ * Pola vidljivog polja [m]. Kamera je fiksna na cijelu raskrsnicu, pa mora da
+ * obuhvati i mjesto na kojem vozila nastaju — inače igrač ne vidi sebe na startu.
+ */
+export const VIEW_HALF = 52;
+
+/** Koliko puta u sekundi se osvježava HUD. Simulacija i dalje ide na `TICK_HZ`. */
+export const HUD_HZ = 10;
+
+/**
+ * Najmanja dužina vozila na ekranu [px]. Na uskom telefonu 4,4 m ispadne
+ * petnaestak piksela; ispod ovoga se vozilo crta uvećano da ostane vidljivo.
+ */
+export const MIN_CAR_PX = 16;
+
+/** Najmanja veličina znaka na ekranu [px] — znak mora da se prepozna. */
+export const MIN_SIGN_PX = 18;
+
+/** Koliko puta u sekundi trepće pokazivač pravca. */
+export const BLINK_HZ = 1.5;
+
+/**
+ * Koliko unutar ivice kadra stoji oznaka za vozilo koje još nije u kadru [m].
+ *
+ * Vozila nastaju 67 m od centra, a kadar hvata 52 m — bez oznake NPC iskrsne na
+ * ivici tek 1,3 s prije posljednjeg trenutka za kočenje, što nije dovoljno da
+ * čovjek reaguje. Mjereno, vidi `zvid` mjerenje u izvještaju faze 2.
+ */
+export const EDGE_MARKER_INSET = 2.5;

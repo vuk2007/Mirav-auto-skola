@@ -94,6 +94,35 @@ export interface Dict {
   ruleRoundaboutExit: string;
   rulePedestrian: string;
 
+  // Igra „Prođi raskrsnicu" (vidi lib/game/)
+  gameTitle: string;
+  gameLead: string;
+  gameStart: string;
+  gameRetry: string;
+  gameSpeed: string;
+  gameTime: string;
+  gameQuality: string;
+  gameThrottle: string;
+  gameBrake: string;
+  gameKeyHint: string;
+  gamePassed: string;
+  gameFailed: string;
+  gameViolationsTitle: string;
+  gameHowTo: string;
+  gameTaskStraight: string;
+  gameTaskLeft: string;
+  gameTaskRight: string;
+  gameSignPriority: string;
+  gameSignYield: string;
+  gameSignStop: string;
+  gameSignNone: string;
+  vioRightOfWay: string;
+  vioStopSign: string;
+  vioRedLight: string;
+  vioCollision: string;
+  vioObstruction: string;
+  vioSpeeding: string;
+
   // Kviz
   loading: string;
   loadErrorTitle: string;
@@ -279,6 +308,35 @@ const me: Dict = {
   rulePedestrian:
     "Pješaka na pješačkom prelazu preko kojeg prolazite morate propustiti.",
 
+  gameTitle: "Prođi raskrsnicu",
+  gameLead:
+    "Vozilo ide zadatom putanjom — vi držite samo gas i kočnicu. Cilj je proći bez ijednog prekršaja: nikome ne oduzeti prednost, stati gdje se mora i ne zadržavati saobraćaj kad prednost imate vi.",
+  gameStart: "Kreni",
+  gameRetry: "Pokušaj ponovo",
+  gameSpeed: "Brzina",
+  gameTime: "Vrijeme",
+  gameQuality: "Iznad idealnog vremena",
+  gameThrottle: "Gas",
+  gameBrake: "Kočnica",
+  gameKeyHint: "Na tastaturi: strelica gore je gas, strelica dolje kočnica.",
+  gamePassed: "Prošli ste bez prekršaja",
+  gameFailed: "Vožnja nije ispravna",
+  gameViolationsTitle: "Prekršaji",
+  gameHowTo: "Kako je trebalo",
+  gameTaskStraight: "Idete pravo kroz raskrsnicu.",
+  gameTaskLeft: "Skrećete lijevo.",
+  gameTaskRight: "Skrećete desno.",
+  gameSignPriority: "Glavni put",
+  gameSignYield: "Ustupi prvenstvo",
+  gameSignStop: "Obavezno zaustavljanje",
+  gameSignNone: "Bez znaka — pravilo desne strane",
+  vioRightOfWay: "Oduzeto prvenstvo prolaza",
+  vioStopSign: "Prolazak stop-linije bez zaustavljanja",
+  vioRedLight: "Prolazak na crveno svjetlo",
+  vioCollision: "Sudar",
+  vioObstruction: "Zadržavanje saobraćaja",
+  vioSpeeding: "Prekoračenje dozvoljene brzine",
+
   loading: "Učitavanje pitanja…",
   loadErrorTitle: "Greška pri učitavanju pitanja",
   noQuestions: "Nema pitanja u izabranoj kategoriji. Izaberite drugu kategoriju.",
@@ -449,6 +507,35 @@ const en: Dict = {
   ruleRoundaboutExit:
     "A vehicle leaving the roundabout before your entry does not cross your path — you need not give way to it.",
   rulePedestrian: "You must give way to a pedestrian on a crossing you are driving over.",
+
+  gameTitle: "Clear the intersection",
+  gameLead:
+    "The car follows a fixed path — you only control the throttle and the brake. The goal is to get through without a single violation: never take someone's right of way, stop where you must, and do not hold up traffic when the right of way is yours.",
+  gameStart: "Go",
+  gameRetry: "Try again",
+  gameSpeed: "Speed",
+  gameTime: "Time",
+  gameQuality: "Above the ideal time",
+  gameThrottle: "Throttle",
+  gameBrake: "Brake",
+  gameKeyHint: "On a keyboard: arrow up is throttle, arrow down is brake.",
+  gamePassed: "Cleared with no violations",
+  gameFailed: "That drive was not correct",
+  gameViolationsTitle: "Violations",
+  gameHowTo: "How it should have gone",
+  gameTaskStraight: "You are going straight through.",
+  gameTaskLeft: "You are turning left.",
+  gameTaskRight: "You are turning right.",
+  gameSignPriority: "Priority road",
+  gameSignYield: "Give way",
+  gameSignStop: "Mandatory stop",
+  gameSignNone: "No sign — right-hand rule",
+  vioRightOfWay: "Failure to give way",
+  vioStopSign: "Crossed the stop line without stopping",
+  vioRedLight: "Entered on a red light",
+  vioCollision: "Collision",
+  vioObstruction: "Obstructing traffic",
+  vioSpeeding: "Exceeding the speed limit",
 
   loading: "Loading questions…",
   loadErrorTitle: "Could not load the questions",
@@ -625,6 +712,35 @@ const sq: Dict = {
     "Automjeti që del nga rrethrrotullimi para hyrjes tuaj nuk u pret rrugën — atij nuk duhet t'i lëshoni rrugë.",
   rulePedestrian:
     "Duhet t'i lëshoni rrugë këmbësorit në vendkalimin nëpër të cilin kaloni.",
+
+  gameTitle: "Kalo kryqëzimin",
+  gameLead:
+    "Automjeti ndjek një trajektore të dhënë — ju kontrolloni vetëm gazin dhe frenat. Qëllimi është të kaloni pa asnjë shkelje: të mos i merrni përparësinë askujt, të ndaloni aty ku duhet dhe të mos e pengoni trafikun kur përparësia është e juaja.",
+  gameStart: "Nis",
+  gameRetry: "Provo përsëri",
+  gameSpeed: "Shpejtësia",
+  gameTime: "Koha",
+  gameQuality: "Mbi kohën ideale",
+  gameThrottle: "Gazi",
+  gameBrake: "Frenat",
+  gameKeyHint: "Në tastierë: shigjeta lart është gazi, shigjeta poshtë është frena.",
+  gamePassed: "Kaluat pa asnjë shkelje",
+  gameFailed: "Ngasja nuk ishte e rregullt",
+  gameViolationsTitle: "Shkeljet",
+  gameHowTo: "Si duhej vepruar",
+  gameTaskStraight: "Vazhdoni drejt përmes kryqëzimit.",
+  gameTaskLeft: "Kthehuni majtas.",
+  gameTaskRight: "Kthehuni djathtas.",
+  gameSignPriority: "Rrugë me përparësi",
+  gameSignYield: "Jepi përparësi",
+  gameSignStop: "Ndalim i detyrueshëm",
+  gameSignNone: "Pa shenjë — rregulli i së djathtës",
+  vioRightOfWay: "Mosdhënie e përparësisë",
+  vioStopSign: "Kalim i vijës së ndalimit pa ndaluar",
+  vioRedLight: "Kalim në dritën e kuqe",
+  vioCollision: "Përplasje",
+  vioObstruction: "Pengim i trafikut",
+  vioSpeeding: "Tejkalim i shpejtësisë së lejuar",
 
   loading: "Duke ngarkuar pyetjet…",
   loadErrorTitle: "Gabim gjatë ngarkimit të pyetjeve",
@@ -803,6 +919,35 @@ const ru: Dict = {
     "Автомобиль, покидающий круг до вашего въезда, не пересекает вам путь — его пропускать не нужно.",
   rulePedestrian:
     "Пешехода на переходе, через который вы проезжаете, необходимо пропустить.",
+
+  gameTitle: "Проезд перекрёстка",
+  gameLead:
+    "Автомобиль едет по заданной траектории — вы управляете только газом и тормозом. Задача — проехать без единого нарушения: никому не создать помеху, остановиться там, где положено, и не задерживать движение, когда преимущество у вас.",
+  gameStart: "Поехали",
+  gameRetry: "Ещё раз",
+  gameSpeed: "Скорость",
+  gameTime: "Время",
+  gameQuality: "Сверх идеального времени",
+  gameThrottle: "Газ",
+  gameBrake: "Тормоз",
+  gameKeyHint: "На клавиатуре: стрелка вверх — газ, стрелка вниз — тормоз.",
+  gamePassed: "Проезд без нарушений",
+  gameFailed: "Проезд выполнен неправильно",
+  gameViolationsTitle: "Нарушения",
+  gameHowTo: "Как было нужно",
+  gameTaskStraight: "Вы едете прямо через перекрёсток.",
+  gameTaskLeft: "Вы поворачиваете налево.",
+  gameTaskRight: "Вы поворачиваете направо.",
+  gameSignPriority: "Главная дорога",
+  gameSignYield: "Уступите дорогу",
+  gameSignStop: "Обязательная остановка",
+  gameSignNone: "Без знака — правило правой руки",
+  vioRightOfWay: "Непредоставление преимущества",
+  vioStopSign: "Проезд стоп-линии без остановки",
+  vioRedLight: "Проезд на красный свет",
+  vioCollision: "Столкновение",
+  vioObstruction: "Создание помех движению",
+  vioSpeeding: "Превышение разрешённой скорости",
 
   loading: "Загрузка вопросов…",
   loadErrorTitle: "Ошибка при загрузке вопросов",
