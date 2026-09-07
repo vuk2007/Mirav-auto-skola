@@ -3,15 +3,19 @@ import { SCENARIOS, scenarioById } from "@/lib/game/scenarios";
 import { flooringBot, perfectBot, run } from "./bots";
 import { DT } from "./config";
 import { compile, lightCountdown, lightFor, TEMPLATES } from "./intersection";
-import type { Scenario } from "./types";
+import type { IntersectionTemplate, Scenario, Template } from "./types";
 import { createWorld, officerAllow, PLAYER_ID, step } from "./world";
 
+function programOf(t: Template | undefined) {
+  return t && t.kind === "cross" ? t.lightProgram : undefined;
+}
+
 const SA_SEMAFOROM = Object.values(TEMPLATES).filter(
-  (t) => (t.lightProgram?.length ?? 0) > 0,
+  (t): t is IntersectionTemplate => (programOf(t)?.length ?? 0) > 0,
 );
 
 const SCENARIJI_SA_SEMAFOROM = SCENARIOS.filter(
-  (s) => (TEMPLATES[s.intersection]?.lightProgram?.length ?? 0) > 0,
+  (s) => (programOf(TEMPLATES[s.intersection])?.length ?? 0) > 0,
 );
 
 describe("program semafora", () => {

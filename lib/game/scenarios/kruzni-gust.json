@@ -1,0 +1,23 @@
+{
+  "id": "kruzni-gust",
+  "intersection": "kruzni",
+  "difficulty": 3,
+  "title": {
+    "me": "Kružni tok — gust saobraćaj",
+    "en": "Roundabout — heavy traffic",
+    "sq": "Rrethrrotullim — trafik i dendur",
+    "ru": "Круговое движение — плотный поток"
+  },
+  "player": { "arm": "N", "intent": { "kind": "exit", "n": 2 }, "spawnDistance": 42 },
+  "npcs": [
+    { "arm": "E", "intent": { "kind": "exit", "n": 2 }, "spawnAt": [0.0, 0.4], "speed": 10 },
+    { "arm": "E", "intent": { "kind": "exit", "n": 3 }, "spawnAt": [2.2, 2.6], "speed": 10 },
+    { "arm": "S", "intent": { "kind": "exit", "n": 3 }, "spawnAt": [3.4, 3.8], "speed": 10 }
+  ],
+  "explanation": {
+    "me": "Prsten je pun i ulazak se mora sačekati — ali samo dok stvarno nema praznine. Kad se praznina pojavi, ulazi se bez oklijevanja; nepotrebno stajanje na slobodnom ulazu zadržava saobraćaj iza vas.",
+    "en": "The ring is busy and you have to wait — but only while there really is no gap. As soon as a gap appears you go without hesitating; standing at a clear entry holds up the traffic behind you.",
+    "sq": "Unaza është e ngarkuar dhe hyrja duhet pritur — por vetëm derisa vërtet nuk ka hapësirë. Sapo hapësira shfaqet, hyni pa hezituar; ndalimi i panevojshëm në hyrje të lirë e pengon trafikun pas jush.",
+    "ru": "Кольцо загружено, и въезд приходится ждать — но только пока действительно нет промежутка. Как только промежуток появился, въезжайте без колебаний: стоянка на свободном въезде задерживает тех, кто позади."
+  }
+}

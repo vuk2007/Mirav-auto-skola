@@ -1,0 +1,21 @@
+{
+  "id": "kruzni-izlaz2",
+  "intersection": "kruzni",
+  "difficulty": 1,
+  "title": {
+    "me": "Kružni tok — drugi izlaz",
+    "en": "Roundabout — second exit",
+    "sq": "Rrethrrotullim — dalja e dytë",
+    "ru": "Круговое движение — второй съезд"
+  },
+  "player": { "arm": "N", "intent": { "kind": "exit", "n": 2 }, "spawnDistance": 42 },
+  "npcs": [
+    { "arm": "E", "intent": { "kind": "exit", "n": 2 }, "spawnAt": [0.0, 0.6], "speed": 10 }
+  ],
+  "explanation": {
+    "me": "Pri ulasku u kružni tok propuštate vozila koja su već u prstenu. Za drugi izlaz se na prilazu ne pali nijedan pokazivač; desni se pali tek kad prođete izlaz prije svog.",
+    "en": "When entering a roundabout you give way to vehicles already circulating. For the second exit you signal nothing on the approach; the right indicator goes on only once you pass the exit before yours.",
+    "sq": "Kur hyni në rrethrrotullim u jepni përparësi automjeteve që janë tashmë në unazë. Për daljen e dytë në afrim nuk ndizet asnjë tregues; i djathti ndizet vetëm pasi kaloni daljen para tuajës.",
+    "ru": "При въезде на круг вы уступаете тем, кто уже движется по кольцу. Для второго съезда на подъезде указатель не включается; правый включается только после того, как вы минуете съезд перед своим."
+  }
+}

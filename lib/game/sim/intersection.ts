@@ -21,7 +21,10 @@ import type {
   IntersectionTemplate,
   Path,
   Point,
+
+  Template,
 } from "./types";
+import { buildRingPath, exitCountsFor, ringConflicts } from "./roundabout";
 import { exitOf } from "@/lib/simRules";
 
 /** Smjer u kojem se vozilo kreće kad ULAZI sa datog kraka (ka centru). */
@@ -170,7 +173,7 @@ export function conflictsBetween(a: Path, b: Path): ConflictPoint[] {
 // ── Keš po šablonu ──────────────────────────────────────────────────────────
 
 export interface CompiledTemplate {
-  template: IntersectionTemplate;
+  template: Template;
   paths: Map<string, Path>;
   /** Za brzo traženje: id putanje → svi konflikti u kojima učestvuje. */
   conflicts: Map<string, ConflictPoint[]>;
@@ -179,33 +182,50 @@ export interface CompiledTemplate {
 const INTENTS: CrossIntent[] = ["straight", "left", "right"];
 const cache = new Map<string, CompiledTemplate>();
 
-export function compile(tpl: IntersectionTemplate): CompiledTemplate {
+export function compile(tpl: Template): CompiledTemplate {
   const hit = cache.get(tpl.id);
   if (hit) return hit;
 
-  const armIds = new Set(tpl.arms.map((a) => a.id));
   const paths = new Map<string, Path>();
-  for (const arm of tpl.arms) {
-    for (const intent of INTENTS) {
-      // Manevar koji vodi na krak kojeg nema (raskrsnica sa tri kraka) ne postoji.
-      if (!armIds.has(exitOf(arm.id, intent))) continue;
-      const p = buildPath(tpl, arm.id, intent);
-      paths.set(p.id, p);
+  if (tpl.kind === "roundabout") {
+    for (const arm of tpl.arms) {
+      for (const n of exitCountsFor(tpl, arm.id)) {
+        const p = buildRingPath(tpl, arm.id, n);
+        paths.set(p.id, p);
+      }
+    }
+  } else {
+    const armIds = new Set(tpl.arms.map((a) => a.id));
+    for (const arm of tpl.arms) {
+      for (const intent of INTENTS) {
+        // Manevar koji vodi na krak kojeg nema (raskrsnica sa tri kraka) ne postoji.
+        if (!armIds.has(exitOf(arm.id, intent))) continue;
+        const p = buildPath(tpl, arm.id, intent);
+        paths.set(p.id, p);
+      }
     }
   }
 
   const conflicts = new Map<string, ConflictPoint[]>();
   const list = [...paths.values()];
-  for (let i = 0; i < list.length; i++) {
-    for (let j = i + 1; j < list.length; j++) {
-      for (const c of conflictsBetween(list[i]!, list[j]!)) {
-        // Konflikt se pamti sa obje strane, sa `s` okrenutim kako treba —
-        // tako pretraga „šta je meni na putu" nikad ne mora da gleda smjer.
-        conflicts.set(c.pathA, [...(conflicts.get(c.pathA) ?? []), c]);
-        conflicts.set(c.pathB, [
-          ...(conflicts.get(c.pathB) ?? []),
-          { pathA: c.pathB, pathB: c.pathA, sA: c.sB, sB: c.sA, kind: c.kind },
-        ]);
+  const parovi: ConflictPoint[] =
+    tpl.kind === "roundabout" ? ringConflicts(tpl, list) : [];
+  const dodaj = (c: ConflictPoint) => {
+    // Konflikt se pamti sa obje strane, sa `s` okrenutim kako treba —
+    // tako pretraga „šta je meni na putu" nikad ne mora da gleda smjer.
+    conflicts.set(c.pathA, [...(conflicts.get(c.pathA) ?? []), c]);
+    conflicts.set(c.pathB, [
+      ...(conflicts.get(c.pathB) ?? []),
+      { pathA: c.pathB, pathB: c.pathA, sA: c.sB, sB: c.sA, kind: c.kind },
+    ]);
+  };
+
+  if (tpl.kind === "roundabout") {
+    parovi.forEach(dodaj);
+  } else {
+    for (let i = 0; i < list.length; i++) {
+      for (let j = i + 1; j < list.length; j++) {
+        conflictsBetween(list[i]!, list[j]!).forEach(dodaj);
       }
     }
   }
@@ -232,7 +252,7 @@ const arm = (id: ArmId, control: Arm["control"], hasCrosswalk = true): Arm => ({
 const BOX = 14; // tijelo raskrsnice [m]
 const geometry = { size: BOX, laneWidth: LANE_WIDTH };
 
-export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
+export const TEMPLATES: Readonly<Record<string, Template>> = {
   /** Neregulisana krstasta raskrsnica — pravilo desne strane. */
   "cross-none": {
     kind: "cross",
@@ -328,6 +348,45 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
    * ekran. Program je podatak, pa je manja raskrsnica poštenije rješenje od
    * izuzetka u kodu.
    */
+  /**
+   * Jednotračni kružni tok sa četiri kraka, svi sa trouglom.
+   *
+   * Radijus je 12 m — dovoljno da se luk vidi kao luk, a da raskrsnica ostane u
+   * kadru zajedno sa dijelom prilaza.
+   */
+  kruzni: {
+    kind: "roundabout",
+    id: "kruzni",
+    arms: [
+      arm("N", { kind: "yield" }, false),
+      arm("E", { kind: "yield" }, false),
+      arm("S", { kind: "yield" }, false),
+      arm("W", { kind: "yield" }, false),
+    ],
+    radius: 12,
+    ringLanes: 1,
+    geometry: { laneWidth: LANE_WIDTH },
+    // Prilaz kružnog toka počinje dalje od centra nego kod krstaste, pa bi u
+    // podrazumijevanom kadru igrač na startu bio van ekrana.
+    viewHalf: 62,
+  },
+
+  /** Isti tok, ali sa znakom STOP na sjevernom kraku. */
+  "kruzni-stop": {
+    kind: "roundabout",
+    id: "kruzni-stop",
+    arms: [
+      arm("N", { kind: "stop" }, false),
+      arm("E", { kind: "yield" }, false),
+      arm("S", { kind: "yield" }, false),
+      arm("W", { kind: "yield" }, false),
+    ],
+    radius: 12,
+    ringLanes: 1,
+    geometry: { laneWidth: LANE_WIDTH },
+    viewHalf: 62,
+  },
+
   "cross-lights-kratki": {
     kind: "cross",
     id: "cross-lights-kratki",
@@ -351,11 +410,11 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
 
 /** Koje svjetlo ima grupa u datoj fazi. */
 export function lightFor(
-  tpl: IntersectionTemplate,
+  tpl: Template,
   phaseIndex: number,
   group: string,
 ): "green" | "yellow" | "red" {
-  const phase = tpl.lightProgram?.[phaseIndex];
+  const phase = tpl.kind === "cross" ? tpl.lightProgram?.[phaseIndex] : undefined;
   if (!phase) return "red";
   if (phase.green.includes(group)) return "green";
   if (phase.yellow?.includes(group)) return "yellow";
@@ -370,12 +429,12 @@ export function lightFor(
  * u ovoj fazi" bio pogrešan broj. Ide se unaprijed dok se boja ne promijeni.
  */
 export function lightCountdown(
-  tpl: IntersectionTemplate,
+  tpl: Template,
   phaseIndex: number,
   phaseT: number,
   group: string,
 ): number | null {
-  const program = tpl.lightProgram;
+  const program = tpl.kind === "cross" ? tpl.lightProgram : undefined;
   if (!program || program.length === 0) return null;
   const sada = lightFor(tpl, phaseIndex, group);
   const tekuca = program[phaseIndex];
@@ -397,20 +456,21 @@ export function lightCountdown(
 // jedno, a crtanje ga nacrta drugdje, igrač ustupa pješaku kojeg ne vidi.
 
 /** Pola širine kolovoza jednog kraka [m]: po jedna traka u svakom smjeru. */
-export const roadHalf = (tpl: IntersectionTemplate, a: Arm): number =>
-  tpl.geometry.laneWidth * a.lanes;
+export const roadHalf = (tpl: Template, a: Arm): number => tpl.geometry.laneWidth * a.lanes;
 
 /** Dokle seže tijelo raskrsnice od centra [m] — tu se kolovozi ukrštaju. */
-export function junctionHalf(tpl: IntersectionTemplate): number {
+export function junctionHalf(tpl: Template): number {
+  if (tpl.kind === "roundabout") return tpl.radius + tpl.geometry.laneWidth;
   return Math.max(...tpl.arms.map((a) => roadHalf(tpl, a)));
 }
 
 /** Rastojanje stop-linije od centra [m]; prati `Path.stopLineS`. */
-export const stopLineAt = (tpl: IntersectionTemplate): number => tpl.geometry.size / 2;
+export const stopLineAt = (tpl: Template): number =>
+  tpl.kind === "roundabout" ? tpl.radius : tpl.geometry.size / 2;
 
 /** Širina pješačkog prelaza [m]: prostor između stop-linije i ukrštanja. */
-export const crosswalkWidth = (tpl: IntersectionTemplate): number =>
-  stopLineAt(tpl) - junctionHalf(tpl);
+export const crosswalkWidth = (tpl: Template): number =>
+  tpl.kind === "roundabout" ? 0 : stopLineAt(tpl) - junctionHalf(tpl);
 
 /**
  * Djelovi putanje koji leže na pješačkom prelazu.
@@ -421,9 +481,11 @@ export const crosswalkWidth = (tpl: IntersectionTemplate): number =>
  * i ne mijenja ništa u odluci „ima li pješaka na prelazu".
  */
 export function crosswalkSpans(
-  tpl: IntersectionTemplate,
+  tpl: Template,
   path: Path,
 ): { arm: ArmId; from: number; to: number }[] {
+  // Pješački prelazi u kružnom toku nijesu modelovani — vidi fazu za pješake.
+  if (tpl.kind === "roundabout") return [];
   const w = crosswalkWidth(tpl);
   const out: { arm: ArmId; from: number; to: number }[] = [];
   const ulaz = tpl.arms.find((a) => a.id === path.arm);
@@ -434,7 +496,7 @@ export function crosswalkSpans(
 }
 
 /** Gdje pješak stoji u svijetu; `u` je odmak od ose kraka. */
-export function pedestrianPos(tpl: IntersectionTemplate, armId: ArmId, u: number): Point {
+export function pedestrianPos(tpl: Template, armId: ArmId, u: number): Point {
   const out = OUTBOUND[armId];
   const d = (junctionHalf(tpl) + stopLineAt(tpl)) / 2;
   const bok = right(out);
@@ -442,13 +504,13 @@ export function pedestrianPos(tpl: IntersectionTemplate, armId: ArmId, u: number
 }
 
 /** Dokle pješak ide: kreće sa trotoara, prelazi kolovoz i silazi na drugi trotoar. */
-export function pedestrianSpan(tpl: IntersectionTemplate, armId: ArmId): number {
+export function pedestrianSpan(tpl: Template, armId: ArmId): number {
   const a = tpl.arms.find((x) => x.id === armId);
   return (a ? roadHalf(tpl, a) : tpl.geometry.laneWidth) + 1.4;
 }
 
 /** Da li je pješak na kolovozu — dok jeste, prelaz nije slobodan. */
-export function pedestrianOnRoad(tpl: IntersectionTemplate, p: { arm: ArmId; u: number }): boolean {
+export function pedestrianOnRoad(tpl: Template, p: { arm: ArmId; u: number }): boolean {
   const a = tpl.arms.find((x) => x.id === p.arm);
   const half = a ? roadHalf(tpl, a) : tpl.geometry.laneWidth;
   return Math.abs(p.u) <= half;

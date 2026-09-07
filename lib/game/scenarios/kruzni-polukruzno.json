@@ -1,0 +1,22 @@
+{
+  "id": "kruzni-polukruzno",
+  "intersection": "kruzni",
+  "difficulty": 3,
+  "title": {
+    "me": "Kružni tok — polukružno okretanje",
+    "en": "Roundabout — turning back",
+    "sq": "Rrethrrotullim — kthim gjysmërrethor",
+    "ru": "Круговое движение — разворот"
+  },
+  "player": { "arm": "N", "intent": { "kind": "exit", "n": 4 }, "spawnDistance": 42 },
+  "npcs": [
+    { "arm": "W", "intent": { "kind": "exit", "n": 1 }, "spawnAt": [4.5, 5.0], "speed": 10 },
+    { "arm": "S", "intent": { "kind": "exit", "n": 1 }, "spawnAt": [6.0, 6.5], "speed": 10 }
+  ],
+  "explanation": {
+    "me": "Puni krug se najavljuje lijevim pokazivačem na prilazu i on ostaje uključen dok kružite. Desni palite tek kad prođete izlaz prije svog. Dok ste u prstenu, vozila koja ulaze dužna su da vas propuste — nemojte stajati zbog njih.",
+    "en": "A full circle is announced with the left indicator on the approach and it stays on while you circulate. The right one goes on only after you pass the exit before yours. While you are in the ring, entering vehicles must give way to you — do not stop for them.",
+    "sq": "Rrethi i plotë njoftohet me treguesin e majtë në afrim dhe ai qëndron i ndezur derisa rrotulloheni. Të djathtin e ndizni vetëm pasi kaloni daljen para tuajës. Derisa jeni në unazë, automjetet që hyjnë duhet t'ju lënë të kaloni — mos ndaloni për ta.",
+    "ru": "Полный круг объявляется левым указателем на подъезде, и он остаётся включённым, пока вы движетесь по кольцу. Правый включается только после того, как вы минуете съезд перед своим. Пока вы на кольце, въезжающие обязаны вас пропустить — не останавливайтесь ради них."
+  }
+}

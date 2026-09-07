@@ -35,12 +35,18 @@ const TASK_LABEL_CROSS: Readonly<Record<"straight" | "left" | "right", keyof Dic
 /**
  * Šta igrač treba da uradi, jednom rečenicom.
  *
- * Funkcija, a ne mapa: kružni tok se ne opisuje smjerom nego rednim brojem
- * izlaza, pa se ključ ne može indeksirati manevrom.
+ * Vraća gotov tekst, ne ključ: kružni tok nosi redni broj izlaza, pa se rečenica
+ * ne može dobiti pukim indeksiranjem rječnika.
  */
-export function taskKeyFor(intent: Intent): keyof Dict {
+export function taskTextFor(intent: Intent, t: Dict, exitCount = 4): string {
   const c = crossIntent(intent);
-  return c ? TASK_LABEL_CROSS[c] : "gameTaskStraight";
+  if (c) return t[TASK_LABEL_CROSS[c]];
+  if (typeof intent !== "string" && intent.kind === "exit") {
+    return intent.n >= exitCount
+      ? t.gameTaskFullCircle
+      : t.gameTaskExit.replace("{n}", String(intent.n));
+  }
+  return t.gameTaskStraight;
 }
 
 /** Znak na kraku igrača. Semafor nema tekst — HUD mu prikazuje boju. */

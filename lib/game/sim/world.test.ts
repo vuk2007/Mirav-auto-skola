@@ -12,8 +12,10 @@ describe("putanje", () => {
   it("svaki šablon ima putanju za svaki mogući manevar sa svakog kraka", () => {
     for (const tpl of Object.values(TEMPLATES)) {
       const { paths } = compile(tpl);
-      // 4 kraka × 3 manevra = 12; kod tri kraka je manje, ali svi moraju postojati.
-      expect(paths.size).toBe(tpl.arms.length * 3);
+      // Krstasta: 3 manevra po kraku. Kružni tok: po jedan izlaz za svaki krak
+      // do kojeg se može stići, uključujući puni krug — dakle po broju krakova.
+      const poKraku = tpl.kind === "roundabout" ? tpl.arms.length : 3;
+      expect(paths.size).toBe(tpl.arms.length * poKraku);
       for (const p of paths.values()) {
         expect(p.length).toBeGreaterThan(0);
         expect(p.points.length).toBeGreaterThanOrEqual(3);

@@ -83,7 +83,33 @@ export interface IntersectionTemplate {
   priorityRoad?: [ArmId, ArmId];
   lightProgram?: LightPhase[];
   geometry: { size: number; laneWidth: number };
+  /** Pola vidnog polja [m]; bez ovoga važi `VIEW_HALF` iz konfiguracije. */
+  viewHalf?: number;
 }
+
+/**
+ * Kružni tok.
+ *
+ * Prsten je jedna kružna traka; vozila se u njemu kreću N → W → S → E → N,
+ * kako je opisano u `RING_ORDER` u `lib/simRules.ts`. Struktura već nosi broj
+ * traka u prstenu iako je za sada uvijek jedan — dvotračni tok mijenja samo
+ * građenje putanja, ne i pravila.
+ */
+export interface RoundaboutTemplate {
+  kind: "roundabout";
+  id: string;
+  /** Tri ili četiri kraka. Regulacija je `yield` ili `stop`. */
+  arms: Arm[];
+  /** Radijus ose prstena [m]. */
+  radius: number;
+  ringLanes: number;
+  geometry: { laneWidth: number };
+  /** Pola vidnog polja [m]. Prilaz kružnog toka je duži nego kod krstaste. */
+  viewHalf?: number;
+}
+
+/** Sve vrste raskrsnica koje simulacija poznaje. */
+export type Template = IntersectionTemplate | RoundaboutTemplate;
 
 // ── Putanja ─────────────────────────────────────────────────────────────────
 
@@ -112,6 +138,25 @@ export interface Path {
   /** `s` na kojem putanja ulazi u tijelo raskrsnice i na kojem ga napušta. */
   boxEnterS: number;
   boxExitS: number;
+  /**
+   * Dionica putanje koja leži u prstenu kružnog toka.
+   *
+   * Uglovi su potrebni da bi se dvije putanje mogle uporediti duž prstena: one
+   * dijele istu kružnicu, pa „ko je ispred koga" nije pitanje presjeka nego
+   * pitanje ugla.
+   */
+  ring?: {
+    from: number;
+    to: number;
+    angleFrom: number;
+    angleTo: number;
+    radius: number;
+  };
+  /**
+   * `s` izlaza koji prethodi mom — po njemu se sudi kad najkasnije mora da se
+   * upali desni pokazivač u kružnom toku.
+   */
+  prevExitS?: number;
 }
 
 /**

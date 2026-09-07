@@ -152,6 +152,14 @@ export interface YieldParty {
    * i vozilo pod pratnjom, i ona se ne sude isto.
    */
   emergency?: boolean;
+  /**
+   * Vozilo je već u prstenu kružnog toka.
+   *
+   * Kao i `emergency`, ovo nije regulacija kraka nego stanje vozila: isti krak
+   * u istom trenutku ima i vozilo koje ulazi i vozilo koje kruži, a ne sude se
+   * isto. Statični simulator istu razliku već pravi kroz `inRoundabout`.
+   */
+  inRing?: boolean;
 }
 
 /**
@@ -190,6 +198,11 @@ export function whoYields(a: YieldParty, b: YieldParty): "a" | "b" | null {
   // Vozilo pod pratnjom ima prvenstvo nad svima, bez obzira na znakove i
   // semafor — zato se provjerava prije nivoa regulacije, a ne unutar njega.
   if (Boolean(a.emergency) !== Boolean(b.emergency)) return a.emergency ? "b" : "a";
+
+  // Vozilo u prstenu ima prvenstvo nad onim koje ulazi. Znak na ulazu (trougao
+  // ili STOP) mijenja PONAŠANJE pri ulasku, ne redosljed — zato i ovo ide prije
+  // nivoa regulacije.
+  if (Boolean(a.inRing) !== Boolean(b.inRing)) return a.inRing ? "b" : "a";
 
   const ta = priorityTier(a.control);
   const tb = priorityTier(b.control);

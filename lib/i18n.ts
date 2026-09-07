@@ -157,6 +157,8 @@ export interface Dict {
   gameTaskStraight: string;
   gameTaskLeft: string;
   gameTaskRight: string;
+  gameTaskExit: string;
+  gameTaskFullCircle: string;
   gameSignPriority: string;
   gameSignYield: string;
   gameSignStop: string;
@@ -424,6 +426,8 @@ const me: Dict = {
   gameTaskStraight: "Idete pravo kroz raskrsnicu.",
   gameTaskLeft: "Skrećete lijevo.",
   gameTaskRight: "Skrećete desno.",
+  gameTaskExit: "Izlazite na {n}. izlazu.",
+  gameTaskFullCircle: "Vozite puni krug i vraćate se odakle ste došli.",
   gameSignPriority: "Glavni put",
   gameSignYield: "Ustupi prvenstvo",
   gameSignStop: "Obavezno zaustavljanje",
@@ -677,6 +681,8 @@ const en: Dict = {
   gameTaskStraight: "You are going straight through.",
   gameTaskLeft: "You are turning left.",
   gameTaskRight: "You are turning right.",
+  gameTaskExit: "You take exit {n}.",
+  gameTaskFullCircle: "You go all the way round and come back the way you came.",
   gameSignPriority: "Priority road",
   gameSignYield: "Give way",
   gameSignStop: "Mandatory stop",
@@ -935,6 +941,8 @@ const sq: Dict = {
   gameTaskStraight: "Vazhdoni drejt përmes kryqëzimit.",
   gameTaskLeft: "Kthehuni majtas.",
   gameTaskRight: "Kthehuni djathtas.",
+  gameTaskExit: "Dilni në daljen {n}.",
+  gameTaskFullCircle: "Bëni rrethin e plotë dhe ktheheni nga erdhët.",
   gameSignPriority: "Rrugë me përparësi",
   gameSignYield: "Jepi përparësi",
   gameSignStop: "Ndalim i detyrueshëm",
@@ -1195,6 +1203,8 @@ const ru: Dict = {
   gameTaskStraight: "Вы едете прямо через перекрёсток.",
   gameTaskLeft: "Вы поворачиваете налево.",
   gameTaskRight: "Вы поворачиваете направо.",
+  gameTaskExit: "Вы съезжаете на {n}-м съезде.",
+  gameTaskFullCircle: "Вы проезжаете полный круг и возвращаетесь тем же путём.",
   gameSignPriority: "Главная дорога",
   gameSignYield: "Уступите дорогу",
   gameSignStop: "Обязательная остановка",

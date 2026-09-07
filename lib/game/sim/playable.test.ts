@@ -27,7 +27,7 @@ const DO_KADA = 14;
  */
 function zelenaVremena(s: Scenario): number[] {
   const tpl = TEMPLATES[s.intersection];
-  const prog = tpl?.lightProgram;
+  const prog = tpl && tpl.kind === "cross" ? tpl.lightProgram : undefined;
   if (!tpl || !prog || prog.length === 0) return [];
   const a = tpl.arms.find((x) => x.id === s.player.arm);
   if (!a || a.control.kind !== "light") return [];

@@ -42,10 +42,13 @@ import type {
   Path,
   Pedestrian,
   Point,
+  RoundaboutTemplate,
   ScenarioOfficer,
+  Template,
   Vehicle,
   World,
 } from "../sim/types";
+import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
 import { officerAllow } from "../sim/world";
 import { renderS, type Driver } from "./runner";
@@ -75,13 +78,16 @@ export interface View {
   cy: number;
   /** Piksela po metru. */
   scale: number;
+  /** Pola vidnog polja [m] — koristi ga i oznaka na ivici kadra. */
+  half: number;
 }
 
-export function viewFor(widthPx: number, heightPx: number): View {
+export function viewFor(widthPx: number, heightPx: number, half = VIEW_HALF): View {
   return {
     cx: widthPx / 2,
     cy: heightPx / 2,
-    scale: Math.min(widthPx, heightPx) / (2 * VIEW_HALF),
+    scale: Math.min(widthPx, heightPx) / (2 * half),
+    half,
   };
 }
 
@@ -137,8 +143,63 @@ function fillPoly(ctx: CanvasRenderingContext2D, v: View, pts: readonly Point[],
 // je koristi i simulacija. Da je ovdje svoja kopija, pješak bi mogao da bude
 // nacrtan na jednom mjestu, a da simulacija računa da je na drugom.
 
+/** Krug u svjetskim koordinatama. */
+function fillCircle(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  c: Point,
+  r: number,
+  color: string,
+): void {
+  const p = px(v, c);
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, r * v.scale, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+/**
+ * Kružni tok: krakovi, prsten i ostrvo.
+ *
+ * Prsten se crta kao pun krug pa se ostrvo „izbuši" preko njega — jedan potez
+ * manje nego crtanje prstena kao debele linije, i ivice ispadnu čiste.
+ */
+function drawRoundabout(ctx: CanvasRenderingContext2D, v: View, tpl: RoundaboutTemplate): void {
+  const reach = v.half * 1.5;
+  const lane = tpl.geometry.laneWidth;
+  const spolja = tpl.radius + lane / 2;
+
+  for (const pass of ["kerb", "asphalt"] as const) {
+    const pad = pass === "kerb" ? 1.6 : 0;
+    for (const a of tpl.arms) {
+      const out = OUTBOUND[a.id];
+      const mid = mul(out, reach / 2);
+      fillPoly(ctx, v, worldRect(mid, out, reach, (roadHalf(tpl, a) + pad) * 2), PALETTE[pass]);
+    }
+    fillCircle(ctx, v, { x: 0, y: 0 }, spolja + pad, PALETTE[pass]);
+  }
+
+  // Ostrvo u sredini: trotoar pa zelenilo.
+  const unutra = tpl.radius - lane / 2;
+  fillCircle(ctx, v, { x: 0, y: 0 }, unutra, PALETTE.kerb);
+  fillCircle(ctx, v, { x: 0, y: 0 }, Math.max(0.5, unutra - 1.2), PALETTE.grass);
+
+  // Linija ustupanja na svakom ulazu, kao isprekidan luk preko ulazne trake.
+  for (const a of tpl.arms) {
+    const { enterAngle } = ringPorts(tpl, a.id);
+    const n = 5;
+    for (let i = 0; i < n; i++) {
+      const r = unutra + ((spolja - unutra) * (i + 0.5)) / n;
+      const t = enterAngle;
+      const c = { x: Math.cos(t) * r, y: Math.sin(t) * r };
+      const smjer = { x: -Math.sin(t), y: Math.cos(t) };
+      fillPoly(ctx, v, worldRect(c, smjer, 0.5, (spolja - unutra) / (n * 1.9)), PALETTE.paint);
+    }
+  }
+}
+
 function drawRoads(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionTemplate): void {
-  const reach = VIEW_HALF * 1.5; // preko ivice ekrana, da nema šava
+  const reach = v.half * 1.5; // preko ivice ekrana, da nema šava
 
   // Trotoar je samo malo širi kolovoz ispod njega.
   for (const pass of ["kerb", "asphalt"] as const) {
@@ -170,7 +231,7 @@ function drawMarkings(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionT
   for (const a of tpl.arms) {
     const out = OUTBOUND[a.id];
     const from = px(v, mul(out, line + 1));
-    const to = px(v, mul(out, VIEW_HALF * 1.5));
+    const to = px(v, mul(out, v.half * 1.5));
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);
@@ -216,10 +277,12 @@ function drawMarkings(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionT
 // ── Znaci i semafor ─────────────────────────────────────────────────────────
 
 /** Znak stoji sa desne strane vozača tog kraka, van kolovoza. */
-function signSpot(tpl: IntersectionTemplate, a: Arm): Point {
+function signSpot(tpl: Template, a: Arm): Point {
   const out = OUTBOUND[a.id];
   const inb = mul(out, -1);
-  return plus(mul(out, stopLineAt(tpl) + 2.5), mul(rt(inb), roadHalf(tpl, a) + 2.6));
+  const udaljenost =
+    tpl.kind === "roundabout" ? tpl.radius + tpl.geometry.laneWidth + 2.5 : stopLineAt(tpl) + 2.5;
+  return plus(mul(out, udaljenost), mul(rt(inb), roadHalf(tpl, a) + 2.6));
 }
 
 function drawSign(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, kind: string) {
@@ -287,7 +350,7 @@ function drawLight(ctx: CanvasRenderingContext2D, x: number, y: number, r: numbe
 function drawControls(
   ctx: CanvasRenderingContext2D,
   v: View,
-  tpl: IntersectionTemplate,
+  tpl: Template,
   phaseIndex: number,
 ): void {
   const r = Math.max(MIN_SIGN_PX / 2, 1.15 * v.scale);
@@ -491,7 +554,7 @@ function drawEdgeMarker(
   heading: Point,
   color: string,
 ): void {
-  const lim = VIEW_HALF - EDGE_MARKER_INSET;
+  const lim = v.half - EDGE_MARKER_INSET;
   const clamped = {
     x: Math.max(-lim, Math.min(lim, pos.x)),
     y: Math.max(-lim, Math.min(lim, pos.y)),
@@ -521,7 +584,7 @@ function drawEdgeMarker(
 function drawPedestrian(
   ctx: CanvasRenderingContext2D,
   v: View,
-  tpl: IntersectionTemplate,
+  tpl: Template,
   ped: Pedestrian,
 ): void {
   const p = px(v, pedestrianPos(tpl, ped.arm, ped.u));
@@ -621,13 +684,17 @@ export function drawScene(
   const tpl = TEMPLATES[world.templateId];
   if (!tpl) return;
   const { paths } = compile(tpl);
-  const v = viewFor(widthPx, heightPx);
+  const v = viewFor(widthPx, heightPx, tpl.viewHalf);
 
   ctx.fillStyle = PALETTE.grass;
   ctx.fillRect(0, 0, widthPx, heightPx);
 
-  drawRoads(ctx, v, tpl);
-  drawMarkings(ctx, v, tpl);
+  if (tpl.kind === "roundabout") {
+    drawRoundabout(ctx, v, tpl);
+  } else {
+    drawRoads(ctx, v, tpl);
+    drawMarkings(ctx, v, tpl);
+  }
 
   const player = world.vehicles.find((x) => x.kind === "player");
   if (player) {
@@ -675,8 +742,10 @@ export function drawScene(
         ? PALETTE.emergency
         : PALETTE.npc[(npcOrder.get(veh.id) ?? 0) % PALETTE.npc.length]!;
 
-    if (Math.abs(pos.x) > VIEW_HALF || Math.abs(pos.y) > VIEW_HALF) {
-      if (!isPlayer) drawEdgeMarker(ctx, v, pos, heading, color);
+    if (Math.abs(pos.x) > v.half || Math.abs(pos.y) > v.half) {
+      // I igrač dobija oznaku: na dužem prilazu je na startu van kadra, pa bi
+      // inače prvih par sekundi vozio nevidljiv.
+      drawEdgeMarker(ctx, v, pos, heading, isPlayer ? PALETTE.blue : color);
       continue;
     }
 

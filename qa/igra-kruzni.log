@@ -1,0 +1,10 @@
+{
+  "broj": 18,
+  "kruzniNaSpisku": 4,
+  "zadatak": "Izlazite na 2. izlazu.",
+  "ishodPunGas": "pao",
+  "prekrsaji": [
+    "Oduzeto prvenstvo prolaza"
+  ],
+  "greske": []
+}

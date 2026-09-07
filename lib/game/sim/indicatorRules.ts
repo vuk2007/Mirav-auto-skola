@@ -15,7 +15,22 @@ import type { Intent, Path, Severity, ViolationType } from "./types";
 import { turnSide } from "./types";
 
 /** Karakteristična mjesta na putanji, na koja se pravila vežu. */
-export type Anchor = "pathStart" | "stopLine" | "boxEnter" | "boxExit" | "pathEnd";
+export type Anchor =
+  | "pathStart"
+  | "stopLine"
+  | "boxEnter"
+  | "boxExit"
+  | "pathEnd"
+  /** Izlaz koji prethodi mom — postoji samo u kružnom toku. */
+  | "prevExit";
+
+/**
+ * Za koji manevar pravilo važi.
+ *
+ * Krstasta raskrsnica ima tri; kružni tok tri druga, jer se tamo ne pita smjer
+ * nego koji izlaz: prvi (desno), drugi (praktično pravo) i treći ili dalji.
+ */
+export type Maneuver = "left" | "right" | "straight" | "ring1" | "ring2" | "ringN";
 
 export interface Spot {
   at: Anchor;
@@ -25,8 +40,7 @@ export interface Spot {
 
 export interface IndicatorPhase {
   id: string;
-  /** Za koji manevar pravilo važi. */
-  maneuver: "left" | "right" | "straight";
+  maneuver: Maneuver;
   from: Spot;
   to: Spot;
   /** Očekivano stanje pokazivača kroz cijelu fazu. */
@@ -97,6 +111,88 @@ export const INDICATOR_RULES: readonly IndicatorPhase[] = [
     severity: "minor",
     mismatchType: "indicatorWrong",
   },
+
+  // ── Kružni tok ────────────────────────────────────────────────────────────
+  //
+  // Prvi izlaz: desni od prilaza pa sve do izlaska. Drugi izlaz: bez pokazivača
+  // do prethodnog izlaza, pa desni. Treći i dalji, kao i puni krug: lijevi od
+  // prilaza, pa desni tek kad se prođe izlaz prije svog.
+  //
+  // Rok za desni na izlazu je POČETAK te faze („najkasnije kad prođeš izlaz
+  // prije svog"), pa `mustBeSetBefore` smije da bude jednak `from` — provjera
+  // tada traži da pokazivač već bude upaljen na ulasku u fazu.
+  {
+    id: "krug-prvi-izlaz",
+    maneuver: "ring1",
+    from: { at: "stopLine", offset: -INDICATOR_LEAD },
+    to: { at: "boxExit", offset: 0 },
+    expected: "right",
+    mustBeSetBefore: { at: "stopLine", offset: 0 },
+    severity: "fail",
+  },
+  {
+    id: "krug-drugi-prilaz",
+    maneuver: "ring2",
+    from: { at: "stopLine", offset: -INDICATOR_LEAD },
+    to: { at: "prevExit", offset: 0 },
+    expected: null,
+    severity: "minor",
+    mismatchType: "indicatorWrong",
+  },
+  {
+    id: "krug-dalji-prilaz",
+    maneuver: "ringN",
+    from: { at: "stopLine", offset: -INDICATOR_LEAD },
+    to: { at: "prevExit", offset: 0 },
+    expected: "left",
+    mustBeSetBefore: { at: "stopLine", offset: 0 },
+    severity: "fail",
+  },
+  {
+    id: "krug-izlaz-drugi",
+    maneuver: "ring2",
+    from: { at: "prevExit", offset: 0 },
+    to: { at: "boxExit", offset: 0 },
+    expected: "right",
+    mustBeSetBefore: { at: "prevExit", offset: 0 },
+    severity: "fail",
+  },
+  {
+    id: "krug-izlaz-dalji",
+    maneuver: "ringN",
+    from: { at: "prevExit", offset: 0 },
+    to: { at: "boxExit", offset: 0 },
+    expected: "right",
+    mustBeSetBefore: { at: "prevExit", offset: 0 },
+    severity: "fail",
+  },
+  {
+    id: "krug-gasenje",
+    maneuver: "ring1",
+    from: { at: "boxExit", offset: INDICATOR_OFF_AFTER },
+    to: { at: "pathEnd", offset: 0 },
+    expected: null,
+    severity: "minor",
+    mismatchType: "indicatorLeftOn",
+  },
+  {
+    id: "krug-gasenje-drugi",
+    maneuver: "ring2",
+    from: { at: "boxExit", offset: INDICATOR_OFF_AFTER },
+    to: { at: "pathEnd", offset: 0 },
+    expected: null,
+    severity: "minor",
+    mismatchType: "indicatorLeftOn",
+  },
+  {
+    id: "krug-gasenje-dalji",
+    maneuver: "ringN",
+    from: { at: "boxExit", offset: INDICATOR_OFF_AFTER },
+    to: { at: "pathEnd", offset: 0 },
+    expected: null,
+    severity: "minor",
+    mismatchType: "indicatorLeftOn",
+  },
 ];
 
 export function resolveSpot(path: Path, spot: Spot): number {
@@ -109,8 +205,26 @@ export function resolveSpot(path: Path, spot: Spot): number {
           ? path.boxEnterS
           : spot.at === "boxExit"
             ? path.boxExitS
-            : path.length;
+            : spot.at === "prevExit"
+              ? (path.prevExitS ?? path.stopLineS)
+              : path.length;
   return Math.max(0, Math.min(path.length, base + spot.offset));
+}
+
+/**
+ * Koji manevar putanja predstavlja, u pojmovima tabele pravila.
+ *
+ * Kružni tok se ne svodi na smjer: prvi izlaz je desno, drugi je praktično
+ * pravo, a treći i dalji su lijevo — ali pravila za njih nisu ista kao za
+ * skretanje na krstastoj raskrsnici, pa imaju svoje ključeve.
+ */
+export function maneuverFor(intent: Intent): Maneuver {
+  const side = turnSide(intent);
+  if (side) return side;
+  if (typeof intent !== "string" && intent.kind === "exit") {
+    return intent.n <= 1 ? "ring1" : intent.n === 2 ? "ring2" : "ringN";
+  }
+  return "straight";
 }
 
 export interface ResolvedPhase {
@@ -129,8 +243,7 @@ export function phasesFor(
   intent: Intent,
   rules: readonly IndicatorPhase[] = INDICATOR_RULES,
 ): ResolvedPhase[] {
-  const side = turnSide(intent);
-  const maneuver = side ?? "straight";
+  const maneuver = maneuverFor(intent);
   return rules
     .filter((r) => r.maneuver === maneuver)
     .map((r) => ({

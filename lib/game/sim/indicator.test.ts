@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SCENARIOS, scenarioById } from "@/lib/game/scenarios";
-import { flooringBot, perfectBot, run, wrongIndicatorBot, type Bot } from "./bots";
+import { flooringBot, noIndicatorBot, perfectBot, run, wrongIndicatorBot, type Bot } from "./bots";
 import { INDICATOR_LEAD, INDICATOR_OFF_AFTER } from "./config";
 import {
   expectedIndicatorAt,
@@ -11,19 +11,23 @@ import {
 } from "./indicatorRules";
 import { compile, TEMPLATES } from "./intersection";
 import type { Path, Scenario } from "./types";
-import { turnSide } from "./types";
-import { hasFail, PLAYER_ID } from "./world";
 
-const SKRECU = SCENARIOS.filter((s) => turnSide(s.player.intent) !== null);
-const IDU_PRAVO = SCENARIOS.filter((s) => turnSide(s.player.intent) === null);
+import { hasFail, intentKey, PLAYER_ID } from "./world";
+
+/**
+ * Podjela ide po TABELI, ne po smjeru: u kružnom toku se pokazivač traži i kad
+ * se ide „pravo" (drugi izlaz), pa smjer skretanja nije mjerilo.
+ */
+const trazi = (s: Scenario) =>
+  phasesFor(putanjaIgraca(s), s.player.intent).some((f) => f.expected !== null);
+const SKRECU = SCENARIOS.filter(trazi);
+const IDU_PRAVO = SCENARIOS.filter((s) => !trazi(s));
 
 function putanjaIgraca(s: Scenario): Path {
   const tpl = TEMPLATES[s.intersection]!;
-  const { paths } = compile(tpl);
-  const p = [...paths.values()].find(
-    (x) => x.arm === s.player.arm && x.intent === s.player.intent,
-  );
-  return p!;
+  // Manevar kružnog toka je objekat, pa poređenje mora ići preko ključa —
+  // `intent === intent` bi poredilo reference.
+  return compile(tpl).paths.get(`${tpl.id}:${s.player.arm}:${intentKey(s.player.intent)}`)!;
 }
 
 /** Bot koji vozi savršeno, ali pokazivač pali po zadatoj funkciji mjesta. */
@@ -86,11 +90,15 @@ describe("pokazivač u vožnji", () => {
 
   for (const s of SKRECU) {
     it(`${s.id}: bez pokazivača na skretanju je prekršaj koji obara vožnju`, () => {
-      const { world } = run(s, flooringBot);
+      // Ne `flooringBot`: on u kružnom toku pogine na ulasku, prije nego što
+      // uopšte stigne do faze u kojoj se pokazivač traži.
+      const { world } = run(s, noIndicatorBot);
       const v = world.violations.find((x) => x.type === "indicatorMissing");
       expect(v, `prijavljeno: ${JSON.stringify(world.violations.map((x) => x.type))}`).toBeDefined();
       expect(v!.severity).toBe("fail");
-      expect(v!.phaseId).toBe(turnSide(s.player.intent) === "left" ? "najava-lijevo" : "najava-desno");
+      // Faza koja je propuštena je prva u kojoj se pokazivač traži.
+      const prva = phasesFor(putanjaIgraca(s), s.player.intent).find((f) => f.expected !== null)!;
+      expect(v!.phaseId).toBe(prva.id);
     });
 
     it(`${s.id}: pokazivač na pogrešnu stranu je prijavljen`, () => {
@@ -124,7 +132,8 @@ describe("kasno i ostavljeno", () => {
     const path = putanjaIgraca(s);
     const { world } = run(
       s,
-      pokazivacBot((x) => (x > path.stopLineS + 0.5 && x < path.boxExitS ? "left" : null)),
+      // Iza tolerancije (`INDICATOR_GRACE`), da kašnjenje bude stvarno.
+      pokazivacBot((x) => (x > path.stopLineS + 5 && x < path.boxExitS ? "left" : null)),
     );
     const tipovi = world.violations.map((v) => v.type);
     expect(tipovi).toContain("indicatorLate");

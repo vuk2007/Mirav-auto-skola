@@ -20,6 +20,10 @@ import pjesaci from "./pjesaci.json";
 import policajacPropusta from "./policajac-propusta.json";
 import policajacZaustavlja from "./policajac-zaustavlja.json";
 import hitna from "./hitna.json";
+import kruzniIzlaz2 from "./kruzni-izlaz2.json";
+import kruzniGust from "./kruzni-gust.json";
+import kruzniPolukruzno from "./kruzni-polukruzno.json";
+import kruzniStop from "./kruzni-stop.json";
 import stop from "./stop.json";
 import trougao from "./trougao.json";
 import type { Scenario } from "../sim/types";
@@ -39,6 +43,10 @@ export const SCENARIOS: readonly Scenario[] = [
   hitna,
   policajacPropusta,
   policajacZaustavlja,
+  kruzniIzlaz2,
+  kruzniStop,
+  kruzniGust,
+  kruzniPolukruzno,
   // JSON ne nosi literalne tipove (npr. `spawnAt` je `number[]`, a treba
   // `[number, number]`), pa se oblik provjerava testom umjesto kompajlerom.
 ] as unknown as Scenario[];
@@ -67,4 +75,8 @@ export const PLAYER_MUST_YIELD: readonly string[] = [
   "pjesaci",
   "hitna",
   "policajac-zaustavlja",
+  // U kružnom toku igrač ustupa vozilima koja su već u prstenu.
+  "kruzni-izlaz2",
+  "kruzni-gust",
+  "kruzni-stop",
 ];

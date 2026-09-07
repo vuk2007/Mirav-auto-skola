@@ -48,6 +48,17 @@ export const flooringBot: Bot = () => GAS;
 /** Samo stoji — mora da izazove `obstruction`. */
 export const idleBot: Bot = () => STOP;
 
+/**
+ * Vozi ispravno, ali nikad ne pali pokazivač.
+ *
+ * Za razliku od `flooringBot`-a, ovaj stigne do kraja manevra — pa se na njemu
+ * vidi i propust u fazama koje dolaze tek u raskrsnici ili u prstenu.
+ */
+export const noIndicatorBot: Bot = (world, scenario) => ({
+  ...perfectBot(world, scenario),
+  indicator: null,
+});
+
 /** Vozi ispravno, ali pali pokazivač na pogrešnu stranu. */
 export const wrongIndicatorBot: Bot = (world, scenario) => {
   const ispravan = ispravanPokazivac(world, scenario);

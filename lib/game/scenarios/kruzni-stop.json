@@ -1,0 +1,21 @@
+{
+  "id": "kruzni-stop",
+  "intersection": "kruzni-stop",
+  "difficulty": 2,
+  "title": {
+    "me": "Kružni tok — STOP na ulazu",
+    "en": "Roundabout — STOP at the entry",
+    "sq": "Rrethrrotullim — STOP në hyrje",
+    "ru": "Круговое движение — STOP на въезде"
+  },
+  "player": { "arm": "N", "intent": { "kind": "exit", "n": 1 }, "spawnDistance": 42 },
+  "npcs": [
+    { "arm": "E", "intent": { "kind": "exit", "n": 2 }, "spawnAt": [1.6, 2.2], "speed": 10 }
+  ],
+  "explanation": {
+    "me": "Na ulazu je znak STOP, pa se zaustavljate potpuno i onda kad je prsten prazan. Tek poslije zaustavljanja propuštate vozila u prstenu i ulazite. Prvi izlaz se najavljuje desnim pokazivačem još na prilazu.",
+    "en": "The entry carries a STOP sign, so you come to a complete halt even when the ring is empty. Only after stopping do you give way to circulating traffic and enter. The first exit is announced with the right indicator while still on the approach.",
+    "sq": "Në hyrje është shenja STOP, prandaj ndaloni plotësisht edhe kur unaza është bosh. Vetëm pas ndalimit u jepni përparësi automjeteve në unazë dhe hyni. Dalja e parë njoftohet me treguesin e djathtë ende në afrim.",
+    "ru": "На въезде стоит знак STOP, поэтому вы останавливаетесь полностью даже при пустом кольце. Только после остановки вы уступаете движущимся по кольцу и въезжаете. Первый съезд объявляется правым указателем ещё на подъезде."
+  }
+}

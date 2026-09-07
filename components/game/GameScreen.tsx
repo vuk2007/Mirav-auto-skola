@@ -6,7 +6,7 @@ import { idealTime } from "@/lib/game/sim/bots";
 import type { Outcome, Scenario } from "@/lib/game/sim/types";
 import { compile, TEMPLATES } from "@/lib/game/sim/intersection";
 import { playerControl } from "@/lib/game/ui/draw";
-import { CONTROL_LABEL, taskKeyFor } from "@/lib/game/ui/labels";
+import { CONTROL_LABEL, taskTextFor } from "@/lib/game/ui/labels";
 import { createPlayback, createRunner, type Playback } from "@/lib/game/ui/runner";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import PedalControls from "./PedalControls";
@@ -121,9 +121,10 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
   }, [scenario.difficulty, t.gameIndicatorShortLeft, t.gameIndicatorShortRight]);
 
   const player = runner.world.vehicles.find((v) => v.kind === "player");
-  const playerPath = player
-    ? compile(TEMPLATES[runner.world.templateId]!).paths.get(player.pathId)
-    : undefined;
+  const playerPath = player ? compile(TEMPLATES[runner.world.templateId]!).paths.get(player.pathId) : undefined;
+
+  const tpl = TEMPLATES[runner.world.templateId]!;
+  const zadatak = taskTextFor(scenario.player.intent, t, tpl.arms.length);
 
   const control = playerControl(runner.world, scenario.officer);
   const violations = runner.world.violations;
@@ -182,7 +183,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
 
       <div>
         <h1 className="text-xl font-bold sm:text-2xl">{title}</h1>
-        <p className="mt-0.5 text-sm text-muted">{t[taskKeyFor(scenario.player.intent)]}</p>
+        <p className="mt-0.5 text-sm text-muted">{zadatak}</p>
       </div>
 
       {/* Platno je kvadrat, ali ne smije da bude više od ekrana: na 1440×900
@@ -204,7 +205,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           flagVehicleId={phase === "over" ? flagged : null}
           officer={scenario.officer ?? null}
           indicatorZones={zones}
-          label={`${title} — ${t[taskKeyFor(scenario.player.intent)]}`}
+          label={`${title} — ${zadatak}`}
         />
 
         {(phase === "play" || playback) && (

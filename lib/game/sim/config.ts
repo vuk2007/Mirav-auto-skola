@@ -179,3 +179,25 @@ export const INDICATOR_LEAD = 20;
 
 /** Koliko poslije izlaska iz raskrsnice pokazivač mora biti ugašen [m]. */
 export const INDICATOR_OFF_AFTER = 15;
+
+/**
+ * Tolerancija na rok za paljenje pokazivača [m].
+ *
+ * Kad je rok isti kao početak faze (u kružnom toku: „najkasnije kad prođeš
+ * izlaz prije svog"), vozač koji upali TAČNO tu ispadne zakasnio — jer se
+ * simulacija odvija u koracima, pa se promjena zabilježi metar dalje. Bez ove
+ * tolerancije ni savršen bot ne bi mogao da prođe sopstvenu tabelu.
+ *
+ * Ista tolerancija vrijedi i za čovjeka: niko ne pomjera ručicu na tačan metar.
+ */
+export const INDICATOR_GRACE = 2;
+
+/**
+ * Koliko je linija ustupanja odmaknuta od ivice prstena [m].
+ *
+ * Bez odmaka vozilo koje ISPRAVNO stane i čeka prazninu stoji nosom u kružnoj
+ * traci, pa ga pokosi prvo vozilo koje prođe — izmjereno, sva tri scenarija sa
+ * gustim prstenom su tako padala na sudar bez ičije greške. Stvarna linija
+ * ustupanja je takođe uvučena.
+ */
+export const RING_YIELD_SETBACK = 5;

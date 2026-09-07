@@ -20,6 +20,7 @@ import {
   DT,
   FOLLOW_GAP,
   GAP,
+  INDICATOR_GRACE,
   MAX_SCENARIO_SECONDS,
   OBSTRUCTION_TIMEOUT,
   ROLL_RESISTANCE,
@@ -44,6 +45,7 @@ import {
   TEMPLATES,
 } from "./intersection";
 import { expectedIndicatorAt, phasesFor } from "./indicatorRules";
+import { ringAngleAt, ringGap, ringUAt } from "./roundabout";
 import type {
   ArmId,
   ConflictPoint,
@@ -51,12 +53,12 @@ import type {
   IndicatorEvent,
   Input,
   Intent,
-  IntersectionTemplate,
   Path,
   Pedestrian,
   Scenario,
   ScenarioOfficer,
   Severity,
+  Template,
   Vehicle,
   Violation,
   World,
@@ -104,7 +106,7 @@ export function hasFail(world: World): boolean {
 
 function controlToEffective(
   control: Control,
-  tpl: IntersectionTemplate,
+  tpl: Template,
   phaseIndex: number,
 ): EffectiveControl {
   switch (control.kind) {
@@ -133,19 +135,21 @@ function armControl(ctx: Regulacija, armId: ArmId, phaseIndex: number): Effectiv
 
 /** Ono što je za odluku o prvenstvu dovoljno znati o raskrsnici. */
 interface Regulacija {
-  tpl: IntersectionTemplate;
+  tpl: Template;
   /** Krakovi koje policajac trenutno propušta; `null` kad policajca nema. */
   officerAllow: ArmId[] | null;
 }
 
-function party(ctx: Regulacija, v: Vehicle, phaseIndex: number): YieldParty {
+function party(ctx: Ctx, v: Vehicle, phaseIndex: number): YieldParty {
+  const path = ctx.paths.get(v.pathId);
   return {
     approach: v.arm,
-    // Pravila prvenstva za sada poznaju samo manevre krstaste raskrsnice;
-    // kružni tok dolazi kao zasebno polje na `YieldParty`, ne kao manevar.
+    // Kružni tok se ne opisuje manevrom nego time da li je vozilo već u prstenu;
+    // manevar se zato svodi na „pravo" i ne učestvuje u odluci.
     intent: crossIntent(v.intent) ?? "straight",
     control: armControl(ctx, v.arm, phaseIndex),
     emergency: v.emergency,
+    inRing: path ? ringAngleAt(path, v.s) !== null : false,
   };
 }
 
@@ -331,6 +335,19 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
     limit = Math.min(limit, o.s - o.length - FOLLOW_GAP);
   }
 
+  // Vozilo ispred u ISTOJ IZLAZNOJ TRACI, i kad mu je putanja druga.
+  // Dva vozila koja izlaze na isti krak voze jednu za drugim po istom asfaltu;
+  // to nije pitanje prvenstva nego odstojanja. Na krstastoj raskrsnici je taj
+  // slučaj do sad pokrivala `merge` konfliktna tačka, koja odlučuje KO PRVI —
+  // a poslije raskrsnice više nema „ko prvi", nego samo „ko je ispred".
+  limit = Math.min(limit, exitLaneFollowLimit(world, ctx, me, mePath));
+
+  // Vozilo ispred U PRSTENU. Putanje kroz prsten se poklapaju na dužini, pa ovo
+  // nije pitanje prvenstva nego odstojanja — i ne može se svesti na „ista
+  // putanja", jer dva vozila mogu dijeliti luk a izlaziti na različitim
+  // krakovima.
+  limit = Math.min(limit, ringFollowLimit(world, ctx, me, mePath));
+
   // Prvenstvo na konfliktnim tačkama.
   for (const c of ctx.conflicts.get(mePath.id) ?? []) {
     if (c.sA < me.s) continue; // konflikt je iza nas
@@ -357,6 +374,57 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
     }
   }
 
+  return limit;
+}
+
+/**
+ * Do kojeg `s` se smije ići zbog vozila ispred u zajedničkoj izlaznoj traci.
+ *
+ * Rastojanje se mjeri preostalim putem do izlaza: ko ima manje preostalo, taj
+ * je ispred. Time se ne mora znati ništa o obliku putanja — samo da vode na
+ * isti krak.
+ */
+function exitLaneFollowLimit(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
+  let limit = Infinity;
+  const doIzlaza = mePath.boxExitS - me.s;
+  for (const o of world.vehicles) {
+    if (o.id === me.id || o.done || world.t < o.spawnT) continue;
+    if (o.pathId === me.pathId) continue; // već pokriveno pravilom iste trake
+    const oPath = ctx.paths.get(o.pathId);
+    if (!oPath || oPath.exitArm !== mePath.exitArm) continue;
+    // Vozilo koje još nije ušlo u raskrsnicu nije u zajedničkoj traci.
+    if (o.s < oPath.boxEnterS) continue;
+    const njegovo = oPath.boxExitS - o.s;
+    const razmak = doIzlaza - njegovo;
+    if (razmak <= 0 || razmak > 40) continue; // iza mene, ili predaleko
+    limit = Math.min(limit, me.s + razmak - o.length - FOLLOW_GAP);
+  }
+  return limit;
+}
+
+/**
+ * Do kojeg `s` se smije ići zbog vozila ispred u prstenu.
+ *
+ * Položaj duž prstena je jedan broj (`ringU`), pa je „ko je ispred" obično
+ * poređenje po modulu obima. Razmak se onda prevede nazad u `s` na mojoj
+ * putanji — u prstenu su to iste jedinice.
+ */
+function ringFollowLimit(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
+  const uMe = ringUAt(mePath, me.s);
+  if (uMe === null) return Infinity;
+  const radius = mePath.ring!.radius;
+  let limit = Infinity;
+  for (const o of world.vehicles) {
+    if (o.id === me.id || o.done || world.t < o.spawnT) continue;
+    const oPath = ctx.paths.get(o.pathId);
+    if (!oPath) continue;
+    const uO = ringUAt(oPath, o.s);
+    if (uO === null) continue;
+    const gap = ringGap(uMe, uO, radius);
+    // Nula znači „na istom mjestu"; pola obima i više je vozilo iza mene.
+    if (gap <= 0 || gap > Math.PI * radius) continue;
+    limit = Math.min(limit, me.s + gap - o.length - FOLLOW_GAP);
+  }
   return limit;
 }
 
@@ -414,7 +482,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   const ctx = ctxFor(world, scenario);
 
   // ── semafor ───────────────────────────────────────────────────────────────
-  const program = ctx.tpl.lightProgram;
+  const program = ctx.tpl.kind === "cross" ? ctx.tpl.lightProgram : undefined;
   if (program && program.length > 0) {
     const before = armControl(ctx, scenario.player.arm, world.phaseIndex);
     world.phaseT += DT;
@@ -752,7 +820,12 @@ function evaluateIndicator(
 
     const kraj = Math.min(ph.to, Math.max(player.s, ph.from));
     if (kraj <= ph.from) continue;
-    const stanja = statesOver(world.indicatorLog, ph.from, kraj);
+    // Zahtjev faze stupa na snagu `INDICATOR_GRACE` metara poslije njenog
+    // početka. Bez toga se prelaz iz jedne faze u drugu prijavljuje kao greška:
+    // vozač koji prebaci žmigavac TAČNO na granici biva zabilježen metar
+    // kasnije, jer se simulacija odvija u koracima.
+    const pocetak = Math.min(ph.from + INDICATOR_GRACE, kraj);
+    const stanja = statesOver(world.indicatorLog, pocetak, kraj);
     const detalj = (x: string) => x;
 
     if (ph.expected === null) {
@@ -790,8 +863,12 @@ function evaluateIndicator(
       continue;
     }
 
-    const prvi = firstAt(world.indicatorLog, ph.expected, ph.from, kraj);
-    if (ph.mustBeSetBefore !== null && prvi !== null && prvi > ph.mustBeSetBefore) {
+    const prvi = firstAt(world.indicatorLog, ph.expected, pocetak, kraj);
+    if (
+      ph.mustBeSetBefore !== null &&
+      prvi !== null &&
+      prvi > ph.mustBeSetBefore + INDICATOR_GRACE
+    ) {
       add(world, {
         type: "indicatorLate",
         severity: "minor",
