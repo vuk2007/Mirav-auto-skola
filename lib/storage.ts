@@ -13,6 +13,7 @@ const KEY_LANG = "mirav.lang";
 const KEY_BEST = "mirav.bestExam";
 const KEY_PRACTICE = "mirav.practice";
 const KEY_GAME = "mirav.game";
+const KEY_SHIFT = "mirav.smjena";
 
 function read<T>(key: string): T | null {
   try {
@@ -175,4 +176,31 @@ export function saveGameAttempt(id: string, passed: boolean, time: number): Game
   const updated = { ...all, [id]: next };
   write(KEY_GAME, updated);
   return updated;
+}
+
+// ── Najbolja smjena ─────────────────────────────────────────────────────────
+
+export interface BestShift {
+  segments: number;
+  bestStreak: number;
+  date: string;
+}
+
+export function loadBestShift(): BestShift | null {
+  const v = read<Partial<BestShift>>(KEY_SHIFT);
+  if (!v || typeof v.segments !== "number" || typeof v.date !== "string") return null;
+  return {
+    segments: v.segments,
+    bestStreak: typeof v.bestStreak === "number" ? v.bestStreak : 0,
+    date: v.date,
+  };
+}
+
+/** Upisuje samo bolji rezultat — mjeri se brojem pređenih segmenata. */
+export function saveBestShift(result: Omit<BestShift, "date">): BestShift {
+  const prev = loadBestShift();
+  if (prev && prev.segments >= result.segments) return prev;
+  const next = { ...result, date: new Date().toISOString() };
+  write(KEY_SHIFT, next);
+  return next;
 }

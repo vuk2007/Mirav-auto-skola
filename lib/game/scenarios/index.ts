@@ -82,7 +82,12 @@ export const PLAYER_MUST_YIELD: readonly string[] = [
   "hitna",
   "policajac-zaustavlja",
   // U kružnom toku igrač ustupa vozilima koja su već u prstenu.
-  "kruzni-izlaz2",
+  //
+  // `kruzni-izlaz2` NIJE ovdje, i to je izmjereno, a ne previđeno: sa jednim
+  // vozilom na četvorokrakom kružnom toku bezobzirni vozač nikome ne može da
+  // oduzme prvenstvo. Vozilo koje prilazi svojoj liniji vidi da igrač stiže
+  // prije njega i propusti ga — kao i pravi vozač. Bezobzirna vožnja se tamo
+  // hvata pravilom o pokazivaču, koje je takođe `fail`.
   "kruzni-gust",
   "kruzni-stop",
 ];

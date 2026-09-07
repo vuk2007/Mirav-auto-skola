@@ -293,3 +293,17 @@ export const HORN_AT = 0.5;
 
 /** Usporenje iznad kojeg se kamera blago trese [m/s²]. */
 export const SHAKE_DECEL = 3;
+
+/**
+ * Širina razdjelnog ostrva između ulazne i izlazne trake kraka kružnog toka [m].
+ *
+ * Bez njega su ulaz i izlaz istog kraka udaljeni samo širinu trake (3,5 m), pa
+ * se vozilo koje ULAZI i vozilo koje IZLAZI na istom kraku fizički preklapaju
+ * iako jedno drugom ne prelaze put. Izmjereno: bez ostrva je oko 2% nasumično
+ * generisanih segmenata sa kružnim tokom završavalo sudarom koji nije ničija
+ * greška. Stvarni kružni tokovi imaju to ostrvo iz istog razloga.
+ */
+export const RING_SPLITTER = 3;
+
+/** Pola vidnog polja u beskonačnom modu [m] — kamera prati, pa je uže. */
+export const SHIFT_VIEW_HALF = 34;

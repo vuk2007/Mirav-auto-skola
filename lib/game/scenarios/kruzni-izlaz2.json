@@ -8,9 +8,27 @@
     "sq": "Rrethrrotullim — dalja e dytë",
     "ru": "Круговое движение — второй съезд"
   },
-  "player": { "arm": "N", "intent": { "kind": "exit", "n": 2 }, "spawnDistance": 42 },
+  "player": {
+    "arm": "N",
+    "intent": {
+      "kind": "exit",
+      "n": 2
+    },
+    "spawnDistance": 42
+  },
   "npcs": [
-    { "arm": "E", "intent": { "kind": "exit", "n": 2 }, "spawnAt": [0.0, 0.6], "speed": 10 }
+    {
+      "arm": "E",
+      "intent": {
+        "kind": "exit",
+        "n": 2
+      },
+      "spawnAt": [
+        1.9,
+        2.5
+      ],
+      "speed": 10
+    }
   ],
   "explanation": {
     "me": "Pri ulasku u kružni tok propuštate vozila koja su već u prstenu. Za drugi izlaz se na prilazu ne pali nijedan pokazivač; desni se pali tek kad prođete izlaz prije svog.",

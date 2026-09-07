@@ -8,11 +8,51 @@
     "sq": "Rrethrrotullim — trafik i dendur",
     "ru": "Круговое движение — плотный поток"
   },
-  "player": { "arm": "N", "intent": { "kind": "exit", "n": 2 }, "spawnDistance": 42 },
+  "player": {
+    "arm": "N",
+    "intent": {
+      "kind": "exit",
+      "n": 2
+    },
+    "spawnDistance": 42
+  },
   "npcs": [
-    { "arm": "E", "intent": { "kind": "exit", "n": 2 }, "spawnAt": [0.0, 0.4], "speed": 10 },
-    { "arm": "E", "intent": { "kind": "exit", "n": 3 }, "spawnAt": [2.2, 2.6], "speed": 10 },
-    { "arm": "S", "intent": { "kind": "exit", "n": 3 }, "spawnAt": [3.4, 3.8], "speed": 10 }
+    {
+      "arm": "E",
+      "intent": {
+        "kind": "exit",
+        "n": 2
+      },
+      "spawnAt": [
+        0.9,
+        1.3
+      ],
+      "speed": 10
+    },
+    {
+      "arm": "E",
+      "intent": {
+        "kind": "exit",
+        "n": 3
+      },
+      "spawnAt": [
+        3.1,
+        3.5
+      ],
+      "speed": 10
+    },
+    {
+      "arm": "S",
+      "intent": {
+        "kind": "exit",
+        "n": 3
+      },
+      "spawnAt": [
+        4.3,
+        4.7
+      ],
+      "speed": 10
+    }
   ],
   "explanation": {
     "me": "Prsten je pun i ulazak se mora sačekati — ali samo dok stvarno nema praznine. Kad se praznina pojavi, ulazi se bez oklijevanja; nepotrebno stajanje na slobodnom ulazu zadržava saobraćaj iza vas.",

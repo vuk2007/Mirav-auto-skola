@@ -335,6 +335,35 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
     if (staje) limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
   }
 
+  // Ulazak u kružni tok: prilazi se SPREMAN DA SE STANE.
+  //
+  // Bez ovoga vozilo donese odluku tek kad drugi uđe u prsten — a tada je već
+  // prešlo svoju liniju ustupanja i staje unutar kružne trake, gdje ga pokosi
+  // onaj ko kruži. Fuzz test je to izvukao kao sudar bez ičije greške.
+  if (mePath.ring && me.s < mePath.stopLineS && !me.emergency && !bezobzirno) {
+    const nekoKruzi = (ctx.conflicts.get(mePath.id) ?? []).some((c) => {
+      // Samo konflikt na MOM ulasku u prsten; vozilo koje izlazi prije njega mi
+      // ne prelazi put.
+      if (Math.abs(c.sA - mePath.boxEnterS) > 0.5) return false;
+      return world.vehicles.some((o) => {
+        if (o.id === me.id || o.done || world.t < o.spawnT) return false;
+        if (o.pathId !== c.pathB) return false;
+        const oPath = ctx.paths.get(o.pathId);
+        if (!oPath?.ring) return false;
+        // Već u prstenu, prije moje ulazne tačke.
+        if (o.s >= oPath.boxEnterS && o.s <= c.sB) return true;
+        // Ili tek stiže, ali će ući PRIJE mene. Poređenje ide po vremenu do
+        // prstena, pa je poredak strog i ne može doći do uzajamnog čekanja:
+        // vozilo koje stoji ima beskonačno vrijeme i nikoga ne blokira.
+        if (o.s >= oPath.boxEnterS) return false;
+        const tOn = timeTo(o, oPath.boxEnterS);
+        const tJa = timeTo(me, mePath.boxEnterS);
+        return tOn < tJa;
+      });
+    });
+    if (nekoKruzi) limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
+  }
+
   // Pješak na prelazu preko kojeg prolazim — staje se prije prelaza.
   limit = Math.min(limit, pedestrianLimit(world, ctx, me, mePath));
 
@@ -382,7 +411,13 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
       const tMe = timeTo(me, c.sA);
       const tThem = timeTo(o, c.sB);
       const oNear = inBox(o, oPath) || tThem < Math.max(ctx.dif.ttcThreshold, tMe + CLEAR_TIME);
-      if (oNear) limit = Math.min(limit, c.sA - GAP);
+      if (!oNear) continue;
+      // Vozilo koje ustupa nikad ne planira da stane IZA svoje linije. Bez ovog
+      // ograničenja odluka doneseta kasno (jer je treće vozilo tek ušlo u prag)
+      // ostavlja vozilo zaustavljeno nasred raskrsnice — a tamo ga zakuca onaj
+      // ko ima prednost.
+      const svoja = me.s < mePath.stopLineS ? mePath.stopLineS - STOP_MARGIN : Infinity;
+      limit = Math.min(limit, Math.min(c.sA - GAP, svoja));
     }
   }
 
@@ -729,7 +764,16 @@ function detectViolations(
   }
 
   for (const c of ctx.conflicts.get(path.id) ?? []) {
-    if (player.s < c.sA - 1 || player.s > c.sA + player.length) continue; // nije u zoni
+    // Zona u kojoj se sudi „ušao je ispred onoga ko ima prednost".
+    //
+    // Na krstastoj raskrsnici je konflikt duboko u tijelu raskrsnice, pa je
+    // dovoljno gledati metar prije njega. U kružnom toku je konflikt SAM ULAZ,
+    // pa bi ta ista zona bila široka jedan metar — a igrač bi u njoj već važio
+    // za vozilo u prstenu i dobio bi ravnopravan tretman. Zato tamo zona
+    // počinje na liniji ustupanja, gdje se odluka i donosi.
+    const naUlasku = Boolean(path.ring) && Math.abs(c.sA - path.boxEnterS) < 0.5;
+    const odKada = naUlasku ? path.stopLineS : c.sA - 1;
+    if (player.s < odKada || player.s > c.sA + player.length) continue;
     for (const o of world.vehicles) {
       if (o.id === player.id || o.done || world.t < o.spawnT || o.pathId !== c.pathB) continue;
       if (o.s > c.sB + o.length) continue; // već prošao

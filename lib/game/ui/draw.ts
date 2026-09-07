@@ -677,6 +677,14 @@ export interface DrawOptions {
    * osjeti da je kočenje bilo naglo, a ne da se sakrije šta se dešava.
    */
   shake?: number;
+  /**
+   * Kamera prati igrača umjesto da stoji na raskrsnici.
+   *
+   * Koristi je beskonačni mod: tamo se vozi kroz niz raskrsnica, pa fiksni
+   * kadar nema šta da fiksira. `half` sužava vidno polje, jer se u praćenju
+   * gleda ono ispred, a ne cijela raskrsnica odjednom.
+   */
+  camera?: { follow: boolean; half?: number };
 }
 
 /** Nacrtaj cijelu scenu — svejedno je da li se vozi ili se ponavlja snimak. */
@@ -691,7 +699,18 @@ export function drawScene(
   const tpl = TEMPLATES[world.templateId];
   if (!tpl) return;
   const { paths } = compile(tpl);
-  const v = viewFor(widthPx, heightPx, tpl.viewHalf);
+  const v = viewFor(widthPx, heightPx, opts.camera?.half ?? tpl.viewHalf);
+  if (opts.camera?.follow) {
+    const igrac = world.vehicles.find((x) => x.kind === "player");
+    const p = igrac ? paths.get(igrac.pathId) : undefined;
+    if (igrac && p) {
+      const poz = pointAt(p.points, p.cum, renderS(runner, igrac.id, igrac.s));
+      // Igrač stoji na 38% visine — dvije trećine kadra su ono ispred njega.
+      v.cx = widthPx / 2 - poz.x * v.scale;
+      v.cy = heightPx * 0.38 - poz.y * v.scale;
+    }
+  }
+
   const trese = opts.shake ?? 0;
   if (trese > 0) {
     // Pomjeraj je vezan za vrijeme simulacije, pa je isti i pri ponavljanju.

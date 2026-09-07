@@ -14,7 +14,13 @@
  */
 
 import { RING_ORDER, type Approach } from "@/lib/simRules";
-import { APPROACH_LENGTH, ARC_SAMPLES, EXIT_LENGTH, RING_YIELD_SETBACK } from "./config";
+import {
+  APPROACH_LENGTH,
+  ARC_SAMPLES,
+  EXIT_LENGTH,
+  RING_SPLITTER,
+  RING_YIELD_SETBACK,
+} from "./config";
 import { cumulative, right } from "./geometry";
 import type { ArmId, ConflictPoint, Path, Point, RoundaboutTemplate } from "./types";
 
@@ -51,6 +57,9 @@ export function ringGap(uMe: number, uOther: number, radius: number): number {
   return ((uOther - uMe) % c + c) % c;
 }
 
+/** Bočni pomak ulazne odnosno izlazne trake od ose kraka [m]. */
+export const portOffset = (laneWidth: number): number => laneWidth / 2 + RING_SPLITTER / 2;
+
 /** Tačka na prstenu pod datim uglom. */
 const onRing = (angle: number, radius: number): Point => ({
   x: Math.cos(angle) * radius,
@@ -71,7 +80,7 @@ export function ringPorts(
 ): { enter: Point; leave: Point; enterAngle: number; leaveAngle: number } {
   const out = AXIS[arm];
   const inb = { x: -out.x, y: -out.y };
-  const off = tpl.geometry.laneWidth / 2;
+  const off = portOffset(tpl.geometry.laneWidth);
   // Rastojanje po osi kraka na kojem tačka sa bočnim pomakom `off` pada tačno
   // na kružnicu poluprečnika `radius`.
   const d = Math.sqrt(Math.max(0.01, tpl.radius * tpl.radius - off * off));
@@ -117,7 +126,7 @@ export function buildRingPath(tpl: RoundaboutTemplate, arm: ArmId, exitN: number
 
   const out = AXIS[arm];
   const inb = { x: -out.x, y: -out.y };
-  const off = tpl.geometry.laneWidth / 2;
+  const off = portOffset(tpl.geometry.laneWidth);
   const sideIn = right(inb);
   const start = {
     x: out.x * (tpl.radius + APPROACH_LENGTH) + sideIn.x * off,
@@ -237,7 +246,10 @@ export function ringConflicts(tpl: RoundaboutTemplate, paths: Path[]): ConflictP
       out.push({
         pathA: ulazna.id,
         pathB: kruzna.id,
-        sA: ulazna.stopLineS,
+        // Konflikt je na ULASKU u prsten, ne na liniji ustupanja. Linija je
+        // mjesto gdje se STAJE; da je i konflikt tamo, vozilo koje uredno čeka
+        // iza linije bilo bi prijavljeno da je oduzelo prvenstvo.
+        sA: ulazna.boxEnterS,
         sB: sNaLuku,
         kind: "cross",
       });

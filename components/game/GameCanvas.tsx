@@ -28,6 +28,8 @@ interface GameCanvasProps {
   /** Nivo težine scenarija — po njemu se zna kad je rok zadržavanja na pola. */
   level: Level;
   sound: Sound;
+  /** Kamera koja prati igrača — koristi je beskonačni mod. */
+  camera?: { follow: boolean; half?: number };
   label: string;
 }
 
@@ -49,6 +51,7 @@ export default function GameCanvas({
   indicatorZones,
   level,
   sound,
+  camera,
   label,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -62,6 +65,7 @@ export default function GameCanvas({
   const zonesRef = useRef(indicatorZones);
   const levelRef = useRef(level);
   const soundRef = useRef(sound);
+  const cameraRef = useRef(camera);
   onHudRef.current = onHud;
   onFinishRef.current = onFinish;
   runningRef.current = running;
@@ -70,6 +74,7 @@ export default function GameCanvas({
   zonesRef.current = indicatorZones;
   levelRef.current = level;
   soundRef.current = sound;
+  cameraRef.current = camera;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -133,6 +138,7 @@ export default function GameCanvas({
         officer: officerRef.current,
         indicatorZones: zonesRef.current,
         shake: Math.min(1, Math.max(0, (usporenje - SHAKE_DECEL) / 4)),
+        camera: cameraRef.current,
       });
 
       if (now - lastHud > 1000 / HUD_HZ) {

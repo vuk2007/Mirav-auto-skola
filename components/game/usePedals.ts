@@ -19,6 +19,14 @@ export interface Pedals {
   toggleIndicator: (side: Side) => void;
   /** Otpusti sve — poziva se kad scenario počne ili se završi. */
   release: () => void;
+  /**
+   * Ugasi samo pokazivač, a pedale ostavi kako jesu.
+   *
+   * Za prelaz između segmenata u smjeni: nova raskrsnica počinje bez žmigavca,
+   * ali igrač koji DRŽI gas ne smije da ga izgubi — otpuštanje bi mu ga uzelo,
+   * a novi pritisak ne stiže jer taster nikad nije ni pušten.
+   */
+  resetIndicator: () => void;
 }
 
 /**
@@ -76,6 +84,11 @@ export function usePedals(): Pedals {
     },
     [sync],
   );
+
+  const resetIndicator = useCallback(() => {
+    setIndicator(null);
+    inputRef.current.indicator = null;
+  }, []);
 
   const release = useCallback(() => {
     pointers.current.clear();
@@ -136,7 +149,15 @@ export function usePedals(): Pedals {
   }, [sync, release, toggleIndicator]);
 
   return useMemo(
-    () => ({ inputRef, active, pressPointer, indicator, toggleIndicator, release }),
-    [active, pressPointer, indicator, toggleIndicator, release],
+    () => ({
+      inputRef,
+      active,
+      pressPointer,
+      indicator,
+      toggleIndicator,
+      release,
+      resetIndicator,
+    }),
+    [active, pressPointer, indicator, toggleIndicator, release, resetIndicator],
   );
 }

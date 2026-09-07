@@ -144,6 +144,20 @@ export interface Dict {
   gameHazardYielded: string;
   gameHazardCollision: string;
   gameReaction: string;
+  shiftTitle: string;
+  shiftDesc: string;
+  shiftStart: string;
+  shiftLives: string;
+  shiftLevel: string;
+  shiftSegments: string;
+  shiftStreak: string;
+  shiftOver: string;
+  shiftBest: string;
+  shiftAgain: string;
+  shiftSkip: string;
+  shiftLostLife: string;
+  shiftNoReaction: string;
+  shiftBack: string;
   gameSoundOn: string;
   gameSoundOff: string;
   gameTimelineTitle: string;
@@ -419,6 +433,21 @@ const me: Dict = {
   gameHazardCollision:
     "Prednost se ne uzima silom. Kad vidite da drugi ne staje, jedini ispravan potez je kočnica.",
   gameReaction: "Vrijeme reakcije",
+  shiftTitle: "Smjena",
+  shiftDesc:
+    "Raskrsnica za raskrsnicom, bez kraja. Tri života; težina raste dok vozite čisto i spušta se kad pogriješite.",
+  shiftStart: "Počni smjenu",
+  shiftLives: "Životi",
+  shiftLevel: "Nivo",
+  shiftSegments: "Raskrsnica",
+  shiftStreak: "Najduži niz",
+  shiftOver: "Smjena je gotova",
+  shiftBest: "Najbolje",
+  shiftAgain: "Nova smjena",
+  shiftSkip: "Dalje",
+  shiftLostLife: "Izgubili ste jedan život",
+  shiftNoReaction: "nije bilo mjerenja",
+  shiftBack: "Izlaz iz smjene",
   gameSoundOn: "Isključi zvuk",
   gameSoundOff: "Uključi zvuk",
   gameTimelineTitle: "Pokazivač duž putanje",
@@ -682,6 +711,21 @@ const en: Dict = {
   gameHazardCollision:
     "Right of way is not taken by force. When you see that the other driver is not stopping, the only correct move is the brake.",
   gameReaction: "Reaction time",
+  shiftTitle: "Shift",
+  shiftDesc:
+    "One intersection after another, with no end. Three lives; the difficulty rises while you drive clean and drops when you slip.",
+  shiftStart: "Start the shift",
+  shiftLives: "Lives",
+  shiftLevel: "Level",
+  shiftSegments: "Intersections",
+  shiftStreak: "Longest run",
+  shiftOver: "The shift is over",
+  shiftBest: "Best",
+  shiftAgain: "New shift",
+  shiftSkip: "Carry on",
+  shiftLostLife: "You lost a life",
+  shiftNoReaction: "nothing measured",
+  shiftBack: "Leave the shift",
   gameSoundOn: "Mute",
   gameSoundOff: "Unmute",
   gameTimelineTitle: "Indicator along the path",
@@ -950,6 +994,21 @@ const sq: Dict = {
   gameHazardCollision:
     "Përparësia nuk merret me forcë. Kur shihni se tjetri nuk ndalon, lëvizja e vetme e drejtë është frena.",
   gameReaction: "Koha e reagimit",
+  shiftTitle: "Turni",
+  shiftDesc:
+    "Kryqëzim pas kryqëzimi, pa fund. Tri jetë; vështirësia rritet ndërsa ngisni pastër dhe bie kur gabon.",
+  shiftStart: "Fillo turnin",
+  shiftLives: "Jetët",
+  shiftLevel: "Niveli",
+  shiftSegments: "Kryqëzime",
+  shiftStreak: "Seria më e gjatë",
+  shiftOver: "Turni mbaroi",
+  shiftBest: "Më i miri",
+  shiftAgain: "Turn i ri",
+  shiftSkip: "Vazhdo",
+  shiftLostLife: "Humbët një jetë",
+  shiftNoReaction: "pa matje",
+  shiftBack: "Dil nga turni",
   gameSoundOn: "Fik zërin",
   gameSoundOff: "Ndiz zërin",
   gameTimelineTitle: "Treguesi përgjatë trajektores",
@@ -1220,6 +1279,21 @@ const ru: Dict = {
   gameHazardCollision:
     "Преимущество не берут силой. Когда видно, что другой не останавливается, единственно правильное действие — торможение.",
   gameReaction: "Время реакции",
+  shiftTitle: "Смена",
+  shiftDesc:
+    "Перекрёсток за перекрёстком, без конца. Три жизни; сложность растёт, пока едете чисто, и падает при ошибке.",
+  shiftStart: "Начать смену",
+  shiftLives: "Жизни",
+  shiftLevel: "Уровень",
+  shiftSegments: "Перекрёстков",
+  shiftStreak: "Лучшая серия",
+  shiftOver: "Смена окончена",
+  shiftBest: "Лучший результат",
+  shiftAgain: "Новая смена",
+  shiftSkip: "Дальше",
+  shiftLostLife: "Вы потеряли жизнь",
+  shiftNoReaction: "измерений не было",
+  shiftBack: "Выйти из смены",
   gameSoundOn: "Выключить звук",
   gameSoundOff: "Включить звук",
   gameTimelineTitle: "Указатель вдоль траектории",

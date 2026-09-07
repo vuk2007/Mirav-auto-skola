@@ -1,0 +1,27 @@
+{
+  "motor": "chromium-desktop",
+  "imaKarticuSmjene": true,
+  "zivotiNaPocetku": 3,
+  "nivoNaPocetku": 1,
+  "rezime": {
+    "raskrsnica": 12,
+    "imaNiz": true,
+    "imaReakciju": true,
+    "imaPrekrsaje": true,
+    "imaNovuSmjenu": true
+  },
+  "smjenaZavrsena": true,
+  "presaoRaskrsnica": 12,
+  "najmanjeZivota": 3,
+  "greske": []
+}
+{
+  "motor": "webkit-mobile",
+  "imaKarticuSmjene": true,
+  "zivotiNaPocetku": 3,
+  "nivoNaPocetku": 1,
+  "smjenaZavrsena": false,
+  "presaoRaskrsnica": 15,
+  "najmanjeZivota": 3,
+  "greske": []
+}
