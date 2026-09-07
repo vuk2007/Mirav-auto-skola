@@ -1022,7 +1022,15 @@ export function mergeGap(
   world: World,
   me: Vehicle,
   target: number,
-): { behind: number; ahead: number; safe: boolean; blame: string | null } {
+): {
+  behind: number;
+  ahead: number;
+  safe: boolean;
+  blame: string | null;
+  /** Brzine prvog vozila ispred i prvog iza u toj traci; `null` ako ih nema. */
+  aheadV: number | null;
+  behindV: number | null;
+} {
   let iza: Vehicle | null = null;
   let ispred: Vehicle | null = null;
   for (const o of world.vehicles) {
@@ -1039,6 +1047,8 @@ export function mergeGap(
     ahead,
     safe,
     blame: safe ? null : ((behind < MERGE_GAP_TIME ? iza?.id : ispred?.id) ?? null),
+    aheadV: ispred?.v ?? null,
+    behindV: iza?.v ?? null,
   };
 }
 

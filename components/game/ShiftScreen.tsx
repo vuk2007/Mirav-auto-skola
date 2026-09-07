@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { SHIFT_VIEW_HALF } from "@/lib/game/sim/config";
+import { TEMPLATES } from "@/lib/game/sim/intersection";
 import type { Scenario } from "@/lib/game/sim/types";
 import { generateSegment } from "@/lib/game/shift/generate";
 import {
@@ -12,7 +13,7 @@ import {
   startShift,
   type ShiftState,
 } from "@/lib/game/shift/session";
-import { VIOLATION_LABEL } from "@/lib/game/ui/labels";
+import { taskTextFor, VIOLATION_LABEL } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import { loadBestShift, saveBestShift, type BestShift } from "@/lib/storage";
@@ -57,6 +58,13 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
     () => createRunner(scenario, state.seed + state.index),
     [scenario, state.seed, state.index],
   );
+
+  // Dionica autoputa se vozi drukčije nego raskrsnica: širi kadar, dugmad za
+  // traku, i rečenica o tome šta se traži — na autoputu se zadatak ne vidi iz
+  // same slike, kao što se na raskrsnici vidi iz znaka.
+  const tpl = TEMPLATES[scenario.intersection];
+  const autoput = tpl?.kind === "highway";
+  const zadatak = autoput ? taskTextFor(scenario.player.intent, t, 0, scenario.taskKey) : null;
 
   const start = useCallback(() => {
     pedals.release();
@@ -141,14 +149,21 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
           indicatorZones={state.level <= 2 ? {} : null}
           level={state.level}
           sound={sound}
-          camera={{ follow: true, half: SHIFT_VIEW_HALF }}
+          camera={{ follow: true, half: autoput ? tpl.viewHalf : SHIFT_VIEW_HALF }}
           label={t.shiftTitle}
         />
 
         {phase === "play" && (
-          <div className="pointer-events-none absolute top-2 left-2 flex gap-2">
-            <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
-            <Hud label={t.gameTime} value={`${hud.t.toFixed(1)} s`} />
+          <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
+            <div className="flex gap-2">
+              <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
+              <Hud label={t.gameTime} value={`${hud.t.toFixed(1)} s`} />
+            </div>
+            {zadatak && (
+              <p className="max-w-[15rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
+                {zadatak}
+              </p>
+            )}
           </div>
         )}
 
@@ -178,6 +193,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
           indicatorLabel={t.gameIndicator}
           leftLabel={t.gameIndicatorLeft}
           rightLabel={t.gameIndicatorRight}
+          lanes={autoput ? { leftLabel: t.gameLaneLeft, rightLabel: t.gameLaneRight } : null}
         />
       ) : (
         <div className="rounded border border-line bg-panel p-4">

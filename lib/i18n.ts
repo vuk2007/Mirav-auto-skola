@@ -148,6 +148,7 @@ export interface Dict {
   gameTaskMerge: string;
   gameTaskOvertake: string;
   gameTaskExitHighway: string;
+  gameTaskFollow: string;
   ruleIndicator: string;
   ruleIndicatorOff: string;
   gameIndicator: string;
@@ -396,7 +397,7 @@ const me: Dict = {
     "Vozilo ide zadatom putanjom — vi držite samo gas i kočnicu. Cilj je proći bez ijednog prekršaja: nikome ne oduzeti prednost, stati gdje se mora i ne zadržavati saobraćaj kad prednost imate vi.",
   gameStart: "Kreni",
   gameDesc:
-    "Vozite kroz raskrsnicu u realnom vremenu — držite gas i kočnicu i prođite bez ijednog prekršaja. Četrnaest situacija: prvenstvo, znaci, semafor, pješaci, policajac.",
+    "Vozite u realnom vremenu — držite gas i kočnicu i prođite bez ijednog prekršaja. Situacije: prvenstvo, znaci, semafor, pješaci, policajac, kružni tok i autoput.",
   gameMeta: "tajming i prvenstvo",
   gameOpen: "Otvori igru",
   gameRetry: "Pokušaj ponovo",
@@ -453,6 +454,7 @@ const me: Dict = {
   gameTaskMerge: "Uključujete se na autoput.",
   gameTaskOvertake: "Pretičete sporije vozilo i vraćate se u desnu traku.",
   gameTaskExitHighway: "Isključujete se sa autoputa.",
+  gameTaskFollow: "Vozite dionicom autoputa i držite odstojanje.",
   ruleIndicator:
     "Namjeru da skrenete najavljujete pokazivačem pravca prije nego što uđete u raskrsnicu, i držite ga do kraja skretanja. Pokazivač je jedini način da ostali saznaju šta ćete uraditi.",
   ruleIndicatorOff:
@@ -471,7 +473,7 @@ const me: Dict = {
   gameReaction: "Vrijeme reakcije",
   shiftTitle: "Smjena",
   shiftDesc:
-    "Raskrsnica za raskrsnicom, bez kraja. Tri života; težina raste dok vozite čisto i spušta se kad pogriješite.",
+    "Raskrsnica za raskrsnicom, bez kraja, a od drugog nivoa i pokoja dionica autoputa. Tri života; težina raste dok vozite čisto i spušta se kad pogriješite.",
   shiftStart: "Počni smjenu",
   shiftLives: "Životi",
   shiftLevel: "Nivo",
@@ -694,7 +696,7 @@ const en: Dict = {
     "The car follows a fixed path — you only control the throttle and the brake. The goal is to get through without a single violation: never take someone's right of way, stop where you must, and do not hold up traffic when the right of way is yours.",
   gameStart: "Go",
   gameDesc:
-    "Drive through the intersection in real time — hold the throttle and the brake and get through without a single violation. Fourteen situations: right of way, signs, lights, pedestrians, a police officer.",
+    "Drive in real time — hold the throttle and the brake and get through without a single violation. The situations: right of way, signs, lights, pedestrians, a police officer, roundabouts and the motorway.",
   gameMeta: "timing and right of way",
   gameOpen: "Open the game",
   gameRetry: "Try again",
@@ -751,6 +753,7 @@ const en: Dict = {
   gameTaskMerge: "You are joining the motorway.",
   gameTaskOvertake: "You overtake the slower vehicle and return to the right lane.",
   gameTaskExitHighway: "You are leaving the motorway.",
+  gameTaskFollow: "Drive the motorway section and keep your distance.",
   ruleIndicator:
     "You announce a turn with the direction indicator before you enter the intersection, and keep it on until the turn is complete. The indicator is the only way others learn what you are about to do.",
   ruleIndicatorOff:
@@ -769,7 +772,7 @@ const en: Dict = {
   gameReaction: "Reaction time",
   shiftTitle: "Shift",
   shiftDesc:
-    "One intersection after another, with no end. Three lives; the difficulty rises while you drive clean and drops when you slip.",
+    "One intersection after another, with no end, and from level two the odd stretch of motorway. Three lives; the difficulty rises while you drive clean and drops when you slip.",
   shiftStart: "Start the shift",
   shiftLives: "Lives",
   shiftLevel: "Level",
@@ -997,7 +1000,7 @@ const sq: Dict = {
     "Automjeti ndjek një trajektore të dhënë — ju kontrolloni vetëm gazin dhe frenat. Qëllimi është të kaloni pa asnjë shkelje: të mos i merrni përparësinë askujt, të ndaloni aty ku duhet dhe të mos e pengoni trafikun kur përparësia është e juaja.",
   gameStart: "Nis",
   gameDesc:
-    "Ngisni nëpër kryqëzim në kohë reale — mbani gazin dhe frenat dhe kaloni pa asnjë shkelje. Katërmbëdhjetë situata: përparësia, shenjat, semafori, këmbësorët, polici.",
+    "Ngisni në kohë reale — mbani gazin dhe frenat dhe kaloni pa asnjë shkelje. Situatat: përparësia, shenjat, semafori, këmbësorët, polici, rrethrrotullimi dhe autostrada.",
   gameMeta: "koha dhe përparësia",
   gameOpen: "Hap lojën",
   gameRetry: "Provo përsëri",
@@ -1054,6 +1057,7 @@ const sq: Dict = {
   gameTaskMerge: "Po futeni në autostradë.",
   gameTaskOvertake: "Tejkaloni automjetin më të ngadaltë dhe ktheheni në korsinë e djathtë.",
   gameTaskExitHighway: "Po dilni nga autostrada.",
+  gameTaskFollow: "Ngisni segmentin e autostradës dhe mbani distancën.",
   ruleIndicator:
     "Qëllimin për t'u kthyer e njoftoni me treguesin e drejtimit para se të hyni në kryqëzim, dhe e mbani të ndezur deri në fund të kthesës. Treguesi është mënyra e vetme që të tjerët të marrin vesh çfarë do të bëni.",
   ruleIndicatorOff:
@@ -1072,7 +1076,7 @@ const sq: Dict = {
   gameReaction: "Koha e reagimit",
   shiftTitle: "Turni",
   shiftDesc:
-    "Kryqëzim pas kryqëzimi, pa fund. Tri jetë; vështirësia rritet ndërsa ngisni pastër dhe bie kur gabon.",
+    "Kryqëzim pas kryqëzimi, pa fund, dhe nga niveli i dytë edhe ndonjë segment autostrade. Tri jetë; vështirësia rritet ndërsa ngisni pastër dhe bie kur gabon.",
   shiftStart: "Fillo turnin",
   shiftLives: "Jetët",
   shiftLevel: "Niveli",
@@ -1302,7 +1306,7 @@ const ru: Dict = {
     "Автомобиль едет по заданной траектории — вы управляете только газом и тормозом. Задача — проехать без единого нарушения: никому не создать помеху, остановиться там, где положено, и не задерживать движение, когда преимущество у вас.",
   gameStart: "Поехали",
   gameDesc:
-    "Проезд перекрёстка в реальном времени — управляйте газом и тормозом и проедьте без единого нарушения. Четырнадцать ситуаций: преимущество, знаки, светофор, пешеходы, регулировщик.",
+    "Езда в реальном времени — управляйте газом и тормозом и проедьте без единого нарушения. Ситуации: преимущество, знаки, светофор, пешеходы, регулировщик, круговое движение и автомагистраль.",
   gameMeta: "тайминг и преимущество",
   gameOpen: "Открыть игру",
   gameRetry: "Ещё раз",
@@ -1359,6 +1363,7 @@ const ru: Dict = {
   gameTaskMerge: "Вы въезжаете на автомагистраль.",
   gameTaskOvertake: "Вы обгоняете более медленный автомобиль и возвращаетесь в правую полосу.",
   gameTaskExitHighway: "Вы съезжаете с автомагистрали.",
+  gameTaskFollow: "Проезжайте участок автомагистрали и держите дистанцию.",
   ruleIndicator:
     "О намерении повернуть вы сообщаете указателем поворота до въезда на перекрёсток и держите его включённым до конца манёвра. Указатель — единственный способ для остальных узнать, что вы собираетесь сделать.",
   ruleIndicatorOff:
@@ -1377,7 +1382,7 @@ const ru: Dict = {
   gameReaction: "Время реакции",
   shiftTitle: "Смена",
   shiftDesc:
-    "Перекрёсток за перекрёстком, без конца. Три жизни; сложность растёт, пока едете чисто, и падает при ошибке.",
+    "Перекрёсток за перекрёстком, без конца, а со второго уровня и участки автомагистрали. Три жизни; сложность растёт, пока едете чисто, и падает при ошибке.",
   shiftStart: "Начать смену",
   shiftLives: "Жизни",
   shiftLevel: "Уровень",

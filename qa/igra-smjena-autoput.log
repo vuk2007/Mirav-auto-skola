@@ -1,0 +1,28 @@
+{
+  "motor": "chromium-desktop",
+  "smjena": 5,
+  "najviseNivo": 3,
+  "dioniceAutoputa": 1,
+  "nivoiSaAutoputem": [
+    3
+  ],
+  "zadatakUzAutoput": true,
+  "smjenaZavrsena": true,
+  "rezimeVidjen": true,
+  "nikadNaPrvomNivou": true,
+  "greske": []
+}
+{
+  "motor": "webkit-mobile",
+  "smjena": 2,
+  "najviseNivo": 3,
+  "dioniceAutoputa": 1,
+  "nivoiSaAutoputem": [
+    3
+  ],
+  "zadatakUzAutoput": true,
+  "smjenaZavrsena": true,
+  "rezimeVidjen": true,
+  "nikadNaPrvomNivou": true,
+  "greske": []
+}

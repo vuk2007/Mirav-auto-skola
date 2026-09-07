@@ -95,7 +95,12 @@ for (const [ime, pokreni, viewport] of [
   page.on("pageerror", (e) => greske.push(`pageerror: ${e.message}`));
   page.on("console", (m) => {
     // Vercelov skript ne postoji van produkcije — to nije greška aplikacije.
-    if (m.type() === "error" && !/_vercel/.test(m.text())) greske.push(`console: ${m.text()}`);
+    // „Failed to load resource" u konzoli NE nosi URL, pa se po njemu ne može
+    // reći šta je palo — za HTTP greške je mjerodavan slušalac odgovora ispod,
+    // koji vidi adresu. Ovo je već dvaput navelo na pogrešan trag.
+    if (m.type() === "error" && !/_vercel|Failed to load resource/.test(m.text())) {
+      greske.push(`console: ${m.text()}`);
+    }
   });
   page.on("response", (r) => {
     if (r.status() >= 400 && !r.url().includes("_vercel")) greske.push(`${r.status()} ${r.url()}`);

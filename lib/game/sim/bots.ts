@@ -18,6 +18,8 @@ import {
   DT,
   INDICATOR_LEAD_TIME,
   MAX_SCENARIO_SECONDS,
+  MERGE_AHEAD_TIME,
+  MERGE_GAP_TIME,
   V_MAX_DEFAULT,
 } from "./config";
 import { expectedIndicatorAt } from "./indicatorRules";
@@ -173,10 +175,23 @@ const UKLJUCENJE_OD = 200;
  * prestane. Preticanje i isključenje nisu pravila nego zadatak, i njih vozi
  * `highwayBot` iz scenarija — inače bi ovaj bot znao ono što mu niko nije rekao.
  */
+interface Traka extends Pick<Input, "indicator" | "changeLane"> {
+  /**
+   * Brzina na koju se vozilo drži dok traži prazninu [m/s].
+   *
+   * Postoji zato što je „izjednači brzinu sa saobraćajem" dio samog pravila o
+   * uključivanju, a ne stil vožnje. Bez toga savršen vozač na traci za
+   * ubrzavanje juri do najveće dozvoljene, prestigne kolonu u koju treba da se
+   * uključi, i praznina ispred njega se samo skuplja — izmjereno na
+   * generisanim segmentima, gdje je tako završavao na zaustavnoj traci.
+   */
+  cap?: number;
+}
+
 function autoputTraka(
   world: World,
   player: { lane?: number; laneFrom?: number; laneT?: number; s: number; v: number; id: string },
-): Pick<Input, "indicator" | "changeLane"> {
+): Traka {
   const tpl = TEMPLATES[world.templateId]!;
   if (tpl.kind !== "highway") return { indicator: null };
   if ((player.lane ?? 0) !== -1) return { indicator: null };
@@ -192,8 +207,24 @@ function autoputTraka(
     .filter((e) => e.indicator === "left")
     .some((e) => world.t - e.t >= INDICATOR_LEAD_TIME);
   const me = world.vehicles.find((v) => v.id === player.id)!;
-  if (!uPravoVrijeme || !mergeGap(world, me, 0).safe) return { indicator: "left" };
-  return { indicator: "left", changeLane: "left" };
+  const g = mergeGap(world, me, 0);
+  if (uPravoVrijeme && g.safe) return { indicator: "left", changeLane: "left" };
+
+  // Nema praznine — brzinom se bira gdje će se ući.
+  //
+  // Vozilo koje sustiže s leđa, a nije sporije od nas, ne može se „pobjeći":
+  // traka za ubrzavanje je kraća od puta koji bi za to trebalo. Ispravno je
+  // popustiti i ući iza njega, i to je jedini potez koji tu i postoji.
+  if (g.behind < MERGE_GAP_TIME && g.behindV !== null && g.behindV >= player.v - 1) {
+    return { indicator: "left", cap: Math.max(4, g.behindV - 12) };
+  }
+  if (g.aheadV !== null) {
+    return {
+      indicator: "left",
+      cap: g.ahead < MERGE_AHEAD_TIME ? Math.max(4, g.aheadV - 3) : g.aheadV + 2,
+    };
+  }
+  return { indicator: "left" };
 }
 
 export const perfectBot: Bot = (world, scenario) => {
@@ -222,6 +253,10 @@ export const perfectBot: Bot = (world, scenario) => {
   const traka = autoputTraka(world, player);
   const indicator = traka.indicator ?? ispravanPokazivac(world, scenario);
   const lane = { indicator, changeLane: traka.changeLane ?? null };
+  // Otpor u modelu usporava samo pod gasom, pa se višak brzine skida kočnicom.
+  if (traka.cap !== undefined && player.v > traka.cap) {
+    return { throttle: 0, brake: Math.min(1, (player.v - traka.cap) / 4), ...lane };
+  }
   if (a > 0.05) return { throttle: Math.min(1, a / A_MAX), brake: 0, ...lane };
   if (a < -0.05) return { throttle: 0, brake: Math.min(1, -a / B_MAX), ...lane };
   void path;

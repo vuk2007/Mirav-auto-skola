@@ -422,6 +422,28 @@ export const TEMPLATES: Readonly<Record<string, Template>> = {
     viewHalf: 50,
   },
 
+  /**
+   * Dionica autoputa za beskonačni mod.
+   *
+   * Kraća je (420 m umjesto 800) iz istog razloga iz kojeg postoji
+   * `cross-lights-kratki`: u smjeni se segmenti nižu, pa jedan koji traje
+   * dvadeset pet sekundi razbija ritam raskrsnica od desetak. Traka za
+   * usporavanje je prazan opseg — u lancu se sa autoputa ne isključuje, nego
+   * se na njega uključuje, pa je sve iza trake za ubrzavanje zaustavna traka.
+   */
+  "autoput-smjena": {
+    kind: "highway",
+    id: "autoput-smjena",
+    length: 420,
+    lanes: 2,
+    rampRange: [0, 200],
+    exitRange: [420, 420],
+    vMin: 16.7,
+    vMax: 36.1,
+    geometry: { laneWidth: LANE_WIDTH },
+    viewHalf: 44,
+  },
+
   "cross-lights-kratki": {
     kind: "cross",
     id: "cross-lights-kratki",

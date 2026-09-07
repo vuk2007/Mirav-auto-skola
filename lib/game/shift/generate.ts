@@ -13,9 +13,17 @@
 import { perfectBot, run } from "../sim/bots";
 import { DIFFICULTY, type Level } from "../sim/config";
 import { rng } from "../sim/geometry";
-import type { ArmId, Intent, Scenario, ScenarioHazard, ScenarioNpc } from "../sim/types";
+import { TEMPLATES } from "../sim/intersection";
+import type {
+  ArmId,
+  HighwayTemplate,
+  Intent,
+  Scenario,
+  ScenarioHazard,
+  ScenarioNpc,
+} from "../sim/types";
 
-/** Šabloni iz kojih se bira. Autoput nije među njima — vidi fazu autoputa. */
+/** Raskrsnice iz kojih se bira. */
 export const SEGMENT_TEMPLATES = [
   "cross-none",
   "cross-priority-ns",
@@ -24,7 +32,16 @@ export const SEGMENT_TEMPLATES = [
   "kruzni",
 ] as const;
 
-export type SegmentTemplate = (typeof SEGMENT_TEMPLATES)[number];
+/**
+ * Dionica autoputa u lancu.
+ *
+ * Stoji odvojeno od `SEGMENT_TEMPLATES` jer se ne bira ravnopravno sa
+ * raskrsnicama nego po vjerovatnoći nivoa (`highwayChance`) — na prvom nivou
+ * je nema uopšte.
+ */
+export const HIGHWAY_TEMPLATE = "autoput-smjena";
+
+export type SegmentTemplate = (typeof SEGMENT_TEMPLATES)[number] | typeof HIGHWAY_TEMPLATE;
 
 /**
  * Koliko sekundi poslije starta bezobzirni igrač stigne do raskrsnice.
@@ -82,6 +99,10 @@ function rjesiv(s: Scenario, seed: number): boolean {
 function sastavi(seed: number, level: Level, index: number, pokusaj: number): Scenario {
   const rand = rng(seed * 7919 + index * 104729 + 17);
   const dif = DIFFICULTY[level];
+  // Odluka o autoputu je prvi potez sjemena, prije svega ostalog. Time je
+  // izbor stabilan: `highwayChance` se mijenja po nivou, a ne po tome šta je
+  // generator prije toga izvukao.
+  if (rand() < dif.highwayChance) return autoput(rand, level, index, pokusaj);
   const tpl = izborNiza(rand, SEGMENT_TEMPLATES);
   const kruzni = tpl === "kruzni";
   const intent: Intent = kruzni ? { kind: "exit", n: 2 } : "straight";
@@ -143,6 +164,105 @@ function sastavi(seed: number, level: Level, index: number, pokusaj: number): Sc
     player: { arm: "N", intent, spawnDistance: 42 },
     npcs,
     hazards: hazards.length > 0 ? hazards : undefined,
+    explanation: { me: "" },
+  };
+}
+
+/**
+ * Dionica autoputa: ili uključivanje sa trake za ubrzavanje, ili vožnja u
+ * koloni.
+ *
+ * Oba zadatka su ono što savršen vozač zna sam: uključivanje jer se zaustavnom
+ * trakom ne vozi, kolona jer se odstojanje drži. Preticanja i isključenja u
+ * lancu NEMA, i to nije previd — oni nisu pravilo nego namjera, pa generator ne
+ * bi imao čime da dokaže da su rješivi. Provjera rješivosti je ista za sve
+ * segmente i mora ostati poštena.
+ *
+ * Problematičnih događaja ovdje takođe nema: sva četiri su vezana za
+ * raskrsnicu (prolazak STOP-a, pješak na prelazu, vozilo iza zaklona), a
+ * izmišljati peti samo da bi ga autoput imao značilo bi pravilo bez pokrića.
+ */
+function autoput(rand: () => number, level: Level, index: number, pokusaj: number): Scenario {
+  const tpl = TEMPLATES[HIGHWAY_TEMPLATE] as HighwayTemplate;
+  const dif = DIFFICULTY[level];
+  const popust = pokusaj < 0 ? 9 : Math.floor(pokusaj / 2);
+  const ukljucenje = rand() < 0.6;
+  const brzina = Math.round(22 * dif.speedMultiplier * 10) / 10;
+  const koliko = Math.max(
+    1,
+    Math.min(3, Math.round((1 + Math.floor(rand() * 2)) * dif.densityMultiplier)) - popust,
+  );
+  // Svaki sljedeći pokušaj razmiče vozila; poslednji ih razmiče toliko da
+  // praznine mora biti.
+  const razmak = 90 + 35 * Math.max(0, pokusaj) + (pokusaj < 0 ? 200 : 0);
+  const npcs: ScenarioNpc[] = [];
+  const vozilo = (traka: number, startS: number, speed: number): ScenarioNpc => ({
+    arm: "N",
+    intent: { kind: "lane", index: traka },
+    startS: Math.round(startS),
+    spawnAt: [0, 0],
+    speed: Math.round(speed * 10) / 10,
+  });
+
+  if (ukljucenje) {
+    // Igrač je na traci za ubrzavanje, a jedno vozilo ga sustiže s leđa: zbog
+    // njega se uključenje ne smije samo „ugurati". Rastojanje je namjerno često
+    // manje od `MERGE_GAP_TIME` puta brzina — izmjereno je da je sa širim
+    // razmakom svako uključenje bilo bezbjedno već u prvoj sekundi, pa se
+    // praznina nije ni tražila. Sa gustinom se skuplja.
+    // Svaki sljedeći pokušaj daje više prostora, a posljednji uklanja vozilo
+    // sa leđa i ostavlja jedno daleko ispred. Bez toga rezervna varijanta nije
+    // bila lakša od one koja je pala — mjenjali su se razmaci među vozilima
+    // kojih u uključivanju ima jedno.
+    const iza = Math.min(120, 15 + (50 / dif.densityMultiplier) * rand() + 40 * Math.max(0, pokusaj));
+    for (let i = 0; i < koliko; i++) {
+      const gdje =
+        pokusaj < 0 ? iza + 250 : i === 0 ? 0 : iza + razmak * i + rand() * 30;
+      npcs.push(vozilo(0, gdje, brzina));
+    }
+    return {
+      id: `smjena-${index}`,
+      intersection: HIGHWAY_TEMPLATE,
+      difficulty: level,
+      title: { me: `Segment ${index + 1}` },
+      taskKey: "gameTaskMerge",
+      player: {
+        arm: "N",
+        intent: { kind: "lane", index: -1 },
+        spawnDistance: 0,
+        startS: Math.round(iza),
+        startV: Math.round(tpl.vMin * dif.speedMultiplier * 10) / 10,
+      },
+      npcs,
+      explanation: { me: "" },
+    };
+  }
+
+  // Kolona: sporije vozilo ispred u istoj traci. Zadatak je odstojanje, a ono
+  // se mjeri u sekundama — zato je razmak među vozilima kolone vezan za brzinu.
+  const sporije = brzina * (0.7 + rand() * 0.15);
+  const kolona = Math.max(45, sporije * 2 + 10);
+  for (let i = 0; i < koliko; i++) {
+    npcs.push(vozilo(0, 70 + rand() * 40 + kolona * i, sporije));
+  }
+  // Od trećeg nivoa se lijevom trakom neko i vozi — preticanje nije zadatak,
+  // ali ko ga se lati mora da pogleda iza sebe.
+  if (level >= 3 && rand() < 0.5) npcs.push(vozilo(1, 20 + rand() * 40, brzina * 1.25));
+
+  return {
+    id: `smjena-${index}`,
+    intersection: HIGHWAY_TEMPLATE,
+    difficulty: level,
+    title: { me: `Segment ${index + 1}` },
+    taskKey: "gameTaskFollow",
+    player: {
+      arm: "N",
+      intent: { kind: "lane", index: 0 },
+      spawnDistance: 0,
+      startS: 0,
+      startV: Math.round(brzina * 10) / 10,
+    },
+    npcs,
     explanation: { me: "" },
   };
 }

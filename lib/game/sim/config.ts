@@ -219,6 +219,14 @@ export interface DifficultyParams {
   ruleBreakerChance: number;
   /** Tolerancija na rok za pokazivač [m]. */
   indicatorGrace: number;
+  /**
+   * Vjerovatnoća da segment u smjeni bude dionica autoputa.
+   *
+   * Na prvom nivou je nula: polaznik koji tek uči pravilo desne strane nema
+   * šta da traži na autoputu. Ni na višim nivoima ne ide preko četvrtine —
+   * smjena je vježba raskrsnica, autoput je promjena ritma u njoj.
+   */
+  highwayChance: number;
 }
 
 /**
@@ -241,6 +249,7 @@ export const DIFFICULTY: Readonly<Record<Level, DifficultyParams>> = {
     ttcThreshold: 3,
     ruleBreakerChance: 0,
     indicatorGrace: 3,
+    highwayChance: 0,
   },
   2: {
     densityMultiplier: 1,
@@ -249,6 +258,7 @@ export const DIFFICULTY: Readonly<Record<Level, DifficultyParams>> = {
     ttcThreshold: 3,
     ruleBreakerChance: 0,
     indicatorGrace: 2.5,
+    highwayChance: 0.15,
   },
   3: {
     densityMultiplier: 1.15,
@@ -257,6 +267,7 @@ export const DIFFICULTY: Readonly<Record<Level, DifficultyParams>> = {
     ttcThreshold: 3,
     ruleBreakerChance: 0.25,
     indicatorGrace: 2,
+    highwayChance: 0.2,
   },
   4: {
     densityMultiplier: 1.3,
@@ -265,6 +276,7 @@ export const DIFFICULTY: Readonly<Record<Level, DifficultyParams>> = {
     ttcThreshold: 2.75,
     ruleBreakerChance: 0.4,
     indicatorGrace: 1.5,
+    highwayChance: 0.2,
   },
   5: {
     densityMultiplier: 1.5,
@@ -273,6 +285,7 @@ export const DIFFICULTY: Readonly<Record<Level, DifficultyParams>> = {
     ttcThreshold: 2.5,
     ruleBreakerChance: 0.5,
     indicatorGrace: 1,
+    highwayChance: 0.25,
   },
 };
 

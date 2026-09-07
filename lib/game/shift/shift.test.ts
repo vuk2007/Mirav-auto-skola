@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { perfectBot, run } from "../sim/bots";
+import { flooringBot, perfectBot, run } from "../sim/bots";
 import { MAX_SCENARIO_SECONDS, type Level } from "../sim/config";
 import { TEMPLATES } from "../sim/intersection";
-import { CLEAN_TO_LEVEL_UP, generateChain, generateSegment, nextLevel, SEGMENT_TEMPLATES } from "./generate";
+import type { Scenario } from "../sim/types";
+import {
+  CLEAN_TO_LEVEL_UP,
+  generateChain,
+  generateSegment,
+  HIGHWAY_TEMPLATE,
+  nextLevel,
+  SEGMENT_TEMPLATES,
+} from "./generate";
 import { applySegment, averageReaction, LIVES, startShift } from "./session";
 
 const NIVOI: Level[] = [1, 2, 3, 4, 5];
@@ -27,9 +35,12 @@ describe("generisanje segmenata", () => {
     for (const t of SEGMENT_TEMPLATES) expect(vidjeni.has(t), t).toBe(true);
   });
 
-  it("svi šabloni iz banke postoje, i autoputa nema", () => {
+  it("svi šabloni iz banke postoje", () => {
     for (const t of SEGMENT_TEMPLATES) expect(TEMPLATES[t], t).toBeDefined();
-    expect(SEGMENT_TEMPLATES).not.toContain("autoput");
+    expect(TEMPLATES[HIGHWAY_TEMPLATE]?.kind).toBe("highway");
+    // Raskrsnice se biraju ravnopravno; autoput ne — on ide po vjerovatnoći
+    // nivoa, pa u toj banci nema šta da traži.
+    expect(SEGMENT_TEMPLATES as readonly string[]).not.toContain(HIGHWAY_TEMPLATE);
   });
 
   it("gustina i brzina rastu sa nivoom", () => {
@@ -54,6 +65,74 @@ describe("generisanje segmenata", () => {
     const teski = generateChain(3, 5, 150);
     expect(teski.some((s) => (s.hazards?.length ?? 0) > 0)).toBe(true);
   });
+});
+
+// ── Autoput u lancu ─────────────────────────────────────────────────────────
+
+describe("autoput u smjeni", () => {
+  const dionice = (nivo: Level, koliko = 300) =>
+    generateChain(99, nivo, koliko).filter((s) => s.intersection === HIGHWAY_TEMPLATE);
+
+  it("na prvom nivou ga nema uopšte", () => {
+    expect(dionice(1)).toEqual([]);
+  }, 60000);
+
+  it("od drugog nivoa se pojavljuje, ali ostaje manjina", () => {
+    for (const nivo of [2, 3, 4, 5] as Level[]) {
+      const udio = dionice(nivo).length / 300;
+      expect(udio, `nivo ${nivo}`).toBeGreaterThan(0.05);
+      expect(udio, `nivo ${nivo}`).toBeLessThan(0.35);
+    }
+  }, 120000);
+
+  it("javljaju se oba zadatka, i oba su imenovana", () => {
+    const kljucevi = new Set(dionice(5).map((s) => s.taskKey));
+    expect(kljucevi).toEqual(new Set(["gameTaskMerge", "gameTaskFollow"]));
+  }, 60000);
+
+  it("uključivanje počinje na traci za ubrzavanje, kolona u voznoj", () => {
+    const tpl = TEMPLATES[HIGHWAY_TEMPLATE]!;
+    for (const s of dionice(4)) {
+      const traka = s.player.intent as { kind: string; index: number };
+      expect(traka.kind).toBe("lane");
+      expect(traka.index).toBe(s.taskKey === "gameTaskMerge" ? -1 : 0);
+      // Polazi se u pokretu: na autoput se ne ulazi iz mjesta.
+      expect(s.player.startV ?? 0).toBeGreaterThan(10);
+      if (s.taskKey === "gameTaskMerge") {
+        expect(s.player.startS ?? 0).toBeLessThan(
+          tpl.kind === "highway" ? tpl.rampRange[1] : 0,
+        );
+      }
+      // Sva vozila su na dionici, nijedno u zaustavnoj traci.
+      for (const n of s.npcs) {
+        expect((n.intent as { index: number }).index).toBeGreaterThanOrEqual(0);
+      }
+    }
+  }, 60000);
+
+  it("bezobzirna vožnja pada na svakoj dionici", () => {
+    // Ako bi gas do daske prolazio, dionica ne bi ništa ni provjeravala.
+    for (const s of dionice(4).slice(0, 25)) {
+      const { world } = run(s, flooringBot, 5);
+      expect(
+        world.violations.some((v) => v.severity === "fail"),
+        `${s.id} ${s.taskKey}`,
+      ).toBe(true);
+    }
+  }, 60000);
+
+  it("dionica traje kao raskrsnica, ne duže", () => {
+    const trajanje = (lista: typeof SEGMENT_TEMPLATES extends never ? never : Scenario[]) =>
+      lista.reduce((a, s) => a + run(s, perfectBot, 5).time, 0) / Math.max(1, lista.length);
+    const ap = trajanje(dionice(4).slice(0, 20));
+    const raskrsnice = trajanje(
+      generateChain(99, 4, 300)
+        .filter((s) => s.intersection !== HIGHWAY_TEMPLATE)
+        .slice(0, 20),
+    );
+    // Dva puta duže bi razbilo ritam smjene; ovoliko je promjena tempa.
+    expect(ap).toBeLessThan(raskrsnice * 2);
+  }, 120000);
 });
 
 // ── Prilagođavanje ──────────────────────────────────────────────────────────
