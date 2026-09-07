@@ -128,6 +128,23 @@ export interface Dict {
   gameOfficerStop: string;
   ruleOfficer: string;
   ruleEmergency: string;
+  vioIndicatorMissing: string;
+  vioIndicatorWrong: string;
+  vioIndicatorLate: string;
+  vioIndicatorLeftOn: string;
+  ruleIndicator: string;
+  ruleIndicatorOff: string;
+  gameIndicator: string;
+  gameIndicatorLeft: string;
+  gameIndicatorRight: string;
+  gameIndicatorShortLeft: string;
+  gameIndicatorShortRight: string;
+  gameMinor: string;
+  gameTimelineTitle: string;
+  gameTimelineExpected: string;
+  gameTimelineActual: string;
+  gameTimelineOff: string;
+  gameKeyHintIndicator: string;
   ruleObstruction: string;
   ruleSpeeding: string;
   gameThrottle: string;
@@ -374,6 +391,25 @@ const me: Dict = {
     "Naredba policijskog službenika jača je i od znakova i od semafora. Kad policajac reguliše saobraćaj, svjetlo na semaforu se ne poštuje.",
   ruleEmergency:
     "Vozilu pod pratnjom i vozilu sa uključenim rotacionim svjetlom i sirenom ustupa se prvenstvo bez obzira na znakove i semafor.",
+  vioIndicatorMissing: "Bez pokazivača pravca",
+  vioIndicatorWrong: "Pokazivač na pogrešnu stranu",
+  vioIndicatorLate: "Pokazivač uključen prekasno",
+  vioIndicatorLeftOn: "Pokazivač ostavljen uključen",
+  ruleIndicator:
+    "Namjeru da skrenete najavljujete pokazivačem pravca prije nego što uđete u raskrsnicu, i držite ga do kraja skretanja. Pokazivač je jedini način da ostali saznaju šta ćete uraditi.",
+  ruleIndicatorOff:
+    "Poslije završenog skretanja pokazivač se gasi. Ostavljen pokazivač obmanjuje one koji čekaju da vide kuda idete.",
+  gameIndicator: "Pokazivač",
+  gameIndicatorLeft: "Lijevo",
+  gameIndicatorRight: "Desno",
+  gameIndicatorShortLeft: "L",
+  gameIndicatorShortRight: "D",
+  gameMinor: "blaga greška",
+  gameTimelineTitle: "Pokazivač duž putanje",
+  gameTimelineExpected: "traži se",
+  gameTimelineActual: "vi",
+  gameTimelineOff: "ugašen",
+  gameKeyHintIndicator: "Strelice lijevo i desno pale i gase pokazivač.",
   ruleObstruction:
     "Kad imate prednost i put je slobodan, dužni ste da nastavite. Nepotrebno stajanje na raskrsnici zadržava saobraćaj i samo po sebi je prekršaj.",
   ruleSpeeding:
@@ -608,6 +644,25 @@ const en: Dict = {
     "An order given by a police officer overrides both signs and traffic lights. When an officer is directing traffic, the signal is not to be obeyed.",
   ruleEmergency:
     "An emergency vehicle with its beacon and siren on has the right of way regardless of signs and traffic lights.",
+  vioIndicatorMissing: "No direction indicator",
+  vioIndicatorWrong: "Indicator on the wrong side",
+  vioIndicatorLate: "Indicator switched on too late",
+  vioIndicatorLeftOn: "Indicator left on",
+  ruleIndicator:
+    "You announce a turn with the direction indicator before you enter the intersection, and keep it on until the turn is complete. The indicator is the only way others learn what you are about to do.",
+  ruleIndicatorOff:
+    "Once the turn is complete the indicator goes off. An indicator left on misleads those waiting to see where you are going.",
+  gameIndicator: "Indicator",
+  gameIndicatorLeft: "Left",
+  gameIndicatorRight: "Right",
+  gameIndicatorShortLeft: "L",
+  gameIndicatorShortRight: "R",
+  gameMinor: "minor fault",
+  gameTimelineTitle: "Indicator along the path",
+  gameTimelineExpected: "required",
+  gameTimelineActual: "you",
+  gameTimelineOff: "off",
+  gameKeyHintIndicator: "Left and right arrows switch the indicator on and off.",
   ruleObstruction:
     "When the right of way is yours and the road is clear, you are required to proceed. Stopping needlessly at an intersection holds up traffic and is an offence in itself.",
   ruleSpeeding:
@@ -847,6 +902,25 @@ const sq: Dict = {
     "Urdhri i punonjësit të policisë është më i fortë edhe se shenjat edhe se semafori. Kur policia rregullon trafikun, drita e semaforit nuk zbatohet.",
   ruleEmergency:
     "Automjetit me përparësi, me dritën rrotulluese dhe sirenën të ndezura, i jepet përparësia pavarësisht shenjave dhe semaforit.",
+  vioIndicatorMissing: "Pa tregues drejtimi",
+  vioIndicatorWrong: "Treguesi në anën e gabuar",
+  vioIndicatorLate: "Treguesi u ndez shumë vonë",
+  vioIndicatorLeftOn: "Treguesi u la i ndezur",
+  ruleIndicator:
+    "Qëllimin për t'u kthyer e njoftoni me treguesin e drejtimit para se të hyni në kryqëzim, dhe e mbani të ndezur deri në fund të kthesës. Treguesi është mënyra e vetme që të tjerët të marrin vesh çfarë do të bëni.",
+  ruleIndicatorOff:
+    "Pas përfundimit të kthesës treguesi fiket. Treguesi i lënë ndezur i mashtron ata që presin të shohin nga po shkoni.",
+  gameIndicator: "Treguesi",
+  gameIndicatorLeft: "Majtas",
+  gameIndicatorRight: "Djathtas",
+  gameIndicatorShortLeft: "M",
+  gameIndicatorShortRight: "DJ",
+  gameMinor: "gabim i lehtë",
+  gameTimelineTitle: "Treguesi përgjatë trajektores",
+  gameTimelineExpected: "kërkohet",
+  gameTimelineActual: "ju",
+  gameTimelineOff: "i fikur",
+  gameKeyHintIndicator: "Shigjetat majtas dhe djathtas e ndezin dhe e fikin treguesin.",
   ruleObstruction:
     "Kur përparësia është e juaja dhe rruga është e lirë, jeni i detyruar të vazhdoni. Ndalimi i panevojshëm në kryqëzim e pengon trafikun dhe në vetvete është shkelje.",
   ruleSpeeding:
@@ -1088,6 +1162,25 @@ const ru: Dict = {
     "Указание сотрудника полиции имеет преимущество и над знаками, и над светофором. Когда движением управляет регулировщик, сигнал светофора не выполняется.",
   ruleEmergency:
     "Транспортному средству с включённым проблесковым маячком и сиреной уступают дорогу независимо от знаков и светофора.",
+  vioIndicatorMissing: "Без указателя поворота",
+  vioIndicatorWrong: "Указатель включён не в ту сторону",
+  vioIndicatorLate: "Указатель включён слишком поздно",
+  vioIndicatorLeftOn: "Указатель оставлен включённым",
+  ruleIndicator:
+    "О намерении повернуть вы сообщаете указателем поворота до въезда на перекрёсток и держите его включённым до конца манёвра. Указатель — единственный способ для остальных узнать, что вы собираетесь сделать.",
+  ruleIndicatorOff:
+    "После завершения поворота указатель выключается. Оставленный указатель вводит в заблуждение тех, кто ждёт, чтобы понять, куда вы едете.",
+  gameIndicator: "Указатель",
+  gameIndicatorLeft: "Налево",
+  gameIndicatorRight: "Направо",
+  gameIndicatorShortLeft: "Л",
+  gameIndicatorShortRight: "П",
+  gameMinor: "лёгкая ошибка",
+  gameTimelineTitle: "Указатель вдоль траектории",
+  gameTimelineExpected: "требуется",
+  gameTimelineActual: "вы",
+  gameTimelineOff: "выключен",
+  gameKeyHintIndicator: "Стрелки влево и вправо включают и выключают указатель.",
   ruleObstruction:
     "Когда преимущество у вас и дорога свободна, вы обязаны продолжить движение. Ненужная остановка на перекрёстке задерживает движение и сама по себе является нарушением.",
   ruleSpeeding:

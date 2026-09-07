@@ -72,7 +72,11 @@ export function createRunner(scenario: Scenario, seed: number): Runner {
         runner.prev = snapshotOf(runner.world);
         // Ulaz se pamti kao kopija: `input` je isti objekat u svakom kadru i
         // mijenja se u mjestu, pa bi se inače cio dnevnik „pomjerio" s njim.
-        runner.inputLog.push({ throttle: input.throttle, brake: input.brake });
+        runner.inputLog.push({
+          throttle: input.throttle,
+          brake: input.brake,
+          indicator: input.indicator,
+        });
         step(runner.world, scenario, input);
         tick += 1;
         acc -= DT;

@@ -6,10 +6,43 @@
  * i pravila prvenstva; razlikuju se samo po tome što igra ima vrijeme.
  */
 
-import type { Approach, Intent } from "@/lib/simRules";
+import type { Approach, Intent as CrossIntent } from "@/lib/simRules";
+// Samo tip — uvoz se briše pri prevođenju, pa ciklus između ova dva fajla ne
+// postoji u izvršnom kodu.
+import type { IndicatorPhase } from "./indicatorRules";
 
 export type ArmId = Approach;
-export type { Intent };
+export type { CrossIntent };
+
+/**
+ * Manevar vozila.
+ *
+ * Krstasta raskrsnica ima tri manevra i oni ostaju obični stringovi, isti kao u
+ * `lib/simRules.ts` — pravila prvenstva su zajednička i ne smiju da se razlikuju
+ * po obliku podatka. Kružni tok se ne opisuje smjerom nego rednim brojem izlaza,
+ * a autoput trakom, pa oni dolaze kao zasebni oblici.
+ *
+ * Zašto ne sve svesti na broj izlaza: statični simulator bi ostao na starom
+ * pojmu, pa bi u istom projektu postojala dva rječnika za istu stvar.
+ */
+export type Intent =
+  | CrossIntent
+  | { kind: "exit"; n: number }
+  | { kind: "lane"; index: number };
+
+/** Manevar na krstastoj raskrsnici, ili `null` ako je vozilo u kružnom toku. */
+export function crossIntent(intent: Intent): CrossIntent | null {
+  return typeof intent === "string" ? intent : null;
+}
+
+/**
+ * Manevar sveden na stranu skretanja — jedino što treba pravilima pokazivača.
+ * Kružni tok ima svoju tabelu faza, pa se ovdje ne pojavljuje.
+ */
+export function turnSide(intent: Intent): "left" | "right" | null {
+  const c = crossIntent(intent);
+  return c === "left" || c === "right" ? c : null;
+}
 
 /** Kako je krak regulisan. */
 export type Control =
@@ -37,6 +70,8 @@ export interface LightPhase {
 }
 
 export interface IntersectionTemplate {
+  /** Diskriminator: kružni tok i autoput dolaze kao zasebni oblici. */
+  kind: "cross";
   id: string;
   /** Tri ili četiri kraka. Krak kojeg nema ne postoji kao ulaz ni izlaz. */
   arms: Arm[];
@@ -195,6 +230,13 @@ export interface Scenario {
   difficulty: 1 | 2 | 3;
   vMax?: number;
   /**
+   * Zamjena za `INDICATOR_RULES`, samo za testove.
+   *
+   * Stoji u scenariju, a ne u stanju svijeta: tabela je ulaz u simulaciju kao i
+   * raskrsnica, i ne treba da se kopira u svaki snimak za ponavljanje.
+   */
+  indicatorRules?: readonly IndicatorPhase[];
+  /**
    * Naziv i objašnjenje po jeziku.
    *
    * Ovo NE ide u `lib/i18n.ts` iako je tekst za korisnika: to je sadržaj
@@ -216,10 +258,25 @@ export type ViolationType =
   | "obstruction"
   | "speeding"
   | "pedestrian"
-  | "officer";
+  | "officer"
+  | "indicatorMissing"
+  | "indicatorWrong"
+  | "indicatorLate"
+  | "indicatorLeftOn";
+
+/**
+ * Koliko prekršaj košta.
+ *
+ * `fail` obara vožnju, `minor` se prijavi i objasni ali vožnja ostaje ispravna.
+ * Razlika postoji zbog pokazivača: ostavljen žmigavac poslije skretanja jeste
+ * greška, ali nije istog reda kao ulazak u raskrsnicu bez prava prolaza, i ne
+ * bi bilo pošteno da ista kartica znači isto.
+ */
+export type Severity = "fail" | "minor";
 
 export interface Violation {
   type: ViolationType;
+  severity: Severity;
   /** Trenutak u simulaciji [s]. */
   t: number;
   details: string;
@@ -230,6 +287,8 @@ export interface Violation {
   penaltyRef: string | null;
   /** Vozilo kojem je oduzeta prednost, ako ga ima — za crveni highlight. */
   otherVehicleId?: string;
+  /** Id faze pokazivača, kad je prekršaj iz te porodice — za timeline. */
+  phaseId?: string;
 }
 
 export type SimEvent =
@@ -255,9 +314,27 @@ export interface World {
   idleT: number;
   /** Da li je žuto počelo dok je igrač bio dovoljno blizu da nastavi. */
   yellowCommitted: boolean;
+  /**
+   * Svaka promjena pokazivača igrača, sa trenutkom i mjestom na putanji.
+   *
+   * Pamti se i `s`, ne samo `t`: pravila pokazivača su vezana za mjesto na
+   * putanji („prije stop-linije", „poslije izlaza"), a ne za vrijeme, pa bi
+   * računanje unazad iz vremena bilo izvedeno i lomljivo.
+   */
+  indicatorLog: IndicatorEvent[];
+  /** Faze pokazivača koje su već ocijenjene — svaka se ocjenjuje jednom. */
+  indicatorDone: string[];
+}
+
+export interface IndicatorEvent {
+  t: number;
+  s: number;
+  indicator: "left" | "right" | null;
 }
 
 export interface Input {
   throttle: number;
   brake: number;
+  /** Pokazivač pravca. `null` je isključen. */
+  indicator: "left" | "right" | null;
 }

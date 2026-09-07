@@ -1,0 +1,28 @@
+{
+  "motor": "chromium-desktop",
+  "imaDugmadPokazivaca": true,
+  "bezPokazivaca": "pao",
+  "prijavljenoBezPokazivaca": true,
+  "imaTraku": true,
+  "imaPravilo": true,
+  "tastaturaPaliPokazivac": true,
+  "saPokazivacem": "pao",
+  "ostavljenPokazivac": true,
+  "oznakaBlage": true,
+  "dugmePrekidac": true,
+  "greske": []
+}
+{
+  "motor": "webkit-mobile",
+  "imaDugmadPokazivaca": true,
+  "bezPokazivaca": "pao",
+  "prijavljenoBezPokazivaca": true,
+  "imaTraku": true,
+  "imaPravilo": true,
+  "tastaturaPaliPokazivac": true,
+  "saPokazivacem": "pao",
+  "ostavljenPokazivac": true,
+  "oznakaBlage": true,
+  "dugmePrekidac": true,
+  "greske": []
+}

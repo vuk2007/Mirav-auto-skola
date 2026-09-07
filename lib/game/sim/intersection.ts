@@ -17,8 +17,8 @@ import type {
   Arm,
   ArmId,
   ConflictPoint,
+  CrossIntent,
   IntersectionTemplate,
-  Intent,
   Path,
   Point,
 } from "./types";
@@ -74,7 +74,7 @@ function quadratic(p0: Point, c: Point, p1: Point, t: number): Point {
  * Pravi putanju: prilazna traka → stop-linija → luk kroz raskrsnicu → izlazna
  * traka. Nema slobodnog upravljanja, pa je putanja fiksna po (krak, manevar).
  */
-export function buildPath(tpl: IntersectionTemplate, arm: ArmId, intent: Intent): Path {
+export function buildPath(tpl: IntersectionTemplate, arm: ArmId, intent: CrossIntent): Path {
   const { size, laneWidth } = tpl.geometry;
   const inDir = INBOUND[arm];
   const exitArm = exitOf(arm, intent);
@@ -176,7 +176,7 @@ export interface CompiledTemplate {
   conflicts: Map<string, ConflictPoint[]>;
 }
 
-const INTENTS: Intent[] = ["straight", "left", "right"];
+const INTENTS: CrossIntent[] = ["straight", "left", "right"];
 const cache = new Map<string, CompiledTemplate>();
 
 export function compile(tpl: IntersectionTemplate): CompiledTemplate {
@@ -235,6 +235,7 @@ const geometry = { size: BOX, laneWidth: LANE_WIDTH };
 export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
   /** Neregulisana krstasta raskrsnica — pravilo desne strane. */
   "cross-none": {
+    kind: "cross",
     id: "cross-none",
     arms: [
       arm("N", { kind: "none" }),
@@ -247,6 +248,7 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
 
   /** Glavni put N–S; E i W imaju trougao. */
   "cross-priority-ns": {
+    kind: "cross",
     id: "cross-priority-ns",
     arms: [
       arm("N", { kind: "priority" }),
@@ -260,6 +262,7 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
 
   /** Glavni put N–S; E i W imaju STOP. */
   "cross-stop-ew": {
+    kind: "cross",
     id: "cross-stop-ew",
     arms: [
       arm("N", { kind: "priority" }),
@@ -277,6 +280,7 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
    * zato oba nose `priority`, pa `whoYields` pada na desnu stranu.
    */
   "cross-priority-bent-ne": {
+    kind: "cross",
     id: "cross-priority-bent-ne",
     arms: [
       arm("N", { kind: "priority" }),
@@ -290,6 +294,7 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
 
   /** Semafor: N–S i E–W naizmjenično. */
   "cross-lights": {
+    kind: "cross",
     id: "cross-lights",
     arms: [
       arm("N", { kind: "light", phaseGroup: "NS" }),
@@ -324,6 +329,7 @@ export const TEMPLATES: Readonly<Record<string, IntersectionTemplate>> = {
    * izuzetka u kodu.
    */
   "cross-lights-kratki": {
+    kind: "cross",
     id: "cross-lights-kratki",
     arms: [
       arm("N", { kind: "light", phaseGroup: "NS" }),

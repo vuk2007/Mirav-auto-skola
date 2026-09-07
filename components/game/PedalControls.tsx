@@ -7,6 +7,9 @@ interface PedalControlsProps {
   disabled: boolean;
   throttleLabel: string;
   brakeLabel: string;
+  indicatorLabel: string;
+  leftLabel: string;
+  rightLabel: string;
 }
 
 /**
@@ -21,6 +24,9 @@ export default function PedalControls({
   disabled,
   throttleLabel,
   brakeLabel,
+  indicatorLabel,
+  leftLabel,
+  rightLabel,
 }: PedalControlsProps) {
   const button = (pedal: "throttle" | "brake", label: string, tone: string) => (
     <button
@@ -40,10 +46,35 @@ export default function PedalControls({
     </button>
   );
 
+  // Pokazivač je PREKIDAČ, ne pedala: pritisak ga pali i ostavlja upaljenim.
+  // Zato ide na `onClick`, a ne na `pointerdown` kao gas i kočnica.
+  const zmigavac = (side: "left" | "right", label: string, znak: string) => (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-pressed={pedals.indicator === side}
+      aria-label={`${indicatorLabel}: ${label}`}
+      onClick={() => pedals.toggleIndicator(side)}
+      className={`font-display flex-1 rounded border-2 py-2.5 text-lg font-bold tracking-wide uppercase transition-colors select-none disabled:opacity-40 ${
+        pedals.indicator === side
+          ? "border-yellow bg-yellow text-ink"
+          : "border-line bg-panel text-muted"
+      }`}
+    >
+      <span aria-hidden="true">{znak}</span> {label}
+    </button>
+  );
+
   return (
-    <div className="flex gap-3">
-      {button("brake", brakeLabel, "border-red bg-red text-white")}
-      {button("throttle", throttleLabel, "border-green bg-green text-white")}
+    <div className="space-y-2">
+      <div className="flex gap-3">
+        {zmigavac("left", leftLabel, "◀")}
+        {zmigavac("right", rightLabel, "▶")}
+      </div>
+      <div className="flex gap-3">
+        {button("brake", brakeLabel, "border-red bg-red text-white")}
+        {button("throttle", throttleLabel, "border-green bg-green text-white")}
+      </div>
     </div>
   );
 }

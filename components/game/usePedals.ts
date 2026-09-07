@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Input } from "@/lib/game/sim/types";
 
 type Pedal = "throttle" | "brake";
+type Side = "left" | "right";
 
 export interface Pedals {
   /** Ulaz za simulaciju. Mijenja se u mjestu — namjerno nije React state. */
@@ -12,6 +13,10 @@ export interface Pedals {
   active: Record<Pedal, boolean>;
   /** Prst ili miš su spušteni na dugme. Otpuštanje hvata sam hook. */
   pressPointer: (pedal: Pedal, pointerId: number) => void;
+  /** Trenutno stanje pokazivača pravca. */
+  indicator: Side | null;
+  /** Prekidač pokazivača: ista strana ga gasi, druga ga prebacuje. */
+  toggleIndicator: (side: Side) => void;
   /** Otpusti sve — poziva se kad scenario počne ili se završi. */
   release: () => void;
 }
@@ -30,7 +35,7 @@ export interface Pedals {
  * nijedan pregledač ne može da progura.
  */
 export function usePedals(): Pedals {
-  const inputRef = useRef<Input>({ throttle: 0, brake: 0 });
+  const inputRef = useRef<Input>({ throttle: 0, brake: 0, indicator: null });
   const keys = useRef<Record<Pedal, boolean>>({ throttle: false, brake: false });
   /** Koji pokazivač drži koju pedalu — dva prsta smiju držati obje. */
   const pointers = useRef(new Map<number, Pedal>());
@@ -38,6 +43,20 @@ export function usePedals(): Pedals {
     throttle: false,
     brake: false,
   });
+  const [indicator, setIndicator] = useState<Side | null>(null);
+
+  /**
+   * Pokazivač je prekidač, ne pedala: pritisak ga pali i ostaje upaljen dok se
+   * ne ugasi. Zato ide kroz state, a ne kroz mapu pritisnutih pokazivača — i
+   * zato se ne otpušta kad prozor izgubi fokus, kao gas.
+   */
+  const toggleIndicator = useCallback((side: Side) => {
+    setIndicator((prev) => {
+      const next = prev === side ? null : side;
+      inputRef.current.indicator = next;
+      return next;
+    });
+  }, []);
 
   const sync = useCallback(() => {
     const held = [...pointers.current.values()];
@@ -61,6 +80,8 @@ export function usePedals(): Pedals {
   const release = useCallback(() => {
     pointers.current.clear();
     keys.current = { throttle: false, brake: false };
+    setIndicator(null);
+    inputRef.current.indicator = null;
     sync();
   }, [sync]);
 
@@ -71,6 +92,13 @@ export function usePedals(): Pedals {
       return null;
     };
     const down = (e: KeyboardEvent) => {
+      // Strelice lijevo/desno su pokazivač. Na autoputu će im trebati i promjena
+      // trake — tada se razdvajaju (vidi faza 5).
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+        if (!e.repeat) toggleIndicator(e.key === "ArrowLeft" ? "left" : "right");
+        return;
+      }
       const p = pedalOf(e);
       if (!p || keys.current[p]) return;
       e.preventDefault(); // strelice inače skroluju stranicu ispod platna
@@ -105,10 +133,10 @@ export function usePedals(): Pedals {
       window.removeEventListener("blur", blur);
       document.removeEventListener("visibilitychange", blur);
     };
-  }, [sync, release]);
+  }, [sync, release, toggleIndicator]);
 
   return useMemo(
-    () => ({ inputRef, active, pressPointer, release }),
-    [active, pressPointer, release],
+    () => ({ inputRef, active, pressPointer, indicator, toggleIndicator, release }),
+    [active, pressPointer, indicator, toggleIndicator, release],
   );
 }

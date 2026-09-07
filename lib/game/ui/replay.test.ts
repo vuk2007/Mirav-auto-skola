@@ -29,7 +29,7 @@ function otisak(world: World): string {
 function odigraj(s: Scenario, seed: number): Runner {
   const runner = createRunner(s, seed);
   const rnd = rng(seed * 977 + 13);
-  const input: Input = { throttle: 1, brake: 0 };
+  const input: Input = { throttle: 1, brake: 0, indicator: null };
   while (runner.world.outcome === "running" && runner.inputLog.length < 3600) {
     if (rnd() < 0.03) {
       const gas = rnd() < 0.5;
@@ -51,7 +51,7 @@ describe("ponavljanje snimka", () => {
       const pb = createPlayback(runner, REPLAY_SECONDS);
       let steps = 0;
       while (!pb.done && steps < 3600) {
-        pb.advance(DT, { throttle: 0, brake: 0 });
+        pb.advance(DT, { throttle: 0, brake: 0, indicator: null });
         steps += 1;
       }
 
@@ -74,7 +74,7 @@ describe("ponavljanje snimka", () => {
     const runner = odigraj(SCENARIOS[0]!, 3);
     const prije = otisak(runner.world);
     const pb = createPlayback(runner, REPLAY_SECONDS);
-    for (let i = 0; i < 3600 && !pb.done; i++) pb.advance(DT, { throttle: 0, brake: 0 });
+    for (let i = 0; i < 3600 && !pb.done; i++) pb.advance(DT, { throttle: 0, brake: 0, indicator: null });
     expect(otisak(runner.world)).toBe(prije);
   });
 });

@@ -43,20 +43,25 @@ import {
   pedestrianSpan,
   TEMPLATES,
 } from "./intersection";
+import { expectedIndicatorAt, phasesFor } from "./indicatorRules";
 import type {
   ArmId,
   ConflictPoint,
   Control,
+  IndicatorEvent,
   Input,
+  Intent,
   IntersectionTemplate,
   Path,
   Pedestrian,
   Scenario,
   ScenarioOfficer,
+  Severity,
   Vehicle,
   Violation,
   World,
 } from "./types";
+import { crossIntent } from "./types";
 import { whoYields, type EffectiveControl, type YieldParty } from "@/lib/simRules";
 
 export const PLAYER_ID = "player";
@@ -76,7 +81,24 @@ export const PENALTY_REF: Readonly<Record<Violation["type"], string | null>> = {
   speeding: null, // stepenovano po brzini — bira se tek kad kazne budu potvrđene
   pedestrian: "pjesacki-prelaz",
   officer: "policija",
+  // Propust oko pokazivača spada pod nepropisno skretanje — najbliža stavka u
+  // katalogu. Kad instruktorka potvrdi tačan član, mijenja se ovdje.
+  indicatorMissing: "skretanje",
+  indicatorWrong: "skretanje",
+  indicatorLate: "skretanje",
+  indicatorLeftOn: "skretanje",
 };
+
+/** Ključ manevra u id-u putanje. Kružni tok i autoput dodaju svoje oblike. */
+export function intentKey(intent: Intent): string {
+  if (typeof intent === "string") return intent;
+  return intent.kind === "exit" ? `exit${intent.n}` : `lane${intent.index}`;
+}
+
+/** Da li vožnja pada. `minor` prekršaji se prijave, ali vožnju ne obaraju. */
+export function hasFail(world: World): boolean {
+  return world.violations.some((v) => v.severity === "fail");
+}
 
 // ── pomoćne ────────────────────────────────────────────────────────────────
 
@@ -119,7 +141,9 @@ interface Regulacija {
 function party(ctx: Regulacija, v: Vehicle, phaseIndex: number): YieldParty {
   return {
     approach: v.arm,
-    intent: v.intent,
+    // Pravila prvenstva za sada poznaju samo manevre krstaste raskrsnice;
+    // kružni tok dolazi kao zasebno polje na `YieldParty`, ne kao manevar.
+    intent: crossIntent(v.intent) ?? "straight",
     control: armControl(ctx, v.arm, phaseIndex),
     emergency: v.emergency,
   };
@@ -162,7 +186,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
   if (!tpl) throw new Error(`Nepoznata raskrsnica: ${scenario.intersection}`);
   const { paths } = compile(tpl);
 
-  const pathId = (arm: ArmId, intent: Vehicle["intent"]) => `${tpl.id}:${arm}:${intent}`;
+  const pathId = (arm: ArmId, intent: Intent) => `${tpl.id}:${arm}:${intentKey(intent)}`;
   const need = (id: string): Path => {
     const p = paths.get(id);
     if (!p) throw new Error(`Nema putanje ${id} — provjeri krakove šablona.`);
@@ -181,7 +205,9 @@ export function createWorld(scenario: Scenario, seed: number): World {
       width: CAR_WIDTH,
       intent: scenario.player.intent,
       arm: scenario.player.arm,
-      indicator: scenario.player.intent === "straight" ? null : scenario.player.intent,
+      // Pokazivač igrača je od sada KOMANDA, ne posljedica namjere — počinje
+      // ugašen i pali ga igrač.
+      indicator: null,
       stopHeld: 0,
       done: false,
       spawnT: 0,
@@ -205,7 +231,9 @@ export function createWorld(scenario: Scenario, seed: number): World {
       width: CAR_WIDTH,
       intent: n.intent,
       arm: n.arm,
-      indicator: n.intent === "straight" ? null : n.intent,
+      // NPC su idealni vozači: pokazivač im vodi ista tabela po kojoj se sudi
+      // igraču, pa uz put i pokazuju kako treba.
+      indicator: expectedIndicatorAt(p, n.intent, 0),
       stopHeld: 0,
       done: false,
       spawnT: t,
@@ -241,6 +269,8 @@ export function createWorld(scenario: Scenario, seed: number): World {
     outcome: "running",
     idleT: 0,
     yellowCommitted: false,
+    indicatorLog: [],
+    indicatorDone: [],
   };
 }
 
@@ -421,9 +451,17 @@ export function step(world: World, scenario: Scenario, input: Input): void {
     const path = ctx.paths.get(v.pathId)!;
 
     if (v.kind === "player") {
+      // Pokazivač je komanda: svaka promjena ide u dnevnik, sa mjestom na
+      // putanji, jer se pravila vezuju za mjesto a ne za vrijeme.
+      const zeljeni = input.indicator ?? null;
+      if (v.indicator !== zeljeni) {
+        v.indicator = zeljeni;
+        world.indicatorLog.push({ t: world.t, s: v.s, indicator: zeljeni });
+      }
       const a = input.throttle * A_MAX - input.brake * B_MAX;
       integrate(v, a);
     } else {
+      v.indicator = expectedIndicatorAt(path, v.intent, v.s);
       const limit = npcTarget(world, ctx, v, path);
       const a = accelToward(v, limit, ctx.vMax);
       // Naglo kočenje zbog igrača je događaj, ne samo usporenje — po njemu se
@@ -449,12 +487,16 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   }
 
   detectViolations(world, ctx, scenario, player, playerPath, playerBefore);
+  // Pokazivač se ocjenjuje van `detectViolations` jer ta funkcija odustaje čim
+  // igrač izađe sa putanje — a posljednja faza (gašenje) se završava baš tada.
+  evaluateIndicator(world, scenario, player, playerPath);
 
   world.t += DT;
 
   if (world.outcome === "running") {
     if (player.done) {
-      world.outcome = world.violations.length === 0 ? "passed" : "failed";
+      // Blagi prekršaji se prijave i objasne, ali vožnju ne obaraju.
+      world.outcome = hasFail(world) ? "failed" : "passed";
     } else if (world.t > MAX_SCENARIO_SECONDS) {
       world.outcome = "failed";
     }
@@ -486,9 +528,22 @@ function blamePlayer(
 
 // ── prekršaji ───────────────────────────────────────────────────────────────
 
-function add(world: World, v: Omit<Violation, "penaltyRef">): void {
-  if (world.violations.some((x) => x.type === v.type)) return; // jedan po vrsti
-  world.violations.push({ ...v, penaltyRef: PENALTY_REF[v.type] });
+/**
+ * Upisuje prekršaj. Jedan po vrsti — a kod pokazivača jedan po vrsti I fazi,
+ * jer „nema žmigavca pri najavi" i „ugašen prije kraja skretanja" nisu ista
+ * greška iako nose isti tip.
+ */
+function add(
+  world: World,
+  v: Omit<Violation, "penaltyRef" | "severity"> & { severity?: Severity },
+): void {
+  const kljuc = `${v.type}:${v.phaseId ?? ""}`;
+  if (world.violations.some((x) => `${x.type}:${x.phaseId ?? ""}` === kljuc)) return;
+  world.violations.push({
+    ...v,
+    severity: v.severity ?? "fail",
+    penaltyRef: PENALTY_REF[v.type],
+  });
 }
 
 function detectViolations(
@@ -633,6 +688,129 @@ function detectViolations(
       t: world.t,
       details: `Brzina ${(player.v * 3.6).toFixed(0)} km/h iznad dozvoljene.`,
     });
+  }
+}
+
+// ── pokazivač pravca ───────────────────────────────────────────────────────
+
+/** Stanje pokazivača na mjestu `s` — posljednja promjena prije tog mjesta. */
+function indicatorAt(log: readonly IndicatorEvent[], s: number): "left" | "right" | null {
+  let cur: "left" | "right" | null = null;
+  for (const e of log) if (e.s <= s) cur = e.indicator;
+  return cur;
+}
+
+/** Sva stanja kroz koja je pokazivač prošao na dionici `[from, to)`. */
+function statesOver(
+  log: readonly IndicatorEvent[],
+  from: number,
+  to: number,
+): ("left" | "right" | null)[] {
+  const out: ("left" | "right" | null)[] = [indicatorAt(log, from)];
+  for (const e of log) if (e.s > from && e.s < to) out.push(e.indicator);
+  return out;
+}
+
+/** Gdje je pokazivač PRVI put bio u traženom stanju na toj dionici. */
+function firstAt(
+  log: readonly IndicatorEvent[],
+  want: "left" | "right",
+  from: number,
+  to: number,
+): number | null {
+  if (indicatorAt(log, from) === want) return from;
+  for (const e of log) if (e.s > from && e.s < to && e.indicator === want) return e.s;
+  return null;
+}
+
+/**
+ * Ocjenjuje faze pokazivača čim ih igrač pređe.
+ *
+ * Ova funkcija ne zna nijedno pravilo napamet — sve čita iz `phasesFor`, koji
+ * čita iz tabele. Zbog toga izmjena tabele mijenja ocjenu bez ijedne izmjene
+ * ovdje, što `indicator.test.ts` i provjerava.
+ */
+function evaluateIndicator(
+  world: World,
+  scenario: Scenario,
+  player: Vehicle,
+  path: Path,
+): void {
+  const prekinuto = world.outcome !== "running";
+  for (const ph of phasesFor(path, player.intent, scenario.indicatorRules)) {
+    if (world.indicatorDone.includes(ph.id)) continue;
+
+    const predjena = player.s >= ph.to || player.done;
+    // Kad se vožnja prekine usred faze (sudar, oduzeto prvenstvo), ocjenjuje se
+    // samo ono što je stvarno odvezeno, i samo ono što je do tog mjesta već
+    // bilo dužno. Bez toga bi propušten žmigavac nestao svaki put kad scenario
+    // padne prije izlaska iz raskrsnice — a upravo tada je najvažniji.
+    const dospjelo = ph.mustBeSetBefore === null ? predjena : player.s >= ph.mustBeSetBefore;
+    const usla = player.s > ph.from;
+    if (!predjena && !(prekinuto && usla && dospjelo)) continue;
+    world.indicatorDone.push(ph.id);
+
+    const kraj = Math.min(ph.to, Math.max(player.s, ph.from));
+    if (kraj <= ph.from) continue;
+    const stanja = statesOver(world.indicatorLog, ph.from, kraj);
+    const detalj = (x: string) => x;
+
+    if (ph.expected === null) {
+      if (stanja.some((x) => x !== null)) {
+        add(world, {
+          type: ph.mismatchType,
+          severity: ph.severity,
+          t: world.t,
+          phaseId: ph.id,
+          details: detalj("Pokazivač je bio uključen tamo gdje se ne očekuje."),
+        });
+      }
+      continue;
+    }
+
+    if (stanja.some((x) => x !== null && x !== ph.expected)) {
+      add(world, {
+        type: "indicatorWrong",
+        severity: ph.severity,
+        t: world.t,
+        phaseId: ph.id,
+        details: detalj("Uključen je pokazivač na pogrešnu stranu."),
+      });
+      continue;
+    }
+
+    if (!stanja.includes(ph.expected)) {
+      add(world, {
+        type: "indicatorMissing",
+        severity: ph.severity,
+        t: world.t,
+        phaseId: ph.id,
+        details: detalj("Pokazivač uopšte nije bio uključen."),
+      });
+      continue;
+    }
+
+    const prvi = firstAt(world.indicatorLog, ph.expected, ph.from, kraj);
+    if (ph.mustBeSetBefore !== null && prvi !== null && prvi > ph.mustBeSetBefore) {
+      add(world, {
+        type: "indicatorLate",
+        severity: "minor",
+        t: world.t,
+        phaseId: ph.id,
+        details: detalj("Pokazivač je uključen prekasno — poslije mjesta na kojem se traži."),
+      });
+      continue;
+    }
+
+    if (predjena && indicatorAt(world.indicatorLog, kraj - 0.01) !== ph.expected) {
+      add(world, {
+        type: "indicatorMissing",
+        severity: ph.severity,
+        t: world.t,
+        phaseId: ph.id,
+        details: detalj("Pokazivač je ugašen prije nego što je manevar završen."),
+      });
+    }
   }
 }
 

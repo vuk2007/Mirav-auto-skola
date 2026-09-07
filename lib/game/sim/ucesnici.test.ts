@@ -80,7 +80,7 @@ describe("pješaci", () => {
 
     let stajao = false;
     for (let i = 0; i < 2000 && world.outcome === "running"; i++) {
-      step(world, s, { throttle: 0, brake: 1 });
+      step(world, s, { throttle: 0, brake: 1, indicator: null });
       const npc = world.vehicles.find((v) => v.kind === "npc");
       const ped = world.pedestrians[0]!;
       if (!npc || npc.done || world.t < npc.spawnT) continue;
@@ -225,7 +225,7 @@ describe("vozilo pod pratnjom", () => {
     let prije = 0;
     for (let i = 0; i < 1200 && world.outcome === "running"; i++) {
       const faza = world.phaseIndex;
-      step(world, s, { throttle: 0, brake: 1 });
+      step(world, s, { throttle: 0, brake: 1, indicator: null });
       const npc = world.vehicles.find((v) => v.kind === "npc")!;
       if (prije < npcPath.stopLineS && npc.s >= npcPath.stopLineS) {
         presaoNaCrveno = lightFor(tpl, faza, "EW") === "red";

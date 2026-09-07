@@ -9,6 +9,7 @@
 import type { Dict } from "@/lib/i18n";
 import { OPPOSITE, type Approach } from "@/lib/simRules";
 import type { Intent, ViolationType } from "../sim/types";
+import { crossIntent } from "../sim/types";
 
 export const VIOLATION_LABEL: Readonly<Record<ViolationType, keyof Dict>> = {
   rightOfWay: "vioRightOfWay",
@@ -19,13 +20,28 @@ export const VIOLATION_LABEL: Readonly<Record<ViolationType, keyof Dict>> = {
   speeding: "vioSpeeding",
   pedestrian: "vioPedestrian",
   officer: "vioOfficer",
+  indicatorMissing: "vioIndicatorMissing",
+  indicatorWrong: "vioIndicatorWrong",
+  indicatorLate: "vioIndicatorLate",
+  indicatorLeftOn: "vioIndicatorLeftOn",
 };
 
-export const TASK_LABEL: Readonly<Record<Intent, keyof Dict>> = {
+const TASK_LABEL_CROSS: Readonly<Record<"straight" | "left" | "right", keyof Dict>> = {
   straight: "gameTaskStraight",
   left: "gameTaskLeft",
   right: "gameTaskRight",
 };
+
+/**
+ * Šta igrač treba da uradi, jednom rečenicom.
+ *
+ * Funkcija, a ne mapa: kružni tok se ne opisuje smjerom nego rednim brojem
+ * izlaza, pa se ključ ne može indeksirati manevrom.
+ */
+export function taskKeyFor(intent: Intent): keyof Dict {
+  const c = crossIntent(intent);
+  return c ? TASK_LABEL_CROSS[c] : "gameTaskStraight";
+}
 
 /** Znak na kraku igrača. Semafor nema tekst — HUD mu prikazuje boju. */
 export const CONTROL_LABEL: Readonly<Record<string, keyof Dict>> = {
@@ -68,6 +84,12 @@ export function ruleKeyFor(opts: {
       return "rulePedestrian";
     case "officer":
       return "ruleOfficer";
+    case "indicatorLeftOn":
+      return "ruleIndicatorOff";
+    case "indicatorMissing":
+    case "indicatorWrong":
+    case "indicatorLate":
+      return "ruleIndicator";
     default:
       break;
   }

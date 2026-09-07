@@ -4,12 +4,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { idealTime } from "@/lib/game/sim/bots";
 import type { Outcome, Scenario } from "@/lib/game/sim/types";
+import { compile, TEMPLATES } from "@/lib/game/sim/intersection";
 import { playerControl } from "@/lib/game/ui/draw";
-import { CONTROL_LABEL, TASK_LABEL } from "@/lib/game/ui/labels";
+import { CONTROL_LABEL, taskKeyFor } from "@/lib/game/ui/labels";
 import { createPlayback, createRunner, type Playback } from "@/lib/game/ui/runner";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
+import IndicatorTimeline from "./IndicatorTimeline";
 import ViolationCard from "./ViolationCard";
 
 type Phase = "brief" | "play" | "over";
@@ -104,6 +106,25 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
     [phase, outcome, scenario, seed],
   );
 
+  /**
+   * Zone pokazivača na putanji.
+   *
+   * Na lakšim nivoima se vide sa slovom strane, na težem samo kao segmenti, a
+   * na najtežem se ne prikazuju — tada polaznik mora sam da zna gdje se šta
+   * traži. Skala težine je za sada 1–3; kad dođe 1–5, mijenja se samo ovdje.
+   */
+  const zones = useMemo(() => {
+    if (scenario.difficulty >= 3) return null;
+    return scenario.difficulty <= 1
+      ? { labels: { left: t.gameIndicatorShortLeft, right: t.gameIndicatorShortRight } }
+      : {};
+  }, [scenario.difficulty, t.gameIndicatorShortLeft, t.gameIndicatorShortRight]);
+
+  const player = runner.world.vehicles.find((v) => v.kind === "player");
+  const playerPath = player
+    ? compile(TEMPLATES[runner.world.templateId]!).paths.get(player.pathId)
+    : undefined;
+
   const control = playerControl(runner.world, scenario.officer);
   const violations = runner.world.violations;
   const flagged = violations.find((v) => v.otherVehicleId)?.otherVehicleId ?? null;
@@ -161,7 +182,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
 
       <div>
         <h1 className="text-xl font-bold sm:text-2xl">{title}</h1>
-        <p className="mt-0.5 text-sm text-muted">{t[TASK_LABEL[scenario.player.intent]]}</p>
+        <p className="mt-0.5 text-sm text-muted">{t[taskKeyFor(scenario.player.intent)]}</p>
       </div>
 
       {/* Platno je kvadrat, ali ne smije da bude više od ekrana: na 1440×900
@@ -182,7 +203,8 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           onFinish={finish}
           flagVehicleId={phase === "over" ? flagged : null}
           officer={scenario.officer ?? null}
-          label={`${title} — ${t[TASK_LABEL[scenario.player.intent]]}`}
+          indicatorZones={zones}
+          label={`${title} — ${t[taskKeyFor(scenario.player.intent)]}`}
         />
 
         {(phase === "play" || playback) && (
@@ -209,8 +231,13 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
             disabled={false}
             throttleLabel={t.gameThrottle}
             brakeLabel={t.gameBrake}
+            indicatorLabel={t.gameIndicator}
+            leftLabel={t.gameIndicatorLeft}
+            rightLabel={t.gameIndicatorRight}
           />
-          <p className="text-xs text-muted">{t.gameKeyHint}</p>
+          <p className="text-xs text-muted">
+            {t.gameKeyHint} {t.gameKeyHintIndicator}
+          </p>
         </>
       ) : (
         <div className="rounded border border-line bg-panel p-4">
@@ -264,6 +291,17 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
                     ))}
                   </ul>
                 </>
+              )}
+
+              {playerPath && (
+                <IndicatorTimeline
+                  path={playerPath}
+                  intent={scenario.player.intent}
+                  log={runner.world.indicatorLog}
+                  maxS={player?.s ?? 0}
+                  rules={scenario.indicatorRules}
+                  t={t}
+                />
               )}
 
               {explanation && (

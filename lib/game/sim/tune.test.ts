@@ -62,7 +62,7 @@ function idealniSpawn(s: Scenario): number | null {
   const w2 = createWorld(sam, 1);
   let tNpc = Infinity;
   for (let i = 0; i < 3600; i++) {
-    step(w2, sam, { throttle: 0, brake: 1 });
+    step(w2, sam, { throttle: 0, brake: 1, indicator: null });
     const n = w2.vehicles.find((v) => v.kind === "npc");
     if (n && n.s >= c.sB) {
       tNpc = w2.t;

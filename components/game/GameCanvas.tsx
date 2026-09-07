@@ -22,6 +22,8 @@ interface GameCanvasProps {
   flagVehicleId: string | null;
   /** Policajac je dio scenarija, pa ga platno dobija spolja. */
   officer: ScenarioOfficer | null;
+  /** Zone pokazivača na putanji; `null` ih ne crta. */
+  indicatorZones: { labels?: { left: string; right: string } } | null;
   label: string;
 }
 
@@ -40,6 +42,7 @@ export default function GameCanvas({
   onFinish,
   flagVehicleId,
   officer,
+  indicatorZones,
   label,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -50,11 +53,13 @@ export default function GameCanvas({
   const runningRef = useRef(running);
   const flagRef = useRef(flagVehicleId);
   const officerRef = useRef(officer);
+  const zonesRef = useRef(indicatorZones);
   onHudRef.current = onHud;
   onFinishRef.current = onFinish;
   runningRef.current = running;
   flagRef.current = flagVehicleId;
   officerRef.current = officer;
+  zonesRef.current = indicatorZones;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -95,6 +100,7 @@ export default function GameCanvas({
         playerBraking: inputRef.current.brake > 0,
         flagVehicleId: flagRef.current,
         officer: officerRef.current,
+        indicatorZones: zonesRef.current,
       });
 
       if (now - lastHud > 1000 / HUD_HZ) {

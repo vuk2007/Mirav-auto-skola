@@ -166,3 +166,16 @@ export const BLINK_HZ = 1.5;
  * čovjek reaguje. Mjereno, vidi `zvid` mjerenje u izvještaju faze 2.
  */
 export const EDGE_MARKER_INSET = 2.5;
+
+// ── Pokazivač pravca ────────────────────────────────────────────────────────
+
+/**
+ * Koliko prije stop-linije se očekuje uključen pokazivač [m].
+ *
+ * Rastojanje, a ne vrijeme, jer se zona pokazivača crta na putanji: igrač mora
+ * da vidi gdje se šta očekuje, a vrijeme se ne može nacrtati.
+ */
+export const INDICATOR_LEAD = 20;
+
+/** Koliko poslije izlaska iz raskrsnice pokazivač mora biti ugašen [m]. */
+export const INDICATOR_OFF_AFTER = 15;

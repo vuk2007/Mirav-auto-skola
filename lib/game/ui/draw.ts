@@ -37,6 +37,7 @@ import {
 import type {
   Arm,
   ArmId,
+  Intent,
   IntersectionTemplate,
   Path,
   Pedestrian,
@@ -45,6 +46,7 @@ import type {
   Vehicle,
   World,
 } from "../sim/types";
+import { phasesFor } from "../sim/indicatorRules";
 import { officerAllow } from "../sim/world";
 import { renderS, type Driver } from "./runner";
 
@@ -62,6 +64,8 @@ export const PALETTE = {
   npc: ["#c8232c", "#2f7d33", "#726b5c", "#8a5a2b"],
   lampOff: "#2a2a2a",
   emergency: "#f2f2f0",
+  /** Zona pokazivača — mora se razlikovati od boje same putanje. */
+  zone: "#f4c300",
   beacon: "#1f5fd0",
   officer: "#123a6d",
 } as const;
@@ -299,13 +303,29 @@ function drawControls(
 
 // ── Putanja igrača ──────────────────────────────────────────────────────────
 
-function drawPlayerPath(ctx: CanvasRenderingContext2D, v: View, path: Path, fromS: number): void {
-  const pts = path.points.filter((_, i) => path.cum[i]! >= fromS);
-  if (pts.length < 2) return;
+/** Dio putanje između dva `s`, kao niz tačaka sa tačnim krajevima. */
+function pathSlice(path: Path, from: number, to: number): Point[] {
+  const out: Point[] = [pointAt(path.points, path.cum, from)];
+  path.points.forEach((p, i) => {
+    const c = path.cum[i]!;
+    if (c > from && c < to) out.push(p);
+  });
+  out.push(pointAt(path.points, path.cum, to));
+  return out;
+}
 
-  ctx.strokeStyle = PALETTE.yellow;
-  ctx.globalAlpha = 0.75;
-  ctx.lineWidth = Math.max(2, 0.9 * v.scale);
+function strokePoints(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  pts: readonly Point[],
+  color: string,
+  widthM: number,
+  alpha: number,
+): void {
+  if (pts.length < 2) return;
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = Math.max(2, widthM * v.scale);
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   ctx.beginPath();
@@ -315,7 +335,52 @@ function drawPlayerPath(ctx: CanvasRenderingContext2D, v: View, path: Path, from
     else ctx.lineTo(q.x, q.y);
   });
   ctx.stroke();
+  ctx.globalAlpha = 1;
+}
 
+/**
+ * Putanja igrača sa zonama pokazivača.
+ *
+ * Cijela putanja se vidi od početka: pređeni dio blijedi, preostali je pun.
+ * Zone su segmenti druge boje sa slovom strane — polaznik mora da vidi GDJE se
+ * šta traži, jer je pravilo vezano za mjesto na putanji, a ne za vrijeme.
+ */
+function drawPlayerPath(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  path: Path,
+  intent: Intent,
+  fromS: number,
+  zones: { labels?: { left: string; right: string } } | null,
+): void {
+  strokePoints(ctx, v, pathSlice(path, 0, Math.max(0.01, fromS)), PALETTE.blue, 0.9, 0.22);
+  const pts = pathSlice(path, Math.max(0, fromS), path.length);
+  strokePoints(ctx, v, pts, PALETTE.blue, 0.9, 0.7);
+
+  if (zones) {
+    for (const ph of phasesFor(path, intent)) {
+      if (ph.expected === null) continue;
+      strokePoints(ctx, v, pathSlice(path, ph.from, ph.to), PALETTE.zone, 1.5, 0.55);
+      if (zones.labels) {
+        const mid = px(v, pointAt(path.points, path.cum, (ph.from + ph.to) / 2));
+        const r = Math.max(7, 1.1 * v.scale);
+        ctx.beginPath();
+        ctx.arc(mid.x, mid.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = PALETTE.zone;
+        ctx.fill();
+        ctx.strokeStyle = PALETTE.ink;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = PALETTE.ink;
+        ctx.font = `bold ${Math.round(r * 1.4)}px system-ui, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(ph.expected === "left" ? zones.labels.left : zones.labels.right, mid.x, mid.y);
+      }
+    }
+  }
+
+  if (pts.length < 2) return;
   // Strelica na kraju — bez nje se ne vidi kuda putanja vodi.
   const tip = px(v, pts[pts.length - 1]!);
   const before = px(v, pts[pts.length - 2]!);
@@ -329,7 +394,7 @@ function drawPlayerPath(ctx: CanvasRenderingContext2D, v: View, path: Path, from
   ctx.lineTo(-a * 0.8, a * 0.7);
   ctx.lineTo(-a * 0.8, -a * 0.7);
   ctx.closePath();
-  ctx.fillStyle = PALETTE.yellow;
+  ctx.fillStyle = PALETTE.blue;
   ctx.fill();
   ctx.restore();
   ctx.globalAlpha = 1;
@@ -537,6 +602,11 @@ export interface DrawOptions {
   playerBraking?: boolean;
   /** Policajac je dio scenarija, ne raskrsnice — zato stiže spolja. */
   officer?: ScenarioOfficer | null;
+  /**
+   * Zone pokazivača na putanji igrača. `null` ih gasi — na najtežem nivou
+   * polaznik mora sam da zna gdje se šta traži.
+   */
+  indicatorZones?: { labels?: { left: string; right: string } } | null;
 }
 
 /** Nacrtaj cijelu scenu — svejedno je da li se vozi ili se ponavlja snimak. */
@@ -562,7 +632,16 @@ export function drawScene(
   const player = world.vehicles.find((x) => x.kind === "player");
   if (player) {
     const path = paths.get(player.pathId);
-    if (path) drawPlayerPath(ctx, v, path, renderS(runner, player.id, player.s));
+    if (path) {
+      drawPlayerPath(
+        ctx,
+        v,
+        path,
+        player.intent,
+        renderS(runner, player.id, player.s),
+        opts.indicatorZones ?? null,
+      );
+    }
   }
 
   drawControls(ctx, v, tpl, world.phaseIndex);

@@ -13,21 +13,47 @@
  */
 
 import { A_MAX, B_MAX, DT, MAX_SCENARIO_SECONDS, V_MAX_DEFAULT } from "./config";
+import { expectedIndicatorAt } from "./indicatorRules";
 import { compile, TEMPLATES } from "./intersection";
 import type { Input, Scenario, World } from "./types";
 import { createWorld, PLAYER_ID, step } from "./world";
 
+/**
+ * Pokazivač kakav tabela traži na mjestu na kojem je igrač.
+ *
+ * Botovi ga čitaju iz iste funkcije iz koje se crtaju zone i po kojoj se sudi.
+ * Da bot ima svoju kopiju pravila, „savršen vozač" bi mogao da prolazi test i
+ * kad se tabela promijeni — a test bi i dalje bio zelen.
+ */
+function ispravanPokazivac(world: World, scenario: Scenario): "left" | "right" | null {
+  const p = world.vehicles.find((v) => v.id === PLAYER_ID);
+  if (!p) return null;
+  const tpl = TEMPLATES[world.templateId]!;
+  const path = compile(tpl).paths.get(p.pathId);
+  return path ? expectedIndicatorAt(path, p.intent, p.s, scenario.indicatorRules) : null;
+}
+
 export type Bot = (world: World, scenario: Scenario) => Input;
 
-const GAS: Input = { throttle: 1, brake: 0 };
-const STOP: Input = { throttle: 0, brake: 1 };
-const COAST: Input = { throttle: 0, brake: 0 };
+const GAS: Input = { throttle: 1, brake: 0, indicator: null };
+const STOP: Input = { throttle: 0, brake: 1, indicator: null };
+const COAST: Input = { throttle: 0, brake: 0, indicator: null };
 
-/** Samo gas — ne gleda ništa. Mora da napravi prekršaj tamo gdje nema prednost. */
+/**
+ * Samo gas, bez pokazivača — ne gleda ništa. Mora da napravi prekršaj tamo
+ * gdje nema prednost, a na skretanjima i prekršaj pokazivača.
+ */
 export const flooringBot: Bot = () => GAS;
 
 /** Samo stoji — mora da izazove `obstruction`. */
 export const idleBot: Bot = () => STOP;
+
+/** Vozi ispravno, ali pali pokazivač na pogrešnu stranu. */
+export const wrongIndicatorBot: Bot = (world, scenario) => {
+  const ispravan = ispravanPokazivac(world, scenario);
+  const obrnut = ispravan === "left" ? "right" : ispravan === "right" ? "left" : "right";
+  return { ...perfectBot(world, scenario), indicator: obrnut };
+};
 
 /**
  * Savršen vozač: vozi po istim pravilima po kojima voze NPC-ovi.
@@ -52,8 +78,11 @@ export const perfectBot: Bot = (world, scenario) => {
     vehicles: world.vehicles.map((v) => (v.id === PLAYER_ID ? { ...v, kind: "npc" as const } : { ...v })),
     // Pješaci se MORAJU kopirati: `step` ih pomjera u mjestu, pa bi ih proba
     // gurnula jednom više po koraku i pješak bi hodao dvostruko brže nego što
-    // ga igrač vidi.
+    // ga igrač vidi. Isto važi za dnevnik pokazivača i spisak ocijenjenih faza:
+    // proba bi ih „potrošila" i prava vožnja bi ostala bez ocjene.
     pedestrians: world.pedestrians.map((p) => ({ ...p })),
+    indicatorLog: [...world.indicatorLog],
+    indicatorDone: [...world.indicatorDone],
     events: [],
     violations: [],
   };
@@ -62,11 +91,12 @@ export const perfectBot: Bot = (world, scenario) => {
 
   // Ubrzanje koje je NPC logika izabrala za naše vozilo.
   const a = (after.v - player.v) / DT;
-  if (a > 0.05) return { throttle: Math.min(1, a / A_MAX), brake: 0 };
-  if (a < -0.05) return { throttle: 0, brake: Math.min(1, -a / B_MAX) };
+  const indicator = ispravanPokazivac(world, scenario);
+  if (a > 0.05) return { throttle: Math.min(1, a / A_MAX), brake: 0, indicator };
+  if (a < -0.05) return { throttle: 0, brake: Math.min(1, -a / B_MAX), indicator };
   void path;
   void vMax;
-  return COAST;
+  return { ...COAST, indicator };
 };
 
 export interface RunResult {
@@ -105,5 +135,10 @@ export function idealTime(scenario: Scenario, seed = 1): number {
  * botom se to provjerava — vidi `playable.test.ts`.
  */
 export function bangBangBot(brakeFrom: number, brakeTo: number): Bot {
-  return (world) => (world.t >= brakeFrom && world.t < brakeTo ? STOP : GAS);
+  // Pokazivač je ispravan i ovdje: čovjek sa dvije pedale ima i ručicu, a ovaj
+  // bot mjeri da li se scenario može odvoziti, ne da li se zna žmigavac.
+  return (world, scenario) => ({
+    ...(world.t >= brakeFrom && world.t < brakeTo ? STOP : GAS),
+    indicator: ispravanPokazivac(world, scenario),
+  });
 }
