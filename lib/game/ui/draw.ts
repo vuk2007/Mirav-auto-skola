@@ -670,6 +670,13 @@ export interface DrawOptions {
    * polaznik mora sam da zna gdje se šta traži.
    */
   indicatorZones?: { labels?: { left: string; right: string } } | null;
+  /**
+   * Jačina podrhtavanja kamere, 0–1.
+   *
+   * Koristi se pri naglom kočenju. Namjerno je slabo i kratko: cilj je da se
+   * osjeti da je kočenje bilo naglo, a ne da se sakrije šta se dešava.
+   */
+  shake?: number;
 }
 
 /** Nacrtaj cijelu scenu — svejedno je da li se vozi ili se ponavlja snimak. */
@@ -685,6 +692,12 @@ export function drawScene(
   if (!tpl) return;
   const { paths } = compile(tpl);
   const v = viewFor(widthPx, heightPx, tpl.viewHalf);
+  const trese = opts.shake ?? 0;
+  if (trese > 0) {
+    // Pomjeraj je vezan za vrijeme simulacije, pa je isti i pri ponavljanju.
+    v.cx += Math.sin(world.t * 47) * trese * 4;
+    v.cy += Math.cos(world.t * 61) * trese * 4;
+  }
 
   ctx.fillStyle = PALETTE.grass;
   ctx.fillRect(0, 0, widthPx, heightPx);

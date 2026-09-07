@@ -1,0 +1,25 @@
+{
+  "id": "pjesak-iskace",
+  "intersection": "cross-none",
+  "difficulty": 4,
+  "title": {
+    "me": "Pješak iskače na prelaz",
+    "en": "A pedestrian steps out",
+    "sq": "Këmbësori del papritur",
+    "ru": "Пешеход выходит на переход"
+  },
+  "player": { "arm": "N", "intent": "straight", "spawnDistance": 42 },
+  "npcs": [],
+  "pedestrians": [
+    { "arm": "S", "dir": 1, "spawnAt": [90, 90], "speed": 1.4 }
+  ],
+  "hazards": [
+    { "kind": "pedestrianSteps", "target": 0, "atPlayerS": 44 }
+  ],
+  "explanation": {
+    "me": "Pješak stupa na prelaz kad ste mu već blizu. Kočite i sačekajte da siđe sa kolovoza. Prelaz na izlazu iz raskrsnice se lako previdi jer se gleda samo saobraćaj sa strane.",
+    "en": "The pedestrian steps onto the crossing when you are already close. Brake and wait until they are off the roadway. The crossing on the way out of an intersection is easy to miss because attention goes to the traffic from the sides.",
+    "sq": "Këmbësori del në vendkalim kur ju jeni tashmë afër. Frenoni dhe prisni derisa të dalë nga karrexhata. Vendkalimi në dalje të kryqëzimit harrohet lehtë, sepse vëmendja shkon te trafiku anash.",
+    "ru": "Пешеход выходит на переход, когда вы уже рядом. Тормозите и дождитесь, пока он сойдёт с проезжей части. Переход на выезде с перекрёстка легко упустить, потому что внимание уходит на поперечный транспорт."
+  }
+}

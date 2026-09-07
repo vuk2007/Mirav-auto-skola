@@ -201,3 +201,95 @@ export const INDICATOR_GRACE = 2;
  * ustupanja je takođe uvučena.
  */
 export const RING_YIELD_SETBACK = 5;
+
+// ── Težina ──────────────────────────────────────────────────────────────────
+
+export type Level = 1 | 2 | 3 | 4 | 5;
+
+export interface DifficultyParams {
+  /** Množilac za broj NPC-a i skraćivanje prozora nastanka. */
+  densityMultiplier: number;
+  /** Množilac brzine NPC-a. */
+  speedMultiplier: number;
+  /** Koliko igrač smije da stoji na slobodnom putu [s]. */
+  obstructionTimeout: number;
+  /** Prag „nailazi" za ustupanje [s]. */
+  ttcThreshold: number;
+  /** Vjerovatnoća problematičnog događaja u generisanom segmentu. */
+  ruleBreakerChance: number;
+  /** Tolerancija na rok za pokazivač [m]. */
+  indicatorGrace: number;
+}
+
+/**
+ * Parametri po nivou.
+ *
+ * `ttcThreshold` NIKAD ne pada ispod 2,5 s. Ispod toga bi se kažnjavalo
+ * ponašanje koje je ispravno: vozač koji uđe sa dvije sekunde rezerve nije
+ * pogriješio, nego je igra postala nemoguća.
+ *
+ * `densityMultiplier` i `speedMultiplier` se NE primjenjuju na napisane
+ * scenarije. Njihovi prozori nastanka su izmjereni (vidi `tune.test.ts`) i
+ * skaliranje bi ih poništilo — scenario bi prestao da uči ono zbog čega je
+ * napisan. Ta dva množioca važe samo za generisane segmente u beskonačnom modu.
+ */
+export const DIFFICULTY: Readonly<Record<Level, DifficultyParams>> = {
+  1: {
+    densityMultiplier: 1,
+    speedMultiplier: 1,
+    obstructionTimeout: 4,
+    ttcThreshold: 3,
+    ruleBreakerChance: 0,
+    indicatorGrace: 3,
+  },
+  2: {
+    densityMultiplier: 1,
+    speedMultiplier: 1,
+    obstructionTimeout: 4,
+    ttcThreshold: 3,
+    ruleBreakerChance: 0,
+    indicatorGrace: 2.5,
+  },
+  3: {
+    densityMultiplier: 1.15,
+    speedMultiplier: 1.1,
+    obstructionTimeout: 3.5,
+    ttcThreshold: 3,
+    ruleBreakerChance: 0.25,
+    indicatorGrace: 2,
+  },
+  4: {
+    densityMultiplier: 1.3,
+    speedMultiplier: 1.2,
+    obstructionTimeout: 3,
+    ttcThreshold: 2.75,
+    ruleBreakerChance: 0.4,
+    indicatorGrace: 1.5,
+  },
+  5: {
+    densityMultiplier: 1.5,
+    speedMultiplier: 1.3,
+    obstructionTimeout: 2,
+    ttcThreshold: 2.5,
+    ruleBreakerChance: 0.5,
+    indicatorGrace: 1,
+  },
+};
+
+/** Najniži dozvoljeni prag ustupanja [s] — vidi komentar uz `DIFFICULTY`. */
+export const TTC_FLOOR = 2.5;
+
+/**
+ * Koliko poslije okidanja problematični događaj još „traje".
+ *
+ * Za to vrijeme se igraču ne broji zadržavanje saobraćaja: on ispravno stoji i
+ * čeka da prekršilac prođe, a kazniti ga za to bilo bi upravo ono što se ovom
+ * igrom uči da se ne radi.
+ */
+export const HAZARD_WINDOW = 8;
+
+/** Na kojem dijelu isteklog roka zadržavanja se javlja truba iza leđa. */
+export const HORN_AT = 0.5;
+
+/** Usporenje iznad kojeg se kamera blago trese [m/s²]. */
+export const SHAKE_DECEL = 3;

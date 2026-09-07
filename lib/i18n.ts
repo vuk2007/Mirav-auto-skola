@@ -140,6 +140,12 @@ export interface Dict {
   gameIndicatorShortLeft: string;
   gameIndicatorShortRight: string;
   gameMinor: string;
+  gameHazardTitle: string;
+  gameHazardYielded: string;
+  gameHazardCollision: string;
+  gameReaction: string;
+  gameSoundOn: string;
+  gameSoundOff: string;
   gameTimelineTitle: string;
   gameTimelineExpected: string;
   gameTimelineActual: string;
@@ -407,6 +413,14 @@ const me: Dict = {
   gameIndicatorShortLeft: "L",
   gameIndicatorShortRight: "D",
   gameMinor: "blaga greška",
+  gameHazardTitle: "Neko nije poštovao pravila",
+  gameHazardYielded:
+    "Imali ste prednost, ali je niste imali na raspolaganju — ispravno ste ustupili. To se ne računa protiv vas.",
+  gameHazardCollision:
+    "Prednost se ne uzima silom. Kad vidite da drugi ne staje, jedini ispravan potez je kočnica.",
+  gameReaction: "Vrijeme reakcije",
+  gameSoundOn: "Isključi zvuk",
+  gameSoundOff: "Uključi zvuk",
   gameTimelineTitle: "Pokazivač duž putanje",
   gameTimelineExpected: "traži se",
   gameTimelineActual: "vi",
@@ -662,6 +676,14 @@ const en: Dict = {
   gameIndicatorShortLeft: "L",
   gameIndicatorShortRight: "R",
   gameMinor: "minor fault",
+  gameHazardTitle: "Someone broke the rules",
+  gameHazardYielded:
+    "The right of way was yours, but it was not available to you — you correctly gave way. That is not held against you.",
+  gameHazardCollision:
+    "Right of way is not taken by force. When you see that the other driver is not stopping, the only correct move is the brake.",
+  gameReaction: "Reaction time",
+  gameSoundOn: "Mute",
+  gameSoundOff: "Unmute",
   gameTimelineTitle: "Indicator along the path",
   gameTimelineExpected: "required",
   gameTimelineActual: "you",
@@ -922,6 +944,14 @@ const sq: Dict = {
   gameIndicatorShortLeft: "M",
   gameIndicatorShortRight: "DJ",
   gameMinor: "gabim i lehtë",
+  gameHazardTitle: "Dikush nuk i respektoi rregullat",
+  gameHazardYielded:
+    "Përparësia ishte e juaja, por nuk e kishit në dispozicion — ju dhatë përparësi si duhet. Kjo nuk llogaritet kundër jush.",
+  gameHazardCollision:
+    "Përparësia nuk merret me forcë. Kur shihni se tjetri nuk ndalon, lëvizja e vetme e drejtë është frena.",
+  gameReaction: "Koha e reagimit",
+  gameSoundOn: "Fik zërin",
+  gameSoundOff: "Ndiz zërin",
   gameTimelineTitle: "Treguesi përgjatë trajektores",
   gameTimelineExpected: "kërkohet",
   gameTimelineActual: "ju",
@@ -1184,6 +1214,14 @@ const ru: Dict = {
   gameIndicatorShortLeft: "Л",
   gameIndicatorShortRight: "П",
   gameMinor: "лёгкая ошибка",
+  gameHazardTitle: "Кто-то нарушил правила",
+  gameHazardYielded:
+    "Преимущество было вашим, но воспользоваться им было нельзя — вы правильно уступили. Против вас это не засчитывается.",
+  gameHazardCollision:
+    "Преимущество не берут силой. Когда видно, что другой не останавливается, единственно правильное действие — торможение.",
+  gameReaction: "Время реакции",
+  gameSoundOn: "Выключить звук",
+  gameSoundOff: "Включить звук",
   gameTimelineTitle: "Указатель вдоль траектории",
   gameTimelineExpected: "требуется",
   gameTimelineActual: "вы",

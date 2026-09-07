@@ -5,6 +5,7 @@ import { useApp } from "@/components/AppProvider";
 import { idealTime } from "@/lib/game/sim/bots";
 import type { Outcome, Scenario } from "@/lib/game/sim/types";
 import { compile, TEMPLATES } from "@/lib/game/sim/intersection";
+import { createSound } from "@/lib/game/ui/sound";
 import { playerControl } from "@/lib/game/ui/draw";
 import { CONTROL_LABEL, taskTextFor } from "@/lib/game/ui/labels";
 import { createPlayback, createRunner, type Playback } from "@/lib/game/ui/runner";
@@ -51,6 +52,11 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
   const [replayDone, setReplayDone] = useState(false);
   /** Rezultat se upisuje jednom po pokušaju, i to iz efekta, ne iz crtanja. */
   const reported = useRef<string | null>(null);
+  const [muted, setMuted] = useState(false);
+  // Zvuk se pravi jednom po ekranu; `AudioContext` se otvara tek na prvi ton.
+  const sound = useMemo(() => createSound(), []);
+  useEffect(() => sound.setMuted(muted), [sound, muted]);
+  useEffect(() => () => sound.close(), [sound]);
 
   // Novo sjeme znači i novi pokušaj: `createRunner` pravi svjež svijet, a
   // `GameCanvas` na promjenu pokretača ponovo pokreće petlju.
@@ -143,7 +149,16 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
         >
           ← {t.gameBack}
         </button>
-        <span className="font-display ml-auto rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <button
+          type="button"
+          onClick={() => setMuted((m) => !m)}
+          aria-pressed={muted}
+          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
+          className="ml-auto rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
+        >
+          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+        </button>
+        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
           {control.kind === "officer" ? (
             <span className="flex items-center gap-1.5">
               <span
@@ -205,6 +220,8 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           flagVehicleId={phase === "over" ? flagged : null}
           officer={scenario.officer ?? null}
           indicatorZones={zones}
+          level={scenario.difficulty}
+          sound={sound}
           label={`${title} — ${zadatak}`}
         />
 
@@ -292,6 +309,25 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
                     ))}
                   </ul>
                 </>
+              )}
+
+              {runner.world.reaction.length > 0 && (
+                <div className="mt-3 rounded border-l-4 border-yellow bg-panel p-3">
+                  <p className="font-display text-sm font-bold tracking-wide uppercase">
+                    {t.gameHazardTitle}
+                  </p>
+                  <p className="mt-1 text-sm">
+                    {outcome === "passed" ? t.gameHazardYielded : t.gameHazardCollision}
+                  </p>
+                  <p className="mt-2 text-sm text-muted">
+                    {t.gameReaction}:{" "}
+                    {runner.world.reaction
+                      .map((r) =>
+                        r.brakedAt === null ? "—" : `${(r.brakedAt - r.at).toFixed(2)} s`,
+                      )
+                      .join(" · ")}
+                  </p>
+                </div>
               )}
 
               {playerPath && (

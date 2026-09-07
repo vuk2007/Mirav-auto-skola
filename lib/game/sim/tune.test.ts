@@ -25,7 +25,10 @@ const TEMPIRANI = SCENARIOS.filter(
     s.npcs.length > 0 &&
     // Kad reguliše policajac, trenutak polaska diktira njegova naredba, a ne
     // to kad drugo vozilo naiđe.
-    !s.officer,
+    !s.officer &&
+    // Problematični događaji se okidaju po mjestu igrača, pa im susret ne
+    // zavisi od prozora nastanka.
+    !s.hazards?.length,
 );
 
 /** Koliko izmjereni idealni trenutak smije da odstupa od zadatog prozora [s]. */

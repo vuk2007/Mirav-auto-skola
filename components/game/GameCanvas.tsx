@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { HUD_HZ } from "@/lib/game/sim/config";
+import { DIFFICULTY, HORN_AT, HUD_HZ, SHAKE_DECEL, type Level } from "@/lib/game/sim/config";
 import type { Input, Outcome, ScenarioOfficer } from "@/lib/game/sim/types";
 import { drawScene } from "@/lib/game/ui/draw";
+import type { Sound } from "@/lib/game/ui/sound";
 import type { Driver } from "@/lib/game/ui/runner";
 
 export interface HudState {
@@ -24,6 +25,9 @@ interface GameCanvasProps {
   officer: ScenarioOfficer | null;
   /** Zone pokazivača na putanji; `null` ih ne crta. */
   indicatorZones: { labels?: { left: string; right: string } } | null;
+  /** Nivo težine scenarija — po njemu se zna kad je rok zadržavanja na pola. */
+  level: Level;
+  sound: Sound;
   label: string;
 }
 
@@ -43,6 +47,8 @@ export default function GameCanvas({
   flagVehicleId,
   officer,
   indicatorZones,
+  level,
+  sound,
   label,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -54,12 +60,16 @@ export default function GameCanvas({
   const flagRef = useRef(flagVehicleId);
   const officerRef = useRef(officer);
   const zonesRef = useRef(indicatorZones);
+  const levelRef = useRef(level);
+  const soundRef = useRef(sound);
   onHudRef.current = onHud;
   onFinishRef.current = onFinish;
   runningRef.current = running;
   flagRef.current = flagVehicleId;
   officerRef.current = officer;
   zonesRef.current = indicatorZones;
+  levelRef.current = level;
+  soundRef.current = sound;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -71,6 +81,9 @@ export default function GameCanvas({
     let last = 0;
     let lastHud = 0;
     let reported = false;
+    let hornPlayed = false;
+    let crashPlayed = false;
+    let prevV = 0;
     let cssW = 0;
     let cssH = 0;
 
@@ -96,11 +109,30 @@ export default function GameCanvas({
         runner.advance(dt, inputRef.current);
       }
 
+      const player = runner.world.vehicles.find((v) => v.kind === "player");
+      const usporenje = player ? Math.max(0, (prevV - player.v) / Math.max(dt, 1e-3)) : 0;
+      if (player) prevV = player.v;
+
+      // Truba iza leđa kad je rok zadržavanja na pola — dozvoljen pritisak:
+      // saopštava da neko čeka, ne kažnjava i ne skriva ništa.
+      const rok = DIFFICULTY[levelRef.current].obstructionTimeout;
+      if (!hornPlayed && runner.world.idleT > rok * HORN_AT) {
+        hornPlayed = true;
+        soundRef.current.horn();
+      }
+      if (runner.world.idleT === 0) hornPlayed = false;
+
+      if (!crashPlayed && runner.world.violations.some((v) => v.type === "collision")) {
+        crashPlayed = true;
+        soundRef.current.crash();
+      }
+
       drawScene(ctx, runner, cssW, cssH, {
         playerBraking: inputRef.current.brake > 0,
         flagVehicleId: flagRef.current,
         officer: officerRef.current,
         indicatorZones: zonesRef.current,
+        shake: Math.min(1, Math.max(0, (usporenje - SHAKE_DECEL) / 4)),
       });
 
       if (now - lastHud > 1000 / HUD_HZ) {

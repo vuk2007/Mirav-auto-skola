@@ -10,6 +10,7 @@ import type { Approach, Intent as CrossIntent } from "@/lib/simRules";
 // Samo tip — uvoz se briše pri prevođenju, pa ciklus između ova dva fajla ne
 // postoji u izvršnom kodu.
 import type { IndicatorPhase } from "./indicatorRules";
+import type { Level } from "./config";
 
 export type ArmId = Approach;
 export type { CrossIntent };
@@ -195,6 +196,14 @@ export interface Vehicle {
   spawnT: number;
   /** Vozilo pod pratnjom — rotacija i sirena. Prvenstvo nad svima. */
   emergency?: boolean;
+  /**
+   * Vozilo se ponaša neispravno: ne ustupa i ne poštuje znak.
+   *
+   * Postoji zbog vježbe defanzivne vožnje. Kad je uključeno, igraču se NE
+   * računa zadržavanje saobraćaja dok prekršilac prolazi — inače bi ga igra
+   * kaznila baš za ono što je ispravno uradio.
+   */
+  reckless?: boolean;
 }
 
 /**
@@ -256,6 +265,41 @@ export interface ScenarioOfficer {
   phases: { allow: ArmId[]; duration: number }[];
 }
 
+/** Vrste problematičnih događaja u saobraćaju. */
+export type HazardKind =
+  /** Vozilo prolazi STOP ili trougao bez ustupanja. */
+  | "npcRunsStop"
+  /** Vozilo iskrsava iza zaklona, sa malim vremenom do susreta. */
+  | "npcLateSpawn"
+  /** Pješak stupa na prelaz iz zaklona. */
+  | "pedestrianSteps"
+  /** Vozilo pod pratnjom se pojavljuje. */
+  | "emergencyVehicle";
+
+/**
+ * Skriptovan problematičan događaj.
+ *
+ * Okidač je ili vrijeme ili mjesto igrača na putanji — oba su determinisana,
+ * pa ponavljanje snimka daje isti događaj u istom trenutku. Nasumičnost bi
+ * pokvarila i snimak i testove.
+ */
+export interface ScenarioHazard {
+  kind: HazardKind;
+  /** Indeks vozila u `npcs`, odnosno pješaka u `pedestrians`. */
+  target: number;
+  atTime?: number;
+  /** Okida se kad igrač pređe ovo mjesto na svojoj putanji [m]. */
+  atPlayerS?: number;
+  /**
+   * Gdje se vozilo pojavljuje na svojoj putanji [m].
+   *
+   * Postoji zbog `npcLateSpawn`: vozilo koje iskrsne sa početka svoje putanje
+   * ima šezdeset metara zaleta i nikoga ne iznenadi. Zaklon se modeluje time
+   * što se pojavi bliže raskrsnici.
+   */
+  npcS?: number;
+}
+
 export interface Scenario {
   id: string;
   intersection: string;
@@ -263,6 +307,7 @@ export interface Scenario {
   npcs: ScenarioNpc[];
   pedestrians?: ScenarioPedestrian[];
   officer?: ScenarioOfficer;
+  hazards?: ScenarioHazard[];
   lightStartPhase?: number;
   /**
    * Koliko je već proteklo u početnoj fazi semafora [s].
@@ -272,7 +317,7 @@ export interface Scenario {
    * igrač do linije stigne za sedam.
    */
   lightStartT?: number;
-  difficulty: 1 | 2 | 3;
+  difficulty: Level;
   vMax?: number;
   /**
    * Zamjena za `INDICATOR_RULES`, samo za testove.
@@ -339,7 +384,8 @@ export interface Violation {
 export type SimEvent =
   | { type: "forcedBrake"; t: number; vehicleId: string; by: string }
   | { type: "spawn"; t: number; vehicleId: string }
-  | { type: "exit"; t: number; vehicleId: string };
+  | { type: "exit"; t: number; vehicleId: string }
+  | { type: "hazard"; t: number; kind: HazardKind; index: number };
 
 export type Outcome = "running" | "passed" | "failed";
 
@@ -369,6 +415,13 @@ export interface World {
   indicatorLog: IndicatorEvent[];
   /** Faze pokazivača koje su već ocijenjene — svaka se ocjenjuje jednom. */
   indicatorDone: string[];
+  /** Indeksi već okinutih problematičnih događaja. */
+  hazardsFired: number[];
+  /**
+   * Mjerenje reakcije: kad je događaj postao vidljiv i kad je igrač prvi put
+   * zakočio poslije toga. `null` znači da još nije zakočio.
+   */
+  reaction: { at: number; kind: HazardKind; brakedAt: number | null }[];
 }
 
 export interface IndicatorEvent {

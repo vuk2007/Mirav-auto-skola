@@ -12,12 +12,14 @@ interface ScenarioPickerProps {
   onPick: (id: string) => void;
 }
 
-/** Tri tačke po težini — brojka „2/3" bi ovdje samo tražila objašnjenje. */
+/** Tačke po težini — brojka „2/5" bi ovdje samo tražila objašnjenje. */
+const NIVOA = 5;
+
 function Difficulty({ level, label }: { level: number; label: string }) {
   return (
-    <span className="flex items-center gap-1" title={`${label}: ${level}/3`}>
-      <span className="sr-only">{`${label}: ${level}/3`}</span>
-      {[1, 2, 3].map((i) => (
+    <span className="flex items-center gap-1" title={`${label}: ${level}/${NIVOA}`}>
+      <span className="sr-only">{`${label}: ${level}/${NIVOA}`}</span>
+      {Array.from({ length: NIVOA }, (_, k) => k + 1).map((i) => (
         <span
           key={i}
           aria-hidden="true"

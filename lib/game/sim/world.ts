@@ -19,10 +19,10 @@ import {
   DRAG_COEFF,
   DT,
   FOLLOW_GAP,
+  DIFFICULTY,
   GAP,
-  INDICATOR_GRACE,
+  HAZARD_WINDOW,
   MAX_SCENARIO_SECONDS,
-  OBSTRUCTION_TIMEOUT,
   ROLL_RESISTANCE,
   SPEEDING_FACTOR,
   STOPPED_SPEED,
@@ -30,7 +30,7 @@ import {
   STOP_HOLD,
   STOP_MARGIN,
   STOP_ZONE,
-  TTC_THRESHOLD,
+  type DifficultyParams,
   V_MAX_DEFAULT,
   V_TOP,
   YELLOW_COMMIT_TTC,
@@ -56,6 +56,7 @@ import type {
   Path,
   Pedestrian,
   Scenario,
+  ScenarioHazard,
   ScenarioOfficer,
   Severity,
   Template,
@@ -275,6 +276,8 @@ export function createWorld(scenario: Scenario, seed: number): World {
     yellowCommitted: false,
     indicatorLog: [],
     indicatorDone: [],
+    hazardsFired: [],
+    reaction: [],
   };
 }
 
@@ -284,6 +287,8 @@ interface Ctx extends Regulacija {
   paths: Map<string, Path>;
   conflicts: Map<string, ConflictPoint[]>;
   vMax: number;
+  /** Parametri težine za nivo ovog scenarija. */
+  dif: DifficultyParams;
 }
 
 function ctxFor(world: World, scenario: Scenario): Ctx {
@@ -295,6 +300,7 @@ function ctxFor(world: World, scenario: Scenario): Ctx {
     paths: c.paths,
     conflicts: c.conflicts,
     vMax: scenario.vMax ?? V_MAX_DEFAULT,
+    dif: DIFFICULTY[scenario.difficulty],
   };
 }
 
@@ -305,10 +311,14 @@ function ctxFor(world: World, scenario: Scenario): Ctx {
 function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
   let limit = Infinity;
 
+  // Vozilo koje se ponaša neispravno ne poštuje ni znak ni prvenstvo. Pješake
+  // i dalje propušta — „prolazi STOP" nije isto što i „gazi pješake".
+  const bezobzirno = Boolean(me.reckless);
+
   // STOP znak: potpuno zaustavljanje na liniji, pa nastavak po pravilima.
   const control = armControl(ctx, me.arm, world.phaseIndex);
   // Cilja se ISPRED linije, ne na nju — vidi `STOP_MARGIN`.
-  if (control === "stop" && me.stopHeld < STOP_DWELL && me.s < mePath.stopLineS) {
+  if (!bezobzirno && control === "stop" && me.stopHeld < STOP_DWELL && me.s < mePath.stopLineS) {
     limit = Math.min(limit, mePath.stopLineS - STOP_MARGIN);
   }
   // Semafor. Na žuto se staje SAMO ako se stigne bezbjedno stati — isti prag
@@ -318,7 +328,7 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
   //
   // Vozilo pod pratnjom se ovdje ne zaustavlja: ono prolazi i na crveno, uz
   // obavezu da se uvjeri da može bezbjedno. Ostali mu ustupaju kroz `whoYields`.
-  if (me.s < mePath.stopLineS && !me.emergency) {
+  if (me.s < mePath.stopLineS && !me.emergency && !bezobzirno) {
     const staje =
       control === "red" ||
       (control === "yellow" && timeTo(me, mePath.stopLineS) >= YELLOW_COMMIT_TTC);
@@ -348,7 +358,9 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
   // krakovima.
   limit = Math.min(limit, ringFollowLimit(world, ctx, me, mePath));
 
-  // Prvenstvo na konfliktnim tačkama.
+  // Prvenstvo na konfliktnim tačkama. Bezobzirno vozilo ga preskače — u tome i
+  // jeste poenta vježbe defanzivne vožnje.
+  if (bezobzirno) return limit;
   for (const c of ctx.conflicts.get(mePath.id) ?? []) {
     if (c.sA < me.s) continue; // konflikt je iza nas
     for (const o of world.vehicles) {
@@ -369,7 +381,7 @@ function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): number {
       if (oPast) continue;
       const tMe = timeTo(me, c.sA);
       const tThem = timeTo(o, c.sB);
-      const oNear = inBox(o, oPath) || tThem < Math.max(TTC_THRESHOLD, tMe + CLEAR_TIME);
+      const oNear = inBox(o, oPath) || tThem < Math.max(ctx.dif.ttcThreshold, tMe + CLEAR_TIME);
       if (oNear) limit = Math.min(limit, c.sA - GAP);
     }
   }
@@ -513,6 +525,13 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   const playerPath = ctx.paths.get(player.pathId)!;
   const playerBefore = player.s;
 
+  fireHazards(world, scenario, player);
+  // Reakcija se mjeri od trenutka kad je događaj postao vidljiv do prvog
+  // kočenja. Gas se ne broji: reakcija na opasnost je kočnica.
+  if (input.brake > 0) {
+    for (const r of world.reaction) if (r.brakedAt === null) r.brakedAt = world.t;
+  }
+
   // ── kretanje ──────────────────────────────────────────────────────────────
   for (const v of world.vehicles) {
     if (v.done || world.t < v.spawnT) continue;
@@ -582,7 +601,7 @@ function blamePlayer(
 ): boolean {
   for (const c of ctx.conflicts.get(npcPath.id) ?? []) {
     if (c.pathB !== playerPath.id || c.sA < npc.s) continue;
-    const playerNear = inBox(player, playerPath) || timeTo(player, c.sB) < TTC_THRESHOLD;
+    const playerNear = inBox(player, playerPath) || timeTo(player, c.sB) < ctx.dif.ttcThreshold;
     if (!playerNear) continue;
     // Kriv je samo ako je NPC imao prednost.
     const decision = whoYields(
@@ -719,7 +738,7 @@ function detectViolations(
         party(ctx, o, world.phaseIndex),
       );
       if (decision !== "a") continue;
-      if (timeTo(o, c.sB) < TTC_THRESHOLD || inBox(o, ctx.paths.get(o.pathId)!)) {
+      if (timeTo(o, c.sB) < ctx.dif.ttcThreshold || inBox(o, ctx.paths.get(o.pathId)!)) {
         add(world, {
           type: "rightOfWay",
           t: world.t,
@@ -738,11 +757,11 @@ function detectViolations(
   const blocked = pathBlocked(world, ctx, player, path);
   if (player.v < CRAWL_SPEED && !blocked && control !== "red" && control !== "yellow") {
     world.idleT += DT;
-    if (world.idleT > OBSTRUCTION_TIMEOUT) {
+    if (world.idleT > ctx.dif.obstructionTimeout) {
       add(world, {
         type: "obstruction",
         t: world.t,
-        details: `Stajao ${OBSTRUCTION_TIMEOUT} s na slobodnom putu i zadržavao saobraćaj.`,
+        details: `Stajao ${ctx.dif.obstructionTimeout} s na slobodnom putu i zadržavao saobraćaj.`,
       });
     }
   } else {
@@ -756,6 +775,54 @@ function detectViolations(
       t: world.t,
       details: `Brzina ${(player.v * 3.6).toFixed(0)} km/h iznad dozvoljene.`,
     });
+  }
+}
+
+// ── problematični događaji ─────────────────────────────────────────────────
+
+/**
+ * Okida događaje kojima je došlo vrijeme.
+ *
+ * Okidač je vrijeme ili mjesto igrača — oboje determinisano, pa ponavljanje
+ * snimka daje isti događaj u istom trenutku. Nasumičnost bi pokvarila i snimak
+ * i testove, pa je ovdje nema: nivo težine bira KOJI scenariji nose događaje,
+ * ne hoće li se dogoditi.
+ */
+function fireHazards(world: World, scenario: Scenario, player: Vehicle): void {
+  const spisak = scenario.hazards ?? [];
+  spisak.forEach((h, i) => {
+    if (world.hazardsFired.includes(i)) return;
+    const vrijeme = h.atTime !== undefined && world.t >= h.atTime;
+    const mjesto = h.atPlayerS !== undefined && player.s >= h.atPlayerS;
+    if (!vrijeme && !mjesto) return;
+
+    world.hazardsFired.push(i);
+    world.events.push({ type: "hazard", t: world.t, kind: h.kind, index: i });
+    world.reaction.push({ at: world.t, kind: h.kind, brakedAt: null });
+    applyHazard(world, h);
+  });
+}
+
+function applyHazard(world: World, h: ScenarioHazard): void {
+  if (h.kind === "pedestrianSteps") {
+    const ped = world.pedestrians[h.target];
+    if (ped) ped.spawnT = world.t;
+    return;
+  }
+  const v = world.vehicles.find((x) => x.id === `npc${h.target + 1}`);
+  if (!v) return;
+  switch (h.kind) {
+    case "npcRunsStop":
+      v.reckless = true;
+      break;
+    case "npcLateSpawn":
+      v.spawnT = world.t;
+      if (h.npcS !== undefined) v.s = h.npcS;
+      break;
+    case "emergencyVehicle":
+      v.emergency = true;
+      v.spawnT = Math.min(v.spawnT, world.t);
+      break;
   }
 }
 
@@ -804,6 +871,7 @@ function evaluateIndicator(
   player: Vehicle,
   path: Path,
 ): void {
+  const grace = DIFFICULTY[scenario.difficulty].indicatorGrace;
   const prekinuto = world.outcome !== "running";
   for (const ph of phasesFor(path, player.intent, scenario.indicatorRules)) {
     if (world.indicatorDone.includes(ph.id)) continue;
@@ -824,7 +892,7 @@ function evaluateIndicator(
     // početka. Bez toga se prelaz iz jedne faze u drugu prijavljuje kao greška:
     // vozač koji prebaci žmigavac TAČNO na granici biva zabilježen metar
     // kasnije, jer se simulacija odvija u koracima.
-    const pocetak = Math.min(ph.from + INDICATOR_GRACE, kraj);
+    const pocetak = Math.min(ph.from + grace, kraj);
     const stanja = statesOver(world.indicatorLog, pocetak, kraj);
     const detalj = (x: string) => x;
 
@@ -867,7 +935,7 @@ function evaluateIndicator(
     if (
       ph.mustBeSetBefore !== null &&
       prvi !== null &&
-      prvi > ph.mustBeSetBefore + INDICATOR_GRACE
+      prvi > ph.mustBeSetBefore + grace
     ) {
       add(world, {
         type: "indicatorLate",
@@ -896,6 +964,11 @@ function evaluateIndicator(
  * fizički zauzima konfliktnu tačku na njegovoj putanji.
  */
 function pathBlocked(world: World, ctx: Ctx, player: Vehicle, path: Path): boolean {
+  // Dok traje problematičan događaj, zadržavanje saobraćaja se NE broji.
+  // Igrač tada ispravno stoji i čeka da prekršilac prođe; kazniti ga za to bilo
+  // bi tačno ono što se ovom igrom uči da se ne radi.
+  if (world.reaction.some((r) => world.t - r.at < HAZARD_WINDOW)) return true;
+
   // Pješak na prelazu ispred je razlog da se stoji — čekanje tada nije
   // zadržavanje saobraćaja nego propisno ustupanje.
   if (Number.isFinite(pedestrianLimit(world, ctx, player, path))) return true;
@@ -916,7 +989,7 @@ function pathBlocked(world: World, ctx: Ctx, player: Vehicle, path: Path): boole
         party(ctx, player, world.phaseIndex),
         party(ctx, o, world.phaseIndex),
       );
-      if (decision === "a" && timeTo(o, c.sB) < TTC_THRESHOLD) return true;
+      if (decision === "a" && timeTo(o, c.sB) < ctx.dif.ttcThreshold) return true;
     }
   }
   return false;

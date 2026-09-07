@@ -1,0 +1,56 @@
+{
+  "motor": "chromium-desktop",
+  "brojSituacija": 21,
+  "imaPeticu": true,
+  "imaCetvorku": true,
+  "punGas": {
+    "Neko vam ne ustupa": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaKarticuDogadjaja": true,
+      "imaReakciju": true
+    },
+    "Pješak iskače na prelaz": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaKarticuDogadjaja": true,
+      "imaReakciju": true
+    },
+    "Vozilo pod pratnjom iza zaklona": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaKarticuDogadjaja": true,
+      "imaReakciju": true
+    }
+  },
+  "zvukPrekidac": true,
+  "greske": []
+}
+{
+  "motor": "webkit-mobile",
+  "brojSituacija": 21,
+  "imaPeticu": true,
+  "imaCetvorku": true,
+  "punGas": {
+    "Neko vam ne ustupa": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaKarticuDogadjaja": true,
+      "imaReakciju": true
+    },
+    "Pješak iskače na prelaz": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaKarticuDogadjaja": true,
+      "imaReakciju": true
+    },
+    "Vozilo pod pratnjom iza zaklona": {
+      "ishod": "pao",
+      "imaPrekrsaj": true,
+      "imaKarticuDogadjaja": true,
+      "imaReakciju": true
+    }
+  },
+  "zvukPrekidac": true,
+  "greske": []
+}

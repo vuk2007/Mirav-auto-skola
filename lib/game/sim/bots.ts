@@ -35,6 +35,32 @@ function ispravanPokazivac(world: World, scenario: Scenario): "left" | "right" |
 
 export type Bot = (world: World, scenario: Scenario) => Input;
 
+/**
+ * Kopija svijeta u kojoj je igrač označen kao NPC.
+ *
+ * SVAKI promjenljiv niz u `World` mora ovdje da se kopira. `step` ih mijenja u
+ * mjestu, pa bi proba „potrošila" ono što pripada pravoj vožnji: pješak bi
+ * hodao dvostruko brže, dnevnik pokazivača bi ostao bez unosa, a problematičan
+ * događaj bi se okinuo u probi i nikad u igri. To se do sad desilo tri puta —
+ * zato postoji i `bots.test.ts`, koji pada čim se doda novo polje a zaboravi
+ * kopija.
+ */
+export function probeWorld(world: World): World {
+  return {
+    ...world,
+    vehicles: world.vehicles.map((v) =>
+      v.id === PLAYER_ID ? { ...v, kind: "npc" as const } : { ...v },
+    ),
+    pedestrians: world.pedestrians.map((p) => ({ ...p })),
+    indicatorLog: [...world.indicatorLog],
+    indicatorDone: [...world.indicatorDone],
+    hazardsFired: [...world.hazardsFired],
+    reaction: world.reaction.map((r) => ({ ...r })),
+    events: [],
+    violations: [],
+  };
+}
+
 const GAS: Input = { throttle: 1, brake: 0, indicator: null };
 const STOP: Input = { throttle: 0, brake: 1, indicator: null };
 const COAST: Input = { throttle: 0, brake: 0, indicator: null };
@@ -73,9 +99,61 @@ export const wrongIndicatorBot: Bot = (world, scenario) => {
  * vozilo se privremeno predstavi kao NPC i pusti kroz istu funkciju. Tako bot i
  * NPC ne mogu da se raziđu.
  */
+/**
+ * Da li je sudar neposredno pred nama, bez obzira na to ko ima prvenstvo.
+ *
+ * Pravila kažu ko SMIJE da prođe; ne kažu šta da radiš kad neko drugi ne
+ * poštuje pravila. Savršen vozač u toj situaciji koči — prednost se ne uzima
+ * silom.
+ *
+ * Ključni uslov nije „stižemo u isto vrijeme" nego „drugi više NE MOŽE da
+ * stane": ako mu je potrebno usporenje veće od onog koje vozilo ima, on ulazi
+ * u raskrsnicu bez obzira na pravila i to se vidi golim okom. Bez tog uslova
+ * bot koči i pred vozilom koje uredno usporava da ga propusti — izmjereno, na
+ * `glavni-put` je time pravio sudar kojeg prije nije bilo.
+ */
+const SUDAR_TTC = 2.5;
+const SUDAR_RAZLIKA = 1.2;
+
+function sudarNeizbjezan(world: World): boolean {
+  const player = world.vehicles.find((v) => v.id === PLAYER_ID);
+  if (!player || player.done) return false;
+  const tpl = TEMPLATES[world.templateId]!;
+  const { conflicts } = compile(tpl);
+  const doTacke = (v: { s: number; v: number }, s: number) => {
+    const d = s - v.s;
+    if (d <= 0) return v.v > 0.05 ? d / v.v : -Infinity;
+    return v.v > 0.05 ? d / v.v : Infinity;
+  };
+
+  for (const c of conflicts.get(player.pathId) ?? []) {
+    if (c.sA + player.length < player.s) continue; // konflikt je iza nas
+    for (const o of world.vehicles) {
+      if (o.id === player.id || o.done || world.t < o.spawnT) continue;
+      if (o.pathId !== c.pathB) continue;
+      const tJa = doTacke(player, c.sA);
+      const tOn = doTacke(o, c.sB);
+      if (tJa < 0 || tOn < 0) continue;
+      if (tJa >= SUDAR_TTC || tOn >= SUDAR_TTC) continue;
+      if (Math.abs(tJa - tOn) >= SUDAR_RAZLIKA) continue;
+      // Može li on još da stane pred tom tačkom?
+      const d = Math.max(0.01, c.sB - o.s);
+      const potrebno = (o.v * o.v) / (2 * d);
+      if (potrebno > B_MAX * 0.9) return true;
+    }
+  }
+  return false;
+}
+
 export const perfectBot: Bot = (world, scenario) => {
   const player = world.vehicles.find((v) => v.id === PLAYER_ID);
   if (!player || player.done) return COAST;
+
+  // Izbjegavanje sudara ide PRIJE pravila: ako neko ne poštuje prvenstvo,
+  // ispravan potez je kočnica, a ne insistiranje na svom pravu.
+  if (sudarNeizbjezan(world)) {
+    return { throttle: 0, brake: 1, indicator: ispravanPokazivac(world, scenario) };
+  }
 
   const tpl = TEMPLATES[world.templateId]!;
   const path = compile(tpl).paths.get(player.pathId)!;
@@ -84,19 +162,7 @@ export const perfectBot: Bot = (world, scenario) => {
   // Kopija svijeta u kojoj je igrač NPC — `npcTarget` je interna funkcija
   // `world.ts`-a, pa se do nje dolazi tako što se odigra jedan korak sa
   // igračem u ulozi NPC-a i pogleda koliko bi ubrzao.
-  const probe: World = {
-    ...world,
-    vehicles: world.vehicles.map((v) => (v.id === PLAYER_ID ? { ...v, kind: "npc" as const } : { ...v })),
-    // Pješaci se MORAJU kopirati: `step` ih pomjera u mjestu, pa bi ih proba
-    // gurnula jednom više po koraku i pješak bi hodao dvostruko brže nego što
-    // ga igrač vidi. Isto važi za dnevnik pokazivača i spisak ocijenjenih faza:
-    // proba bi ih „potrošila" i prava vožnja bi ostala bez ocjene.
-    pedestrians: world.pedestrians.map((p) => ({ ...p })),
-    indicatorLog: [...world.indicatorLog],
-    indicatorDone: [...world.indicatorDone],
-    events: [],
-    violations: [],
-  };
+  const probe = probeWorld(world);
   step(probe, scenario, COAST);
   const after = probe.vehicles.find((v) => v.id === PLAYER_ID)!;
 
