@@ -1,0 +1,56 @@
+{
+  "id": "autoput-iskljucenje",
+  "intersection": "autoput",
+  "difficulty": 3,
+  "taskKey": "gameTaskExitHighway",
+  "title": {
+    "me": "Autoput — isključivanje",
+    "en": "Motorway — leaving",
+    "sq": "Autostradë — dalja",
+    "ru": "Автомагистраль — съезд"
+  },
+  "player": {
+    "arm": "N",
+    "intent": {
+      "kind": "lane",
+      "index": 0
+    },
+    "spawnDistance": 0,
+    "startS": 0,
+    "startV": 28
+  },
+  "npcs": [
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 0
+      },
+      "startS": 300,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 26
+    },
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": -1
+      },
+      "startS": 560,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 12
+    }
+  ],
+  "explanation": {
+    "me": "Sa autoputa se izlazi preko trake za usporavanje: desni pokazivač, pa prelazak u nju tek kad ona počne, i usporavanje u njoj — a ne na voznoj traci. U zaustavnu traku prije početka izlaza se ne ulazi.",
+    "en": "You leave a motorway through the deceleration lane: right indicator, move into it only once it begins, and slow down in it — not in the running lane. You do not enter the hard shoulder before the exit lane starts.",
+    "sq": "Nga autostrada dilet përmes korsisë së ngadalësimit: treguesi i djathtë, kalimi në të vetëm kur ajo fillon, dhe ngadalësimi brenda saj — jo në korsinë e qarkullimit. Në korsinë e emergjencës para fillimit të daljes nuk hyhet.",
+    "ru": "С автомагистрали съезжают по полосе торможения: правый указатель, перестроение только там, где она начинается, и торможение уже в ней — не в ходовой полосе. В аварийную полосу до начала съезда не выезжают."
+  }
+}

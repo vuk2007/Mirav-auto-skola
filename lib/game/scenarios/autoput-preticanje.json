@@ -1,0 +1,56 @@
+{
+  "id": "autoput-preticanje",
+  "intersection": "autoput",
+  "difficulty": 3,
+  "taskKey": "gameTaskOvertake",
+  "title": {
+    "me": "Autoput — preticanje",
+    "en": "Motorway — overtaking",
+    "sq": "Autostradë — tejkalimi",
+    "ru": "Автомагистраль — обгон"
+  },
+  "player": {
+    "arm": "N",
+    "intent": {
+      "kind": "lane",
+      "index": 0
+    },
+    "spawnDistance": 0,
+    "startS": 0,
+    "startV": 26
+  },
+  "npcs": [
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 0
+      },
+      "startS": 170,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 14
+    },
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 1
+      },
+      "startS": 40,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 34
+    }
+  ],
+  "explanation": {
+    "me": "Prije izlaska u lijevu traku provjerava se da li iza dolazi brže vozilo — ono ima prednost i ne smije zbog vas da koči. Poslije preticanja se odmah vraća u desnu traku; lijeva nije traka za vožnju.",
+    "en": "Before pulling out into the left lane you check whether a faster vehicle is coming up behind — it has priority and must not brake because of you. After overtaking you return to the right lane at once; the left lane is not a lane to drive in.",
+    "sq": "Para se të dilni në korsinë e majtë kontrolloni a po vjen nga prapa një automjet më i shpejtë — ai ka përparësi dhe nuk duhet të frenojë për shkakun tuaj. Pas tejkalimit ktheheni menjëherë në korsinë e djathtë; e majta nuk është korsi ngasjeje.",
+    "ru": "Перед выездом в левую полосу проверьте, не догоняет ли более быстрый автомобиль — у него преимущество, и он не должен тормозить из-за вас. После обгона сразу возвращайтесь в правую полосу; левая — не полоса для движения."
+  }
+}

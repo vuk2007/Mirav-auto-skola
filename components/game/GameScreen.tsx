@@ -130,7 +130,15 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
   const playerPath = player ? compile(TEMPLATES[runner.world.templateId]!).paths.get(player.pathId) : undefined;
 
   const tpl = TEMPLATES[runner.world.templateId]!;
-  const zadatak = taskTextFor(scenario.player.intent, t, tpl.arms.length);
+  const zadatak = taskTextFor(
+    scenario.player.intent,
+    t,
+    tpl.kind === "highway" ? 0 : tpl.arms.length,
+    scenario.taskKey,
+  );
+
+  // Autoput se vozi u praćenju: dionica je 800 m i u fiksni kadar ne staje.
+  const autoput = tpl.kind === "highway";
 
   const control = playerControl(runner.world, scenario.officer);
   const violations = runner.world.violations;
@@ -222,6 +230,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           indicatorZones={zones}
           level={scenario.difficulty}
           sound={sound}
+          camera={autoput ? { follow: true, half: tpl.viewHalf } : undefined}
           label={`${title} — ${zadatak}`}
         />
 
@@ -252,9 +261,11 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
             indicatorLabel={t.gameIndicator}
             leftLabel={t.gameIndicatorLeft}
             rightLabel={t.gameIndicatorRight}
+            lanes={autoput ? { leftLabel: t.gameLaneLeft, rightLabel: t.gameLaneRight } : null}
           />
           <p className="text-xs text-muted">
             {t.gameKeyHint} {t.gameKeyHintIndicator}
+            {autoput ? ` ${t.gameKeyHintLane}` : ""}
           </p>
         </>
       ) : (
@@ -330,7 +341,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
                 </div>
               )}
 
-              {playerPath && (
+              {playerPath && !autoput && (
                 <IndicatorTimeline
                   path={playerPath}
                   intent={scenario.player.intent}

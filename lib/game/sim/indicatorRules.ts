@@ -30,7 +30,7 @@ export type Anchor =
  * Krstasta raskrsnica ima tri; kružni tok tri druga, jer se tamo ne pita smjer
  * nego koji izlaz: prvi (desno), drugi (praktično pravo) i treći ili dalji.
  */
-export type Maneuver = "left" | "right" | "straight" | "ring1" | "ring2" | "ringN";
+export type Maneuver = "left" | "right" | "straight" | "ring1" | "ring2" | "ringN" | "lane";
 
 export interface Spot {
   at: Anchor;
@@ -221,6 +221,10 @@ export function resolveSpot(path: Path, spot: Spot): number {
 export function maneuverFor(intent: Intent): Maneuver {
   const side = turnSide(intent);
   if (side) return side;
+  // Autoput nema faza vezanih za mjesto na putanji: pokazivač se tamo traži uz
+  // promjenu trake, a to je događaj, ne dionica. Zato manevar postoji, a
+  // nijedno pravilo u tabeli ga ne pominje — vidi `laneStep` u `world.ts`.
+  if (typeof intent !== "string" && intent.kind === "lane") return "lane";
   if (typeof intent !== "string" && intent.kind === "exit") {
     return intent.n <= 1 ? "ring1" : intent.n === 2 ? "ring2" : "ringN";
   }

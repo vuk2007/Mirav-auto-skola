@@ -24,6 +24,7 @@ import type {
 
   Template,
 } from "./types";
+import { buildLanePath, HIGHWAY_LANES } from "./highway";
 import { buildRingPath, exitCountsFor, ringConflicts } from "./roundabout";
 import { exitOf } from "@/lib/simRules";
 
@@ -187,7 +188,14 @@ export function compile(tpl: Template): CompiledTemplate {
   if (hit) return hit;
 
   const paths = new Map<string, Path>();
-  if (tpl.kind === "roundabout") {
+  if (tpl.kind === "highway") {
+    // Trake su paralelne i ne sijeku se, pa autoput nema nijednu konfliktnu
+    // tačku: odnos među vozilima je odstojanje u traci, ne prvenstvo.
+    for (const i of HIGHWAY_LANES) {
+      const p = buildLanePath(tpl, i);
+      paths.set(p.id, p);
+    }
+  } else if (tpl.kind === "roundabout") {
     for (const arm of tpl.arms) {
       for (const n of exitCountsFor(tpl, arm.id)) {
         const p = buildRingPath(tpl, arm.id, n);
@@ -220,7 +228,9 @@ export function compile(tpl: Template): CompiledTemplate {
     ]);
   };
 
-  if (tpl.kind === "roundabout") {
+  if (tpl.kind === "highway") {
+    // ništa: nema konflikata
+  } else if (tpl.kind === "roundabout") {
     parovi.forEach(dodaj);
   } else {
     for (let i = 0; i < list.length; i++) {
@@ -387,6 +397,31 @@ export const TEMPLATES: Readonly<Record<string, Template>> = {
     viewHalf: 62,
   },
 
+  /**
+   * Dionica autoputa: dvije vozne trake i spoljna.
+   *
+   * Dužina je 800 m — na sto na sat je to dvadesetak sekundi, taman da se
+   * preticanje odvozi od početka do kraja. Traka za ubrzavanje drži prvih
+   * 300 m, traka za usporavanje posljednjih 240; između je spoljna traka
+   * zaustavna i u njoj se ne vozi (vidi `hardShoulder`).
+   *
+   * Granice brzine su iz ZOBS-a (130 i 60 km/h), ali ubrzanje u modelu je
+   * skromno (2,5 m/s²), pa se gornja u praksi i ne dodiruje — ona je tu da
+   * `speeding` postoji, a ne da se o nju igrač svakih par sekundi očeše.
+   */
+  autoput: {
+    kind: "highway",
+    id: "autoput",
+    length: 800,
+    lanes: 2,
+    rampRange: [0, 300],
+    exitRange: [560, 800],
+    vMin: 16.7,
+    vMax: 36.1,
+    geometry: { laneWidth: LANE_WIDTH },
+    viewHalf: 50,
+  },
+
   "cross-lights-kratki": {
     kind: "cross",
     id: "cross-lights-kratki",
@@ -461,16 +496,17 @@ export const roadHalf = (tpl: Template, a: Arm): number => tpl.geometry.laneWidt
 /** Dokle seže tijelo raskrsnice od centra [m] — tu se kolovozi ukrštaju. */
 export function junctionHalf(tpl: Template): number {
   if (tpl.kind === "roundabout") return tpl.radius + tpl.geometry.laneWidth;
+  if (tpl.kind === "highway") return tpl.geometry.laneWidth * (tpl.lanes + 1);
   return Math.max(...tpl.arms.map((a) => roadHalf(tpl, a)));
 }
 
 /** Rastojanje stop-linije od centra [m]; prati `Path.stopLineS`. */
 export const stopLineAt = (tpl: Template): number =>
-  tpl.kind === "roundabout" ? tpl.radius : tpl.geometry.size / 2;
+  tpl.kind === "roundabout" ? tpl.radius : tpl.kind === "highway" ? 0 : tpl.geometry.size / 2;
 
 /** Širina pješačkog prelaza [m]: prostor između stop-linije i ukrštanja. */
 export const crosswalkWidth = (tpl: Template): number =>
-  tpl.kind === "roundabout" ? 0 : stopLineAt(tpl) - junctionHalf(tpl);
+  tpl.kind === "cross" ? stopLineAt(tpl) - junctionHalf(tpl) : 0;
 
 /**
  * Djelovi putanje koji leže na pješačkom prelazu.
@@ -484,8 +520,8 @@ export function crosswalkSpans(
   tpl: Template,
   path: Path,
 ): { arm: ArmId; from: number; to: number }[] {
-  // Pješački prelazi u kružnom toku nijesu modelovani — vidi fazu za pješake.
-  if (tpl.kind === "roundabout") return [];
+  // Pješačkih prelaza nema ni u kružnom toku ni na autoputu.
+  if (tpl.kind !== "cross") return [];
   const w = crosswalkWidth(tpl);
   const out: { arm: ArmId; from: number; to: number }[] = [];
   const ulaz = tpl.arms.find((a) => a.id === path.arm);
@@ -505,13 +541,13 @@ export function pedestrianPos(tpl: Template, armId: ArmId, u: number): Point {
 
 /** Dokle pješak ide: kreće sa trotoara, prelazi kolovoz i silazi na drugi trotoar. */
 export function pedestrianSpan(tpl: Template, armId: ArmId): number {
-  const a = tpl.arms.find((x) => x.id === armId);
+  const a = tpl.kind === "highway" ? undefined : tpl.arms.find((x) => x.id === armId);
   return (a ? roadHalf(tpl, a) : tpl.geometry.laneWidth) + 1.4;
 }
 
 /** Da li je pješak na kolovozu — dok jeste, prelaz nije slobodan. */
 export function pedestrianOnRoad(tpl: Template, p: { arm: ArmId; u: number }): boolean {
-  const a = tpl.arms.find((x) => x.id === p.arm);
+  const a = tpl.kind === "highway" ? undefined : tpl.arms.find((x) => x.id === p.arm);
   const half = a ? roadHalf(tpl, a) : tpl.geometry.laneWidth;
   return Math.abs(p.u) <= half;
 }

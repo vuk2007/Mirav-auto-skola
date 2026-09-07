@@ -17,6 +17,13 @@ export interface Pedals {
   indicator: Side | null;
   /** Prekidač pokazivača: ista strana ga gasi, druga ga prebacuje. */
   toggleIndicator: (side: Side) => void;
+  /**
+   * Zahtjev za promjenu trake (samo autoput).
+   *
+   * Za razliku od pokazivača nije stanje nego jedan zahtjev: postavi se, pa ga
+   * `GameCanvas` potroši u prvom sljedećem kadru.
+   */
+  requestLane: (side: Side) => void;
   /** Otpusti sve — poziva se kad scenario počne ili se završi. */
   release: () => void;
   /**
@@ -43,7 +50,7 @@ export interface Pedals {
  * nijedan pregledač ne može da progura.
  */
 export function usePedals(): Pedals {
-  const inputRef = useRef<Input>({ throttle: 0, brake: 0, indicator: null });
+  const inputRef = useRef<Input>({ throttle: 0, brake: 0, indicator: null, changeLane: null });
   const keys = useRef<Record<Pedal, boolean>>({ throttle: false, brake: false });
   /** Koji pokazivač drži koju pedalu — dva prsta smiju držati obje. */
   const pointers = useRef(new Map<number, Pedal>());
@@ -64,6 +71,10 @@ export function usePedals(): Pedals {
       inputRef.current.indicator = next;
       return next;
     });
+  }, []);
+
+  const requestLane = useCallback((side: Side) => {
+    inputRef.current.changeLane = side;
   }, []);
 
   const sync = useCallback(() => {
@@ -88,6 +99,7 @@ export function usePedals(): Pedals {
   const resetIndicator = useCallback(() => {
     setIndicator(null);
     inputRef.current.indicator = null;
+    inputRef.current.changeLane = null;
   }, []);
 
   const release = useCallback(() => {
@@ -95,6 +107,7 @@ export function usePedals(): Pedals {
     keys.current = { throttle: false, brake: false };
     setIndicator(null);
     inputRef.current.indicator = null;
+    inputRef.current.changeLane = null;
     sync();
   }, [sync]);
 
@@ -105,11 +118,15 @@ export function usePedals(): Pedals {
       return null;
     };
     const down = (e: KeyboardEvent) => {
-      // Strelice lijevo/desno su pokazivač. Na autoputu će im trebati i promjena
-      // trake — tada se razdvajaju (vidi faza 5).
+      // Strelice lijevo/desno su pokazivač; sa Shiftom su promjena trake.
+      // Razdvojene su namjerno: promjena trake bez pokazivača je prekršaj, pa
+      // jedno dugme za oboje ne bi moglo ni da ga napravi.
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
         e.preventDefault();
-        if (!e.repeat) toggleIndicator(e.key === "ArrowLeft" ? "left" : "right");
+        if (e.repeat) return;
+        const side = e.key === "ArrowLeft" ? "left" : "right";
+        if (e.shiftKey) requestLane(side);
+        else toggleIndicator(side);
         return;
       }
       const p = pedalOf(e);
@@ -146,7 +163,7 @@ export function usePedals(): Pedals {
       window.removeEventListener("blur", blur);
       document.removeEventListener("visibilitychange", blur);
     };
-  }, [sync, release, toggleIndicator]);
+  }, [sync, release, toggleIndicator, requestLane]);
 
   return useMemo(
     () => ({
@@ -155,9 +172,10 @@ export function usePedals(): Pedals {
       pressPointer,
       indicator,
       toggleIndicator,
+      requestLane,
       release,
       resetIndicator,
     }),
-    [active, pressPointer, indicator, toggleIndicator, release, resetIndicator],
+    [active, pressPointer, indicator, toggleIndicator, requestLane, release, resetIndicator],
   );
 }

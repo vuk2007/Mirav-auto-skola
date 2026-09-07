@@ -28,6 +28,10 @@ import nepropisni from "./nepropisni.json";
 import pjesakIskace from "./pjesak-iskace.json";
 import hitnaIznenada from "./hitna-iznenada.json";
 import stop from "./stop.json";
+import autoputUkljucenje from "./autoput-ukljucenje.json";
+import autoputGust from "./autoput-gust.json";
+import autoputPreticanje from "./autoput-preticanje.json";
+import autoputIskljucenje from "./autoput-iskljucenje.json";
 import trougao from "./trougao.json";
 import type { Scenario } from "../sim/types";
 
@@ -53,6 +57,10 @@ export const SCENARIOS: readonly Scenario[] = [
   nepropisni,
   pjesakIskace,
   hitnaIznenada,
+  autoputUkljucenje,
+  autoputPreticanje,
+  autoputIskljucenje,
+  autoputGust,
   // JSON ne nosi literalne tipove (npr. `spawnAt` je `number[]`, a treba
   // `[number, number]`), pa se oblik provjerava testom umjesto kompajlerom.
 ] as unknown as Scenario[];

@@ -132,6 +132,22 @@ export interface Dict {
   vioIndicatorWrong: string;
   vioIndicatorLate: string;
   vioIndicatorLeftOn: string;
+  vioUnsafeMerge: string;
+  vioStoppedOnRamp: string;
+  vioTooSlow: string;
+  vioTailgating: string;
+  vioBrakingOnHighway: string;
+  vioHardShoulder: string;
+  ruleHardShoulder: string;
+  ruleMerge: string;
+  ruleHighwaySpeed: string;
+  ruleFollowing: string;
+  gameLaneLeft: string;
+  gameLaneRight: string;
+  gameKeyHintLane: string;
+  gameTaskMerge: string;
+  gameTaskOvertake: string;
+  gameTaskExitHighway: string;
   ruleIndicator: string;
   ruleIndicatorOff: string;
   gameIndicator: string;
@@ -417,6 +433,26 @@ const me: Dict = {
   vioIndicatorWrong: "Pokazivač na pogrešnu stranu",
   vioIndicatorLate: "Pokazivač uključen prekasno",
   vioIndicatorLeftOn: "Pokazivač ostavljen uključen",
+  vioUnsafeMerge: "Nebezbjedno uključivanje u traku",
+  vioStoppedOnRamp: "Zaustavljanje na traci za ubrzavanje",
+  vioTooSlow: "Prespora vožnja na autoputu",
+  vioTailgating: "Nedovoljno odstojanje",
+  vioBrakingOnHighway: "Naglo kočenje bez razloga",
+  vioHardShoulder: "Vožnja zaustavnom trakom",
+  ruleHardShoulder:
+    "Spoljna traka je zaustavna: u njoj se vozi samo dok traje traka za ubrzavanje pri ulasku, odnosno traka za usporavanje pred izlazom. Van toga je ona rezervisana za vozila u kvaru i za hitne službe.",
+  ruleMerge:
+    "U traku se uključujete tek kad ste izjednačili brzinu i kad iza vas ima dovoljno praznine. Vozilo koje već vozi tom trakom ne smije zbog vas da koči.",
+  ruleHighwaySpeed:
+    "Na autoputu postoji i najmanja dozvoljena brzina. Prespora vožnja ometa saobraćaj isto koliko i prebrza, a zaustavljanje na traci za ubrzavanje je opasno.",
+  ruleFollowing:
+    "Odstojanje se mjeri u sekundama, ne u metrima: pri većoj brzini treba više puta. Naglo kočenje bez razloga ugrožava one iza vas.",
+  gameLaneLeft: "U lijevu",
+  gameLaneRight: "U desnu",
+  gameKeyHintLane: "Shift i strelica lijevo/desno mijenjaju traku.",
+  gameTaskMerge: "Uključujete se na autoput.",
+  gameTaskOvertake: "Pretičete sporije vozilo i vraćate se u desnu traku.",
+  gameTaskExitHighway: "Isključujete se sa autoputa.",
   ruleIndicator:
     "Namjeru da skrenete najavljujete pokazivačem pravca prije nego što uđete u raskrsnicu, i držite ga do kraja skretanja. Pokazivač je jedini način da ostali saznaju šta ćete uraditi.",
   ruleIndicatorOff:
@@ -695,6 +731,26 @@ const en: Dict = {
   vioIndicatorWrong: "Indicator on the wrong side",
   vioIndicatorLate: "Indicator switched on too late",
   vioIndicatorLeftOn: "Indicator left on",
+  vioUnsafeMerge: "Unsafe merge",
+  vioStoppedOnRamp: "Stopping on the acceleration lane",
+  vioTooSlow: "Driving too slowly on the motorway",
+  vioTailgating: "Insufficient following distance",
+  vioBrakingOnHighway: "Hard braking for no reason",
+  vioHardShoulder: "Driving on the hard shoulder",
+  ruleHardShoulder:
+    "The outer lane is the hard shoulder: you drive in it only along the acceleration lane when joining and the deceleration lane before an exit. Elsewhere it is reserved for broken-down vehicles and the emergency services.",
+  ruleMerge:
+    "You move into the lane only once your speed matches and there is enough of a gap behind you. A vehicle already in that lane must not have to brake because of you.",
+  ruleHighwaySpeed:
+    "A motorway has a minimum speed as well as a maximum. Driving too slowly obstructs traffic just as much as driving too fast, and stopping on the acceleration lane is dangerous.",
+  ruleFollowing:
+    "Following distance is measured in seconds, not metres: the faster you go, the more you need. Hard braking for no reason endangers those behind you.",
+  gameLaneLeft: "Move left",
+  gameLaneRight: "Move right",
+  gameKeyHintLane: "Shift with the left/right arrow changes lane.",
+  gameTaskMerge: "You are joining the motorway.",
+  gameTaskOvertake: "You overtake the slower vehicle and return to the right lane.",
+  gameTaskExitHighway: "You are leaving the motorway.",
   ruleIndicator:
     "You announce a turn with the direction indicator before you enter the intersection, and keep it on until the turn is complete. The indicator is the only way others learn what you are about to do.",
   ruleIndicatorOff:
@@ -978,6 +1034,26 @@ const sq: Dict = {
   vioIndicatorWrong: "Treguesi në anën e gabuar",
   vioIndicatorLate: "Treguesi u ndez shumë vonë",
   vioIndicatorLeftOn: "Treguesi u la i ndezur",
+  vioUnsafeMerge: "Bashkim i pasigurt në korsi",
+  vioStoppedOnRamp: "Ndalim në korsinë e përshpejtimit",
+  vioTooSlow: "Ngasje shumë e ngadaltë në autostradë",
+  vioTailgating: "Distancë e pamjaftueshme",
+  vioBrakingOnHighway: "Frenim i papritur pa arsye",
+  vioHardShoulder: "Ngasje në korsinë e emergjencës",
+  ruleHardShoulder:
+    "Korsia e jashtme është korsi emergjence: në të ecet vetëm përgjatë korsisë së përshpejtimit kur futeni dhe asaj të ngadalësimit para daljes. Përndryshe ajo u rezervohet automjeteve në defekt dhe shërbimeve emergjente.",
+  ruleMerge:
+    "Në korsi futeni vetëm kur e keni barazuar shpejtësinë dhe kur pas jush ka hapësirë të mjaftueshme. Automjeti që tashmë lëviz në atë korsi nuk duhet të frenojë për shkakun tuaj.",
+  ruleHighwaySpeed:
+    "Në autostradë ka edhe shpejtësi minimale. Ngasja shumë e ngadaltë e pengon trafikun po aq sa ajo e shpejtë, ndërsa ndalimi në korsinë e përshpejtimit është i rrezikshëm.",
+  ruleFollowing:
+    "Distanca matet në sekonda, jo në metra: sa më shpejt të ecni, aq më shumë ju duhet. Frenimi i papritur pa arsye i rrezikon ata pas jush.",
+  gameLaneLeft: "Në të majtën",
+  gameLaneRight: "Në të djathtën",
+  gameKeyHintLane: "Shift me shigjetën majtas/djathtas ndërron korsinë.",
+  gameTaskMerge: "Po futeni në autostradë.",
+  gameTaskOvertake: "Tejkaloni automjetin më të ngadaltë dhe ktheheni në korsinë e djathtë.",
+  gameTaskExitHighway: "Po dilni nga autostrada.",
   ruleIndicator:
     "Qëllimin për t'u kthyer e njoftoni me treguesin e drejtimit para se të hyni në kryqëzim, dhe e mbani të ndezur deri në fund të kthesës. Treguesi është mënyra e vetme që të tjerët të marrin vesh çfarë do të bëni.",
   ruleIndicatorOff:
@@ -1263,6 +1339,26 @@ const ru: Dict = {
   vioIndicatorWrong: "Указатель включён не в ту сторону",
   vioIndicatorLate: "Указатель включён слишком поздно",
   vioIndicatorLeftOn: "Указатель оставлен включённым",
+  vioUnsafeMerge: "Небезопасное перестроение",
+  vioStoppedOnRamp: "Остановка на полосе разгона",
+  vioTooSlow: "Слишком медленная езда по автомагистрали",
+  vioTailgating: "Недостаточная дистанция",
+  vioBrakingOnHighway: "Резкое торможение без причины",
+  vioHardShoulder: "Движение по полосе аварийной остановки",
+  ruleHardShoulder:
+    "Внешняя полоса — аварийная: по ней едут только вдоль полосы разгона при въезде и полосы торможения перед съездом. В остальном она предназначена для неисправных машин и экстренных служб.",
+  ruleMerge:
+    "В полосу перестраиваются только после того, как сравняли скорость и убедились, что сзади достаточно места. Автомобиль, уже едущий по этой полосе, не должен тормозить из-за вас.",
+  ruleHighwaySpeed:
+    "На автомагистрали есть и минимальная скорость. Слишком медленная езда мешает движению не меньше быстрой, а остановка на полосе разгона опасна.",
+  ruleFollowing:
+    "Дистанция измеряется в секундах, а не в метрах: чем выше скорость, тем больше нужно. Резкое торможение без причины подвергает опасности едущих сзади.",
+  gameLaneLeft: "В левую",
+  gameLaneRight: "В правую",
+  gameKeyHintLane: "Shift со стрелкой влево/вправо меняет полосу.",
+  gameTaskMerge: "Вы въезжаете на автомагистраль.",
+  gameTaskOvertake: "Вы обгоняете более медленный автомобиль и возвращаетесь в правую полосу.",
+  gameTaskExitHighway: "Вы съезжаете с автомагистрали.",
   ruleIndicator:
     "О намерении повернуть вы сообщаете указателем поворота до въезда на перекрёсток и держите его включённым до конца манёвра. Указатель — единственный способ для остальных узнать, что вы собираетесь сделать.",
   ruleIndicatorOff:

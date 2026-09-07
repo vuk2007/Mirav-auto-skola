@@ -98,7 +98,7 @@ describe("odbrojavanje", () => {
 describe("vozila i semafor", () => {
   for (const s of SCENARIJI_SA_SEMAFOROM) {
     it(`${s.id}: nijedan NPC ne prelazi stop-liniju bez prava prolaza`, () => {
-      const tpl = TEMPLATES[s.intersection]!;
+      const tpl = TEMPLATES[s.intersection] as IntersectionTemplate;
       const { paths } = compile(tpl);
       for (const seed of [1, 7, 42]) {
         const world = createWorld(s, seed);
@@ -164,7 +164,7 @@ describe("odluka na žuto", () => {
 describe("zeleno ne znači slobodno", () => {
   it("ljevak na zeleno mora propustiti susretnog", () => {
     const s = scenarioById("semafor-ljevak")!;
-    const tpl = TEMPLATES[s.intersection]!;
+    const tpl = TEMPLATES[s.intersection] as IntersectionTemplate;
     // Oba vozila zaista imaju zeleno na startu — inače scenario uči nešto drugo.
     const zaKrak = (id: string) => tpl.arms.find((a) => a.id === id)!.control;
     for (const krak of [s.player.arm, s.npcs[0]!.arm]) {

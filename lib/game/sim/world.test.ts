@@ -14,11 +14,18 @@ describe("putanje", () => {
       const { paths } = compile(tpl);
       // Krstasta: 3 manevra po kraku. Kružni tok: po jedan izlaz za svaki krak
       // do kojeg se može stići, uključujući puni krug — dakle po broju krakova.
-      const poKraku = tpl.kind === "roundabout" ? tpl.arms.length : 3;
-      expect(paths.size).toBe(tpl.arms.length * poKraku);
+      if (tpl.kind === "highway") {
+        // Autoput ima po jednu putanju za svaku traku, uključujući spoljnu.
+        expect(paths.size).toBe(tpl.lanes + 1);
+      } else {
+        const poKraku = tpl.kind === "roundabout" ? tpl.arms.length : 3;
+        expect(paths.size).toBe(tpl.arms.length * poKraku);
+      }
       for (const p of paths.values()) {
         expect(p.length).toBeGreaterThan(0);
-        expect(p.points.length).toBeGreaterThanOrEqual(3);
+        // Traka autoputa je prava linija sa dvije tačke; kroz raskrsnicu ide
+        // prilaz–tijelo–izlaz, pa ih tamo mora biti bar tri.
+        expect(p.points.length).toBeGreaterThanOrEqual(tpl.kind === "highway" ? 2 : 3);
         expect(p.boxEnterS).toBeLessThan(p.boxExitS);
         // Kumulativne dužine moraju rasti — inače `pointAt` daje besmislice.
         for (let i = 1; i < p.cum.length; i++) {

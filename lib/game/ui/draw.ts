@@ -21,7 +21,7 @@ import {
   MIN_SIGN_PX,
   VIEW_HALF,
 } from "../sim/config";
-import { headingAt, pointAt } from "../sim/geometry";
+import { pointAt } from "../sim/geometry";
 import {
   compile,
   crosswalkWidth,
@@ -41,6 +41,7 @@ import type {
   IntersectionTemplate,
   Path,
   Pedestrian,
+  HighwayTemplate,
   Point,
   RoundaboutTemplate,
   ScenarioOfficer,
@@ -48,9 +49,10 @@ import type {
   Vehicle,
   World,
 } from "../sim/types";
+import { HIGHWAY_LANES, laneX } from "../sim/highway";
 import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
-import { officerAllow } from "../sim/world";
+import { officerAllow, poseOn } from "../sim/world";
 import { renderS, type Driver } from "./runner";
 
 /** Boje su iste kao tokeni u `app/globals.css` — scena mora da liči na sajt. */
@@ -80,6 +82,9 @@ export interface View {
   scale: number;
   /** Pola vidnog polja [m] — koristi ga i oznaka na ivici kadra. */
   half: number;
+  /** Veličina platna [px]. Vidljivost se računa u ekranu, ne u svijetu. */
+  wPx: number;
+  hPx: number;
 }
 
 export function viewFor(widthPx: number, heightPx: number, half = VIEW_HALF): View {
@@ -88,8 +93,22 @@ export function viewFor(widthPx: number, heightPx: number, half = VIEW_HALF): Vi
     cy: heightPx / 2,
     scale: Math.min(widthPx, heightPx) / (2 * half),
     half,
+    wPx: widthPx,
+    hPx: heightPx,
   };
 }
+
+/**
+ * Da li tačka pada u kadar.
+ *
+ * Računa se u pikselima, a ne poređenjem sa `half`: kadar više nije uvijek
+ * centriran na ishodište — prati igrača u smjeni, a na autoputu je ishodište
+ * na početku dionice, sto metara iza njega.
+ */
+const inFrame = (v: View, p: Point): boolean => {
+  const q = px(v, p);
+  return q.x >= 0 && q.x <= v.wPx && q.y >= 0 && q.y <= v.hPx;
+};
 
 const px = (v: View, p: Point): Point => ({ x: v.cx + p.x * v.scale, y: v.cy + p.y * v.scale });
 
@@ -196,6 +215,78 @@ function drawRoundabout(ctx: CanvasRenderingContext2D, v: View, tpl: RoundaboutT
       fillPoly(ctx, v, worldRect(c, smjer, 0.5, (spolja - unutra) / (n * 1.9)), PALETTE.paint);
     }
   }
+}
+
+/**
+ * Autoput: trake, isprekidane linije između njih i spoljna traka.
+ *
+ * Traka za ubrzavanje i traka za usporavanje se crtaju punom bojom kolovoza, a
+ * dio spoljne trake van njih blijedi — tako se vidi gdje ona zaista postoji.
+ */
+function drawHighway(ctx: CanvasRenderingContext2D, v: View, tpl: HighwayTemplate): void {
+  const lane = tpl.geometry.laneWidth;
+  const duz = tpl.length;
+  const sredina = { x: 0, y: duz / 2 };
+  const smjer = { x: 0, y: 1 };
+
+  // Bankina pa kolovoz.
+  const sveTrake = tpl.lanes + 1;
+  fillPoly(
+    ctx,
+    v,
+    worldRect(
+      { x: laneX(tpl.lanes - 1) + lane / 2 - (sveTrake * lane) / 2, y: duz / 2 },
+      smjer,
+      duz + 200,
+      sveTrake * lane + 3.2,
+    ),
+    PALETTE.kerb,
+  );
+  for (const i of HIGHWAY_LANES) {
+    const spoljna = i === -1;
+    fillPoly(
+      ctx,
+      v,
+      worldRect({ x: laneX(i), y: sredina.y }, smjer, duz + 200, lane),
+      PALETTE.asphalt,
+    );
+    if (spoljna) {
+      // Dio spoljne trake koji nije ni ulaz ni izlaz — zatamnjen.
+      ctx.globalAlpha = 0.35;
+      const rupa: [number, number][] = [
+        [0, tpl.rampRange[0]],
+        [tpl.rampRange[1], tpl.exitRange[0]],
+        [tpl.exitRange[1], duz],
+      ];
+      for (const [od, doK] of rupa) {
+        if (doK - od <= 0) continue;
+        fillPoly(
+          ctx,
+          v,
+          worldRect({ x: laneX(i), y: (od + doK) / 2 }, smjer, doK - od, lane),
+          PALETTE.kerb,
+        );
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // Razdjelne linije: puna uz razdjelni pojas, isprekidane između voznih traka.
+  ctx.strokeStyle = PALETTE.paint;
+  ctx.lineWidth = Math.max(1, 0.15 * v.scale);
+  const linija = (x: number, dash: boolean) => {
+    ctx.setLineDash(dash ? [3 * v.scale, 3 * v.scale] : []);
+    const a = px(v, { x, y: -100 });
+    const b = px(v, { x, y: duz + 100 });
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  };
+  linija(laneX(tpl.lanes - 1) + lane / 2, false);
+  for (let i = 0; i < tpl.lanes - 1; i++) linija(laneX(i) + lane / 2, true);
+  linija(laneX(0) - lane / 2, true);
+  ctx.setLineDash([]);
 }
 
 function drawRoads(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionTemplate): void {
@@ -353,6 +444,7 @@ function drawControls(
   tpl: Template,
   phaseIndex: number,
 ): void {
+  if (tpl.kind === "highway") return; // autoput nema znakove na krakovima
   const r = Math.max(MIN_SIGN_PX / 2, 1.15 * v.scale);
   for (const a of tpl.arms) {
     const p = px(v, signSpot(tpl, a));
@@ -554,12 +646,12 @@ function drawEdgeMarker(
   heading: Point,
   color: string,
 ): void {
-  const lim = v.half - EDGE_MARKER_INSET;
-  const clamped = {
-    x: Math.max(-lim, Math.min(lim, pos.x)),
-    y: Math.max(-lim, Math.min(lim, pos.y)),
+  const inset = EDGE_MARKER_INSET * v.scale;
+  const raw = px(v, pos);
+  const c = {
+    x: Math.max(inset, Math.min(v.wPx - inset, raw.x)),
+    y: Math.max(inset, Math.min(v.hPx - inset, raw.y)),
   };
-  const c = px(v, clamped);
   const r = Math.max(7, 1.3 * v.scale);
 
   ctx.save();
@@ -704,9 +796,11 @@ export function drawScene(
     const igrac = world.vehicles.find((x) => x.kind === "player");
     const p = igrac ? paths.get(igrac.pathId) : undefined;
     if (igrac && p) {
-      const poz = pointAt(p.points, p.cum, renderS(runner, igrac.id, igrac.s));
+      const poz = poseOn(tpl, p, { ...igrac, s: renderS(runner, igrac.id, igrac.s) }).pos;
       // Igrač stoji na 38% visine — dvije trećine kadra su ono ispred njega.
-      v.cx = widthPx / 2 - poz.x * v.scale;
+      // Na autoputu se prati samo uzduž: da kadar klizi i bočno pri promjeni
+      // trake značilo bi da se pomjera put, a ne vozilo.
+      v.cx = widthPx / 2 - (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
       v.cy = heightPx * 0.38 - poz.y * v.scale;
     }
   }
@@ -723,6 +817,8 @@ export function drawScene(
 
   if (tpl.kind === "roundabout") {
     drawRoundabout(ctx, v, tpl);
+  } else if (tpl.kind === "highway") {
+    drawHighway(ctx, v, tpl);
   } else {
     drawRoads(ctx, v, tpl);
     drawMarkings(ctx, v, tpl);
@@ -765,8 +861,7 @@ export function drawScene(
     if (!path || veh.done || world.t < veh.spawnT) continue;
 
     const s = renderS(runner, veh.id, veh.s);
-    const pos = pointAt(path.points, path.cum, s);
-    const heading = headingAt(path.points, path.cum, s);
+    const { pos, heading } = poseOn(tpl, path, { ...veh, s });
     const isPlayer = veh.kind === "player";
     const color = isPlayer
       ? PALETTE.blue
@@ -774,7 +869,7 @@ export function drawScene(
         ? PALETTE.emergency
         : PALETTE.npc[(npcOrder.get(veh.id) ?? 0) % PALETTE.npc.length]!;
 
-    if (Math.abs(pos.x) > v.half || Math.abs(pos.y) > v.half) {
+    if (!inFrame(v, pos)) {
       // I igrač dobija oznaku: na dužem prilazu je na startu van kadra, pa bi
       // inače prvih par sekundi vozio nevidljiv.
       drawEdgeMarker(ctx, v, pos, heading, isPlayer ? PALETTE.blue : color);
@@ -810,7 +905,7 @@ export function playerControl(
 } {
   const tpl = TEMPLATES[world.templateId];
   const player = world.vehicles.find((x) => x.kind === "player");
-  const a = tpl?.arms.find((x) => x.id === (player?.arm as ArmId));
+  const a = tpl && tpl.kind !== "highway" ? tpl.arms.find((x) => x.id === (player?.arm as ArmId)) : undefined;
   // Policajac poništava i znak i semafor, pa se gleda prije njih.
   const naredba = officerAllow(officer ?? undefined, world.t);
   if (naredba && player) {
@@ -820,6 +915,12 @@ export function playerControl(
       countdown: null,
       officerAllows: naredba.includes(player.arm),
     };
+  }
+  // Autoput nema znak na kraku, ali ima svoja pravila — kartica prekršaja po
+  // ovome bira da li „prekoračenje brzine" objašnjava gradskim ili autoputskim
+  // pravilom.
+  if (tpl?.kind === "highway") {
+    return { kind: "highway", light: null, countdown: null, officerAllows: null };
   }
   if (!tpl || !a) return { kind: "none", light: null, countdown: null, officerAllows: null };
   if (a.control.kind === "light") {

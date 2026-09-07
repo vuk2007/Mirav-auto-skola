@@ -12,11 +12,18 @@
  * ništa što NPC ne zna — inače bi test mjerio bota, ne pravila.
  */
 
-import { A_MAX, B_MAX, DT, MAX_SCENARIO_SECONDS, V_MAX_DEFAULT } from "./config";
+import {
+  A_MAX,
+  B_MAX,
+  DT,
+  INDICATOR_LEAD_TIME,
+  MAX_SCENARIO_SECONDS,
+  V_MAX_DEFAULT,
+} from "./config";
 import { expectedIndicatorAt } from "./indicatorRules";
 import { compile, TEMPLATES } from "./intersection";
 import type { Input, Scenario, World } from "./types";
-import { createWorld, PLAYER_ID, step } from "./world";
+import { createWorld, mergeGap, PLAYER_ID, step } from "./world";
 
 /**
  * Pokazivač kakav tabela traži na mjestu na kojem je igrač.
@@ -56,6 +63,10 @@ export function probeWorld(world: World): World {
     indicatorDone: [...world.indicatorDone],
     hazardsFired: [...world.hazardsFired],
     reaction: world.reaction.map((r) => ({ ...r })),
+    // Brojači autoputa se takođe mijenjaju u mjestu: bez kopije bi svaka proba
+    // bota gurala vrijeme prespore vožnje na PRAVOM svijetu, pa bi se prekršaj
+    // javio dvostruko brže nego što je igrač vozio.
+    highway: { ...world.highway },
     events: [],
     violations: [],
   };
@@ -145,6 +156,46 @@ function sudarNeizbjezan(world: World): boolean {
   return false;
 }
 
+/**
+ * Koliko prije kraja trake za ubrzavanje savršen vozač počinje da se uključuje.
+ *
+ * Nije proizvoljno: prelazak traje `LANE_CHANGE_TIME`, a pokazivač mora biti
+ * upaljen `INDICATOR_LEAD_TIME` prije njega. Na sto na sat je to osamdesetak
+ * metara, pa ostatak trake ostaje za čekanje praznine.
+ */
+const UKLJUCENJE_OD = 200;
+
+/**
+ * Šta savršen vozač radi sa trakom na autoputu.
+ *
+ * Jedino pravilo koje ga tjera da promijeni traku je zaustavna traka: u njoj se
+ * ne vozi, pa se sa trake za ubrzavanje mora uključiti prije nego što ona
+ * prestane. Preticanje i isključenje nisu pravila nego zadatak, i njih vozi
+ * `highwayBot` iz scenarija — inače bi ovaj bot znao ono što mu niko nije rekao.
+ */
+function autoputTraka(
+  world: World,
+  player: { lane?: number; laneFrom?: number; laneT?: number; s: number; v: number; id: string },
+): Pick<Input, "indicator" | "changeLane"> {
+  const tpl = TEMPLATES[world.templateId]!;
+  if (tpl.kind !== "highway") return { indicator: null };
+  if ((player.lane ?? 0) !== -1) return { indicator: null };
+  // Traka za usporavanje nije traka za ubrzavanje: iz nje se ne vraća na
+  // autoput nego se sa njega izlazi. Bez ovog uslova bi bot, čim se isključi,
+  // odmah krenuo nazad u desnu traku.
+  if (player.s >= tpl.rampRange[1]) return { indicator: null };
+  // Prelazak već traje — pokazivač ostaje dok se ne završi.
+  if (player.laneFrom !== undefined && (player.laneT ?? 1) < 1) return { indicator: "left" };
+  if (player.s < tpl.rampRange[1] - UKLJUCENJE_OD) return { indicator: null };
+
+  const uPravoVrijeme = world.indicatorLog
+    .filter((e) => e.indicator === "left")
+    .some((e) => world.t - e.t >= INDICATOR_LEAD_TIME);
+  const me = world.vehicles.find((v) => v.id === player.id)!;
+  if (!uPravoVrijeme || !mergeGap(world, me, 0).safe) return { indicator: "left" };
+  return { indicator: "left", changeLane: "left" };
+}
+
 export const perfectBot: Bot = (world, scenario) => {
   const player = world.vehicles.find((v) => v.id === PLAYER_ID);
   if (!player || player.done) return COAST;
@@ -168,13 +219,64 @@ export const perfectBot: Bot = (world, scenario) => {
 
   // Ubrzanje koje je NPC logika izabrala za naše vozilo.
   const a = (after.v - player.v) / DT;
-  const indicator = ispravanPokazivac(world, scenario);
-  if (a > 0.05) return { throttle: Math.min(1, a / A_MAX), brake: 0, indicator };
-  if (a < -0.05) return { throttle: 0, brake: Math.min(1, -a / B_MAX), indicator };
+  const traka = autoputTraka(world, player);
+  const indicator = traka.indicator ?? ispravanPokazivac(world, scenario);
+  const lane = { indicator, changeLane: traka.changeLane ?? null };
+  if (a > 0.05) return { throttle: Math.min(1, a / A_MAX), brake: 0, ...lane };
+  if (a < -0.05) return { throttle: 0, brake: Math.min(1, -a / B_MAX), ...lane };
   void path;
   void vMax;
-  return { ...COAST, indicator };
+  return { ...COAST, ...lane };
 };
+
+/**
+ * Vozač koji uz pravila izvršava i zadatak: promjenu trake u zadatom trenutku.
+ *
+ * Postoji zato što preticanje i isključenje nisu pravila nego namjera — nešto
+ * što igraču kaže zadatak, a ne saobraćajni propis. Bot pali pokazivač na
+ * vrijeme, čeka da prelazak prođe, pa prelazi na sljedeći korak plana.
+ */
+export interface LaneStep {
+  side: "left" | "right";
+  /** Od kada se smije tražiti prelazak [s]. */
+  t?: number;
+  /** Ili: od kojeg mjesta na dionici [m]. Otpornije na promjenu brzina. */
+  atS?: number;
+}
+
+export function highwayBot(plan: readonly LaneStep[], cruise = Infinity): Bot {
+  let i = 0;
+  let trazeno = false;
+  return (world, scenario) => {
+    const p = world.vehicles.find((v) => v.id === PLAYER_ID);
+    // Brzina se bira prije trake: pred izlazom se usporava, a to je i razlog
+    // zašto traka za usporavanje postoji.
+    const prebrzo = p !== undefined && p.v > cruise;
+    const osnova = prebrzo
+      ? { ...perfectBot(world, scenario), throttle: 0, brake: 1 }
+      : perfectBot(world, scenario);
+    const korak = plan[i];
+    if (!p || p.done || !korak) return osnova;
+
+    const uToku = p.laneFrom !== undefined && (p.laneT ?? 1) < 1;
+    if (trazeno && !uToku) {
+      i += 1;
+      trazeno = false;
+      return { ...osnova, indicator: null, changeLane: null };
+    }
+    const vodi = Math.max(20, p.v * (INDICATOR_LEAD_TIME + 0.5));
+    const najava =
+      korak.t !== undefined ? world.t >= korak.t - INDICATOR_LEAD_TIME - 0.5 : p.s >= (korak.atS ?? 0) - vodi;
+    const sada = korak.t !== undefined ? world.t >= korak.t : p.s >= (korak.atS ?? 0);
+    if (!najava) return osnova;
+    if (uToku) return { ...osnova, indicator: korak.side, changeLane: null };
+    if (sada && mergeGap(world, p, (p.lane ?? 0) + (korak.side === "left" ? 1 : -1)).safe) {
+      trazeno = true;
+      return { ...osnova, indicator: korak.side, changeLane: korak.side };
+    }
+    return { ...osnova, indicator: korak.side, changeLane: null };
+  };
+}
 
 export interface RunResult {
   world: World;

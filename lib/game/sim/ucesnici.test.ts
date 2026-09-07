@@ -123,7 +123,7 @@ describe("policajac", () => {
     const s = scenarioById("policajac-propusta")!;
     const tpl = TEMPLATES[s.intersection]!;
     // Svjetlo na kraku igrača zaista JESTE crveno — inače scenario ne dokazuje ništa.
-    const arm = tpl.arms.find((a) => a.id === s.player.arm)!;
+    const arm = tpl.kind === "cross" ? tpl.arms.find((a) => a.id === s.player.arm)! : undefined!;
     expect(arm.control.kind).toBe("light");
     if (arm.control.kind === "light") {
       expect(lightFor(tpl, s.lightStartPhase ?? 0, arm.control.phaseGroup)).toBe("red");
@@ -136,7 +136,7 @@ describe("policajac", () => {
   it("policajac je jači i od zelenog — prolazak jeste prekršaj", () => {
     const s = scenarioById("policajac-zaustavlja")!;
     const tpl = TEMPLATES[s.intersection]!;
-    const arm = tpl.arms.find((a) => a.id === s.player.arm)!;
+    const arm = tpl.kind === "cross" ? tpl.arms.find((a) => a.id === s.player.arm)! : undefined!;
     expect(arm.control.kind).toBe("light");
     if (arm.control.kind === "light") {
       expect(lightFor(tpl, s.lightStartPhase ?? 0, arm.control.phaseGroup)).toBe("green");
@@ -164,7 +164,7 @@ describe("policajac", () => {
       step(world, s, perfectBot(world, s));
       const npc = world.vehicles.find((v) => v.kind === "npc");
       if (!npc || world.t < npc.spawnT) continue;
-      const arm = tpl.arms.find((a) => a.id === npc.arm)!;
+      const arm = tpl.kind === "cross" ? tpl.arms.find((a) => a.id === npc.arm)! : undefined!;
       if (arm.control.kind === "light" && lightFor(tpl, world.phaseIndex, arm.control.phaseGroup) === "green") {
         imaoZeleno = true;
       }

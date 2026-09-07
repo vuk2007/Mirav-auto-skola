@@ -9,6 +9,7 @@ import {
   resolveSpot,
   type IndicatorPhase,
 } from "./indicatorRules";
+import { lanePathId } from "./highway";
 import { compile, TEMPLATES } from "./intersection";
 import type { Path, Scenario } from "./types";
 
@@ -25,6 +26,14 @@ const IDU_PRAVO = SCENARIOS.filter((s) => !trazi(s));
 
 function putanjaIgraca(s: Scenario): Path {
   const tpl = TEMPLATES[s.intersection]!;
+  // Na autoputu putanju bira traka, a ne krak — krak tamo i ne postoji.
+  if (tpl.kind === "highway") {
+    const traka =
+      typeof s.player.intent !== "string" && s.player.intent.kind === "lane"
+        ? s.player.intent.index
+        : 0;
+    return compile(tpl).paths.get(lanePathId(tpl.id, traka))!;
+  }
   // Manevar kružnog toka je objekat, pa poređenje mora ići preko ključa —
   // `intent === intent` bi poredilo reference.
   return compile(tpl).paths.get(`${tpl.id}:${s.player.arm}:${intentKey(s.player.intent)}`)!;

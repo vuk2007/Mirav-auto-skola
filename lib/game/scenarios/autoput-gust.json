@@ -1,0 +1,95 @@
+{
+  "id": "autoput-gust",
+  "intersection": "autoput",
+  "difficulty": 4,
+  "taskKey": "gameTaskMerge",
+  "title": {
+    "me": "Autoput — uključivanje u gust saobraćaj",
+    "en": "Motorway — joining heavy traffic",
+    "sq": "Autostradë — futja në trafik të dendur",
+    "ru": "Автомагистраль — въезд в плотный поток"
+  },
+  "player": {
+    "arm": "N",
+    "intent": {
+      "kind": "lane",
+      "index": -1
+    },
+    "spawnDistance": 0,
+    "startS": 40,
+    "startV": 22
+  },
+  "npcs": [
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 0
+      },
+      "startS": 0,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 24
+    },
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 0
+      },
+      "startS": 120,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 24
+    },
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 0
+      },
+      "startS": 240,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 24
+    },
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 0
+      },
+      "startS": 360,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 24
+    },
+    {
+      "arm": "N",
+      "intent": {
+        "kind": "lane",
+        "index": 0
+      },
+      "startS": 480,
+      "spawnAt": [
+        0,
+        0
+      ],
+      "speed": 24
+    }
+  ],
+  "explanation": {
+    "me": "U gustom saobraćaju se ulazi u prazninu, a ne u kolonu: brzina se izjednači sa saobraćajem, pa se traži razmak koji ostaje dovoljan i ispred i iza vas. Vozilo koje već vozi tom trakom ne smije zbog vas da koči, a traka za ubrzavanje se mora napustiti dok još traje.",
+    "en": "In heavy traffic you join a gap, not a column: match the speed of the traffic, then look for a space that stays wide enough both ahead of and behind you. A vehicle already in that lane must not brake because of you, and the acceleration lane has to be left while it still lasts.",
+    "sq": "Në trafik të dendur futeni në një hapësirë, jo në kolonë: barazoni shpejtësinë me trafikun, pastaj kërkoni një distancë që mbetet e mjaftueshme si para ashtu edhe pas jush. Automjeti që tashmë lëviz në atë korsi nuk duhet të frenojë për shkakun tuaj, dhe korsia e përshpejtimit duhet lëshuar sa është ende.",
+    "ru": "В плотном потоке въезжают в промежуток, а не в колонну: сравняйте скорость с потоком, затем найдите интервал, который остаётся достаточным и спереди, и сзади. Автомобиль, уже едущий по этой полосе, не должен тормозить из-за вас, а полосу разгона нужно покинуть, пока она ещё есть."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "motor": "chromium-desktop",
+  "naSpisku": [
+    "Autoput — uključivanje",
+    "Autoput — preticanje",
+    "Autoput — isključivanje",
+    "Autoput — uključivanje u gust saobraćaj"
+  ],
+  "raskrsnicaImaDugmadZaTraku": 0,
+  "zadatak": true,
+  "objasnjenjeImaDijakritike": true,
+  "imaDugmadZaTraku": 2,
+  "imaSavjetZaTastaturu": true,
+  "kamera": {
+    "vidiSeIgrac": true,
+    "scenaSeMijenja": true,
+    "igracNaIstojVisini": true,
+    "visina": 0.671
+  },
+  "saUkljucenjem": {
+    "ishod": true,
+    "zaustavnaTraka": false
+  },
+  "bezUkljucenja": {
+    "ishod": true,
+    "zaustavnaTraka": true,
+    "imaPravilo": true
+  },
+  "misem": {
+    "bezPokazivaca": true,
+    "zaustavnaTraka": false
+  },
+  "greske": [
+    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}
+{
+  "motor": "webkit-mobile",
+  "naSpisku": [
+    "Autoput — uključivanje",
+    "Autoput — preticanje",
+    "Autoput — isključivanje",
+    "Autoput — uključivanje u gust saobraćaj"
+  ],
+  "raskrsnicaImaDugmadZaTraku": 0,
+  "zadatak": true,
+  "objasnjenjeImaDijakritike": true,
+  "imaDugmadZaTraku": 2,
+  "imaSavjetZaTastaturu": true,
+  "kamera": {
+    "vidiSeIgrac": true,
+    "scenaSeMijenja": true,
+    "igracNaIstojVisini": true,
+    "visina": 0.68
+  },
+  "saUkljucenjem": {
+    "ishod": true,
+    "zaustavnaTraka": false
+  },
+  "bezUkljucenja": {
+    "ishod": true,
+    "zaustavnaTraka": true,
+    "imaPravilo": true
+  },
+  "misem": {
+    "bezPokazivaca": true,
+    "zaustavnaTraka": false
+  },
+  "greske": [
+    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

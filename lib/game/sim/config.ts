@@ -307,3 +307,54 @@ export const RING_SPLITTER = 3;
 
 /** Pola vidnog polja u beskonačnom modu [m] — kamera prati, pa je uže. */
 export const SHIFT_VIEW_HALF = 34;
+
+// ── Autoput ─────────────────────────────────────────────────────────────────
+
+/** Koliko traje prelazak iz trake u traku [s]. */
+export const LANE_CHANGE_TIME = 2;
+/** Koliko prije promjene trake pokazivač mora biti uključen [s]. */
+export const INDICATOR_LEAD_TIME = 1;
+/** Najmanje odstojanje iza koje se smije uključiti [s]. */
+export const MERGE_GAP_TIME = 2;
+/**
+ * Najmanje odstojanje ispred koje se smije uključiti [s].
+ *
+ * Isto je kao `HIGHWAY_FOLLOW_TIME` i to nije slučajno: kad bi bilo manje,
+ * uključenje bi bilo dozvoljeno na razmaku na kojem se odmah poslije njega ne
+ * smije voziti — pa bi vozilo koje je legalno prešlo u traku istog trena
+ * moralo naglo da koči.
+ */
+export const MERGE_AHEAD_TIME = 2;
+/** Koliko dugo se smije voziti ispod donje granice [s]. */
+export const TOO_SLOW_TIME = 3;
+/** Odstojanje ispod kojeg je vožnja preblizu [s]. */
+export const TAILGATE_GAP = 2;
+/** Koliko dugo se to trpi [s]. */
+export const TAILGATE_TIME = 2;
+/** Iznad koje brzine se odstojanje uopšte mjeri [m/s] ≈ 60 km/h. */
+export const TAILGATE_SPEED = 16.7;
+/** Usporenje iznad kojeg je kočenje na autoputu naglo [m/s²]. */
+export const HIGHWAY_BRAKE = 3;
+/** Brzina ispod koje se smatra da vozilo stoji na traci za ubrzavanje [m/s]. */
+export const RAMP_STOP_SPEED = 2;
+/** Odstojanje koje NPC drži na autoputu [s]. */
+export const HIGHWAY_FOLLOW_TIME = 2;
+/**
+ * Najveća brzina koju vozilo MOŽE da razvije na autoputu [m/s] ≈ 144 km/h.
+ *
+ * Gradski `V_TOP` je 18 m/s i to je bila namjera: u gradu se ne vozi brže.
+ * Na autoputu bi ista granica značila da je najveća dozvoljena brzina duplo
+ * iznad onoga što vozilo uopšte može, pa bi pravilo o prekoračenju bilo mrtvo,
+ * a donja granica od 60 km/h bi bila skoro pa najveća moguća.
+ */
+export const HIGHWAY_V_TOP = 40;
+/**
+ * Otpor na autoputu.
+ *
+ * Manji je nego u gradu (`DRAG_COEFF`) iz istog razloga: gradski koeficijent
+ * je biran tako da terminalna brzina padne blizu `V_TOP`, pa bi na autoputu
+ * zakovao vozilo na šezdesetak km/h bez obzira na `HIGHWAY_V_TOP`.
+ */
+export const HIGHWAY_DRAG = 0.02;
+/** Koliko se dugo smije voziti spoljnom (zaustavnom) trakom [s]. */
+export const HARD_SHOULDER_TIME = 1.5;

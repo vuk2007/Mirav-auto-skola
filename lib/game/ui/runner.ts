@@ -76,8 +76,15 @@ export function createRunner(scenario: Scenario, seed: number): Runner {
           throttle: input.throttle,
           brake: input.brake,
           indicator: input.indicator,
+          changeLane: input.changeLane ?? null,
         });
         step(runner.world, scenario, input);
+        // Zahtjev za promjenu trake vrijedi za TAČNO jedan korak simulacije.
+        // Gasi se ovdje, a ne u komponenti: kadar u kojem se ne odradi nijedan
+        // korak (akumulator nije sakupio `DT`) bi inače progutao zahtjev, pa bi
+        // pritisak dugmeta ponekad prošao a ponekad ne. Dnevnik je već zapisan
+        // gore, kao kopija, pa ponavljanje snimka ovo ne osjeti.
+        input.changeLane = null;
         tick += 1;
         acc -= DT;
         steps += 1;

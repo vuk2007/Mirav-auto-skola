@@ -28,7 +28,10 @@ const TEMPIRANI = SCENARIOS.filter(
     !s.officer &&
     // Problematični događaji se okidaju po mjestu igrača, pa im susret ne
     // zavisi od prozora nastanka.
-    !s.hazards?.length,
+    !s.hazards?.length &&
+    // Autoput nema konfliktnih tačaka — tamo se susret ne tempira nego se vozi
+    // odstojanje. Njegovo mjerenje je u `autoput.test.ts`.
+    TEMPLATES[s.intersection]?.kind !== "highway",
 );
 
 /** Koliko izmjereni idealni trenutak smije da odstupa od zadatog prozora [s]. */

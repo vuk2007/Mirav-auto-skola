@@ -28,7 +28,7 @@ const DO_KADA = 14;
 function zelenaVremena(s: Scenario): number[] {
   const tpl = TEMPLATES[s.intersection];
   const prog = tpl && tpl.kind === "cross" ? tpl.lightProgram : undefined;
-  if (!tpl || !prog || prog.length === 0) return [];
+  if (!tpl || tpl.kind !== "cross" || !prog || prog.length === 0) return [];
   const a = tpl.arms.find((x) => x.id === s.player.arm);
   if (!a || a.control.kind !== "light") return [];
   const group = a.control.phaseGroup;
@@ -69,8 +69,18 @@ function nadjiRjesenje(s: Scenario, seed: number): { from: number; to: number } 
   return null;
 }
 
+/**
+ * Autoput je izuzet, i to ne zato što je težak.
+ *
+ * Igrač tamo ima i treću komandu — promjenu trake — pa „gas, kočnica, gas" nije
+ * ono čime raspolaže. Traženje rješenja bez nje bi dokazivalo da je zadatak
+ * nemoguć, a nije. Igrivost autoputa se dokazuje u `autoput.test.ts`, botom
+ * koji uz pedale ima i traku.
+ */
+const BEZ_AUTOPUTA = SCENARIOS.filter((s) => TEMPLATES[s.intersection]?.kind !== "highway");
+
 describe("igrivost sa dvije pedale", () => {
-  for (const s of SCENARIOS) {
+  for (const s of BEZ_AUTOPUTA) {
     // Sjemena mijenjaju trenutak nastanka NPC-a unutar prozora; scenario mora
     // biti rješiv u cijelom prozoru, a ne samo za jedno sjeme.
     for (const seed of [1, 7, 42]) {

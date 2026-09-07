@@ -109,8 +109,32 @@ export interface RoundaboutTemplate {
   viewHalf?: number;
 }
 
+/**
+ * Dionica autoputa.
+ *
+ * Nema krakova ni prvenstva — ima trake, odstojanje i brzinu. `vMin` postoji
+ * jer je prespora vožnja na autoputu prekršaj, a ne samo nespretnost.
+ */
+export interface HighwayTemplate {
+  kind: "highway";
+  id: string;
+  /** Dužina dionice [m]. */
+  length: number;
+  /** Broj voznih traka (bez spoljne). Za sada 2. */
+  lanes: number;
+  /** Dio dionice na kojem je spoljna traka traka za ubrzavanje [m]. */
+  rampRange: [number, number];
+  /** Dio dionice na kojem je spoljna traka traka za usporavanje [m]. */
+  exitRange: [number, number];
+  /** Najmanja i najveća dozvoljena brzina [m/s]. */
+  vMin: number;
+  vMax: number;
+  geometry: { laneWidth: number };
+  viewHalf?: number;
+}
+
 /** Sve vrste raskrsnica koje simulacija poznaje. */
-export type Template = IntersectionTemplate | RoundaboutTemplate;
+export type Template = IntersectionTemplate | RoundaboutTemplate | HighwayTemplate;
 
 // ── Putanja ─────────────────────────────────────────────────────────────────
 
@@ -196,6 +220,14 @@ export interface Vehicle {
   spawnT: number;
   /** Vozilo pod pratnjom — rotacija i sirena. Prvenstvo nad svima. */
   emergency?: boolean;
+  /** Traka na autoputu. Nedefinisano na raskrsnicama. */
+  lane?: number;
+  /** Traka iz koje se prelazi, dok prelazak traje. */
+  laneFrom?: number;
+  /** Napredak prelaska iz trake u traku, 0–1. */
+  laneT?: number;
+  /** Brzina koju vozilo drži na autoputu [m/s]. */
+  cruise?: number;
   /**
    * Vozilo se ponaša neispravno: ne ustupa i ne poštuje znak.
    *
@@ -230,6 +262,8 @@ export interface Pedestrian {
 export interface ScenarioNpc {
   arm: ArmId;
   intent: Intent;
+  /** Gdje vozilo počinje duž dionice [m]. Na raskrsnicama je uvijek 0. */
+  startS?: number;
   /** Opseg sekundi u kojem vozilo nastaje; bira se po sjemenu. */
   spawnAt: [number, number];
   speed: number;
@@ -303,7 +337,7 @@ export interface ScenarioHazard {
 export interface Scenario {
   id: string;
   intersection: string;
-  player: { arm: ArmId; intent: Intent; spawnDistance: number };
+  player: { arm: ArmId; intent: Intent; spawnDistance: number; startS?: number; startV?: number };
   npcs: ScenarioNpc[];
   pedestrians?: ScenarioPedestrian[];
   officer?: ScenarioOfficer;
@@ -336,6 +370,14 @@ export interface Scenario {
   title: Record<string, string>;
   /** Tekst tačnog rješenja po jeziku. */
   explanation: Record<string, string>;
+  /**
+   * Ključ u rječniku za rečenicu „šta treba uraditi".
+   *
+   * Postoji zbog autoputa: tamo namjera nosi samo traku u kojoj se počinje, pa
+   * se iz nje ne vidi da li je zadatak uključivanje, preticanje ili isključenje.
+   * Ključ, a ne tekst, jer su te rečenice opšte i trebaće ih i generator smjene.
+   */
+  taskKey?: string;
 }
 
 // ── Događaji i prekršaji ────────────────────────────────────────────────────
@@ -352,7 +394,13 @@ export type ViolationType =
   | "indicatorMissing"
   | "indicatorWrong"
   | "indicatorLate"
-  | "indicatorLeftOn";
+  | "indicatorLeftOn"
+  | "unsafeMerge"
+  | "stoppedOnRamp"
+  | "tooSlow"
+  | "tailgating"
+  | "brakingOnHighway"
+  | "hardShoulder";
 
 /**
  * Koliko prekršaj košta.
@@ -417,6 +465,8 @@ export interface World {
   indicatorDone: string[];
   /** Indeksi već okinutih problematičnih događaja. */
   hazardsFired: number[];
+  /** Tajmeri za prekršaje na autoputu koji traju u vremenu. */
+  highway: { tooSlowT: number; tailgateT: number; shoulderT: number };
   /**
    * Mjerenje reakcije: kad je događaj postao vidljiv i kad je igrač prvi put
    * zakočio poslije toga. `null` znači da još nije zakočio.
@@ -435,4 +485,12 @@ export interface Input {
   brake: number;
   /** Pokazivač pravca. `null` je isključen. */
   indicator: "left" | "right" | null;
+  /**
+   * Zahtjev za promjenu trake, samo na autoputu.
+   *
+   * Nije stanje nego namjera u tom kadru: simulacija je prihvati ili odbije, pa
+   * je vozilo ili počelo prelazak ili nije. Držanje dugmeta ne mijenja ništa
+   * dok prelazak traje.
+   */
+  changeLane?: "left" | "right" | null;
 }

@@ -24,6 +24,12 @@ export const VIOLATION_LABEL: Readonly<Record<ViolationType, keyof Dict>> = {
   indicatorWrong: "vioIndicatorWrong",
   indicatorLate: "vioIndicatorLate",
   indicatorLeftOn: "vioIndicatorLeftOn",
+  unsafeMerge: "vioUnsafeMerge",
+  stoppedOnRamp: "vioStoppedOnRamp",
+  tooSlow: "vioTooSlow",
+  tailgating: "vioTailgating",
+  brakingOnHighway: "vioBrakingOnHighway",
+  hardShoulder: "vioHardShoulder",
 };
 
 const TASK_LABEL_CROSS: Readonly<Record<"straight" | "left" | "right", keyof Dict>> = {
@@ -38,9 +44,14 @@ const TASK_LABEL_CROSS: Readonly<Record<"straight" | "left" | "right", keyof Dic
  * Vraća gotov tekst, ne ključ: kružni tok nosi redni broj izlaza, pa se rečenica
  * ne može dobiti pukim indeksiranjem rječnika.
  */
-export function taskTextFor(intent: Intent, t: Dict, exitCount = 4): string {
+export function taskTextFor(intent: Intent, t: Dict, exitCount = 4, taskKey?: string): string {
+  // Scenario smije da kaže svoj zadatak: na autoputu se iz namjere vidi samo
+  // polazna traka, ne i manevar.
+  const iz = taskKey ? t[taskKey as keyof Dict] : undefined;
+  if (typeof iz === "string") return iz;
   const c = crossIntent(intent);
   if (c) return t[TASK_LABEL_CROSS[c]];
+  if (typeof intent !== "string" && intent.kind === "lane") return t.gameTaskMerge;
   if (typeof intent !== "string" && intent.kind === "exit") {
     return intent.n >= exitCount
       ? t.gameTaskFullCircle
@@ -84,14 +95,23 @@ export function ruleKeyFor(opts: {
       return "ruleStopSign";
     case "obstruction":
       return "ruleObstruction";
-    case "speeding":
-      return "ruleSpeeding";
     case "pedestrian":
       return "rulePedestrian";
     case "officer":
       return "ruleOfficer";
     case "indicatorLeftOn":
       return "ruleIndicatorOff";
+    case "unsafeMerge":
+      return "ruleMerge";
+    case "stoppedOnRamp":
+    case "tooSlow":
+    case "speeding":
+      return opts.control === "highway" ? "ruleHighwaySpeed" : "ruleSpeeding";
+    case "hardShoulder":
+      return "ruleHardShoulder";
+    case "tailgating":
+    case "brakingOnHighway":
+      return "ruleFollowing";
     case "indicatorMissing":
     case "indicatorWrong":
     case "indicatorLate":

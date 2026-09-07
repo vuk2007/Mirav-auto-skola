@@ -10,6 +10,8 @@ interface PedalControlsProps {
   indicatorLabel: string;
   leftLabel: string;
   rightLabel: string;
+  /** Dugmad za promjenu trake — samo na autoputu. */
+  lanes?: { leftLabel: string; rightLabel: string } | null;
 }
 
 /**
@@ -27,6 +29,7 @@ export default function PedalControls({
   indicatorLabel,
   leftLabel,
   rightLabel,
+  lanes = null,
 }: PedalControlsProps) {
   const button = (pedal: "throttle" | "brake", label: string, tone: string) => (
     <button
@@ -65,12 +68,31 @@ export default function PedalControls({
     </button>
   );
 
+  // Promjena trake je jedan zahtjev, ne stanje — zato `onClick` i bez
+  // `aria-pressed`: dugme se ne „drži" upaljeno.
+  const traka = (side: "left" | "right", label: string, znak: string) => (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => pedals.requestLane(side)}
+      className="font-display flex-1 rounded border-2 border-blue bg-panel py-2.5 text-lg font-bold tracking-wide text-blue uppercase transition-colors select-none hover:bg-blue hover:text-white disabled:opacity-40"
+    >
+      <span aria-hidden="true">{znak}</span> {label}
+    </button>
+  );
+
   return (
     <div className="space-y-2">
       <div className="flex gap-3">
         {zmigavac("left", leftLabel, "◀")}
         {zmigavac("right", rightLabel, "▶")}
       </div>
+      {lanes && (
+        <div className="flex gap-3">
+          {traka("left", lanes.leftLabel, "⇤")}
+          {traka("right", lanes.rightLabel, "⇥")}
+        </div>
+      )}
       <div className="flex gap-3">
         {button("brake", brakeLabel, "border-red bg-red text-white")}
         {button("throttle", throttleLabel, "border-green bg-green text-white")}
