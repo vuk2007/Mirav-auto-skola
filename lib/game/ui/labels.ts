@@ -6,6 +6,7 @@
  * drugo na drugom.
  */
 
+import type { Level } from "../sim/config";
 import type { Dict } from "@/lib/i18n";
 import { OPPOSITE, type Approach } from "@/lib/simRules";
 import type { Intent, ViolationType } from "../sim/types";
@@ -58,6 +59,26 @@ export function taskTextFor(intent: Intent, t: Dict, exitCount = 4, taskKey?: st
       : t.gameTaskExit.replace("{n}", String(intent.n));
   }
   return t.gameTaskStraight;
+}
+
+/**
+ * Koliko se od zona pokazivača vidi na datom nivou.
+ *
+ * Na prva dva nivoa zone nose i slovo strane, na trećem i četvrtom se vide
+ * samo kao segmenti, a na petom ih nema — tada polaznik mora sam da zna gdje
+ * se šta traži.
+ *
+ * Stoji ovdje, a ne u svakom ekranu ponaosob, jer je to jedna skala: scenario
+ * i smjena moraju da je čitaju isto.
+ */
+export function zonesForLevel(
+  level: Level,
+  t: Dict,
+): { labels?: { left: string; right: string } } | null {
+  if (level >= 5) return null;
+  return level <= 2
+    ? { labels: { left: t.gameIndicatorShortLeft, right: t.gameIndicatorShortRight } }
+    : {};
 }
 
 /** Znak na kraku igrača. Semafor nema tekst — HUD mu prikazuje boju. */

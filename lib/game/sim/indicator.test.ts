@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { SCENARIOS, scenarioById } from "@/lib/game/scenarios";
 import { flooringBot, noIndicatorBot, perfectBot, run, wrongIndicatorBot, type Bot } from "./bots";
-import { INDICATOR_LEAD, INDICATOR_OFF_AFTER } from "./config";
+import { INDICATOR_LEAD, INDICATOR_OFF_AFTER, type Level } from "./config";
+import { zonesForLevel } from "../ui/labels";
+import { dict } from "@/lib/i18n";
 import {
   expectedIndicatorAt,
   INDICATOR_RULES,
@@ -116,6 +118,38 @@ describe("pokazivač u vožnji", () => {
     });
   }
 
+  /**
+   * U kružnom toku se pokazivač traži DVAPUT: na prilazu i pred izlazom. Test
+   * gleda obje faze, jer je ranije provjeravao samo prvu — a propušten desni
+   * pred izlazom je greška koju polaznici prave češće od one na prilazu.
+   */
+  for (const s of SCENARIOS.filter(
+    (x) => TEMPLATES[x.intersection]?.kind === "roundabout",
+  )) {
+    it(`${s.id}: bez pokazivača se prijavljuje SVAKA faza u kojoj se traži`, () => {
+      const { world } = run(s, noIndicatorBot);
+      const trazene = phasesFor(putanjaIgraca(s), s.player.intent)
+        .filter((f) => f.expected !== null)
+        .map((f) => f.id);
+      expect(trazene.length).toBeGreaterThan(0);
+      const prijavljene = world.violations
+        .filter((v) => v.type === "indicatorMissing")
+        .map((v) => v.phaseId);
+      expect(prijavljene.sort()).toEqual(trazene.sort());
+    });
+
+    it(`${s.id}: desni od prilaza je pogrešan kad izlaz nije prvi`, () => {
+      // Prerano uključen desni obmanjuje one koji čekaju ulazak: oni misle da
+      // izlaziš na prvom izlazu i krenu.
+      const prvi = phasesFor(putanjaIgraca(s), s.player.intent)[0]!;
+      if (prvi.expected === "right") return; // prvi izlaz — desni je tačan
+      const { world } = run(s, pokazivacBot(() => "right"));
+      const v = world.violations.find((x) => x.type === "indicatorWrong");
+      expect(v, JSON.stringify(world.violations.map((x) => x.type))).toBeDefined();
+      expect(v!.phaseId).toBe(prvi.id);
+    });
+  }
+
   for (const s of IDU_PRAVO) {
     it(`${s.id}: vožnja pravo bez pokazivača ne prijavljuje ništa`, () => {
       const { world } = run(s, flooringBot);
@@ -160,6 +194,30 @@ describe("kasno i ostavljeno", () => {
     expect(v, `prijavljeno: ${JSON.stringify(world.violations.map((x) => x.type))}`).toBeDefined();
     expect(v!.severity).toBe("minor");
     expect(world.outcome).toBe("passed");
+  });
+});
+
+// ── Koliko se zona vidi ─────────────────────────────────────────────────────
+
+describe("vidljivost zona po nivou", () => {
+  const t = dict("me");
+
+  it("prva dva nivoa nose i slovo strane", () => {
+    for (const nivo of [1, 2] as Level[]) {
+      expect(zonesForLevel(nivo, t)?.labels, `nivo ${nivo}`).toBeDefined();
+    }
+  });
+
+  it("treći i četvrti pokazuju zone bez slova", () => {
+    for (const nivo of [3, 4] as Level[]) {
+      const z = zonesForLevel(nivo, t);
+      expect(z, `nivo ${nivo}`).not.toBeNull();
+      expect(z!.labels, `nivo ${nivo}`).toBeUndefined();
+    }
+  });
+
+  it("na petom se ne prikazuju — tada se mora znati napamet", () => {
+    expect(zonesForLevel(5, t)).toBeNull();
   });
 });
 

@@ -513,7 +513,7 @@ function drawPlayerPath(
   strokePoints(ctx, v, pts, PALETTE.blue, 0.9, 0.7);
 
   if (zones) {
-    for (const ph of phasesFor(path, intent)) {
+    for (const ph of phasesFor(path, intent, undefined, { hints: true })) {
       if (ph.expected === null) continue;
       strokePoints(ctx, v, pathSlice(path, ph.from, ph.to), PALETTE.zone, 1.5, 0.55);
       if (zones.labels) {

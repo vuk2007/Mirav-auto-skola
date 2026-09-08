@@ -55,6 +55,9 @@ export function buildLanePath(tpl: HighwayTemplate, index: number): Path {
     stopLineS: daleko,
     boxEnterS: daleko,
     boxExitS: daleko + 1,
+    // Samo spoljna traka ima kraj trake za ubrzavanje; u voznim trakama zona
+    // uključenja nema smisla, pa se ni ne crta.
+    rampEndS: index === -1 ? tpl.rampRange[1] : undefined,
   };
 }
 

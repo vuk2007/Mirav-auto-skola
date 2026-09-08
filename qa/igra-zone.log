@@ -1,0 +1,50 @@
+{
+  "situacije": {
+    "kruzni-izlaz2": {
+      "nivo": 1,
+      "imaZonu": true,
+      "imaSlovo": true,
+      "piksela": {
+        "zona": 794,
+        "slovo": 16
+      }
+    },
+    "kruzni-stop": {
+      "nivo": 2,
+      "imaZonu": true,
+      "imaSlovo": true,
+      "piksela": {
+        "zona": 1556,
+        "slovo": 14
+      }
+    },
+    "ljevak": {
+      "nivo": 3,
+      "imaZonu": true,
+      "imaSlovo": false,
+      "piksela": {
+        "zona": 1943,
+        "slovo": 0
+      }
+    },
+    "kruzni-polukruzno": {
+      "nivo": 3,
+      "imaZonu": true,
+      "imaSlovo": false,
+      "piksela": {
+        "zona": 3857,
+        "slovo": 0
+      }
+    },
+    "autoput-ukljucenje": {
+      "nivo": 2,
+      "imaZonu": true,
+      "imaSlovo": true,
+      "piksela": {
+        "zona": 5414,
+        "slovo": 25
+      }
+    }
+  },
+  "greske": []
+}

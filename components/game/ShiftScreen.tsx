@@ -13,7 +13,7 @@ import {
   startShift,
   type ShiftState,
 } from "@/lib/game/shift/session";
-import { taskTextFor, VIOLATION_LABEL } from "@/lib/game/ui/labels";
+import { taskTextFor, VIOLATION_LABEL, zonesForLevel } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import { loadBestShift, saveBestShift, type BestShift } from "@/lib/storage";
@@ -146,7 +146,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
           onFinish={finish}
           flagVehicleId={null}
           officer={scenario.officer ?? null}
-          indicatorZones={state.level <= 2 ? {} : null}
+          indicatorZones={zonesForLevel(state.level, t)}
           level={state.level}
           sound={sound}
           camera={{ follow: true, half: autoput ? tpl.viewHalf : SHIFT_VIEW_HALF }}

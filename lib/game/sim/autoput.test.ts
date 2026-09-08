@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { scenarioById } from "@/lib/game/scenarios";
 import { flooringBot, highwayBot, perfectBot, run, type Bot, type LaneStep } from "./bots";
-import { HARD_SHOULDER_TIME, MERGE_AHEAD_TIME, MERGE_GAP_TIME } from "./config";
+import { HARD_SHOULDER_TIME, MERGE_AHEAD_TIME, MERGE_GAP_TIME, MERGE_ZONE } from "./config";
+import { expectedIndicatorAt, phasesFor } from "./indicatorRules";
 import { HIGHWAY_LANES, lanePathId, laneX, lateralX, occupiedLanes, shareLane } from "./highway";
 import { compile, TEMPLATES } from "./intersection";
 import type { HighwayTemplate, Input, Vehicle, World } from "./types";
@@ -174,6 +175,46 @@ describe("pravila autoputa", () => {
     const bot = botDo((p) => p.s > 60 && p.s < 120, { throttle: 0, brake: 1 });
     const { world } = run(scenarioById("autoput-iskljucenje")!, bot);
     expect(world.violations.map((x) => x.type)).not.toContain("brakingOnHighway");
+  });
+});
+
+// ── Zona uključenja ─────────────────────────────────────────────────────────
+
+describe("zona uključenja", () => {
+  const putanja = (traka: number) => compile(AUTOPUT).paths.get(lanePathId(AUTOPUT.id, traka))!;
+
+  it("crta se samo na traci za ubrzavanje, i taman pred njenim krajem", () => {
+    const p = putanja(-1);
+    expect(p.rampEndS).toBe(AUTOPUT.rampRange[1]);
+    const zone = phasesFor(p, p.intent, undefined, { hints: true });
+    expect(zone.map((z) => z.id)).toEqual(["traka-najava"]);
+    expect(zone[0]!.expected).toBe("left");
+    expect(zone[0]!.to).toBeCloseTo(AUTOPUT.rampRange[1], 6);
+    expect(zone[0]!.to - zone[0]!.from).toBeCloseTo(MERGE_ZONE, 6);
+  });
+
+  it("u voznim trakama je nema — tamo se nema gdje uključiti", () => {
+    for (const traka of [0, 1]) {
+      const p = putanja(traka);
+      expect(p.rampEndS).toBeUndefined();
+      expect(phasesFor(p, p.intent, undefined, { hints: true })).toEqual([]);
+    }
+  });
+
+  it("je putokaz, a ne pravilo: ne ocjenjuje se", () => {
+    const p = putanja(-1);
+    // Bez `hints` je nema, pa je ni detekcija ni botovi ne vide.
+    expect(phasesFor(p, p.intent)).toEqual([]);
+    expect(expectedIndicatorAt(p, p.intent, AUTOPUT.rampRange[1] - 10)).toBeNull();
+  });
+
+  it("gašenje pokazivača poslije uključenja nije prekršaj", () => {
+    // Ovo je razlog zbog kojeg zona nije pravilo: vozač koji se uključi na
+    // sredini zone ispravno gasi pokazivač, a faza bi mu to naplatila.
+    const { plan } = PLAN["autoput-ukljucenje"]!;
+    const { world } = run(scenarioById("autoput-ukljucenje")!, highwayBot(plan), 1);
+    expect(world.violations.map((v) => v.phaseId)).not.toContain("traka-najava");
+    expect(world.violations).toEqual([]);
   });
 });
 

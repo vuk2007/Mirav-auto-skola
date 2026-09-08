@@ -160,6 +160,13 @@ export interface Path {
   length: number;
   /** `s` na kojem putanja prelazi stop-liniju. */
   stopLineS: number;
+  /**
+   * `s` na kojem prestaje traka za ubrzavanje — samo spoljna traka autoputa.
+   *
+   * Postoji da bi se zona uključenja mogla napisati u tabeli pravila, kao i
+   * sve ostale zone, umjesto da je crtanje računa napamet.
+   */
+  rampEndS?: number;
   /** `s` na kojem putanja ulazi u tijelo raskrsnice i na kojem ga napušta. */
   boxEnterS: number;
   boxExitS: number;

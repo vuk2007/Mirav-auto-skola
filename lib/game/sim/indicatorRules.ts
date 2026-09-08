@@ -10,7 +10,7 @@
  * stop-linije i izlaza razlikuju od putanje do putanje.
  */
 
-import { INDICATOR_LEAD, INDICATOR_OFF_AFTER } from "./config";
+import { INDICATOR_LEAD, INDICATOR_OFF_AFTER, MERGE_ZONE } from "./config";
 import type { Intent, Path, Severity, ViolationType } from "./types";
 import { turnSide } from "./types";
 
@@ -22,7 +22,9 @@ export type Anchor =
   | "boxExit"
   | "pathEnd"
   /** Izlaz koji prethodi mom — postoji samo u kružnom toku. */
-  | "prevExit";
+  | "prevExit"
+  /** Kraj trake za ubrzavanje — postoji samo na spoljnoj traci autoputa. */
+  | "rampEnd";
 
 /**
  * Za koji manevar pravilo važi.
@@ -50,6 +52,16 @@ export interface IndicatorPhase {
   severity: Severity;
   /** Koji se prekršaj prijavljuje kad se očekuje ugašen, a nije. */
   mismatchType?: ViolationType;
+  /**
+   * Faza koja se CRTA, ali se ne ocjenjuje.
+   *
+   * Postoji zbog autoputa. Tamo se pokazivač traži uz sam čin promjene trake, a
+   * ne na dionici puta: čim se uključenje završi, ispravno je ugasiti ga. Faza
+   * koja bi kroz cijelu zonu tražila lijevi kaznila bi upravo to gašenje —
+   * dakle ispravno ponašanje. Zato zona ostaje putokaz igraču, a sud i dalje
+   * donosi `laneStep`. Razlika je ovdje, u podatku, a ne skrivena u kodu.
+   */
+  hintOnly?: boolean;
 }
 
 /**
@@ -166,6 +178,20 @@ export const INDICATOR_RULES: readonly IndicatorPhase[] = [
     mustBeSetBefore: { at: "prevExit", offset: 0 },
     severity: "fail",
   },
+  // ── Autoput ───────────────────────────────────────────────────────────────
+  //
+  // Jedina zona koja se ne ocjenjuje — vidi `hintOnly`. Crta se samo na
+  // spoljnoj traci, jer samo ona ima kraj trake za ubrzavanje.
+  {
+    id: "traka-najava",
+    maneuver: "lane",
+    from: { at: "rampEnd", offset: -MERGE_ZONE },
+    to: { at: "rampEnd", offset: 0 },
+    expected: "left",
+    severity: "minor",
+    hintOnly: true,
+  },
+
   {
     id: "krug-gasenje",
     maneuver: "ring1",
@@ -207,7 +233,11 @@ export function resolveSpot(path: Path, spot: Spot): number {
             ? path.boxExitS
             : spot.at === "prevExit"
               ? (path.prevExitS ?? path.stopLineS)
-              : path.length;
+              : spot.at === "rampEnd"
+                // Putanja bez trake za ubrzavanje daje nulu, pa se zona sama
+                // sažme na ništa i `phasesFor` je odbaci.
+                ? (path.rampEndS ?? 0)
+                : path.length;
   return Math.max(0, Math.min(path.length, base + spot.offset));
 }
 
@@ -239,17 +269,25 @@ export interface ResolvedPhase {
   mustBeSetBefore: number | null;
   severity: Severity;
   mismatchType: ViolationType;
+  hintOnly: boolean;
 }
 
-/** Faze koje važe za dati manevar, sa `s` vrijednostima za tu putanju. */
+/**
+ * Faze koje važe za dati manevar, sa `s` vrijednostima za tu putanju.
+ *
+ * Podrazumijevano vraća samo one po kojima se sudi. Crtanje traži i one koje su
+ * puki putokaz (`hints: true`) — jedna funkcija za oboje, da se ono što se
+ * prikazuje i ono što se traži ne mogu razići.
+ */
 export function phasesFor(
   path: Path,
   intent: Intent,
   rules: readonly IndicatorPhase[] = INDICATOR_RULES,
+  { hints = false }: { hints?: boolean } = {},
 ): ResolvedPhase[] {
   const maneuver = maneuverFor(intent);
   return rules
-    .filter((r) => r.maneuver === maneuver)
+    .filter((r) => r.maneuver === maneuver && (hints || !r.hintOnly))
     .map((r) => ({
       id: r.id,
       from: resolveSpot(path, r.from),
@@ -258,6 +296,7 @@ export function phasesFor(
       mustBeSetBefore: r.mustBeSetBefore ? resolveSpot(path, r.mustBeSetBefore) : null,
       severity: r.severity,
       mismatchType: r.mismatchType ?? "indicatorWrong",
+      hintOnly: Boolean(r.hintOnly),
     }))
     .filter((p) => p.to > p.from);
 }

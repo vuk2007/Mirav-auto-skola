@@ -371,3 +371,12 @@ export const HIGHWAY_V_TOP = 40;
 export const HIGHWAY_DRAG = 0.02;
 /** Koliko se dugo smije voziti spoljnom (zaustavnom) trakom [s]. */
 export const HARD_SHOULDER_TIME = 1.5;
+/**
+ * Dužina zone uključenja koja se crta pred krajem trake za ubrzavanje [m].
+ *
+ * Nije pravilo nego putokaz: uključiti se smije bilo gdje na traci, a ovo je
+ * dionica na kojoj je krajnje vrijeme. Devedeset metara je na sto na sat oko
+ * tri sekunde — taman za pokazivač (`INDICATOR_LEAD_TIME`) i sam prelazak
+ * (`LANE_CHANGE_TIME`), sa nešto rezerve.
+ */
+export const MERGE_ZONE = 90;

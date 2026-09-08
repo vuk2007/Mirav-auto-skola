@@ -7,7 +7,7 @@ import type { Outcome, Scenario } from "@/lib/game/sim/types";
 import { compile, TEMPLATES } from "@/lib/game/sim/intersection";
 import { createSound } from "@/lib/game/ui/sound";
 import { playerControl } from "@/lib/game/ui/draw";
-import { CONTROL_LABEL, taskTextFor } from "@/lib/game/ui/labels";
+import { CONTROL_LABEL, taskTextFor, zonesForLevel } from "@/lib/game/ui/labels";
 import { createPlayback, createRunner, type Playback } from "@/lib/game/ui/runner";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import PedalControls from "./PedalControls";
@@ -112,19 +112,9 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
     [phase, outcome, scenario, seed],
   );
 
-  /**
-   * Zone pokazivača na putanji.
-   *
-   * Na lakšim nivoima se vide sa slovom strane, na težem samo kao segmenti, a
-   * na najtežem se ne prikazuju — tada polaznik mora sam da zna gdje se šta
-   * traži. Skala težine je za sada 1–3; kad dođe 1–5, mijenja se samo ovdje.
-   */
-  const zones = useMemo(() => {
-    if (scenario.difficulty >= 3) return null;
-    return scenario.difficulty <= 1
-      ? { labels: { left: t.gameIndicatorShortLeft, right: t.gameIndicatorShortRight } }
-      : {};
-  }, [scenario.difficulty, t.gameIndicatorShortLeft, t.gameIndicatorShortRight]);
+  // Zone pokazivača na putanji — skala je u `zonesForLevel`, ista za scenario
+  // i za smjenu.
+  const zones = useMemo(() => zonesForLevel(scenario.difficulty, t), [scenario.difficulty, t]);
 
   const player = runner.world.vehicles.find((v) => v.kind === "player");
   const playerPath = player ? compile(TEMPLATES[runner.world.templateId]!).paths.get(player.pathId) : undefined;
