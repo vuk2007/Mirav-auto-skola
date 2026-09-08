@@ -14,6 +14,7 @@ const KEY_BEST = "mirav.bestExam";
 const KEY_PRACTICE = "mirav.practice";
 const KEY_GAME = "mirav.game";
 const KEY_SHIFT = "mirav.smjena";
+const KEY_TRIP = "mirav.putovanje";
 
 function read<T>(key: string): T | null {
   try {
@@ -203,4 +204,25 @@ export function saveBestShift(result: Omit<BestShift, "date">): BestShift {
   const next = { ...result, date: new Date().toISOString() };
   write(KEY_SHIFT, next);
   return next;
+}
+
+// ── Putovanje ───────────────────────────────────────────────────────────────
+
+/**
+ * Putovanje se pamti cijelo, a ne samo rezultat.
+ *
+ * Razlog je što ono i nema rezultat: sastoji se od toga gdje si stigao i šta
+ * si usput vidio, pa je nastavak jedino što ima smisla ponuditi. Provjera
+ * ispravnosti je u `lib/game/trip/trip.ts` — ovdje se samo čita i piše.
+ */
+export function loadTrip(): unknown {
+  return read<unknown>(KEY_TRIP);
+}
+
+export function saveTrip(state: unknown): void {
+  write(KEY_TRIP, state);
+}
+
+export function clearTrip(): void {
+  remove(KEY_TRIP);
 }

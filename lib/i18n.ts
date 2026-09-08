@@ -161,6 +161,40 @@ export interface Dict {
   gameHazardYielded: string;
   gameHazardCollision: string;
   gameReaction: string;
+  tripTitle: string;
+  tripDesc: string;
+  tripStart: string;
+  tripResume: string;
+  tripNew: string;
+  tripBack: string;
+  tripPickStart: string;
+  tripWhereTo: string;
+  tripGo: string;
+  tripTurnAround: string;
+  tripBorderTitle: string;
+  tripBorderDesc: string;
+  tripDeadEndTitle: string;
+  tripDeadEndDesc: string;
+  tripArrived: string;
+  tripSeenHere: string;
+  tripNothingSeen: string;
+  tripContinue: string;
+  tripKm: string;
+  tripLegs: string;
+  tripTowns: string;
+  tripCollected: string;
+  tripSummer: string;
+  tripSummerHint: string;
+  tripTagSeasonal: string;
+  tripTagFerry: string;
+  tripTagUnverified: string;
+  tripCrash: string;
+  tripNoted: string;
+  tripRetry: string;
+  tripRoadAutoput: string;
+  tripRoadMagistrala: string;
+  tripRoadRegionalni: string;
+  tripRoadPlaninski: string;
   shiftTitle: string;
   shiftDesc: string;
   shiftStart: string;
@@ -471,6 +505,41 @@ const me: Dict = {
   gameHazardCollision:
     "Prednost se ne uzima silom. Kad vidite da drugi ne staje, jedini ispravan potez je kočnica.",
   gameReaction: "Vrijeme reakcije",
+  tripTitle: "Putovanje",
+  tripDesc:
+    "Vožnja kroz Crnu Goru, dionicu po dionicu. Na svakoj raskrsnici birate kuda dalje, a nudi se samo ono što je stvarno susjedno. Jedna dionica traje oko četiri minuta.",
+  tripStart: "Kreni na put",
+  tripResume: "Nastavi putovanje",
+  tripNew: "Novo putovanje",
+  tripBack: "Izlaz iz putovanja",
+  tripPickStart: "Odakle krećete?",
+  tripWhereTo: "Kuda dalje?",
+  tripGo: "Kreni",
+  tripTurnAround: "Okreni se",
+  tripBorderTitle: "Granični prelaz",
+  tripBorderDesc: "Ovdje se put završava. Dalje je granica — okrenite se i vratite istim putem.",
+  tripDeadEndTitle: "Kraj puta",
+  tripDeadEndDesc: "Put se ovdje završava. Okrenite se i vratite istim putem.",
+  tripArrived: "Stigli ste u",
+  tripSeenHere: "Viđeno na ovoj dionici",
+  tripNothingSeen: "Na ovoj dionici nema zabilježenih znamenitosti.",
+  tripContinue: "Dalje",
+  tripKm: "Pređeno",
+  tripLegs: "Dionica",
+  tripTowns: "Opština",
+  tripCollected: "Znamenitosti",
+  tripSummer: "Ljeto",
+  tripSummerHint: "Ljeti su prohodni i sezonski prevoji, poput Žabljak — Plužine preko Trse.",
+  tripTagSeasonal: "sezonski",
+  tripTagFerry: "trajekt",
+  tripTagUnverified: "nije provjereno",
+  tripCrash: "Sudar. Ova dionica se vozi ponovo.",
+  tripNoted: "Zabilježeno usput",
+  tripRetry: "Vozi ponovo",
+  tripRoadAutoput: "autoput",
+  tripRoadMagistrala: "magistrala",
+  tripRoadRegionalni: "regionalni put",
+  tripRoadPlaninski: "planinski put",
   shiftTitle: "Smjena",
   shiftDesc:
     "Raskrsnica za raskrsnicom, bez kraja, a od drugog nivoa i pokoja dionica autoputa. Tri života; težina raste dok vozite čisto i spušta se kad pogriješite.",
@@ -770,6 +839,41 @@ const en: Dict = {
   gameHazardCollision:
     "Right of way is not taken by force. When you see that the other driver is not stopping, the only correct move is the brake.",
   gameReaction: "Reaction time",
+  tripTitle: "Road trip",
+  tripDesc:
+    "Driving across Montenegro, one leg at a time. At every junction you choose where to go next, and only genuine neighbours are offered. A leg takes about four minutes.",
+  tripStart: "Set off",
+  tripResume: "Continue the trip",
+  tripNew: "New trip",
+  tripBack: "Leave the trip",
+  tripPickStart: "Where do you start?",
+  tripWhereTo: "Where to next?",
+  tripGo: "Go",
+  tripTurnAround: "Turn around",
+  tripBorderTitle: "Border crossing",
+  tripBorderDesc: "The road ends here. Beyond is the border — turn around and drive back.",
+  tripDeadEndTitle: "End of the road",
+  tripDeadEndDesc: "The road ends here. Turn around and drive back.",
+  tripArrived: "You have reached",
+  tripSeenHere: "Seen on this leg",
+  tripNothingSeen: "No landmarks recorded on this leg.",
+  tripContinue: "Continue",
+  tripKm: "Distance",
+  tripLegs: "Legs",
+  tripTowns: "Municipalities",
+  tripCollected: "Landmarks",
+  tripSummer: "Summer",
+  tripSummerHint: "In summer the seasonal passes are open too, such as Žabljak — Plužine over Trsa.",
+  tripTagSeasonal: "seasonal",
+  tripTagFerry: "ferry",
+  tripTagUnverified: "unverified",
+  tripCrash: "A crash. This leg starts over.",
+  tripNoted: "Noted along the way",
+  tripRetry: "Drive again",
+  tripRoadAutoput: "motorway",
+  tripRoadMagistrala: "main road",
+  tripRoadRegionalni: "regional road",
+  tripRoadPlaninski: "mountain road",
   shiftTitle: "Shift",
   shiftDesc:
     "One intersection after another, with no end, and from level two the odd stretch of motorway. Three lives; the difficulty rises while you drive clean and drops when you slip.",
@@ -1074,6 +1178,41 @@ const sq: Dict = {
   gameHazardCollision:
     "Përparësia nuk merret me forcë. Kur shihni se tjetri nuk ndalon, lëvizja e vetme e drejtë është frena.",
   gameReaction: "Koha e reagimit",
+  tripTitle: "Udhëtim",
+  tripDesc:
+    "Ngasje nëpër Mal të Zi, pjesë pas pjese. Në çdo kryqëzim zgjidhni ku të vazhdoni, dhe ofrohen vetëm fqinjët e vërtetë. Një pjesë zgjat rreth katër minuta.",
+  tripStart: "Nisu në rrugë",
+  tripResume: "Vazhdo udhëtimin",
+  tripNew: "Udhëtim i ri",
+  tripBack: "Dil nga udhëtimi",
+  tripPickStart: "Nga ku niseni?",
+  tripWhereTo: "Ku më tej?",
+  tripGo: "Nisu",
+  tripTurnAround: "Kthehu mbrapsht",
+  tripBorderTitle: "Pikë kufitare",
+  tripBorderDesc: "Rruga mbaron këtu. Më tej është kufiri — kthehuni dhe ngisni mbrapsht.",
+  tripDeadEndTitle: "Fundi i rrugës",
+  tripDeadEndDesc: "Rruga mbaron këtu. Kthehuni dhe ngisni mbrapsht.",
+  tripArrived: "Keni arritur në",
+  tripSeenHere: "Parë në këtë pjesë",
+  tripNothingSeen: "Asnjë pikë interesi e regjistruar në këtë pjesë.",
+  tripContinue: "Vazhdo",
+  tripKm: "Përshkuar",
+  tripLegs: "Pjesë",
+  tripTowns: "Komuna",
+  tripCollected: "Pika interesi",
+  tripSummer: "Verë",
+  tripSummerHint: "Në verë janë të kalueshme edhe qafat sezonale, si Žabljak — Plužine përmes Trsës.",
+  tripTagSeasonal: "sezonale",
+  tripTagFerry: "traget",
+  tripTagUnverified: "e paverifikuar",
+  tripCrash: "Përplasje. Kjo pjesë nis nga fillimi.",
+  tripNoted: "Shënuar gjatë rrugës",
+  tripRetry: "Ngis përsëri",
+  tripRoadAutoput: "autostradë",
+  tripRoadMagistrala: "rrugë magjistrale",
+  tripRoadRegionalni: "rrugë rajonale",
+  tripRoadPlaninski: "rrugë malore",
   shiftTitle: "Turni",
   shiftDesc:
     "Kryqëzim pas kryqëzimi, pa fund, dhe nga niveli i dytë edhe ndonjë segment autostrade. Tri jetë; vështirësia rritet ndërsa ngisni pastër dhe bie kur gabon.",
@@ -1380,6 +1519,41 @@ const ru: Dict = {
   gameHazardCollision:
     "Преимущество не берут силой. Когда видно, что другой не останавливается, единственно правильное действие — торможение.",
   gameReaction: "Время реакции",
+  tripTitle: "Путешествие",
+  tripDesc:
+    "Поездка по Черногории, участок за участком. На каждом перекрёстке вы выбираете, куда дальше, и предлагаются только настоящие соседи. Участок занимает около четырёх минут.",
+  tripStart: "В путь",
+  tripResume: "Продолжить путешествие",
+  tripNew: "Новое путешествие",
+  tripBack: "Выйти из путешествия",
+  tripPickStart: "Откуда начинаете?",
+  tripWhereTo: "Куда дальше?",
+  tripGo: "Ехать",
+  tripTurnAround: "Развернуться",
+  tripBorderTitle: "Пограничный переход",
+  tripBorderDesc: "Здесь дорога заканчивается. Дальше граница — развернитесь и возвращайтесь.",
+  tripDeadEndTitle: "Конец дороги",
+  tripDeadEndDesc: "Здесь дорога заканчивается. Развернитесь и возвращайтесь тем же путём.",
+  tripArrived: "Вы прибыли в",
+  tripSeenHere: "Увидено на этом участке",
+  tripNothingSeen: "На этом участке достопримечательности не отмечены.",
+  tripContinue: "Дальше",
+  tripKm: "Пройдено",
+  tripLegs: "Участков",
+  tripTowns: "Общин",
+  tripCollected: "Достопримечательности",
+  tripSummer: "Лето",
+  tripSummerHint: "Летом проходимы и сезонные перевалы, например Жабляк — Плужине через Трсу.",
+  tripTagSeasonal: "сезонная",
+  tripTagFerry: "паром",
+  tripTagUnverified: "не проверено",
+  tripCrash: "Авария. Этот участок начинается заново.",
+  tripNoted: "Отмечено в пути",
+  tripRetry: "Ехать снова",
+  tripRoadAutoput: "автомагистраль",
+  tripRoadMagistrala: "магистраль",
+  tripRoadRegionalni: "региональная дорога",
+  tripRoadPlaninski: "горная дорога",
   shiftTitle: "Смена",
   shiftDesc:
     "Перекрёсток за перекрёстком, без конца, а со второго уровня и участки автомагистрали. Три жизни; сложность растёт, пока едете чисто, и падает при ошибке.",

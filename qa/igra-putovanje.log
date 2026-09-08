@@ -1,0 +1,39 @@
+{
+  "otvorenoPutovanje": true,
+  "brojPolazista": 1,
+  "imaLjeto": true,
+  "izabranaPodgorica": true,
+  "putokaz": {
+    "ponudjenoKomada": 8,
+    "svakiSusjedPrikazan": true,
+    "nemaTudjegGrada": [],
+    "imaVrstuPutaIKm": true,
+    "imaOkretanje": false
+  },
+  "imaPlatno": true,
+  "voznja": {
+    "naStartu": 40,
+    "uVoznji": 66,
+    "ubrzava": true
+  },
+  "stigao": true,
+  "pao": false,
+  "dolazak": {
+    "mjesto": true,
+    "imaZnamenitosti": true,
+    "brojIkona": 1,
+    "kilometraza": true,
+    "prijavljenoPrekoracenje": true,
+    "ikoneUcitane": true
+  },
+  "krajPuta": {
+    "porukaKrajPuta": true,
+    "nijeGranica": true,
+    "nudiOkretanje": true,
+    "nemaDrugihPravaca": true
+  },
+  "pamcenje": {
+    "ponudjenNastavak": true
+  },
+  "greske": []
+}

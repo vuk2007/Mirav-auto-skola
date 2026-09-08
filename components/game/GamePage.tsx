@@ -8,6 +8,7 @@ import { loadGameProgress, saveGameAttempt, type GameProgressMap } from "@/lib/s
 import GameScreen from "./GameScreen";
 import ScenarioPicker from "./ScenarioPicker";
 import ShiftScreen from "./ShiftScreen";
+import TripScreen from "./TripScreen";
 
 /**
  * Igra „Prođi raskrsnicu" — spisak situacija i jedna situacija u toku.
@@ -22,6 +23,7 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
   const [progress, setProgress] = useState<GameProgressMap>({});
   const [activeId, setActiveId] = useState<string | null>(null);
   const [shift, setShift] = useState(false);
+  const [trip, setTrip] = useState(false);
 
   useEffect(() => {
     setProgress(loadGameProgress());
@@ -70,7 +72,9 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
         </div>
       )}
 
-      {shift ? (
+      {trip ? (
+        <TripScreen onExit={() => setTrip(false)} />
+      ) : shift ? (
         <ShiftScreen onExit={() => setShift(false)} />
       ) : active ? (
         <GameScreen
@@ -91,6 +95,23 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
             lang={lang}
             onPick={setActiveId}
           />
+
+          {/* Putovanje stoji ispod spiska, uz smjenu: obje su vožnje bez
+              ocjene po situaciji, samo se jedna vozi u mjestu, a druga kroz
+              zemlju. */}
+          <section className="panel flex flex-col gap-3 border-t-4 border-t-blue p-4 sm:flex-row sm:items-center">
+            <div className="flex-1">
+              <h2 className="text-lg font-bold">{t.tripTitle}</h2>
+              <p className="mt-1 text-sm text-muted">{t.tripDesc}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setTrip(true)}
+              className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
+            >
+              {t.tripStart}
+            </button>
+          </section>
 
           {/* Smjena stoji ispod spiska: prvo se uče situacije, pa se onda vozi
               bez kraja. */}
