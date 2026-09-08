@@ -113,6 +113,14 @@ export default function GameCanvas({
         runner.advance(dt, inputRef.current);
       }
 
+      // Motor svira samo dok se stvarno vozi. Prije toga se ne dira: `ensure`
+      // bi napravio `AudioContext` prije ijedne korisničke radnje, a pregledači
+      // ga tada drže zaustavljenim i još se i požale u konzoli.
+      const vozi = runningRef.current && runner.world.outcome === "running";
+      const igrac = runner.world.vehicles.find((x) => x.kind === "player");
+      if (vozi && igrac) soundRef.current.engine(igrac.v, inputRef.current.throttle);
+      else soundRef.current.engineOff();
+
       // Truba iza leđa kad je rok zadržavanja na pola — dozvoljen pritisak:
       // saopštava da neko čeka, ne kažnjava i ne skriva ništa.
       const rok = DIFFICULTY[levelRef.current].obstructionTimeout;

@@ -37,6 +37,11 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
   const { t } = useApp();
   const pedals = usePedals();
   const sound = useMemo(() => createSound(), []);
+  // Smjena do sada nije imala prekidač za zvuk jer su se čuli samo truba i
+  // sudar — kratki i rijetki. Motor svira neprekidno, pa mora da može da se
+  // ugasi i ovdje, kao na ekranu scenarija.
+  const [muted, setMuted] = useState(false);
+  useEffect(() => sound.setMuted(muted), [sound, muted]);
   useEffect(() => () => sound.close(), [sound]);
 
   const [seed] = useState(() => Math.floor(Math.random() * 1e9));
@@ -121,6 +126,15 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
           className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
         >
           ← {t.shiftBack}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMuted((m) => !m)}
+          aria-pressed={muted}
+          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
+          className="rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
+        >
+          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
         </button>
         <span className="font-display ml-auto text-sm font-semibold tracking-wide uppercase">
           {t.shiftLives}{" "}

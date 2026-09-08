@@ -1,0 +1,22 @@
+{
+  "prijeVoznje": {
+    "konteksta": 0,
+    "oscilatora": 0,
+    "freq": []
+  },
+  "naStartu": {
+    "oscilatora": 2
+  },
+  "uVoznji": {
+    "oscilatora": 2,
+    "promjenaUcestanosti": 348,
+    "najniza": 52,
+    "najvisa": 221,
+    "raspon": 169
+  },
+  "prijeUtisavanja": "running",
+  "poslijeUtisavanja": "closed",
+  "smjenaImaPrekidac": true,
+  "smjenaPrekidacRadi": true,
+  "greske": []
+}
