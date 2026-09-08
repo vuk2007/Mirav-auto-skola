@@ -133,8 +133,60 @@ export interface HighwayTemplate {
   viewHalf?: number;
 }
 
+/** Jedna krivina na otvorenom putu. */
+export interface RoadCurve {
+  /** Sredina luka na putanji [m]. */
+  atS: number;
+  /** Dužina luka [m]. */
+  arc: number;
+  /**
+   * Poluprečnik [m].
+   *
+   * Ne pogađa se: dobija se iz preporučene brzine i dozvoljenog bočnog
+   * ubrzanja, pa ono što piše na tabli i ono što je nacrtano opisuju istu
+   * krivinu.
+   */
+  radius: number;
+  side: "left" | "right";
+  /** Preporučena brzina [km/h] — ono što stoji na tabli. */
+  advisorySpeed: number;
+}
+
+/**
+ * Otvorena dionica između dva čvora grafa puteva.
+ *
+ * Nema krakova, nema prvenstva i nema prestrojavanja: dvije trake, jedna u
+ * svakom smjeru, i krivine. Traka 0 je naša, traka 1 je susretna i njena je
+ * putanja obrnuta, pa susretnom vozilu `s` raste dok nam se približava.
+ *
+ * `length` je koliko se STVARNO vozi, a `edgeKm` koliko ivica ima na karti.
+ * Razlika je namjerna — vidi `TRIP_SEGMENT_TIME`.
+ */
+export interface RoadTemplate {
+  kind: "road";
+  id: string;
+  /** Dužina koja se vozi [m]. */
+  length: number;
+  /** Ivica iz grafa i njena stvarna dužina [km]. */
+  edgeId: string;
+  edgeKm: number;
+  /** Dozvoljena brzina [m/s]. */
+  vMax: number;
+  curves: RoadCurve[];
+  geometry: { laneWidth: number };
+  viewHalf?: number;
+}
+
 /** Sve vrste raskrsnica koje simulacija poznaje. */
-export type Template = IntersectionTemplate | RoundaboutTemplate | HighwayTemplate;
+export type Template =
+  | IntersectionTemplate
+  | RoundaboutTemplate
+  | HighwayTemplate
+  | RoadTemplate;
+
+/** Šablon bez krakova: odnos među vozilima nije prvenstvo nego traka. */
+export const bezKrakova = (tpl: Template): tpl is HighwayTemplate | RoadTemplate =>
+  tpl.kind === "highway" || tpl.kind === "road";
 
 // ── Putanja ─────────────────────────────────────────────────────────────────
 
@@ -344,6 +396,14 @@ export interface ScenarioHazard {
 export interface Scenario {
   id: string;
   intersection: string;
+  /**
+   * Šablon koji ide uz scenario, umjesto onoga iz `TEMPLATES`.
+   *
+   * Postoji zbog putovanja: dionica se pravi iz ivice grafa i sjemena, pa je
+   * nemoguće da stoji u spisku napisanih raskrsnica. Scenario je ulaz u
+   * simulaciju, ne njeno stanje, pa ovo ne ulazi ni u jedan snimak.
+   */
+  template?: Template;
   player: { arm: ArmId; intent: Intent; spawnDistance: number; startS?: number; startV?: number };
   npcs: ScenarioNpc[];
   pedestrians?: ScenarioPedestrian[];

@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { idealTime } from "@/lib/game/sim/bots";
+import { bezKrakova } from "@/lib/game/sim/types";
 import type { Outcome, Scenario } from "@/lib/game/sim/types";
-import { compile, TEMPLATES } from "@/lib/game/sim/intersection";
+import { compile, templateById } from "@/lib/game/sim/intersection";
 import { createSound } from "@/lib/game/ui/sound";
 import { playerControl } from "@/lib/game/ui/draw";
 import { CONTROL_LABEL, taskTextFor, zonesForLevel } from "@/lib/game/ui/labels";
@@ -117,13 +118,13 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
   const zones = useMemo(() => zonesForLevel(scenario.difficulty, t), [scenario.difficulty, t]);
 
   const player = runner.world.vehicles.find((v) => v.kind === "player");
-  const playerPath = player ? compile(TEMPLATES[runner.world.templateId]!).paths.get(player.pathId) : undefined;
+  const playerPath = player ? compile(templateById(runner.world.templateId)!).paths.get(player.pathId) : undefined;
 
-  const tpl = TEMPLATES[runner.world.templateId]!;
+  const tpl = templateById(runner.world.templateId)!;
   const zadatak = taskTextFor(
     scenario.player.intent,
     t,
-    tpl.kind === "highway" ? 0 : tpl.arms.length,
+    bezKrakova(tpl) ? 0 : tpl.arms.length,
     scenario.taskKey,
   );
 

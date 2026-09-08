@@ -45,6 +45,9 @@ import {
   STOP_MARGIN,
   STOP_ZONE,
   type DifficultyParams,
+  ROAD_V_TOP_FACTOR,
+  TRIP_SEGMENT_TIME,
+  TRIP_SEGMENT_TIMEOUT_FACTOR,
   V_MAX_DEFAULT,
   V_TOP,
   YELLOW_COMMIT_TTC,
@@ -56,6 +59,8 @@ import {
   lightFor,
   pedestrianOnRoad,
   pedestrianSpan,
+  registerTemplate,
+  templateById,
   TEMPLATES,
 } from "./intersection";
 import { expectedIndicatorAt, phasesFor } from "./indicatorRules";
@@ -88,7 +93,7 @@ import type {
   Violation,
   World,
 } from "./types";
-import { crossIntent } from "./types";
+import { bezKrakova, crossIntent } from "./types";
 import { whoYields, type EffectiveControl, type YieldParty } from "@/lib/simRules";
 
 export const PLAYER_ID = "player";
@@ -162,8 +167,9 @@ function controlToEffective(
  */
 function armControl(ctx: Regulacija, armId: ArmId, phaseIndex: number): EffectiveControl {
   if (ctx.officerAllow) return ctx.officerAllow.includes(armId) ? "green" : "red";
-  // Autoput nema regulisane krakove — tamo prvenstvo uopšte ne odlučuje.
-  if (ctx.tpl.kind === "highway") return "none";
+  // Ni autoput ni otvoren put nemaju regulisane krakove — tamo prvenstvo
+  // uopšte ne odlučuje.
+  if (bezKrakova(ctx.tpl)) return "none";
   const a = ctx.tpl.arms.find((x) => x.id === armId);
   return a ? controlToEffective(a.control, ctx.tpl, phaseIndex) : "none";
 }
@@ -223,6 +229,8 @@ export function poseOn(
       heading: { x: 0, y: 1 },
     };
   }
+  // Na otvorenom putu je svaka traka svoja putanja i ona je kriva, pa se
+  // položaj čita iz nje, a ne iz bočnog pomaka kao na autoputu.
   return {
     pos: pointAt(path.points, path.cum, v.s),
     heading: headingAt(path.points, path.cum, v.s),
@@ -248,8 +256,10 @@ function inBox(v: Vehicle, path: Path): boolean {
 // ── stvaranje svijeta ───────────────────────────────────────────────────────
 
 export function createWorld(scenario: Scenario, seed: number): World {
-  const tpl = TEMPLATES[scenario.intersection];
+  const tpl = scenario.template ?? TEMPLATES[scenario.intersection];
   if (!tpl) throw new Error(`Nepoznata raskrsnica: ${scenario.intersection}`);
+  // Napravljeni šablon mora biti dostupan i po `id`-u — vidi `templateById`.
+  if (scenario.template) registerTemplate(scenario.template);
   const { paths } = compile(tpl);
 
   const pathId = (arm: ArmId, intent: Intent) => `${tpl.id}:${arm}:${intentKey(intent)}`;
@@ -259,7 +269,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
     return p;
   };
 
-  const jeAutoput = tpl.kind === "highway";
+  const jeAutoput = bezKrakova(tpl);
   const trakaIz = (intent: Intent): number | undefined =>
     typeof intent !== "string" && intent.kind === "lane" ? intent.index : undefined;
 
@@ -378,16 +388,23 @@ interface Ctx extends Regulacija {
 }
 
 function ctxFor(world: World, scenario: Scenario): Ctx {
-  const tpl = TEMPLATES[world.templateId]!;
+  const tpl = scenario.template ?? templateById(world.templateId)!;
   const c = compile(tpl);
   return {
     tpl,
     officerAllow: officerAllow(scenario.officer, world.t),
     paths: c.paths,
     conflicts: c.conflicts,
-    vMax: tpl.kind === "highway" ? tpl.vMax : (scenario.vMax ?? V_MAX_DEFAULT),
-    vTop: tpl.kind === "highway" ? HIGHWAY_V_TOP : V_TOP,
-    drag: tpl.kind === "highway" ? HIGHWAY_DRAG : DRAG_COEFF,
+    vMax: bezKrakova(tpl) ? tpl.vMax : (scenario.vMax ?? V_MAX_DEFAULT),
+    // Gradski `V_TOP` je ispod dozvoljene brzine na magistrali, pa bi na
+    // otvorenom putu ograničenje bilo nedostižno — vidi `ROAD_V_TOP_FACTOR`.
+    vTop:
+      tpl.kind === "highway"
+        ? HIGHWAY_V_TOP
+        : tpl.kind === "road"
+          ? tpl.vMax * ROAD_V_TOP_FACTOR
+          : V_TOP,
+    drag: bezKrakova(tpl) ? HIGHWAY_DRAG : DRAG_COEFF,
     dif: DIFFICULTY[scenario.difficulty],
   };
 }
@@ -397,8 +414,8 @@ function ctxFor(world: World, scenario: Scenario): Ctx {
  * `Infinity` znači „put je slobodan".
  */
 function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): Target {
-  // Autoput: nema prvenstva ni znakova, samo traka i odstojanje.
-  if (ctx.tpl.kind === "highway") return highwayFollowLimit(world, ctx, me);
+  // Autoput i otvoren put: nema prvenstva ni znakova, samo traka i odstojanje.
+  if (bezKrakova(ctx.tpl)) return highwayFollowLimit(world, ctx, me);
 
   let limit = Infinity;
 
@@ -746,10 +763,23 @@ export function step(world: World, scenario: Scenario, input: Input): void {
     if (player.done) {
       // Blagi prekršaji se prijave i objasne, ali vožnju ne obaraju.
       world.outcome = hasFail(world) ? "failed" : "passed";
-    } else if (world.t > MAX_SCENARIO_SECONDS) {
+    } else if (world.t > maxSecondsFor(ctx.tpl)) {
       world.outcome = "failed";
     }
   }
+}
+
+/**
+ * Poslije koliko sekundi se scenario prekida.
+ *
+ * Raskrsnica se rješava u sekundama i dvije minute su tamo znak da je nešto
+ * zaglavljeno. Dionica putovanja po zadatku traje četiri minuta, pa bi je isti
+ * broj obarao uvijek — vidi `TRIP_SEGMENT_TIMEOUT_FACTOR`.
+ */
+export function maxSecondsFor(tpl: Template): number {
+  return tpl.kind === "road"
+    ? TRIP_SEGMENT_TIME * TRIP_SEGMENT_TIMEOUT_FACTOR
+    : MAX_SCENARIO_SECONDS;
 }
 
 /** Da li je NPC zakočio baš zbog igrača (a ne zbog drugog NPC-a). */
@@ -1379,7 +1409,7 @@ function pathBlocked(world: World, ctx: Ctx, player: Vehicle, path: Path): boole
 // ── pomoć za render i testove ───────────────────────────────────────────────
 
 export function vehiclePose(world: World, v: Vehicle): { pos: { x: number; y: number }; heading: { x: number; y: number } } {
-  const tpl = TEMPLATES[world.templateId]!;
+  const tpl = templateById(world.templateId)!;
   const path = compile(tpl).paths.get(v.pathId)!;
   return {
     pos: pointAt(path.points, path.cum, v.s),

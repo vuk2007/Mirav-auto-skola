@@ -401,3 +401,59 @@ export const MOUNTAIN_CURVES_MAX = 8;
 export const MOUNTAIN_ADVISORY_MIN = 30;
 export const MOUNTAIN_ADVISORY_MAX = 40;
 export const MOUNTAIN_ADVISORY_STEP = 5;
+
+// ── Otvorena dionica (putovanje) ────────────────────────────────────────────
+
+/**
+ * Koliko traje jedna dionica [s].
+ *
+ * Ivice u grafu su od 8 do 60 km. Na osamdeset na sat je i najkraća od njih
+ * šest minuta stvarne vožnje, a najduža skoro tri četvrt sata — to niko ne
+ * vozi. Zato se vozi IZVOD dionice, uvijek jednako dug u vremenu: koliko je
+ * metara to zapravo, zavisi od ograničenja, a kilometraža koja se prikazuje
+ * ide srazmjerno stvarnoj dužini ivice.
+ */
+export const TRIP_SEGMENT_TIME = 240;
+
+/** Razmak uzoraka polilinije puta [m]. Sitniji korak = glađa krivina. */
+export const ROAD_STEP = 4;
+
+/**
+ * Bočno ubrzanje po kojem se iz preporučene brzine dobija poluprečnik krivine
+ * [m/s²]. Poluprečnik je onda `v² / a` — tabla i geometrija se slažu, umjesto
+ * da se poluprečnik pogađa.
+ */
+export const ROAD_LATERAL_ACCEL = 2.5;
+
+/** Koliko krivina skreće [rad] — od šezdeset do sto dvadeset stepeni. */
+export const ROAD_TURN_MIN = Math.PI / 3;
+export const ROAD_TURN_MAX = (2 * Math.PI) / 3;
+
+/**
+ * Koliko vozilo fizički može na otvorenom putu, u odnosu na ograničenje.
+ *
+ * Gradski `V_TOP` je 18 m/s i na magistrali bi bio ispod dozvoljene brzine, pa
+ * se ograničenje ne bi moglo ni dostići, a kamoli prekoračiti.
+ */
+export const ROAD_V_TOP_FACTOR = 1.35;
+
+/** Na koliko sekundi se u prosjeku mimoiđe susretno vozilo. */
+export const ONCOMING_GAP = 7;
+
+/**
+ * Koliko dionica smije da traje prije nego što se prekine, u odnosu na
+ * `TRIP_SEGMENT_TIME`.
+ *
+ * Opšti `MAX_SCENARIO_SECONDS` je dvije minute i on je zaštita od zaglavljene
+ * raskrsnice; na dionici od četiri minuta bi obarao svaku vožnju. Faktor je
+ * 2,5 — ko vozi ispod četrdeset odsto ograničenja, taj i ne vozi.
+ */
+export const TRIP_SEGMENT_TIMEOUT_FACTOR = 2.5;
+
+/**
+ * Koliko prije krivine stoji tabla sa preporučenom brzinom [m].
+ *
+ * Na pedeset na sat je pedeset metara tri i po sekunde — taman da se vidi,
+ * pročita i uspori. Tabla na samom početku luka bi stigla prekasno.
+ */
+export const SIGN_LEAD = 50;

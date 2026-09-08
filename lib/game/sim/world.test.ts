@@ -4,6 +4,7 @@ import { flooringBot, idleBot, perfectBot, run } from "./bots";
 import { OBSTRUCTION_TIMEOUT } from "./config";
 import { clearCache, compile, TEMPLATES } from "./intersection";
 import { createWorld, step } from "./world";
+import { bezKrakova } from "./types";
 import type { Scenario } from "./types";
 
 beforeEach(() => clearCache());
@@ -17,6 +18,9 @@ describe("putanje", () => {
       if (tpl.kind === "highway") {
         // Autoput ima po jednu putanju za svaku traku, uključujući spoljnu.
         expect(paths.size).toBe(tpl.lanes + 1);
+      } else if (tpl.kind === "road") {
+        // Otvoren put ima našu i susretnu traku, i ništa više.
+        expect(paths.size).toBe(2);
       } else {
         const poKraku = tpl.kind === "roundabout" ? tpl.arms.length : 3;
         expect(paths.size).toBe(tpl.arms.length * poKraku);
@@ -25,7 +29,7 @@ describe("putanje", () => {
         expect(p.length).toBeGreaterThan(0);
         // Traka autoputa je prava linija sa dvije tačke; kroz raskrsnicu ide
         // prilaz–tijelo–izlaz, pa ih tamo mora biti bar tri.
-        expect(p.points.length).toBeGreaterThanOrEqual(tpl.kind === "highway" ? 2 : 3);
+        expect(p.points.length).toBeGreaterThanOrEqual(bezKrakova(tpl) ? 2 : 3);
         expect(p.boxEnterS).toBeLessThan(p.boxExitS);
         // Kumulativne dužine moraju rasti — inače `pointAt` daje besmislice.
         for (let i = 1; i < p.cum.length; i++) {

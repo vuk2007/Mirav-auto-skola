@@ -19,6 +19,7 @@ import {
   EDGE_MARKER_INSET,
   MIN_CAR_PX,
   MIN_SIGN_PX,
+  SIGN_LEAD,
   VIEW_HALF,
 } from "../sim/config";
 import { pointAt } from "../sim/geometry";
@@ -32,7 +33,7 @@ import {
   pedestrianPos,
   roadHalf,
   stopLineAt,
-  TEMPLATES,
+  templateById,
 } from "../sim/intersection";
 import type {
   Arm,
@@ -43,13 +44,16 @@ import type {
   Pedestrian,
   HighwayTemplate,
   Point,
+  RoadTemplate,
   RoundaboutTemplate,
   ScenarioOfficer,
   Template,
   Vehicle,
   World,
 } from "../sim/types";
+import { bezKrakova } from "../sim/types";
 import { HIGHWAY_LANES, laneX } from "../sim/highway";
+import { centerLine } from "../sim/road";
 import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
 import { officerAllow, poseOn } from "../sim/world";
@@ -242,6 +246,88 @@ function drawRoundabout(ctx: CanvasRenderingContext2D, v: View, tpl: RoundaboutT
  * Traka za ubrzavanje i traka za usporavanje se crtaju punom bojom kolovoza, a
  * dio spoljne trake van njih blijedi — tako se vidi gdje ona zaista postoji.
  */
+/** Polilinija u svijetu, debljine zadate u metrima. */
+function strokeLine(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  pts: readonly Point[],
+  color: string,
+  width: number,
+  dash?: [number, number],
+): void {
+  if (pts.length < 2) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(1, width * v.scale);
+  ctx.setLineDash(dash ? [dash[0] * v.scale, dash[1] * v.scale] : []);
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const q = px(v, p);
+    if (i === 0) ctx.moveTo(q.x, q.y);
+    else ctx.lineTo(q.x, q.y);
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+/** Osovina pomjerena bočno; `offset > 0` je vozačeva lijeva strana. */
+function pomjeri(points: readonly Point[], heading: readonly number[], offset: number): Point[] {
+  return points.map((p, i) => {
+    const u = heading[i] ?? 0;
+    return { x: p.x + Math.cos(u) * offset, y: p.y - Math.sin(u) * offset };
+  });
+}
+
+/**
+ * Otvorena dionica.
+ *
+ * Kolovoz je traka oko osovine, pa se crta kao jedan poligon: lijeva ivica
+ * naprijed, desna unazad. Rezanje na pravougaonike bi u serpentini ostavilo
+ * bijele klinove na spojevima.
+ */
+function drawRoad(ctx: CanvasRenderingContext2D, v: View, tpl: RoadTemplate): void {
+  const { points, heading } = centerLine(tpl);
+  const pola = tpl.geometry.laneWidth;
+
+  const traka = (o: number) => pomjeri(points, heading, o);
+  const bankina = [...traka(pola + 1.6), ...traka(-pola - 1.6).reverse()];
+  fillPoly(ctx, v, bankina, PALETTE.kerb);
+  fillPoly(ctx, v, [...traka(pola), ...traka(-pola).reverse()], PALETTE.asphalt);
+
+  // Ivične linije pune, razdjelna isprekidana — kao na putu bez zabrane
+  // preticanja. Zabrana je pravilo i doći će sa pravilima.
+  strokeLine(ctx, v, traka(pola - 0.15), PALETTE.paint, 0.12);
+  strokeLine(ctx, v, traka(-pola + 0.15), PALETTE.paint, 0.12);
+  strokeLine(ctx, v, points, PALETTE.paint, 0.12, [3, 6]);
+
+  // Tabla sa preporučenom brzinom stoji PRED krivinom i uvijek uz VOZAČEVU
+  // DESNU stranu — tako stoje znaci na putu, bez obzira na to na koju stranu
+  // krivina ide. Postavljena tačno na početak luka bila bi prekasna: na
+  // pedeset na sat se pedeset metara pređe za tri i po sekunde.
+  const korak = Math.max(1, tpl.length / (points.length - 1));
+  for (const k of tpl.curves) {
+    const i = Math.round(Math.max(0, k.atS - k.arc / 2 - SIGN_LEAD) / korak);
+    const p = points[Math.min(i, points.length - 1)];
+    const u = heading[Math.min(i, heading.length - 1)] ?? 0;
+    if (!p) continue;
+    const odmak = -(pola + 1);
+    const c = { x: p.x + Math.cos(u) * odmak, y: p.y - Math.sin(u) * odmak };
+    const q = px(v, c);
+    const r = Math.max(MIN_SIGN_PX / 2, 1.15 * v.scale);
+    ctx.beginPath();
+    ctx.arc(q.x, q.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = PALETTE.paint;
+    ctx.fill();
+    ctx.lineWidth = Math.max(2, r * 0.18);
+    ctx.strokeStyle = PALETTE.red;
+    ctx.stroke();
+    ctx.fillStyle = PALETTE.ink;
+    ctx.font = `600 ${Math.round(r)}px system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(String(k.advisorySpeed), q.x, q.y);
+  }
+}
+
 function drawHighway(ctx: CanvasRenderingContext2D, v: View, tpl: HighwayTemplate): void {
   const lane = tpl.geometry.laneWidth;
   const duz = tpl.length;
@@ -463,7 +549,8 @@ function drawControls(
   tpl: Template,
   phaseIndex: number,
 ): void {
-  if (tpl.kind === "highway") return; // autoput nema znakove na krakovima
+  // Ni autoput ni otvoren put nemaju krakove, pa ni znakove na njima.
+  if (bezKrakova(tpl)) return;
   const r = Math.max(MIN_SIGN_PX / 2, 1.15 * v.scale);
   for (const a of tpl.arms) {
     const p = px(v, signSpot(tpl, a));
@@ -800,7 +887,7 @@ export function drawScene(
   opts: DrawOptions = {},
 ): void {
   const world = runner.world;
-  const tpl = TEMPLATES[world.templateId];
+  const tpl = templateById(world.templateId);
   if (!tpl) return;
   const { paths } = compile(tpl);
   const v = viewFor(widthPx, heightPx, opts.camera?.half ?? tpl.viewHalf);
@@ -825,13 +912,17 @@ export function drawScene(
     drawRoundabout(ctx, v, tpl);
   } else if (tpl.kind === "highway") {
     drawHighway(ctx, v, tpl);
+  } else if (tpl.kind === "road") {
+    drawRoad(ctx, v, tpl);
   } else {
     drawRoads(ctx, v, tpl);
     drawMarkings(ctx, v, tpl);
   }
 
   const player = world.vehicles.find((x) => x.kind === "player");
-  if (player) {
+  // Na otvorenom putu se putanja ne iscrtava: nema manevra ni zone, a plava
+  // linija preko cijele trake bi četiri minuta stajala preko puta bez potrebe.
+  if (player && tpl.kind !== "road") {
     const path = paths.get(player.pathId);
     if (path) {
       drawPlayerPath(
@@ -909,9 +1000,12 @@ export function playerControl(
   /** Da li policajac propušta krak igrača; `null` kad policajca nema. */
   officerAllows: boolean | null;
 } {
-  const tpl = TEMPLATES[world.templateId];
+  const tpl = templateById(world.templateId);
   const player = world.vehicles.find((x) => x.kind === "player");
-  const a = tpl && tpl.kind !== "highway" ? tpl.arms.find((x) => x.id === (player?.arm as ArmId)) : undefined;
+  const a =
+    tpl && !bezKrakova(tpl)
+      ? tpl.arms.find((x) => x.id === (player?.arm as ArmId))
+      : undefined;
   // Policajac poništava i znak i semafor, pa se gleda prije njih.
   const naredba = officerAllow(officer ?? undefined, world.t);
   if (naredba && player) {

@@ -13,6 +13,7 @@ import {
   LANE_WIDTH,
 } from "./config";
 import { cumulative, len, right, scale, segmentIntersection, sub } from "./geometry";
+import { bezKrakova } from "./types";
 import type {
   Arm,
   ArmId,
@@ -25,6 +26,7 @@ import type {
   Template,
 } from "./types";
 import { buildLanePath, HIGHWAY_LANES } from "./highway";
+import { buildRoadPaths } from "./road";
 import { buildRingPath, exitCountsFor, ringConflicts } from "./roundabout";
 import { exitOf } from "@/lib/simRules";
 
@@ -188,7 +190,10 @@ export function compile(tpl: Template): CompiledTemplate {
   if (hit) return hit;
 
   const paths = new Map<string, Path>();
-  if (tpl.kind === "highway") {
+  if (tpl.kind === "road") {
+    // Dvije trake koje se ne sijeku — kao na autoputu, konflikata nema.
+    for (const p of buildRoadPaths(tpl)) paths.set(p.id, p);
+  } else if (tpl.kind === "highway") {
     // Trake su paralelne i ne sijeku se, pa autoput nema nijednu konfliktnu
     // tačku: odnos među vozilima je odstojanje u traci, ne prvenstvo.
     for (const i of HIGHWAY_LANES) {
@@ -228,7 +233,7 @@ export function compile(tpl: Template): CompiledTemplate {
     ]);
   };
 
-  if (tpl.kind === "highway") {
+  if (bezKrakova(tpl)) {
     // ništa: nema konflikata
   } else if (tpl.kind === "roundabout") {
     parovi.forEach(dodaj);
@@ -519,12 +524,13 @@ export const roadHalf = (tpl: Template, a: Arm): number => tpl.geometry.laneWidt
 export function junctionHalf(tpl: Template): number {
   if (tpl.kind === "roundabout") return tpl.radius + tpl.geometry.laneWidth;
   if (tpl.kind === "highway") return tpl.geometry.laneWidth * (tpl.lanes + 1);
+  if (tpl.kind === "road") return tpl.geometry.laneWidth;
   return Math.max(...tpl.arms.map((a) => roadHalf(tpl, a)));
 }
 
 /** Rastojanje stop-linije od centra [m]; prati `Path.stopLineS`. */
 export const stopLineAt = (tpl: Template): number =>
-  tpl.kind === "roundabout" ? tpl.radius : tpl.kind === "highway" ? 0 : tpl.geometry.size / 2;
+  tpl.kind === "roundabout" ? tpl.radius : bezKrakova(tpl) ? 0 : tpl.geometry.size / 2;
 
 /** Širina pješačkog prelaza [m]: prostor između stop-linije i ukrštanja. */
 export const crosswalkWidth = (tpl: Template): number =>
@@ -563,13 +569,43 @@ export function pedestrianPos(tpl: Template, armId: ArmId, u: number): Point {
 
 /** Dokle pješak ide: kreće sa trotoara, prelazi kolovoz i silazi na drugi trotoar. */
 export function pedestrianSpan(tpl: Template, armId: ArmId): number {
-  const a = tpl.kind === "highway" ? undefined : tpl.arms.find((x) => x.id === armId);
+  const a = bezKrakova(tpl) ? undefined : tpl.arms.find((x) => x.id === armId);
   return (a ? roadHalf(tpl, a) : tpl.geometry.laneWidth) + 1.4;
 }
 
 /** Da li je pješak na kolovozu — dok jeste, prelaz nije slobodan. */
 export function pedestrianOnRoad(tpl: Template, p: { arm: ArmId; u: number }): boolean {
-  const a = tpl.kind === "highway" ? undefined : tpl.arms.find((x) => x.id === p.arm);
+  const a = bezKrakova(tpl) ? undefined : tpl.arms.find((x) => x.id === p.arm);
   const half = a ? roadHalf(tpl, a) : tpl.geometry.laneWidth;
   return Math.abs(p.u) <= half;
+}
+
+// ── Šabloni napravljeni u hodu ──────────────────────────────────────────────
+
+/**
+ * Dionice putovanja se prave iz ivice grafa i sjemena, pa ne mogu stajati u
+ * `TEMPLATES`. Ovdje se pamte samo zato što se šablon traži po `id`-u na više
+ * mjesta (`ctxFor`, crtanje), a scenario nije svuda pri ruci.
+ *
+ * Registar je namjerno malen i izbacuje najstarije: u jednom putovanju je u
+ * igri jedna dionica, a stare više nikome ne trebaju — ni ovdje ni u kešu
+ * prevedenih šablona.
+ */
+const MAX_GENERATED = 16;
+const generated = new Map<string, Template>();
+
+export function registerTemplate(tpl: Template): void {
+  generated.delete(tpl.id);
+  generated.set(tpl.id, tpl);
+  while (generated.size > MAX_GENERATED) {
+    const najstariji = generated.keys().next().value;
+    if (najstariji === undefined) break;
+    generated.delete(najstariji);
+    cache.delete(najstariji);
+  }
+}
+
+/** Šablon po `id`-u: prvo napisani, pa napravljeni. */
+export function templateById(id: string): Template | undefined {
+  return TEMPLATES[id] ?? generated.get(id);
 }

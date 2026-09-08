@@ -23,9 +23,9 @@ import {
   V_MAX_DEFAULT,
 } from "./config";
 import { expectedIndicatorAt } from "./indicatorRules";
-import { compile, TEMPLATES } from "./intersection";
+import { compile, templateById, TEMPLATES } from "./intersection";
 import type { Input, Scenario, World } from "./types";
-import { createWorld, mergeGap, PLAYER_ID, step } from "./world";
+import { createWorld, maxSecondsFor, mergeGap, PLAYER_ID, step } from "./world";
 
 /**
  * Pokazivač kakav tabela traži na mjestu na kojem je igrač.
@@ -37,7 +37,7 @@ import { createWorld, mergeGap, PLAYER_ID, step } from "./world";
 function ispravanPokazivac(world: World, scenario: Scenario): "left" | "right" | null {
   const p = world.vehicles.find((v) => v.id === PLAYER_ID);
   if (!p) return null;
-  const tpl = TEMPLATES[world.templateId]!;
+  const tpl = templateById(world.templateId)!;
   const path = compile(tpl).paths.get(p.pathId);
   return path ? expectedIndicatorAt(path, p.intent, p.s, scenario.indicatorRules) : null;
 }
@@ -131,7 +131,7 @@ const SUDAR_RAZLIKA = 1.2;
 function sudarNeizbjezan(world: World): boolean {
   const player = world.vehicles.find((v) => v.id === PLAYER_ID);
   if (!player || player.done) return false;
-  const tpl = TEMPLATES[world.templateId]!;
+  const tpl = templateById(world.templateId)!;
   const { conflicts } = compile(tpl);
   const doTacke = (v: { s: number; v: number }, s: number) => {
     const d = s - v.s;
@@ -192,7 +192,7 @@ function autoputTraka(
   world: World,
   player: { lane?: number; laneFrom?: number; laneT?: number; s: number; v: number; id: string },
 ): Traka {
-  const tpl = TEMPLATES[world.templateId]!;
+  const tpl = templateById(world.templateId)!;
   if (tpl.kind !== "highway") return { indicator: null };
   if ((player.lane ?? 0) !== -1) return { indicator: null };
   // Traka za usporavanje nije traka za ubrzavanje: iz nje se ne vraća na
@@ -237,7 +237,7 @@ export const perfectBot: Bot = (world, scenario) => {
     return { throttle: 0, brake: 1, indicator: ispravanPokazivac(world, scenario) };
   }
 
-  const tpl = TEMPLATES[world.templateId]!;
+  const tpl = templateById(world.templateId)!;
   const path = compile(tpl).paths.get(player.pathId)!;
   const vMax = scenario.vMax ?? V_MAX_DEFAULT;
 
@@ -323,7 +323,9 @@ export interface RunResult {
 /** Pusti scenario do kraja sa datim botom. Deterministički za dato sjeme. */
 export function run(scenario: Scenario, bot: Bot, seed = 1): RunResult {
   const world = createWorld(scenario, seed);
-  const maxTicks = Math.ceil(MAX_SCENARIO_SECONDS / DT);
+  // Isti prekid kao u `step`: dionica putovanja traje duže od raskrsnice.
+  const tpl = scenario.template ?? TEMPLATES[scenario.intersection];
+  const maxTicks = Math.ceil((tpl ? maxSecondsFor(tpl) : MAX_SCENARIO_SECONDS) / DT);
   let ticks = 0;
   while (world.outcome === "running" && ticks < maxTicks) {
     step(world, scenario, bot(world, scenario));

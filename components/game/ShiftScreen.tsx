@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { SHIFT_VIEW_HALF } from "@/lib/game/sim/config";
-import { TEMPLATES } from "@/lib/game/sim/intersection";
+import { templateById } from "@/lib/game/sim/intersection";
 import type { Scenario } from "@/lib/game/sim/types";
 import { generateSegment } from "@/lib/game/shift/generate";
 import {
@@ -67,7 +67,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
   // Dionica autoputa se vozi drukčije nego raskrsnica: širi kadar, dugmad za
   // traku, i rečenica o tome šta se traži — na autoputu se zadatak ne vidi iz
   // same slike, kao što se na raskrsnici vidi iz znaka.
-  const tpl = TEMPLATES[scenario.intersection];
+  const tpl = scenario.template ?? templateById(scenario.intersection);
   const autoput = tpl?.kind === "highway";
   const zadatak = autoput ? taskTextFor(scenario.player.intent, t, 0, scenario.taskKey) : null;
 
