@@ -60,6 +60,14 @@ export interface RoadEdge {
   seasonal: boolean;
   /** Trajekt: kratak segment bez saobraćaja. */
   ferry: boolean;
+  /**
+   * Put se na drugom kraju završava — dalje se nema kuda.
+   *
+   * Stoji na ivici, ne na čvoru, da bi postojao samo jedan izvor istine: čvor
+   * je slijep tačno onda kad su sve ivice koje do njega vode ovako označene.
+   * Ponašanje je isto kao na granici — poruka i ponuda okretanja.
+   */
+  deadEnd: boolean;
   /** Fiksan broj krivina; bez ovoga se broj izvlači iz sjemena. */
   curves?: number;
 }
@@ -105,6 +113,7 @@ const CVORISTA: ReadonlyArray<readonly [string, string]> = [
   ["vilusi", "Vilusi"],
   ["kamenari", "Kamenari"],
   ["njegusi", "Njeguši"],
+  ["kucka-korita", "Kučka Korita"],
 ];
 
 const GRANICE: ReadonlyArray<readonly [string, string, Country]> = [
@@ -136,6 +145,7 @@ interface EdgeInput {
   verified?: false;
   seasonal?: true;
   ferry?: true;
+  deadEnd?: true;
   curves?: number;
   speedLimit?: number;
 }
@@ -151,6 +161,8 @@ const EDGE_INPUT: readonly EdgeInput[] = [
   { a: "podgorica", b: "smokovac", kind: "magistrala", km: 8 },
   { a: "smokovac", b: "matesevo", kind: "autoput", km: 41 },
   { a: "podgorica", b: "bioce", kind: "magistrala", km: 12 },
+  // Slijep put: gore se stane i vraća se istim putem.
+  { a: "podgorica", b: "kucka-korita", kind: "planinski", km: 35, deadEnd: true },
   // Kanjon Morače, Platije.
   { a: "bioce", b: "kolasin", kind: "planinski", km: 60 },
   { a: "matesevo", b: "kolasin", kind: "regionalni", km: 15 },
@@ -220,6 +232,7 @@ export const EDGES: readonly RoadEdge[] = EDGE_INPUT.map((e) => ({
   verified: e.verified ?? true,
   seasonal: e.seasonal ?? false,
   ferry: e.ferry ?? false,
+  deadEnd: e.deadEnd ?? false,
   ...(e.curves === undefined ? {} : { curves: e.curves }),
 }));
 
@@ -273,6 +286,20 @@ export interface Putokaz {
   nazad: Smjer | null;
   /** Postavljeno ako je čvor granični prelaz: tu se put završava. */
   granica: RoadNode | null;
+  /**
+   * Postavljeno ako je čvor slijep kraj puta (nije granica).
+   *
+   * Nije isto što i `krajPuta`: opština koja je u ovom skupu list grafa — Zeta,
+   * Petnjica, Gusinje — nema kuda dalje samo zato što mreža ovdje prestaje, a
+   * ne zato što se put stvarno završava. Poruka „kraj puta" ide samo ovdje.
+   */
+  slijepiKraj: RoadNode | null;
+}
+
+/** Čvor je slijep kad su sve ivice do njega tako označene. */
+function slijepCvor(nodeId: string): boolean {
+  const ivice = edgesAt(nodeId);
+  return ivice.length > 0 && ivice.every((e) => e.deadEnd);
 }
 
 /**
@@ -311,6 +338,7 @@ export function putokazi(
     krajPuta: smjerovi.length === 0,
     nazad,
     granica: cvor && cvor.kind === "granica" ? cvor : null,
+    slijepiKraj: cvor && cvor.kind !== "granica" && slijepCvor(cvor.id) ? cvor : null,
   };
 }
 

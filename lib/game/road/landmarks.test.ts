@@ -105,4 +105,9 @@ describe("znamenitosti po dionici", () => {
       "stari-bar",
     ]);
   });
+
+  it("Kučka Korita stoje na svom čvoru, ne na dionici do Bioča", () => {
+    expect(landmarksAtNode("kucka-korita").map((l) => l.id)).toEqual(["kucka-korita"]);
+    expect(landmarksOnEdge("podgorica--bioce")).toEqual([]);
+  });
 });

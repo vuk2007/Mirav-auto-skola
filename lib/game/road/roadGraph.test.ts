@@ -32,12 +32,12 @@ function dostizni(od: string, ljeto: boolean): Set<string> {
 }
 
 describe("čvorovi", () => {
-  it("ima svih 25 opština, 10 čvorišta i 9 graničnih prelaza", () => {
+  it("ima svih 25 opština, 11 čvorišta i 9 graničnih prelaza", () => {
     const po = (k: string) => NODES.filter((n) => n.kind === k).length;
     expect(po("opstina")).toBe(25);
-    expect(po("cvoriste")).toBe(10);
+    expect(po("cvoriste")).toBe(11);
     expect(po("granica")).toBe(9);
-    expect(NODES).toHaveLength(44);
+    expect(NODES).toHaveLength(45);
   });
 
   it("nema dva čvora sa istim identifikatorom", () => {
@@ -96,6 +96,10 @@ describe("ivice", () => {
     expect(EDGES.filter((e) => e.seasonal).map((e) => e.id)).toEqual(["zabljak--pluzine"]);
     expect(EDGES.filter((e) => e.ferry).map((e) => e.id)).toEqual(["tivat--kamenari"]);
   });
+
+  it("slijepa je samo Podgorica — Kučka Korita", () => {
+    expect(EDGES.filter((e) => e.deadEnd).map((e) => e.id)).toEqual(["podgorica--kucka-korita"]);
+  });
 });
 
 describe("povezanost", () => {
@@ -152,19 +156,33 @@ describe("putokaz", () => {
       const odakle = susjed[0] ?? "";
       const p = putokazi(g.id, { odakle });
       expect(p.granica?.id).toBe(g.id);
+      expect(p.slijepiKraj, g.id).toBeNull();
       expect(p.krajPuta).toBe(true);
       expect(p.smjerovi).toEqual([]);
       expect(p.nazad?.to.id).toBe(odakle);
     }
   });
 
-  it("slijepi kraj koji nije granica se ponaša isto, samo bez poruke o granici", () => {
-    // Zeta, Petnjica i Gusinje su u ovom skupu listovi grafa.
+  it("Kučka Korita su kraj puta sa okretanjem, isto kao granica", () => {
+    const p = putokazi("kucka-korita", { odakle: "podgorica" });
+    expect(p.krajPuta).toBe(true);
+    expect(p.smjerovi).toEqual([]);
+    expect(p.slijepiKraj?.id).toBe("kucka-korita");
+    expect(p.granica).toBeNull();
+    expect(p.nazad?.to.id).toBe("podgorica");
+    // Iz Podgorice se tamo ide kao i svuda drugo — slijep je gornji kraj.
+    expect(putokazi("podgorica").smjerovi.map((s) => s.to.id)).toContain("kucka-korita");
+    expect(putokazi("podgorica").slijepiKraj).toBeNull();
+  });
+
+  it("list grafa koji nije proglašen slijepim nema poruku o kraju puta", () => {
+    // Zeta, Petnjica i Gusinje su listovi samo zato što mreža tu prestaje.
     for (const id of ["zeta", "petnjica", "gusinje"]) {
       const odakle = edgesAt(id).map((e) => otherEnd(e, id))[0] ?? "";
       const p = putokazi(id, { odakle });
       expect(p.krajPuta, id).toBe(true);
       expect(p.granica, id).toBeNull();
+      expect(p.slijepiKraj, id).toBeNull();
       expect(p.nazad?.to.id, id).toBe(odakle);
     }
   });
@@ -183,6 +201,7 @@ describe("putokaz", () => {
     expect(p.smjerovi).toEqual([]);
     expect(p.krajPuta).toBe(true);
     expect(p.granica).toBeNull();
+    expect(p.slijepiKraj).toBeNull();
   });
 });
 

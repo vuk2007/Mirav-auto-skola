@@ -124,7 +124,7 @@ const INPUT: readonly LandmarkInput[] = [
   { id: "prokletije-grebaje", name: "Prokletije, Grebaje", type: "planina", node: "gusinje" },
   { id: "hridsko-jezero", name: "Hridsko jezero", type: "jezero", node: "plav", cardOnly: true },
   { id: "izvor-ibra", name: "Izvor Ibra", type: "izvor", node: "rozaje" },
-  { id: "kucka-korita", name: "Kučka Korita", type: "planina", edge: "podgorica--bioce", atKm: 8, side: "right" },
+  { id: "kucka-korita", name: "Kučka Korita", type: "planina", node: "kucka-korita" },
 
   // ── Cetinje, Lovćen, Boka ─────────────────────────────────────────────────
   { id: "cetinjski-manastir", name: "Cetinjski manastir", type: "manastir", node: "cetinje" },
