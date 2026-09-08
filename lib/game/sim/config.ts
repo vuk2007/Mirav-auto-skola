@@ -378,3 +378,26 @@ export const HARD_SHOULDER_TIME = 1.5;
  * (`LANE_CHANGE_TIME`), sa nešto rezerve.
  */
 export const MERGE_ZONE = 90;
+
+// ── Putna mreža Crne Gore ───────────────────────────────────────────────────
+//
+// Ovdje su, izuzetno, kilometri i km/h: to su jedinice sa saobraćajnog znaka i
+// sa karte, a ne jedinice simulacije. Kad dionica grafa uđe u simulaciju,
+// pretvaraju se u metre i m/s na jednom mjestu, ne ovdje.
+
+/** Uobičajeno ograničenje po vrsti puta [km/h]; ivica ga smije nadjačati. */
+export const SPEED_LIMIT_KMH_BY_ROAD = {
+  autoput: 100,
+  magistrala: 80,
+  regionalni: 60,
+  planinski: 50,
+  gradski: 50,
+} as const;
+
+/** Koliko krivina dobija planinska ivica ako joj broj nije zadat. */
+export const MOUNTAIN_CURVES_MIN = 4;
+export const MOUNTAIN_CURVES_MAX = 8;
+/** Preporučena brzina u planinskoj krivini [km/h] — raspon i korak. */
+export const MOUNTAIN_ADVISORY_MIN = 30;
+export const MOUNTAIN_ADVISORY_MAX = 40;
+export const MOUNTAIN_ADVISORY_STEP = 5;
