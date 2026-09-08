@@ -304,8 +304,6 @@ export const HAZARD_WINDOW = 8;
 /** Na kojem dijelu isteklog roka zadržavanja se javlja truba iza leđa. */
 export const HORN_AT = 0.5;
 
-/** Usporenje iznad kojeg se kamera blago trese [m/s²]. */
-export const SHAKE_DECEL = 3;
 
 /**
  * Širina razdjelnog ostrva između ulazne i izlazne trake kraka kružnog toka [m].

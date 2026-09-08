@@ -5,8 +5,8 @@
       "imaZonu": true,
       "imaSlovo": true,
       "piksela": {
-        "zona": 794,
-        "slovo": 16
+        "zona": 795,
+        "slovo": 20
       }
     },
     "kruzni-stop": {
@@ -14,8 +14,8 @@
       "imaZonu": true,
       "imaSlovo": true,
       "piksela": {
-        "zona": 1556,
-        "slovo": 14
+        "zona": 1564,
+        "slovo": 16
       }
     },
     "ljevak": {
@@ -23,7 +23,7 @@
       "imaZonu": true,
       "imaSlovo": false,
       "piksela": {
-        "zona": 1943,
+        "zona": 1945,
         "slovo": 0
       }
     },
@@ -32,7 +32,7 @@
       "imaZonu": true,
       "imaSlovo": false,
       "piksela": {
-        "zona": 3857,
+        "zona": 3860,
         "slovo": 0
       }
     },
@@ -41,8 +41,8 @@
       "imaZonu": true,
       "imaSlovo": true,
       "piksela": {
-        "zona": 5414,
-        "slovo": 25
+        "zona": 5432,
+        "slovo": 28
       }
     }
   },

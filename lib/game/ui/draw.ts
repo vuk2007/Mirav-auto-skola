@@ -110,7 +110,26 @@ const inFrame = (v: View, p: Point): boolean => {
   return q.x >= 0 && q.x <= v.wPx && q.y >= 0 && q.y <= v.hPx;
 };
 
-const px = (v: View, p: Point): Point => ({ x: v.cx + p.x * v.scale, y: v.cy + p.y * v.scale });
+/**
+ * Svijet → ekran, uz okretanje kadra za 180°.
+ *
+ * Sjever se crta DOLJE. Razlog je vozač, ne karta: igrač uvijek ulazi sa
+ * sjevernog kraka i vozi na jug, pa bi na uobičajenoj karti (sjever gore) vozio
+ * nadolje — a tada je njegova lijeva strana desno na ekranu. Pokazivač koji se
+ * upali lijevo osvijetli desnu stranu slike, a skretanje ulijevo se izvije
+ * udesno. Sve je bilo geometrijski tačno i svejedno nečitljivo.
+ *
+ * Sa okrenutim kadrom igrač vozi NAGORE: lijevo je lijevo, desno je desno, i
+ * slika liči na crtež iz testova. Okretanje je rotacija, ne ogledalo, pa se
+ * strane svijeta ne miješaju — desna strana ostaje desna i u pravilu prvenstva.
+ *
+ * Uz `px` ide i `screenAngle`: sve što se crta rotacijom oko svoje ose mora
+ * dobiti isti obrt.
+ */
+const px = (v: View, p: Point): Point => ({ x: v.cx - p.x * v.scale, y: v.cy - p.y * v.scale });
+
+/** Ugao smjera na ekranu — isti obrt kao `px`. */
+const screenAngle = (h: Point): number => Math.atan2(-h.y, -h.x);
 
 /** Vektor okrenut za 90° udesno (u sistemu gdje `y` raste nadolje). */
 const rt = (h: Point): Point => ({ x: -h.y, y: h.x });
@@ -576,7 +595,7 @@ function drawVehicle(
   const k = lenPx / (CAR_LENGTH * v.scale);
   const widPx = CAR_WIDTH * v.scale * k;
   const c = px(v, pos);
-  const ang = Math.atan2(heading.y, heading.x);
+  const ang = screenAngle(heading);
 
   ctx.save();
   ctx.translate(c.x, c.y);
@@ -656,7 +675,7 @@ function drawEdgeMarker(
 
   ctx.save();
   ctx.translate(c.x, c.y);
-  ctx.rotate(Math.atan2(heading.y, heading.x));
+  ctx.rotate(screenAngle(heading));
   ctx.globalAlpha = 0.85;
   ctx.beginPath();
   ctx.moveTo(r, 0);
@@ -721,7 +740,7 @@ function drawOfficer(
 
   ctx.save();
   ctx.translate(c.x, c.y);
-  ctx.rotate(Math.atan2(osa.y, osa.x));
+  ctx.rotate(screenAngle(osa));
 
   // Svijetla podloga — tamna figura na tamnom asfaltu se inače ne vidi.
   ctx.beginPath();
@@ -763,13 +782,6 @@ export interface DrawOptions {
    */
   indicatorZones?: { labels?: { left: string; right: string } } | null;
   /**
-   * Jačina podrhtavanja kamere, 0–1.
-   *
-   * Koristi se pri naglom kočenju. Namjerno je slabo i kratko: cilj je da se
-   * osjeti da je kočenje bilo naglo, a ne da se sakrije šta se dešava.
-   */
-  shake?: number;
-  /**
    * Kamera prati igrača umjesto da stoji na raskrsnici.
    *
    * Koristi je beskonačni mod: tamo se vozi kroz niz raskrsnica, pa fiksni
@@ -797,19 +809,13 @@ export function drawScene(
     const p = igrac ? paths.get(igrac.pathId) : undefined;
     if (igrac && p) {
       const poz = poseOn(tpl, p, { ...igrac, s: renderS(runner, igrac.id, igrac.s) }).pos;
-      // Igrač stoji na 38% visine — dvije trećine kadra su ono ispred njega.
+      // Igrač stoji na 62% visine — dvije trećine kadra su ono ispred njega, a
+      // ispred je NAGORE (vidi `px`). Predznaci prate okrenuti kadar.
       // Na autoputu se prati samo uzduž: da kadar klizi i bočno pri promjeni
       // trake značilo bi da se pomjera put, a ne vozilo.
-      v.cx = widthPx / 2 - (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
-      v.cy = heightPx * 0.38 - poz.y * v.scale;
+      v.cx = widthPx / 2 + (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
+      v.cy = heightPx * 0.62 + poz.y * v.scale;
     }
-  }
-
-  const trese = opts.shake ?? 0;
-  if (trese > 0) {
-    // Pomjeraj je vezan za vrijeme simulacije, pa je isti i pri ponavljanju.
-    v.cx += Math.sin(world.t * 47) * trese * 4;
-    v.cy += Math.cos(world.t * 61) * trese * 4;
   }
 
   ctx.fillStyle = PALETTE.grass;
