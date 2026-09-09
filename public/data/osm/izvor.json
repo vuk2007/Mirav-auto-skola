@@ -1,0 +1,26 @@
+{
+  "izvor": "OpenStreetMap",
+  "licenca": "ODbL 1.0",
+  "potpis": "Podaci o putevima i okolini: (c) OpenStreetMap contributors (ODbL)",
+  "preuzeto": "2026-09-09T10:03:24.917Z",
+  "stanjeBaze": {
+    "putevi": "2026-09-09T08:53:17Z",
+    "ulice": "2026-09-09T09:04:23Z",
+    "voda": "2026-09-09T09:06:26Z",
+    "zelenilo": "2026-07-28T02:16:18Z",
+    "vrhovi": "2026-06-01T08:52:28Z",
+    "granica": "2026-09-09T10:01:20Z"
+  },
+  "obradjeno": "2026-09-09T10:03:36.255Z",
+  "koordinate": "UTM 34N (WGS84)",
+  "napomena": "Koordinate su metri, ne stepeni. Ovo nije WGS84 GeoJSON.",
+  "tile": 2000,
+  "uprosceno": {
+    "linije": 5,
+    "poligoni": 20
+  },
+  "najmanjaPovrsina": 2000,
+  "tileova": 8218,
+  "vrhova": 4593,
+  "granicaKomada": 172
+}

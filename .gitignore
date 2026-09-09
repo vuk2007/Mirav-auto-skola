@@ -13,3 +13,6 @@ next-env.d.ts
 
 # generise se pri svakom buildu iz data/kazne.json (samo potvrdjene kazne)
 data/javno/
+
+# Sirovi Overpass odgovori — ne idu u repozitorijum.
+scripts/osm/.cache/

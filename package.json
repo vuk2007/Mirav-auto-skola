@@ -16,7 +16,11 @@
     "translate": "node scripts/translate.mjs",
     "translate:stats": "node scripts/translate.mjs --stats",
     "translate:apply": "node scripts/apply-translations.mjs",
-    "translate:check": "node scripts/apply-translations.mjs --check"
+    "translate:check": "node scripts/apply-translations.mjs --check",
+    "osm:povuci": "node --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/povuci.mjs",
+    "osm:pripremi": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/pripremi.mjs",
+    "osm:ivice": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/ivice.mjs",
+    "osm:kicme": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/kicme.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
