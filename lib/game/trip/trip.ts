@@ -11,6 +11,8 @@
  * ponovo, sa istim sjemenom, pa je i druga vožnja ista situacija.
  */
 
+import { CITY_JUNCTIONS_MAX, CITY_JUNCTIONS_MIN } from "../sim/config";
+import { rng } from "../sim/geometry";
 import type { Landmark } from "../road/landmarks";
 import { landmarksAtNode, landmarksOnEdge } from "../road/landmarks";
 import {
@@ -88,6 +90,27 @@ export function znamenitosti(state: TripState, edge: RoadEdge): Landmark[] {
     ...landmarksOnEdge(edge.id, obrnuto(state, edge)),
     ...landmarksAtNode(cilj).filter((l) => !l.cardOnly),
   ];
+}
+
+/**
+ * Gradska vožnja u mjestu u koje se stiže.
+ *
+ * Kroz opštinu se prolazi ulicom, dakle nizom raskrsnica. Čvorište i granični
+ * prelaz nisu grad — tamo se samo bira pravac, odnosno okreće.
+ *
+ * Sjeme je izvedeno iz sjemena same dionice, pa je i gradska vožnja ista kad
+ * se dionica ponovi poslije sudara.
+ */
+export function gradskaVoznja(
+  state: TripState,
+  edge: RoadEdge,
+): { seed: number; count: number } {
+  const cilj = nodeById(otherEnd(edge, state.at));
+  const seed = (legSeed(state, edge) ^ 0x5bf03635) >>> 0;
+  if (cilj?.kind !== "opstina") return { seed, count: 0 };
+  const r = rng(seed);
+  const raspon = CITY_JUNCTIONS_MAX - CITY_JUNCTIONS_MIN + 1;
+  return { seed, count: CITY_JUNCTIONS_MIN + Math.floor(r() * raspon) };
 }
 
 /** Stanje poslije pređene dionice. */

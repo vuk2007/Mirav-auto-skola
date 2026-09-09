@@ -9,13 +9,16 @@ import {
   type RoadKind,
   type Smjer,
 } from "@/lib/game/road/roadGraph";
+import { CITY_LEVEL, SHIFT_VIEW_HALF } from "@/lib/game/sim/config";
+import { generateSegment } from "@/lib/game/shift/generate";
 import type { RoadTemplate, ViolationType } from "@/lib/game/sim/types";
-import { VIOLATION_LABEL } from "@/lib/game/ui/labels";
+import { VIOLATION_LABEL, zonesForLevel } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import {
   dionicaZa,
   gdjeSam,
+  gradskaVoznja,
   opstina,
   parseTrip,
   smjerovi,
@@ -30,7 +33,10 @@ import GameCanvas, { type HudState } from "./GameCanvas";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
 
-type Phase = "polazak" | "putokaz" | "voznja" | "stigao" | "sudar";
+type Phase = "polazak" | "putokaz" | "voznja" | "grad" | "stigao" | "sudar";
+
+/** Gdje se stalo — po tome se zna šta se ponavlja poslije sudara. */
+type Grad = { seed: number; count: number; index: number };
 
 const ROAD_LABEL: Record<RoadKind, keyof Dict> = {
   autoput: "tripRoadAutoput",
@@ -66,6 +72,15 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
   const [edge, setEdge] = useState<RoadEdge | null>(null);
   const [vidjeno, setVidjeno] = useState<Landmark[]>([]);
   const [zabiljezeno, setZabiljezeno] = useState<ViolationType[]>([]);
+  const [grad, setGrad] = useState<Grad | null>(null);
+  /**
+   * Koji je ovo pokušaj iste vožnje.
+   *
+   * Poslije sudara se vozi ISTA situacija, ali od početka. Bez ovog brojača bi
+   * se vratio isti, već potrošeni svijet: platno bi odmah ponovo javilo ishod
+   * i ekran bi se zavrtio u petlji.
+   */
+  const [pokusaj, setPokusaj] = useState(0);
   const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0 });
 
   // Sačuvano putovanje se čita tek na klijentu; ako je iz starije verzije
@@ -75,44 +90,98 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
     if (trip) saveTrip(trip);
   }, [trip]);
 
-  const scenario = useMemo(
-    () => (trip && edge ? dionicaZa(trip, edge) : null),
-    [trip, edge],
-  );
-  const runner = useMemo(() => (scenario ? createRunner(scenario, 1) : null), [scenario]);
+  // Jedna dionica su dvije vrste vožnje: otvoren put do mjesta, pa ulica kroz
+  // njega. Obje su običan scenario, pa se platno i komande ne mijenjaju.
+  const scenario = useMemo(() => {
+    // Van vožnje se scenario ne pravi: poslije dolaska je `trip` već pomjeren,
+    // pa bi ista ivica dala dionicu u suprotnom smjeru — nepotreban posao i
+    // šablon koji se uzalud upisuje u registar.
+    if (!trip || !edge || (phase !== "voznja" && phase !== "grad")) return null;
+    if (grad) {
+      return generateSegment(grad.seed, CITY_LEVEL, grad.index, { autoput: false });
+    }
+    return dionicaZa(trip, edge);
+  }, [trip, edge, grad, phase]);
+  const runner = useMemo(() => {
+    // `pokusaj` ulazi ovdje samo da bi poslije sudara nastao NOV svijet.
+    // Sjeme ostaje 1, pa se ponavlja ista situacija — mijenja se stanje, ne
+    // scenario.
+    void pokusaj;
+    return scenario ? createRunner(scenario, 1) : null;
+  }, [scenario, pokusaj]);
   const tpl = scenario?.template as RoadTemplate | undefined;
+  const uGradu = grad !== null;
 
   const kreni = useCallback(
     (smjer: Smjer) => {
       pedals.release();
+      setZabiljezeno([]);
+      setGrad(null);
+      setPokusaj(0);
       setEdge(smjer.edge);
       setPhase("voznja");
     },
     [pedals],
   );
 
+  const stigaoUMjesto = useCallback(
+    (state: TripState, e: RoadEdge) => {
+      setVidjeno(znamenitosti(state, e));
+      setTrip(stigao(state, e));
+      setGrad(null);
+      setPhase("stigao");
+    },
+    [],
+  );
+
   /**
-   * Kraj dionice.
+   * Kraj jedne vožnje — dionice ili gradske raskrsnice.
    *
    * Prekršaj NE prekida putovanje — dok pravila otvorenog puta nisu
    * napravljena, jedino što stvarno zaustavlja jeste sudar, jer se kroz drugo
    * vozilo ne može proći. Ostalo se prijavi na dolasku i ide dalje: da
    * prekoračenje brzine ovdje obara vožnju, igra bi kažnjavala po pravilu koje
    * još nije ni objašnjeno.
+   *
+   * Poslije sudara se ponavlja samo ono što je i palo: raskrsnica ako se pala
+   * u gradu, dionica ako se pala na putu. Ponavljati četiri minuta puta zbog
+   * sudara na posljednjoj raskrsnici bila bi kazna, a ne ispravka.
    */
   const zavrsi = useCallback(() => {
     if (!trip || !edge || !runner) return;
-    pedals.release();
     const prekrsaji = runner.world.violations;
     if (prekrsaji.some((v) => v.type === "collision")) {
+      pedals.release();
       setPhase("sudar");
       return;
     }
-    setZabiljezeno([...new Set(prekrsaji.map((v) => v.type))]);
-    setVidjeno(znamenitosti(trip, edge));
-    setTrip(stigao(trip, edge));
-    setPhase("stigao");
-  }, [trip, edge, runner, pedals]);
+    setZabiljezeno((prije) => [...new Set([...prije, ...prekrsaji.map((v) => v.type)])]);
+
+    // Namjerno NIJE `release()` dok se vožnja nastavlja — isto kao u smjeni:
+    // ko drži gas kroz grad mora da ga zadrži i u sljedećoj raskrsnici.
+    // Otpuštanje bi mu ga uzelo, a novi pritisak ne stiže jer taster nikad
+    // nije ni pušten. Provjera u pregledaču je upravo na ovo i naletjela.
+    if (grad) {
+      const sljedeca = grad.index + 1;
+      if (sljedeca < grad.count) {
+        pedals.resetIndicator();
+        setGrad({ ...grad, index: sljedeca });
+      } else {
+        pedals.release();
+        stigaoUMjesto(trip, edge);
+      }
+      return;
+    }
+    const ulica = gradskaVoznja(trip, edge);
+    if (ulica.count > 0) {
+      pedals.resetIndicator();
+      setGrad({ ...ulica, index: 0 });
+      setPhase("grad");
+      return;
+    }
+    pedals.release();
+    stigaoUMjesto(trip, edge);
+  }, [trip, edge, runner, grad, pedals, stigaoUMjesto]);
 
   const putokaz = trip ? smjerovi(trip) : null;
   const mjesto = trip ? gdjeSam(trip) : undefined;
@@ -191,7 +260,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
         </span>
       </div>
 
-      {phase === "voznja" && runner && tpl && scenario ? (
+      {(phase === "voznja" || phase === "grad") && runner && scenario ? (
         <>
           <div className="relative mx-auto w-full max-w-[min(100%,58vh)]">
             <GameCanvas
@@ -201,12 +270,12 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               onHud={setHud}
               onFinish={zavrsi}
               flagVehicleId={null}
-              officer={null}
-              indicatorZones={null}
+              officer={scenario.officer ?? null}
+              indicatorZones={uGradu ? zonesForLevel(CITY_LEVEL, t) : null}
               level={scenario.difficulty}
               sound={sound}
-              camera={{ follow: true, half: tpl.viewHalf }}
-              label={scenario.title.me ?? t.tripTitle}
+              camera={{ follow: true, half: uGradu ? SHIFT_VIEW_HALF : tpl?.viewHalf }}
+              label={uGradu ? t.tripCity : (scenario.title.me ?? t.tripTitle)}
             />
             <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
               <div className="flex gap-2">
@@ -214,7 +283,9 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
                 <Hud label={t.gameTime} value={`${hud.t.toFixed(0)} s`} />
               </div>
               <p className="max-w-[15rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
-                {scenario.title.me}
+                {grad
+                  ? `${t.tripCity} ${grad.index + 1}/${grad.count} — ${mjesto?.name ?? ""}`
+                  : scenario.title.me}
               </p>
             </div>
           </div>
@@ -231,12 +302,15 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
         </>
       ) : phase === "sudar" ? (
         <div className="rounded border border-line bg-panel p-4">
-          <p className="font-display text-lg font-bold text-red uppercase">{t.tripCrash}</p>
+          <p className="font-display text-lg font-bold text-red uppercase">
+            {grad ? t.tripCrashJunction : t.tripCrash}
+          </p>
           <button
             type="button"
             onClick={() => {
               pedals.release();
-              setPhase("voznja");
+              setPokusaj((n) => n + 1);
+              setPhase(grad ? "grad" : "voznja");
             }}
             className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
           >

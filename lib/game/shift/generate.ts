@@ -80,15 +80,31 @@ function izborNiza<T>(rand: () => number, niz: readonly T[]): T {
  * bilo nerješivo, a zadatak izričito zabranjuje situacije bez ispravnog
  * rješenja. Jedna provjera je jedan prolaz simulacije — desetak milisekundi.
  */
-export function generateSegment(seed: number, level: Level, index: number): Scenario {
+export interface SegmentOptions {
+  /**
+   * Da li lanac smije da ubaci dionicu autoputa.
+   *
+   * Postoji zbog gradske vožnje u putovanju: kroz Cetinje se ne prolazi
+   * autoputem. Izvlačenje iz sjemena se i tada obavi — samo se rezultat
+   * zanemari — pa je ostatak lanca isti sa autoputem i bez njega.
+   */
+  autoput?: boolean;
+}
+
+export function generateSegment(
+  seed: number,
+  level: Level,
+  index: number,
+  opts: SegmentOptions = {},
+): Scenario {
   for (let pokusaj = 0; pokusaj < 6; pokusaj += 1) {
-    const kandidat = sastavi(seed, level, index, pokusaj);
+    const kandidat = sastavi(seed, level, index, pokusaj, opts);
     if (rjesiv(kandidat, seed)) return kandidat;
   }
   // Ako nijedna varijanta ne prođe, ide najjednostavnija: jedno vozilo i širok
   // prozor. Nju fuzz test i dalje provjerava — ako i ona padne, nešto je u
   // pravilima, a ne u generatoru.
-  return sastavi(seed, level, index, -1);
+  return sastavi(seed, level, index, -1, opts);
 }
 
 function rjesiv(s: Scenario, seed: number): boolean {
@@ -96,13 +112,21 @@ function rjesiv(s: Scenario, seed: number): boolean {
   return finished && world.outcome === "passed" && world.violations.length === 0;
 }
 
-function sastavi(seed: number, level: Level, index: number, pokusaj: number): Scenario {
+function sastavi(
+  seed: number,
+  level: Level,
+  index: number,
+  pokusaj: number,
+  opts: SegmentOptions = {},
+): Scenario {
   const rand = rng(seed * 7919 + index * 104729 + 17);
   const dif = DIFFICULTY[level];
   // Odluka o autoputu je prvi potez sjemena, prije svega ostalog. Time je
   // izbor stabilan: `highwayChance` se mijenja po nivou, a ne po tome šta je
-  // generator prije toga izvukao.
-  if (rand() < dif.highwayChance) return autoput(rand, level, index, pokusaj);
+  // generator prije toga izvukao. Zabrana autoputa ne preskače izvlačenje nego
+  // samo njegov ishod — inače bi zabrana pomjerila cijeli ostatak lanca.
+  const naAutoput = rand() < dif.highwayChance;
+  if (naAutoput && (opts.autoput ?? true)) return autoput(rand, level, index, pokusaj);
   const tpl = izborNiza(rand, SEGMENT_TEMPLATES);
   const kruzni = tpl === "kruzni";
   const intent: Intent = kruzni ? { kind: "exit", n: 2 } : "straight";

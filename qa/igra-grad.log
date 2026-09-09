@@ -1,0 +1,25 @@
+{
+  "opstina": {
+    "uGradu": 3,
+    "ukupno": 3,
+    "ponavljanja": 0,
+    "imaGradskuVoznju": true,
+    "provezenoSve": true,
+    "stigao": true
+  },
+  "cvoriste": {
+    "uGradu": 0,
+    "ukupno": 0,
+    "ponavljanja": 0,
+    "bezGradskeVoznje": true,
+    "stigao": true
+  },
+  "ponavljanje": {
+    "sudarNaRaskrsnici": true,
+    "istaRaskrsnicaPoslije": true,
+    "nastavljeno": false,
+    "porukaRaskrsnica": true,
+    "nijeUPetlji": true
+  },
+  "greske": []
+}

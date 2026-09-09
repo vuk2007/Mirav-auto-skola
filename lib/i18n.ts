@@ -190,6 +190,8 @@ export interface Dict {
   tripTagUnverified: string;
   tripCrash: string;
   tripNoted: string;
+  tripCity: string;
+  tripCrashJunction: string;
   tripRetry: string;
   tripRoadAutoput: string;
   tripRoadMagistrala: string;
@@ -535,6 +537,8 @@ const me: Dict = {
   tripTagUnverified: "nije provjereno",
   tripCrash: "Sudar. Ova dionica se vozi ponovo.",
   tripNoted: "Zabilježeno usput",
+  tripCity: "Kroz grad",
+  tripCrashJunction: "Sudar. Ova raskrsnica se vozi ponovo.",
   tripRetry: "Vozi ponovo",
   tripRoadAutoput: "autoput",
   tripRoadMagistrala: "magistrala",
@@ -869,6 +873,8 @@ const en: Dict = {
   tripTagUnverified: "unverified",
   tripCrash: "A crash. This leg starts over.",
   tripNoted: "Noted along the way",
+  tripCity: "Through town",
+  tripCrashJunction: "A crash. This junction starts over.",
   tripRetry: "Drive again",
   tripRoadAutoput: "motorway",
   tripRoadMagistrala: "main road",
@@ -1208,6 +1214,8 @@ const sq: Dict = {
   tripTagUnverified: "e paverifikuar",
   tripCrash: "Përplasje. Kjo pjesë nis nga fillimi.",
   tripNoted: "Shënuar gjatë rrugës",
+  tripCity: "Nëpër qytet",
+  tripCrashJunction: "Përplasje. Ky kryqëzim nis nga fillimi.",
   tripRetry: "Ngis përsëri",
   tripRoadAutoput: "autostradë",
   tripRoadMagistrala: "rrugë magjistrale",
@@ -1549,6 +1557,8 @@ const ru: Dict = {
   tripTagUnverified: "не проверено",
   tripCrash: "Авария. Этот участок начинается заново.",
   tripNoted: "Отмечено в пути",
+  tripCity: "По городу",
+  tripCrashJunction: "Авария. Этот перекрёсток начинается заново.",
   tripRetry: "Ехать снова",
   tripRoadAutoput: "автомагистраль",
   tripRoadMagistrala: "магистраль",

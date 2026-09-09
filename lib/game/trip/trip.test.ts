@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { EDGES, edgeById, nodeById, otherEnd, type RoadEdge } from "../road/roadGraph";
 import { LANDMARKS } from "../road/landmarks";
+import { CITY_LEVEL } from "../sim/config";
+import { TEMPLATES } from "../sim/intersection";
+import { generateSegment } from "../shift/generate";
 import {
   dionicaZa,
+  gradskaVoznja,
   ispravno,
   legSeed,
   obrnuto,
@@ -264,5 +268,53 @@ describe("čitanje sačuvanog putovanja", () => {
     ]) {
       expect(parseTrip(loše), JSON.stringify(loše)).toBeNull();
     }
+  });
+});
+
+describe("gradska vožnja", () => {
+  it("kroz opštinu se prolazi ulicom, kroz čvorište i granicu ne", () => {
+    const t = startTrip("podgorica", 1);
+    expect(gradskaVoznja(t, ivica("podgorica--danilovgrad")).count).toBeGreaterThan(0);
+    expect(gradskaVoznja(t, ivica("podgorica--smokovac")).count).toBe(0);
+    expect(gradskaVoznja(startTrip("tuzi", 1), ivica("tuzi--bozaj")).count).toBe(0);
+    expect(gradskaVoznja(t, ivica("podgorica--kucka-korita")).count).toBe(0);
+  });
+
+  it("dvije ili tri raskrsnice, nikad više", () => {
+    for (let seed = 1; seed <= 200; seed++) {
+      const t = startTrip("podgorica", seed);
+      const { count } = gradskaVoznja(t, ivica("podgorica--cetinje"));
+      expect(count, `sjeme ${seed}`).toBeGreaterThanOrEqual(2);
+      expect(count, `sjeme ${seed}`).toBeLessThanOrEqual(3);
+    }
+  });
+
+  it("i broj i sjeme se ponavljaju uz ponovljenu dionicu", () => {
+    const t = startTrip("podgorica", 5);
+    const e = ivica("podgorica--cetinje");
+    expect(gradskaVoznja(t, e)).toEqual(gradskaVoznja(t, e));
+    expect(gradskaVoznja(t, e)).not.toEqual(gradskaVoznja({ ...t, legs: 1 }, e));
+  });
+
+  it("gradska raskrsnica nikad nije autoput", () => {
+    for (let seed = 1; seed <= 120; seed++) {
+      const s = generateSegment(seed, CITY_LEVEL, seed % 4, { autoput: false });
+      const tpl = s.template ?? TEMPLATES[s.intersection];
+      expect(tpl?.kind, `sjeme ${seed}`).not.toBe("highway");
+    }
+  });
+
+  it("zabrana autoputa ne mijenja ostatak lanca", () => {
+    // Sjeme koje ionako nije izvuklo autoput mora dati isti segment sa
+    // zabranom i bez nje — inače bi zabrana pomjerila cijelu smjenu.
+    let uporedjeno = 0;
+    for (let seed = 1; seed <= 60 && uporedjeno < 10; seed++) {
+      const sa = generateSegment(seed, CITY_LEVEL, 0);
+      const tpl = sa.template ?? TEMPLATES[sa.intersection];
+      if (tpl?.kind === "highway") continue;
+      expect(generateSegment(seed, CITY_LEVEL, 0, { autoput: false })).toEqual(sa);
+      uporedjeno += 1;
+    }
+    expect(uporedjeno).toBeGreaterThan(0);
   });
 });

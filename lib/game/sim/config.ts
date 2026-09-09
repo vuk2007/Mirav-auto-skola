@@ -457,3 +457,21 @@ export const TRIP_SEGMENT_TIMEOUT_FACTOR = 2.5;
  * pročita i uspori. Tabla na samom početku luka bi stigla prekasno.
  */
 export const SIGN_LEAD = 50;
+
+/**
+ * Gradska vožnja u mjestu u koje se stiže.
+ *
+ * Dvije do tri raskrsnice: dovoljno da grad bude vožnja, a ne natpis, a
+ * dovoljno kratko da se ne pretvori u smjenu usred putovanja.
+ */
+export const CITY_JUNCTIONS_MIN = 2;
+export const CITY_JUNCTIONS_MAX = 3;
+
+/**
+ * Težina gradskih raskrsnica u putovanju.
+ *
+ * Ne raste sa putovanjem: putovanje nije takmičenje nego obilazak, pa bi
+ * napredovanje težine značilo da se isti grad na kraju vozi teže nego na
+ * početku, bez ikakvog objašnjenja igraču.
+ */
+export const CITY_LEVEL: Level = 2;
