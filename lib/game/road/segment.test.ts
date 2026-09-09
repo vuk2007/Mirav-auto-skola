@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { run } from "../sim/bots";
 import { ONCOMING_GAP, TRIP_SEGMENT_TIME } from "../sim/config";
@@ -6,6 +7,7 @@ import { lanePathId } from "../sim/highway";
 import { curvatureAt } from "../sim/road";
 import type { Input, RoadTemplate, World } from "../sim/types";
 import { createWorld, PLAYER_ID, poseOn, step } from "../sim/world";
+import { parseGeometry, type EdgeGeometry } from "./edgeGeometry";
 import { EDGES, edgeById, type RoadEdge } from "./roadGraph";
 import { dionica, nazivDionice, roadTemplate } from "./segment";
 
@@ -341,5 +343,105 @@ describe("znamenitosti uz dionicu", () => {
     const e = ivica("bar--ulcinj");
     const tpl = dionica(e, 1, false).template as RoadTemplate;
     expect(tpl.landmarks.map((z) => z.name)).toContain("Stara maslina na Mirovici");
+  });
+});
+
+// Sabijanje stvarne geometrije traje oko sedam sekundi za cijelu mrežu pri
+// prvom prolazu (poslije se čita iz keša). Rok je zato duži od podrazumijevanog.
+describe("dionica sa stvarnom geometrijom", { timeout: 60000 }, () => {
+  /**
+   * Ovdje se ne pravi izmišljena geometrija nego se čita ona iz
+   * `public/data/osm/edgeGeometry/`, koju pravi `npm run osm:ivice`. Razlog je
+   * isti kao i kod sabijanja: greške su bile u onome što izmišljena kriva
+   * nema — u nepravilnom razmaku tačaka i u serpentinama.
+   */
+  const geom = (id: string): EdgeGeometry => {
+    const g = parseGeometry(
+      JSON.parse(readFileSync(`public/data/osm/edgeGeometry/${id}.json`, "utf8")),
+    );
+    if (!g) throw new Error(`neispravna geometrija ${id}`);
+    return g;
+  };
+
+  it("gasi proceduralne krivine i uzima osovinu iz OSM-a", () => {
+    const e = ivica("njegusi--kotor");
+    const proceduralna = roadTemplate(e, 1);
+    const stvarna = roadTemplate(e, 1, false, geom(e.id));
+    expect(proceduralna.centerline).toBeUndefined();
+    expect(stvarna.centerline!.length).toBeGreaterThan(100);
+    // Ivica ima zadatih dvanaest proceduralnih krivina; stvarni put ih ima
+    // mnogo više, jer je to serpentina, a ne dvanaest zavoja.
+    expect(proceduralna.curves).toHaveLength(12);
+    expect(stvarna.curves.length).toBeGreaterThan(20);
+  });
+
+  it("dužina više nije ista za sve, i to je posljedica terena", () => {
+    const ravna = roadTemplate(ivica("podgorica--zeta"), 1, false, geom("podgorica--zeta"));
+    const planinska = roadTemplate(ivica("zabljak--pluzine"), 1, false, geom("zabljak--pluzine"));
+    expect(ravna.length / ravna.vMax).toBeLessThan(planinska.length / planinska.vMax);
+  });
+
+  it("oba smjera su jednako dugačka", () => {
+    // Isti put u suprotnom smjeru mora dati istu dionicu po dužini — inače bi
+    // se povratak razlikovao od odlaska bez ijednog razloga.
+    for (const id of ["njegusi--kotor", "bioce--kolasin", "podgorica--zeta"]) {
+      const e = ivica(id);
+      const tamo = roadTemplate(e, 1, false, geom(id));
+      const nazad = roadTemplate(e, 1, true, geom(id));
+      expect(nazad.length, id).toBeCloseTo(tamo.length, 6);
+    }
+  });
+
+  it("znamenitosti ostaju unutar dionice i u redoslijedu", () => {
+    for (const e of EDGES) {
+      const tpl = roadTemplate(e, 1, false, geom(e.id));
+      let prethodna = -1;
+      for (const z of tpl.landmarks) {
+        expect(z.atS, `${e.id} ${z.name}`).toBeGreaterThanOrEqual(0);
+        expect(z.atS, `${e.id} ${z.name}`).toBeLessThanOrEqual(tpl.length);
+        expect(z.atS, `${e.id} ${z.name}`).toBeGreaterThanOrEqual(prethodna);
+        prethodna = z.atS;
+      }
+    }
+  });
+
+  it("table stoje unutar dionice", () => {
+    for (const e of EDGES) {
+      const tpl = roadTemplate(e, 1, false, geom(e.id));
+      for (const c of tpl.curves) {
+        expect(c.atS, e.id).toBeGreaterThanOrEqual(0);
+        expect(c.atS, e.id).toBeLessThanOrEqual(tpl.length);
+        expect(c.advisorySpeed, e.id).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("obje trake se sastave i imaju dužinu dionice", () => {
+    const e = ivica("cetinje--njegusi");
+    const tpl = roadTemplate(e, 1, false, geom(e.id));
+    const { paths } = compile(tpl);
+    for (const traka of [0, 1]) {
+      const p = paths.get(lanePathId(tpl.id, traka));
+      expect(p, `traka ${traka}`).toBeDefined();
+      // Traka je osovina pomjerena bočno, pa joj se dužina razlikuje za nešto
+      // u krivinama, ali ne za red veličine.
+      expect(p!.length).toBeGreaterThan(tpl.length * 0.85);
+      expect(p!.length).toBeLessThan(tpl.length * 1.15);
+    }
+  });
+
+  it("vozač po propisu prevozi svaku dionicu bez isteka vremena", () => {
+    // Nepromjenjivo pravilo: savršen bot prolazi svaku rutu. Sa stvarnom
+    // geometrijom dionice više nisu jednako duge, pa je rok morao da se veže za
+    // dužinu — bez toga bi Žabljak — Plužine padao na vrijeme svaki put.
+    for (const id of ["podgorica--zeta", "njegusi--kotor", "zabljak--pluzine", "smokovac--matesevo"]) {
+      const e = ivica(id);
+      const s = dionica(e, 1, false, geom(id));
+      const tpl = s.template as RoadTemplate;
+      const { world, finished } = run(s, poPropisu(tpl.vMax), 1);
+      expect(finished, id).toBe(true);
+      const sudar = world.violations.some((v) => v.type === "collision");
+      expect(sudar, id).toBe(false);
+    }
   });
 });

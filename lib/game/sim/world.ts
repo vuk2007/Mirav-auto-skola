@@ -777,9 +777,12 @@ export function step(world: World, scenario: Scenario, input: Input): void {
  * broj obarao uvijek — vidi `TRIP_SEGMENT_TIMEOUT_FACTOR`.
  */
 export function maxSecondsFor(tpl: Template): number {
-  return tpl.kind === "road"
-    ? TRIP_SEGMENT_TIME * TRIP_SEGMENT_TIMEOUT_FACTOR
-    : MAX_SCENARIO_SECONDS;
+  // Rok se računa iz DUŽINE dionice, ne iz dogovorenog trajanja: sa stvarnom
+  // geometrijom dionice više nisu jednako duge, pa bi fiksnih deset minuta
+  // obaralo Žabljak — Plužine svaki put.
+  if (tpl.kind !== "road") return MAX_SCENARIO_SECONDS;
+  const trajanje = tpl.vMax > 0 ? tpl.length / tpl.vMax : TRIP_SEGMENT_TIME;
+  return Math.max(trajanje, TRIP_SEGMENT_TIME) * TRIP_SEGMENT_TIMEOUT_FACTOR;
 }
 
 /** Da li je NPC zakočio baš zbog igrača (a ne zbog drugog NPC-a). */

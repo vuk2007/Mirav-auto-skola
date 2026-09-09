@@ -55,7 +55,7 @@ import type {
 } from "../sim/types";
 import { bezKrakova } from "../sim/types";
 import { HIGHWAY_LANES, laneX } from "../sim/highway";
-import { centerLine } from "../sim/road";
+import { bocnaLinija, centerLine } from "../sim/road";
 import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
 import { officerAllow, poseOn } from "../sim/world";
@@ -294,14 +294,6 @@ function ikona(src: string): HTMLImageElement | null {
   return img.complete && img.naturalWidth > 0 ? img : null;
 }
 
-/** Osovina pomjerena bočno; `offset > 0` je vozačeva lijeva strana. */
-function pomjeri(points: readonly Point[], heading: readonly number[], offset: number): Point[] {
-  return points.map((p, i) => {
-    const u = heading[i] ?? 0;
-    return { x: p.x + Math.cos(u) * offset, y: p.y - Math.sin(u) * offset };
-  });
-}
-
 /**
  * Otvorena dionica.
  *
@@ -313,7 +305,10 @@ function drawRoad(ctx: CanvasRenderingContext2D, v: View, tpl: RoadTemplate): vo
   const { points, heading } = centerLine(tpl);
   const pola = tpl.geometry.laneWidth;
 
-  const traka = (o: number) => pomjeri(points, heading, o);
+  // Bočni odmak ide kroz `bocnaLinija` iz `sim/road.ts`, dakle kroz isti račun
+  // kojim se prave i trake po kojima se vozi: kolovoz se u krivini proširuje, a
+  // ako se asfalt i traka proširuju iz dva izvora, vozilo vozi van puta.
+  const traka = (o: number) => bocnaLinija(points, heading, o);
   const bankina = [...traka(pola + 1.6), ...traka(-pola - 1.6).reverse()];
   fillPoly(ctx, v, bankina, PALETTE.kerb);
   fillPoly(ctx, v, [...traka(pola), ...traka(-pola).reverse()], PALETTE.asphalt);

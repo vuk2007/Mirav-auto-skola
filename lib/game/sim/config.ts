@@ -480,3 +480,120 @@ export const CITY_LEVEL: Level = 2;
 export const LANDMARK_OFFSET = 5;
 /** Veličina table sa znamenitošću [m]. */
 export const LANDMARK_SIZE = 6;
+
+// ── Sabijanje stvarne geometrije ────────────────────────────────────────────
+//
+// Stvarna Crna Gora je prevelika da se vozi. Budva — Kolašin je sto trideset
+// kilometara; na ograničenju je to preko dva sata, a niko toliko ne igra. Zato
+// se put SABIJA po dužini: prave se skraćuju mnogo, krivine malo.
+//
+// Sabijanje je reparametrizacija po dužini, ne umanjenje slike. Pravci
+// skretanja se čuvaju TAČNO — zbir svih uglova prije i poslije je isti, pa put
+// zadržava svoj oblik i redoslijed krivina. Ono što se mijenja jeste koliko se
+// metara pređe između dva skretanja, a s tim i poluprečnik: krivina koja u
+// prirodi ima tri stotine metara poluprečnika, sabijena deset puta, ima
+// trideset. Zbog toga postoji donja granica ispod koje faktor mora popustiti.
+
+/** Koliko se skraćuje prav put. */
+export const SCALE_STRAIGHT = 10;
+/**
+ * Koliko se skraćuje krivudav put.
+ *
+ * Zadatak je predlagao 2,5. Izmjereno, sa tom vrijednošću Budva — Kolašin traje
+ * 25,3 minuta, a traženo je 15–20: crnogorski putevi su krivudavi skoro cijelom
+ * dužinom, pa najmanji faktor odlučuje o svemu. Sa 3,5 ista ruta traje 19,9
+ * minuta, a prosječna dionica 3,8 — taman koliko je i dogovoreno da traje.
+ */
+export const SCALE_CURVY = 3.5;
+
+/**
+ * Najmanji poluprečnik koji smije da ostane poslije sabijanja [m].
+ *
+ * Ovo je granica koja NADJAČAVA faktor: gdje bi sabijanje napravilo krivinu
+ * oštriju od ove, faktor se lokalno smanjuje taman toliko da ne napravi.
+ *
+ * Granica važi samo dokle priroda dopušta. Izmjereno na stvarnoj geometriji:
+ * dvadeset od pedeset četiri ivice već ima krivine ispod dvadeset pet metara —
+ * Rožaje — Dračenovac ima osam, Njeguši — Kotor trinaest. Tamo se ne ispravlja
+ * teren nego se sabijanje jednostavno isključi (faktor 1), pa krivina ostane
+ * onakva kakva u prirodi jeste. Pravilo je: sabijanje ne smije napraviti
+ * krivinu oštriju nego što je stvarna, niti oštriju od ove granice tamo gdje je
+ * stvarna blaža.
+ */
+export const MIN_CURVE_RADIUS = 25;
+
+/**
+ * Iznad ovog poluprečnika je put prav [m].
+ *
+ * Pet stotina, a ne devet: na devet stotina skoro ništa u Crnoj Gori ne prolazi
+ * kao prav put, pa cijela mreža sjedi na sredini prelaza i sabija se slabo.
+ */
+export const RADIUS_STRAIGHT = 500;
+/** Ispod ovog poluprečnika je put krivudav [m]. */
+export const RADIUS_CURVY = 150;
+
+/**
+ * Preko koliko metara se izglađuje zakrivljenost [m].
+ *
+ * Polilinija iz OSM-a je uprošćena na pet metara, pa svaka zadržana tačka
+ * izgleda kao prelom. Bez izglađivanja bi se na pravom putu očitavale krivine
+ * od nekoliko metara poluprečnika i sabijanje bi svuda popustilo.
+ */
+export const CURVATURE_WINDOW = 40;
+
+/**
+ * Poluprečnik → preporučena brzina [m, km/h], od najoštrije krivine naviše.
+ *
+ * Poluprečnik je onaj POSLIJE sabijanja — tabla mora da govori o krivini koju
+ * igrač stvarno vozi, a ne o onoj koja stoji na terenu.
+ */
+export const ADVISORY_BY_RADIUS = [
+  [60, 40],
+  [100, 50],
+  [180, 60],
+] as const;
+
+/** Ispod ovog poluprečnika krivina uopšte dobija tablu [m]. */
+export const ADVISORY_MAX_RADIUS = 180;
+
+/** Krivine bliže od ovoga se spajaju u jednu [m]. */
+export const CURVE_MERGE_GAP = 30;
+
+/**
+ * Najkraći luk koji uopšte dobija tablu [m], mjereno po sabijenom putu.
+ *
+ * Ispod ovoga nije krivina nego talas u poliliniji: uprošćena linija iz OSM-a
+ * ima sitne prelome koje izglađivanje ne pojede sasvim, a tabla pred svakim od
+ * njih samo smeta.
+ */
+export const MIN_CURVE_ARC = 40;
+
+/**
+ * Mjera za proširenje kolovoza u krivini [m].
+ *
+ * Put se u oštroj krivini gradi širi nego na pravcu, jer vozilo kroz nju ne
+ * prolazi kao tačka — zadnji točkovi sijeku unutrašnju stranu, a prednji kraj
+ * izlazi na spoljašnju. Proširenje je `L² / (2R)`, gdje je `L` dužina vozila.
+ *
+ * Ovdje nije ukras nego uslov da se dionica može provesti: bez njega su se na
+ * serpentini Njeguši — Kotor (poluprečnik trinaest metara) igrač i susretno
+ * vozilo sudarali iako su oba bila propisno u svojoj traci — pod velikim uglom
+ * im se preklapaju uglovi karoserije. Izmjereno, ne pretpostavljeno.
+ */
+export const CURVE_WIDENING_LENGTH = 6;
+/** Koliko proširenje najviše smije da naraste [m]. */
+export const CURVE_WIDENING_MAX = 2;
+
+/**
+ * Najoštriji poluprečnik koji polilinija smije da ima prije sabijanja [m].
+ *
+ * Ovo NIJE ograničenje puta nego ispravka digitalizacije. Linija iz OSM-a je
+ * uprošćena na pet metara, pa serpentina koja na terenu ima desetak metara
+ * poluprečnika ispadne kao nekoliko oštrih uglova — mjereno, do tri metra. Na
+ * takvom uglu se bočni odmak trake prelomi kroz osu puta: unutrašnja traka
+ * pređe na drugu stranu i vozila se sudaraju stojeći svako u svojoj.
+ *
+ * Dvanaest metara je poluprečnik stvarne serpentine, pa zaobljavanje do te
+ * mjere ne izmišlja put nego vraća onaj koji je uprošćavanje uglastim učinilo.
+ */
+export const MIN_GEOMETRY_RADIUS = 12;

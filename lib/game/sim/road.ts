@@ -16,7 +16,12 @@
  * smjer, umjesto samo putanju.
  */
 
-import { APPROACH_LENGTH, ROAD_STEP } from "./config";
+import {
+  APPROACH_LENGTH,
+  CURVE_WIDENING_LENGTH,
+  CURVE_WIDENING_MAX,
+  ROAD_STEP,
+} from "./config";
 import { cumulative } from "./geometry";
 import { lanePathId } from "./highway";
 import type { Path, Point, RoadCurve, RoadTemplate } from "./types";
@@ -42,8 +47,23 @@ export function curvatureAt(curves: readonly RoadCurve[], s: number): number {
   return k;
 }
 
-/** Osovina puta: tačke i ugao smjera u svakoj od njih. */
+/**
+ * Osovina puta: tačke i ugao smjera u svakoj od njih.
+ *
+ * Kad šablon nosi stvarnu geometriju (`centerline`), ona se uzima kakva jest i
+ * krivine se iz nje ČITAJU, ne crtaju. Proceduralno savijanje ispod važi samo
+ * za dionice bez geometrije.
+ */
 export function centerLine(tpl: RoadTemplate): { points: Point[]; heading: number[] } {
+  if (tpl.centerline && tpl.centerline.length >= 2) {
+    const points = tpl.centerline;
+    const heading = points.map((p, i) => {
+      const a = i === 0 ? p : points[i - 1]!;
+      const b = i === 0 ? points[1]! : p;
+      return Math.atan2(b.x - a.x, b.y - a.y);
+    });
+    return { points, heading };
+  }
   const koraka = Math.max(1, Math.round(tpl.length / ROAD_STEP));
   const korak = tpl.length / koraka;
   const points: Point[] = [];
@@ -67,11 +87,45 @@ export function centerLine(tpl: RoadTemplate): { points: Point[]; heading: numbe
   return { points, heading };
 }
 
-/** Osa jedne trake: osovina pomjerena bočno. `offset > 0` je ulijevo. */
-function offsetLine(points: Point[], heading: number[], offset: number): Point[] {
+/**
+ * Proširenje kolovoza u svakoj tački osovine [m].
+ *
+ * `L² / (2R)`, ograničeno odozgo. Na pravcu je nula, u serpentini oko metar i
+ * po po strani. Vidi `CURVE_WIDENING_LENGTH` za razlog zbog kojeg postoji.
+ */
+export function prosirenja(points: readonly Point[], heading: readonly number[]): number[] {
+  return points.map((p, i) => {
+    const prije = points[Math.max(0, i - 1)]!;
+    const poslije = points[Math.min(points.length - 1, i + 1)]!;
+    const d = Math.hypot(poslije.x - prije.x, poslije.y - prije.y);
+    if (d < 1e-6) return 0;
+    let du = (heading[Math.min(heading.length - 1, i + 1)] ?? 0) - (heading[Math.max(0, i - 1)] ?? 0);
+    while (du > Math.PI) du -= 2 * Math.PI;
+    while (du <= -Math.PI) du += 2 * Math.PI;
+    const kappa = Math.abs(du) / d;
+    if (kappa < 1e-9) return 0;
+    const radius = 1 / kappa;
+    return Math.min(CURVE_WIDENING_MAX, (CURVE_WIDENING_LENGTH * CURVE_WIDENING_LENGTH) / (2 * radius));
+  });
+}
+
+/**
+ * Linija na bočnom odmaku od osovine. `offset > 0` je ulijevo.
+ *
+ * Odmak raste za proširenje krivine, i to na OBJE strane — kolovoz se u krivini
+ * širi, a ne pomjera. Zbog toga i vožnja i crtanje moraju ići kroz ovu funkciju:
+ * da traka i asfalt idu iz dva računa, vozilo bi u serpentini vozilo van puta.
+ */
+export function bocnaLinija(
+  points: readonly Point[],
+  heading: readonly number[],
+  offset: number,
+): Point[] {
+  const w = prosirenja(points, heading);
   return points.map((p, i) => {
     const ugao = heading[i] ?? 0;
-    return { x: p.x + Math.cos(ugao) * offset, y: p.y - Math.sin(ugao) * offset };
+    const odmak = offset === 0 ? 0 : offset + Math.sign(offset) * (w[i] ?? 0);
+    return { x: p.x + Math.cos(ugao) * odmak, y: p.y - Math.sin(ugao) * odmak };
   });
 }
 
@@ -87,7 +141,7 @@ export function buildRoadPaths(tpl: RoadTemplate): Path[] {
   const pola = tpl.geometry.laneWidth / 2;
 
   return ROAD_LANES.map((index) => {
-    const linija = offsetLine(points, heading, isOncoming(index) ? pola : -pola);
+    const linija = bocnaLinija(points, heading, isOncoming(index) ? pola : -pola);
     // Susretna traka se vozi u suprotnom smjeru, pa joj putanja ide unazad.
     const tacke = isOncoming(index) ? [...linija].reverse() : linija;
     const cum = cumulative(tacke);

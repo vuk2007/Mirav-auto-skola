@@ -189,6 +189,14 @@ export interface RoadTemplate {
   /** Dozvoljena brzina [m/s]. */
   vMax: number;
   curves: RoadCurve[];
+  /**
+   * Osovina puta, kad dolazi iz stvarne geometrije.
+   *
+   * Kad je zadata, `curves` više NE opisuju oblik puta nego samo table sa
+   * preporučenom brzinom — oblik dolazi odavde. Bez ovoga bi se ista krivina
+   * opisivala dvaput, iz dva izvora koji se mogu razići.
+   */
+  centerline?: Point[];
   /** Znamenitosti pored puta, u smjeru vožnje. */
   landmarks: RoadLandmark[];
   geometry: { laneWidth: number };

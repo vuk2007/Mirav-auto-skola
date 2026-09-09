@@ -33,6 +33,8 @@ import type {
   ScenarioNpc,
 } from "../sim/types";
 import { landmarksOnEdge } from "./landmarks";
+import { osovina, type EdgeGeometry } from "./edgeGeometry";
+import { sabijenaIvica, type Sabijeno } from "./sabijanje";
 import { curvesFor, type RoadEdge, type RoadKind, nodeById } from "./roadGraph";
 
 /** Koliko je dionica teška — dok nema pravila, ovo samo bira gustinu. */
@@ -127,19 +129,20 @@ function znamenitostiNaDionici(
   edge: RoadEdge,
   length: number,
   obrnuto: boolean,
+  sabijeno?: Sabijeno,
 ): RoadLandmark[] {
-  return landmarksOnEdge(edge.id, obrnuto).flatMap((l): RoadLandmark[] =>
-    l.at.kind === "edge"
-      ? [
-          {
-            atS: (l.at.atKm / edge.km) * length,
-            side: l.at.side,
-            icon: l.icon,
-            name: l.name,
-          },
-        ]
-      : [],
-  );
+  return landmarksOnEdge(edge.id, obrnuto).flatMap((l): RoadLandmark[] => {
+    if (l.at.kind !== "edge") return [];
+    // Bez geometrije je razmjera ravnomjerna. Sa geometrijom nije: sabijanje
+    // nije svuda isto, pa se položaj prvo prevede u metre STVARNOG puta, a
+    // onda preslika istim preslikavanjem kojim je i put sabijen. Inače bi
+    // znamenitost na izlazu iz kanjona ispala nasred pravca.
+    const udio = l.at.atKm / edge.km;
+    const atS = sabijeno
+      ? sabijeno.uSabijeni(udio * sabijeno.stvarnaDuzina)
+      : udio * length;
+    return [{ atS, side: l.at.side, icon: l.icon, name: l.name }];
+  });
 }
 
 /**
@@ -149,8 +152,35 @@ function znamenitostiNaDionici(
  * znamenitosti nisu, a šabloni se keširaju po `id`-u — bez smjera bi povratak
  * dobio tuđi raspored.
  */
-export function roadTemplate(edge: RoadEdge, seed: number, obrnuto = false): RoadTemplate {
+export function roadTemplate(
+  edge: RoadEdge,
+  seed: number,
+  obrnuto = false,
+  geom?: EdgeGeometry,
+): RoadTemplate {
   const vMax = edge.speedLimit / 3.6;
+
+  // Sa stvarnom geometrijom se proceduralni generator krivina GASI: oblik puta
+  // dolazi iz OSM-a, a `curves` ostaju samo kao table sa preporučenom brzinom.
+  // Dužina više nije fiksna nego onolika kolika ispadne poslije sabijanja —
+  // Podgorica — Zeta je minut i po, Žabljak — Plužine trinaest.
+  if (geom) {
+    const sabijeno = sabijenaIvica(geom.id, osovina(geom, obrnuto), obrnuto);
+    return {
+      kind: "road",
+      id: `road:${edge.id}:${seed >>> 0}${obrnuto ? ":obrnuto" : ""}:osm`,
+      length: sabijeno.duzina,
+      edgeId: edge.id,
+      edgeKm: edge.km,
+      vMax,
+      curves: sabijeno.krivine,
+      centerline: sabijeno.tacke,
+      landmarks: znamenitostiNaDionici(edge, sabijeno.duzina, obrnuto, sabijeno),
+      geometry: { laneWidth: LANE_WIDTH },
+      viewHalf: 26,
+    };
+  }
+
   const length = TRIP_SEGMENT_TIME * vMax;
   return {
     kind: "road",
@@ -180,13 +210,17 @@ function susretna(tpl: RoadTemplate, seed: number): ScenarioNpc[] {
   const r = rng((seed ^ 0x9e3779b9) >>> 0);
   const v = tpl.vMax;
   const out: ScenarioNpc[] = [];
-  for (let t = ONCOMING_GAP; t < TRIP_SEGMENT_TIME; t += ONCOMING_GAP) {
+  // Koliko dionica traje NIJE više uvijek `TRIP_SEGMENT_TIME`: sa stvarnom
+  // geometrijom dužina zavisi od puta. Susretna kolona mora da prati to
+  // trajanje, inače na dugoj dionici ostane praznih deset minuta.
+  const trajanje = tpl.length / v;
+  for (let t = ONCOMING_GAP; t < trajanje; t += ONCOMING_GAP) {
     // Razmak se malo koleba, da kolona ne bude metronom.
     const kada = t + (r() - 0.5) * ONCOMING_GAP * 0.6;
     const naDionici = tpl.length - 2 * v * kada;
     const startS = Math.max(0, naDionici);
-    const spawnT = naDionici >= 0 ? 0 : 2 * kada - tpl.length / v;
-    if (spawnT >= TRIP_SEGMENT_TIME) continue;
+    const spawnT = naDionici >= 0 ? 0 : 2 * kada - trajanje;
+    if (spawnT >= trajanje) continue;
     out.push({
       arm: "S",
       intent: { kind: "lane", index: 1 },
@@ -204,8 +238,13 @@ function susretna(tpl: RoadTemplate, seed: number): ScenarioNpc[] {
  * `obrnuto` je vožnja od `b` prema `a`: geometrija je ista, ali znamenitosti
  * dolaze obrnutim redom i sa druge strane puta.
  */
-export function dionica(edge: RoadEdge, seed: number, obrnuto = false): Scenario {
-  const tpl = roadTemplate(edge, seed, obrnuto);
+export function dionica(
+  edge: RoadEdge,
+  seed: number,
+  obrnuto = false,
+  geom?: EdgeGeometry,
+): Scenario {
+  const tpl = roadTemplate(edge, seed, obrnuto, geom);
   const naziv = nazivDionice(edge, obrnuto);
   const opis = OPIS[edge.kind];
   const naslov: Record<string, string> = {};
