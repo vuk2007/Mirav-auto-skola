@@ -597,3 +597,28 @@ export const CURVE_WIDENING_MAX = 2;
  * mjere ne izmišlja put nego vraća onaj koji je uprošćavanje uglastim učinilo.
  */
 export const MIN_GEOMETRY_RADIUS = 12;
+
+// ── Ruta i svijet ───────────────────────────────────────────────────────────
+
+/**
+ * Koliko tačaka oko spoja dvije dionice ulazi u zaobljavanje.
+ *
+ * Na čvoru se put stvarno skreće, pa se dionice spajaju pod uglom koji dolazi
+ * iz stvarne geometrije. Taj ugao treba razvući u luk: u prirodi je tu
+ * raskrsnica na kojoj se usporava i skreće, a nju modelujemo tek sa gradskim
+ * kičmama. Dok je nema, oštar prelom bi značio da se vozilo okrene u mjestu.
+ *
+ * Četrdeset tačaka na koraku od četiri metra je sto šezdeset metara sa svake
+ * strane — dovoljno da se i skretanje od devedeset stepeni razvuče u luk od
+ * dvadeset pet metara poluprečnika, koliko i jest raskrsnica.
+ */
+export const ROUTE_JOIN_WINDOW = 40;
+
+/**
+ * Koliko svijeta se drži ispred i iza igrača [m].
+ *
+ * Ispred mora stati sve što se vidi i sve što stiže u susret; iza je dovoljno
+ * toliko da vozilo koje je upravo prošlo ne nestane pred ogledalom.
+ */
+export const LOAD_AHEAD = 2000;
+export const KEEP_BEHIND = 500;

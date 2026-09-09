@@ -173,7 +173,7 @@ const ZAOBLJENJE_CILJ = 300;
  * Ovo je jedino mjesto na kojem se stvarna geometrija mijenja, i mijenja se
  * zato što je uprošćena, a ne zato što nam tako odgovara.
  */
-export function zaobli(uzorci: readonly Point[], korak: number): Point[] {
+export function zaobli(uzorci: readonly Point[], korak: number, prag?: number): Point[] {
   let tacke = uzorci.map((p) => ({ ...p }));
   // Izglađeni oblik se računa JEDNOM, prije zaobljavanja: on je mjera onoga
   // kako put ide, a zaobljavanje ga skoro i ne mijenja — mijenja samo uglove
@@ -195,8 +195,10 @@ export function zaobli(uzorci: readonly Point[], korak: number): Point[] {
       // metara je ostavljao uglove na pravcima, a baš oni su zaustavljali
       // sabijanje: faktor mora pasti na `R/25` gdje god je prelom oštar.
       const glatkiR = glatko[i] === 0 ? Infinity : 1 / Math.abs(glatko[i] ?? 0);
-      const prag = Math.max(MIN_GEOMETRY_RADIUS, Math.min(glatkiR, ZAOBLJENJE_CILJ));
-      if (radius >= prag) continue;
+      // Zadati prag nadjačava: spoj dvije dionice se zaobljava do poluprečnika
+      // raskrsnice, bez obzira na to šta izglađena krivina tu kaže.
+      const ovaj = prag ?? Math.max(MIN_GEOMETRY_RADIUS, Math.min(glatkiR, ZAOBLJENJE_CILJ));
+      if (radius >= ovaj) continue;
       ostro = true;
       const a = tacke[i - 1]!;
       const b = tacke[i]!;

@@ -36,6 +36,7 @@ import {
   TAILGATE_TIME,
   TOO_SLOW_TIME,
   HAZARD_WINDOW,
+  KEEP_BEHIND,
   MAX_SCENARIO_SECONDS,
   ROLL_RESISTANCE,
   SPEEDING_FACTOR,
@@ -751,6 +752,11 @@ export function step(world: World, scenario: Scenario, input: Input): void {
     }
   }
 
+  // Vozila koja su ostala predaleko iza igrača napuštaju svijet. Na otvorenom
+  // putu ona više ne mogu ni na šta uticati — ni na odstojanje, ni na sudar, ni
+  // na prvenstvo, jer prvenstva tu nema — a računaju se u svakom koraku.
+  if (ctx.tpl.kind === "road") odnesiZaostale(world, ctx, player);
+
   detectViolations(world, ctx, scenario, player, playerPath, playerBefore);
   if (ctx.tpl.kind === "highway" && !player.done) highwayViolations(world, ctx, player, input);
   // Pokazivač se ocjenjuje van `detectViolations` jer ta funkcija odustaje čim
@@ -766,6 +772,23 @@ export function step(world: World, scenario: Scenario, input: Input): void {
     } else if (world.t > maxSecondsFor(ctx.tpl)) {
       world.outcome = "failed";
     }
+  }
+}
+
+/**
+ * Briše vozila koja su daleko iza igrača.
+ *
+ * Mjeri se položaj NA RUTI, ne po putanji: susretna traka je okrenuta, pa
+ * njeno `s` raste u suprotnom smjeru. Vozilo koje je prošlo pored igrača i
+ * odmaklo `KEEP_BEHIND` metara više se neće vratiti.
+ */
+function odnesiZaostale(world: World, ctx: Ctx, player: Vehicle): void {
+  for (const v of world.vehicles) {
+    if (v.kind === "player" || v.done || world.t < v.spawnT) continue;
+    const path = ctx.paths.get(v.pathId);
+    if (!path) continue;
+    const naRuti = v.lane === 1 ? path.length - v.s : v.s;
+    if (naRuti < player.s - KEEP_BEHIND) v.done = true;
   }
 }
 
