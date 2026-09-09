@@ -4,6 +4,7 @@ import {
   EDGES,
   NODES,
   type RoadEdge,
+  type RoadNode,
   curvesFor,
   edgeById,
   edgesAt,
@@ -271,5 +272,67 @@ describe("krivine", () => {
     // Dvije ivice sa istim sjemenom ne smiju dobiti isti raspored.
     const d = EDGES.find((x) => x.id === "zabljak--savnik") as RoadEdge;
     expect(curvesFor(e, 42)).not.toEqual(curvesFor(d, 42));
+  });
+});
+
+describe("koordinate", () => {
+  /** Rastojanje po velikom krugu [km]. */
+  function vazdusnaLinija(a: RoadNode, b: RoadNode): number {
+    const R = 6371;
+    const rad = (x: number) => (x * Math.PI) / 180;
+    const dLat = rad(b.lat - a.lat);
+    const dLon = rad(b.lon - a.lon);
+    const h =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+
+  it("svaki čvor je unutar Crne Gore i njenog pograničja", () => {
+    for (const n of NODES) {
+      expect(n.lat, n.id).toBeGreaterThan(41.8);
+      expect(n.lat, n.id).toBeLessThan(43.6);
+      expect(n.lon, n.id).toBeGreaterThan(18.4);
+      expect(n.lon, n.id).toBeLessThan(20.4);
+    }
+  });
+
+  it("nijedna koordinata nije potvrđena — sve su procjena", () => {
+    for (const n of NODES) expect(n.coordsVerified, n.id).toBe(false);
+  });
+
+  it("nema dva čvora na istom mjestu", () => {
+    const kljucevi = NODES.map((n) => `${n.lat},${n.lon}`);
+    expect(new Set(kljucevi).size).toBe(NODES.length);
+  });
+
+  /**
+   * Ovo je prava provjera unosa: put je uvijek duži od vazdušne linije, nikad
+   * kraći. Ako je vazdušna linija duža od kilometraže ivice, onda je jedna od
+   * dvije brojke pogrešna — najvjerovatnije koordinata, jer su one procjena.
+   *
+   * Granica je kilometraža uvećana za 15% i 4 km: kilometraže su zaokružene, a
+   * koordinate uzete iz centra mjesta, pa je i tačan unos malo neuredan.
+   */
+  it("nijedna ivica nije kraća od vazdušne linije između svojih krajeva", () => {
+    const lose: string[] = [];
+    for (const e of EDGES) {
+      const a = nodeById(e.a);
+      const b = nodeById(e.b);
+      if (!a || !b) continue;
+      const zrak = vazdusnaLinija(a, b);
+      if (zrak > e.km * 1.15 + 4) {
+        lose.push(`${e.id}: ${e.km} km po putu, ${zrak.toFixed(1)} km vazdušno`);
+      }
+    }
+    expect(lose, lose.join("; ")).toEqual([]);
+  });
+
+  it("sjever je sjeverno, primorje je na jugozapadu", () => {
+    const n = (id: string) => nodeById(id);
+    expect(n("pljevlja")!.lat).toBeGreaterThan(n("podgorica")!.lat);
+    expect(n("bar")!.lat).toBeLessThan(n("podgorica")!.lat);
+    expect(n("herceg-novi")!.lon).toBeLessThan(n("rozaje")!.lon);
+    expect(n("ulcinj")!.lat).toBeLessThan(n("zabljak")!.lat);
   });
 });

@@ -191,6 +191,8 @@ export interface Dict {
   tripCrash: string;
   tripNoted: string;
   tripCity: string;
+  tripMap: string;
+  tripMapHide: string;
   tripCrashJunction: string;
   tripRetry: string;
   tripRoadAutoput: string;
@@ -538,6 +540,8 @@ const me: Dict = {
   tripCrash: "Sudar. Ova dionica se vozi ponovo.",
   tripNoted: "Zabilježeno usput",
   tripCity: "Kroz grad",
+  tripMap: "Karta",
+  tripMapHide: "Sakrij kartu",
   tripCrashJunction: "Sudar. Ova raskrsnica se vozi ponovo.",
   tripRetry: "Vozi ponovo",
   tripRoadAutoput: "autoput",
@@ -874,6 +878,8 @@ const en: Dict = {
   tripCrash: "A crash. This leg starts over.",
   tripNoted: "Noted along the way",
   tripCity: "Through town",
+  tripMap: "Map",
+  tripMapHide: "Hide the map",
   tripCrashJunction: "A crash. This junction starts over.",
   tripRetry: "Drive again",
   tripRoadAutoput: "motorway",
@@ -1215,6 +1221,8 @@ const sq: Dict = {
   tripCrash: "Përplasje. Kjo pjesë nis nga fillimi.",
   tripNoted: "Shënuar gjatë rrugës",
   tripCity: "Nëpër qytet",
+  tripMap: "Harta",
+  tripMapHide: "Fshih hartën",
   tripCrashJunction: "Përplasje. Ky kryqëzim nis nga fillimi.",
   tripRetry: "Ngis përsëri",
   tripRoadAutoput: "autostradë",
@@ -1558,6 +1566,8 @@ const ru: Dict = {
   tripCrash: "Авария. Этот участок начинается заново.",
   tripNoted: "Отмечено в пути",
   tripCity: "По городу",
+  tripMap: "Карта",
+  tripMapHide: "Скрыть карту",
   tripCrashJunction: "Авария. Этот перекрёсток начинается заново.",
   tripRetry: "Ехать снова",
   tripRoadAutoput: "автомагистраль",

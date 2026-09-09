@@ -31,6 +31,7 @@ import type { Dict } from "@/lib/i18n";
 import { clearTrip, loadTrip, saveTrip } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import PedalControls from "./PedalControls";
+import TripMap from "./TripMap";
 import { usePedals } from "./usePedals";
 
 type Phase = "polazak" | "putokaz" | "voznja" | "grad" | "stigao" | "sudar";
@@ -81,6 +82,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
    * i ekran bi se zavrtio u petlji.
    */
   const [pokusaj, setPokusaj] = useState(0);
+  const [karta, setKarta] = useState(false);
   const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0 });
 
   // Sačuvano putovanje se čita tek na klijentu; ako je iz starije verzije
@@ -363,7 +365,23 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
       ) : (
         putokaz && (
           <div className="rounded border border-line bg-panel p-4">
-            <h2 className="font-display text-2xl font-bold">{mjesto?.name}</h2>
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="font-display text-2xl font-bold">{mjesto?.name}</h2>
+              <button
+                type="button"
+                onClick={() => setKarta((k) => !k)}
+                aria-pressed={karta}
+                className="font-display rounded border border-line px-3 py-1 text-sm font-bold tracking-wide uppercase text-muted hover:border-blue hover:text-blue"
+              >
+                {karta ? t.tripMapHide : t.tripMap}
+              </button>
+            </div>
+
+            {karta && (
+              <div className="mt-3 rounded border border-line bg-bg p-2">
+                <TripMap trip={trip} susjedi={putokaz.smjerovi.map((s) => s.to.id)} />
+              </div>
+            )}
 
             {putokaz.granica && (
               <div className="mt-2 rounded border-l-4 border-l-red bg-bg p-3">

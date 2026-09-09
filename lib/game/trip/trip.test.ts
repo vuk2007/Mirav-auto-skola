@@ -318,3 +318,30 @@ describe("gradska vožnja", () => {
     expect(uporedjeno).toBeGreaterThan(0);
   });
 });
+
+describe("pređeni putevi", () => {
+  it("svaka prevezena ivica se pamti, i to jednom", () => {
+    let t = startTrip("podgorica", 1);
+    expect(t.driven).toEqual([]);
+    t = vozi(t, "cetinje");
+    expect(t.driven).toEqual(["podgorica--cetinje"]);
+    t = vozi(t, "podgorica");
+    // Povratak istim putem ne dodaje drugu stavku.
+    expect(t.driven).toEqual(["podgorica--cetinje"]);
+    t = vozi(t, "danilovgrad");
+    expect(t.driven).toEqual(["podgorica--cetinje", "podgorica--danilovgrad"]);
+  });
+
+  it("sačuvano putovanje bez spiska puteva se prihvata kao prazno", () => {
+    const t = vozi(startTrip("podgorica", 3), "cetinje");
+    const staro = JSON.parse(JSON.stringify(t)) as Record<string, unknown>;
+    delete staro.driven;
+    expect(parseTrip(staro)?.driven).toEqual([]);
+  });
+
+  it("put kojeg u grafu nema obara stanje", () => {
+    const t = startTrip("podgorica", 1);
+    expect(parseTrip({ ...t, driven: ["nema--ovoga"] })).toBeNull();
+    expect(parseTrip({ ...t, driven: "podgorica--cetinje" })).toBeNull();
+  });
+});

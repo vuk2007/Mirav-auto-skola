@@ -1,0 +1,21 @@
+{
+  "kartaSakrivenaNaPocetku": true,
+  "kartaOtvorena": true,
+  "putevi": {
+    "ukupno": 54,
+    "svakaIvicaNacrtana": true,
+    "istaknutih": 4,
+    "istaknutoTacno": true
+  },
+  "natpisi": {
+    "komada": 7,
+    "imaGdjeSam": true,
+    "imaPonudjene": true,
+    "imaPosjecene": true,
+    "nemaSuvisnih": true,
+    "preklapanja": 0
+  },
+  "kartaNijePrecica": true,
+  "kartaSeSakriva": true,
+  "greske": []
+}

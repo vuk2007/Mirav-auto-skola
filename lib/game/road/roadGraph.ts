@@ -43,6 +43,15 @@ export interface RoadNode {
   kind: NodeKind;
   /** Samo za `granica`: država sa druge strane. */
   country?: Country;
+  /** Geografska širina i dužina [°]. */
+  lat: number;
+  lon: number;
+  /**
+   * Uvijek `false`: koordinate nisu zadate nego procijenjene, isto kao položaj
+   * znamenitosti. Dovoljne su da karta liči na Crnu Goru i da se vidi gdje si
+   * bio; nisu mjerenje.
+   */
+  coordsVerified: boolean;
 }
 
 export interface RoadEdge {
@@ -74,64 +83,92 @@ export interface RoadEdge {
 
 // ── Čvorovi ─────────────────────────────────────────────────────────────────
 
-const OPSTINE: ReadonlyArray<readonly [string, string]> = [
-  ["podgorica", "Podgorica"],
-  ["zeta", "Zeta (Golubovci)"],
-  ["tuzi", "Tuzi"],
-  ["danilovgrad", "Danilovgrad"],
-  ["niksic", "Nikšić"],
-  ["cetinje", "Cetinje"],
-  ["budva", "Budva"],
-  ["tivat", "Tivat"],
-  ["kotor", "Kotor"],
-  ["herceg-novi", "Herceg Novi"],
-  ["bar", "Bar"],
-  ["ulcinj", "Ulcinj"],
-  ["kolasin", "Kolašin"],
-  ["mojkovac", "Mojkovac"],
-  ["bijelo-polje", "Bijelo Polje"],
-  ["berane", "Berane"],
-  ["petnjica", "Petnjica"],
-  ["andrijevica", "Andrijevica"],
-  ["plav", "Plav"],
-  ["gusinje", "Gusinje"],
-  ["rozaje", "Rožaje"],
-  ["zabljak", "Žabljak"],
-  ["pljevlja", "Pljevlja"],
-  ["savnik", "Šavnik"],
-  ["pluzine", "Plužine"],
+const OPSTINE: ReadonlyArray<readonly [string, string, number, number]> = [
+  ["podgorica", "Podgorica", 42.44, 19.26],
+  ["zeta", "Zeta (Golubovci)", 42.34, 19.23],
+  ["tuzi", "Tuzi", 42.36, 19.33],
+  ["danilovgrad", "Danilovgrad", 42.55, 19.11],
+  ["niksic", "Nikšić", 42.77, 18.94],
+  ["cetinje", "Cetinje", 42.39, 18.92],
+  ["budva", "Budva", 42.29, 18.84],
+  ["tivat", "Tivat", 42.43, 18.7],
+  ["kotor", "Kotor", 42.42, 18.77],
+  ["herceg-novi", "Herceg Novi", 42.45, 18.53],
+  ["bar", "Bar", 42.1, 19.1],
+  ["ulcinj", "Ulcinj", 41.93, 19.2],
+  ["kolasin", "Kolašin", 42.82, 19.52],
+  ["mojkovac", "Mojkovac", 42.96, 19.58],
+  ["bijelo-polje", "Bijelo Polje", 43.04, 19.75],
+  ["berane", "Berane", 42.84, 19.87],
+  ["petnjica", "Petnjica", 42.91, 19.97],
+  ["andrijevica", "Andrijevica", 42.73, 19.79],
+  ["plav", "Plav", 42.6, 19.94],
+  ["gusinje", "Gusinje", 42.56, 19.83],
+  ["rozaje", "Rožaje", 42.84, 20.17],
+  ["zabljak", "Žabljak", 43.15, 19.12],
+  ["pljevlja", "Pljevlja", 43.36, 19.36],
+  ["savnik", "Šavnik", 42.96, 19.1],
+  ["pluzine", "Plužine", 43.15, 18.84],
 ];
 
-const CVORISTA: ReadonlyArray<readonly [string, string]> = [
-  ["smokovac", "Smokovac"],
-  ["matesevo", "Mateševo"],
-  ["virpazar", "Virpazar"],
-  ["petrovac", "Petrovac"],
-  ["sutomore", "Sutomore"],
-  ["bioce", "Bioče"],
-  ["djurdjevica-tara", "Đurđevića Tara"],
-  ["vilusi", "Vilusi"],
-  ["kamenari", "Kamenari"],
-  ["njegusi", "Njeguši"],
-  ["kucka-korita", "Kučka Korita"],
+const CVORISTA: ReadonlyArray<readonly [string, string, number, number]> = [
+  ["smokovac", "Smokovac", 42.49, 19.29],
+  ["matesevo", "Mateševo", 42.72, 19.55],
+  ["virpazar", "Virpazar", 42.24, 19.09],
+  ["petrovac", "Petrovac", 42.2, 18.94],
+  ["sutomore", "Sutomore", 42.14, 19.03],
+  ["bioce", "Bioče", 42.51, 19.32],
+  ["djurdjevica-tara", "Đurđevića Tara", 43.15, 19.29],
+  ["vilusi", "Vilusi", 42.74, 18.63],
+  ["kamenari", "Kamenari", 42.46, 18.68],
+  ["njegusi", "Njeguši", 42.42, 18.83],
+  ["kucka-korita", "Kučka Korita", 42.55, 19.47],
 ];
 
-const GRANICE: ReadonlyArray<readonly [string, string, Country]> = [
-  ["bozaj", "Božaj", "ALB"],
-  ["sukobin", "Sukobin", "ALB"],
-  ["debeli-brijeg", "Debeli Brijeg", "HRV"],
-  ["scepan-polje", "Šćepan Polje", "BIH"],
-  ["ilino-brdo", "Ilino Brdo", "BIH"],
-  ["dobrakovo", "Dobrakovo", "SRB"],
-  ["dracenovac", "Dračenovac", "SRB"],
-  ["kula", "Kula", "KOS"],
-  ["rance-jabuka", "Ranče/Jabuka", "SRB"],
+const GRANICE: ReadonlyArray<readonly [string, string, Country, number, number]> = [
+  ["bozaj", "Božaj", "ALB", 42.3, 19.38],
+  ["sukobin", "Sukobin", "ALB", 41.95, 19.32],
+  ["debeli-brijeg", "Debeli Brijeg", "HRV", 42.51, 18.44],
+  ["scepan-polje", "Šćepan Polje", "BIH", 43.34, 18.84],
+  ["ilino-brdo", "Ilino Brdo", "BIH", 42.79, 18.55],
+  ["dobrakovo", "Dobrakovo", "SRB", 43.19, 19.79],
+  ["dracenovac", "Dračenovac", "SRB", 43.0, 20.28],
+  ["kula", "Kula", "KOS", 42.87, 20.33],
+  ["rance-jabuka", "Ranče/Jabuka", "SRB", 43.5, 19.36],
 ];
 
 export const NODES: readonly RoadNode[] = [
-  ...OPSTINE.map(([id, name]): RoadNode => ({ id, name, kind: "opstina" })),
-  ...CVORISTA.map(([id, name]): RoadNode => ({ id, name, kind: "cvoriste" })),
-  ...GRANICE.map(([id, name, country]): RoadNode => ({ id, name, kind: "granica", country })),
+  ...OPSTINE.map(
+    ([id, name, lat, lon]): RoadNode => ({
+      id,
+      name,
+      kind: "opstina",
+      lat,
+      lon,
+      coordsVerified: false,
+    }),
+  ),
+  ...CVORISTA.map(
+    ([id, name, lat, lon]): RoadNode => ({
+      id,
+      name,
+      kind: "cvoriste",
+      lat,
+      lon,
+      coordsVerified: false,
+    }),
+  ),
+  ...GRANICE.map(
+    ([id, name, country, lat, lon]): RoadNode => ({
+      id,
+      name,
+      kind: "granica",
+      country,
+      lat,
+      lon,
+      coordsVerified: false,
+    }),
+  ),
 ];
 
 // ── Ivice ───────────────────────────────────────────────────────────────────

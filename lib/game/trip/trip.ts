@@ -41,12 +41,20 @@ export interface TripState {
   visited: string[];
   /** Znamenitosti koje su ostale iza — svaka se broji jednom. */
   seen: string[];
+  /**
+   * Ivice koje su prevezene, u bilo kom smjeru.
+   *
+   * Postoji zbog karte: „gdje sam bio" je pitanje puteva, ne gradova. Bez
+   * ovoga bi karta mogla samo da oboji čvorove, pa se ne bi vidjelo kojim se
+   * putem između njih išlo.
+   */
+  driven: string[];
   /** Da li su sezonski putevi prohodni. */
   ljeto: boolean;
 }
 
 export function startTrip(at: string, seed: number, ljeto = true): TripState {
-  return { seed, at, from: null, legs: 0, km: 0, visited: [at], seen: [], ljeto };
+  return { seed, at, from: null, legs: 0, km: 0, visited: [at], seen: [], driven: [], ljeto };
 }
 
 /** Šta putokaz nudi odavde. */
@@ -126,6 +134,7 @@ export function stigao(state: TripState, edge: RoadEdge): TripState {
     km: state.km + edge.km,
     visited: state.visited.includes(cilj) ? state.visited : [...state.visited, cilj],
     seen: [...vidjeno],
+    driven: state.driven.includes(edge.id) ? state.driven : [...state.driven, edge.id],
   };
 }
 
@@ -155,7 +164,10 @@ export function ispravno(state: TripState): boolean {
       if (!ima) return false;
     }
   }
-  return state.visited.every((id) => nodeById(id) !== undefined);
+  return (
+    state.visited.every((id) => nodeById(id) !== undefined) &&
+    state.driven.every((id) => edgeById(id) !== undefined)
+  );
 }
 
 /**
@@ -179,7 +191,8 @@ export function parseTrip(raw: unknown): TripState | null {
     typeof v.km !== "number" ||
     typeof v.ljeto !== "boolean" ||
     !niz(v.visited) ||
-    !niz(v.seen)
+    !niz(v.seen) ||
+    (v.driven !== undefined && !niz(v.driven))
   ) {
     return null;
   }
@@ -191,6 +204,9 @@ export function parseTrip(raw: unknown): TripState | null {
     km: v.km,
     visited: v.visited,
     seen: v.seen,
+    // Putovanja sačuvana prije karte nemaju spisak pređenih puteva; prazan
+    // spisak je tačan opis takvog stanja, pa se ne odbija zbog toga.
+    driven: v.driven ?? [],
     ljeto: v.ljeto,
   };
   return ispravno(state) ? state : null;
