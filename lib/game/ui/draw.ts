@@ -19,6 +19,8 @@ import {
   EDGE_MARKER_INSET,
   MIN_CAR_PX,
   MIN_SIGN_PX,
+  LANDMARK_OFFSET,
+  LANDMARK_SIZE,
   SIGN_LEAD,
   VIEW_HALF,
 } from "../sim/config";
@@ -269,6 +271,29 @@ function strokeLine(
   ctx.setLineDash([]);
 }
 
+/**
+ * Keš ikona znamenitosti.
+ *
+ * Slika se učitava jednom i crta tek kad stigne — do tada se mjesto ostavlja
+ * prazno. Bez keša bi svaki kadar tražio novu sliku; sa čekanjem bi se petlja
+ * crtanja zaustavljala na mreži.
+ *
+ * `Image` ne postoji u Node-u, gdje se scena snima kroz lažno platno, pa se
+ * postojanje provjerava umjesto da se pretpostavi.
+ */
+const IKONE = new Map<string, HTMLImageElement>();
+
+function ikona(src: string): HTMLImageElement | null {
+  if (typeof Image === "undefined") return null;
+  let img = IKONE.get(src);
+  if (!img) {
+    img = new Image();
+    img.src = src;
+    IKONE.set(src, img);
+  }
+  return img.complete && img.naturalWidth > 0 ? img : null;
+}
+
 /** Osovina pomjerena bočno; `offset > 0` je vozačeva lijeva strana. */
 function pomjeri(points: readonly Point[], heading: readonly number[], offset: number): Point[] {
   return points.map((p, i) => {
@@ -325,6 +350,42 @@ function drawRoad(ctx: CanvasRenderingContext2D, v: View, tpl: RoadTemplate): vo
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(String(k.advisorySpeed), q.x, q.y);
+  }
+
+  // Znamenitosti stoje iza bankine, na svojoj strani puta, sa natpisom ispod.
+  // Namjerno se crtaju POSLIJE tabli: tabla je pravilo i ne smije da je
+  // pokrije ukras.
+  for (const z of tpl.landmarks) {
+    const i = Math.min(Math.max(Math.round(z.atS / korak), 0), points.length - 1);
+    const p = points[i];
+    const u = heading[i] ?? 0;
+    if (!p) continue;
+    const odmak = (z.side === "left" ? 1 : -1) * (pola + LANDMARK_OFFSET);
+    const c = { x: p.x + Math.cos(u) * odmak, y: p.y - Math.sin(u) * odmak };
+    const q = px(v, c);
+    const w = LANDMARK_SIZE * v.scale;
+    if (q.x < -w || q.x > v.wPx + w || q.y < -w || q.y > v.hPx + w) continue;
+
+    roundedRect(ctx, q.x - w / 2, q.y - w / 2, w, w, w * 0.18);
+    ctx.fillStyle = PALETTE.paint;
+    ctx.fill();
+    ctx.lineWidth = Math.max(1, w * 0.06);
+    ctx.strokeStyle = PALETTE.ink;
+    ctx.stroke();
+
+    const slika = ikona(z.icon);
+    if (slika) ctx.drawImage(slika, q.x - w * 0.4, q.y - w * 0.4, w * 0.8, w * 0.8);
+
+    const visina = Math.max(9, w * 0.26);
+    ctx.font = `600 ${Math.round(visina)}px system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    const sirina = ctx.measureText(z.name).width + visina * 0.8;
+    roundedRect(ctx, q.x - sirina / 2, q.y + w * 0.58, sirina, visina * 1.5, visina * 0.35);
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.fill();
+    ctx.fillStyle = PALETTE.ink;
+    ctx.fillText(z.name, q.x, q.y + w * 0.58 + visina * 0.25);
   }
 }
 

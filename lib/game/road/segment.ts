@@ -25,7 +25,14 @@ import {
 } from "../sim/config";
 import { rng } from "../sim/geometry";
 import type { Level } from "../sim/config";
-import type { RoadCurve, RoadTemplate, Scenario, ScenarioNpc } from "../sim/types";
+import type {
+  RoadCurve,
+  RoadLandmark,
+  RoadTemplate,
+  Scenario,
+  ScenarioNpc,
+} from "../sim/types";
+import { landmarksOnEdge } from "./landmarks";
 import { curvesFor, type RoadEdge, type RoadKind, nodeById } from "./roadGraph";
 
 /** Koliko je dionica teška — dok nema pravila, ovo samo bira gustinu. */
@@ -109,18 +116,51 @@ function krivine(tpl: Pick<RoadTemplate, "length">, edge: RoadEdge, seed: number
   });
 }
 
-/** Šablon dionice. `id` nosi i ivicu i sjeme, da se dvije dionice ne pobrkaju. */
-export function roadTemplate(edge: RoadEdge, seed: number): RoadTemplate {
+/**
+ * Znamenitosti preslikane sa ivice na dionicu koja se vozi.
+ *
+ * `landmarksOnEdge` već okreće i redoslijed i stranu kad se vozi unatrag, pa
+ * ovdje ostaje samo srazmjera: znamenitost na 30. kilometru šezdesetokilo-
+ * metarske ivice stoji na pola dionice.
+ */
+function znamenitostiNaDionici(
+  edge: RoadEdge,
+  length: number,
+  obrnuto: boolean,
+): RoadLandmark[] {
+  return landmarksOnEdge(edge.id, obrnuto).flatMap((l): RoadLandmark[] =>
+    l.at.kind === "edge"
+      ? [
+          {
+            atS: (l.at.atKm / edge.km) * length,
+            side: l.at.side,
+            icon: l.icon,
+            name: l.name,
+          },
+        ]
+      : [],
+  );
+}
+
+/**
+ * Šablon dionice.
+ *
+ * `id` nosi ivicu, sjeme I smjer: geometrija jeste ista u oba smjera, ali
+ * znamenitosti nisu, a šabloni se keširaju po `id`-u — bez smjera bi povratak
+ * dobio tuđi raspored.
+ */
+export function roadTemplate(edge: RoadEdge, seed: number, obrnuto = false): RoadTemplate {
   const vMax = edge.speedLimit / 3.6;
   const length = TRIP_SEGMENT_TIME * vMax;
   return {
     kind: "road",
-    id: `road:${edge.id}:${seed >>> 0}`,
+    id: `road:${edge.id}:${seed >>> 0}${obrnuto ? ":obrnuto" : ""}`,
     length,
     edgeId: edge.id,
     edgeKm: edge.km,
     vMax,
     curves: krivine({ length }, edge, seed),
+    landmarks: znamenitostiNaDionici(edge, length, obrnuto),
     geometry: { laneWidth: LANE_WIDTH },
     // Dvije trake, ne tri: uže vidno polje nego na autoputu, inače put ostane
     // tanka traka nasred praznog ekrana.
@@ -161,11 +201,11 @@ function susretna(tpl: RoadTemplate, seed: number): ScenarioNpc[] {
 /**
  * Dionica kao scenario.
  *
- * `obrnuto` je vožnja od `b` prema `a`. Za sada mijenja samo naziv: geometrija
- * je simetrična, a znamenitosti i kilometraža se preslikavaju u prikazu.
+ * `obrnuto` je vožnja od `b` prema `a`: geometrija je ista, ali znamenitosti
+ * dolaze obrnutim redom i sa druge strane puta.
  */
 export function dionica(edge: RoadEdge, seed: number, obrnuto = false): Scenario {
-  const tpl = roadTemplate(edge, seed);
+  const tpl = roadTemplate(edge, seed, obrnuto);
   const naziv = nazivDionice(edge, obrnuto);
   const opis = OPIS[edge.kind];
   const naslov: Record<string, string> = {};

@@ -153,6 +153,22 @@ export interface RoadCurve {
 }
 
 /**
+ * Znamenitost postavljena uz dionicu.
+ *
+ * U šablonu stoji već preračunata — položaj duž putanje i strana puta, oboje
+ * u smjeru vožnje. Crtanje time ne mora da poznaje ni graf ni to u kom se
+ * smjeru ide.
+ */
+export interface RoadLandmark {
+  /** Položaj duž dionice [m]. */
+  atS: number;
+  side: "left" | "right";
+  /** Putanja do ikone 64×64. */
+  icon: string;
+  name: string;
+}
+
+/**
  * Otvorena dionica između dva čvora grafa puteva.
  *
  * Nema krakova, nema prvenstva i nema prestrojavanja: dvije trake, jedna u
@@ -173,6 +189,8 @@ export interface RoadTemplate {
   /** Dozvoljena brzina [m/s]. */
   vMax: number;
   curves: RoadCurve[];
+  /** Znamenitosti pored puta, u smjeru vožnje. */
+  landmarks: RoadLandmark[];
   geometry: { laneWidth: number };
   viewHalf?: number;
 }

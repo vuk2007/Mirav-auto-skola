@@ -288,3 +288,58 @@ describe("strana puta", () => {
     },
   );
 });
+
+describe("znamenitosti uz dionicu", () => {
+  it("stoje unutar dionice i sa jedne od dvije strane", () => {
+    for (const e of EDGES) {
+      for (const obrnuto of [false, true]) {
+        const tpl = roadTemplate(e, 3, obrnuto);
+        for (const z of tpl.landmarks) {
+          expect(z.atS, `${e.id} ${z.name}`).toBeGreaterThan(0);
+          expect(z.atS, `${e.id} ${z.name}`).toBeLessThan(tpl.length);
+          expect(["left", "right"], z.name).toContain(z.side);
+          expect(z.icon.startsWith("/assets/landmarks/"), z.name).toBe(true);
+          expect(z.name.length).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it("kilometraža ivice se preslikava srazmjerno na dužinu koja se vozi", () => {
+    // Ostrog je na 12. od 35 km ivice Danilovgrad — Nikšić.
+    const e = ivica("danilovgrad--niksic");
+    const tpl = roadTemplate(e, 1);
+    const ostrog = tpl.landmarks.find((z) => z.name.includes("Ostrog"));
+    expect(ostrog).toBeTruthy();
+    expect(ostrog?.atS).toBeCloseTo((12 / 35) * tpl.length, 6);
+  });
+
+  it("u suprotnom smjeru se okreću i redoslijed i strana", () => {
+    const e = ivica("kotor--kamenari");
+    const naprijed = roadTemplate(e, 1, false).landmarks;
+    const nazad = roadTemplate(e, 1, true).landmarks;
+    expect(naprijed.map((z) => z.name)).toEqual([...nazad].reverse().map((z) => z.name));
+    const perastN = naprijed.find((z) => z.name === "Perast");
+    const perastZ = nazad.find((z) => z.name === "Perast");
+    expect(perastN?.side).toBe("left");
+    expect(perastZ?.side).toBe("right");
+    // Dvanaesti kilometar od Kotora je osamnaesti od Kamenara.
+    const tpl = roadTemplate(e, 1);
+    expect(perastZ?.atS).toBeCloseTo((18 / 30) * tpl.length, 6);
+  });
+
+  it("dva smjera su dva šablona, da im se raspored ne pomiješa", () => {
+    const e = ivica("kotor--kamenari");
+    expect(roadTemplate(e, 1, false).id).not.toBe(roadTemplate(e, 1, true).id);
+  });
+
+  it("dionica bez znamenitosti ih nema, a ne dobija tuđe", () => {
+    expect(roadTemplate(ivica("berane--rozaje"), 1).landmarks).toEqual([]);
+  });
+
+  it("scenario nosi znamenitosti u smjeru u kojem se vozi", () => {
+    const e = ivica("bar--ulcinj");
+    const tpl = dionica(e, 1, false).template as RoadTemplate;
+    expect(tpl.landmarks.map((z) => z.name)).toContain("Stara maslina na Mirovici");
+  });
+});

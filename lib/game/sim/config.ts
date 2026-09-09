@@ -475,3 +475,8 @@ export const CITY_JUNCTIONS_MAX = 3;
  * početku, bez ikakvog objašnjenja igraču.
  */
 export const CITY_LEVEL: Level = 2;
+
+/** Koliko je znamenitost udaljena od ivice kolovoza [m]. */
+export const LANDMARK_OFFSET = 5;
+/** Veličina table sa znamenitošću [m]. */
+export const LANDMARK_SIZE = 6;
