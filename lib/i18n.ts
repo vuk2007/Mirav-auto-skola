@@ -193,6 +193,19 @@ export interface Dict {
   tripCity: string;
   tripMap: string;
   tripMapHide: string;
+  rutaTitle: string;
+  rutaDesc: string;
+  rutaStart: string;
+  rutaFrom: string;
+  rutaTo: string;
+  rutaPrepare: string;
+  rutaGo: string;
+  rutaLegs: string;
+  rutaLeft: string;
+  rutaDone: string;
+  rutaCrash: string;
+  rutaNoRoute: string;
+  rutaFailed: string;
   tripCrashJunction: string;
   tripRetry: string;
   tripRoadAutoput: string;
@@ -542,6 +555,20 @@ const me: Dict = {
   tripCity: "Kroz grad",
   tripMap: "Karta",
   tripMapHide: "Sakrij kartu",
+  rutaTitle: "Ruta",
+  rutaDesc:
+    "Cijela ruta u jednom potezu, po stvarnim putevima Crne Gore. Bez zastajanja između dionica.",
+  rutaStart: "Vozi rutu",
+  rutaFrom: "Odakle",
+  rutaTo: "Dokle",
+  rutaPrepare: "Pripremam put…",
+  rutaGo: "Kreni",
+  rutaLegs: "Dionica",
+  rutaLeft: "Ostalo",
+  rutaDone: "Stigli ste.",
+  rutaCrash: "Sudar. Ruta se vozi ponovo.",
+  rutaNoRoute: "Između ta dva mjesta graf nema put.",
+  rutaFailed: "Put se nije mogao pripremiti.",
   tripCrashJunction: "Sudar. Ova raskrsnica se vozi ponovo.",
   tripRetry: "Vozi ponovo",
   tripRoadAutoput: "autoput",
@@ -880,6 +907,20 @@ const en: Dict = {
   tripCity: "Through town",
   tripMap: "Map",
   tripMapHide: "Hide the map",
+  rutaTitle: "Route",
+  rutaDesc:
+    "A whole route in one go, along the real roads of Montenegro. No stopping between legs.",
+  rutaStart: "Drive the route",
+  rutaFrom: "From",
+  rutaTo: "To",
+  rutaPrepare: "Preparing the road…",
+  rutaGo: "Go",
+  rutaLegs: "Leg",
+  rutaLeft: "Left",
+  rutaDone: "You have arrived.",
+  rutaCrash: "A crash. The route starts over.",
+  rutaNoRoute: "The graph has no road between those two places.",
+  rutaFailed: "The road could not be prepared.",
   tripCrashJunction: "A crash. This junction starts over.",
   tripRetry: "Drive again",
   tripRoadAutoput: "motorway",
@@ -1223,6 +1264,20 @@ const sq: Dict = {
   tripCity: "Nëpër qytet",
   tripMap: "Harta",
   tripMapHide: "Fshih hartën",
+  rutaTitle: "Itinerari",
+  rutaDesc:
+    "I gjithë itinerari pa ndërprerje, nëpër rrugët e vërteta të Malit të Zi. Pa ndalesa mes pjesëve.",
+  rutaStart: "Ngis itinerarin",
+  rutaFrom: "Nga",
+  rutaTo: "Deri",
+  rutaPrepare: "Po përgatis rrugën…",
+  rutaGo: "Nisu",
+  rutaLegs: "Pjesa",
+  rutaLeft: "Mbetur",
+  rutaDone: "Mbërritët.",
+  rutaCrash: "Përplasje. Itinerari nis nga fillimi.",
+  rutaNoRoute: "Grafi nuk ka rrugë mes atyre dy vendeve.",
+  rutaFailed: "Rruga nuk u përgatit dot.",
   tripCrashJunction: "Përplasje. Ky kryqëzim nis nga fillimi.",
   tripRetry: "Ngis përsëri",
   tripRoadAutoput: "autostradë",
@@ -1568,6 +1623,20 @@ const ru: Dict = {
   tripCity: "По городу",
   tripMap: "Карта",
   tripMapHide: "Скрыть карту",
+  rutaTitle: "Маршрут",
+  rutaDesc:
+    "Весь маршрут за один раз, по настоящим дорогам Черногории. Без остановок между участками.",
+  rutaStart: "Проехать маршрут",
+  rutaFrom: "Откуда",
+  rutaTo: "Куда",
+  rutaPrepare: "Готовлю дорогу…",
+  rutaGo: "Поехали",
+  rutaLegs: "Участок",
+  rutaLeft: "Осталось",
+  rutaDone: "Вы приехали.",
+  rutaCrash: "Авария. Маршрут начинается заново.",
+  rutaNoRoute: "В графе нет дороги между этими двумя местами.",
+  rutaFailed: "Дорогу не удалось подготовить.",
   tripCrashJunction: "Авария. Этот перекрёсток начинается заново.",
   tripRetry: "Ехать снова",
   tripRoadAutoput: "автомагистраль",

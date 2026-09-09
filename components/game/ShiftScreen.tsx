@@ -47,7 +47,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
   const [seed] = useState(() => Math.floor(Math.random() * 1e9));
   const [state, setState] = useState<ShiftState>(() => startShift(seed));
   const [phase, setPhase] = useState<Phase>("brief");
-  const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0 });
+  const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0, s: 0 });
   const [best, setBest] = useState<BestShift | null>(null);
   const [lastFail, setLastFail] = useState<string | null>(null);
   const reported = useRef(-1);

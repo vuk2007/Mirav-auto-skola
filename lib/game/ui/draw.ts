@@ -84,6 +84,18 @@ export const PALETTE = {
 export interface View {
   cx: number;
   cy: number;
+  /**
+   * Tačka svijeta oko koje se kadar okreće i ugao za koji se okreće [rad].
+   *
+   * Bez okretanja se kadar samo pomjerao, i to je bilo dovoljno dok je dionica
+   * bila kratka: put je počinjao nagore i tako se i završavao. Na ruti od
+   * trideset kilometara se smjer mijenja za pun krug i više puta, pa bi vozilo
+   * vozilo bočno preko ekrana, a lijevo i desno bi zamijenili mjesta. Nula znači
+   * „bez okretanja" — tako rade svi zatečeni kadrovi.
+   */
+  wx: number;
+  wy: number;
+  rot: number;
   /** Piksela po metru. */
   scale: number;
   /** Pola vidnog polja [m] — koristi ga i oznaka na ivici kadra. */
@@ -97,6 +109,9 @@ export function viewFor(widthPx: number, heightPx: number, half = VIEW_HALF): Vi
   return {
     cx: widthPx / 2,
     cy: heightPx / 2,
+    wx: 0,
+    wy: 0,
+    rot: 0,
     scale: Math.min(widthPx, heightPx) / (2 * half),
     half,
     wPx: widthPx,
@@ -132,10 +147,20 @@ const inFrame = (v: View, p: Point): boolean => {
  * Uz `px` ide i `screenAngle`: sve što se crta rotacijom oko svoje ose mora
  * dobiti isti obrt.
  */
-const px = (v: View, p: Point): Point => ({ x: v.cx - p.x * v.scale, y: v.cy - p.y * v.scale });
+const px = (v: View, p: Point): Point => {
+  const dx = p.x - v.wx;
+  const dy = p.y - v.wy;
+  if (v.rot === 0) return { x: v.cx - dx * v.scale, y: v.cy - dy * v.scale };
+  const cos = Math.cos(v.rot);
+  const sin = Math.sin(v.rot);
+  return {
+    x: v.cx - (dx * cos - dy * sin) * v.scale,
+    y: v.cy - (dx * sin + dy * cos) * v.scale,
+  };
+};
 
-/** Ugao smjera na ekranu — isti obrt kao `px`. */
-const screenAngle = (h: Point): number => Math.atan2(-h.y, -h.x);
+/** Ugao smjera na ekranu — isti obrt kao `px`, uključujući okretanje kadra. */
+const screenAngle = (v: View, h: Point): number => Math.atan2(-h.y, -h.x) + v.rot;
 
 /** Vektor okrenut za 90° udesno (u sistemu gdje `y` raste nadolje). */
 const rt = (h: Point): Point => ({ x: -h.y, y: h.x });
@@ -738,7 +763,7 @@ function drawVehicle(
   const k = lenPx / (CAR_LENGTH * v.scale);
   const widPx = CAR_WIDTH * v.scale * k;
   const c = px(v, pos);
-  const ang = screenAngle(heading);
+  const ang = screenAngle(v, heading);
 
   ctx.save();
   ctx.translate(c.x, c.y);
@@ -818,7 +843,7 @@ function drawEdgeMarker(
 
   ctx.save();
   ctx.translate(c.x, c.y);
-  ctx.rotate(screenAngle(heading));
+  ctx.rotate(screenAngle(v, heading));
   ctx.globalAlpha = 0.85;
   ctx.beginPath();
   ctx.moveTo(r, 0);
@@ -883,7 +908,7 @@ function drawOfficer(
 
   ctx.save();
   ctx.translate(c.x, c.y);
-  ctx.rotate(screenAngle(osa));
+  ctx.rotate(screenAngle(v, osa));
 
   // Svijetla podloga — tamna figura na tamnom asfaltu se inače ne vidi.
   ctx.beginPath();
@@ -930,8 +955,14 @@ export interface DrawOptions {
    * Koristi je beskonačni mod: tamo se vozi kroz niz raskrsnica, pa fiksni
    * kadar nema šta da fiksira. `half` sužava vidno polje, jer se u praćenju
    * gleda ono ispred, a ne cijela raskrsnica odjednom.
+   *
+   * `rotate` uz to okreće kadar tako da je vozačev pravac uvijek NAGORE. Traži
+   * ga ruta: na trideset kilometara stvarnog puta se smjer promijeni za više
+   * punih krugova, pa bi bez okretanja vozilo klizilo bočno preko ekrana, a
+   * lijevo i desno bi zamijenili mjesta. Raskrsnica ga ne traži — tamo se ulazi
+   * uvijek sa istog kraka.
    */
-  camera?: { follow: boolean; half?: number };
+  camera?: { follow: boolean; half?: number; rotate?: boolean };
 }
 
 /** Nacrtaj cijelu scenu — svejedno je da li se vozi ili se ponavlja snimak. */
@@ -951,13 +982,24 @@ export function drawScene(
     const igrac = world.vehicles.find((x) => x.kind === "player");
     const p = igrac ? paths.get(igrac.pathId) : undefined;
     if (igrac && p) {
-      const poz = poseOn(tpl, p, { ...igrac, s: renderS(runner, igrac.id, igrac.s) }).pos;
+      const stanje = { ...igrac, s: renderS(runner, igrac.id, igrac.s) };
+      const poza = poseOn(tpl, p, stanje);
+      const poz = poza.pos;
       // Igrač stoji na 62% visine — dvije trećine kadra su ono ispred njega, a
       // ispred je NAGORE (vidi `px`). Predznaci prate okrenuti kadar.
       // Na autoputu se prati samo uzduž: da kadar klizi i bočno pri promjeni
       // trake značilo bi da se pomjera put, a ne vozilo.
-      v.cx = widthPx / 2 + (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
-      v.cy = heightPx * 0.62 + poz.y * v.scale;
+      if (opts.camera.rotate) {
+        // Kadar se okreće oko igrača tako da mu je pravac uvijek nagore.
+        v.wx = poz.x;
+        v.wy = poz.y;
+        v.cx = widthPx / 2;
+        v.cy = heightPx * 0.62;
+        v.rot = -Math.PI / 2 - Math.atan2(-poza.heading.y, -poza.heading.x);
+      } else {
+        v.cx = widthPx / 2 + (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
+        v.cy = heightPx * 0.62 + poz.y * v.scale;
+      }
     }
   }
 

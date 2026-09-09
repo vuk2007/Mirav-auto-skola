@@ -83,7 +83,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
    */
   const [pokusaj, setPokusaj] = useState(0);
   const [karta, setKarta] = useState(false);
-  const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0 });
+  const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0, s: 0 });
 
   // Sačuvano putovanje se čita tek na klijentu; ako je iz starije verzije
   // grafa, `parseTrip` ga odbija i nudi se novo.

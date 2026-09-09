@@ -47,7 +47,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
 
   const [phase, setPhase] = useState<Phase>("brief");
   const [seed, setSeed] = useState(1);
-  const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0 });
+  const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0, s: 0 });
   const [outcome, setOutcome] = useState<Outcome>("running");
   const [playback, setPlayback] = useState<Playback | null>(null);
   const [replayDone, setReplayDone] = useState(false);
@@ -67,7 +67,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
     pedals.release();
     setPlayback(null);
     setReplayDone(false);
-    setHud({ speedKmh: 0, t: 0 });
+    setHud({ speedKmh: 0, t: 0, s: 0 });
     setOutcome("running");
     setPhase("play");
   }, [pedals]);

@@ -10,6 +10,13 @@ import type { Driver } from "@/lib/game/ui/runner";
 export interface HudState {
   speedKmh: number;
   t: number;
+  /**
+   * Koliko je igrač prešao po svojoj putanji [m].
+   *
+   * Ruti treba da bi znala na kojoj je dionici i koliko je ostalo. Raskrsnici ne
+   * znači ništa, pa ga tamo niko i ne čita.
+   */
+  s: number;
 }
 
 interface GameCanvasProps {
@@ -28,8 +35,13 @@ interface GameCanvasProps {
   /** Nivo težine scenarija — po njemu se zna kad je rok zadržavanja na pola. */
   level: Level;
   sound: Sound;
-  /** Kamera koja prati igrača — koristi je beskonačni mod. */
-  camera?: { follow: boolean; half?: number };
+  /**
+   * Kamera koja prati igrača — koristi je beskonačni mod.
+   *
+   * `rotate` uz to okreće kadar tako da je vozačev pravac uvijek nagore; traži
+   * ga ruta, gdje se smjer mijenja duž cijele vožnje.
+   */
+  camera?: { follow: boolean; half?: number; rotate?: boolean };
   label: string;
 }
 
@@ -146,7 +158,11 @@ export default function GameCanvas({
       if (now - lastHud > 1000 / HUD_HZ) {
         lastHud = now;
         const player = runner.world.vehicles.find((v) => v.kind === "player");
-        onHudRef.current({ speedKmh: (player?.v ?? 0) * 3.6, t: runner.world.t });
+        onHudRef.current({
+          speedKmh: (player?.v ?? 0) * 3.6,
+          t: runner.world.t,
+          s: player?.s ?? 0,
+        });
       }
 
       // Ishod se javlja tačno jednom po pokušaju; `reset` vraća svijet u

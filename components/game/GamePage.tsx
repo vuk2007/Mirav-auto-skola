@@ -8,6 +8,7 @@ import { loadGameProgress, saveGameAttempt, type GameProgressMap } from "@/lib/s
 import GameScreen from "./GameScreen";
 import ScenarioPicker from "./ScenarioPicker";
 import ShiftScreen from "./ShiftScreen";
+import RouteScreen from "./RouteScreen";
 import TripScreen from "./TripScreen";
 
 /**
@@ -24,6 +25,7 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
   const [activeId, setActiveId] = useState<string | null>(null);
   const [shift, setShift] = useState(false);
   const [trip, setTrip] = useState(false);
+  const [ruta, setRuta] = useState(false);
 
   useEffect(() => {
     setProgress(loadGameProgress());
@@ -72,7 +74,9 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
         </div>
       )}
 
-      {trip ? (
+      {ruta ? (
+        <RouteScreen onExit={() => setRuta(false)} />
+      ) : trip ? (
         <TripScreen onExit={() => setTrip(false)} />
       ) : shift ? (
         <ShiftScreen onExit={() => setShift(false)} />
@@ -110,6 +114,22 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
               className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
             >
               {t.tripStart}
+            </button>
+          </section>
+
+          {/* Ruta stoji uz putovanje: isti putevi, ali bez ijednog zastajanja
+              između dionica — cijela vožnja je jedan svijet. */}
+          <section className="panel flex flex-col gap-3 border-t-4 border-t-yellow p-4 sm:flex-row sm:items-center">
+            <div className="flex-1">
+              <h2 className="text-lg font-bold">{t.rutaTitle}</h2>
+              <p className="mt-1 text-sm text-muted">{t.rutaDesc}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setRuta(true)}
+              className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
+            >
+              {t.rutaStart}
             </button>
           </section>
 
