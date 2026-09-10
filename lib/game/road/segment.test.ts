@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { run } from "../sim/bots";
+import { perfectBot, run } from "../sim/bots";
 import { ONCOMING_GAP, TRIP_SEGMENT_TIME } from "../sim/config";
 import { compile } from "../sim/intersection";
 import { lanePathId } from "../sim/highway";
 import { curvatureAt } from "../sim/road";
-import type { Input, RoadTemplate, World } from "../sim/types";
+import type { Input, RoadTemplate, Scenario, World } from "../sim/types";
 import { createWorld, PLAYER_ID, poseOn, step } from "../sim/world";
 import { parseGeometry, type EdgeGeometry } from "./edgeGeometry";
 import { EDGES, edgeById, type RoadEdge } from "./roadGraph";
@@ -18,18 +18,26 @@ const ivica = (id: string): RoadEdge => {
 };
 
 /** Vozač koji drži dozvoljenu brzinu i ništa više — mjerilo za trajanje. */
+/**
+ * Vozač koji drži ograničenje i odstojanje.
+ *
+ * Osnovu daje savršen vozač, dakle ista logika po kojoj voze NPC-ovi — otkad u
+ * našoj traci ima sporijih vozila, vozač koji gleda samo brzinomjer ih zakuca
+ * s leđa. Preticanje ne zna: ko ne pretiče, vozi iza njih i plaća vremenom.
+ */
 const poPropisu =
-  (vMax: number) =>
+  (vMax: number, scenario: Scenario) =>
   (world: World): Input => {
     const igrac = world.vehicles.find((v) => v.id === PLAYER_ID);
     const v = igrac?.v ?? 0;
-    return {
-      throttle: v < vMax ? 1 : 0,
-      brake: v > vMax * 1.02 ? 0.4 : 0,
-      indicator: null,
-      changeLane: null,
-    };
+    const osnova = perfectBot(world, scenario);
+    if (v > vMax * 1.02) return { ...osnova, throttle: 0, brake: 0.4 };
+    if (v < vMax) return osnova;
+    return { ...osnova, throttle: 0 };
   };
+
+/** Ista dionica bez ijednog vozila — za mjere koje se tiču puta, ne saobraćaja. */
+const prazna = (s: Scenario): Scenario => ({ ...s, npcs: [] });
 
 describe("šablon dionice", () => {
   it("traje četiri minuta po dozvoljenoj brzini, koliko god ivica bila duga", () => {
@@ -165,12 +173,20 @@ describe("vožnja dionicom", () => {
       const e = ivica(id);
       const s = dionica(e, 5);
       const tpl = s.template as RoadTemplate;
-      const r = run(s, poPropisu(tpl.vMax), 5);
+      // Četiri minuta je obećanje o DUŽINI dionice, pa se mjeri na praznom
+      // putu; sa saobraćajem se vozi duže, i to je tačno.
+      const p = prazna(s);
+      const bez = run(p, poPropisu(tpl.vMax, p), 5);
+      expect(bez.finished, id).toBe(true);
+      expect(bez.world.outcome, `${id}: ${JSON.stringify(bez.world.violations)}`).toBe("passed");
+      // Kreće se sa osamdeset odsto brzine, pa je nešto sporije od tačno 240 s.
+      expect(bez.time, id).toBeGreaterThan(TRIP_SEGMENT_TIME * 0.9);
+      expect(bez.time, id).toBeLessThan(TRIP_SEGMENT_TIME * 1.15);
+
+      const r = run(s, poPropisu(tpl.vMax, s), 5);
       expect(r.finished, id).toBe(true);
       expect(r.world.outcome, `${id}: ${JSON.stringify(r.world.violations)}`).toBe("passed");
-      // Kreće se sa osamdeset odsto brzine, pa je nešto sporije od tačno 240 s.
-      expect(r.time, id).toBeGreaterThan(TRIP_SEGMENT_TIME * 0.9);
-      expect(r.time, id).toBeLessThan(TRIP_SEGMENT_TIME * 1.15);
+      expect(r.time, id).toBeLessThan(TRIP_SEGMENT_TIME * 1.6);
     }
   });
 
@@ -191,7 +207,7 @@ describe("vožnja dionicom", () => {
         const e = ivica(id);
         const s = dionica(e, 11);
         const tpl = s.template as RoadTemplate;
-        const r = run(s, poPropisu(tpl.vMax), 11);
+        const r = run(s, poPropisu(tpl.vMax, s), 11);
         expect(r.finished, id).toBe(true);
         expect(r.world.outcome, `${id}: ${JSON.stringify(r.world.violations)}`).toBe("passed");
       }
@@ -219,7 +235,7 @@ describe("vožnja dionicom", () => {
     const s = dionica(ivica("podgorica--danilovgrad"), 9);
     const tpl = s.template as RoadTemplate;
     const world = createWorld(s, 9);
-    const bot = poPropisu(tpl.vMax);
+    const bot = poPropisu(tpl.vMax, s);
     const mimoilazenja: number[] = [];
     const bilo = new Set<string>();
 
@@ -243,7 +259,9 @@ describe("vožnja dionicom", () => {
     expect(mimoilazenja.length).toBeGreaterThan(20);
     const prvo = mimoilazenja[0] ?? 0;
     const zadnje = mimoilazenja[mimoilazenja.length - 1] ?? 0;
-    expect(prvo).toBeLessThan(ONCOMING_GAP * 3);
+    // Prvo mimoilaženje ne može biti odmah: susretno vozilo se sada rađa na
+    // ivici prozora, dva kilometra ispred, pa do susreta treba pola minuta.
+    expect(prvo).toBeLessThan(ONCOMING_GAP * 8);
     expect(zadnje).toBeGreaterThan(TRIP_SEGMENT_TIME * 0.85);
   });
 });
@@ -257,7 +275,7 @@ describe("strana puta", () => {
     const s = dionica(ivica(id), 4);
     const tpl = s.template as RoadTemplate;
     const world = createWorld(s, 4);
-    const bot = poPropisu(tpl.vMax);
+    const bot = poPropisu(tpl.vMax, s);
     const { paths } = compile(tpl);
     let mjereno = 0;
 
@@ -270,7 +288,9 @@ describe("strana puta", () => {
       const smjer = poseOn(tpl, mojaPutanja, ja).heading;
 
       for (const v of world.vehicles) {
-        if (v.kind !== "npc" || v.spawnT > world.t) continue;
+        // Mjeri se mimoilaženje, dakle SUSRETNA vozila; ono što ide u našem
+        // smjeru se ne mimoilazi nego pretiče ili prati.
+        if (v.kind !== "npc" || v.spawnT > world.t || v.lane !== 1) continue;
         const p = paths.get(v.pathId);
         if (!p) continue;
         const poz = poseOn(tpl, p, v).pos;
@@ -279,6 +299,10 @@ describe("strana puta", () => {
         // Uzduž smjera vožnje: mimoilaženje je kad je vozilo tačno bočno.
         const uzduz = dx * smjer.x + dy * smjer.y;
         if (Math.abs(uzduz) > 1) continue;
+        // Na serpentini je i vozilo iz druge okuke „tačno bočno", a sa njim se
+        // ne mimoilazimo nego ga gledamo preko doline. Mjeri se samo ono što
+        // nam je zaista pod bokom.
+        if (Math.hypot(dx, dy) > tpl.geometry.laneWidth * 3) continue;
         // Vozačeva lijeva strana je +x zaokrenuto sa smjerom (vidi `laneX`).
         const ulijevo = dx * smjer.y - dy * smjer.x;
         expect(ulijevo, `susretno vozilo ${v.id} nije lijevo`).toBeGreaterThan(0);
@@ -438,7 +462,7 @@ describe("dionica sa stvarnom geometrijom", { timeout: 60000 }, () => {
       const e = ivica(id);
       const s = dionica(e, 1, false, geom(id));
       const tpl = s.template as RoadTemplate;
-      const { world, finished } = run(s, poPropisu(tpl.vMax), 1);
+      const { world, finished } = run(s, poPropisu(tpl.vMax, s), 1);
       expect(finished, id).toBe(true);
       const sudar = world.violations.some((v) => v.type === "collision");
       expect(sudar, id).toBe(false);

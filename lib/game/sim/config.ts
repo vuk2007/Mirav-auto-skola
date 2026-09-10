@@ -801,3 +801,78 @@ export const OFF_ROAD_MARGIN = 0.25;
 export const OFF_ROAD_FAIL_TIME = 2;
 /** Iznad koje brzine izlazak sa kolovoza odmah obara vožnju [m/s]. */
 export const OFF_ROAD_FAIL_SPEED = 30 / 3.6;
+
+// ── preticanje i puna linija ────────────────────────────────────────────────
+
+/**
+ * Ispod kojeg poluprečnika krivina nosi punu liniju [m].
+ *
+ * Mjeri se STVARNI poluprečnik, isti onaj po kojem se bira i tabla sa
+ * preporučenom brzinom — dva pravila o istoj krivini ne smiju da govore
+ * različito. Sabijanje krivinu čini oštrijom, pa zabrana na ekranu uvijek pada
+ * u nešto što i izgleda kao oštra krivina.
+ */
+export const NO_OVERTAKE_RADIUS = 250;
+
+/** Koliko se puna linija produžava prije i poslije krivine [m]. */
+export const NO_OVERTAKE_CURVE_LEAD = 100;
+
+/** Koliko prije raskrsnice počinje puna linija [m]. */
+export const NO_OVERTAKE_BEFORE_JUNCTION = 50;
+
+/**
+ * Do koje dozvoljene brzine se dionica smatra naseljem [m/s].
+ *
+ * Naselje se u simulaciji ne označava zastavicom nego ograničenjem: gradska
+ * dionica nosi pedeset na sat i to je jedini podatak koji o naselju postoji.
+ */
+export const SETTLEMENT_V = 50 / 3.6;
+
+/**
+ * Koliko vremena do susretnog vozila mora ostati da bi preticanje bilo
+ * bezbjedno [s]. Računa se po ZBIRNOJ brzini — prilazi se jedno drugom.
+ */
+export const ONCOMING_TTC = 6;
+
+/** Najduže zadržavanje u kontra traci [s]. */
+export const MAX_OVERTAKE_TIME = 8;
+
+/** Najmanji razmak pri vraćanju ispred preteknutog vozila [s]. */
+export const CUT_IN_TIME = 1;
+
+/**
+ * Koliko poslije vraćanja u traku se još gleda da li je preteknuti zakočio [s].
+ *
+ * Bez prozora bi se moralo pogoditi baš onaj korak u kojem NPC zakoči, a on
+ * reaguje tek kad mu se razmak stvarno smanji.
+ */
+export const CUT_IN_WINDOW = 2;
+
+/**
+ * Koliko točak smije preko razdjelne linije prije nego što se to zove
+ * prelaskom [m].
+ *
+ * Bez tolerancije bi i držanje uz samu liniju bilo prekršaj: traka je 4,2 m, a
+ * auto 1,8 m, pa je do linije svega 1,2 m.
+ */
+export const LINE_CROSS_TOL = 0.3;
+
+/**
+ * Na koliko se sekundi vožnje pojavi sporije vozilo u našoj traci.
+ *
+ * Postoji da bi preticanje uopšte imalo smisla: do sada je saobraćaj bio samo
+ * susretni, pa se nije imalo šta preteći. Gušći saobraćaj i vrste vozila dolaze
+ * kasnije — ovo je najmanje što pravilima treba da se mogu provjeriti.
+ */
+export const SLOW_GAP = 150;
+/**
+ * Koliko oko sebe se traži vozilo koje pretičemo [m].
+ *
+ * Ne mjeri se samo ono ispred: dok smo u kontra traci, preteknuti nam je pod
+ * bokom, pa bi „ispred" propustilo baš onaj trenutak zbog kojeg pravilo i
+ * postoji.
+ */
+export const PRETEKNUT_POJAS = 60;
+
+/** Koliki dio dozvoljene brzine drži sporije vozilo. */
+export const SLOW_SHARE = 0.75;

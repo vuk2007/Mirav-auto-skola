@@ -189,6 +189,14 @@ export interface RoadTemplate {
   /** Dozvoljena brzina [m/s]. */
   vMax: number;
   /**
+   * Koliko vožnja traje ako se vozi po ograničenju [s].
+   *
+   * Postoji zbog roka: `length / vMax` na ruti sa autoputem i gradskim ulicama
+   * daje vrijeme koje niko ne može odvoziti, jer `vMax` je najveće ograničenje
+   * na CIJELOJ ruti, a ne ono koje važi na svakoj dionici.
+   */
+  trajanje?: number;
+  /**
    * Dozvoljena brzina na mjestu `s` [m/s], kad se duž dionice mijenja.
    *
    * Ruta je niz dionica raznih vrsta — magistrala, autoput, ulica kroz grad —
@@ -208,6 +216,13 @@ export interface RoadTemplate {
   centerline?: Point[];
   /** Znamenitosti pored puta, u smjeru vožnje. */
   landmarks: RoadLandmark[];
+  /**
+   * Dionice na kojima je razdjelna linija puna.
+   *
+   * Podatak, a ne račun u crtanju: po njemu se i crta i sudi. Vidi
+   * `lib/game/road/zabrane.ts`.
+   */
+  zabrane?: { from: number; to: number }[];
   geometry: { laneWidth: number };
   viewHalf?: number;
 }
@@ -287,6 +302,8 @@ export interface Path {
    */
   doIvice?: number[];
   doSredine?: number[];
+  /** Rastojanje od ose ove trake do spoljne ivice SUSRETNE trake [m]. */
+  doPreko?: number[];
 }
 
 /**
@@ -350,6 +367,13 @@ export interface Vehicle {
    * odnosu na osu trake — auto koji se pomjera u stranu ne gleda pravo.
    */
   lateralV?: number;
+  /**
+   * Da li je vozilo već postavljeno u prozor oko igrača.
+   *
+   * Na otvorenom putu raspored kaže KAD se vozilo pojavi, a prozor GDJE — vidi
+   * `postaviUProzor` u `world.ts`.
+   */
+  postavljen?: boolean;
   /** Traka iz koje se prelazi, dok prelazak traje. */
   laneFrom?: number;
   /** Napredak prelaska iz trake u traku, 0–1. */
@@ -392,6 +416,15 @@ export interface ScenarioNpc {
   intent: Intent;
   /** Gdje vozilo počinje duž dionice [m]. Na raskrsnicama je uvijek 0. */
   startS?: number;
+  /**
+   * Vozilo se postavlja TAČNO na `startS`, bez pomjeranja u prozor.
+   *
+   * Na otvorenom putu se vozila inače rađaju tamo gdje je igrač (vidi
+   * `postaviUProzor`), jer raspored napravljen po ograničenju ne pogađa gdje
+   * igrač stvarno jeste. Situacija koja se namjerno postavlja — u testu ili u
+   * scenariju — mora moći da kaže „ovdje i nigdje drugdje".
+   */
+  fiksno?: boolean;
   /** Opseg sekundi u kojem vozilo nastaje; bira se po sjemenu. */
   spawnAt: [number, number];
   speed: number;
@@ -548,7 +581,11 @@ export type ViolationType =
   | "tailgating"
   | "brakingOnHighway"
   | "hardShoulder"
-  | "offRoad";
+  | "offRoad"
+  | "crossingSolidLine"
+  | "unsafeOvertake"
+  | "overtakeTooLong"
+  | "cutIn";
 
 /**
  * Koliko prekršaj košta.
@@ -615,8 +652,21 @@ export interface World {
   hazardsFired: number[];
   /** Tajmeri za prekršaje na autoputu koji traju u vremenu. */
   highway: { tooSlowT: number; tailgateT: number; shoulderT: number };
-  /** Koliko igrač neprekidno vozi van kolovoza [s]. */
-  volan: { offRoadT: number };
+  /**
+   * Šta traje u vožnji volanom: van kolovoza, u kontra traci, i trag
+   * posljednjeg preticanja.
+   *
+   * `preticao` pamti koga smo prošli dok smo bili u kontra traci — bez toga se
+   * pri povratku ne zna ispred koga smo se vratili.
+   */
+  volan: {
+    offRoadT: number;
+    kontraT: number;
+    /** Id vozila koje je prošlo pored nas dok smo bili u kontra traci. */
+    preticao: string | null;
+    /** Do kada se još gleda da li je preteknuti morao da koči [s]. */
+    cutInDo: number;
+  };
   /**
    * Mjerenje reakcije: kad je događaj postao vidljiv i kad je igrač prvi put
    * zakočio poslije toga. `null` znači da još nije zakočio.

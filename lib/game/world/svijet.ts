@@ -17,7 +17,10 @@ import {
   ONCOMING_GAP,
   ROAD_LANE_WIDTH,
   ROAD_VIEW_HALF,
+  SLOW_GAP,
+  SLOW_SHARE,
 } from "../sim/config";
+import { zabraneNaPutu } from "../road/zabrane";
 import { rng } from "../sim/geometry";
 import type { Level } from "../sim/config";
 import type { RoadTemplate, Scenario, ScenarioNpc, World } from "../sim/types";
@@ -36,11 +39,21 @@ export function rutaTemplate(ruta: Ruta): RoadTemplate {
     edgeId: ruta.dionice.flatMap((d) => (d.edge ? [d.edge.id] : [])).join(","),
     edgeKm: kilometraza(ruta),
     vMax: ruta.vMax,
+    // Rok vožnje se računa po ograničenjima svake dionice, ne po najbržoj.
+    trajanje: vrijemeDo(ruta, ruta.duzina),
     // Ograničenje se duž rute mijenja: magistrala, autoput, ulica kroz grad.
     vMaxNa: (s) => ruta.vMaxNa(s),
     curves: ruta.krivine,
     centerline: ruta.tacke,
     landmarks: ruta.landmarks,
+    // Puna linija: krivine, naselja i prilazi mjestima u koja se ulazi. Isti
+    // podatak čitaju i crtanje i sud.
+    zabrane: zabraneNaPutu({
+      duzina: ruta.duzina,
+      krivine: ruta.krivine,
+      vMaxNa: (s) => ruta.vMaxNa(s),
+      raskrsnice: ruta.dionice.flatMap((d, i) => (i === 0 ? [] : [d.odS])).concat(ruta.duzina),
+    }),
     geometry: { laneWidth: ROAD_LANE_WIDTH },
     viewHalf: ROAD_VIEW_HALF,
   };
@@ -127,6 +140,65 @@ export function susretniSaobracaj(ruta: Ruta, seed: number): ScenarioNpc[] {
   return out;
 }
 
+/**
+ * Gdje je igrač na ruti poslije `t` sekundi vožnje po ograničenju [m].
+ *
+ * Ista mjera kao `vrijemeDo`, samo obrnuta. Nije predviđanje vožnje nego
+ * raspored saobraćaja — dovoljno je da vozila budu tamo gdje se prolazi.
+ */
+function mjestoU(ruta: Ruta, t: number): number | null {
+  let preostalo = t;
+  for (const d of ruta.dionice) {
+    const trajanje = (d.doS - d.odS) / d.vMax;
+    if (preostalo <= trajanje) return d.odS + preostalo * d.vMax;
+    preostalo -= trajanje;
+  }
+  return null;
+}
+
+/**
+ * Sporija vozila u NAŠOJ traci.
+ *
+ * Do sada je saobraćaj bio samo susretni, pa se nije imalo šta preteći — a
+ * preticanje je jedino zbog čega volan i postoji. Svako vozilo se postavi tako
+ * da ga igrač sustigne otprilike u trenutku `kada`: nastaje unaprijed, sa svoje
+ * brzine, pa se ne pojavi niotkuda pred haubom.
+ */
+export function sporiSaobracaj(ruta: Ruta, seed: number): ScenarioNpc[] {
+  const r = rng((seed ^ 0x51ed270b) >>> 0);
+  const out: ScenarioNpc[] = [];
+  const ukupno = vrijemeDo(ruta, ruta.duzina);
+
+  for (let t = SLOW_GAP; t < ukupno; t += SLOW_GAP) {
+    const kada = t + (r() - 0.5) * SLOW_GAP * 0.4;
+    const mjesto = mjestoU(ruta, kada);
+    if (mjesto === null) continue;
+    const v = ruta.vMaxNa(mjesto) * SLOW_SHARE * (0.9 + r() * 0.2);
+    // Susret se dešava tik ispred igrača; dotle vozilo vozi svojom brzinom.
+    const cilj = mjesto + PRED_HAUBOM;
+    let spawnT = Math.max(0, kada - VOD_SPOROG);
+    let startS = cilj - v * (kada - spawnT);
+    if (startS < 0) {
+      startS = 0;
+      spawnT = Math.max(0, kada - cilj / Math.max(1, v));
+    }
+    if (spawnT >= ukupno) continue;
+    out.push({
+      arm: "N",
+      intent: { kind: "lane", index: 0 },
+      startS,
+      spawnAt: [spawnT, spawnT],
+      speed: v,
+    });
+  }
+  return out;
+}
+
+/** Koliko ispred igrača se sporo vozilo nađe u trenutku susreta [m]. */
+const PRED_HAUBOM = 30;
+/** Koliko ranije sporo vozilo nastane, da ne iskrsne pred haubom [s]. */
+const VOD_SPOROG = 60;
+
 /** Ruta kao scenario. Igrač kreće u vožnji, ne iz mjesta. */
 export function rutaScenario(ruta: Ruta, seed: number, difficulty: Level = 2): Scenario {
   const tpl = rutaTemplate(ruta);
@@ -146,7 +218,7 @@ export function rutaScenario(ruta: Ruta, seed: number, difficulty: Level = 2): S
       startS: 0,
       startV: ruta.vMaxNa(0) * 0.8,
     },
-    npcs: susretniSaobracaj(ruta, seed),
+    npcs: [...susretniSaobracaj(ruta, seed), ...sporiSaobracaj(ruta, seed)],
     // Ruta je otvoren put kao i dionica putovanja — vozi se volanom.
     upravljanje: "traka",
     difficulty,

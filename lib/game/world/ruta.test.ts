@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { KEEP_BEHIND, LOAD_AHEAD, ROAD_STEP } from "@/lib/game/sim/config";
+import { perfectBot } from "@/lib/game/sim/bots";
 import { compile } from "@/lib/game/sim/intersection";
 import { createWorld, PLAYER_ID, poseOn, step } from "@/lib/game/sim/world";
-import type { Input, Point, RoadTemplate, World } from "@/lib/game/sim/types";
+import type { Input, Point, RoadTemplate, Scenario, World } from "@/lib/game/sim/types";
 import { EDGES, NODES } from "@/lib/game/road/roadGraph";
 import { parseGeometry, type EdgeGeometry } from "@/lib/game/road/edgeGeometry";
 import { parseKicma, type Kicma } from "@/lib/game/road/kicma";
@@ -74,17 +75,18 @@ const RUTE: ReadonlyArray<readonly [string, string]> = [
 const POGLED = 200;
 
 const poPropisu =
-  (r: Ruta) =>
+  (r: Ruta, scenario: Scenario) =>
   (world: World): Input => {
     const igrac = world.vehicles.find((v) => v.id === PLAYER_ID);
     const v = igrac?.v ?? 0;
     const limit = vMaxNaprijed(r, igrac?.s ?? 0, POGLED);
-    return {
-      throttle: v < limit ? 1 : 0,
-      brake: v > limit * 1.02 ? 0.35 : 0,
-      indicator: null,
-      changeLane: null,
-    };
+    // Osnovu daje savršen vozač, dakle ISTA logika po kojoj voze NPC-ovi: on
+    // drži odstojanje od onoga ko je ispred. Otkad u našoj traci ima sporijih
+    // vozila, vozač koji samo gleda tablu ih zakuca s leđa.
+    const osnova = perfectBot(world, scenario);
+    if (v > limit * 1.02) return { ...osnova, throttle: 0, brake: 0.35 };
+    if (v < limit) return osnova;
+    return { ...osnova, throttle: 0 };
   };
 
 interface Voznja {
@@ -98,12 +100,12 @@ interface Voznja {
 }
 
 /** Provozaj cijelu rutu i izmjeri sve što nas zanima. */
-function provozaj(r: Ruta, seed = 1): Voznja {
-  const scenario = rutaScenario(r, seed);
+function provozaj(r: Ruta, seed = 1, zadati?: Scenario): Voznja {
+  const scenario = zadati ?? rutaScenario(r, seed);
   const tpl = scenario.template as RoadTemplate;
   const { paths } = compile(tpl);
   const world = createWorld(scenario, seed);
-  const bot = poPropisu(r);
+  const bot = poPropisu(r, scenario);
 
   let prethodna: Point | null = null;
   let najveciSkok = 0;
@@ -249,9 +251,24 @@ describe("vožnja bez prekida", { timeout: 300000 }, () => {
   });
 
   it("vožnja traje onoliko koliko razmjera obećava", () => {
+    // Mjeri se PRAZAN put: razmjera je obećanje o dužini, a ne o saobraćaju.
+    // Otkad u našoj traci ima sporijih vozila, vožnja iza njih traje duže — i
+    // to je tačno, ali to više nije mjera sabijanja.
+    const r = ruta("budva", "kolasin");
+    const prazna = { ...rutaScenario(r, 1), npcs: [] };
+    const v = provozaj(r, 1, prazna);
+    expect(v.vrijeme / 60).toBeGreaterThan(15);
+    expect(v.vrijeme / 60).toBeLessThan(20);
+  });
+
+  it("saobraćaj usporava vožnju, ali je ne zaustavlja", () => {
     const budva = voznje.find((x) => x.a === "budva")!;
-    expect(budva.v.vrijeme / 60).toBeGreaterThan(15);
-    expect(budva.v.vrijeme / 60).toBeLessThan(20);
+    const r = ruta("budva", "kolasin");
+    const prazna = provozaj(r, 1, { ...rutaScenario(r, 1), npcs: [] });
+    // Iza sporijih vozila se vozi duže, ali ne dvostruko: ko ne pretiče, plaća
+    // vremenom. Preticanje dolazi sa botom koji ga zna.
+    expect(budva.v.vrijeme).toBeGreaterThan(prazna.vrijeme);
+    expect(budva.v.vrijeme).toBeLessThan(prazna.vrijeme * 1.6);
   });
 });
 

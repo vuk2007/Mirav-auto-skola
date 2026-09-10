@@ -55,12 +55,22 @@ export function curvatureAt(curves: readonly RoadCurve[], s: number): number {
  * krivine se iz nje ČITAJU, ne crtaju. Proceduralno savijanje ispod važi samo
  * za dionice bez geometrije.
  */
-export function centerLine(tpl: RoadTemplate): { points: Point[]; heading: number[] } {
+export function centerLine(
+  tpl: RoadTemplate,
+  od = 0,
+  doK = Number.POSITIVE_INFINITY,
+): { points: Point[]; heading: number[] } {
   if (tpl.centerline && tpl.centerline.length >= 2) {
-    const points = tpl.centerline;
-    const heading = points.map((p, i) => {
-      const a = i === 0 ? p : points[i - 1]!;
-      const b = i === 0 ? points[1]! : p;
+    const sve = tpl.centerline;
+    const i0 = Math.max(0, Math.floor(od));
+    const i1 = Math.min(sve.length - 1, Math.floor(doK));
+    // Ugao se računa iz SUSJEDA U CIJELOJ osovini, i kad se vraća samo komad —
+    // inače bi se na spoju dva kadra smjer prelomio.
+    const points = i0 === 0 && i1 === sve.length - 1 ? sve : sve.slice(i0, i1 + 1);
+    const heading = points.map((p, k) => {
+      const i = i0 + k;
+      const a = i === 0 ? p : sve[i - 1]!;
+      const b = i === 0 ? sve[1]! : p;
       return Math.atan2(b.x - a.x, b.y - a.y);
     });
     return { points, heading };
@@ -84,6 +94,11 @@ export function centerLine(tpl: RoadTemplate): { points: Point[]; heading: numbe
     x += Math.sin(pola) * korak;
     y += Math.cos(pola) * korak;
     ugao += curvatureAt(tpl.curves, s + korak / 2) * korak;
+  }
+  if (od > 0 || Number.isFinite(doK)) {
+    const i0 = Math.max(0, Math.floor(od));
+    const i1 = Math.min(points.length - 1, Math.floor(doK));
+    return { points: points.slice(i0, i1 + 1), heading: heading.slice(i0, i1 + 1) };
   }
   return { points, heading };
 }
@@ -161,8 +176,12 @@ export function buildRoadPaths(tpl: RoadTemplate): Path[] {
     const ivica = bocnaLinija(points, heading, znak * tpl.geometry.laneWidth);
     const razmak = (a: readonly Point[], b: readonly Point[]): number[] =>
       a.map((p, i) => Math.hypot((b[i]?.x ?? p.x) - p.x, (b[i]?.y ?? p.y) - p.y));
+    // Daleka ivica kolovoza — spoljna ivica SUSRETNE trake. Do nje se smije
+    // pri preticanju, i tu je kraj poprečnog kretanja ulijevo.
+    const preko = bocnaLinija(points, heading, -znak * tpl.geometry.laneWidth);
     const doIvice = razmak(linija, ivica);
     const doSredine = razmak(linija, points);
+    const doPreko = razmak(linija, preko);
     // Susretna traka se vozi u suprotnom smjeru, pa joj putanja ide unazad.
     const tacke = isOncoming(index) ? [...linija].reverse() : linija;
     const cum = cumulative(tacke);
@@ -181,6 +200,7 @@ export function buildRoadPaths(tpl: RoadTemplate): Path[] {
       boxExitS: daleko + 1,
       doIvice: isOncoming(index) ? [...doIvice].reverse() : doIvice,
       doSredine: isOncoming(index) ? [...doSredine].reverse() : doSredine,
+      doPreko: isOncoming(index) ? [...doPreko].reverse() : doPreko,
     };
   });
 }

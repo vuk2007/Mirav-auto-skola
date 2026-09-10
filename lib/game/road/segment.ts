@@ -17,6 +17,8 @@
 
 import {
   ONCOMING_GAP,
+  SLOW_GAP,
+  SLOW_SHARE,
   ROAD_LATERAL_ACCEL,
   ROAD_TURN_MAX,
   ROAD_TURN_MIN,
@@ -25,6 +27,7 @@ import {
   ROAD_VIEW_HALF,
 } from "../sim/config";
 import { rng } from "../sim/geometry";
+import { zabraneNaPutu } from "./zabrane";
 import type { Level } from "../sim/config";
 import type {
   RoadCurve,
@@ -177,6 +180,13 @@ export function roadTemplate(
       curves: sabijeno.krivine,
       centerline: sabijeno.tacke,
       landmarks: znamenitostiNaDionici(edge, sabijeno.duzina, obrnuto, sabijeno),
+      zabrane: zabraneNaPutu({
+        duzina: sabijeno.duzina,
+        krivine: sabijeno.krivine,
+        // Dionica ima jedno ograničenje, pa naselja u njoj nema; kraj dionice
+        // je uvijek raskrsnica ili mjesto u koje se stiže.
+        raskrsnice: [sabijeno.duzina],
+      }),
       geometry: { laneWidth: ROAD_LANE_WIDTH },
       viewHalf: ROAD_VIEW_HALF,
     };
@@ -192,9 +202,48 @@ export function roadTemplate(
     vMax,
     curves: krivine({ length }, edge, seed),
     landmarks: znamenitostiNaDionici(edge, length, obrnuto),
+    zabrane: zabraneNaPutu({
+      duzina: length,
+      krivine: krivine({ length }, edge, seed),
+      raskrsnice: [length],
+    }),
     geometry: { laneWidth: ROAD_LANE_WIDTH },
     viewHalf: ROAD_VIEW_HALF,
   };
+}
+
+/**
+ * Sporija vozila u našoj traci — nešto što se ima preteći.
+ *
+ * Postavljaju se tako da ih igrač sustigne otprilike u trenutku `kada`: nastaju
+ * unaprijed i voze svojom brzinom, pa ne iskrsnu pred haubom.
+ */
+function spora(tpl: RoadTemplate, seed: number): ScenarioNpc[] {
+  const r = rng((seed ^ 0x51ed270b) >>> 0);
+  const out: ScenarioNpc[] = [];
+  const v = tpl.vMax;
+  const trajanje = tpl.length / v;
+  for (let t = SLOW_GAP; t < trajanje; t += SLOW_GAP) {
+    const kada = t + (r() - 0.5) * SLOW_GAP * 0.4;
+    const mjesto = v * kada;
+    if (mjesto > tpl.length) continue;
+    const vs = v * SLOW_SHARE * (0.9 + r() * 0.2);
+    const cilj = mjesto + 30;
+    let spawnT = Math.max(0, kada - 60);
+    let startS = cilj - vs * (kada - spawnT);
+    if (startS < 0) {
+      startS = 0;
+      spawnT = Math.max(0, kada - cilj / Math.max(1, vs));
+    }
+    out.push({
+      arm: "N",
+      intent: { kind: "lane", index: 0 },
+      startS,
+      spawnAt: [spawnT, spawnT],
+      speed: vs,
+    });
+  }
+  return out;
 }
 
 /**
@@ -261,7 +310,7 @@ export function dionica(
       // Kreće se u vožnji, ne iz mjesta: dionica je sredina puta, ne polazak.
       startV: tpl.vMax * 0.8,
     },
-    npcs: susretna(tpl, seed),
+    npcs: [...susretna(tpl, seed), ...spora(tpl, seed)],
     // Na otvorenom putu se vozi volanom: dionica ima trake, ne šinu.
     upravljanje: "traka",
     difficulty: TEZINA[edge.kind],

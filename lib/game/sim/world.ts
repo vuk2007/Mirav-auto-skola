@@ -37,6 +37,7 @@ import {
   TOO_SLOW_TIME,
   HAZARD_WINDOW,
   KEEP_BEHIND,
+  LOAD_AHEAD,
   MAX_SCENARIO_SECONDS,
   ROLL_RESISTANCE,
   SPEEDING_FACTOR,
@@ -58,6 +59,12 @@ import {
   LAT_SPEED_V_FAST,
   LAT_SPEED_V_SLOW,
   LANE_COMMIT,
+  LINE_CROSS_TOL,
+  CUT_IN_TIME,
+  CUT_IN_WINDOW,
+  MAX_OVERTAKE_TIME,
+  ONCOMING_TTC,
+  PRETEKNUT_POJAS,
   OFF_ROAD_FAIL_SPEED,
   OFF_ROAD_FAIL_TIME,
   OFF_ROAD_MARGIN,
@@ -65,6 +72,7 @@ import {
   STEER_DEAD_ZONE,
 } from "./config";
 import { headingAt, pointAt, polygonsOverlap, rectCorners, right, rng, valueAt } from "./geometry";
+import { zabranjeno } from "../road/zabrane";
 import {
   compile,
   crosswalkSpans,
@@ -94,6 +102,7 @@ import type {
   Intent,
   Path,
   Pedestrian,
+  RoadTemplate,
   Point,
   Scenario,
   HighwayTemplate,
@@ -142,6 +151,12 @@ export const PENALTY_REF: Readonly<Record<Violation["type"], string | null>> = {
   // Izlazak sa kolovoza: najbliža stavka u katalogu je kretanje desnom stranom
   // kolovoza. Kad instruktorka potvrdi tačan član, mijenja se ovdje.
   offRoad: "desna-strana",
+  // Preticanje: najbliže stavke u katalogu. Kad instruktorka potvrdi tačne
+  // članove, mijenja se ovdje.
+  crossingSolidLine: "signalizacija",
+  unsafeOvertake: "preticanje-opasno",
+  overtakeTooLong: "preticanje",
+  cutIn: "preticanje",
 };
 
 /** Ključ manevra u id-u putanje. Kružni tok i autoput dodaju svoje oblike. */
@@ -265,10 +280,45 @@ export function poseOn(
  */
 export function bocneGranice(path: Path, s: number): { lijevo: number; desno: number } {
   const pola = CAR_WIDTH / 2;
+  // Ulijevo se ide do spoljne ivice susretne trake: puna linija se PRELAZI, ne
+  // odbija. Zabrana je pravilo i prijavljuje se, a ne zid — vozilo koje bi se
+  // zaustavilo na liniji bilo bi opasnije od onoga koje je pređe.
+  const preko = path.doPreko ? doLinije(path, path.doPreko, s) : doLinije(path, path.doSredine, s);
   return {
-    lijevo: -Math.max(0, doLinije(path, path.doSredine, s) - pola),
+    lijevo: -Math.max(0, preko - pola),
     desno: Math.max(0, doLinije(path, path.doIvice, s) + SHOULDER_WIDTH - pola),
   };
+}
+
+/**
+ * Koje trake vozilo zauzima na otvorenom putu.
+ *
+ * Ne pita se `lane` nego TIJELO: vozilo koje je pola auta preko razdjelne
+ * linije jeste u obje trake, i tako se prema njemu i ponaša ostali saobraćaj.
+ * Bez ovoga bi kolona iza nas kočila i dok smo u kontra traci, jer bi po
+ * `pathId`-u i dalje bila iza nas u istoj traci.
+ */
+export function trakeNaPutu(path: Path, v: Vehicle): number[] {
+  const svoja = v.lane ?? 0;
+  const druga = svoja === 1 ? 0 : 1;
+  const lat = v.lateral ?? 0;
+  if (lat === 0) return [svoja];
+  const pola = CAR_WIDTH / 2;
+  const doSredine = doLinije(path, path.doSredine, v.s);
+  const doIvice = doLinije(path, path.doIvice, v.s);
+  const preko = path.doPreko ? doLinije(path, path.doPreko, v.s) : doSredine;
+  const lijevoTijelo = lat - pola;
+  const desnoTijelo = lat + pola;
+
+  const out: number[] = [];
+  if (desnoTijelo > -doSredine + LINE_CROSS_TOL && lijevoTijelo < doIvice) out.push(svoja);
+  if (lijevoTijelo < -doSredine - LINE_CROSS_TOL && desnoTijelo > -preko) out.push(druga);
+  return out.length > 0 ? out : [svoja];
+}
+
+/** Položaj vozila mjeren duž RUTE, bez obzira na to kojom trakom ide. */
+function naRuti(v: Vehicle, path: Path): number {
+  return v.lane === 1 ? path.length - v.s : v.s;
 }
 
 /**
@@ -318,13 +368,127 @@ function volanKorak(v: Vehicle, path: Path, input: Input): void {
 }
 
 /**
+ * Pravila preticanja.
+ *
+ * Sve se mjeri od RAZDJELNE LINIJE, jer je ona jedina stvarna granica na
+ * dvosmjernom putu: tijelo preko nje je prelazak, sredina preko nje je vožnja
+ * kontra trakom.
+ *
+ * Zabrana se ne čita iz krivine u trenutku vožnje nego iz šablona — iz istog
+ * podatka iz kojeg se linija i crta. Vidi `lib/game/road/zabrane.ts`.
+ */
+function preticanje(world: World, ctx: Ctx, player: Vehicle, path: Path): void {
+  const tpl = ctx.tpl as RoadTemplate;
+  const lat = player.lateral ?? 0;
+  const doSredine = doLinije(path, path.doSredine, player.s);
+  const tijeloPreko = lat - CAR_WIDTH / 2 < -doSredine - LINE_CROSS_TOL;
+  const uKontra = lat < -doSredine;
+
+  if (tijeloPreko && zabranjeno(tpl.zabrane, player.s)) {
+    add(world, {
+      type: "crossingSolidLine",
+      t: world.t,
+      details: "Prešao preko pune razdjelne linije.",
+    });
+  }
+
+  if (uKontra) {
+    world.volan.kontraT += DT;
+    if (world.volan.kontraT > MAX_OVERTAKE_TIME) {
+      add(world, {
+        type: "overtakeTooLong",
+        t: world.t,
+        severity: "minor",
+        details: `Zadržao se u suprotnoj traci ${world.volan.kontraT.toFixed(0)} s.`,
+      });
+    }
+
+    // Susretno vozilo: prilazi se ZBIROM brzina, pa je vrijeme do susreta
+    // mnogo kraće nego što razdaljina sugeriše.
+    let najblize = Infinity;
+    let ko: Vehicle | null = null;
+    for (const o of world.vehicles) {
+      if (o.id === player.id || o.done || world.t < o.spawnT || o.lane !== 1) continue;
+      const oPath = ctx.paths.get(o.pathId);
+      if (!oPath) continue;
+      const d = naRuti(o, oPath) - player.s;
+      if (d > 0 && d < najblize) {
+        najblize = d;
+        ko = o;
+      }
+    }
+    if (ko) {
+      const ttc = najblize / Math.max(1, player.v + ko.v);
+      if (ttc < ONCOMING_TTC) {
+        add(world, {
+          type: "unsafeOvertake",
+          t: world.t,
+          details: `U suprotnoj traci, a susretno vozilo stiže za ${ttc.toFixed(1)} s.`,
+          otherVehicleId: ko.id,
+        });
+      }
+    }
+
+    // Koga pretičemo: vozilo u našem smjeru koje nam je pod bokom ili tik
+    // ispred. Pamti se da bi se pri povratku znalo ispred koga smo se vratili.
+    for (const o of world.vehicles) {
+      if (o.id === player.id || o.done || world.t < o.spawnT || o.lane === 1) continue;
+      const oPath = ctx.paths.get(o.pathId);
+      if (!oPath) continue;
+      const d = naRuti(o, oPath) - player.s;
+      if (d > -PRETEKNUT_POJAS && d < PRETEKNUT_POJAS) world.volan.preticao = o.id;
+    }
+    return;
+  }
+
+  // Vratili smo se u svoju traku.
+  if (world.volan.kontraT > 0) {
+    const preteknuti = world.vehicles.find((o) => o.id === world.volan.preticao && !o.done);
+    if (preteknuti) {
+      const oPath = ctx.paths.get(preteknuti.pathId);
+      const iza = oPath ? player.s - naRuti(preteknuti, oPath) : -1;
+      // Samo ako smo se stvarno vratili ISPRED njega.
+      if (iza > 0) {
+        const razmak = (iza - CAR_LENGTH) / Math.max(1, preteknuti.v);
+        if (razmak < CUT_IN_TIME) {
+          add(world, {
+            type: "cutIn",
+            t: world.t,
+            severity: "minor",
+            details: `Vratio se ispred preteknutog na ${razmak.toFixed(1)} s razmaka.`,
+            otherVehicleId: preteknuti.id,
+          });
+        }
+        // Da li je zbog toga morao da koči, vidi se tek u sljedećim koracima.
+        world.volan.cutInDo = world.t + CUT_IN_WINDOW;
+      }
+    }
+    world.volan.kontraT = 0;
+    world.volan.preticao = null;
+  }
+
+  // Vraćanje koje je natjeralo preteknutog na kočnicu nije sitnica.
+  if (world.t < world.volan.cutInDo) {
+    const zakocio = world.events.some(
+      (e) => e.type === "forcedBrake" && e.by === PLAYER_ID && e.t >= world.volan.cutInDo - CUT_IN_WINDOW,
+    );
+    const kartica = world.violations.find((x) => x.type === "cutIn");
+    if (zakocio && kartica && kartica.severity !== "fail") {
+      kartica.severity = "fail";
+      kartica.details = "Vratio se ispred preteknutog, koji je zbog toga morao da koči.";
+    }
+  }
+}
+
+/**
  * Izlazak sa kolovoza.
  *
  * Sudi se po tijelu vozila, ne po njegovoj sredini: prekršaj je kad točak pređe
  * ivičnu liniju. Kratko i sporo je greška koja se prijavi; dugo ili brzo obara
  * vožnju, jer je to već slijetanje.
  */
-function volanPrekrsaji(world: World, player: Vehicle, path: Path): void {
+function volanPrekrsaji(world: World, ctx: Ctx, player: Vehicle, path: Path): void {
+  preticanje(world, ctx, player, path);
   const izvan = (player.lateral ?? 0) + CAR_WIDTH / 2 - doLinije(path, path.doIvice, player.s);
   if (izvan <= 0) {
     world.volan.offRoadT = 0;
@@ -447,6 +611,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
       emergency: n.emergency,
       lane: jeAutoput ? (trakaIz(n.intent) ?? 0) : undefined,
       laneT: 1,
+      postavljen: n.fiksno ?? false,
       cruise: jeAutoput ? n.speed : undefined,
     });
   });
@@ -484,7 +649,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
     hazardsFired: [],
     reaction: [],
     highway: { tooSlowT: 0, tailgateT: 0, shoulderT: 0 },
-    volan: { offRoadT: 0 },
+    volan: { offRoadT: 0, kontraT: 0, preticao: null, cutInDo: 0 },
   };
 }
 
@@ -494,6 +659,8 @@ export function createWorld(scenario: Scenario, seed: number): World {
 interface Target {
   limit: number;
   vLead: number;
+  /** Ko je postavio granicu — po tome se zna zbog koga se koči. */
+  blame?: string;
 }
 
 interface Ctx extends Regulacija {
@@ -535,6 +702,7 @@ function ctxFor(world: World, scenario: Scenario): Ctx {
  */
 function npcTarget(world: World, ctx: Ctx, me: Vehicle, mePath: Path): Target {
   // Autoput i otvoren put: nema prvenstva ni znakova, samo traka i odstojanje.
+  if (ctx.tpl.kind === "road") return roadFollowLimit(world, ctx, me, mePath);
   if (bezKrakova(ctx.tpl)) return highwayFollowLimit(world, ctx, me);
 
   let limit = Infinity;
@@ -751,6 +919,45 @@ function highwayFollowLimit(world: World, ctx: Ctx, me: Vehicle): Target {
 }
 
 /**
+ * Dokle vozilo na otvorenom putu smije zbog onoga što mu je u traci.
+ *
+ * Dvije razlike u odnosu na autoput. Prva: traka se ne čita iz `lane` nego iz
+ * tijela vozila, jer igrač sa volanom može biti i između dvije. Druga:
+ * susretna traka ima okrenutu putanju, pa se „ko je ispred koga" ne može
+ * porediti po `s` — poredi se po položaju NA RUTI, u smjeru u kojem se ide.
+ *
+ * Vozilo koje nam ide u susret u našoj traci nije kolona ispred nego prepreka:
+ * ne izjednačava se brzina nego se koči do zaustavljanja.
+ */
+function roadFollowLimit(world: World, ctx: Ctx, me: Vehicle, mePath: Path): Target {
+  let limit = Infinity;
+  let vLead = 0;
+  let blame: string | undefined;
+  const mojeTrake = trakeNaPutu(mePath, me);
+  const mojSmjer = me.lane === 1 ? -1 : 1;
+  const mojeNaRuti = naRuti(me, mePath);
+  const razmak = Math.max(FOLLOW_GAP, HIGHWAY_FOLLOW_TIME * me.v);
+
+  for (const o of world.vehicles) {
+    if (o.id === me.id || o.done || world.t < o.spawnT) continue;
+    const oPath = ctx.paths.get(o.pathId);
+    if (!oPath) continue;
+    if (!shareLane(mojeTrake, trakeNaPutu(oPath, o))) continue;
+    // Koliko je ispred mene, mjereno u mom smjeru vožnje.
+    const d = (naRuti(o, oPath) - mojeNaRuti) * mojSmjer;
+    if (d <= 0) continue;
+    const istiSmjer = (o.lane === 1) === (me.lane === 1);
+    const kandidat = me.s + d - o.length - (istiSmjer ? razmak : razmak * 1.5);
+    if (kandidat < limit) {
+      limit = kandidat;
+      vLead = istiSmjer ? o.v : 0;
+      blame = o.id;
+    }
+  }
+  return { limit, vLead, blame };
+}
+
+/**
  * Ubrzanje kojim se stiže do `limit` i tu staje, ograničeno na [−B_MAX, A_MAX].
  *
  * `vLead` je brzina onoga zbog koga je granica postavljena. Kod stop-linije i
@@ -834,6 +1041,11 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   for (const v of world.vehicles) {
     if (v.done || world.t < v.spawnT) continue;
     const path = ctx.paths.get(v.pathId)!;
+    // Igrač se nikad ne premješta — a u probi savršenog vozača on je označen
+    // kao NPC, pa se mora prepoznati po `id`-u, ne po vrsti.
+    if (ctx.tpl.kind === "road" && v.id !== PLAYER_ID && !v.postavljen) {
+      postaviUProzor(world, v, path, player);
+    }
 
     if (v.kind === "player") {
       // Pokazivač je komanda: svaka promjena ide u dnevnik, sa mjestom na
@@ -852,12 +1064,17 @@ export function step(world: World, scenario: Scenario, input: Input): void {
       integrate(v, a, ctx.vTop, ctx.drag);
     } else {
       v.indicator = expectedIndicatorAt(path, v.intent, v.s);
-      const { limit, vLead } = npcTarget(world, ctx, v, path);
+      const { limit, vLead, blame } = npcTarget(world, ctx, v, path);
       const a = accelToward(v, limit, v.cruise ?? ctx.vMax, vLead);
       // Naglo kočenje zbog igrača je događaj, ne samo usporenje — po njemu se
-      // prepoznaje oduzeta prednost i kad do sudara ne dođe.
+      // prepoznaje oduzeta prednost i kad do sudara ne dođe. Na otvorenom putu
+      // nema prvenstva, pa se krivac ne traži po konfliktnim tačkama nego po
+      // tome ko je postavio granicu.
       if (a <= -B_MAX + 1e-6 && v.v > 1) {
-        const culprit = blamePlayer(world, ctx, v, path, player, playerPath);
+        const culprit =
+          ctx.tpl.kind === "road"
+            ? blame === PLAYER_ID
+            : blamePlayer(world, ctx, v, path, player, playerPath);
         if (culprit) {
           world.events.push({ type: "forcedBrake", t: world.t, vehicleId: v.id, by: PLAYER_ID });
         }
@@ -883,7 +1100,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
 
   detectViolations(world, ctx, scenario, player, playerPath, playerBefore);
   if (ctx.tpl.kind === "highway" && !player.done) highwayViolations(world, ctx, player, input);
-  if (naVolan && !player.done) volanPrekrsaji(world, player, playerPath);
+  if (naVolan && !player.done) volanPrekrsaji(world, ctx, player, playerPath);
   // Pokazivač se ocjenjuje van `detectViolations` jer ta funkcija odustaje čim
   // igrač izađe sa putanje — a posljednja faza (gašenje) se završava baš tada.
   evaluateIndicator(world, scenario, player, playerPath);
@@ -912,10 +1129,69 @@ function odnesiZaostale(world: World, ctx: Ctx, player: Vehicle): void {
     if (v.kind === "player" || v.done || world.t < v.spawnT) continue;
     const path = ctx.paths.get(v.pathId);
     if (!path) continue;
-    const naRuti = v.lane === 1 ? path.length - v.s : v.s;
-    if (naRuti < player.s - KEEP_BEHIND) v.done = true;
+    const gdje = v.lane === 1 ? path.length - v.s : v.s;
+    if (gdje < player.s - KEEP_BEHIND) {
+      v.done = true;
+      continue;
+    }
+    // Vozilo u NAŠEM smjeru koje je daleko ispred prozora takođe odlazi.
+    // Bez toga se kolona gomila: sporo vozilo se pravi po rasporedu koji
+    // računa da vozimo na ograničenju, a mi u međuvremenu vozimo iza nekog
+    // drugog — pa nas ispred čeka pet vozila koja niko nikad neće vidjeti.
+    if (v.lane !== 1 && gdje > player.s + LOAD_AHEAD * DALEKO_ISPRED) v.done = true;
   }
 }
+
+/** Koliko prozora ispred nas vozilo smije biti prije nego što nas se ne tiče. */
+const DALEKO_ISPRED = 1;
+
+/** Koliko ispred igrača se pojavi sporije vozilo koje treba sustići [m]. */
+const SPORI_ISPRED = 450;
+
+/**
+ * Vozilo se rađa u PROZORU oko igrača, ma šta raspored govorio.
+ *
+ * Raspored je napravljen po ograničenju dionice, a igrač ne vozi po njemu: čim
+ * se nađe iza sporijeg vozila, zaostane za računom i sve što slijedi se pojavi
+ * kilometrima ispred njega. Izmjereno na Herceg Novi — Rožaje: 71 vozilo u
+ * pogonu, od toga 58 van prozora — sve sam račun bez ijednog susreta.
+ *
+ * Zato raspored zadržava samo ono što zna: KAD se vozilo pojavljuje. Gdje se
+ * pojavljuje odlučuje mjesto igrača u tom trenutku.
+ */
+function postaviUProzor(world: World, v: Vehicle, path: Path, player: Vehicle): void {
+  v.postavljen = true;
+  const cilj =
+    v.lane === 1
+      ? // Susretno: ulazi na daljem kraju prozora i vozi nam u susret.
+        Math.max(0, path.length - (player.s + LOAD_AHEAD))
+      : // U našoj traci: tek toliko ispred da ga stignemo, a da ne iskrsne
+        // pred haubom.
+        Math.min(path.length, player.s + SPORI_ISPRED);
+
+  // Više vozila zna da dobije isti trenutak nastanka (raspored ih je stegnuo
+  // na nulu), a dva vozila na istom mjestu su sudar prije nego što je iko
+  // krenuo. Zato se traži prvo slobodno mjesto iza, uvijek istim korakom —
+  // determinizam ostaje.
+  let mjesto = cilj;
+  for (let i = 0; i < RAZMICANJE_KORAKA; i++) {
+    const zauzeto = world.vehicles.some(
+      (o) =>
+        o.id !== v.id &&
+        !o.done &&
+        o.postavljen &&
+        o.lane === v.lane &&
+        Math.abs(o.s - mjesto) < RAZMICANJE,
+    );
+    if (!zauzeto) break;
+    mjesto = Math.max(0, Math.min(path.length, mjesto + RAZMICANJE));
+  }
+  v.s = mjesto;
+}
+
+/** Najmanji razmak dva vozila koja se u istom trenutku pojave [m]. */
+const RAZMICANJE = 30;
+const RAZMICANJE_KORAKA = 20;
 
 /**
  * Poslije koliko sekundi se scenario prekida.
@@ -929,7 +1205,7 @@ export function maxSecondsFor(tpl: Template): number {
   // geometrijom dionice više nisu jednako duge, pa bi fiksnih deset minuta
   // obaralo Žabljak — Plužine svaki put.
   if (tpl.kind !== "road") return MAX_SCENARIO_SECONDS;
-  const trajanje = tpl.vMax > 0 ? tpl.length / tpl.vMax : TRIP_SEGMENT_TIME;
+  const trajanje = tpl.trajanje ?? (tpl.vMax > 0 ? tpl.length / tpl.vMax : TRIP_SEGMENT_TIME);
   return Math.max(trajanje, TRIP_SEGMENT_TIME) * TRIP_SEGMENT_TIMEOUT_FACTOR;
 }
 
@@ -1057,7 +1333,14 @@ function detectViolations(
   }
 
   // ── oduzeto prvenstvo ─────────────────────────────────────────────────────
-  const forced = world.events.find((e) => e.type === "forcedBrake" && e.by === PLAYER_ID);
+  // Na otvorenom putu prvenstva nema: tamo kočenje zbog nas znači ulazak u
+  // tuđu traku ili prerano vraćanje, i o tome sude pravila preticanja. Da se
+  // ovdje ne stane, svako preticanje bi se prijavilo kao „oduzeto prvenstvo" —
+  // pravilo koje na dionici puta ne postoji.
+  const forced =
+    ctx.tpl.kind === "road"
+      ? undefined
+      : world.events.find((e) => e.type === "forcedBrake" && e.by === PLAYER_ID);
   if (forced && forced.type === "forcedBrake") {
     add(world, {
       type: "rightOfWay",

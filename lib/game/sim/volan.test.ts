@@ -8,6 +8,7 @@ import {
   LAT_SPEED_SLOW,
   OFF_ROAD_FAIL_SPEED,
   OFF_ROAD_FAIL_TIME,
+  ROAD_LANE_WIDTH,
   SHOULDER_WIDTH,
 } from "./config";
 import { compile } from "./intersection";
@@ -128,12 +129,13 @@ describe("granice kolovoza", () => {
     expect(Number.isFinite(v.lateral!)).toBe(true);
   });
 
-  it("ulijevo se za sada staje na razdjelnoj liniji", () => {
-    // Prelazak u kontra traku dolazi sa preticanjem; do tada se lijevi bok
-    // zaustavlja na liniji, pa je pomak manji od pola širine trake.
+  it("ulijevo se ide do spoljne ivice suprotne trake", () => {
+    // Puna linija se PRELAZI, a ne odbija: zabrana je pravilo koje se prijavi,
+    // ne zid. Zato granica ulijevo nije razdjelna linija nego kraj kolovoza sa
+    // druge strane — otprilike jedna širina trake preko.
     const v = igrac(vozi(scenario(), ulaz(-1), 900));
-    expect(v.lateral!).toBeGreaterThan(-3);
-    expect(v.lateral!).toBeLessThan(0);
+    expect(v.lateral!).toBeLessThan(-ROAD_LANE_WIDTH);
+    expect(v.lateral!).toBeGreaterThan(-2 * ROAD_LANE_WIDTH);
   });
 
   it("izlazak sa kolovoza se prijavljuje", () => {

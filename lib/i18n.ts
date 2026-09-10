@@ -139,6 +139,10 @@ export interface Dict {
   vioBrakingOnHighway: string;
   vioHardShoulder: string;
   vioOffRoad: string;
+  vioCrossingSolidLine: string;
+  vioUnsafeOvertake: string;
+  vioOvertakeTooLong: string;
+  vioCutIn: string;
   gameSteer: string;
   ruleHardShoulder: string;
   ruleMerge: string;
@@ -500,6 +504,10 @@ const me: Dict = {
   vioBrakingOnHighway: "Naglo kočenje bez razloga",
   vioHardShoulder: "Vožnja zaustavnom trakom",
   vioOffRoad: "Izlazak sa kolovoza",
+  vioCrossingSolidLine: "Prelazak preko pune linije",
+  vioUnsafeOvertake: "Nebezbjedno preticanje",
+  vioOvertakeTooLong: "Predugo u suprotnoj traci",
+  vioCutIn: "Naglo vraćanje ispred preteknutog",
   gameSteer: "Volan",
   ruleHardShoulder:
     "Spoljna traka je zaustavna: u njoj se vozi samo dok traje traka za ubrzavanje pri ulasku, odnosno traka za usporavanje pred izlazom. Van toga je ona rezervisana za vozila u kvaru i za hitne službe.",
@@ -861,6 +869,10 @@ const en: Dict = {
   vioBrakingOnHighway: "Hard braking for no reason",
   vioHardShoulder: "Driving on the hard shoulder",
   vioOffRoad: "Leaving the carriageway",
+  vioCrossingSolidLine: "Crossing a solid line",
+  vioUnsafeOvertake: "Unsafe overtaking",
+  vioOvertakeTooLong: "Too long in the oncoming lane",
+  vioCutIn: "Cutting in after overtaking",
   gameSteer: "Steering",
   ruleHardShoulder:
     "The outer lane is the hard shoulder: you drive in it only along the acceleration lane when joining and the deceleration lane before an exit. Elsewhere it is reserved for broken-down vehicles and the emergency services.",
@@ -1227,6 +1239,10 @@ const sq: Dict = {
   vioBrakingOnHighway: "Frenim i papritur pa arsye",
   vioHardShoulder: "Ngasje në korsinë e emergjencës",
   vioOffRoad: "Dalje nga rruga",
+  vioCrossingSolidLine: "Kalim mbi vijën e plotë",
+  vioUnsafeOvertake: "Tejkalim i pasigurt",
+  vioOvertakeTooLong: "Shumë gjatë në korsinë e kundërt",
+  vioCutIn: "Kthim i papritur para automjetit të tejkaluar",
   gameSteer: "Timoni",
   ruleHardShoulder:
     "Korsia e jashtme është korsi emergjence: në të ecet vetëm përgjatë korsisë së përshpejtimit kur futeni dhe asaj të ngadalësimit para daljes. Përndryshe ajo u rezervohet automjeteve në defekt dhe shërbimeve emergjente.",
@@ -1595,6 +1611,10 @@ const ru: Dict = {
   vioBrakingOnHighway: "Резкое торможение без причины",
   vioHardShoulder: "Движение по полосе аварийной остановки",
   vioOffRoad: "Съезд с проезжей части",
+  vioCrossingSolidLine: "Пересечение сплошной линии",
+  vioUnsafeOvertake: "Опасный обгон",
+  vioOvertakeTooLong: "Слишком долго на встречной полосе",
+  vioCutIn: "Резкое возвращение перед обогнанным",
   gameSteer: "Руль",
   ruleHardShoulder:
     "Внешняя полоса — аварийная: по ней едут только вдоль полосы разгона при въезде и полосы торможения перед съездом. В остальном она предназначена для неисправных машин и экстренных служб.",

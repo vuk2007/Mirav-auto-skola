@@ -26,6 +26,7 @@ import {
   HORIZONT_UGAO,
   KAMERA_TETIVA,
   LANDMARK_SIZE,
+  ROAD_STEP,
   STEER_TILT,
   ROUTE_STEP,
   OKOLINA_POJAS,
@@ -380,8 +381,26 @@ function ikona(src: string): HTMLImageElement | null {
  * naprijed, desna unazad. Rezanje na pravougaonike bi u serpentini ostavilo
  * bijele klinove na spojevima.
  */
-function drawRoad(ctx: CanvasRenderingContext2D, v: View, tpl: RoadTemplate): void {
-  const { points, heading } = centerLine(tpl);
+function drawRoad(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  tpl: RoadTemplate,
+  sIgraca?: number,
+): void {
+  // Crta se SAMO komad puta oko igrača. Ruta ima i po šesnaest hiljada tačaka,
+  // a u kadru ih stane stotinjak; račun bočnih linija i proširenja nad cijelom
+  // osovinom je u svakom kadru koštao dvadesetak kadrova u sekundi — izmjereno
+  // na Herceg Novi — Rožaje: 41 umjesto 60.
+  const svih = tpl.centerline?.length ?? Math.round(tpl.length / ROAD_STEP) + 1;
+  const poTacki = tpl.length / Math.max(1, svih - 1);
+  const domet = v.half * 3;
+  const i0 = sIgraca === undefined ? 0 : Math.max(0, Math.floor((sIgraca - domet) / poTacki));
+  const i1 =
+    sIgraca === undefined
+      ? Number.POSITIVE_INFINITY
+      : Math.min(svih - 1, Math.ceil((sIgraca + domet) / poTacki));
+  const { points, heading } = centerLine(tpl, i0, i1);
+  const odS = i0 * poTacki;
   const pola = tpl.geometry.laneWidth;
 
   // Bočni odmak ide kroz `bocnaLinija` iz `sim/road.ts`, dakle kroz isti račun
@@ -392,20 +411,30 @@ function drawRoad(ctx: CanvasRenderingContext2D, v: View, tpl: RoadTemplate): vo
   fillPoly(ctx, v, bankina, PALETTE.kerb);
   fillPoly(ctx, v, [...traka(pola), ...traka(-pola).reverse()], PALETTE.asphalt);
 
-  // Ivične linije pune, razdjelna isprekidana — kao na putu bez zabrane
-  // preticanja. Zabrana je pravilo i doći će sa pravilima.
+  // Ivične linije su uvijek pune. Razdjelna je isprekidana tamo gdje se smije
+  // preticati, a puna tamo gdje ne smije — i to iz `tpl.zabrane`, iz istog
+  // podatka po kojem se i sudi. Da se linija crta iz jednog računa a sudi po
+  // drugom, igrač bi dobijao prekršaj tamo gdje na ekranu piše da smije.
   strokeLine(ctx, v, traka(pola - 0.2), PALETTE.paint, 0.16);
   strokeLine(ctx, v, traka(-pola + 0.2), PALETTE.paint, 0.16);
   strokeLine(ctx, v, points, PALETTE.paint, 0.16, [4, 7]);
+  for (const z of tpl.zabrane ?? []) {
+    // Zabrane su u koordinatama cijele dionice, a crta se samo isječak.
+    const od = Math.max(0, Math.floor((z.from - odS) / poTacki));
+    const doK = Math.min(points.length - 1, Math.ceil((z.to - odS) / poTacki));
+    if (doK - od < 1) continue;
+    strokeLine(ctx, v, points.slice(od, doK + 1), PALETTE.paint, 0.18);
+  }
 
   // Tabla sa preporučenom brzinom stoji PRED krivinom i uvijek uz VOZAČEVU
   // DESNU stranu — tako stoje znaci na putu, bez obzira na to na koju stranu
   // krivina ide. Postavljena tačno na početak luka bila bi prekasna: na
   // pedeset na sat se pedeset metara pređe za tri i po sekunde.
-  const korak = Math.max(1, tpl.length / (points.length - 1));
+  const korak = poTacki;
   for (const k of tpl.curves) {
-    const i = Math.round(Math.max(0, k.atS - k.arc / 2 - SIGN_LEAD) / korak);
-    const p = points[Math.min(i, points.length - 1)];
+    const i = Math.round((Math.max(0, k.atS - k.arc / 2 - SIGN_LEAD) - odS) / korak);
+    if (i < 0 || i > points.length - 1) continue;
+    const p = points[i];
     const u = heading[Math.min(i, heading.length - 1)] ?? 0;
     if (!p) continue;
     const odmak = -(pola + 1);
@@ -430,7 +459,8 @@ function drawRoad(ctx: CanvasRenderingContext2D, v: View, tpl: RoadTemplate): vo
   // Namjerno se crtaju POSLIJE tabli: tabla je pravilo i ne smije da je
   // pokrije ukras.
   for (const z of tpl.landmarks) {
-    const i = Math.min(Math.max(Math.round(z.atS / korak), 0), points.length - 1);
+    const i = Math.round((z.atS - odS) / korak);
+    if (i < 0 || i > points.length - 1) continue;
     const p = points[i];
     const u = heading[i] ?? 0;
     if (!p) continue;
@@ -1345,6 +1375,8 @@ export function drawScene(
     }
   }
 
+  const player = world.vehicles.find((x) => x.kind === "player");
+
   ctx.fillStyle = PALETTE.grass;
   ctx.fillRect(0, 0, widthPx, heightPx);
 
@@ -1355,13 +1387,12 @@ export function drawScene(
   } else if (tpl.kind === "highway") {
     drawHighway(ctx, v, tpl);
   } else if (tpl.kind === "road") {
-    drawRoad(ctx, v, tpl);
+    drawRoad(ctx, v, tpl, player ? renderS(runner, player.id, player.s) : undefined);
   } else {
     drawRoads(ctx, v, tpl);
     drawMarkings(ctx, v, tpl);
   }
 
-  const player = world.vehicles.find((x) => x.kind === "player");
   // Na otvorenom putu se putanja ne iscrtava: nema manevra ni zone, a plava
   // linija preko cijele trake bi četiri minuta stajala preko puta bez potrebe.
   if (player && tpl.kind !== "road") {
