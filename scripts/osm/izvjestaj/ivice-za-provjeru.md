@@ -1,6 +1,6 @@
 # Ivice grafa: sta OSM kaze
 
-Napravljeno: 2026-09-09T09:49:20.995Z
+Napravljeno: 2026-09-10T09:13:50.706Z
 
 Ukupno ivica: 54. Slaze se sa grafom: 43. Za provjeru: 11.
 

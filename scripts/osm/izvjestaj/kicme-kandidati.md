@@ -1,17 +1,18 @@
 # Kandidati za gradske kicme
 
-Napravljeno: 2026-09-09T09:14:29.267Z
+Napravljeno: 2026-09-10T09:29:08.725Z
 
-Za osam gradova iz zadatka ispod su izlistani kruzni tokovi i vece raskrsnice
-u krugu od 2500 m oko centra, sa ulicama koje se na njima sastaju.
-Skripta nista ne bira. Uz svaki grad stoje i izlazi po grafu, da se vidi
-koliko pravaca kicma mora da poveze.
+Kicme su vec napravljene automatski i stoje u `public/data/osm/kicme/`.
+Ispod su kruzni tokovi i vece raskrsnice u krugu od 2500 m oko centra,
+sa ulicama koje se na njima sastaju — za osam gradova iz zadatka izbor jos
+treba potvrditi rucno. Skripta nista ne bira umjesto covjeka; ovo je samo
+ono sto na terenu postoji.
 
 ## Podgorica
 
-Centar po grafu: 42.44, 19.26 (UTM 356892, 4700097).
+Kicma: 8 ulaza, 96 ulica, 21.9 km.
 
-Izlazi po grafu (8): Danilovgrad (magistrala, 20 km), Zeta (Golubovci) (magistrala, 12 km), Tuzi (magistrala, 12 km), Cetinje (magistrala, 30 km), Smokovac (magistrala, 8 km), Bioče (magistrala, 12 km), Kučka Korita (planinski, 35 km), Virpazar (magistrala, 30 km)
+Ulazi u grad: Danilovgrad (`podgorica--danilovgrad`), Zeta (Golubovci) (`podgorica--zeta`), Tuzi (`podgorica--tuzi`), Cetinje (`podgorica--cetinje`), Smokovac (`podgorica--smokovac`), Bioče (`podgorica--bioce`), Kučka Korita (`podgorica--kucka-korita`), Virpazar (`podgorica--virpazar`)
 
 ### Kruzni tokovi (13)
 
@@ -63,9 +64,9 @@ Izlazi po grafu (8): Danilovgrad (magistrala, 20 km), Zeta (Golubovci) (magistra
 
 ## Nikšić
 
-Centar po grafu: 42.77, 18.94 (UTM 331465, 4737332).
+Kicma: 4 ulaza, 3 ulica, 3.9 km.
 
-Izlazi po grafu (4): Danilovgrad (magistrala, 35 km), Šavnik (magistrala, 40 km), Plužine (magistrala, 60 km), Vilusi (magistrala, 30 km)
+Ulazi u grad: Danilovgrad (`danilovgrad--niksic`), Šavnik (`savnik--niksic`), Plužine (`niksic--pluzine`), Vilusi (`niksic--vilusi`)
 
 ### Kruzni tokovi (5)
 
@@ -105,9 +106,9 @@ Izlazi po grafu (4): Danilovgrad (magistrala, 35 km), Šavnik (magistrala, 40 km
 
 ## Budva
 
-Centar po grafu: 42.29, 18.84 (UTM 321924, 4684235).
+Kicma: 3 ulaza, 15 ulica, 3.0 km.
 
-Izlazi po grafu (3): Cetinje (magistrala, 30 km), Petrovac (magistrala, 18 km), Tivat (magistrala, 20 km)
+Ulazi u grad: Cetinje (`cetinje--budva`), Petrovac (`petrovac--budva`), Tivat (`budva--tivat`)
 
 ### Kruzni tokovi (5)
 
@@ -127,9 +128,9 @@ Izlazi po grafu (3): Cetinje (magistrala, 30 km), Petrovac (magistrala, 18 km), 
 
 ## Kotor
 
-Centar po grafu: 42.42, 18.77 (UTM 316532, 4698819).
+Kicma: 3 ulaza, 1 ulica, 3.9 km.
 
-Izlazi po grafu (3): Njeguši (planinski, 20 km), Tivat (magistrala, 12 km), Kamenari (magistrala, 30 km)
+Ulazi u grad: Njeguši (`njegusi--kotor`), Tivat (`tivat--kotor`), Kamenari (`kotor--kamenari`)
 
 ### Kruzni tokovi (0)
 
@@ -146,9 +147,9 @@ Nema nijednog u dometu.
 
 ## Herceg Novi
 
-Centar po grafu: 42.45, 18.53 (UTM 296882, 4702697).
+Kicma: 3 ulaza, 8 ulica, 3.8 km.
 
-Izlazi po grafu (3): Vilusi (planinski, 50 km), Kamenari (magistrala, 15 km), Debeli Brijeg (magistrala, 8 km)
+Ulazi u grad: Vilusi (`vilusi--herceg-novi`), Kamenari (`kamenari--herceg-novi`), Debeli Brijeg (`herceg-novi--debeli-brijeg`)
 
 ### Kruzni tokovi (1)
 
@@ -167,9 +168,9 @@ Izlazi po grafu (3): Vilusi (planinski, 50 km), Kamenari (magistrala, 15 km), De
 
 ## Bar
 
-Centar po grafu: 42.1, 19.1 (UTM 342890, 4662626).
+Kicma: 3 ulaza, 27 ulica, 4.4 km.
 
-Izlazi po grafu (3): Virpazar (magistrala, 25 km), Ulcinj (magistrala, 25 km), Sutomore (magistrala, 10 km)
+Ulazi u grad: Virpazar (`virpazar--bar`), Ulcinj (`bar--ulcinj`), Sutomore (`bar--sutomore`)
 
 ### Kruzni tokovi (6)
 
@@ -191,9 +192,9 @@ Izlazi po grafu (3): Virpazar (magistrala, 25 km), Ulcinj (magistrala, 25 km), S
 
 ## Bijelo Polje
 
-Centar po grafu: 43.04, 19.75 (UTM 398180, 4766015).
+Kicma: 4 ulaza, 1 ulica, 5.7 km.
 
-Izlazi po grafu (4): Mojkovac (magistrala, 25 km), Pljevlja (regionalni, 60 km), Dobrakovo (magistrala, 20 km), Berane (magistrala, 35 km)
+Ulazi u grad: Mojkovac (`mojkovac--bijelo-polje`), Pljevlja (`pljevlja--bijelo-polje`), Dobrakovo (`bijelo-polje--dobrakovo`), Berane (`bijelo-polje--berane`)
 
 ### Kruzni tokovi (1)
 
@@ -219,9 +220,9 @@ Izlazi po grafu (4): Mojkovac (magistrala, 25 km), Pljevlja (regionalni, 60 km),
 
 ## Berane
 
-Centar po grafu: 42.84, 19.87 (UTM 407656, 4743667).
+Kicma: 4 ulaza, 5 ulica, 3.7 km.
 
-Izlazi po grafu (4): Bijelo Polje (magistrala, 35 km), Petnjica (regionalni, 20 km), Rožaje (magistrala, 35 km), Andrijevica (magistrala, 20 km)
+Ulazi u grad: Bijelo Polje (`bijelo-polje--berane`), Petnjica (`berane--petnjica`), Rožaje (`berane--rozaje`), Andrijevica (`berane--andrijevica`)
 
 ### Kruzni tokovi (3)
 
@@ -248,26 +249,63 @@ Izlazi po grafu (4): Bijelo Polje (magistrala, 35 km), Petnjica (regionalni, 20 
 | `1653717844` | 2129 | (primary_link), M-5 |
 | `1653759045` | 2245 | (secondary_link), R-2 |
 
-## Ostale opstine
+## Ulazi daleko od centra
 
-Tamo se kicma racuna automatski; ovo je samo pregled sta postoji.
+Ulaz je tacka na ivici, `2500` m puta ili manje od njenog kraja. Ako je i pored
+toga kilometrima od unijete koordinate cvora, onda se sama ivica zavrsava
+daleko od grada — to je nalaz o geometriji ivice, ne o kicmi. Vidi
+`ivice-za-provjeru.md` i spisak sumnjivih koordinata u njemu.
 
-| opstina | kruznih tokova | vecih raskrsnica | izlaza po grafu |
-| --- | --- | --- | --- |
-| Zeta (Golubovci) | 4 | 0 | 1 |
-| Tuzi | 0 | 1 | 2 |
-| Danilovgrad | 4 | 4 | 2 |
-| Cetinje | 2 | 8 | 3 |
-| Tivat | 4 | 2 | 3 |
-| Ulcinj | 3 | 2 | 2 |
-| Kolašin | 0 | 2 | 3 |
-| Mojkovac | 0 | 4 | 3 |
-| Petnjica | 0 | 1 | 1 |
-| Andrijevica | 0 | 2 | 3 |
-| Plav | 2 | 0 | 2 |
-| Gusinje | 0 | 0 | 1 |
-| Rožaje | 2 | 4 | 3 |
-| Žabljak | 0 | 0 | 3 |
-| Pljevlja | 1 | 5 | 3 |
-| Šavnik | 0 | 1 | 2 |
-| Plužine | 0 | 2 | 3 |
+Nema — svaki ulaz je u blizini svog grada.
+
+## Gradovi u koje dvije ivice ulaze istom ulicom
+
+Ulaz u grad se povlaci unazad dok se ivica ne odvoji od svih ostalih, ali
+najvise 2500 m od centra — dalje od toga to vise nije grad. Gdje se ni na toj
+udaljenosti ne razdvoje, dvije ivice stvarno ulaze u grad istom ulicom, pa
+kicma izmedju njih nema sta da poveze. Veliki zajednicki prilaz je uz to znak
+da je jedna od te dvije ivice lose rutirana — vidi `ivice-za-provjeru.md`.
+
+| opstina | ulaza | razlicitih |
+| --- | --- | --- |
+| Podgorica | 8 | 5 |
+| Nikšić | 4 | 3 |
+| Tivat | 3 | 2 |
+| Kotor | 3 | 2 |
+| Herceg Novi | 3 | 2 |
+| Bar | 3 | 2 |
+| Bijelo Polje | 4 | 2 |
+| Berane | 4 | 3 |
+| Rožaje | 3 | 2 |
+| Žabljak | 3 | 2 |
+| Plužine | 3 | 2 |
+
+## Sve opstine
+
+| opstina | rucno | ulaza | razlicitih | ulica u kicmi | km | nepovezanih parova |
+| --- | --- | --- | --- | --- | --- | --- |
+| Podgorica | da | 8 | 5 | 96 | 21.9 | 0 |
+| Zeta (Golubovci) | — | 1 | 1 | 0 | 0.0 | 0 |
+| Tuzi | — | 2 | 2 | 1 | 4.1 | 0 |
+| Danilovgrad | — | 2 | 2 | 21 | 1.9 | 0 |
+| Nikšić | da | 4 | 3 | 3 | 3.9 | 0 |
+| Cetinje | — | 3 | 3 | 9 | 1.7 | 0 |
+| Budva | da | 3 | 3 | 15 | 3.0 | 0 |
+| Tivat | — | 3 | 2 | 29 | 3.8 | 0 |
+| Kotor | da | 3 | 2 | 1 | 3.9 | 0 |
+| Herceg Novi | da | 3 | 2 | 8 | 3.8 | 0 |
+| Bar | da | 3 | 2 | 27 | 4.4 | 0 |
+| Ulcinj | — | 2 | 2 | 7 | 0.2 | 0 |
+| Kolašin | — | 3 | 3 | 3 | 3.5 | 0 |
+| Mojkovac | — | 3 | 3 | 6 | 4.1 | 0 |
+| Bijelo Polje | da | 4 | 2 | 1 | 5.7 | 0 |
+| Berane | da | 4 | 3 | 5 | 3.7 | 0 |
+| Petnjica | — | 1 | 1 | 0 | 0.0 | 0 |
+| Andrijevica | — | 3 | 3 | 6 | 3.2 | 0 |
+| Plav | — | 2 | 2 | 3 | 0.2 | 0 |
+| Gusinje | — | 1 | 1 | 0 | 0.0 | 0 |
+| Rožaje | — | 3 | 2 | 8 | 4.0 | 0 |
+| Žabljak | — | 3 | 2 | 1 | 4.1 | 0 |
+| Pljevlja | — | 3 | 3 | 10 | 4.8 | 0 |
+| Šavnik | — | 2 | 2 | 1 | 3.5 | 0 |
+| Plužine | — | 3 | 2 | 1 | 3.8 | 0 |

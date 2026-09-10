@@ -25,26 +25,15 @@ import { EDGES, NODES, nodeById } from "./lib/graf.mjs";
 import { KES } from "./lib/overpass.mjs";
 import { uMetre, uStepene } from "./lib/proj.mjs";
 import { dm, duzina, uprosti } from "./lib/geom.mjs";
-import { Gomila } from "./lib/gomila.mjs";
+import {
+  kandidati as kandidatiZa,
+  napraviMrezu,
+  rangPuta,
+  trazi,
+} from "./lib/rutiranje.mjs";
 
 const IZLAZ = join(process.cwd(), "public", "data", "osm", "edgeGeometry");
 const IZVJESTAJ = join(process.cwd(), "scripts", "osm", "izvjestaj");
-
-/**
- * Kazna po rangu puta.
- *
- * Nije brzina nego sklonost: sa ovim tezinama Dijkstra bira magistralu i onda
- * kad je za koji kilometar duza od lokalnog puta. Bez kazni ruta Podgorica —
- * Cetinje umije da sidje na stari put kroz sela, koji jeste kraci u metrima ali
- * nije put kojim se ide.
- */
-const KAZNA = {
-  motorway: 1.0,
-  trunk: 1.0,
-  primary: 1.1,
-  secondary: 1.35,
-  tertiary: 1.8,
-};
 
 /** Ruta duza od ovoga puta kilometraze iz grafa ide na provjeru. */
 const GORNJA_GRANICA = 1.25;
@@ -71,10 +60,10 @@ const RAZMAK_KANDIDATA = 300;
  * Koliko puta skuplje od voznje se racuna rastojanje do puta.
  *
  * Lijepljenje nije voznja nego priznanje da koordinata cvora nije tacna, pa
- * mora da bolí — ali ne smije biti zabranjeno. Kod Kamenara je najbliza tacka
+ * mora da boli — ali ne smije biti zabranjeno. Kod Kamenara je najbliza tacka
  * bila na M-11, koja se u podacima ne spaja sa M-1, pa je ruta do Herceg Novog
  * isla oko cijelog zaliva: 57 km umjesto 15. Sa vise kandidata i ovom cijenom,
- * M-1 na 600 m pobjeđuje jer stedi cetrdeset kilometara.
+ * M-1 na 600 m pobjedjuje jer stedi cetrdeset kilometara.
  */
 const MNOZILAC_LIJEPLJENJA = 3;
 /** Uproscavanje geometrije ivice [m]. */
@@ -88,190 +77,18 @@ const PRAG_KOORDINATE = 1000;
  * dvosmislena — najcesce je tacka pala izmedju dvije obale ili dva puta koji se
  * ne spajaju. Kod Kamenara je bas to: koordinata (42.46, 18.68) pada izmedju
  * dvije obale tjesnaca, pa je jedna ivica hvatala Kamenare a druga Lepetane,
- * udaljene 900 m preko vode. Ni jedno ni drugo lijepljenje nije bilo dalje od
- * kilometra, pa ih `PRAG_KOORDINATE` nije uhvatio — ovo jeste.
+ * udaljene 900 m preko vode.
  */
 const PRAG_RASIPANJA = 400;
 
-const rang = (tags = {}) => {
-  const h = tags.highway ?? "";
-  const osnovni = h.endsWith("_link") ? h.slice(0, -5) : h;
-  return KAZNA[osnovni] === undefined ? null : osnovni;
-};
-
-// -- mreza -------------------------------------------------------------------
-
-/**
- * Mreza za trazenje puta.
- *
- * `susjedi` je za svaki OSM cvor spisak `[drugiCvor, tezina, duzina, wayId]`.
- * Graf je neusmjeren: jednosmjerne ulice se ne postuju jer se trazi KORIDOR, ne
- * vozni nalog — a jednosmjerni rezim u gradu bi rutu izmedju dva grada samo
- * nasumicno produzio.
- */
-function napraviMrezu(elements) {
-  const tacke = new Map();
-  for (const el of elements) {
-    if (el.type === "node") tacke.set(el.id, uMetre(el.lat, el.lon));
-  }
-
-  const susjedi = new Map();
-  const rangCvora = new Map();
-  const veza = (a, b, tezina, d, wayId, r) => {
-    let s = susjedi.get(a);
-    if (!s) {
-      s = [];
-      susjedi.set(a, s);
-    }
-    s.push([b, tezina, d, wayId, r]);
-  };
-
-  let ivica = 0;
-  for (const el of elements) {
-    if (el.type !== "way" || !el.nodes) continue;
-    const r = rang(el.tags);
-    if (!r) continue;
-    const kazna = KAZNA[r];
-    for (let i = 1; i < el.nodes.length; i++) {
-      const a = el.nodes[i - 1];
-      const b = el.nodes[i];
-      const pa = tacke.get(a);
-      const pb = tacke.get(b);
-      if (!pa || !pb) continue;
-      const d = Math.hypot(pb.x - pa.x, pb.y - pa.y);
-      if (d === 0) continue;
-      veza(a, b, d * kazna, d, el.id, r);
-      veza(b, a, d * kazna, d, el.id, r);
-      ivica += 1;
-      for (const c of [a, b]) {
-        const stari = rangCvora.get(c);
-        if (stari === undefined || kazna < stari) rangCvora.set(c, kazna);
-      }
-    }
-  }
-  // Cvorovi do kojih se dolazi ISKLJUCIVO autoputem. Za ivicu koja nije autoput
-  // takav cvor nije upotrebljiv kao pocetak ni kao kraj.
-  const samoAutoput = new Set();
-  for (const [id, veze] of susjedi) {
-    if (veze.every((v) => v[4] === "motorway")) samoAutoput.add(id);
-  }
-  return { tacke, susjedi, rangCvora, samoAutoput, ivica };
-}
-
-/**
- * Kandidati za lijepljenje cvora grafa na mrezu.
- *
- * Ne uzima se jedna najbliza tacka, i to iz dva razloga. Prvi: centar Podgorice
- * je blizu neke sporedne ulice, a htjeli bismo magistralu — zato se rastojanje
- * mnozi kaznom ranga. Drugi, tezi: najbliza tacka umije da bude na putu koji u
- * podacima nije spojen sa onim kojim se stvarno vozi. Zato se drzi vise
- * kandidata, prostorno razmaknutih, a koji ce pobijediti odlucuje se tek u
- * trazenju rute — po tome sa kojim ispadne kraci put.
- */
-function kandidati(cvor, mreza, { bezAutoputa = false } = {}) {
-  const cilj = uMetre(cvor.lat, cvor.lon);
-  const svi = [];
-  for (const [id, kazna] of mreza.rangCvora) {
-    // Kad autoput nije dozvoljen, cvor sa kojeg se ne moze nikuda osim
-    // autoputem ne smije ni da udje u izbor. Filtriranje POSLIJE izbora ne
-    // valja: kod Smokovca, koji je petlja na A-1, tako je ispadalo svih osam
-    // kandidata na autoputu, pa nijedan nije ostajao i ivica je gubila rutu.
-    if (bezAutoputa && mreza.samoAutoput.has(id)) continue;
-    const p = mreza.tacke.get(id);
-    const d = Math.hypot(p.x - cilj.x, p.y - cilj.y);
-    if (d > DOMET_LIJEPLJENJA) continue;
-    svi.push({ id, d, ocjena: d * kazna });
-  }
-  svi.sort((a, b) => a.ocjena - b.ocjena);
-
-  const izabrani = [];
-  for (const k of svi) {
-    if (izabrani.length >= KANDIDATA) break;
-    const p = mreza.tacke.get(k.id);
-    const preblizu = izabrani.some((i) => {
-      const q = mreza.tacke.get(i.id);
-      return Math.hypot(p.x - q.x, p.y - q.y) < RAZMAK_KANDIDATA;
-    });
-    if (!preblizu) izabrani.push(k);
-  }
-  return izabrani;
-}
-
-/**
- * Najkraci put izmedju dva SKUPA kandidata; `null` ako veze nema.
- *
- * Dijkstra krece iz svih kandidata polazista odjednom, svaki sa pocetnom
- * cijenom svog lijepljenja. Cilj se bira isto tako — pobjeđuje onaj kod kojeg
- * je zbir najmanji. Time se u jednom prolazu ispita svih `KANDIDATA x
- * KANDIDATA` kombinacija, umjesto da se pokrece Dijkstra za svaku.
- *
- * Rano se prekida cim najmanji kljuc u redu premasi najbolji nadjeni zbir —
- * dalje pretrazivanje vise ne moze naci krace.
- */
-function trazi(mreza, odKand, doKand, { bezAutoputa = false } = {}) {
-  const daljina = new Map();
-  const odakle = new Map();
-  const gotovo = new Set();
-  const red = new Gomila();
-  for (const k of odKand) {
-    const cijena = k.d * MNOZILAC_LIJEPLJENJA;
-    if (cijena < (daljina.get(k.id) ?? Infinity)) {
-      daljina.set(k.id, cijena);
-      red.dodaj(cijena, k.id);
-    }
-  }
-  const ciljevi = new Map(doKand.map((k) => [k.id, k.d * MNOZILAC_LIJEPLJENJA]));
-
-  let najbolji = null;
-  let najbolja = Infinity;
-
-  while (red.velicina > 0) {
-    const { kljuc, vrijednost: cvor } = red.uzmi();
-    if (kljuc >= najbolja) break;
-    if (gotovo.has(cvor)) continue;
-    gotovo.add(cvor);
-
-    const kazna = ciljevi.get(cvor);
-    if (kazna !== undefined && kljuc + kazna < najbolja) {
-      najbolja = kljuc + kazna;
-      najbolji = cvor;
-    }
-
-    for (const [drugi, tezina, d, wayId, r] of mreza.susjedi.get(cvor) ?? []) {
-      if (gotovo.has(drugi)) continue;
-      // Ivica koja u grafu nije autoput ne smije se ni voziti autoputem. Bez
-      // ovoga je `bioce--kolasin` — planinski put kroz kanjon Morace — isao
-      // novim autoputem 78% duzine, sa kilometrazom koja se cak poklapala.
-      if (bezAutoputa && r === "motorway") continue;
-      const nova = kljuc + tezina;
-      if (nova < (daljina.get(drugi) ?? Infinity)) {
-        daljina.set(drugi, nova);
-        odakle.set(drugi, [cvor, d, wayId]);
-        red.dodaj(nova, drugi);
-      }
-    }
-  }
-
-  if (najbolji === null) return null;
-  const cvorovi = [najbolji];
-  const putevi = [];
-  const duzine = [];
-  let m = najbolji;
-  for (;;) {
-    const korak = odakle.get(m);
-    if (!korak) break; // stigli smo do kandidata iz kojeg je krenulo
-    putevi.push(korak[2]);
-    duzine.push(korak[1]);
-    m = korak[0];
-    cvorovi.push(m);
-  }
-  cvorovi.reverse();
-  putevi.reverse();
-  duzine.reverse();
-  const pocetni = odKand.find((k) => k.id === m);
-  const krajnji = doKand.find((k) => k.id === najbolji);
-  return { cvorovi, putevi, duzine, pocetni, krajnji };
-}
+/** Kandidati za lijepljenje cvora grafa, sa parametrima ove skripte. */
+const kandidati = (cvor, mreza, opcije = {}) =>
+  kandidatiZa(uMetre(cvor.lat, cvor.lon), mreza, {
+    ...opcije,
+    domet: DOMET_LIJEPLJENJA,
+    koliko: KANDIDATA,
+    razmak: RAZMAK_KANDIDATA,
+  });
 
 // -- glavno ------------------------------------------------------------------
 
@@ -291,7 +108,7 @@ async function glavno() {
   for (const el of sirovo.elements) {
     if (el.type !== "way") continue;
     if (el.tags?.ref) oznake.set(el.id, el.tags.ref);
-    const r = rang(el.tags);
+    const r = rangPuta(el.tags);
     if (r) rangovi.set(el.id, r);
   }
 
@@ -342,7 +159,7 @@ async function glavno() {
       nalazi.push({ e, status: "nemaKraja", razlog: "kraj ivice nije prilijepljen za mrezu" });
       continue;
     }
-    const ruta = trazi(mreza, a, b, { bezAutoputa });
+    const ruta = trazi(mreza, a, b, { bezAutoputa, mnozilacLijepljenja: MNOZILAC_LIJEPLJENJA });
     if (!ruta) {
       nalazi.push({ e, status: "nemaRute", razlog: "mreza ne povezuje ova dva kraja" });
       continue;
