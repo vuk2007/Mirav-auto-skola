@@ -188,6 +188,15 @@ export interface RoadTemplate {
   edgeKm: number;
   /** Dozvoljena brzina [m/s]. */
   vMax: number;
+  /**
+   * Dozvoljena brzina na mjestu `s` [m/s], kad se duž dionice mijenja.
+   *
+   * Ruta je niz dionica raznih vrsta — magistrala, autoput, ulica kroz grad —
+   * pa jedan broj ne opisuje ono što na tom mjestu piše na znaku. `vMax` ostaje
+   * najveća na cijeloj dionici i po njoj se računa šta vozilo MOŽE; po ovome se
+   * sudi šta SMIJE.
+   */
+  vMaxNa?: (s: number) => number;
   curves: RoadCurve[];
   /**
    * Osovina puta, kad dolazi iz stvarne geometrije.

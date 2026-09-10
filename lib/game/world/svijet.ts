@@ -31,9 +31,12 @@ export function rutaTemplate(ruta: Ruta): RoadTemplate {
     length: ruta.duzina,
     // Kilometraža i ivica se odnose na CIJELU rutu; pojedinačna dionica se
     // dobija iz `ruta.dionicaNa`.
-    edgeId: ruta.dionice.map((d) => d.edge.id).join(","),
+    // Gradske dionice nisu ivice grafa, pa ih ovdje i nema.
+    edgeId: ruta.dionice.flatMap((d) => (d.edge ? [d.edge.id] : [])).join(","),
     edgeKm: kilometraza(ruta),
     vMax: ruta.vMax,
+    // Ograničenje se duž rute mijenja: magistrala, autoput, ulica kroz grad.
+    vMaxNa: (s) => ruta.vMaxNa(s),
     curves: ruta.krivine,
     centerline: ruta.tacke,
     landmarks: ruta.landmarks,

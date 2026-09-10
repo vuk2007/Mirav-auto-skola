@@ -4,9 +4,16 @@ import { KEEP_BEHIND, LOAD_AHEAD, ROAD_STEP } from "@/lib/game/sim/config";
 import { compile } from "@/lib/game/sim/intersection";
 import { createWorld, PLAYER_ID, poseOn, step } from "@/lib/game/sim/world";
 import type { Input, Point, RoadTemplate, World } from "@/lib/game/sim/types";
-import { EDGES } from "@/lib/game/road/roadGraph";
+import { EDGES, NODES } from "@/lib/game/road/roadGraph";
 import { parseGeometry, type EdgeGeometry } from "@/lib/game/road/edgeGeometry";
-import { kilometraza, nadjiRutu, napraviRutu, type Ruta } from "@/lib/game/world/ruta";
+import { parseKicma, type Kicma } from "@/lib/game/road/kicma";
+import {
+  kilometraza,
+  nadjiRutu,
+  napraviRutu,
+  vMaxNaprijed,
+  type Ruta,
+} from "@/lib/game/world/ruta";
 import { rutaScenario, uProzoru, vrijemeDo } from "@/lib/game/world/svijet";
 
 /**
@@ -28,10 +35,26 @@ const GEOM: ReadonlyMap<string, EdgeGeometry> = new Map(
   }),
 );
 
+const KICME: ReadonlyMap<string, Kicma> = new Map(
+  NODES.filter((n) => n.kind === "opstina").map((n) => {
+    const k = parseKicma(JSON.parse(readFileSync(`public/data/osm/kicme/${n.id}.json`, "utf8")));
+    if (!k) throw new Error(`Neispravna kičma: ${n.id}`);
+    return [n.id, k] as const;
+  }),
+);
+
+/** Ruta bez gradskih dionica — grad se samo dodirne, kao prije kičmi. */
 const ruta = (od: string, doK: string): Ruta => {
   const cvorovi = nadjiRutu(od, doK);
   if (!cvorovi) throw new Error(`Nema rute ${od} — ${doK}`);
   return napraviRutu(cvorovi, GEOM);
+};
+
+/** Ruta koja kroz gradove stvarno prolazi. */
+const rutaSaGradovima = (od: string, doK: string): Ruta => {
+  const cvorovi = nadjiRutu(od, doK);
+  if (!cvorovi) throw new Error(`Nema rute ${od} — ${doK}`);
+  return napraviRutu(cvorovi, GEOM, KICME);
 };
 
 /** Rute iz zadatka, na kojima se traži neprekidna vožnja. */
@@ -41,13 +64,21 @@ const RUTE: ReadonlyArray<readonly [string, string]> = [
   ["ulcinj", "pljevlja"],
 ];
 
-/** Vozač koji drži ograničenje one dionice na kojoj se trenutno nalazi. */
+/**
+ * Vozač koji drži ograničenje — i usporava PRIJE nego što ono padne.
+ *
+ * Gleda dvjesta metara ispred sebe, otprilike onoliko koliko se na osamdeset na
+ * sat pređe za devet sekundi. Bez toga u naselje ulazi punom brzinom i dobija
+ * prekršaj koji nije mogao izbjeći, jer ograničenje pada u jednoj tački.
+ */
+const POGLED = 200;
+
 const poPropisu =
   (r: Ruta) =>
   (world: World): Input => {
     const igrac = world.vehicles.find((v) => v.id === PLAYER_ID);
     const v = igrac?.v ?? 0;
-    const limit = r.vMaxNa(igrac?.s ?? 0);
+    const limit = vMaxNaprijed(r, igrac?.s ?? 0, POGLED);
     return {
       throttle: v < limit ? 1 : 0,
       brake: v > limit * 1.02 ? 0.35 : 0,
@@ -167,7 +198,7 @@ describe("sastavljanje rute", () => {
     expect(brzine.size).toBeGreaterThan(1);
     for (const d of r.dionice) {
       expect(r.vMaxNa((d.odS + d.doS) / 2)).toBeCloseTo(d.vMax, 6);
-      expect(r.dionicaNa((d.odS + d.doS) / 2).edge.id).toBe(d.edge.id);
+      expect(r.dionicaNa((d.odS + d.doS) / 2).edge?.id ?? null).toBe(d.edge?.id ?? null);
     }
   });
 
@@ -267,5 +298,91 @@ describe("raspored susretnog saobraćaja", () => {
     const r = ruta("budva", "kolasin");
     expect(rutaScenario(r, 7).npcs).toEqual(rutaScenario(r, 7).npcs);
     expect(rutaScenario(r, 7).npcs).not.toEqual(rutaScenario(r, 8).npcs);
+  });
+});
+
+describe("gradske dionice u ruti", { timeout: 300000 }, () => {
+  const saGradovima = RUTE.map(([a, b]) => ({ a, b, r: rutaSaGradovima(a, b) }));
+
+  it("kroz grad se stvarno prolazi", () => {
+    // Bez kičme je grad u ruti bio TAČKA: geometrija ivice završava u centru i
+    // sljedeća odatle kreće, pa se kroz Cetinje nije prolazilo nego ga se samo
+    // dodirivalo.
+    for (const { a, b, r } of saGradovima) {
+      const gradske = r.dionice.filter((d) => d.vrsta === "grad");
+      expect(gradske.length, `${a}-${b}`).toBeGreaterThan(0);
+      for (const d of gradske) {
+        expect(d.grad, `${a}-${b}`).not.toBeNull();
+        expect(d.edge, `${a}-${b}`).toBeNull();
+        expect(d.doS - d.odS, `${a}-${b} ${d.grad}`).toBeGreaterThan(50);
+      }
+    }
+  });
+
+  it("u gradu važi gradsko ograničenje", () => {
+    for (const { a, b, r } of saGradovima) {
+      for (const d of r.dionice) {
+        const sredina = (d.odS + d.doS) / 2;
+        if (d.vrsta === "grad") {
+          expect(Math.round(r.vMaxNa(sredina) * 3.6), `${a}-${b} ${d.grad}`).toBe(50);
+        } else {
+          expect(r.vMaxNa(sredina), `${a}-${b}`).toBeCloseTo(d.edge!.speedLimit / 3.6, 6);
+        }
+      }
+    }
+  });
+
+  it("gradska dionica stoji između dvije ivice, nikad na kraju rute", () => {
+    for (const { a, b, r } of saGradovima) {
+      const vrste = r.dionice.map((d) => d.vrsta);
+      expect(vrste[0], `${a}-${b}`).toBe("ivica");
+      expect(vrste[vrste.length - 1], `${a}-${b}`).toBe("ivica");
+      for (let i = 0; i < vrste.length; i++) {
+        if (vrste[i] !== "grad") continue;
+        expect(vrste[i - 1], `${a}-${b}`).toBe("ivica");
+        expect(vrste[i + 1], `${a}-${b}`).toBe("ivica");
+        // Grad stoji tamo gdje se dvije ivice sastaju, i to na svom čvoru.
+        expect(r.dionice[i - 1]!.do, `${a}-${b}`).toBe(r.dionice[i]!.grad);
+        expect(r.dionice[i + 1]!.od, `${a}-${b}`).toBe(r.dionice[i]!.grad);
+      }
+    }
+  });
+
+  it("dionice i dalje pokrivaju rutu bez rupe", () => {
+    for (const { a, b, r } of saGradovima) {
+      expect(r.dionice[0]!.odS, `${a}-${b}`).toBe(0);
+      expect(r.dionice[r.dionice.length - 1]!.doS, `${a}-${b}`).toBeCloseTo(r.duzina, 6);
+      for (let i = 1; i < r.dionice.length; i++) {
+        expect(r.dionice[i]!.odS, `${a}-${b}`).toBeCloseTo(r.dionice[i - 1]!.doS, 6);
+      }
+    }
+  });
+
+  it("kilometraža broji samo ivice, ne i gradske dionice", () => {
+    // Kilometraža je ono što piše na putokazu, a putokaz mjeri između mjesta.
+    const r = rutaSaGradovima("budva", "kolasin");
+    expect(kilometraza(r)).toBe(132);
+  });
+
+  it("savršen vozač prevozi i rutu sa gradovima", () => {
+    for (const { a, b, r } of saGradovima) {
+      const v = provozaj(r);
+      expect(v.outcome, `${a}-${b}`).toBe("passed");
+      expect(v.prekrsaji, `${a}-${b}`).toEqual([]);
+      expect(v.najveciSkok, `${a}-${b}`).toBeLessThan(1);
+      expect(v.imaNaN, `${a}-${b}`).toBe(false);
+    }
+  });
+
+  it("grad produžava vožnju, ali je ne pretvara u gradsku vožnju", () => {
+    // Kroz naselje se prolazi, ne stanuje: gradske dionice zajedno ne smiju
+    // preuzeti rutu.
+    for (const { a, b, r } of saGradovima) {
+      const uGradu = r.dionice
+        .filter((d) => d.vrsta === "grad")
+        .reduce((x, d) => x + (d.doS - d.odS), 0);
+      expect(uGradu / r.duzina, `${a}-${b}`).toBeLessThan(0.25);
+      expect(uGradu, `${a}-${b}`).toBeGreaterThan(0);
+    }
   });
 });

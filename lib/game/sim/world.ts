@@ -994,11 +994,16 @@ function detectViolations(
   }
 
   // ── prekoračenje brzine ───────────────────────────────────────────────────
-  if (player.v > ctx.vMax * SPEEDING_FACTOR) {
+  // Ograničenje se na ruti mijenja od dionice do dionice, pa se uzima ono koje
+  // važi TU GDJE JE VOZILO. Bez toga se sto osam kroz Cetinje sudi po
+  // magistrali, jer je ona najbrža dionica na toj ruti.
+  const dozvoljeno =
+    ctx.tpl.kind === "road" && ctx.tpl.vMaxNa ? ctx.tpl.vMaxNa(player.s) : ctx.vMax;
+  if (player.v > dozvoljeno * SPEEDING_FACTOR) {
     add(world, {
       type: "speeding",
       t: world.t,
-      details: `Brzina ${(player.v * 3.6).toFixed(0)} km/h iznad dozvoljene.`,
+      details: `Brzina ${(player.v * 3.6).toFixed(0)} km/h iznad dozvoljene (${(dozvoljeno * 3.6).toFixed(0)}).`,
     });
   }
 }

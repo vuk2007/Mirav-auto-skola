@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { parseGeometry, type EdgeGeometry } from "@/lib/game/road/edgeGeometry";
+import { parseKicma, type Kicma } from "@/lib/game/road/kicma";
 import { NODES, edgeById, nodeById } from "@/lib/game/road/roadGraph";
 import { nadjiRutu, napraviRutu, kilometraza, type Ruta } from "@/lib/game/world/ruta";
 import { rutaScenario } from "@/lib/game/world/svijet";
-import type { RoadTemplate } from "@/lib/game/sim/types";
+import type { RoadTemplate, ViolationType } from "@/lib/game/sim/types";
+import { VIOLATION_LABEL } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import type { Dict } from "@/lib/i18n";
@@ -35,6 +37,8 @@ const MJESTA = NODES.filter((n) => n.kind === "opstina");
 
 /** Geometrija se dovlači jednom po ivici i pamti dok stranica živi. */
 const KES = new Map<string, EdgeGeometry>();
+/** Isto i za gradske kičme, po čvoru. */
+const KES_KICME = new Map<string, Kicma>();
 
 async function dovuciGeometriju(ivice: readonly string[]): Promise<Map<string, EdgeGeometry>> {
   const out = new Map<string, EdgeGeometry>();
@@ -51,6 +55,38 @@ async function dovuciGeometriju(ivice: readonly string[]): Promise<Map<string, E
       if (!g) throw new Error(`Neispravna geometrija za ${id}`);
       KES.set(id, g);
       out.set(id, g);
+    }),
+  );
+  return out;
+}
+
+/**
+ * Gradske kičme za mjesta kroz koja ruta prolazi.
+ *
+ * Kičma koja nedostaje NIJE greška: taj grad se onda samo dodirne, kao prije
+ * nego što su kičme postojale. Zato se ovdje ne baca — traži se, i ako je nema,
+ * ide se dalje.
+ */
+async function dovuciKicme(cvorovi: readonly string[]): Promise<Map<string, Kicma>> {
+  const out = new Map<string, Kicma>();
+  const kroz = cvorovi.slice(1, -1).filter((c) => nodeById(c)?.kind === "opstina");
+  await Promise.all(
+    kroz.map(async (id) => {
+      const upamceno = KES_KICME.get(id);
+      if (upamceno) {
+        out.set(id, upamceno);
+        return;
+      }
+      try {
+        const odgovor = await fetch(`/data/osm/kicme/${id}.json`);
+        if (!odgovor.ok) return;
+        const k = parseKicma(await odgovor.json());
+        if (!k) return;
+        KES_KICME.set(id, k);
+        out.set(id, k);
+      } catch {
+        // Grad bez kičme se samo dodirne — vožnja se zbog toga ne prekida.
+      }
     }),
   );
   return out;
@@ -90,6 +126,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
   const [ruta, setRuta] = useState<Ruta | null>(null);
   const [pokusaj, setPokusaj] = useState(0);
   const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0, s: 0 });
+  const [zabiljezeno, setZabiljezeno] = useState<ViolationType[]>([]);
   // Sastavljanje rute traje, a korisnik u međuvremenu može da se predomisli.
   const zadnji = useRef(0);
 
@@ -109,12 +146,16 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
     try {
       const cvorovi = nadjiRutu(od, doK);
       if (!cvorovi || cvorovi.length < 2) throw new Error(t.rutaNoRoute);
-      const geom = await dovuciGeometriju(iviceRute(cvorovi));
+      const [geom, kicme] = await Promise.all([
+        dovuciGeometriju(iviceRute(cvorovi)),
+        dovuciKicme(cvorovi),
+      ]);
       if (moj !== zadnji.current) return;
-      const napravljena = napraviRutu(cvorovi, geom);
+      const napravljena = napraviRutu(cvorovi, geom, kicme);
       if (moj !== zadnji.current) return;
       pedals.release();
       setPokusaj(0);
+      setZabiljezeno([]);
       setRuta(napravljena);
       setFaza("voznja");
     } catch (e) {
@@ -127,8 +168,11 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
   const zavrsi = useCallback(() => {
     if (!runner) return;
     pedals.release();
-    const sudar = runner.world.violations.some((v) => v.type === "collision");
-    setFaza(sudar ? "sudar" : "kraj");
+    const prekrsaji = runner.world.violations;
+    // Kao i u putovanju: dok pravila otvorenog puta nisu napravljena, jedino
+    // što stvarno zaustavlja jeste sudar. Ostalo se prijavi na dolasku.
+    setZabiljezeno([...new Set(prekrsaji.map((v) => v.type))]);
+    setFaza(prekrsaji.some((v) => v.type === "collision") ? "sudar" : "kraj");
   }, [runner, pedals]);
 
   const dionica = ruta ? ruta.dionicaNa(hud.s) : null;
@@ -164,9 +208,11 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
               <Hud label={t.rutaLeft} value={`${(ostalo / 1000).toFixed(1)} km`} />
             </div>
             <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
-              {dionica
-                ? `${nodeById(dionica.od)?.name ?? dionica.od} → ${nodeById(dionica.do)?.name ?? dionica.do} · ${Math.round(dionica.vMax * 3.6)} km/h`
-                : ""}
+              {!dionica
+                ? ""
+                : dionica.vrsta === "grad"
+                  ? `${t.tripCity} ${nodeById(dionica.grad ?? "")?.name ?? ""} · ${Math.round(dionica.vMax * 3.6)} km/h`
+                  : `${nodeById(dionica.od)?.name ?? dionica.od} → ${nodeById(dionica.do)?.name ?? dionica.do} · ${Math.round(dionica.vMax * 3.6)} km/h`}
             </p>
           </div>
         </div>
@@ -198,6 +244,17 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
         )}
         {faza === "greska" && (
           <p className="font-display mt-3 text-lg font-bold text-red">{greska ?? t.rutaFailed}</p>
+        )}
+
+        {(faza === "kraj" || faza === "sudar") && zabiljezeno.length > 0 && (
+          <div className="mt-3 rounded border-l-4 border-l-yellow bg-bg p-3">
+            <p className="font-display text-sm font-bold tracking-wide uppercase">{t.tripNoted}</p>
+            <ul className="mt-1 space-y-0.5 text-sm text-muted">
+              {zabiljezeno.map((v) => (
+                <li key={v}>{t[VIOLATION_LABEL[v]]}</li>
+              ))}
+            </ul>
+          </div>
         )}
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
