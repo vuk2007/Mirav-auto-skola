@@ -205,7 +205,12 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
   if (faza === "voznja" && runner && scenario && ruta && tpl) {
     return (
       <Okvir t={t} onExit={onExit} muted={muted} setMuted={setMuted}>
-        <div className="relative mx-auto w-full max-w-[min(100%,58vh)]">
+        {/* Platno izlazi iz okvira stranice i zauzima cio prozor: ruta se vozi
+            po stvarnom putu i treba vidjeti što dalje ispred sebe. Ostatak
+            sajta zadržava svoju širinu — mijenja se samo ovaj ekran, i samo
+            dok se vozi. Kvadrat ograničava ono što je manje, širina ili visina. */}
+        <div className="relative left-1/2 w-screen -translate-x-1/2 px-2">
+          <div className="relative mx-auto w-full max-w-[min(100vw-1rem,86vh)]">
           <GameCanvas
             runner={runner}
             inputRef={pedals.inputRef}
@@ -241,6 +246,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
                   ? `${t.tripCity} ${nodeById(dionica.grad ?? "")?.name ?? ""} · ${Math.round(dionica.vMax * 3.6)} km/h`
                   : `${nodeById(dionica.od)?.name ?? dionica.od} → ${nodeById(dionica.do)?.name ?? dionica.do} · ${Math.round(dionica.vMax * 3.6)} km/h`}
             </p>
+          </div>
           </div>
         </div>
         <PedalControls

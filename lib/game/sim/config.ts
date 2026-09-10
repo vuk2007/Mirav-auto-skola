@@ -437,6 +437,26 @@ export const ROAD_TURN_MAX = (2 * Math.PI) / 3;
  */
 export const ROAD_V_TOP_FACTOR = 1.35;
 
+/**
+ * Koliko vozilo najviše može na otvorenom putu [m/s].
+ *
+ * Dvjesta na sat. Ovo NIJE dozvoljena brzina nego ono što auto fizički vuče —
+ * dozvoljeno se čita iz dionice na kojoj se vozi (`RoadTemplate.vMaxNa`) i po
+ * njemu se sudi prekoračenje.
+ */
+export const ROAD_V_TOP = 200 / 3.6;
+
+/**
+ * Širina trake na otvorenom putu [m].
+ *
+ * Šira od gradske: kolovoz je dvije trake, dakle preko osam metara. Raskrsnice
+ * zadržavaju svoj `LANE_WIDTH` — tamo je uža traka dio zadatka.
+ */
+export const ROAD_LANE_WIDTH = 4.2;
+
+/** Pola vidnog polja na otvorenom putu [m]. */
+export const ROAD_VIEW_HALF = 34;
+
 /** Na koliko sekundi se u prosjeku mimoiđe susretno vozilo. */
 export const ONCOMING_GAP = 7;
 
@@ -585,6 +605,17 @@ export const CURVE_WIDENING_LENGTH = 6;
 export const CURVE_WIDENING_MAX = 2;
 
 /**
+ * Koliki dio poluprečnika smije da zauzme pola kolovoza sa proširenjem.
+ *
+ * Proširenje postoji da bi se dva vozila mimoišla u oštroj krivini. Ali kad
+ * pola kolovoza priđe poluprečniku, bočni odmak trake se prelomi kroz osu i
+ * unutrašnja traka pređe na drugu stranu — tada se vozila sudaraju upravo zbog
+ * onoga što ih je trebalo razdvojiti. Trećina poluprečnika je granica na kojoj
+ * se to ne dešava.
+ */
+export const CURVE_WIDENING_RADIUS_SHARE = 0.34;
+
+/**
  * Najoštriji poluprečnik koji polilinija smije da ima prije sabijanja [m].
  *
  * Ovo NIJE ograničenje puta nego ispravka digitalizacije. Linija iz OSM-a je
@@ -608,11 +639,16 @@ export const MIN_GEOMETRY_RADIUS = 12;
  * raskrsnica na kojoj se usporava i skreće, a nju modelujemo tek sa gradskim
  * kičmama. Dok je nema, oštar prelom bi značio da se vozilo okrene u mjestu.
  *
- * Četrdeset tačaka na koraku od četiri metra je sto šezdeset metara sa svake
- * strane — dovoljno da se i skretanje od devedeset stepeni razvuče u luk od
- * dvadeset pet metara poluprečnika, koliko i jest raskrsnica.
+ * Mjera je u METRIMA, ne u tačkama. Prva verzija je brojala tačke, pa kad se
+ * razmak tačaka prepolovio (`ROUTE_STEP`), prozor se prepolovio s njim i
+ * spojevi su postali dvostruko oštriji — na ruti Budva — Kolašin je odmah
+ * poslije Cetinja došlo do sudara.
+ *
+ * Sto šezdeset metara sa svake strane je dovoljno da se i skretanje od
+ * devedeset stepeni razvuče u luk od dvadeset pet metara poluprečnika, koliko i
+ * jest raskrsnica.
  */
-export const ROUTE_JOIN_WINDOW = 40;
+export const ROUTE_JOIN_WINDOW = 220;
 
 /**
  * Koliko svijeta se drži ispred i iza igrača [m].
@@ -626,17 +662,55 @@ export const KEEP_BEHIND = 500;
 // ── Okolina puta ────────────────────────────────────────────────────────────
 
 /**
- * Dokle se okolina preslikava sa strane puta [m].
+ * Dokle se okolina crta sa strane puta [m].
  *
- * Vidno polje otvorenog puta je pedeset dva metra široko (`viewHalf` 26), pa se
- * dalje od ovoga ionako ne vidi. Preslikavanje dalje od puta uz to nema smisla:
- * tamo ne postoji „mjesto duž puta" na koje bi se tačka vezala — najbliža tačka
- * osovine kilometrima daleko ne kaže ništa.
+ * Mora biti šire od DIJAGONALE kadra, ne od njegove polovine: kadar je kvadrat,
+ * pa se u ćošku vidi `viewHalf * √2`. Sa šezdeset metara se ivica pojasa
+ * pojavljivala kao ravna kosa linija u uglu slike.
+ *
+ * Preslikavanje mnogo dalje od puta nema smisla: tamo ne postoji „mjesto duž
+ * puta" na koje bi se tačka vezala — najbliža tačka osovine kilometrima daleko
+ * ne kaže ništa.
  */
-export const OKOLINA_POJAS = 60;
+export const OKOLINA_POJAS = 95;
 
 /** Stranica ćelije u rešetki nad stvarnom osovinom [m]. */
 export const OKOLINA_RESETKA = 100;
 
 /** Stranica tile-a okoline [m] — mora se slagati sa `scripts/osm/pripremi.mjs`. */
 export const TILE = 2000;
+
+/**
+ * Razmak tačaka na osovini RUTE [m].
+ *
+ * Sitniji od `ROAD_STEP`, kojim se uzorkuje stvarna geometrija pri sabijanju.
+ * Razlog je crtanje: na krivini od dvadeset pet metara poluprečnika korak od
+ * četiri metra je devet stepeni po tački, pa se put vidi kao izlomljena linija
+ * a kadar se u zavoju sjecka. Na dva metra je upola manje, a tačaka za rutu od
+ * trideset kilometara i dalje ispod dvadeset hiljada.
+ */
+export const ROUTE_STEP = 2;
+
+/**
+ * Preko koliko metara se mjeri smjer za okretanje kadra [m].
+ *
+ * NE po jednom segmentu. Smjer segmenta je stepenasta veličina — mijenja se
+ * skokom na svakom tjemenu, a kadar se okreće s njim, pa vozilo u krivini
+ * poskakuje. Preko tetive od nekoliko metara ugao se mijenja glatko.
+ */
+export const KAMERA_TETIVA = 14;
+
+/**
+ * Najoštriji poluprečnik koji gotova osovina rute smije da ima [m].
+ *
+ * Ovo je posljednja brana i tiče se traka, ne izgleda: traka je osovina
+ * pomjerena bočno za pola kolovoza sa proširenjem — preko tri metra. Kad
+ * poluprečnik padne blizu toga, unutrašnja traka se prelomi kroz osu i vozila
+ * se sudaraju stojeći svako u svojoj. Izmjereno na ruti Bar — Žabljak: mjesto
+ * poluprečnika oko dva metra, koje mjerenje preko šesnaest metara nije ni
+ * vidjelo.
+ *
+ * Dvanaest metara je stvarna serpentina; ispod toga geometrija dolazi od
+ * spajanja i uprošćavanja, ne od puta.
+ */
+export const MIN_ROUTE_RADIUS = 12;

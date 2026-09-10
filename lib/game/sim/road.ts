@@ -20,6 +20,7 @@ import {
   APPROACH_LENGTH,
   CURVE_WIDENING_LENGTH,
   CURVE_WIDENING_MAX,
+  CURVE_WIDENING_RADIUS_SHARE,
   ROAD_STEP,
 } from "./config";
 import { cumulative } from "./geometry";
@@ -93,7 +94,11 @@ export function centerLine(tpl: RoadTemplate): { points: Point[]; heading: numbe
  * `L² / (2R)`, ograničeno odozgo. Na pravcu je nula, u serpentini oko metar i
  * po po strani. Vidi `CURVE_WIDENING_LENGTH` za razlog zbog kojeg postoji.
  */
-export function prosirenja(points: readonly Point[], heading: readonly number[]): number[] {
+export function prosirenja(
+  points: readonly Point[],
+  heading: readonly number[],
+  poluSirine = 0,
+): number[] {
   return points.map((p, i) => {
     const prije = points[Math.max(0, i - 1)]!;
     const poslije = points[Math.min(points.length - 1, i + 1)]!;
@@ -105,7 +110,14 @@ export function prosirenja(points: readonly Point[], heading: readonly number[])
     const kappa = Math.abs(du) / d;
     if (kappa < 1e-9) return 0;
     const radius = 1 / kappa;
-    return Math.min(CURVE_WIDENING_MAX, (CURVE_WIDENING_LENGTH * CURVE_WIDENING_LENGTH) / (2 * radius));
+    // Proširenje se ograničava i poluprečnikom: pola kolovoza sa proširenjem ne
+    // smije da priđe osi zaokreta, inače se traka prelomi kroz nju.
+    const koliko = Math.max(0, radius * CURVE_WIDENING_RADIUS_SHARE - poluSirine);
+    return Math.min(
+      CURVE_WIDENING_MAX,
+      koliko,
+      (CURVE_WIDENING_LENGTH * CURVE_WIDENING_LENGTH) / (2 * radius),
+    );
   });
 }
 
@@ -121,7 +133,7 @@ export function bocnaLinija(
   heading: readonly number[],
   offset: number,
 ): Point[] {
-  const w = prosirenja(points, heading);
+  const w = prosirenja(points, heading, Math.abs(offset));
   return points.map((p, i) => {
     const ugao = heading[i] ?? 0;
     const odmak = offset === 0 ? 0 : offset + Math.sign(offset) * (w[i] ?? 0);

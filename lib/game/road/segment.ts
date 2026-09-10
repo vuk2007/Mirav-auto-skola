@@ -21,7 +21,8 @@ import {
   ROAD_TURN_MAX,
   ROAD_TURN_MIN,
   TRIP_SEGMENT_TIME,
-  LANE_WIDTH,
+  ROAD_LANE_WIDTH,
+  ROAD_VIEW_HALF,
 } from "../sim/config";
 import { rng } from "../sim/geometry";
 import type { Level } from "../sim/config";
@@ -176,8 +177,8 @@ export function roadTemplate(
       curves: sabijeno.krivine,
       centerline: sabijeno.tacke,
       landmarks: znamenitostiNaDionici(edge, sabijeno.duzina, obrnuto, sabijeno),
-      geometry: { laneWidth: LANE_WIDTH },
-      viewHalf: 26,
+      geometry: { laneWidth: ROAD_LANE_WIDTH },
+      viewHalf: ROAD_VIEW_HALF,
     };
   }
 
@@ -191,10 +192,8 @@ export function roadTemplate(
     vMax,
     curves: krivine({ length }, edge, seed),
     landmarks: znamenitostiNaDionici(edge, length, obrnuto),
-    geometry: { laneWidth: LANE_WIDTH },
-    // Dvije trake, ne tri: uže vidno polje nego na autoputu, inače put ostane
-    // tanka traka nasred praznog ekrana.
-    viewHalf: 26,
+    geometry: { laneWidth: ROAD_LANE_WIDTH },
+    viewHalf: ROAD_VIEW_HALF,
   };
 }
 

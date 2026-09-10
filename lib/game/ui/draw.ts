@@ -20,7 +20,9 @@ import {
   MIN_CAR_PX,
   MIN_SIGN_PX,
   LANDMARK_OFFSET,
+  KAMERA_TETIVA,
   LANDMARK_SIZE,
+  ROUTE_STEP,
   OKOLINA_POJAS,
   SIGN_LEAD,
   VIEW_HALF,
@@ -99,11 +101,30 @@ export const OKOLINA_BOJE: Record<string, string> = {
   industrija: "#b3aea6",
 };
 
+/**
+ * Šta se rasipa po traci okoline, da ne bude prazna boja.
+ *
+ * Sve je shematsko i sve je jeftino: krug za drvo, pravougaonik za kuću, kratka
+ * crta za talas. Mjesta se biraju iz položaja, ne iz slučaja — isti komad puta
+ * uvijek izgleda isto, i pri ponovnoj vožnji i pri ponavljanju snimka.
+ */
+export const OKOLINA_SITNO: Record<
+  string,
+  { boja: string; oblik: "drvo" | "kuca" | "talas" | "brazda"; razmak: number; velicina: number }
+> = {
+  suma: { boja: "#5f7a4c", oblik: "drvo", razmak: 11, velicina: 3 },
+  naselje: { boja: "#9a938a", oblik: "kuca", razmak: 24, velicina: 8 },
+  industrija: { boja: "#867f77", oblik: "kuca", razmak: 32, velicina: 12 },
+  voda: { boja: "#bcdcf2", oblik: "talas", razmak: 14, velicina: 5 },
+  njiva: { boja: "#bdb47e", oblik: "brazda", razmak: 9, velicina: 7 },
+  vinograd: { boja: "#a49b62", oblik: "brazda", razmak: 6, velicina: 6 },
+};
+
 /** Boje linijskih pojava: obala, rijeka i sporedne ulice. */
 export const OKOLINA_LINIJE: Record<string, { boja: string; sirina: number }> = {
   obala: { boja: "#7fb0d8", sirina: 1.2 },
   rijeka: { boja: "#9ec6e8", sirina: 4 },
-  put: { boja: "#c2c4bc", sirina: 3.5 },
+  put: { boja: "#cdcfc6", sirina: 2.6 },
 };
 
 export interface View {
@@ -365,9 +386,9 @@ function drawRoad(ctx: CanvasRenderingContext2D, v: View, tpl: RoadTemplate): vo
 
   // Ivične linije pune, razdjelna isprekidana — kao na putu bez zabrane
   // preticanja. Zabrana je pravilo i doći će sa pravilima.
-  strokeLine(ctx, v, traka(pola - 0.15), PALETTE.paint, 0.12);
-  strokeLine(ctx, v, traka(-pola + 0.15), PALETTE.paint, 0.12);
-  strokeLine(ctx, v, points, PALETTE.paint, 0.12, [3, 6]);
+  strokeLine(ctx, v, traka(pola - 0.2), PALETTE.paint, 0.16);
+  strokeLine(ctx, v, traka(-pola + 0.2), PALETTE.paint, 0.16);
+  strokeLine(ctx, v, points, PALETTE.paint, 0.16, [4, 7]);
 
   // Tabla sa preporučenom brzinom stoji PRED krivinom i uvijek uz VOZAČEVU
   // DESNU stranu — tako stoje znaci na putu, bez obzira na to na koju stranu
@@ -1011,6 +1032,7 @@ function drawOkolina(
         });
       }
       fillPoly(ctx, v, [...blize, ...dalje.reverse()], boja);
+      drawSitno(ctx, v, points, heading, i0, i1, strana, vrsta, odIvice);
     }
   }
 
@@ -1019,6 +1041,82 @@ function drawOkolina(
     if (!stil) continue;
     if (!uKadru(v, linija.tacke)) continue;
     strokeLine(ctx, v, linija.tacke, stil.boja, stil.sirina);
+  }
+}
+
+/**
+ * Broj iz cijelog broja, uvijek isti za isti ulaz.
+ *
+ * Služi da drvo ili kuća stoje na istom mjestu pri svakoj vožnji: mjesto se
+ * računa iz položaja, a ne iz `Math.random`. Bez toga bi se okolina mrdala
+ * između dva kadra i ponavljanje snimka ne bi izgledalo isto.
+ */
+function sjeme(a: number, b: number): number {
+  let h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x165667b1, 0xc2b2ae35);
+  h ^= h >>> 15;
+  h = Math.imul(h, 0x2545f491);
+  h ^= h >>> 13;
+  return ((h >>> 0) % 10000) / 10000;
+}
+
+/** Sitni sadržaj u traci okoline: drveće, kuće, talasi, brazde. */
+function drawSitno(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  points: readonly Point[],
+  heading: readonly number[],
+  i0: number,
+  i1: number,
+  strana: 1 | -1,
+  vrsta: string,
+  odIvice: number,
+): void {
+  const stil = OKOLINA_SITNO[vrsta];
+  if (!stil) return;
+  // Na sitnoj razmjeri se ovo ionako ne raspoznaje, a košta.
+  if (stil.velicina * v.scale < 3) return;
+
+  const korakTacaka = Math.max(1, Math.round(stil.razmak / Math.max(0.5, ROUTE_STEP)));
+  const sirina = OKOLINA_POJAS - odIvice;
+  ctx.fillStyle = stil.boja;
+
+  for (let i = i0; i <= i1; i += korakTacaka) {
+    const p = points[i]!;
+    const u = heading[i] ?? 0;
+    const cos = Math.cos(u);
+    const sin = Math.sin(u);
+    // Dva reda po koraku, na različitim odmacima od puta.
+    for (let red = 0; red < 2; red++) {
+      const t = sjeme(i, red * 7 + (strana > 0 ? 1 : 2));
+      const odmak = odIvice + (0.15 + 0.7 * t) * sirina;
+      const uzduz = (sjeme(i + 31, red) - 0.5) * stil.razmak;
+      const c = {
+        x: p.x + cos * odmak * strana - sin * uzduz,
+        y: p.y - sin * odmak * strana - cos * uzduz,
+      };
+      const q = px(v, c);
+      if (q.x < -40 || q.x > v.wPx + 40 || q.y < -40 || q.y > v.hPx + 40) continue;
+      const r = stil.velicina * v.scale * (0.75 + 0.5 * sjeme(i, red + 3));
+
+      if (stil.oblik === "drvo") {
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, r / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (stil.oblik === "kuca") {
+        ctx.save();
+        ctx.translate(q.x, q.y);
+        ctx.rotate(screenAngle(v, { x: cos, y: -sin }));
+        ctx.fillRect(-r / 2, -r * 0.35, r, r * 0.7);
+        ctx.restore();
+      } else {
+        // Talas i brazda su kratke crte poprijeko na put.
+        ctx.save();
+        ctx.translate(q.x, q.y);
+        ctx.rotate(screenAngle(v, { x: cos, y: -sin }) + (stil.oblik === "talas" ? Math.PI / 2 : 0));
+        ctx.fillRect(-r / 2, -Math.max(1, 0.25 * v.scale) / 2, r, Math.max(1, 0.25 * v.scale));
+        ctx.restore();
+      }
+    }
   }
 }
 
@@ -1102,11 +1200,19 @@ export function drawScene(
       // trake značilo bi da se pomjera put, a ne vozilo.
       if (opts.camera.rotate) {
         // Kadar se okreće oko igrača tako da mu je pravac uvijek nagore.
+        //
+        // Smjer se NE uzima iz `poseOn`: on ga mjeri preko pola metra, pa je
+        // stepenast — mijenja se skokom na svakom tjemenu polilinije, i vozilo
+        // u krivini poskakuje. Ovdje se mjeri preko tetive od `KAMERA_TETIVA`
+        // metara, pa se ugao mijenja glatko.
+        const sSad = renderS(runner, igrac.id, igrac.s);
+        const a = pointAt(p.points, p.cum, Math.max(0, sSad - KAMERA_TETIVA / 2));
+        const b = pointAt(p.points, p.cum, Math.min(p.length, sSad + KAMERA_TETIVA / 2));
         v.wx = poz.x;
         v.wy = poz.y;
         v.cx = widthPx / 2;
         v.cy = heightPx * 0.62;
-        v.rot = -Math.PI / 2 - Math.atan2(-poza.heading.y, -poza.heading.x);
+        v.rot = -Math.PI / 2 - Math.atan2(-(b.y - a.y), -(b.x - a.x));
       } else {
         v.cx = widthPx / 2 + (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
         v.cy = heightPx * 0.62 + poz.y * v.scale;

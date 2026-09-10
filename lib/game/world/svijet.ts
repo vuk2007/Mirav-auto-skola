@@ -12,10 +12,11 @@
  */
 
 import {
-  LANE_WIDTH,
   LOAD_AHEAD,
   KEEP_BEHIND,
   ONCOMING_GAP,
+  ROAD_LANE_WIDTH,
+  ROAD_VIEW_HALF,
 } from "../sim/config";
 import { rng } from "../sim/geometry";
 import type { Level } from "../sim/config";
@@ -40,8 +41,8 @@ export function rutaTemplate(ruta: Ruta): RoadTemplate {
     curves: ruta.krivine,
     centerline: ruta.tacke,
     landmarks: ruta.landmarks,
-    geometry: { laneWidth: LANE_WIDTH },
-    viewHalf: 26,
+    geometry: { laneWidth: ROAD_LANE_WIDTH },
+    viewHalf: ROAD_VIEW_HALF,
   };
 }
 

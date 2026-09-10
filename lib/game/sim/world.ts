@@ -46,7 +46,7 @@ import {
   STOP_MARGIN,
   STOP_ZONE,
   type DifficultyParams,
-  ROAD_V_TOP_FACTOR,
+  ROAD_V_TOP,
   TRIP_SEGMENT_TIME,
   TRIP_SEGMENT_TIMEOUT_FACTOR,
   V_MAX_DEFAULT,
@@ -403,7 +403,7 @@ function ctxFor(world: World, scenario: Scenario): Ctx {
       tpl.kind === "highway"
         ? HIGHWAY_V_TOP
         : tpl.kind === "road"
-          ? tpl.vMax * ROAD_V_TOP_FACTOR
+          ? ROAD_V_TOP
           : V_TOP,
     drag: bezKrakova(tpl) ? HIGHWAY_DRAG : DRAG_COEFF,
     dif: DIFFICULTY[scenario.difficulty],

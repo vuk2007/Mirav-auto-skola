@@ -242,6 +242,15 @@ const PIPANJE = [14, 26, 45];
  */
 const DOMET_OBALE = 300;
 
+/**
+ * Dokle se linija smatra samim kolovozom po kojem se vozi [m].
+ *
+ * Kolovoz je nešto preko osam metara, pa je pola njega četiri; šest metara
+ * hvata i mala razilaženja između uprošćene linije iz tile-a i sabijene
+ * osovine.
+ */
+const SVOJ_PUT = 6;
+
 export interface OkolinaOpcije {
   /** Na koliko metara se uzima uzorak duž puta. */
   korak?: number;
@@ -380,11 +389,19 @@ export function preslikajLinije(
   const out: OkolinaLinija[] = [];
   for (const pojava of linije) {
     let tekuca: Point[] = [];
+    let naOsi = 0;
+    let svih = 0;
     const zatvori = () => {
-      if (tekuca.length >= 2) {
+      // Put koji cijelim potezom leži NA osovini je onaj kojim se vozi: on je
+      // već nacrtan, sa trakama i ivičnim linijama. Bez ovoga se preko njega
+      // nacrta još jedna siva traka i kolovoz izgleda udvojeno.
+      const svoj = pojava.k === "put" && svih > 0 && naOsi / svih > 0.7;
+      if (tekuca.length >= 2 && !svoj) {
         out.push({ k: pojava.k, ...(pojava.r ? { r: pojava.r } : {}), tacke: tekuca });
       }
       tekuca = [];
+      naOsi = 0;
+      svih = 0;
     };
     for (const [x, y] of pojava.g) {
       const m = pres.uRutu({ x, y });
@@ -392,6 +409,8 @@ export function preslikajLinije(
         zatvori();
         continue;
       }
+      svih += 1;
+      if (Math.abs(m.bok) < SVOJ_PUT) naOsi += 1;
       const os = naOsovini(ruta, m.s);
       tekuca.push({
         x: os.p.x + -os.smjer.y * m.bok,

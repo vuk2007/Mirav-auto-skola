@@ -28,12 +28,18 @@
  * Sam ugao se poslije zaobli lukom: na raskrsnici se skreće, ne okreće u mjestu.
  */
 
-import { ROAD_STEP, ROUTE_JOIN_WINDOW, SPEED_LIMIT_KMH_BY_ROAD } from "../sim/config";
+import {
+  ROAD_STEP,
+  ROUTE_JOIN_WINDOW,
+  ROUTE_STEP,
+  MIN_ROUTE_RADIUS,
+  SPEED_LIMIT_KMH_BY_ROAD,
+} from "../sim/config";
 import type { Point, RoadCurve, RoadLandmark } from "../sim/types";
 import { osovina, type EdgeGeometry } from "../road/edgeGeometry";
 import { krozGrad, ulazZaIvicu, type Kicma } from "../road/kicma";
 import { edgeById, edgesAt, otherEnd, type RoadEdge } from "../road/roadGraph";
-import { preuzorkuj, sabijenaIvica, type Sabijeno } from "../road/sabijanje";
+import { preuzorkuj, sabijenaIvica, zaobli, type Sabijeno } from "../road/sabijanje";
 import { landmarksOnEdge } from "../road/landmarks";
 
 /** Jedna dionica rute, sa mjestom koje zauzima duž cijele rute. */
@@ -190,7 +196,7 @@ function spojiLukom(tacke: readonly Point[], sredina: number, poluprozor: number
   const p2 = tacke[doK]!;
 
   const gruba = Math.hypot(p1.x - p0.x, p1.y - p0.y) + Math.hypot(p2.x - p1.x, p2.y - p1.y);
-  const n = Math.max(4, Math.round(gruba / ROAD_STEP));
+  const n = Math.max(4, Math.round(gruba / ROUTE_STEP));
   const luk: Point[] = [];
   for (let i = 0; i <= n; i++) {
     const t = i / n;
@@ -471,10 +477,13 @@ export function napraviRutu(
    * Sabijena dionica nosi po tačku na svaka četiri metra STVARNOG puta, pa joj
    * poslije sabijanja tačke stoje na pola metra. Za rutu od tridesetak
    * kilometara to je preko šezdeset hiljada tačaka kroz koje bi i putanje traka
-   * i crtanje prolazili u svakom kadru, bez ijedne koristi: oblik je isti i na
-   * četiri metra.
+   * i crtanje prolazili u svakom kadru, bez ijedne koristi.
+   *
+   * Korak je `ROUTE_STEP`, sitniji od onoga kojim se uzorkuje stvarna
+   * geometrija: na oštroj krivini četiri metra znače devet stepeni po tački, pa
+   * se put vidi kao izlomljen a kadar se sjecka.
    */
-  let osovinaRute = preuzorkuj(tacke, ROAD_STEP);
+  let osovinaRute = preuzorkuj(tacke, ROUTE_STEP);
 
   /**
    * Zaobljavanje spojeva.
@@ -490,10 +499,20 @@ export function napraviRutu(
    * tako ostajao ugao od 179 stepeni, dakle put koji se vraća sam u sebe.
    */
   for (const sSpoja of [...granice.slice(0, -1)].reverse()) {
-    const sredina = Math.round(sSpoja / ROAD_STEP);
-    osovinaRute = spojiLukom(osovinaRute, sredina, ROUTE_JOIN_WINDOW);
+    const sredina = Math.round(sSpoja / ROUTE_STEP);
+    // Prozor je u metrima; ovdje se pretvara u tačke po tekućem koraku.
+    osovinaRute = spojiLukom(osovinaRute, sredina, Math.round(ROUTE_JOIN_WINDOW / ROUTE_STEP));
   }
-  osovinaRute = preuzorkuj(osovinaRute, ROAD_STEP);
+  /**
+   * Posljednje zaobljavanje, nad gotovom osovinom.
+   *
+   * Poslije nizanja, sječenja zajedničkih krakova i lukova na spojevima na
+   * osovini ostanu pojedinačni prelomi od nekoliko metara poluprečnika. Oni se
+   * u mjerenju preko šesnaest metara ni ne vide, ali traku — koja je osovina
+   * pomjerena za preko tri metra — prelome kroz osu, pa se vozila sudaraju
+   * stojeći svako u svojoj. Ovo je jedina brana koja to hvata.
+   */
+  osovinaRute = zaobli(preuzorkuj(osovinaRute, ROUTE_STEP), ROUTE_STEP, MIN_ROUTE_RADIUS);
 
   const kumPoslije = kumulativno(osovinaRute);
   const duzina = kumPoslije[kumPoslije.length - 1]!;
