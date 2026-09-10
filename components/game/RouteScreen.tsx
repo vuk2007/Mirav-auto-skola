@@ -7,6 +7,8 @@ import { parseKicma, type Kicma } from "@/lib/game/road/kicma";
 import { NODES, edgeById, nodeById } from "@/lib/game/road/roadGraph";
 import { nadjiRutu, napraviRutu, kilometraza, type Ruta } from "@/lib/game/world/ruta";
 import { rutaScenario } from "@/lib/game/world/svijet";
+import type { Okolina } from "@/lib/game/world/okolina";
+import { izvorSaMreze, ucitajOkolinu } from "@/lib/game/world/tiles";
 import type { RoadTemplate, ViolationType } from "@/lib/game/sim/types";
 import { VIOLATION_LABEL } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
@@ -127,6 +129,14 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
   const [pokusaj, setPokusaj] = useState(0);
   const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0, s: 0 });
   const [zabiljezeno, setZabiljezeno] = useState<ViolationType[]>([]);
+  /**
+   * Okolina stiže u toku vožnje, tile po tile.
+   *
+   * Drži se u `ref`-u, ne u `state`-u: svaka grupa tile-ova bi inače ponovo
+   * nacrtala cijelo stablo, a platno je ionako čita svaki kadar.
+   */
+  const okolinaRef = useRef<Okolina | null>(null);
+  const [okolinaGotova, setOkolinaGotova] = useState(0);
   // Sastavljanje rute traje, a korisnik u međuvremenu može da se predomisli.
   const zadnji = useRef(0);
 
@@ -156,8 +166,21 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
       pedals.release();
       setPokusaj(0);
       setZabiljezeno([]);
+      okolinaRef.current = null;
+      setOkolinaGotova(0);
       setRuta(napravljena);
       setFaza("voznja");
+
+      // Okolina se dovlači POSLIJE nego što vožnja krene: prvi tile-ovi su oni
+      // na početku puta, pa se ono što se vidi pojavi odmah, a ostatak stiže
+      // dok se vozi. Čekati sve značilo bi ekran učitavanja, a njih nema.
+      void ucitajOkolinu(napravljena, izvorSaMreze, {
+        prekini: () => moj !== zadnji.current,
+        naNapredak: (n) => {
+          okolinaRef.current = n.okolina;
+          setOkolinaGotova(Math.round((100 * n.gotovo) / Math.max(1, n.ukupno)));
+        },
+      });
     } catch (e) {
       if (moj !== zadnji.current) return;
       setGreska(e instanceof Error ? e.message : t.rutaFailed);
@@ -196,6 +219,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
             sound={sound}
             // Kadar se okreće: bez toga bi se na ruti vozilo bočno preko ekrana.
             camera={{ follow: true, rotate: true, half: tpl.viewHalf }}
+            okolinaRef={okolinaRef}
             label={ruta.cvorovi.map((c) => nodeById(c)?.name ?? c).join(" — ")}
           />
           <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
@@ -206,6 +230,9 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
                 value={`${redni}/${ruta.dionice.length}`}
               />
               <Hud label={t.rutaLeft} value={`${(ostalo / 1000).toFixed(1)} km`} />
+              {okolinaGotova < 100 && (
+                <Hud label={t.rutaSurroundings} value={`${okolinaGotova}%`} />
+              )}
             </div>
             <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
               {!dionica

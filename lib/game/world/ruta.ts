@@ -57,6 +57,16 @@ export interface RutaDionica {
   sabijeno: Sabijeno;
   /** Koliko je sabijenih metara odsječeno sa početka. */
   skinuto: number;
+  /** Koliko je STVARNIH metara odsječeno sa početka. */
+  skinutoStvarno: number;
+  /**
+   * Stvarna osovina onog dijela dionice koji ruta zaista vozi, u UTM metrima.
+   *
+   * Za nju se vezuje okolina: tačka u prirodi se prvo nađe na ovoj liniji, pa
+   * se njeno mjesto preslika u sabijeno. Bez odsijecanja bi se okolina vezala i
+   * za komad puta koji je ustupljen gradskoj kičmi.
+   */
+  stvarne: readonly Point[];
   /** Koliko tačaka dionica stvarno doprinosi ruti. */
   tacaka: number;
 }
@@ -204,19 +214,6 @@ function kumulativno(tacke: readonly Point[]): number[] {
   return out;
 }
 
-/** Polilinija skraćena za `metara` sa jednog kraja. */
-function skrati(tacke: readonly Point[], metara: number, sKraja: boolean): Point[] {
-  if (metara <= 0) return [...tacke];
-  const niz = sKraja ? [...tacke].reverse() : [...tacke];
-  const kum = kumulativno(niz);
-  const ukupno = kum[kum.length - 1]!;
-  if (metara >= ukupno) return sKraja ? [...tacke] : [...tacke];
-  let i = 0;
-  while (i < kum.length - 1 && kum[i]! < metara) i += 1;
-  const ostatak = niz.slice(i);
-  return sKraja ? ostatak.reverse() : ostatak;
-}
-
 /**
  * Ivica između dva susjedna čvora.
  *
@@ -246,6 +243,8 @@ interface Komad {
   stvarne: readonly Point[];
   /** Koliko je sabijenih metara skinuto sa početka. */
   skinuto: number;
+  /** Koliko je STVARNIH metara skinuto sa početka. */
+  skinutoStvarno: number;
 }
 
 /**
@@ -280,7 +279,6 @@ function naKomade(
       g,
       obrnuto,
       sabijeno: sabijenaIvica(edge.id, osovina(g), obrnuto),
-      stvarne: osovina(g, obrnuto),
       skratiPocetak: 0,
       skratiKraj: 0,
     });
@@ -316,8 +314,11 @@ function naKomade(
       vMax: gradski,
       sabijeno,
       tacke: sabijeno.tacke,
-      stvarne: put,
+      // Stvarna osovina ide u KORAKU sa sabijenom, tačka po tačka: to je linija
+      // koju je sabijanje zaista koristilo, a ne sirova iz OSM-a.
+      stvarne: sabijeno.stvarne,
       skinuto: 0,
+      skinutoStvarno: 0,
     });
   }
 
@@ -337,8 +338,12 @@ function naKomade(
       Math.floor(iv.sabijeno.tacke.length / 3),
     );
     const tacke = iv.sabijeno.tacke.slice(skiniP, iv.sabijeno.tacke.length - skiniK);
+    // Ista mjera i na stvarnoj osovini: nizovi su u koraku, tačka po tačka.
+    const stvarne = iv.sabijeno.stvarne.slice(skiniP, iv.sabijeno.stvarne.length - skiniK);
     const skinuto =
       skiniP > 0 ? (kumulativno(iv.sabijeno.tacke.slice(0, skiniP + 1)).at(-1) ?? 0) : 0;
+    const skinutoStvarno =
+      skiniP > 0 ? (kumulativno(iv.sabijeno.stvarne.slice(0, skiniP + 1)).at(-1) ?? 0) : 0;
 
     out.push({
       vrsta: "ivica",
@@ -350,12 +355,9 @@ function naKomade(
       vMax: iv.edge.speedLimit / 3.6,
       sabijeno: iv.sabijeno,
       tacke,
-      stvarne: skrati(
-        skrati(iv.stvarne, iv.skratiPocetak, false),
-        iv.skratiKraj,
-        true,
-      ),
+      stvarne,
       skinuto,
+      skinutoStvarno,
     });
   }
   return out;
@@ -440,6 +442,13 @@ export function napraviRutu(
       vMax: k.vMax,
       sabijeno: k.sabijeno,
       skinuto: k.skinuto + (odsjeci > 0 ? (kumulativno(k.tacke.slice(0, odsjeci + 1)).at(-1) ?? 0) : 0),
+      skinutoStvarno:
+        k.skinutoStvarno +
+        (odsjeci > 0 ? (kumulativno(k.stvarne.slice(0, odsjeci + 1)).at(-1) ?? 0) : 0),
+      // Zajednički krak se odsijeca i sa stvarne osovine: okolina se veže samo
+      // za onaj dio puta koji ruta zaista vozi. Nizovi su u koraku, pa se
+      // odsijeca isti broj tačaka.
+      stvarne: odsjeci > 0 ? k.stvarne.slice(odsjeci) : k.stvarne,
       tacaka: svoje.length,
     });
   }

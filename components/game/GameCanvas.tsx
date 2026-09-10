@@ -5,6 +5,7 @@ import { DIFFICULTY, HORN_AT, HUD_HZ, type Level } from "@/lib/game/sim/config";
 import type { Input, Outcome, ScenarioOfficer } from "@/lib/game/sim/types";
 import { drawScene } from "@/lib/game/ui/draw";
 import type { Sound } from "@/lib/game/ui/sound";
+import type { Okolina } from "@/lib/game/world/okolina";
 import type { Driver } from "@/lib/game/ui/runner";
 
 export interface HudState {
@@ -42,6 +43,13 @@ interface GameCanvasProps {
    * ga ruta, gdje se smjer mijenja duž cijele vožnje.
    */
   camera?: { follow: boolean; half?: number; rotate?: boolean };
+  /**
+   * Okolina pored puta, preslikana u koordinate rute.
+   *
+   * Ide kroz `ref` jer se puni u toku vožnje — tile-ovi stižu jedan po jedan, a
+   * svaka izmjena kroz `state` bi ponovo nacrtala cijelo stablo.
+   */
+  okolinaRef?: React.RefObject<Okolina | null>;
   label: string;
 }
 
@@ -64,6 +72,7 @@ export default function GameCanvas({
   level,
   sound,
   camera,
+  okolinaRef,
   label,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -153,6 +162,7 @@ export default function GameCanvas({
         officer: officerRef.current,
         indicatorZones: zonesRef.current,
         camera: cameraRef.current,
+        okolina: okolinaRef?.current ?? null,
       });
 
       if (now - lastHud > 1000 / HUD_HZ) {
@@ -180,7 +190,10 @@ export default function GameCanvas({
       cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, [runner, inputRef]);
+    // `okolinaRef` je `ref` i ne mijenja se, pa petlja zbog njega ne kreće
+    // ispočetka; stoji ovdje samo da bi pravilo o zavisnostima bilo zadovoljeno
+    // bez gašenja provjere.
+  }, [runner, inputRef, okolinaRef]);
 
   return (
     <canvas

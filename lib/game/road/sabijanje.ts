@@ -95,6 +95,7 @@ export function obrni(s: Sabijeno): Sabijeno {
     tacke,
     duzina: s.duzina,
     stvarnaDuzina: s.stvarnaDuzina,
+    stvarne: [...s.stvarne].reverse(),
     krivine: s.krivine
       .map((c) => ({
         ...c,
@@ -310,6 +311,15 @@ export interface Sabijeno {
   najmanjiPoluprecnik: number;
   /** Najmanji poluprečnik STVARNOG puta [m] — granica koju sabijanje ne dira. */
   najmanjiStvarni: number;
+  /**
+   * Stvarna osovina, onakva kakva je zaista ušla u sabijanje.
+   *
+   * Nije ulazna polilinija nego ona poslije preuzorkovanja i zaobljavanja
+   * uglova digitalizacije, tačka po tačka u parovima sa `tacke`. Okolina se
+   * vezuje za put preko nje: da se koristila sirova, preslikavanje bi se na
+   * serpentinama razišlo za desetine metara, jer zaobljavanje mijenja dužinu.
+   */
+  stvarne: Point[];
   /** Faktor sabijanja po uzorku stvarne osovine. */
   faktori: number[];
   /** Ukupno skretanje [rad] — isto prije i poslije, po konstrukciji. */
@@ -366,6 +376,7 @@ export function sabij(tacke: readonly Point[], korak = ROAD_STEP): Sabijeno {
       krivine: [],
       najmanjiPoluprecnik: Infinity,
       najmanjiStvarni: Infinity,
+      stvarne: uzorci.map((p) => ({ ...p })),
       faktori: [],
       skretanje: 0,
       uSabijeni: () => 0,
@@ -456,6 +467,7 @@ export function sabij(tacke: readonly Point[], korak = ROAD_STEP): Sabijeno {
     krivine: izdvojKrivine(k, sIzlaza),
     najmanjiPoluprecnik,
     najmanjiStvarni,
+    stvarne: uzorci,
     faktori,
     skretanje,
     uSabijeni: (s) => preslikaj(sStvarni, sSabijeni, s),

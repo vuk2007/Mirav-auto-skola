@@ -202,6 +202,7 @@ export interface Dict {
   rutaGo: string;
   rutaLegs: string;
   rutaLeft: string;
+  rutaSurroundings: string;
   rutaDone: string;
   rutaCrash: string;
   rutaNoRoute: string;
@@ -565,6 +566,7 @@ const me: Dict = {
   rutaGo: "Kreni",
   rutaLegs: "Dionica",
   rutaLeft: "Ostalo",
+  rutaSurroundings: "Okolina",
   rutaDone: "Stigli ste.",
   rutaCrash: "Sudar. Ruta se vozi ponovo.",
   rutaNoRoute: "Između ta dva mjesta graf nema put.",
@@ -917,6 +919,7 @@ const en: Dict = {
   rutaGo: "Go",
   rutaLegs: "Leg",
   rutaLeft: "Left",
+  rutaSurroundings: "Surroundings",
   rutaDone: "You have arrived.",
   rutaCrash: "A crash. The route starts over.",
   rutaNoRoute: "The graph has no road between those two places.",
@@ -1274,6 +1277,7 @@ const sq: Dict = {
   rutaGo: "Nisu",
   rutaLegs: "Pjesa",
   rutaLeft: "Mbetur",
+  rutaSurroundings: "Rrethina",
   rutaDone: "Mbërritët.",
   rutaCrash: "Përplasje. Itinerari nis nga fillimi.",
   rutaNoRoute: "Grafi nuk ka rrugë mes atyre dy vendeve.",
@@ -1633,6 +1637,7 @@ const ru: Dict = {
   rutaGo: "Поехали",
   rutaLegs: "Участок",
   rutaLeft: "Осталось",
+  rutaSurroundings: "Окрестности",
   rutaDone: "Вы приехали.",
   rutaCrash: "Авария. Маршрут начинается заново.",
   rutaNoRoute: "В графе нет дороги между этими двумя местами.",

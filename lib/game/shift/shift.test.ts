@@ -17,7 +17,10 @@ const NIVOI: Level[] = [1, 2, 3, 4, 5];
 
 // ── Generisanje ─────────────────────────────────────────────────────────────
 
-describe("generisanje segmenata", () => {
+// Ovaj fajl generiše lance segmenata i kroz svaki provozi bota — pedesetak
+// sekundi rada. Podrazumijevanih pet sekundi po testu je pretijesno: prolazi
+// kad se pusti sam, a pod opterećenjem cijelog paketa zna da istekne.
+describe("generisanje segmenata", { timeout: 60000 }, () => {
   it("isto sjeme daje isti segment", () => {
     const a = generateSegment(123, 3, 5);
     const b = generateSegment(123, 3, 5);
@@ -69,7 +72,7 @@ describe("generisanje segmenata", () => {
 
 // ── Autoput u lancu ─────────────────────────────────────────────────────────
 
-describe("autoput u smjeni", () => {
+describe("autoput u smjeni", { timeout: 60000 }, () => {
   const dionice = (nivo: Level, koliko = 300) =>
     generateChain(99, nivo, koliko).filter((s) => s.intersection === HIGHWAY_TEMPLATE);
 
@@ -137,7 +140,7 @@ describe("autoput u smjeni", () => {
 
 // ── Prilagođavanje ──────────────────────────────────────────────────────────
 
-describe("prilagođavanje težine", () => {
+describe("prilagođavanje težine", { timeout: 60000 }, () => {
   it("tri čista segmenta dižu nivo, izgubljen život ga spušta", () => {
     expect(nextLevel(2, CLEAN_TO_LEVEL_UP, false)).toBe(3);
     expect(nextLevel(2, 2, false)).toBe(2);
@@ -152,7 +155,7 @@ describe("prilagođavanje težine", () => {
 
 // ── Fuzz: svaki generisani segment mora biti rješiv ─────────────────────────
 
-describe("fuzz — savršen vozač prolazi sve", () => {
+describe("fuzz — savršen vozač prolazi sve", { timeout: 60000 }, () => {
   for (const nivo of NIVOI) {
     it(`nivo ${nivo}: 200 nasumičnih segmenata bez prekršaja i bez zaglavljivanja`, () => {
       const pali: string[] = [];
@@ -175,7 +178,7 @@ describe("fuzz — savršen vozač prolazi sve", () => {
 
 // ── Determinizam lanca ──────────────────────────────────────────────────────
 
-describe("determinizam smjene", () => {
+describe("determinizam smjene", { timeout: 60000 }, () => {
   it("isti lanac i sjeme daju identičnu istoriju", () => {
     const otisak = () =>
       generateChain(42, 4, 10)
@@ -192,7 +195,7 @@ describe("determinizam smjene", () => {
 
 // ── Tok smjene ──────────────────────────────────────────────────────────────
 
-describe("smjena", () => {
+describe("smjena", { timeout: 60000 }, () => {
   const svijet = (violations: { type: string; severity: string }[], reakcije: number[] = []) =>
     ({
       violations: violations.map((v) => ({ ...v, t: 1, details: "", penaltyRef: null })),

@@ -21,6 +21,7 @@ import {
   MIN_SIGN_PX,
   LANDMARK_OFFSET,
   LANDMARK_SIZE,
+  OKOLINA_POJAS,
   SIGN_LEAD,
   VIEW_HALF,
 } from "../sim/config";
@@ -60,6 +61,7 @@ import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
 import { officerAllow, poseOn } from "../sim/world";
 import { renderS, type Driver } from "./runner";
+import type { Okolina } from "../world/okolina";
 
 /** Boje su iste kao tokeni u `app/globals.css` — scena mora da liči na sajt. */
 export const PALETTE = {
@@ -80,6 +82,29 @@ export const PALETTE = {
   beacon: "#1f5fd0",
   officer: "#123a6d",
 } as const;
+
+/**
+ * Boje okoline pored puta.
+ *
+ * Shematski, po dvije-tri boje: cilj nije slika prirode nego da se sa vozačkog
+ * mjesta odmah vidi šta je s koje strane — voda, šuma, naselje. Sve je nešto
+ * tamnije od trave, da put ostane najsvjetlije što se vidi.
+ */
+export const OKOLINA_BOJE: Record<string, string> = {
+  voda: "#8ab8dd",
+  suma: "#8aa478",
+  njiva: "#ddd5a6",
+  vinograd: "#c6bf88",
+  naselje: "#c8c3ba",
+  industrija: "#b3aea6",
+};
+
+/** Boje linijskih pojava: obala, rijeka i sporedne ulice. */
+export const OKOLINA_LINIJE: Record<string, { boja: string; sirina: number }> = {
+  obala: { boja: "#7fb0d8", sirina: 1.2 },
+  rijeka: { boja: "#9ec6e8", sirina: 4 },
+  put: { boja: "#c2c4bc", sirina: 3.5 },
+};
 
 export interface View {
   cx: number;
@@ -935,9 +960,95 @@ function drawOfficer(
   ctx.restore();
 }
 
+/**
+ * Okolina pored puta.
+ *
+ * Površine se ne crtaju kao poligoni nego kao TRAKE uz put: za svaki komad
+ * rute se zna šta leži lijevo a šta desno, pa se to oboji od ivice kolovoza do
+ * ruba pojasa. Razlog stoji u `world/okolina.ts` — ukratko, preslikan obris
+ * šume se raspadne u krpice, a sa vozačkog mjesta se ionako vidi samo šta je s
+ * koje strane.
+ *
+ * Linije — obala, rijeka, sporedna ulica — crtaju se poslije traka, jer idu
+ * preko njih.
+ */
+function drawOkolina(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  tpl: RoadTemplate,
+  okolina: Okolina,
+): void {
+  const { points, heading } = centerLine(tpl);
+  const korak = tpl.length / Math.max(1, points.length - 1);
+  const odIvice = tpl.geometry.laneWidth + 1.6;
+
+  for (const traka of okolina.trake) {
+    const i0 = Math.max(0, Math.floor(traka.odS / korak));
+    const i1 = Math.min(points.length - 1, Math.ceil(traka.doS / korak));
+    if (i1 - i0 < 1) continue;
+    // Kadar je uzak: komad koji ni jednim krajem ne dodiruje ekran se preskače
+    // prije nego što se za njega išta izračuna.
+    if (!uKadru(v, [points[i0]!, points[i1]!])) continue;
+
+    for (const [strana, vrsta] of [
+      [1, traka.lijevo],
+      [-1, traka.desno],
+    ] as const) {
+      if (!vrsta) continue;
+      const boja = OKOLINA_BOJE[vrsta];
+      if (!boja) continue;
+      const blize: Point[] = [];
+      const dalje: Point[] = [];
+      for (let i = i0; i <= i1; i++) {
+        const p = points[i]!;
+        const u = heading[i] ?? 0;
+        const cos = Math.cos(u);
+        const sin = Math.sin(u);
+        blize.push({ x: p.x + cos * odIvice * strana, y: p.y - sin * odIvice * strana });
+        dalje.push({
+          x: p.x + cos * OKOLINA_POJAS * strana,
+          y: p.y - sin * OKOLINA_POJAS * strana,
+        });
+      }
+      fillPoly(ctx, v, [...blize, ...dalje.reverse()], boja);
+    }
+  }
+
+  for (const linija of okolina.linije) {
+    const stil = OKOLINA_LINIJE[linija.k];
+    if (!stil) continue;
+    if (!uKadru(v, linija.tacke)) continue;
+    strokeLine(ctx, v, linija.tacke, stil.boja, stil.sirina);
+  }
+}
+
+/** Da li polilinija uopšte dodiruje kadar — gruba provjera po okviru. */
+function uKadru(v: View, tacke: readonly Point[]): boolean {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const p of tacke) {
+    const q = px(v, p);
+    if (q.x < minX) minX = q.x;
+    if (q.y < minY) minY = q.y;
+    if (q.x > maxX) maxX = q.x;
+    if (q.y > maxY) maxY = q.y;
+  }
+  return maxX >= 0 && minX <= v.wPx && maxY >= 0 && minY <= v.hPx;
+}
+
 // ── Scena ───────────────────────────────────────────────────────────────────
 
 export interface DrawOptions {
+  /**
+   * Okolina pored puta, već preslikana u koordinate rute.
+   *
+   * Crta se PRVA, ispod svega: more, šume, naselja i sporedne ulice su podloga
+   * po kojoj put ide. Prosljeđuje se spolja jer zavisi od rute, a šablon puta o
+   * ruti ne zna ništa.
+   */
+  okolina?: Okolina | null;
   /** Vozilo koje treba istaći crveno (kome je oduzeta prednost, ili sudar). */
   flagVehicleId?: string | null;
   /** Da li igrač trenutno koči — stop svjetla se ne mogu izvesti iz stanja. */
@@ -1005,6 +1116,8 @@ export function drawScene(
 
   ctx.fillStyle = PALETTE.grass;
   ctx.fillRect(0, 0, widthPx, heightPx);
+
+  if (opts.okolina && tpl.kind === "road") drawOkolina(ctx, v, tpl, opts.okolina);
 
   if (tpl.kind === "roundabout") {
     drawRoundabout(ctx, v, tpl);

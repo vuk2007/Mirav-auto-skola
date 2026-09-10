@@ -622,3 +622,21 @@ export const ROUTE_JOIN_WINDOW = 40;
  */
 export const LOAD_AHEAD = 2000;
 export const KEEP_BEHIND = 500;
+
+// ── Okolina puta ────────────────────────────────────────────────────────────
+
+/**
+ * Dokle se okolina preslikava sa strane puta [m].
+ *
+ * Vidno polje otvorenog puta je pedeset dva metra široko (`viewHalf` 26), pa se
+ * dalje od ovoga ionako ne vidi. Preslikavanje dalje od puta uz to nema smisla:
+ * tamo ne postoji „mjesto duž puta" na koje bi se tačka vezala — najbliža tačka
+ * osovine kilometrima daleko ne kaže ništa.
+ */
+export const OKOLINA_POJAS = 60;
+
+/** Stranica ćelije u rešetki nad stvarnom osovinom [m]. */
+export const OKOLINA_RESETKA = 100;
+
+/** Stranica tile-a okoline [m] — mora se slagati sa `scripts/osm/pripremi.mjs`. */
+export const TILE = 2000;
