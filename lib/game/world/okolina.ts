@@ -56,9 +56,27 @@ export interface OkolinaTraka {
   desno: string | null;
 }
 
+/** Planinski vrh sa imenom, u stvarnim koordinatama. */
+export interface Vrh {
+  ime: string;
+  visina: number;
+  x: number;
+  y: number;
+}
+
 export interface Okolina {
   trake: OkolinaTraka[];
   linije: OkolinaLinija[];
+  /** Vrhovi vrijedni oznake na horizontu. */
+  vrhovi: Vrh[];
+  /**
+   * Gdje se u PRIRODI nalazi vozilo koje je prešlo `s` po ruti.
+   *
+   * Treba i horizontu i mini mapi: oba govore o stvarnoj Crnoj Gori, a vožnja
+   * se odvija po sabijenoj. Bez ovoga se ne bi znalo prema kojoj strani svijeta
+   * gleda vozač.
+   */
+  poza(s: number): { p: Point; smjer: Point } | null;
 }
 
 /** Gdje na ruti leži tačka iz prirode. */
@@ -250,6 +268,13 @@ const DOMET_OBALE = 300;
  * osovine.
  */
 const SVOJ_PUT = 6;
+
+/** Ispod ove visine vrh se ne imenuje [m]. */
+const NAJNIZI_VRH = 1100;
+/** Dokle se vrh uopšte uzima u obzir [m]. */
+const DOMET_VRHA = 25000;
+/** Koliko se vrhova najviše drži za jednu rutu. */
+const KOLIKO_VRHOVA = 40;
 
 export interface OkolinaOpcije {
   /** Na koliko metara se uzima uzorak duž puta. */
@@ -455,6 +480,37 @@ export function preslikajTile(
     }
   }
   return { povrsine, obale, linije: preslikajLinije(ruta, pres, linije) };
+}
+
+/**
+ * Vrhovi koje vrijedi imenovati sa ove rute.
+ *
+ * Bira se po visini i po tome koliko su blizu: sa magistrale kroz Zetu se ne
+ * vidi Durmitor. Zadržava se najviše `KOLIKO_VRHOVA` — više od toga se pretvori
+ * u red imena preko cijele ivice kadra.
+ */
+export function vrhoviZaRutu(ruta: Ruta, svi: readonly Vrh[]): Vrh[] {
+  const tacke: Point[] = [];
+  for (const d of ruta.dionice) {
+    for (let i = 0; i < d.stvarne.length; i += 200) tacke.push(d.stvarne[i]!);
+  }
+  if (tacke.length === 0) return [];
+
+  const blizu = svi
+    .filter((v) => v.visina >= NAJNIZI_VRH)
+    .map((v) => {
+      let najmanja = Infinity;
+      for (const p of tacke) {
+        const d2 = (p.x - v.x) ** 2 + (p.y - v.y) ** 2;
+        if (d2 < najmanja) najmanja = d2;
+      }
+      return { v, daljina: Math.sqrt(najmanja) };
+    })
+    .filter((x) => x.daljina <= DOMET_VRHA);
+
+  // Visok i blizak pobjeđuje: ocjena je visina umanjena za daljinu.
+  blizu.sort((a, b) => b.v.visina - b.daljina / 20 - (a.v.visina - a.daljina / 20));
+  return blizu.slice(0, KOLIKO_VRHOVA).map((x) => x.v);
 }
 
 export type { Povrsina };

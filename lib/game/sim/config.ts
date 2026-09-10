@@ -700,6 +700,21 @@ export const ROUTE_STEP = 2;
  */
 export const KAMERA_TETIVA = 14;
 
+/** Koliko se vrhova najviše ispisuje na horizontu odjednom. */
+export const HORIZONT_NAJVISE = 5;
+/**
+ * Dokle sa strane se vrh još ispisuje [rad].
+ *
+ * Iza leđa se ne gleda, a ono što je skoro tačno bočno bi stajalo jedno preko
+ * drugog uz samu ivicu kadra. Sedamdeset stepeni je otprilike ono što vozač i
+ * vidi kroz vjetrobran i bočni prozor.
+ */
+export const HORIZONT_UGAO = (70 * Math.PI) / 180;
+/** Koliko oznaka vrha stoji unutar ivice kadra [px]. */
+export const HORIZONT_RUB = 26;
+/** Najmanji vodoravni razmak između dva natpisa na horizontu [px]. */
+export const HORIZONT_RAZMAK = 120;
+
 /**
  * Najoštriji poluprečnik koji gotova osovina rute smije da ima [m].
  *

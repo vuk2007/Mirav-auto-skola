@@ -203,6 +203,11 @@ export interface Dict {
   rutaLegs: string;
   rutaLeft: string;
   rutaSurroundings: string;
+  rutaMap: string;
+  osmKratko: string;
+  osmPuno: string;
+  oIgriTitle: string;
+  oIgriDesc: string;
   rutaDone: string;
   rutaCrash: string;
   rutaNoRoute: string;
@@ -567,6 +572,12 @@ const me: Dict = {
   rutaLegs: "Dionica",
   rutaLeft: "Ostalo",
   rutaSurroundings: "Okolina",
+  rutaMap: "Mapa Crne Gore",
+  osmKratko: "© OpenStreetMap contributors (ODbL)",
+  osmPuno: "Podaci o putevima i okolini: © OpenStreetMap contributors (ODbL)",
+  oIgriTitle: "O igri",
+  oIgriDesc:
+    "Vježba za vozački ispit: sve situacije, putovanje i rute voze se po pravilima iz Zakona o bezbjednosti saobraćaja. Putevi, gradovi i okolina su stvarni — rastojanja su sažeta da bi vožnja stala u jedan sat.",
   rutaDone: "Stigli ste.",
   rutaCrash: "Sudar. Ruta se vozi ponovo.",
   rutaNoRoute: "Između ta dva mjesta graf nema put.",
@@ -920,6 +931,12 @@ const en: Dict = {
   rutaLegs: "Leg",
   rutaLeft: "Left",
   rutaSurroundings: "Surroundings",
+  rutaMap: "Map of Montenegro",
+  osmKratko: "© OpenStreetMap contributors (ODbL)",
+  osmPuno: "Road and surroundings data: © OpenStreetMap contributors (ODbL)",
+  oIgriTitle: "About the game",
+  oIgriDesc:
+    "Practice for the driving test: every situation, the journey and the routes follow the Montenegrin Road Safety Act. The roads, towns and surroundings are real — distances are compressed so a drive fits into an hour.",
   rutaDone: "You have arrived.",
   rutaCrash: "A crash. The route starts over.",
   rutaNoRoute: "The graph has no road between those two places.",
@@ -1278,6 +1295,12 @@ const sq: Dict = {
   rutaLegs: "Pjesa",
   rutaLeft: "Mbetur",
   rutaSurroundings: "Rrethina",
+  rutaMap: "Harta e Malit të Zi",
+  osmKratko: "© OpenStreetMap contributors (ODbL)",
+  osmPuno: "Të dhënat për rrugët dhe rrethinat: © OpenStreetMap contributors (ODbL)",
+  oIgriTitle: "Për lojën",
+  oIgriDesc:
+    "Ushtrim për provimin e drejtimit: të gjitha situatat, udhëtimi dhe itineraret ndjekin rregullat e Ligjit për siguri në komunikacion. Rrugët, qytetet dhe rrethinat janë reale — distancat janë ngjeshur që ngasja të zë një orë.",
   rutaDone: "Mbërritët.",
   rutaCrash: "Përplasje. Itinerari nis nga fillimi.",
   rutaNoRoute: "Grafi nuk ka rrugë mes atyre dy vendeve.",
@@ -1638,6 +1661,12 @@ const ru: Dict = {
   rutaLegs: "Участок",
   rutaLeft: "Осталось",
   rutaSurroundings: "Окрестности",
+  rutaMap: "Карта Черногории",
+  osmKratko: "© OpenStreetMap contributors (ODbL)",
+  osmPuno: "Данные о дорогах и окрестностях: © OpenStreetMap contributors (ODbL)",
+  oIgriTitle: "Об игре",
+  oIgriDesc:
+    "Подготовка к экзамену по вождению: все ситуации, путешествие и маршруты следуют правилам Закона о безопасности дорожного движения. Дороги, города и окрестности настоящие — расстояния сжаты, чтобы поездка укладывалась в час.",
   rutaDone: "Вы приехали.",
   rutaCrash: "Авария. Маршрут начинается заново.",
   rutaNoRoute: "В графе нет дороги между этими двумя местами.",

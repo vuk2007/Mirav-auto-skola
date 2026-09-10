@@ -9,8 +9,10 @@ import {
   napraviPreslikavanje,
   preslikajTile,
   trakeOkoline,
+  vrhoviZaRutu,
   type Povrsina,
   type TilePojava,
+  type Vrh,
 } from "@/lib/game/world/okolina";
 import { tileoviRute } from "@/lib/game/world/tiles";
 
@@ -256,5 +258,93 @@ describe("okolina stvarne Crne Gore", { timeout: 120000 }, () => {
 
   it("pojas je uži od onoga što se vidi, pa okolina ne ulazi na put", () => {
     expect(OKOLINA_POJAS).toBeGreaterThan(26);
+  });
+});
+
+describe("vrhovi na horizontu", () => {
+  const SVI: Vrh[] = JSON.parse(readFileSync("public/data/osm/vrhovi.json", "utf8"));
+
+  it("bira visoke vrhove blizu rute, a ne cijelu državu", () => {
+    const r = ruta("podgorica", "kolasin");
+    const izabrani = vrhoviZaRutu(r, SVI);
+    expect(izabrani.length).toBeGreaterThan(0);
+    expect(izabrani.length).toBeLessThanOrEqual(40);
+    for (const v of izabrani) expect(v.visina).toBeGreaterThanOrEqual(1100);
+  });
+
+  it("ne imenuje planinu koja je preko države", () => {
+    // Na primorskoj ruti se ne smije pojaviti vrh sa sjevera: horizont mora da
+    // odgovara onome što se sa tog puta stvarno vidi.
+    const r = ruta("bar", "budva");
+    const izabrani = vrhoviZaRutu(r, SVI);
+    const tacke = r.dionice.flatMap((d) => d.stvarne);
+    for (const v of izabrani) {
+      let najmanja = Infinity;
+      for (const p of tacke) najmanja = Math.min(najmanja, Math.hypot(p.x - v.x, p.y - v.y));
+      expect(najmanja).toBeLessThanOrEqual(25000);
+    }
+  });
+
+  it("dvije udaljene rute nemaju iste vrhove", () => {
+    const primorje = new Set(vrhoviZaRutu(ruta("bar", "budva"), SVI).map((v) => v.ime));
+    const sjever = new Set(vrhoviZaRutu(ruta("zabljak", "pluzine"), SVI).map((v) => v.ime));
+    const zajednicki = [...primorje].filter((ime) => sjever.has(ime));
+    expect(zajednicki.length).toBe(0);
+  });
+
+  it("isti ulaz daje isti izbor", () => {
+    const a = vrhoviZaRutu(ruta("budva", "cetinje"), SVI);
+    const b = vrhoviZaRutu(ruta("budva", "cetinje"), SVI);
+    expect(a.map((v) => v.ime)).toEqual(b.map((v) => v.ime));
+  });
+
+  it("prazan spisak vrhova ne ruši ništa", () => {
+    expect(vrhoviZaRutu(ruta("budva", "cetinje"), [])).toEqual([]);
+  });
+});
+
+describe("obris države za mini mapu", () => {
+  const GRANICA: [number, number][][] = JSON.parse(
+    readFileSync("public/data/osm/granica.json", "utf8"),
+  );
+
+  const okvir = (() => {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (const komad of GRANICA) {
+      for (const [x, y] of komad) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+    return { minX, minY, maxX, maxY };
+  })();
+
+  it("pokriva državu i staje u nju", () => {
+    // Crna Gora je oko 180 km široka i 150 km visoka; sve mnogo veće od toga
+    // znači da je u fajl upao komad susjedne granice.
+    expect((okvir.maxX - okvir.minX) / 1000).toBeGreaterThan(120);
+    expect((okvir.maxX - okvir.minX) / 1000).toBeLessThan(260);
+    expect((okvir.maxY - okvir.minY) / 1000).toBeGreaterThan(100);
+    expect((okvir.maxY - okvir.minY) / 1000).toBeLessThan(260);
+  });
+
+  it("ruta pada unutar obrisa", () => {
+    // Mini mapa crta rutu preko obrisa. Ako se koordinate razilaze, linija bi
+    // izletjela van države — a to se sa slike ne bi odmah vidjelo.
+    const r = ruta("herceg-novi", "rozaje");
+    const pres = napraviPreslikavanje(r);
+    for (let s = 0; s <= r.duzina; s += 250) {
+      const u = pres.izRute(s);
+      if (!u) continue;
+      expect(u.p.x).toBeGreaterThanOrEqual(okvir.minX);
+      expect(u.p.x).toBeLessThanOrEqual(okvir.maxX);
+      expect(u.p.y).toBeGreaterThanOrEqual(okvir.minY);
+      expect(u.p.y).toBeLessThanOrEqual(okvir.maxY);
+    }
   });
 });

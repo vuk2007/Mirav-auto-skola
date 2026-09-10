@@ -20,6 +20,10 @@ import {
   MIN_CAR_PX,
   MIN_SIGN_PX,
   LANDMARK_OFFSET,
+  HORIZONT_NAJVISE,
+  HORIZONT_RAZMAK,
+  HORIZONT_RUB,
+  HORIZONT_UGAO,
   KAMERA_TETIVA,
   LANDMARK_SIZE,
   ROUTE_STEP,
@@ -83,6 +87,9 @@ export const PALETTE = {
   zone: "#f4c300",
   beacon: "#1f5fd0",
   officer: "#123a6d",
+  /** Tabla i njena ivica — iste boje kao paneli na stranici. */
+  panel: "#ffffff",
+  line: "#e6e1d5",
 } as const;
 
 /**
@@ -1120,6 +1127,120 @@ function drawSitno(
   }
 }
 
+/**
+ * Vrhovi na horizontu.
+ *
+ * Planina je kilometrima daleko i u kadru od sedamdeset metara je nema. Ali sa
+ * puta se vidi, i po njoj se zna gdje si — zato se crta na IVICI kadra, u
+ * pravcu u kojem stvarno leži, sa imenom i visinom.
+ *
+ * Pravac se računa u STVARNIM koordinatama: gdje je vozilo u prirodi i kuda
+ * gleda. Sabijeni svijet o stranama svijeta ne zna ništa.
+ */
+function drawHorizont(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  okolina: Okolina,
+  s: number,
+): void {
+  if (okolina.vrhovi.length === 0) return;
+  const poza = okolina.poza(s);
+  if (!poza) return;
+
+  const vozac = Math.atan2(poza.smjer.y, poza.smjer.x);
+  const cx = v.wPx / 2;
+  const cy = v.hPx * 0.62;
+
+  const kandidati = okolina.vrhovi
+    .map((vrh) => {
+      const dx = vrh.x - poza.p.x;
+      const dy = vrh.y - poza.p.y;
+      let ugao = Math.atan2(dy, dx) - vozac;
+      while (ugao > Math.PI) ugao -= 2 * Math.PI;
+      while (ugao <= -Math.PI) ugao += 2 * Math.PI;
+      return { vrh, ugao, daljina: Math.hypot(dx, dy) };
+    })
+    // Iza leđa se ne gleda. Ostalo se rangira isto kao pri izboru vrhova za
+    // rutu: visok i blizak ide prvi, jer se on sa puta i najbolje vidi.
+    .filter((x) => Math.abs(x.ugao) < HORIZONT_UGAO)
+    .sort((a, b) => b.vrh.visina - b.daljina / 20 - (a.vrh.visina - a.daljina / 20));
+
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "600 12px system-ui, sans-serif";
+
+  const zauzeto: { x: number; y: number }[] = [];
+  let ispisanih = 0;
+  for (const { vrh, ugao, daljina } of kandidati) {
+    if (ispisanih >= HORIZONT_NAJVISE) break;
+    const q = naIviciKadra(v, cx, cy, ugao);
+    // Dva vrha u istom pravcu daju dva natpisa jedan preko drugog. Ono što je
+    // niže rangirano se preskače — bolje jedno čitko ime nego dva nečitka.
+    if (zauzeto.some((z) => Math.abs(z.x - q.x) < HORIZONT_RAZMAK && Math.abs(z.y - q.y) < 22)) {
+      continue;
+    }
+    zauzeto.push(q);
+    ispisanih += 1;
+
+    // Što je vrh dalji, to je blijeđi — bliska planina se nameće, daleka se
+    // nazire.
+    ctx.globalAlpha = Math.max(0.55, 1 - daljina / 40000);
+
+    const natpis = `${vrh.ime} ${vrh.visina}`;
+    const sirina = ctx.measureText(natpis).width + 12;
+    // Tabla ide ispod trougla, a uz ivicu se pomjera unutra da ne izađe iz
+    // kadra.
+    const tx = Math.min(v.wPx - sirina / 2 - 3, Math.max(sirina / 2 + 3, q.x));
+    const ty = Math.min(v.hPx - 12, Math.max(24, q.y + 14));
+
+    ctx.beginPath();
+    ctx.moveTo(q.x - 8, q.y + 6);
+    ctx.lineTo(q.x, q.y - 7);
+    ctx.lineTo(q.x + 8, q.y + 6);
+    ctx.closePath();
+    ctx.fillStyle = PALETTE.ink;
+    ctx.fill();
+
+    ctx.fillStyle = PALETTE.panel;
+    ctx.strokeStyle = PALETTE.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(tx - sirina / 2, ty - 9, sirina, 18);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = PALETTE.ink;
+    ctx.fillText(natpis, tx, ty);
+  }
+  ctx.restore();
+}
+
+/**
+ * Gdje zrak iz sredine kadra probija njegovu ivicu.
+ *
+ * Vrh se ne crta tamo gdje bi stvarno pao — na dvadeset kilometara to je daleko
+ * van platna. Crta se na ivici, u pravcu u kojem leži, kao strelica koja kaže
+ * „tamo je".
+ */
+function naIviciKadra(
+  v: View,
+  cx: number,
+  cy: number,
+  ugao: number,
+): { x: number; y: number } {
+  // Nagore je smjer vožnje; ugao raste udesno.
+  const dx = Math.sin(ugao);
+  const dy = -Math.cos(ugao);
+  let t = Infinity;
+  if (dx > 1e-6) t = Math.min(t, (v.wPx - HORIZONT_RUB - cx) / dx);
+  if (dx < -1e-6) t = Math.min(t, (HORIZONT_RUB - cx) / dx);
+  if (dy > 1e-6) t = Math.min(t, (v.hPx - HORIZONT_RUB - cy) / dy);
+  if (dy < -1e-6) t = Math.min(t, (HORIZONT_RUB - cy) / dy);
+  if (!Number.isFinite(t)) t = 0;
+  return { x: cx + dx * t, y: cy + dy * t };
+}
+
 /** Da li polilinija uopšte dodiruje kadar — gruba provjera po okviru. */
 function uKadru(v: View, tacke: readonly Point[]): boolean {
   let minX = Infinity;
@@ -1251,6 +1372,12 @@ export function drawScene(
         opts.indicatorZones ?? null,
       );
     }
+  }
+
+  // Horizont ide PREKO svega osim HUD-a: vrhovi su daleko i ne zaklanjaju ih ni
+  // put ni vozila.
+  if (opts.okolina && tpl.kind === "road" && player) {
+    drawHorizont(ctx, v, opts.okolina, renderS(runner, player.id, player.s));
   }
 
   drawControls(ctx, v, tpl, world.phaseIndex);

@@ -8,13 +8,14 @@ import { NODES, edgeById, nodeById } from "@/lib/game/road/roadGraph";
 import { nadjiRutu, napraviRutu, kilometraza, type Ruta } from "@/lib/game/world/ruta";
 import { rutaScenario } from "@/lib/game/world/svijet";
 import type { Okolina } from "@/lib/game/world/okolina";
-import { izvorSaMreze, ucitajOkolinu } from "@/lib/game/world/tiles";
+import { dovuciGranicu, dovuciVrhove, izvorSaMreze, ucitajOkolinu } from "@/lib/game/world/tiles";
 import type { RoadTemplate, ViolationType } from "@/lib/game/sim/types";
 import { VIOLATION_LABEL } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import type { Dict } from "@/lib/i18n";
 import GameCanvas, { type HudState } from "./GameCanvas";
+import MiniMapa from "./MiniMapa";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
 
@@ -129,6 +130,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
   const [pokusaj, setPokusaj] = useState(0);
   const [hud, setHud] = useState<HudState>({ speedKmh: 0, t: 0, s: 0 });
   const [zabiljezeno, setZabiljezeno] = useState<ViolationType[]>([]);
+  const [granica, setGranica] = useState<[number, number][][]>([]);
   /**
    * Okolina stiže u toku vožnje, tile po tile.
    *
@@ -156,9 +158,13 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
     try {
       const cvorovi = nadjiRutu(od, doK);
       if (!cvorovi || cvorovi.length < 2) throw new Error(t.rutaNoRoute);
-      const [geom, kicme] = await Promise.all([
+      // Vrhovi se dovlače uporedo sa geometrijom: jedan fajl za cijelu državu,
+      // pa se ne čeka duže nego što ionako traje najsporiji zahtjev.
+      const [geom, kicme, vrhovi, obris] = await Promise.all([
         dovuciGeometriju(iviceRute(cvorovi)),
         dovuciKicme(cvorovi),
+        dovuciVrhove(),
+        dovuciGranicu(),
       ]);
       if (moj !== zadnji.current) return;
       const napravljena = napraviRutu(cvorovi, geom, kicme);
@@ -168,6 +174,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
       setZabiljezeno([]);
       okolinaRef.current = null;
       setOkolinaGotova(0);
+      setGranica(obris);
       setRuta(napravljena);
       setFaza("voznja");
 
@@ -175,6 +182,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
       // na početku puta, pa se ono što se vidi pojavi odmah, a ostatak stiže
       // dok se vozi. Čekati sve značilo bi ekran učitavanja, a njih nema.
       void ucitajOkolinu(napravljena, izvorSaMreze, {
+        vrhovi,
         prekini: () => moj !== zadnji.current,
         naNapredak: (n) => {
           okolinaRef.current = n.okolina;
@@ -247,6 +255,13 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
                   : `${nodeById(dionica.od)?.name ?? dionica.od} → ${nodeById(dionica.do)?.name ?? dionica.do} · ${Math.round(dionica.vMax * 3.6)} km/h`}
             </p>
           </div>
+          {/* Mini mapa stoji dolje desno, van puta i van HUD-a: pogleda se kad
+              zatreba, a ne zaklanja ono čime se vozi. */}
+          {granica.length > 0 && (
+            <div className="pointer-events-none absolute right-2 bottom-2">
+              <MiniMapa ruta={ruta} s={hud.s} granica={granica} t={t} />
+            </div>
+          )}
           </div>
         </div>
         <PedalControls

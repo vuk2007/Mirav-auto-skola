@@ -22,10 +22,12 @@ import {
   napraviPreslikavanje,
   preslikajTile,
   trakeOkoline,
+  vrhoviZaRutu,
   type Okolina,
   type OkolinaLinija,
   type Povrsina,
   type TilePojava,
+  type Vrh,
 } from "./okolina";
 import type { Ruta } from "./ruta";
 
@@ -83,8 +85,11 @@ export async function ucitajOkolinu(
     odjednom = 8,
     naNapredak,
     prekini,
+    vrhovi = [],
   }: {
     odjednom?: number;
+    /** Svi vrhovi iz `public/data/osm/vrhovi.json`; filtriraju se za ovu rutu. */
+    vrhovi?: readonly Vrh[];
     naNapredak?: (n: OkolinaNapredak) => void;
     /** Vrati `true` da se učitavanje zaustavi — vožnja je u međuvremenu napuštena. */
     prekini?: () => boolean;
@@ -97,7 +102,9 @@ export async function ucitajOkolinu(
   const linije: OkolinaLinija[] = [];
   let gotovo = 0;
   let praznih = 0;
-  let okolina: Okolina = { trake: [], linije: [] };
+  const zaRutu = vrhoviZaRutu(ruta, vrhovi);
+  const poza = (s: number) => pres.izRute(s);
+  let okolina: Okolina = { trake: [], linije: [], vrhovi: zaRutu, poza };
 
   for (let i = 0; i < kljucevi.length; i += odjednom) {
     if (prekini?.()) break;
@@ -127,11 +134,39 @@ export async function ucitajOkolinu(
     // Trake se računaju iz SVIH površina koje su do sada stigle, jer se dvije
     // susjedne mogu preklopiti — voda preko šume na obali. Račun je jeftin
     // (nekoliko milisekundi), pa se ponavlja poslije svake grupe.
-    okolina = { trake: trakeOkoline(ruta, pres, povrsine, obale), linije };
+    okolina = { trake: trakeOkoline(ruta, pres, povrsine, obale), linije, vrhovi: zaRutu, poza };
     naNapredak?.({ gotovo, ukupno: kljucevi.length, praznih, okolina });
   }
 
   return { gotovo, ukupno: kljucevi.length, praznih, okolina };
+}
+
+/** Vrhovi sa servera; prazan spisak ako ih nema — horizont onda ostaje prazan. */
+export async function dovuciVrhove(): Promise<Vrh[]> {
+  try {
+    const odgovor = await fetch("/data/osm/vrhovi.json");
+    if (!odgovor.ok) return [];
+    const sadrzaj = (await odgovor.json()) as Vrh[];
+    return Array.isArray(sadrzaj) ? sadrzaj : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Obris Crne Gore u UTM koordinatama, za mini mapu.
+ *
+ * Prazan spisak ako ga nema — mapa se onda ne crta, vožnja se nastavlja.
+ */
+export async function dovuciGranicu(): Promise<[number, number][][]> {
+  try {
+    const odgovor = await fetch("/data/osm/granica.json");
+    if (!odgovor.ok) return [];
+    const sadrzaj = (await odgovor.json()) as [number, number][][];
+    return Array.isArray(sadrzaj) ? sadrzaj : [];
+  } catch {
+    return [];
+  }
 }
 
 /** Izvor koji dovlači tile-ove sa servera. */

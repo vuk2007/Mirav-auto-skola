@@ -148,6 +148,25 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
               {t.shiftStart}
             </button>
           </section>
+
+          {/* „O igri" nosi ono što se nigdje drugo ne vidi, a mora se reći:
+              odakle su podaci o putevima i pod kojom licencom. OpenStreetMap
+              traži da autorstvo bude vidljivo tamo gdje se podaci koriste. */}
+          <section className="panel border-t-4 border-t-line p-4">
+            <h2 className="text-lg font-bold">{t.oIgriTitle}</h2>
+            <p className="mt-1 text-sm text-muted">{t.oIgriDesc}</p>
+            <p className="mt-2 text-sm text-muted">
+              {t.osmPuno}{" "}
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue underline"
+              >
+                openstreetmap.org/copyright
+              </a>
+            </p>
+          </section>
         </>
       )}
     </div>
