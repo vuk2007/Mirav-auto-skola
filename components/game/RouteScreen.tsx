@@ -16,8 +16,8 @@ import { createSound } from "@/lib/game/ui/sound";
 import type { Dict } from "@/lib/i18n";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import MiniMapa from "./MiniMapa";
-import PedalControls from "./PedalControls";
-import { usePedals } from "./usePedals";
+import DriveControls from "./DriveControls";
+import { useVolan } from "./useVolan";
 
 /**
  * Vožnja cijele rute u jednom potezu.
@@ -116,7 +116,8 @@ function iviceRute(cvorovi: readonly string[]): string[] {
 
 export default function RouteScreen({ onExit }: { onExit: () => void }) {
   const { t } = useApp();
-  const pedals = usePedals();
+  // Ruta se vozi volanom: putanja je traka, ne šina.
+  const volan = useVolan();
   const sound = useMemo(() => createSound(), []);
   const [muted, setMuted] = useState(false);
   useEffect(() => sound.setMuted(muted), [sound, muted]);
@@ -169,7 +170,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
       if (moj !== zadnji.current) return;
       const napravljena = napraviRutu(cvorovi, geom, kicme);
       if (moj !== zadnji.current) return;
-      pedals.release();
+      volan.release();
       setPokusaj(0);
       setZabiljezeno([]);
       okolinaRef.current = null;
@@ -194,17 +195,17 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
       setGreska(e instanceof Error ? e.message : t.rutaFailed);
       setFaza("greska");
     }
-  }, [od, doK, pedals, t]);
+  }, [od, doK, volan, t]);
 
   const zavrsi = useCallback(() => {
     if (!runner) return;
-    pedals.release();
+    volan.release();
     const prekrsaji = runner.world.violations;
     // Kao i u putovanju: dok pravila otvorenog puta nisu napravljena, jedino
     // što stvarno zaustavlja jeste sudar. Ostalo se prijavi na dolasku.
     setZabiljezeno([...new Set(prekrsaji.map((v) => v.type))]);
     setFaza(prekrsaji.some((v) => v.type === "collision") ? "sudar" : "kraj");
-  }, [runner, pedals]);
+  }, [runner, volan]);
 
   const dionica = ruta ? ruta.dionicaNa(hud.s) : null;
   const redni = ruta && dionica ? ruta.dionice.indexOf(dionica) + 1 : 0;
@@ -221,7 +222,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
           <div className="relative mx-auto w-full max-w-[min(100vw-1rem,86vh)]">
           <GameCanvas
             runner={runner}
-            inputRef={pedals.inputRef}
+            inputRef={volan.inputRef}
             running
             onHud={setHud}
             onFinish={zavrsi}
@@ -264,15 +265,11 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
           )}
           </div>
         </div>
-        <PedalControls
-          pedals={pedals}
-          disabled={false}
+        <DriveControls
+          volan={volan}
+          steerLabel={t.gameSteer}
           throttleLabel={t.gameThrottle}
           brakeLabel={t.gameBrake}
-          indicatorLabel={t.gameIndicator}
-          leftLabel={t.gameIndicatorLeft}
-          rightLabel={t.gameIndicatorRight}
-          lanes={null}
         />
       </Okvir>
     );

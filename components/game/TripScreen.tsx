@@ -30,9 +30,11 @@ import {
 import type { Dict } from "@/lib/i18n";
 import { clearTrip, loadTrip, saveTrip } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
+import DriveControls from "./DriveControls";
 import PedalControls from "./PedalControls";
 import TripMap from "./TripMap";
 import { usePedals } from "./usePedals";
+import { useVolan } from "./useVolan";
 
 type Phase = "polazak" | "putokaz" | "voznja" | "grad" | "stigao" | "sudar";
 
@@ -60,7 +62,16 @@ const POLAZISTA = NODES.filter((n) => n.kind === "opstina");
  */
 export default function TripScreen({ onExit }: { onExit: () => void }) {
   const { t } = useApp();
-  const pedals = usePedals();
+  // Dionica se vozi volanom, gradska raskrsnica i dalje pedalama: tamo je
+  // putanja zadatak, ne izbor. Zato dva skupa komandi žive jedan pored drugog,
+  // a tastaturu sluša samo onaj koji je na ekranu.
+  const [uVolanu, setUVolanu] = useState(false);
+  const volan = useVolan(uVolanu);
+  const pedals = usePedals(!uVolanu);
+  const pusti = useCallback(() => {
+    volan.release();
+    pedals.release();
+  }, [volan, pedals]);
   const sound = useMemo(() => createSound(), []);
   const [muted, setMuted] = useState(false);
   useEffect(() => sound.setMuted(muted), [sound, muted]);
@@ -116,14 +127,15 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
 
   const kreni = useCallback(
     (smjer: Smjer) => {
-      pedals.release();
+      pusti();
+      setUVolanu(true);
       setZabiljezeno([]);
       setGrad(null);
       setPokusaj(0);
       setEdge(smjer.edge);
       setPhase("voznja");
     },
-    [pedals],
+    [pusti],
   );
 
   const stigaoUMjesto = useCallback(
@@ -153,7 +165,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
     if (!trip || !edge || !runner) return;
     const prekrsaji = runner.world.violations;
     if (prekrsaji.some((v) => v.type === "collision")) {
-      pedals.release();
+      pusti();
       setPhase("sudar");
       return;
     }
@@ -169,7 +181,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
         pedals.resetIndicator();
         setGrad({ ...grad, index: sljedeca });
       } else {
-        pedals.release();
+        pusti();
         stigaoUMjesto(trip, edge);
       }
       return;
@@ -177,13 +189,15 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
     const ulica = gradskaVoznja(trip, edge);
     if (ulica.count > 0) {
       pedals.resetIndicator();
+      // Kroz grad se vozi po zadatoj putanji, pa volan tu ćuti.
+      setUVolanu(false);
       setGrad({ ...ulica, index: 0 });
       setPhase("grad");
       return;
     }
-    pedals.release();
+    pusti();
     stigaoUMjesto(trip, edge);
-  }, [trip, edge, runner, grad, pedals, stigaoUMjesto]);
+  }, [trip, edge, runner, grad, pedals, pusti, stigaoUMjesto]);
 
   const putokaz = trip ? smjerovi(trip) : null;
   const mjesto = trip ? gdjeSam(trip) : undefined;
@@ -267,7 +281,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
           <div className="relative mx-auto w-full max-w-[min(100%,58vh)]">
             <GameCanvas
               runner={runner}
-              inputRef={pedals.inputRef}
+              inputRef={uVolanu ? volan.inputRef : pedals.inputRef}
               running
               onHud={setHud}
               onFinish={zavrsi}
@@ -291,16 +305,25 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               </p>
             </div>
           </div>
-          <PedalControls
-            pedals={pedals}
-            disabled={false}
-            throttleLabel={t.gameThrottle}
-            brakeLabel={t.gameBrake}
-            indicatorLabel={t.gameIndicator}
-            leftLabel={t.gameIndicatorLeft}
-            rightLabel={t.gameIndicatorRight}
-            lanes={null}
-          />
+          {uVolanu ? (
+            <DriveControls
+              volan={volan}
+              steerLabel={t.gameSteer}
+              throttleLabel={t.gameThrottle}
+              brakeLabel={t.gameBrake}
+            />
+          ) : (
+            <PedalControls
+              pedals={pedals}
+              disabled={false}
+              throttleLabel={t.gameThrottle}
+              brakeLabel={t.gameBrake}
+              indicatorLabel={t.gameIndicator}
+              leftLabel={t.gameIndicatorLeft}
+              rightLabel={t.gameIndicatorRight}
+              lanes={null}
+            />
+          )}
         </>
       ) : phase === "sudar" ? (
         <div className="rounded border border-line bg-panel p-4">
@@ -310,7 +333,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
           <button
             type="button"
             onClick={() => {
-              pedals.release();
+              pusti();
               setPokusaj((n) => n + 1);
               setPhase(grad ? "grad" : "voznja");
             }}

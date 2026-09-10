@@ -49,7 +49,14 @@ export interface Pedals {
  * Sa slušanjem na prozoru gas radi i kad prst sklizne sa dugmeta, a otpuštanje
  * nijedan pregledač ne može da progura.
  */
-export function usePedals(): Pedals {
+/**
+ * `aktivno` gasi slušanje tastature.
+ *
+ * Postoji zbog putovanja: dionica se vozi volanom, a strelice tamo znače
+ * upravljanje, ne pokazivač. Dva hooka slušaju isti prozor, pa jedan mora da
+ * ćuti — inače bi okretanje volana usput palilo žmigavac.
+ */
+export function usePedals(aktivno = true): Pedals {
   const inputRef = useRef<Input>({ throttle: 0, brake: 0, indicator: null, changeLane: null });
   const keys = useRef<Record<Pedal, boolean>>({ throttle: false, brake: false });
   /** Koji pokazivač drži koju pedalu — dva prsta smiju držati obje. */
@@ -112,6 +119,7 @@ export function usePedals(): Pedals {
   }, [sync]);
 
   useEffect(() => {
+    if (!aktivno) return;
     const pedalOf = (e: KeyboardEvent): Pedal | null => {
       if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") return "throttle";
       if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") return "brake";
@@ -163,7 +171,7 @@ export function usePedals(): Pedals {
       window.removeEventListener("blur", blur);
       document.removeEventListener("visibilitychange", blur);
     };
-  }, [sync, release, toggleIndicator, requestLane]);
+  }, [aktivno, sync, release, toggleIndicator, requestLane]);
 
   return useMemo(
     () => ({

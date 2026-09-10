@@ -262,6 +262,8 @@ export function dionica(
       startV: tpl.vMax * 0.8,
     },
     npcs: susretna(tpl, seed),
+    // Na otvorenom putu se vozi volanom: dionica ima trake, ne šinu.
+    upravljanje: "traka",
     difficulty: TEZINA[edge.kind],
     title: naslov,
     explanation: opis,

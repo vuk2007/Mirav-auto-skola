@@ -58,6 +58,31 @@ export function pointAt(points: readonly Point[], cum: readonly number[], s: num
   return lerp(points[lo]!, points[hi]!, t);
 }
 
+/**
+ * Vrijednost niza vezanog za tačke polilinije, na dužini `s`.
+ *
+ * Isti račun kao `pointAt`, samo nad brojevima: širina kolovoza i rastojanje do
+ * ivice su zadati po tački, a treba ih na proizvoljnom mjestu.
+ */
+export function valueAt(cum: readonly number[], values: readonly number[], s: number): number {
+  const total = cum[cum.length - 1] ?? 0;
+  if (values.length === 0) return 0;
+  if (s <= 0) return values[0]!;
+  if (s >= total) return values[values.length - 1]!;
+  let lo = 0;
+  let hi = cum.length - 1;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if (cum[mid]! <= s) lo = mid;
+    else hi = mid;
+  }
+  const seg = cum[hi]! - cum[lo]!;
+  const t = seg === 0 ? 0 : (s - cum[lo]!) / seg;
+  const a = values[Math.min(lo, values.length - 1)]!;
+  const b = values[Math.min(hi, values.length - 1)]!;
+  return a + (b - a) * t;
+}
+
 /** Smjer kretanja na dužini `s` (jedinični vektor). */
 export function headingAt(points: readonly Point[], cum: readonly number[], s: number): Point {
   const total = cum[cum.length - 1] ?? 0;

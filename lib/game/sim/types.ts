@@ -276,6 +276,17 @@ export interface Path {
    * upali desni pokazivač u kružnom toku.
    */
   prevExitS?: number;
+  /**
+   * Koliko ima od ose ove trake do spoljne ivice kolovoza i do razdjelne
+   * linije, po svakoj tački putanje [m].
+   *
+   * Postoji zbog volana: granica poprečnog pomjeranja mora doći iz ISTE
+   * geometrije iz koje se crta asfalt, jer se kolovoz u krivini širi. Da se
+   * granica računa napamet kao pola širine trake, auto bi u serpentini
+   * „izlazio s puta" tamo gdje je asfalt najširi.
+   */
+  doIvice?: number[];
+  doSredine?: number[];
 }
 
 /**
@@ -316,6 +327,29 @@ export interface Vehicle {
   emergency?: boolean;
   /** Traka na autoputu. Nedefinisano na raskrsnicama. */
   lane?: number;
+  /**
+   * Poprečni položaj u traci [m]; pozitivno je vozačevo DESNO.
+   *
+   * Postoji samo tamo gdje se upravlja volanom (`Scenario.upravljanje`). Nula
+   * je osa trake, dakle tačno ono što je do sada bio jedini mogući položaj —
+   * zato ga vozila bez volana nemaju i zato se ništa zatečeno ne mijenja.
+   */
+  lateral?: number;
+  /**
+   * Koliko se već drži volan preko `LANE_COMMIT` [s].
+   *
+   * Mjeri se po strani: prelazak u susjednu traku počinje tek kad se ta
+   * namjera zadrži, da jedan trzaj u krivini ne izbaci auto iz trake.
+   */
+  lateralHeldT?: number;
+  /**
+   * Bočna brzina koja je stvarno primijenjena [m/s].
+   *
+   * Nije ukras nego mjera: to je razlika poprečnog položaja po sekundi, poslije
+   * stezanja na granice. Crtanje iz nje računa koliko je vozilo zakrenuto u
+   * odnosu na osu trake — auto koji se pomjera u stranu ne gleda pravo.
+   */
+  lateralV?: number;
   /** Traka iz koje se prelazi, dok prelazak traje. */
   laneFrom?: number;
   /** Napredak prelaska iz trake u traku, 0–1. */
@@ -456,6 +490,17 @@ export interface Scenario {
   difficulty: Level;
   vMax?: number;
   /**
+   * Čime igrač upravlja.
+   *
+   * `sina` je zatečeno: putanja je poznata unaprijed, a igrač bira samo brzinu.
+   * `traka` daje volan i poprečni položaj u traci — vozi se putem, ne šinom.
+   *
+   * Stoji u scenariju, a ne u stanju svijeta, iz istog razloga iz kojeg tu
+   * stoji i tabela pokazivača: to je ULAZ u simulaciju, i ne treba da se kopira
+   * u svaki snimak za ponavljanje.
+   */
+  upravljanje?: "sina" | "traka";
+  /**
    * Zamjena za `INDICATOR_RULES`, samo za testove.
    *
    * Stoji u scenariju, a ne u stanju svijeta: tabela je ulaz u simulaciju kao i
@@ -502,7 +547,8 @@ export type ViolationType =
   | "tooSlow"
   | "tailgating"
   | "brakingOnHighway"
-  | "hardShoulder";
+  | "hardShoulder"
+  | "offRoad";
 
 /**
  * Koliko prekršaj košta.
@@ -569,6 +615,8 @@ export interface World {
   hazardsFired: number[];
   /** Tajmeri za prekršaje na autoputu koji traju u vremenu. */
   highway: { tooSlowT: number; tailgateT: number; shoulderT: number };
+  /** Koliko igrač neprekidno vozi van kolovoza [s]. */
+  volan: { offRoadT: number };
   /**
    * Mjerenje reakcije: kad je događaj postao vidljiv i kad je igrač prvi put
    * zakočio poslije toga. `null` znači da još nije zakočio.
@@ -595,4 +643,12 @@ export interface Input {
    * dok prelazak traje.
    */
   changeLane?: "left" | "right" | null;
+  /**
+   * Volan: −1 je puno lijevo, +1 puno desno, 0 pravo.
+   *
+   * Za razliku od `changeLane` ovo JESTE stanje: drži se dok se drži i klizač.
+   * Scenariji koji voze po šini ga ne čitaju, pa je neobavezan — stari ulaz
+   * ostaje ispravan ulaz.
+   */
+  steer?: number;
 }

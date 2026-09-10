@@ -26,6 +26,7 @@ import {
   HORIZONT_UGAO,
   KAMERA_TETIVA,
   LANDMARK_SIZE,
+  STEER_TILT,
   ROUTE_STEP,
   OKOLINA_POJAS,
   SIGN_LEAD,
@@ -1312,7 +1313,10 @@ export function drawScene(
     const igrac = world.vehicles.find((x) => x.kind === "player");
     const p = igrac ? paths.get(igrac.pathId) : undefined;
     if (igrac && p) {
-      const stanje = { ...igrac, s: renderS(runner, igrac.id, igrac.s) };
+      // Kamera prati OSU TRAKE, ne samo vozilo: kad se auto pomjeri u stranu,
+      // mora se vidjeti da se pomjerio. Da kadar ide za njim, put bi klizio
+      // ispod auta, a igrač ne bi imao po čemu da zna gdje je u traci.
+      const stanje = { ...igrac, s: renderS(runner, igrac.id, igrac.s), lateral: 0 };
       const poza = poseOn(tpl, p, stanje);
       const poz = poza.pos;
       // Igrač stoji na 62% visine — dvije trećine kadra su ono ispred njega, a
@@ -1403,6 +1407,19 @@ export function drawScene(
 
     const s = renderS(runner, veh.id, veh.s);
     const { pos, heading } = poseOn(tpl, path, { ...veh, s });
+    // Vozilo koje se pomjera u stranu ne gleda pravo. Ugao je stvaran odnos
+    // bočne i uzdužne brzine, samo ograničen da na malim brzinama ne ispadne
+    // pravi ugao. Crta se, ali se ne koristi za sudar — tijelo vozila ostaje
+    // uz traku, kao i do sada.
+    const nagib = veh.lateralV
+      ? Math.max(-STEER_TILT, Math.min(STEER_TILT, Math.atan2(veh.lateralV, Math.max(6, veh.v))))
+      : 0;
+    const smjer = nagib === 0
+      ? heading
+      : {
+          x: heading.x * Math.cos(nagib) - heading.y * Math.sin(nagib),
+          y: heading.x * Math.sin(nagib) + heading.y * Math.cos(nagib),
+        };
     const isPlayer = veh.kind === "player";
     const color = isPlayer
       ? PALETTE.blue
@@ -1417,7 +1434,7 @@ export function drawScene(
       continue;
     }
 
-    drawVehicle(ctx, v, pos, heading, color, {
+    drawVehicle(ctx, v, pos, smjer, color, {
       braking: isPlayer ? Boolean(opts.playerBraking) : brakingNow(runner, veh),
       blink: veh.indicator && blinkOn ? veh.indicator : null,
       beacon: Boolean(veh.emergency) && Math.floor(world.t * BLINK_HZ * 4) % 2 === 0,

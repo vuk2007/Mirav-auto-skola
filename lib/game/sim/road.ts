@@ -153,7 +153,16 @@ export function buildRoadPaths(tpl: RoadTemplate): Path[] {
   const pola = tpl.geometry.laneWidth / 2;
 
   return ROAD_LANES.map((index) => {
-    const linija = bocnaLinija(points, heading, isOncoming(index) ? pola : -pola);
+    const znak = isOncoming(index) ? 1 : -1;
+    const linija = bocnaLinija(points, heading, znak * pola);
+    // Ivica kolovoza na našoj strani i sama razdjelna linija. Oboje ide kroz
+    // `bocnaLinija`, dakle kroz isti račun kao i asfalt koji se crta — u
+    // krivini se kolovoz širi, pa fiksno „pola širine trake" ne bi valjalo.
+    const ivica = bocnaLinija(points, heading, znak * tpl.geometry.laneWidth);
+    const razmak = (a: readonly Point[], b: readonly Point[]): number[] =>
+      a.map((p, i) => Math.hypot((b[i]?.x ?? p.x) - p.x, (b[i]?.y ?? p.y) - p.y));
+    const doIvice = razmak(linija, ivica);
+    const doSredine = razmak(linija, points);
     // Susretna traka se vozi u suprotnom smjeru, pa joj putanja ide unazad.
     const tacke = isOncoming(index) ? [...linija].reverse() : linija;
     const cum = cumulative(tacke);
@@ -170,6 +179,8 @@ export function buildRoadPaths(tpl: RoadTemplate): Path[] {
       stopLineS: daleko,
       boxEnterS: daleko,
       boxExitS: daleko + 1,
+      doIvice: isOncoming(index) ? [...doIvice].reverse() : doIvice,
+      doSredine: isOncoming(index) ? [...doSredine].reverse() : doSredine,
     };
   });
 }

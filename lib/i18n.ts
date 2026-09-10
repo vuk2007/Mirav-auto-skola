@@ -138,6 +138,8 @@ export interface Dict {
   vioTailgating: string;
   vioBrakingOnHighway: string;
   vioHardShoulder: string;
+  vioOffRoad: string;
+  gameSteer: string;
   ruleHardShoulder: string;
   ruleMerge: string;
   ruleHighwaySpeed: string;
@@ -497,6 +499,8 @@ const me: Dict = {
   vioTailgating: "Nedovoljno odstojanje",
   vioBrakingOnHighway: "Naglo kočenje bez razloga",
   vioHardShoulder: "Vožnja zaustavnom trakom",
+  vioOffRoad: "Izlazak sa kolovoza",
+  gameSteer: "Volan",
   ruleHardShoulder:
     "Spoljna traka je zaustavna: u njoj se vozi samo dok traje traka za ubrzavanje pri ulasku, odnosno traka za usporavanje pred izlazom. Van toga je ona rezervisana za vozila u kvaru i za hitne službe.",
   ruleMerge:
@@ -856,6 +860,8 @@ const en: Dict = {
   vioTailgating: "Insufficient following distance",
   vioBrakingOnHighway: "Hard braking for no reason",
   vioHardShoulder: "Driving on the hard shoulder",
+  vioOffRoad: "Leaving the carriageway",
+  gameSteer: "Steering",
   ruleHardShoulder:
     "The outer lane is the hard shoulder: you drive in it only along the acceleration lane when joining and the deceleration lane before an exit. Elsewhere it is reserved for broken-down vehicles and the emergency services.",
   ruleMerge:
@@ -1220,6 +1226,8 @@ const sq: Dict = {
   vioTailgating: "Distancë e pamjaftueshme",
   vioBrakingOnHighway: "Frenim i papritur pa arsye",
   vioHardShoulder: "Ngasje në korsinë e emergjencës",
+  vioOffRoad: "Dalje nga rruga",
+  gameSteer: "Timoni",
   ruleHardShoulder:
     "Korsia e jashtme është korsi emergjence: në të ecet vetëm përgjatë korsisë së përshpejtimit kur futeni dhe asaj të ngadalësimit para daljes. Përndryshe ajo u rezervohet automjeteve në defekt dhe shërbimeve emergjente.",
   ruleMerge:
@@ -1586,6 +1594,8 @@ const ru: Dict = {
   vioTailgating: "Недостаточная дистанция",
   vioBrakingOnHighway: "Резкое торможение без причины",
   vioHardShoulder: "Движение по полосе аварийной остановки",
+  vioOffRoad: "Съезд с проезжей части",
+  gameSteer: "Руль",
   ruleHardShoulder:
     "Внешняя полоса — аварийная: по ней едут только вдоль полосы разгона при въезде и полосы торможения перед съездом. В остальном она предназначена для неисправных машин и экстренных служб.",
   ruleMerge:

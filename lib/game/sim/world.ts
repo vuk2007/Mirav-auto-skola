@@ -52,8 +52,19 @@ import {
   V_MAX_DEFAULT,
   V_TOP,
   YELLOW_COMMIT_TTC,
+  LANE_WIDTH,
+  LAT_SPEED_FAST,
+  LAT_SPEED_SLOW,
+  LAT_SPEED_V_FAST,
+  LAT_SPEED_V_SLOW,
+  LANE_COMMIT,
+  OFF_ROAD_FAIL_SPEED,
+  OFF_ROAD_FAIL_TIME,
+  OFF_ROAD_MARGIN,
+  SHOULDER_WIDTH,
+  STEER_DEAD_ZONE,
 } from "./config";
-import { headingAt, pointAt, polygonsOverlap, rectCorners, rng } from "./geometry";
+import { headingAt, pointAt, polygonsOverlap, rectCorners, right, rng, valueAt } from "./geometry";
 import {
   compile,
   crosswalkSpans,
@@ -128,6 +139,9 @@ export const PENALTY_REF: Readonly<Record<Violation["type"], string | null>> = {
   tooSlow: "autoput",
   tailgating: "autoput",
   brakingOnHighway: "autoput",
+  // Izlazak sa kolovoza: najbliža stavka u katalogu je kretanje desnom stranom
+  // kolovoza. Kad instruktorka potvrdi tačan član, mijenja se ovdje.
+  offRoad: "desna-strana",
 };
 
 /** Ključ manevra u id-u putanje. Kružni tok i autoput dodaju svoje oblike. */
@@ -231,11 +245,110 @@ export function poseOn(
     };
   }
   // Na otvorenom putu je svaka traka svoja putanja i ona je kriva, pa se
-  // položaj čita iz nje, a ne iz bočnog pomaka kao na autoputu.
+  // položaj čita iz nje. Uz to dolazi poprečni pomak: sa volanom vozilo više
+  // ne stoji na osi trake nego gdje ga vozač drži.
+  const pos = pointAt(path.points, path.cum, v.s);
+  const heading = headingAt(path.points, path.cum, v.s);
+  const lat = v.lateral ?? 0;
+  if (lat === 0) return { pos, heading };
+  const d = right(heading);
+  return { pos: { x: pos.x + d.x * lat, y: pos.y + d.y * lat }, heading };
+}
+
+/**
+ * Dokle vozilo smije poprečno, mjereno od ose svoje trake [m].
+ *
+ * Granice dolaze iz geometrije same putanje (`doIvice`, `doSredine`), dakle iz
+ * istog računa kojim se crta asfalt. Udesno se staje na kraju bankine — nema
+ * slijetanja, auto se zaustavi i to je kraj. Ulijevo se za sada staje na
+ * razdjelnoj liniji: prelazak u kontra traku dolazi sa preticanjem.
+ */
+export function bocneGranice(path: Path, s: number): { lijevo: number; desno: number } {
+  const pola = CAR_WIDTH / 2;
   return {
-    pos: pointAt(path.points, path.cum, v.s),
-    heading: headingAt(path.points, path.cum, v.s),
+    lijevo: -Math.max(0, doLinije(path, path.doSredine, s) - pola),
+    desno: Math.max(0, doLinije(path, path.doIvice, s) + SHOULDER_WIDTH - pola),
   };
+}
+
+/**
+ * Koliko ima od ose trake do date linije na mjestu `s` [m].
+ *
+ * Nikad manje od pola auta uvećanog za `OFF_ROAD_MARGIN` — vidi tamo zašto.
+ */
+function doLinije(path: Path, niz: readonly number[] | undefined, s: number): number {
+  const mjereno = niz ? valueAt(path.cum, niz, s) : LANE_WIDTH / 2;
+  return Math.max(mjereno, CAR_WIDTH / 2 + OFF_ROAD_MARGIN);
+}
+
+/**
+ * Bočna brzina pri punom volanu [m/s].
+ *
+ * Raste sa brzinom: na deset na sat se volan okreće mnogo a auto se pomjeri
+ * malo, na osamdeset je obrnuto.
+ */
+export function bocnaBrzina(v: number): number {
+  const t = (v - LAT_SPEED_V_SLOW) / (LAT_SPEED_V_FAST - LAT_SPEED_V_SLOW);
+  const k = Math.min(1, Math.max(0, t));
+  return LAT_SPEED_SLOW + (LAT_SPEED_FAST - LAT_SPEED_SLOW) * k;
+}
+
+/**
+ * Jedan korak volana.
+ *
+ * Auto se NE vraća sam na sredinu trake — drži ga vozač. Zato ovdje nema
+ * nikakvog centriranja: `lateral` se mijenja samo onoliko koliko volan kaže, i
+ * ostaje gdje jeste kad se volan pusti.
+ */
+function volanKorak(v: Vehicle, path: Path, input: Input): void {
+  const steer = input.steer ?? 0;
+  const komanda = Math.abs(steer) < STEER_DEAD_ZONE ? 0 : Math.max(-1, Math.min(1, steer));
+  const g = bocneGranice(path, v.s);
+  const lat = (v.lateral ?? 0) + komanda * bocnaBrzina(v.v) * DT;
+  const stegnuto = Math.min(g.desno, Math.max(g.lijevo, lat));
+  v.lateralV = (stegnuto - (v.lateral ?? 0)) / DT;
+  v.lateral = stegnuto;
+
+  // Koliko se drži namjera da se pređe u susjednu traku. Prelazak dolazi u
+  // sljedećoj stavci; brojač postoji već sada, jer po istoj granici se sudi i
+  // kada vozilo počinje da zauzima dvije trake.
+  const prag = LANE_COMMIT * doLinije(path, path.doIvice, v.s);
+  const drzi = komanda !== 0 && Math.abs(stegnuto) > prag && Math.sign(stegnuto) === Math.sign(komanda);
+  v.lateralHeldT = drzi ? (v.lateralHeldT ?? 0) + DT : 0;
+}
+
+/**
+ * Izlazak sa kolovoza.
+ *
+ * Sudi se po tijelu vozila, ne po njegovoj sredini: prekršaj je kad točak pređe
+ * ivičnu liniju. Kratko i sporo je greška koja se prijavi; dugo ili brzo obara
+ * vožnju, jer je to već slijetanje.
+ */
+function volanPrekrsaji(world: World, player: Vehicle, path: Path): void {
+  const izvan = (player.lateral ?? 0) + CAR_WIDTH / 2 - doLinije(path, path.doIvice, player.s);
+  if (izvan <= 0) {
+    world.volan.offRoadT = 0;
+    return;
+  }
+  world.volan.offRoadT += DT;
+  const tesko =
+    world.volan.offRoadT > OFF_ROAD_FAIL_TIME || player.v > OFF_ROAD_FAIL_SPEED;
+  const postojeci = world.violations.find((x) => x.type === "offRoad");
+  if (!postojeci) {
+    add(world, {
+      type: "offRoad",
+      t: world.t,
+      severity: tesko ? "fail" : "minor",
+      details: `Izašao sa kolovoza (${izvan.toFixed(1)} m preko ivične linije).`,
+    });
+    return;
+  }
+  // Ista greška, ali je u međuvremenu postala teška: kartica ostaje jedna, a
+  // njena težina prati ono što se stvarno desilo.
+  if (tesko && postojeci.severity !== "fail") {
+    postojeci.severity = "fail";
+    postojeci.details = `Vozio van kolovoza ${world.volan.offRoadT.toFixed(1)} s.`;
+  }
 }
 
 /** Trake koje vozilo zauzima; van autoputa je to prazan spisak. */
@@ -300,6 +413,11 @@ export function createWorld(scenario: Scenario, seed: number): World {
       spawnT: 0,
       lane: jeAutoput ? (trakaIz(scenario.player.intent) ?? 0) : undefined,
       laneT: 1,
+      // Poprečni položaj postoji samo tamo gdje se upravlja volanom. Vozilo
+      // koje ide po šini nema šta da mu radi — i zato se zatečeni scenariji ne
+      // mijenjaju ni za jedan podatak.
+      lateral: scenario.upravljanje === "traka" ? 0 : undefined,
+      lateralHeldT: scenario.upravljanje === "traka" ? 0 : undefined,
     },
   ];
 
@@ -366,6 +484,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
     hazardsFired: [],
     reaction: [],
     highway: { tooSlowT: 0, tailgateT: 0, shoulderT: 0 },
+    volan: { offRoadT: 0 },
   };
 }
 
@@ -702,6 +821,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   const player = world.vehicles.find((x) => x.id === PLAYER_ID)!;
   const playerPath = ctx.paths.get(player.pathId)!;
   const playerBefore = player.s;
+  const naVolan = scenario.upravljanje === "traka" && ctx.tpl.kind === "road";
 
   fireHazards(world, scenario, player);
   // Reakcija se mjeri od trenutka kad je događaj postao vidljiv do prvog
@@ -724,6 +844,10 @@ export function step(world: World, scenario: Scenario, input: Input): void {
         world.indicatorLog.push({ t: world.t, s: v.s, indicator: zeljeni });
       }
       if (ctx.tpl.kind === "highway") laneStep(world, ctx, v, input);
+      // Volan radi samo tamo gdje ga scenario daje. Bez ovog uslova bi isti
+      // ulaz pomjerao vozilo i u ispitnim scenarijima, gdje putanja mora da
+      // ostane šina.
+      if (naVolan) volanKorak(v, path, input);
       const a = input.throttle * A_MAX - input.brake * B_MAX;
       integrate(v, a, ctx.vTop, ctx.drag);
     } else {
@@ -759,6 +883,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
 
   detectViolations(world, ctx, scenario, player, playerPath, playerBefore);
   if (ctx.tpl.kind === "highway" && !player.done) highwayViolations(world, ctx, player, input);
+  if (naVolan && !player.done) volanPrekrsaji(world, player, playerPath);
   // Pokazivač se ocjenjuje van `detectViolations` jer ta funkcija odustaje čim
   // igrač izađe sa putanje — a posljednja faza (gašenje) se završava baš tada.
   evaluateIndicator(world, scenario, player, playerPath);

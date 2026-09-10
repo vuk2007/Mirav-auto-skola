@@ -69,6 +69,7 @@ export function probeWorld(world: World): World {
     // bota gurala vrijeme prespore vožnje na PRAVOM svijetu, pa bi se prekršaj
     // javio dvostruko brže nego što je igrač vozio.
     highway: { ...world.highway },
+    volan: { ...world.volan },
     events: [],
     violations: [],
   };

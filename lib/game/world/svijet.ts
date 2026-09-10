@@ -147,6 +147,8 @@ export function rutaScenario(ruta: Ruta, seed: number, difficulty: Level = 2): S
       startV: ruta.vMaxNa(0) * 0.8,
     },
     npcs: susretniSaobracaj(ruta, seed),
+    // Ruta je otvoren put kao i dionica putovanja — vozi se volanom.
+    upravljanje: "traka",
     difficulty,
     title: tekst(naslov),
     explanation: tekst(naslov),

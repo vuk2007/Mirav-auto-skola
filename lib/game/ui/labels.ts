@@ -31,6 +31,7 @@ export const VIOLATION_LABEL: Readonly<Record<ViolationType, keyof Dict>> = {
   tailgating: "vioTailgating",
   brakingOnHighway: "vioBrakingOnHighway",
   hardShoulder: "vioHardShoulder",
+  offRoad: "vioOffRoad",
 };
 
 const TASK_LABEL_CROSS: Readonly<Record<"straight" | "left" | "right", keyof Dict>> = {

@@ -729,3 +729,75 @@ export const HORIZONT_RAZMAK = 120;
  * spajanja i uprošćavanja, ne od puta.
  */
 export const MIN_ROUTE_RADIUS = 12;
+
+// ── volan (modovi „Putovanje" i „Ruta") ────────────────────────────────────
+
+/**
+ * Mrtva zona klizača volana i gasa.
+ *
+ * Prst na dodirnom ekranu nikad ne stoji tačno na nuli, a klizač koji se vraća
+ * u sredinu se zaustavi „skoro" tamo. Bez mrtve zone auto neprekidno klizi u
+ * stranu iako ga niko ne okreće.
+ */
+export const STEER_DEAD_ZONE = 0.08;
+
+/**
+ * Koliko brzo se auto pomjera bočno pri punom volanu [m/s].
+ *
+ * Raste sa brzinom, jer je to i fizika i osjećaj: na deset na sat se volan
+ * okreće mnogo a auto se pomjeri malo, na osamdeset je obrnuto. Vrijednosti su
+ * iz zadatka; između se interpolira pravolinijski.
+ */
+export const LAT_SPEED_SLOW = 1;
+export const LAT_SPEED_FAST = 3;
+export const LAT_SPEED_V_SLOW = 10 / 3.6;
+export const LAT_SPEED_V_FAST = 80 / 3.6;
+
+/**
+ * Koliko se tastaturom volan pomjera ka krajnjem položaju i nazad [1/s].
+ *
+ * Taster je uključen ili isključen, pa bi bez ovoga volan skakao na kraj i
+ * nazad u jednom kadru. Povratak je brži od okretanja: pušten volan se u autu
+ * vraća sam.
+ */
+export const STEER_KEY_RISE = 3;
+export const STEER_KEY_FALL = 6;
+
+/** Koliko se vozilo vizuelno zakrene pri punom volanu [rad]. Čista kozmetika. */
+export const STEER_TILT = 0.1;
+
+/**
+ * Dio širine trake preko kojeg se drži da bi počeo prelazak u susjednu.
+ *
+ * Vrijednost iz zadatka. Sam prelazak dolazi u sljedećoj stavci; ovdje stoji
+ * zato što ista granica određuje i kad se vozilo računa u OBJE trake.
+ */
+export const LANE_COMMIT = 0.6;
+export const LANE_COMMIT_TIME = 0.5;
+
+/**
+ * Bankina: koliko auto može van kolovoza prije nego što ga zaustavi granica [m].
+ *
+ * Isto ono što se i crta kao bankina pored puta. Nema slijetanja u provaliju —
+ * auto stane na ivici i to je kraj poprečnog kretanja u tu stranu.
+ */
+export const SHOULDER_WIDTH = 1.6;
+
+/**
+ * Koliko prostora vozilu mora ostati sa svake strane, ma šta geometrija rekla [m].
+ *
+ * Postoji zbog izmjerenog nedostatka u proširenju krivine: ispod poluprečnika
+ * od oko 17 m kapa iz `CURVE_WIDENING_RADIUS_SHARE` pogodi ivicu kolovoza prije
+ * nego osu trake, pa osa bude gurnuta VIŠE od ivice. Na ruti Herceg Novi —
+ * Rožaje je tako ostalo 0,67 m od ose do ivice, a pola auta je 0,9 m — vozilo
+ * uredno u svojoj traci je time „izlazilo s puta".
+ *
+ * Dok se proširenje ne popravi, granica se ne računa ispod pola auta: pravilo
+ * ne smije da kažnjava ono što je naša geometrija zgriješila.
+ */
+export const OFF_ROAD_MARGIN = 0.25;
+
+/** Poslije koliko sekundi van kolovoza prekršaj obara vožnju [s]. */
+export const OFF_ROAD_FAIL_TIME = 2;
+/** Iznad koje brzine izlazak sa kolovoza odmah obara vožnju [m/s]. */
+export const OFF_ROAD_FAIL_SPEED = 30 / 3.6;
