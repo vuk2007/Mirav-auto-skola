@@ -206,6 +206,20 @@ function ringSFromAngle(
   return from + (to - from) * Math.min(1, Math.max(0, t));
 }
 
+/**
+ * Gdje na datoj putanji kroz prsten leži dati ugao.
+ *
+ * Obrnuto od `ringAngleAt`. Postoji zbog promjene izlaza u toku kruženja: dvije
+ * putanje kroz isti prsten se ne poklapaju po `s` (luk im se uzorkuje različito
+ * gustim korakom), ali se poklapaju po UGLU — pa se prelazak sa jedne na drugu
+ * mjeri uglom, a ne pređenim putem.
+ */
+export function ringSNaUglu(path: Path, angle: number): number | null {
+  const r = path.ring;
+  if (!r) return null;
+  return ringSFromAngle(angle, r.angleFrom, r.angleTo, r.from, r.to);
+}
+
 /** Ugao prstena na kojem se vozilo nalazi, ili `null` ako nije u prstenu. */
 export function ringAngleAt(path: Path, s: number): number | null {
   const r = path.ring;

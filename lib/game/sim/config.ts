@@ -802,6 +802,27 @@ export const OFF_ROAD_FAIL_TIME = 2;
 /** Iznad koje brzine izlazak sa kolovoza odmah obara vožnju [m/s]. */
 export const OFF_ROAD_FAIL_SPEED = 30 / 3.6;
 
+// ── izbor pravca volanom ───────────────────────────────────────────────────
+
+/**
+ * Koliko prije tačke odluke se volanom bira pravac [m].
+ *
+ * Prije toga se pravac ne mijenja: vozač koji se u krivini nagne udesno ne
+ * najavljuje time desno skretanje na raskrsnici koja je tek pred njim.
+ */
+export const DECISION_LEAD = 45;
+
+/**
+ * Koliko dugo volan mora da se drži da bi se pravac izabrao [s].
+ *
+ * Bez zadržavanja bi svaki trzaj u traci mijenjao izabranu putanju, a sa njom i
+ * ono što NPC-ovi o nama pretpostavljaju.
+ */
+export const DECISION_HOLD = 0.4;
+
+/** Koliko volan mora biti okrenut da bi se to računalo kao izbor. */
+export const DECISION_STEER = 0.5;
+
 // ── preticanje i puna linija ────────────────────────────────────────────────
 
 /**

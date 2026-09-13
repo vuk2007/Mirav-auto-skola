@@ -666,6 +666,9 @@ export interface World {
     preticao: string | null;
     /** Do kada se još gleda da li je preteknuti morao da koči [s]. */
     cutInDo: number;
+    /** Na koju stranu je volan trenutno okrenut preko praga, i koliko dugo. */
+    izborStrana: "left" | "right" | null;
+    izborT: number;
   };
   /**
    * Mjerenje reakcije: kad je događaj postao vidljiv i kad je igrač prvi put

@@ -58,6 +58,10 @@ import {
   LAT_SPEED_SLOW,
   LAT_SPEED_V_FAST,
   LAT_SPEED_V_SLOW,
+  DECISION_HOLD,
+  DECISION_LEAD,
+  DECISION_STEER,
+  INDICATOR_LEAD,
   LANE_COMMIT,
   LINE_CROSS_TOL,
   CUT_IN_TIME,
@@ -92,7 +96,7 @@ import {
   onRamp,
   shareLane,
 } from "./highway";
-import { ringAngleAt, ringGap, ringUAt } from "./roundabout";
+import { exitCountsFor, ringAngleAt, ringGap, ringSNaUglu, ringUAt } from "./roundabout";
 import type {
   ArmId,
   ConflictPoint,
@@ -100,9 +104,11 @@ import type {
   IndicatorEvent,
   Input,
   Intent,
+  CrossIntent,
   Path,
   Pedestrian,
   RoadTemplate,
+  RoundaboutTemplate,
   Point,
   Scenario,
   HighwayTemplate,
@@ -365,6 +371,128 @@ function volanKorak(v: Vehicle, path: Path, input: Input): void {
   const prag = LANE_COMMIT * doLinije(path, path.doIvice, v.s);
   const drzi = komanda !== 0 && Math.abs(stegnuto) > prag && Math.sign(stegnuto) === Math.sign(komanda);
   v.lateralHeldT = drzi ? (v.lateralHeldT ?? 0) + DT : 0;
+}
+
+/**
+ * Izbor pravca volanom.
+ *
+ * Na raskrsnici se ne bira dugmetom nego onim čime se i vozi: volan ulijevo
+ * prije raskrsnice znači da se skreće lijevo. Izabrana putanja se odmah
+ * iscrtava, pa igrač vidi šta je izabrao — i to je ista putanja po kojoj ostali
+ * računaju šta namjeravamo.
+ *
+ * Izbor se zaključava `INDICATOR_LEAD` metara prije stop-linije, tamo gdje
+ * počinje faza najave: da se pravac mijenja i poslije toga, pokazivač bi se
+ * sudio po namjeri koju igrač u međuvremenu više nema.
+ */
+function izborPravca(
+  world: World,
+  ctx: Ctx,
+  player: Vehicle,
+  path: Path,
+  input: Input,
+): void {
+  const steer = input.steer ?? 0;
+  const strana: "left" | "right" | null =
+    steer <= -DECISION_STEER ? "left" : steer >= DECISION_STEER ? "right" : null;
+  if (strana === world.volan.izborStrana) world.volan.izborT += DT;
+  else {
+    world.volan.izborStrana = strana;
+    world.volan.izborT = 0;
+  }
+  if (world.volan.izborT < DECISION_HOLD) return;
+
+  const uPrstenu = path.ring !== undefined && player.s >= path.boxEnterS;
+  const uProzoruOdluke =
+    player.s >= path.stopLineS - DECISION_LEAD && player.s <= path.stopLineS - INDICATOR_LEAD;
+  if (!uPrstenu && !uProzoruOdluke) return;
+
+  const zeljena = uPrstenu
+    ? izlazUPrstenu(ctx, player, path, strana)
+    : ctx.tpl.kind === "roundabout"
+      ? prstenPrilaz(ctx, path, strana)
+      : krstastaPrilaz(ctx, path, strana);
+  if (!zeljena || zeljena === player.pathId) return;
+  preusmjeri(ctx, player, path, zeljena);
+}
+
+/** Putanja koju na krstastoj raskrsnici bira dati položaj volana. */
+function krstastaPrilaz(ctx: Ctx, path: Path, strana: "left" | "right" | null): string | null {
+  const manevar: CrossIntent = strana ?? "straight";
+  const id = `${ctx.tpl.id}:${path.arm}:${manevar}`;
+  // Krak kojeg nema nema ni putanju — na raskrsnici sa tri kraka se u tu
+  // stranu jednostavno ne može.
+  return ctx.paths.has(id) ? id : null;
+}
+
+/**
+ * Izlaz iz kružnog toka koji bira volan na prilazu.
+ *
+ * Desno je prvi izlaz, ništa je drugi (praktično pravo), lijevo je treći ili
+ * dalji — isto onako kako se u kružni tok i ulazi.
+ */
+function prstenPrilaz(ctx: Ctx, path: Path, strana: "left" | "right" | null): string | null {
+  const tpl = ctx.tpl as RoundaboutTemplate;
+  const moguci = exitCountsFor(tpl, path.arm);
+  const n = strana === "right" ? 1 : strana === null ? 2 : 3;
+  const izabran = moguci.includes(n) ? n : (moguci[moguci.length - 1] ?? null);
+  if (izabran === null) return null;
+  const id = `${tpl.id}:${path.arm}:exit${izabran}`;
+  return ctx.paths.has(id) ? id : null;
+}
+
+/**
+ * Promjena izlaza dok se već kruži.
+ *
+ * Desno znači „izlazim ranije" — nikad „ostajem duže". Izlaz koji je prošao se
+ * ne može izabrati, zato se poredi po UGLU, a ne po rednom broju; a izlaz dalji
+ * od već izabranog se ne bira jer se pred svojim izlazom volan i tako drži
+ * udesno. Bez tog uslova bi svako izlaženje iz kružnog toka značilo još jedan
+ * krug.
+ */
+function izlazUPrstenu(
+  ctx: Ctx,
+  player: Vehicle,
+  path: Path,
+  strana: "left" | "right" | null,
+): string | null {
+  if (strana !== "right" || ctx.tpl.kind !== "roundabout") return null;
+  const sada = ringAngleAt(path, player.s);
+  if (sada === null) return null;
+  let najblizi: Path | null = null;
+  for (const n of exitCountsFor(ctx.tpl, path.arm)) {
+    const kandidat = ctx.paths.get(`${ctx.tpl.id}:${path.arm}:exit${n}`);
+    if (!kandidat?.ring) continue;
+    // Ugao OPADA duž kretanja, pa je izlaz ispred nas onaj sa manjim uglom.
+    if (kandidat.ring.angleTo > sada - IZLAZ_MARGINA) continue;
+    // Dalje od onoga što je već izabrano se ne ide.
+    if (path.ring && kandidat.ring.angleTo <= path.ring.angleTo) continue;
+    if (!najblizi?.ring || kandidat.ring.angleTo > najblizi.ring.angleTo) najblizi = kandidat;
+  }
+  return najblizi?.id ?? null;
+}
+
+/** Koliko prije izlaza je prekasno da se on izabere [rad]. */
+const IZLAZ_MARGINA = 0.25;
+
+/**
+ * Prebaci vozilo na drugu putanju, bez skoka u prostoru.
+ *
+ * Sve putanje sa istog kraka dijele prilaz, pa se `s` prenosi kakav jest. U
+ * prstenu se ne prenosi `s` nego UGAO: dvije putanje kroz isti prsten uzorkuju
+ * luk različito gustim korakom, pa bi isti `s` značio drugo mjesto.
+ */
+function preusmjeri(ctx: Ctx, player: Vehicle, stara: Path, noviId: string): void {
+  const nova = ctx.paths.get(noviId);
+  if (!nova) return;
+  const ugao = ringAngleAt(stara, player.s);
+  if (ugao !== null) {
+    const s = ringSNaUglu(nova, ugao);
+    if (s === null) return;
+    player.s = s;
+  }
+  player.pathId = nova.id;
+  player.intent = nova.intent;
 }
 
 /**
@@ -649,7 +777,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
     hazardsFired: [],
     reaction: [],
     highway: { tooSlowT: 0, tailgateT: 0, shoulderT: 0 },
-    volan: { offRoadT: 0, kontraT: 0, preticao: null, cutInDo: 0 },
+    volan: { offRoadT: 0, kontraT: 0, preticao: null, cutInDo: 0, izborStrana: null, izborT: 0 },
   };
 }
 
@@ -1028,7 +1156,10 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   const player = world.vehicles.find((x) => x.id === PLAYER_ID)!;
   const playerPath = ctx.paths.get(player.pathId)!;
   const playerBefore = player.s;
-  const naVolan = scenario.upravljanje === "traka" && ctx.tpl.kind === "road";
+  const volanom = scenario.upravljanje === "traka";
+  const naVolan = volanom && ctx.tpl.kind === "road";
+  const naRaskrsnici =
+    volanom && (ctx.tpl.kind === "cross" || ctx.tpl.kind === "roundabout");
 
   fireHazards(world, scenario, player);
   // Reakcija se mjeri od trenutka kad je događaj postao vidljiv do prvog
@@ -1040,7 +1171,9 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   // ── kretanje ──────────────────────────────────────────────────────────────
   for (const v of world.vehicles) {
     if (v.done || world.t < v.spawnT) continue;
-    const path = ctx.paths.get(v.pathId)!;
+    // Putanja igrača se u toku prilaza može promijeniti — volanom se bira
+    // pravac — pa ovo nije konstanta.
+    let path = ctx.paths.get(v.pathId)!;
     // Igrač se nikad ne premješta — a u probi savršenog vozača on je označen
     // kao NPC, pa se mora prepoznati po `id`-u, ne po vrsti.
     if (ctx.tpl.kind === "road" && v.id !== PLAYER_ID && !v.postavljen) {
@@ -1059,7 +1192,14 @@ export function step(world: World, scenario: Scenario, input: Input): void {
       // Volan radi samo tamo gdje ga scenario daje. Bez ovog uslova bi isti
       // ulaz pomjerao vozilo i u ispitnim scenarijima, gdje putanja mora da
       // ostane šina.
-      if (naVolan) volanKorak(v, path, input);
+      //
+      // Pravac se bira PRIJE poprečnog pomjeranja: izbor mijenja putanju, a
+      // granice u traci se čitaju iz nje.
+      if (naRaskrsnici) {
+        izborPravca(world, ctx, v, path, input);
+        path = ctx.paths.get(v.pathId)!;
+      }
+      if (volanom) volanKorak(v, path, input);
       const a = input.throttle * A_MAX - input.brake * B_MAX;
       integrate(v, a, ctx.vTop, ctx.drag);
     } else {
@@ -1098,12 +1238,14 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   // na prvenstvo, jer prvenstva tu nema — a računaju se u svakom koraku.
   if (ctx.tpl.kind === "road") odnesiZaostale(world, ctx, player);
 
-  detectViolations(world, ctx, scenario, player, playerPath, playerBefore);
+  // Putanja se u međuvremenu mogla promijeniti: volanom se bira pravac.
+  const putIgraca = ctx.paths.get(player.pathId) ?? playerPath;
+  detectViolations(world, ctx, scenario, player, putIgraca, playerBefore);
   if (ctx.tpl.kind === "highway" && !player.done) highwayViolations(world, ctx, player, input);
-  if (naVolan && !player.done) volanPrekrsaji(world, ctx, player, playerPath);
+  if (naVolan && !player.done) volanPrekrsaji(world, ctx, player, putIgraca);
   // Pokazivač se ocjenjuje van `detectViolations` jer ta funkcija odustaje čim
   // igrač izađe sa putanje — a posljednja faza (gašenje) se završava baš tada.
-  evaluateIndicator(world, scenario, player, playerPath);
+  evaluateIndicator(world, scenario, player, putIgraca);
 
   world.t += DT;
 

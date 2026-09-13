@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { STEER_DEAD_ZONE, STEER_KEY_FALL, STEER_KEY_RISE } from "@/lib/game/sim/config";
 import type { Input } from "@/lib/game/sim/types";
 
@@ -29,6 +29,12 @@ export interface VolanStanje {
 export interface Volan {
   /** Ulaz za simulaciju; mijenja se u mjestu. */
   inputRef: React.RefObject<Input>;
+  /** Trenutno stanje pokazivača pravca. */
+  indicator: "left" | "right" | null;
+  /** Prekidač pokazivača: ista strana ga gasi, druga ga prebacuje. */
+  toggleIndicator: (side: "left" | "right") => void;
+  /** Ugasi pokazivač, a klizače ostavi kako jesu — za prelaz na sljedeću raskrsnicu. */
+  resetIndicator: () => void;
   /** Trenutni položaj oba klizača — za crtanje, bez ponovnog rendera. */
   stanjeRef: React.RefObject<VolanStanje>;
   /** Prst je spušten na klizač: vrijednost u [−1, 1]. */
@@ -52,6 +58,24 @@ export function useVolan(aktivno = true): Volan {
   const dodir = useRef<{ steer: number | null; gas: number | null }>({ steer: null, gas: null });
   const prsti = useRef(new Map<number, "steer" | "gas">());
   const tasteri = useRef({ lijevo: false, desno: false, gas: false, kocnica: false });
+  const [indicator, setIndicator] = useState<"left" | "right" | null>(null);
+
+  /**
+   * Pokazivač je prekidač, ne klizač: pritisak ga pali i ostaje upaljen dok se
+   * ne ugasi. Strelice su zauzete volanom, pa mu na tastaturi pripadaju Q i E.
+   */
+  const toggleIndicator = useCallback((side: "left" | "right") => {
+    setIndicator((prev) => {
+      const next = prev === side ? null : side;
+      inputRef.current.indicator = next;
+      return next;
+    });
+  }, []);
+
+  const resetIndicator = useCallback(() => {
+    setIndicator(null);
+    inputRef.current.indicator = null;
+  }, []);
 
   const primijeni = useCallback((s: VolanStanje) => {
     stanjeRef.current = s;
@@ -65,6 +89,8 @@ export function useVolan(aktivno = true): Volan {
     prsti.current.clear();
     dodir.current = { steer: null, gas: null };
     tasteri.current = { lijevo: false, desno: false, gas: false, kocnica: false };
+    setIndicator(null);
+    inputRef.current.indicator = null;
     primijeni({ steer: 0, gas: 0 });
   }, [primijeni]);
 
@@ -95,6 +121,11 @@ export function useVolan(aktivno = true): Volan {
       return null;
     };
     const down = (e: KeyboardEvent) => {
+      if (e.key === "q" || e.key === "Q" || e.key === "e" || e.key === "E") {
+        e.preventDefault();
+        if (!e.repeat) toggleIndicator(e.key === "q" || e.key === "Q" ? "left" : "right");
+        return;
+      }
       const k = strana(e);
       if (!k) return;
       e.preventDefault(); // strelice inače skroluju stranicu ispod platna
@@ -129,7 +160,7 @@ export function useVolan(aktivno = true): Volan {
       window.removeEventListener("blur", blur);
       document.removeEventListener("visibilitychange", blur);
     };
-  }, [aktivno, release]);
+  }, [aktivno, release, toggleIndicator]);
 
   // Jedna petlja koja svakog kadra spaja prst i tastaturu u konačnu vrijednost.
   useEffect(() => {
@@ -160,7 +191,16 @@ export function useVolan(aktivno = true): Volan {
   }, [aktivno, primijeni]);
 
   return useMemo(
-    () => ({ inputRef, stanjeRef, pocniDodir, pomjeri, release }),
-    [pocniDodir, pomjeri, release],
+    () => ({
+      inputRef,
+      stanjeRef,
+      indicator,
+      toggleIndicator,
+      resetIndicator,
+      pocniDodir,
+      pomjeri,
+      release,
+    }),
+    [indicator, toggleIndicator, resetIndicator, pocniDodir, pomjeri, release],
   );
 }

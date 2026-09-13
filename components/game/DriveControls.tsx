@@ -8,6 +8,8 @@ interface DriveControlsProps {
   steerLabel: string;
   throttleLabel: string;
   brakeLabel: string;
+  /** Pokazivač pravca; bez ovoga se dugmad ne crtaju (otvoren put ih ne sudi). */
+  indicator?: { label: string; leftLabel: string; rightLabel: string } | null;
   disabled?: boolean;
 }
 
@@ -26,6 +28,7 @@ export default function DriveControls({
   steerLabel,
   throttleLabel,
   brakeLabel,
+  indicator = null,
   disabled = false,
 }: DriveControlsProps) {
   const volanKvaka = useRef<HTMLDivElement>(null);
@@ -79,8 +82,34 @@ export default function DriveControls({
     onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
   });
 
+  // Pokazivač je PREKIDAČ, ne klizač: pritisak ga pali i ostavlja upaljenim.
+  // Zato ide na `onClick`, a ne na `pointerdown` kao volan i gas.
+  const zmigavac = (side: "left" | "right", label: string, znak: string) => (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-pressed={volan.indicator === side}
+      aria-label={`${indicator?.label ?? ""}: ${label}`}
+      onClick={() => volan.toggleIndicator(side)}
+      className={`font-display flex-1 touch-none rounded border-2 text-2xl font-bold transition-colors select-none disabled:opacity-40 ${
+        volan.indicator === side
+          ? "border-yellow bg-yellow text-ink"
+          : "border-line bg-panel text-muted"
+      }`}
+    >
+      {znak}
+    </button>
+  );
+
   return (
     <div className="mt-3 flex h-32 items-stretch gap-3">
+      {indicator && (
+        <div className="flex w-20 flex-col gap-2">
+          {zmigavac("left", indicator.leftLabel, "◄")}
+          {zmigavac("right", indicator.rightLabel, "►")}
+        </div>
+      )}
+
       {/* Volan: puna širina, jer se drži palcem u pokretu. */}
       <div
         className="relative flex-1 touch-none overflow-hidden rounded border-2 border-line bg-panel select-none"
