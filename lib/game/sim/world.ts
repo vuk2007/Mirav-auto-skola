@@ -75,6 +75,8 @@ import {
   SHOULDER_WIDTH,
   STEER_DEAD_ZONE,
   AUTO_INDICATOR_HOLD,
+  DIO_TIJELA,
+  VOZILA,
 } from "./config";
 import { headingAt, pointAt, polygonsOverlap, rectCorners, right, rng, valueAt } from "./geometry";
 import { zabranjeno } from "../road/zabrane";
@@ -275,6 +277,41 @@ export function poseOn(
   if (lat === 0) return { pos, heading };
   const d = right(heading);
   return { pos: { x: pos.x + d.x * lat, y: pos.y + d.y * lat }, heading };
+}
+
+/** Komad tijela vozila: pravougaonik sa središtem, smjerom i mjerama [m]. */
+export interface DioTijela {
+  pos: Point;
+  heading: Point;
+  length: number;
+  width: number;
+}
+
+/**
+ * Tijelo vozila kao niz pravougaonika duž njegove putanje, od zadnjeg ka
+ * prednjem.
+ *
+ * Putnički auto i kombi su jedan pravougaonik, kao i do sada. Duže vozilo se
+ * dijeli na jednake komade od najviše `DIO_TIJELA` metara, i svaki stoji na
+ * svojoj tački putanje, sa smjerom putanje u toj tački. Tako kamion u krivini
+ * prati svoju traku, a ne izlazi krajevima preko linije — vidi `DIO_TIJELA`.
+ *
+ * Isto tijelo se i sudara i crta: da se crta jedno a sudara drugo, igrač bi
+ * udario u kamion kojeg na ekranu nema, ili prošao kroz onoga koji tu jeste.
+ */
+export function tijeloVozila(tpl: Template, path: Path, v: Vehicle): DioTijela[] {
+  const komada = Math.max(1, Math.ceil(v.length / DIO_TIJELA));
+  if (komada === 1) {
+    const { pos, heading } = poseOn(tpl, path, v);
+    return [{ pos, heading, length: v.length, width: v.width }];
+  }
+  const dio = v.length / komada;
+  const out: DioTijela[] = [];
+  for (let i = 0; i < komada; i++) {
+    const { pos, heading } = poseOn(tpl, path, { ...v, s: v.s - v.length / 2 + dio * (i + 0.5) });
+    out.push({ pos, heading, length: dio, width: v.width });
+  }
+  return out;
 }
 
 /**
@@ -686,7 +723,10 @@ function preticanje(
       const iza = oPath ? player.s - naRuti(preteknuti, oPath) : -1;
       // Samo ako smo se stvarno vratili ISPRED njega.
       if (iza > 0) {
-        const razmak = (iza - CAR_LENGTH) / Math.max(1, preteknuti.v);
+        // Od njegovog prednjeg branika do našeg zadnjeg: `s` je sredina vozila,
+        // pa se oduzimaju dvije polovine dužine. Ispred kamiona bi cijela dužina
+        // auta pokazala skoro četiri metra više praznine nego što je ima.
+        const razmak = (iza - (player.length + preteknuti.length) / 2) / Math.max(1, preteknuti.v);
         if (razmak < CUT_IN_TIME) {
           add(world, {
             type: "cutIn",
@@ -878,14 +918,18 @@ export function createWorld(scenario: Scenario, seed: number): World {
     const p = need(jeAutoput ? lanePathId(tpl.id, trakaIz(n.intent) ?? 0) : pathId(n.arm, n.intent));
     const [lo, hi] = n.spawnAt;
     const t = lo + rand() * (hi - lo);
+    // Vozilo bez vrste je srednji putnički auto — tačno ono što je do sada bilo
+    // svako vozilo, pa se zatečeni scenariji ne mijenjaju.
+    const mjere = VOZILA[n.vrsta ?? "auto"];
     vehicles.push({
       id: `npc${i + 1}`,
       kind: "npc",
       pathId: p.id,
       s: n.startS ?? 0,
       v: n.speed,
-      length: CAR_LENGTH,
-      width: CAR_WIDTH,
+      length: mjere.duzina,
+      width: mjere.sirina,
+      ...(n.vrsta ? { vrsta: n.vrsta } : {}),
       intent: n.intent,
       arm: n.arm,
       // NPC su idealni vozači: pokazivač im vodi ista tabela po kojoj se sudi
@@ -1242,7 +1286,10 @@ function roadFollowLimit(world: World, ctx: Ctx, me: Vehicle, mePath: Path): Tar
     const d = (naRuti(o, oPath) - mojeNaRuti) * mojSmjer;
     if (d <= 0) continue;
     const istiSmjer = (o.lane === 1) === (me.lane === 1);
-    const kandidat = me.s + d - o.length - (istiSmjer ? razmak : razmak * 1.5);
+    // `s` je sredina vozila, pa se od razmaka središta oduzimaju dvije polovine
+    // dužine — od branika do branika. Za dva ista auta je to isto što i jedna
+    // cijela dužina, kako je ranije i pisalo; za auto iza kamiona nije.
+    const kandidat = me.s + d - (me.length + o.length) / 2 - (istiSmjer ? razmak : razmak * 1.5);
     if (kandidat < limit) {
       limit = kandidat;
       vLead = istiSmjer ? o.v : 0;
@@ -1633,13 +1680,19 @@ function detectViolations(
   }
 
   // ── sudar ─────────────────────────────────────────────────────────────────
-  const ja = poseOn(ctx.tpl, path, player);
-  const pRect = rectCorners(ja.pos, ja.heading, player.length, player.width);
+  // Tijelo se sudara komad po komad: dugo vozilo prati svoju traku i u krivini,
+  // pa se sudar računa po onome što je i nacrtano — vidi `tijeloVozila`.
+  const mojeTijelo = tijeloVozila(ctx.tpl, path, player).map((d) =>
+    rectCorners(d.pos, d.heading, d.length, d.width),
+  );
   for (const o of world.vehicles) {
     if (o.id === player.id || o.done || world.t < o.spawnT) continue;
     const oPath = ctx.paths.get(o.pathId)!;
-    const on = poseOn(ctx.tpl, oPath, o);
-    if (polygonsOverlap(pRect, rectCorners(on.pos, on.heading, o.length, o.width))) {
+    const udaren = tijeloVozila(ctx.tpl, oPath, o).some((d) => {
+      const oRect = rectCorners(d.pos, d.heading, d.length, d.width);
+      return mojeTijelo.some((p) => polygonsOverlap(p, oRect));
+    });
+    if (udaren) {
       add(world, { type: "collision", t: world.t, details: "Sudar.", otherVehicleId: o.id });
       world.outcome = "failed";
       return;

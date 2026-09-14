@@ -321,16 +321,29 @@ export interface ConflictPoint {
 
 // ── Vozilo ──────────────────────────────────────────────────────────────────
 
+/**
+ * Vrsta vozila.
+ *
+ * Tri putnička auta se razlikuju samo mjerama; kombi, kamion i autobus su i
+ * širi i drukčije se ponašaju. Mjere su u `VOZILA` u konfiguraciji.
+ */
+export type VrstaVozila = "auto-mali" | "auto" | "auto-veliki" | "kombi" | "kamion" | "autobus";
+
 export interface Vehicle {
   id: string;
   kind: "player" | "npc";
   pathId: string;
-  /** Pozicija duž putanje [m]. */
+  /** Pozicija duž putanje [m] — središte vozila. */
   s: number;
   /** Brzina [m/s]. */
   v: number;
   length: number;
   width: number;
+  /**
+   * Vrsta vozila. Bez nje je vozilo srednji putnički auto — kakva su bila sva
+   * vozila prije nego što su vrste postojale.
+   */
+  vrsta?: VrstaVozila;
   intent: Intent;
   arm: ArmId;
   indicator: "left" | "right" | null;
@@ -414,6 +427,8 @@ export interface Pedestrian {
 export interface ScenarioNpc {
   arm: ArmId;
   intent: Intent;
+  /** Vrsta vozila; bez nje je to srednji putnički auto. */
+  vrsta?: VrstaVozila;
   /** Gdje vozilo počinje duž dionice [m]. Na raskrsnicama je uvijek 0. */
   startS?: number;
   /**

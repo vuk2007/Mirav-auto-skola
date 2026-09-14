@@ -15,7 +15,6 @@
 import {
   BLINK_HZ,
   CAR_LENGTH,
-  CAR_WIDTH,
   EDGE_MARKER_INSET,
   MIN_CAR_PX,
   MIN_SIGN_PX,
@@ -60,6 +59,7 @@ import type {
   ScenarioOfficer,
   Template,
   Vehicle,
+  VrstaVozila,
   World,
 } from "../sim/types";
 import { bezKrakova } from "../sim/types";
@@ -67,7 +67,7 @@ import { HIGHWAY_LANES, laneX } from "../sim/highway";
 import { bocnaLinija, centerLine } from "../sim/road";
 import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
-import { officerAllow, poseOn } from "../sim/world";
+import { officerAllow, poseOn, tijeloVozila, type DioTijela } from "../sim/world";
 import { renderS, type Driver } from "./runner";
 import type { Okolina } from "../world/okolina";
 
@@ -92,6 +92,10 @@ export const PALETTE = {
   /** Tabla i njena ivica — iste boje kao paneli na stranici. */
   panel: "#ffffff",
   line: "#e6e1d5",
+  /** Tovarni sanduk kamiona — svijetao, da se kabina u boji vozila razlikuje od tereta. */
+  sanduk: "#ebe8df",
+  /** Gradski autobus — boja koju nema nijedno drugo vozilo ni oznaka na putu. */
+  autobus: "#1d7a80",
 } as const;
 
 /**
@@ -838,12 +842,39 @@ function drawPlayerPath(
 
 // ── Vozila ──────────────────────────────────────────────────────────────────
 
+/**
+ * Boja vozila koja se ne mijenja dok ono postoji.
+ *
+ * Vozila iz scenarija nose redni broj u `id`-u i dobijaju boju po njemu, kao i
+ * do sada. Saobraćaj na putu nastaje i nestaje u toku vožnje, pa bi boja po
+ * mjestu u nizu skakala čim neko ispred izađe — zato se bira iz samog `id`-a.
+ */
+function bojaVozila(veh: Vehicle): string {
+  const paleta = PALETTE.npc;
+  const redni = /^npc(\d+)$/.exec(veh.id);
+  if (redni) return paleta[(Number(redni[1]) - 1) % paleta.length]!;
+  let h = 2166136261;
+  for (let i = 0; i < veh.id.length; i++) h = Math.imul(h ^ veh.id.charCodeAt(i), 16777619) >>> 0;
+  return paleta[h % paleta.length]!;
+}
+
+/**
+ * Koliko se vozila uvećavaju na uskom ekranu.
+ *
+ * Na telefonu 4,4 m ispadne petnaestak piksela; ispod `MIN_CAR_PX` se vozilo
+ * crta uvećano, jer je čitljivost preča od razmjere. Faktor je isti za sve
+ * vrste, da mali auto, kombi i kamion ostanu u razmjeri jedan prema drugom.
+ */
+const uvecanje = (v: View): number =>
+  Math.max(MIN_CAR_PX, CAR_LENGTH * v.scale) / (CAR_LENGTH * v.scale);
+
 function drawVehicle(
   ctx: CanvasRenderingContext2D,
   v: View,
-  pos: Point,
+  tijelo: readonly DioTijela[],
   heading: Point,
   color: string,
+  vrsta: VrstaVozila | undefined,
   opts: {
     braking: boolean;
     blink: "left" | "right" | null;
@@ -851,12 +882,16 @@ function drawVehicle(
     beacon: boolean;
   },
 ): void {
-  // Na uskom ekranu 4,4 m ispadne oko petnaest piksela; ispod toga se vozilo
-  // crta uvećano, jer je čitljivost preča od razmjere.
-  const lenPx = Math.max(MIN_CAR_PX, CAR_LENGTH * v.scale);
-  const k = lenPx / (CAR_LENGTH * v.scale);
-  const widPx = CAR_WIDTH * v.scale * k;
-  const c = px(v, pos);
+  if (tijelo.length > 1) {
+    drawDugoVozilo(ctx, v, tijelo, color, vrsta, opts);
+    return;
+  }
+  const dio = tijelo[0];
+  if (!dio) return;
+  const k = uvecanje(v);
+  const lenPx = dio.length * v.scale * k;
+  const widPx = dio.width * v.scale * k;
+  const c = px(v, dio.pos);
   const ang = screenAngle(v, heading);
 
   ctx.save();
@@ -879,9 +914,17 @@ function drawVehicle(
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  // Vjetrobran — po njemu se vidi gdje je prednji kraj.
-  ctx.fillStyle = "rgba(255,255,255,0.7)";
-  ctx.fillRect(lenPx * 0.1, -widPx * 0.34, lenPx * 0.2, widPx * 0.68);
+  if (vrsta === "kombi") {
+    // Kombi: kratka hauba, pa vjetrobran skoro naprijed, a iza njega ravan krov.
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.fillRect(lenPx * 0.24, -widPx * 0.36, lenPx * 0.13, widPx * 0.72);
+    ctx.fillStyle = "rgba(255,255,255,0.2)";
+    ctx.fillRect(-lenPx * 0.44, -widPx * 0.38, lenPx * 0.64, widPx * 0.76);
+  } else {
+    // Vjetrobran — po njemu se vidi gdje je prednji kraj.
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.fillRect(lenPx * 0.1, -widPx * 0.34, lenPx * 0.2, widPx * 0.68);
+  }
 
   // Stop svjetla.
   ctx.fillStyle = opts.braking ? "#ff3b30" : "rgba(0,0,0,0.35)";
@@ -911,6 +954,96 @@ function drawVehicle(
   }
 
   ctx.restore();
+}
+
+/**
+ * Kamion ili autobus: tijelo od više komada koji prate putanju.
+ *
+ * Obris se slaže iz poprečnih presjeka na krajevima i spojevima komada, pa se
+ * vozilo u krivini savije zajedno sa trakom — isto tijelo po kojem se računa i
+ * sudar. Crta se u koordinatama svijeta, a ne u okrenutom okviru kao auto:
+ * dugo vozilo u krivini nema jedan smjer.
+ */
+function drawDugoVozilo(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  tijelo: readonly DioTijela[],
+  color: string,
+  vrsta: VrstaVozila | undefined,
+  opts: { braking: boolean; blink: "left" | "right" | null; highlight: string | null },
+): void {
+  const prvi = tijelo[0];
+  const zadnji = tijelo[tijelo.length - 1];
+  if (!prvi || !zadnji) return;
+  const pola = (prvi.width * uvecanje(v)) / 2;
+  const kraj = (d: DioTijela, koliko: number): Point => plus(d.pos, mul(d.heading, koliko));
+
+  // Presjeci od zadnjeg branika do prednjeg. Na spoju dva komada se uzima
+  // sredina njihovih krajeva i srednji smjer, da obris nema zub.
+  const presjeci: { c: Point; h: Point }[] = [{ c: kraj(prvi, -prvi.length / 2), h: prvi.heading }];
+  for (let i = 0; i + 1 < tijelo.length; i++) {
+    const a = tijelo[i]!;
+    const b = tijelo[i + 1]!;
+    const h = plus(a.heading, b.heading);
+    const d = Math.hypot(h.x, h.y) || 1;
+    presjeci.push({
+      c: mul(plus(kraj(a, a.length / 2), kraj(b, -b.length / 2)), 0.5),
+      h: { x: h.x / d, y: h.y / d },
+    });
+  }
+  presjeci.push({ c: kraj(zadnji, zadnji.length / 2), h: zadnji.heading });
+  const bok = (p: { c: Point; h: Point }, znak: number): Point => plus(p.c, mul(rt(p.h), pola * znak));
+  const obris = [...presjeci.map((p) => bok(p, 1)), ...presjeci.map((p) => bok(p, -1)).reverse()];
+
+  if (opts.highlight) {
+    const duzina = tijelo.reduce((a, d) => a + d.length, 0);
+    const q = px(v, tijelo[Math.floor(tijelo.length / 2)]!.pos);
+    ctx.beginPath();
+    ctx.arc(q.x, q.y, duzina * v.scale * 0.62, 0, Math.PI * 2);
+    ctx.strokeStyle = opts.highlight;
+    ctx.lineWidth = Math.max(2, duzina * v.scale * 0.04);
+    ctx.stroke();
+  }
+
+  fillPoly(ctx, v, obris, vrsta === "autobus" ? PALETTE.autobus : PALETTE.sanduk);
+  strokeLine(ctx, v, [...obris, obris[0]!], "rgba(0,0,0,0.4)", 0.06);
+
+  const naprijed = zadnji.heading;
+  const nos = kraj(zadnji, zadnji.length / 2);
+  if (vrsta === "autobus") {
+    // Prozori duž oba boka, pa vjetrobran preko skoro cijele širine.
+    for (const d of tijelo) {
+      for (const znak of [1, -1]) {
+        const c = plus(d.pos, mul(rt(d.heading), (pola - 0.45) * znak));
+        fillPoly(ctx, v, worldRect(c, d.heading, d.length * 0.78, 0.5), "rgba(255,255,255,0.45)");
+      }
+    }
+    fillPoly(ctx, v, worldRect(kraj(zadnji, zadnji.length / 2 - 0.5), naprijed, 0.6, pola * 1.6), "rgba(255,255,255,0.75)");
+  } else {
+    // Kamion: kabina u boji vozila ispred svijetlog sanduka.
+    const kabina = Math.min(2.4, zadnji.length);
+    fillPoly(ctx, v, worldRect(plus(nos, mul(naprijed, -kabina / 2)), naprijed, kabina, pola * 2), color);
+    fillPoly(ctx, v, worldRect(plus(nos, mul(naprijed, -0.75)), naprijed, 0.5, pola * 1.4), "rgba(255,255,255,0.7)");
+  }
+
+  // Stop svjetla na zadnjem kraju.
+  const rep = kraj(prvi, -prvi.length / 2 + 0.2);
+  for (const znak of [1, -1]) {
+    fillPoly(
+      ctx,
+      v,
+      worldRect(plus(rep, mul(rt(prvi.heading), pola * 0.62 * znak)), prvi.heading, 0.4, pola * 0.5),
+      opts.braking ? "#ff3b30" : "rgba(0,0,0,0.35)",
+    );
+  }
+
+  if (opts.blink) {
+    // Pokazivač na prednjem i zadnjem uglu, na strani na koju se ide.
+    const znak = opts.blink === "right" ? 1 : -1;
+    const r = Math.max(1.5 / v.scale, pola * 0.3);
+    fillCircle(ctx, v, plus(kraj(zadnji, zadnji.length / 2 - 0.4), mul(rt(naprijed), pola * znak)), r, PALETTE.yellow);
+    fillCircle(ctx, v, plus(kraj(prvi, -prvi.length / 2 + 0.4), mul(rt(prvi.heading), pola * znak)), r, PALETTE.yellow);
+  }
 }
 
 /**
@@ -1436,18 +1569,13 @@ export function drawScene(
   if (naredba) drawOfficer(ctx, v, naredba);
 
   const blinkOn = pokazivacSvijetli(world.t);
-  // Boja NPC-a se veže za redosljed u scenariju, a ne za redosljed crtanja —
-  // inače bi vozilo promijenilo boju čim neko ispred njega izađe.
-  const npcOrder = new Map(
-    world.vehicles.filter((x) => x.kind === "npc").map((x, i) => [x.id, i]),
-  );
 
   for (const veh of world.vehicles) {
     const path = paths.get(veh.pathId);
     if (!path || veh.done || world.t < veh.spawnT) continue;
 
-    const s = renderS(runner, veh.id, veh.s);
-    const { pos, heading } = poseOn(tpl, path, { ...veh, s });
+    const stanje = { ...veh, s: renderS(runner, veh.id, veh.s) };
+    const { pos, heading } = poseOn(tpl, path, stanje);
     // Vozilo koje se pomjera u stranu ne gleda pravo. Ugao je stvaran odnos
     // bočne i uzdužne brzine, samo ograničen da na malim brzinama ne ispadne
     // pravi ugao. Crta se, ali se ne koristi za sudar — tijelo vozila ostaje
@@ -1462,20 +1590,21 @@ export function drawScene(
           y: heading.x * Math.sin(nagib) + heading.y * Math.cos(nagib),
         };
     const isPlayer = veh.kind === "player";
-    const color = isPlayer
-      ? PALETTE.blue
-      : veh.emergency
-        ? PALETTE.emergency
-        : PALETTE.npc[(npcOrder.get(veh.id) ?? 0) % PALETTE.npc.length]!;
+    // Boja se veže za samo vozilo, a ne za redosljed crtanja — inače bi vozilo
+    // promijenilo boju čim neko ispred njega izađe. Vidi `bojaVozila`.
+    const color = isPlayer ? PALETTE.blue : veh.emergency ? PALETTE.emergency : bojaVozila(veh);
 
-    if (!inFrame(v, pos)) {
+    // Dugo vozilo je u kadru i kad mu sredina nije: dovoljno je da se vidi bilo
+    // koji njegov komad.
+    const tijelo = tijeloVozila(tpl, path, stanje);
+    if (!tijelo.some((d) => inFrame(v, d.pos))) {
       // I igrač dobija oznaku: na dužem prilazu je na startu van kadra, pa bi
       // inače prvih par sekundi vozio nevidljiv.
       drawEdgeMarker(ctx, v, pos, heading, isPlayer ? PALETTE.blue : color);
       continue;
     }
 
-    drawVehicle(ctx, v, pos, smjer, color, {
+    drawVehicle(ctx, v, tijelo, smjer, color, veh.vrsta, {
       braking: isPlayer ? Boolean(opts.playerBraking) : brakingNow(runner, veh),
       blink: veh.indicator && blinkOn ? veh.indicator : null,
       beacon: Boolean(veh.emergency) && Math.floor(world.t * BLINK_HZ * 4) % 2 === 0,

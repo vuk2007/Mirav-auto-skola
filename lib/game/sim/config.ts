@@ -9,6 +9,8 @@
  * Jedinice: metri, sekunde, m/s. Nigdje km/h osim u prikazu.
  */
 
+import type { VrstaVozila } from "./types";
+
 /** Korak simulacije. Fiksan — vidi `world.ts` za razlog. */
 export const TICK_HZ = 60;
 export const DT = 1 / TICK_HZ;
@@ -55,6 +57,36 @@ export const ROLL_RESISTANCE = 0.35;
 
 export const CAR_LENGTH = 4.4;
 export const CAR_WIDTH = 1.8;
+
+/**
+ * Mjere vozila po vrsti [m].
+ *
+ * Srednji putnički auto je tačno `CAR_LENGTH` × `CAR_WIDTH` — jedino vozilo
+ * koje su ispitni scenariji i „Smjena" ikad imali. Vozilo bez vrste je on, pa
+ * se tamo ništa ne mijenja ni za centimetar.
+ *
+ * Ostalo su uobičajene mjere: gradski auto oko 3,8 m, karavan 4,9, kombi 5,4,
+ * kamion sa sandukom i gradski autobus po dvanaest metara.
+ */
+export const VOZILA: Readonly<Record<VrstaVozila, { duzina: number; sirina: number }>> = {
+  "auto-mali": { duzina: 3.8, sirina: 1.7 },
+  auto: { duzina: CAR_LENGTH, sirina: CAR_WIDTH },
+  "auto-veliki": { duzina: 4.9, sirina: 1.85 },
+  kombi: { duzina: 5.4, sirina: 2 },
+  kamion: { duzina: 12, sirina: 2.5 },
+  autobus: { duzina: 12, sirina: 2.55 },
+};
+
+/**
+ * Najduži komad tijela koji se računa kao jedan pravougaonik [m].
+ *
+ * Dugo vozilo u krivini nije kruta daska. Kamion od dvanaest metara postavljen
+ * kao jedan pravougaonik na tangentu izlazi krajevima iz svoje trake za
+ * `L² / 8R` — na poluprečniku od dvanaest metara, najoštrijem koji ruta smije
+ * da ima, to je metar i po. Zato se tijelo dijeli na komade koji prate traku.
+ * Sve do kombija ostaje jedan komad: njemu je ta greška 0,3 m.
+ */
+export const DIO_TIJELA = 5.5;
 
 // ── Ponašanje NPC vozila ────────────────────────────────────────────────────
 
