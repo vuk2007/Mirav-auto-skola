@@ -9,14 +9,17 @@ import { nadjiRutu, napraviRutu, kilometraza, type Ruta } from "@/lib/game/world
 import { rutaScenario } from "@/lib/game/world/svijet";
 import type { Okolina } from "@/lib/game/world/okolina";
 import { dovuciGranicu, dovuciVrhove, izvorSaMreze, ucitajOkolinu } from "@/lib/game/world/tiles";
-import type { RoadTemplate, ViolationType } from "@/lib/game/sim/types";
+import type { PokazivaciRezim, RoadTemplate, ViolationType } from "@/lib/game/sim/types";
+import { pokazivacSvijetli } from "@/lib/game/ui/draw";
 import { VIOLATION_LABEL } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import type { Dict } from "@/lib/i18n";
+import { loadPokazivaci, savePokazivaci } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import MiniMapa from "./MiniMapa";
 import DriveControls from "./DriveControls";
+import PokazivaciIzbor from "./PokazivaciIzbor";
 import { useVolan } from "./useVolan";
 
 /**
@@ -116,8 +119,18 @@ function iviceRute(cvorovi: readonly string[]): string[] {
 
 export default function RouteScreen({ onExit }: { onExit: () => void }) {
   const { t } = useApp();
+  /**
+   * Ko pali pokazivač. Pamti se jer je to navika, a ne izbor po vožnji; čita se
+   * tek na klijentu, pa prvi prikaz ide sa podrazumijevanim automatskim.
+   */
+  const [pokazivaci, setPokazivaci] = useState<PokazivaciRezim>("auto");
+  useEffect(() => setPokazivaci(loadPokazivaci()), []);
+  const promijeniPokazivace = useCallback((rezim: PokazivaciRezim) => {
+    setPokazivaci(rezim);
+    savePokazivaci(rezim);
+  }, []);
   // Ruta se vozi volanom: putanja je traka, ne šina.
-  const volan = useVolan();
+  const volan = useVolan(true, { pokazivacRukom: pokazivaci === "rucni" });
   const sound = useMemo(() => createSound(), []);
   const [muted, setMuted] = useState(false);
   useEffect(() => sound.setMuted(muted), [sound, muted]);
@@ -143,7 +156,10 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
   // Sastavljanje rute traje, a korisnik u međuvremenu može da se predomisli.
   const zadnji = useRef(0);
 
-  const scenario = useMemo(() => (ruta ? rutaScenario(ruta, 1) : null), [ruta]);
+  const scenario = useMemo(
+    () => (ruta ? { ...rutaScenario(ruta, 1), pokazivaci } : null),
+    [ruta, pokazivaci],
+  );
   const runner = useMemo(() => {
     // `pokusaj` je ovdje da bi poslije sudara nastao NOV svijet — ista ruta,
     // isto sjeme, ista situacija od početka.
@@ -151,6 +167,16 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
     return scenario ? createRunner(scenario, 1) : null;
   }, [scenario, pokusaj]);
   const tpl = scenario?.template as RoadTemplate | undefined;
+
+  /** Stanje pokazivača u simulaciji — za lampice pored volana. */
+  const stanjePokazivaca = useCallback(() => {
+    const world = runner?.world;
+    const strana = world?.vehicles.find((v) => v.kind === "player")?.indicator ?? null;
+    return {
+      strana,
+      svijetli: world !== undefined && strana !== null && pokazivacSvijetli(world.t),
+    };
+  }, [runner]);
 
   const kreni = useCallback(async () => {
     const moj = ++zadnji.current;
@@ -234,6 +260,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
             // Kadar se okreće: bez toga bi se na ruti vozilo bočno preko ekrana.
             camera={{ follow: true, rotate: true, half: tpl.viewHalf }}
             okolinaRef={okolinaRef}
+            zvukPokazivaca
             label={ruta.cvorovi.map((c) => nodeById(c)?.name ?? c).join(" — ")}
           />
           <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
@@ -270,6 +297,15 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
           steerLabel={t.gameSteer}
           throttleLabel={t.gameThrottle}
           brakeLabel={t.gameBrake}
+          indicator={{
+            label: t.gameIndicator,
+            leftLabel: t.gameIndicatorLeft,
+            rightLabel: t.gameIndicatorRight,
+            rezim: pokazivaci,
+            autoLabel: t.gameIndicatorAuto,
+            autoShort: t.gameIndicatorAutoShort,
+            stanje: stanjePokazivaca,
+          }}
         />
       </Okvir>
     );
@@ -306,6 +342,8 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
           <Izbor labela={t.rutaFrom} vrijednost={od} promijeni={setOd} />
           <Izbor labela={t.rutaTo} vrijednost={doK} promijeni={setDoK} />
         </div>
+
+        <PokazivaciIzbor vrijednost={pokazivaci} promijeni={promijeniPokazivace} t={t} />
 
         {ruta && faza !== "priprema" && (
           <p className="mt-3 text-sm text-muted">

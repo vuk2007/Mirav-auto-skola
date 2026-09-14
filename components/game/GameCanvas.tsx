@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { DIFFICULTY, HORN_AT, HUD_HZ, type Level } from "@/lib/game/sim/config";
 import type { Input, Outcome, ScenarioOfficer } from "@/lib/game/sim/types";
-import { drawScene } from "@/lib/game/ui/draw";
+import { drawScene, pokazivacSvijetli } from "@/lib/game/ui/draw";
 import type { Sound } from "@/lib/game/ui/sound";
 import type { Okolina } from "@/lib/game/world/okolina";
 import type { Driver } from "@/lib/game/ui/runner";
@@ -50,6 +50,13 @@ interface GameCanvasProps {
    * svaka izmjena kroz `state` bi ponovo nacrtala cijelo stablo.
    */
   okolinaRef?: React.RefObject<Okolina | null>;
+  /**
+   * Klik pokazivača dok je upaljen.
+   *
+   * Samo tamo gdje je tražen — putovanje i ruta. Ispitni ekrani i smjena ga
+   * nemaju, da se tamo ništa ne promijeni.
+   */
+  zvukPokazivaca?: boolean;
   label: string;
 }
 
@@ -73,6 +80,7 @@ export default function GameCanvas({
   sound,
   camera,
   okolinaRef,
+  zvukPokazivaca = false,
   label,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -87,6 +95,7 @@ export default function GameCanvas({
   const levelRef = useRef(level);
   const soundRef = useRef(sound);
   const cameraRef = useRef(camera);
+  const zvukPokazivacaRef = useRef(zvukPokazivaca);
   onHudRef.current = onHud;
   onFinishRef.current = onFinish;
   runningRef.current = running;
@@ -96,6 +105,7 @@ export default function GameCanvas({
   levelRef.current = level;
   soundRef.current = sound;
   cameraRef.current = camera;
+  zvukPokazivacaRef.current = zvukPokazivaca;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -109,6 +119,8 @@ export default function GameCanvas({
     let reported = false;
     let hornPlayed = false;
     let crashPlayed = false;
+    /** Svjetlo pokazivača u prethodnom kadru; `null` dok je ugašen. */
+    let zadnjiTreptaj: boolean | null = null;
     let cssW = 0;
     let cssH = 0;
 
@@ -141,6 +153,18 @@ export default function GameCanvas({
       const igrac = runner.world.vehicles.find((x) => x.kind === "player");
       if (vozi && igrac) soundRef.current.engine(igrac.v, inputRef.current.throttle);
       else soundRef.current.engineOff();
+
+      // Pokazivač kucka u ritmu u kojem trepće: isto vrijeme simulacije po kojem
+      // se i crta, pa zvuk i slika ne mogu da se raziđu.
+      if (vozi && zvukPokazivacaRef.current && igrac?.indicator) {
+        const svijetli = pokazivacSvijetli(runner.world.t);
+        if (svijetli !== zadnjiTreptaj) {
+          zadnjiTreptaj = svijetli;
+          soundRef.current.tick(svijetli);
+        }
+      } else {
+        zadnjiTreptaj = null;
+      }
 
       // Truba iza leđa kad je rok zadržavanja na pola — dozvoljen pritisak:
       // saopštava da neko čeka, ne kažnjava i ne skriva ništa.

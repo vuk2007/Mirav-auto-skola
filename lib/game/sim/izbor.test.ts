@@ -77,6 +77,17 @@ describe("krstasta raskrsnica", () => {
     expect(igrac(w).intent).toBe("straight");
   });
 
+  it("pušten volan prije tačke odluke vraća pravo", () => {
+    // Izbor prati volan do tačke odluke, i tamo se zaključava ono što volan
+    // TADA pokazuje. Lijevo izabrano pa pušteno nije lijevo.
+    const s = scenario("cross-none", "straight");
+    const world = createWorld(s, 1);
+    for (let i = 0; i < Math.round(1 / DT); i++) step(world, s, ulaz(-1));
+    expect(igrac(world).intent).toBe("left");
+    for (let i = 0; i < Math.round(1 / DT); i++) step(world, s, ulaz(0));
+    expect(igrac(world).intent).toBe("straight");
+  });
+
   it("prerano okretanje volana ne bira ništa", () => {
     const put = compile(TEMPLATES["cross-none"]!).paths.get("cross-none:N:straight")!;
     const w = drzi(scenario("cross-none", "straight"), -1, 1, put.stopLineS - DECISION_LEAD - 10);

@@ -495,6 +495,9 @@ export interface ScenarioHazard {
   npcS?: number;
 }
 
+/** Ko pali pokazivač igrača — vidi `Scenario.pokazivaci`. */
+export type PokazivaciRezim = "auto" | "rucni";
+
 export interface Scenario {
   id: string;
   intersection: string;
@@ -533,6 +536,19 @@ export interface Scenario {
    * u svaki snimak za ponavljanje.
    */
   upravljanje?: "sina" | "traka";
+  /**
+   * Ko pali pokazivač igrača.
+   *
+   * `rucni` je zatečeno: pokazivač je komanda igrača i po njemu se sudi. `auto`
+   * ga pali simulacija — na raskrsnici i u kružnom toku po istoj tabeli po kojoj
+   * se sudi i po kojoj vozi savršeni vozač, na otvorenom putu uz prelazak
+   * razdjelne linije. Greške pokazivača se tada ne sude: igrač ih nije ni mogao
+   * napraviti. Autoput automatski pokazivač nema — vidi `createWorld`.
+   *
+   * Bez ovoga važi `rucni`, pa se zatečeni scenariji ne mijenjaju. Stoji u
+   * scenariju iz istog razloga kao i `upravljanje`: to je ulaz, ne stanje.
+   */
+  pokazivaci?: PokazivaciRezim;
   /**
    * Zamjena za `INDICATOR_RULES`, samo za testove.
    *
@@ -669,6 +685,13 @@ export interface World {
     /** Na koju stranu je volan trenutno okrenut preko praga, i koliko dugo. */
     izborStrana: "left" | "right" | null;
     izborT: number;
+    /**
+     * Prelazak razdjelne linije za koji je upaljen automatski pokazivač, i
+     * koliko vozilo već stoji uz liniju a ne prelazi je [s]. Vidi
+     * `pokazivacNaPutu` u `world.ts`.
+     */
+    autoStrana: "left" | "right" | null;
+    autoT: number;
   };
   /**
    * Mjerenje reakcije: kad je događaj postao vidljiv i kad je igrač prvi put

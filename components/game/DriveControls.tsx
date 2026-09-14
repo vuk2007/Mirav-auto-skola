@@ -1,16 +1,50 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { PokazivaciRezim } from "@/lib/game/sim/types";
 import type { Volan } from "./useVolan";
+
+/**
+ * Pokazivač pored volana.
+ *
+ * Kad ga pali igrač, to su dvije sklopke. Kad ga pali simulacija, to su lampice
+ * kao na instrument tabli: pokazuju šta je upaljeno, a pritisak na njih ne bi
+ * imao šta da promijeni.
+ */
+export interface DriveIndicator {
+  label: string;
+  leftLabel: string;
+  rightLabel: string;
+  rezim: PokazivaciRezim;
+  /** Pun naziv automatskog režima — za čitač ekrana. */
+  autoLabel: string;
+  /** Kratak natpis ispod lampica. */
+  autoShort: string;
+  /**
+   * Stanje pokazivača u simulaciji.
+   *
+   * Funkcija, a ne vrijednost: čita se svakog kadra zajedno sa klizačima, pa
+   * lampica trepće tačno u ritmu auta na platnu, bez ijednog ponovnog crtanja
+   * stabla.
+   */
+  stanje: () => { strana: "left" | "right" | null; svijetli: boolean };
+}
 
 interface DriveControlsProps {
   volan: Volan;
   steerLabel: string;
   throttleLabel: string;
   brakeLabel: string;
-  /** Pokazivač pravca; bez ovoga se dugmad ne crtaju (otvoren put ih ne sudi). */
-  indicator?: { label: string; leftLabel: string; rightLabel: string } | null;
+  /** Pokazivač pravca; bez ovoga se ne crta. */
+  indicator?: DriveIndicator | null;
   disabled?: boolean;
+}
+
+/** Upali ili ugasi lampicu mimo Reacta; atribut se dira samo kad se promijeni. */
+function lampa(el: HTMLElement | null, svijetli: boolean): void {
+  if (!el) return;
+  const vrijednost = svijetli ? "da" : "ne";
+  if (el.dataset.svijetli !== vrijednost) el.dataset.svijetli = vrijednost;
 }
 
 /**
@@ -33,6 +67,12 @@ export default function DriveControls({
 }: DriveControlsProps) {
   const volanKvaka = useRef<HTMLDivElement>(null);
   const gasKvaka = useRef<HTMLDivElement>(null);
+  const lijevaLampa = useRef<HTMLDivElement>(null);
+  const desnaLampa = useRef<HTMLDivElement>(null);
+  // Kroz ref: roditelj pravi novi objekat pri svakom crtanju, a petlja zbog
+  // toga ne smije da kreće ispočetka.
+  const indicatorRef = useRef(indicator);
+  indicatorRef.current = indicator;
 
   useEffect(() => {
     let raf = 0;
@@ -54,6 +94,10 @@ export default function DriveControls({
       };
       pomak(volanKvaka.current, false, s.steer);
       pomak(gasKvaka.current, true, s.gas);
+      // Lampice se pale kao što se kvake pomjeraju: direktno, svakog kadra.
+      const z = indicatorRef.current?.stanje();
+      lampa(lijevaLampa.current, z?.strana === "left" && z.svijetli);
+      lampa(desnaLampa.current, z?.strana === "right" && z.svijetli);
       raf = requestAnimationFrame(kadar);
     };
     raf = requestAnimationFrame(kadar);
@@ -103,10 +147,34 @@ export default function DriveControls({
 
   return (
     <div className="mt-3 flex h-32 items-stretch gap-3">
-      {indicator && (
+      {indicator?.rezim === "rucni" && (
         <div className="flex w-20 flex-col gap-2">
           {zmigavac("left", indicator.leftLabel, "◄")}
           {zmigavac("right", indicator.rightLabel, "►")}
+        </div>
+      )}
+      {indicator?.rezim === "auto" && (
+        // Lampice, ne dugmad: pokazivač pali simulacija, pa pritisak ne bi imao
+        // šta da promijeni. Svjetlo prati auto na platnu, ne React.
+        <div
+          role="group"
+          aria-label={`${indicator.label}: ${indicator.autoLabel}`}
+          className="flex w-20 flex-col gap-1.5"
+        >
+          {(["left", "right"] as const).map((strana) => (
+            <div
+              key={strana}
+              ref={strana === "left" ? lijevaLampa : desnaLampa}
+              data-svijetli="ne"
+              aria-hidden="true"
+              className="font-display flex flex-1 items-center justify-center rounded border-2 border-line bg-panel text-2xl font-bold text-muted select-none data-[svijetli=da]:border-yellow data-[svijetli=da]:bg-yellow data-[svijetli=da]:text-ink"
+            >
+              {strana === "left" ? "◄" : "►"}
+            </div>
+          ))}
+          <span className="font-display text-center text-[10px] leading-none font-bold tracking-wider text-muted uppercase">
+            {indicator.autoShort}
+          </span>
         </div>
       )}
 

@@ -74,6 +74,7 @@ import {
   OFF_ROAD_MARGIN,
   SHOULDER_WIDTH,
   STEER_DEAD_ZONE,
+  AUTO_INDICATOR_HOLD,
 } from "./config";
 import { headingAt, pointAt, polygonsOverlap, rectCorners, right, rng, valueAt } from "./geometry";
 import { zabranjeno } from "../road/zabrane";
@@ -373,6 +374,104 @@ function volanKorak(v: Vehicle, path: Path, input: Input): void {
   v.lateralHeldT = drzi ? (v.lateralHeldT ?? 0) + DT : 0;
 }
 
+/** Upiši stanje pokazivača igrača; dnevnik dobija unos samo kad se promijeni. */
+function postaviPokazivac(world: World, v: Vehicle, zeljeni: "left" | "right" | null): void {
+  if (v.indicator === zeljeni) return;
+  v.indicator = zeljeni;
+  world.indicatorLog.push({ t: world.t, s: v.s, indicator: zeljeni });
+}
+
+/**
+ * Pokazivač koji pali simulacija (`Scenario.pokazivaci === "auto"`).
+ *
+ * Na raskrsnici i u kružnom toku to je `expectedIndicatorAt` — ista funkcija po
+ * kojoj se sudi i po kojoj vozi savršeni vozač, pa se tajming ne može razlikovati
+ * od traženog. Pravac se zaključava tačno tamo gdje počinje faza najave, pa se
+ * pokazivač pali u istom koraku u kojem je izbor postao konačan.
+ *
+ * Na otvorenom putu tabela nema faza — tamo pokazivač ide uz prelazak razdjelne
+ * linije, vidi `pokazivacNaPutu`.
+ */
+function autoPokazivac(
+  world: World,
+  ctx: Ctx,
+  scenario: Scenario,
+  v: Vehicle,
+  path: Path,
+  input: Input,
+): "left" | "right" | null {
+  if (ctx.tpl.kind === "road") {
+    return v.lateral === undefined ? null : pokazivacNaPutu(world, v, path, input);
+  }
+  return expectedIndicatorAt(path, v.intent, v.s, scenario.indicatorRules);
+}
+
+/**
+ * Automatski pokazivač pri prelasku razdjelne linije.
+ *
+ * Simulacija ne zna šta vozač namjerava dok ne okrene volan, pa pokazivač pali
+ * onda kad volan to otkrije: kad bi, ovom bočnom brzinom, sredina vozila prešla
+ * liniju za `INDICATOR_LEAD_TIME` ili manje. To je isti rok koji se u ručnom
+ * režimu traži od vozača, samo izmjeren unaprijed. Ko okrene volan naglo, dobije
+ * pokazivač kasnije nego što bi ga upalio sam — prije pokreta ga niko ne može
+ * upaliti umjesto njega.
+ *
+ * Gasi se kad je manevar gotov (vozilo je cijelo u traci u koju je prelazilo),
+ * kad se vozač predomisli i krene nazad, i kad `AUTO_INDICATOR_HOLD` sekundi
+ * stoji uz liniju a ne prelazi je.
+ */
+function pokazivacNaPutu(
+  world: World,
+  v: Vehicle,
+  path: Path,
+  input: Input,
+): "left" | "right" | null {
+  const steer = input.steer ?? 0;
+  const komanda = Math.abs(steer) < STEER_DEAD_ZONE ? 0 : steer;
+  const vLat = v.lateralV ?? 0;
+  const lat = v.lateral ?? 0;
+  const doSredine = doLinije(path, path.doSredine, v.s);
+  const kretanjeKa = (strana: "left" | "right"): boolean =>
+    strana === "left" ? komanda < 0 && vLat < 0 : komanda > 0 && vLat > 0;
+
+  // Sredina vozila je već u suprotnoj traci: prelazak koji može da slijedi je
+  // povratak udesno.
+  const preko = lat < -doSredine;
+  const ka = preko ? "right" : "left";
+  const doLinijeM = preko ? -doSredine - lat : doSredine + lat;
+  const krece = kretanjeKa(ka) && doLinijeM / Math.abs(vLat) <= INDICATOR_LEAD_TIME;
+
+  const svoja = v.lane ?? 0;
+  const druga = svoja === 1 ? 0 : 1;
+  const zauzete = trakeNaPutu(path, v);
+  const cijeloU = (traka: number) => zauzete.length === 1 && zauzete[0] === traka;
+
+  const sada = world.volan.autoStrana;
+  let sljedeca = sada;
+  if (sada === null) {
+    if (krece) sljedeca = ka;
+  } else {
+    const nazad = sada === "left" ? "right" : "left";
+    if (cijeloU(sada === "left" ? druga : svoja)) {
+      // Manevar je gotov.
+      sljedeca = null;
+    } else if (kretanjeKa(nazad)) {
+      // Predomislio se. Ako je sredina već preko linije, to je novi prelazak
+      // nazad; ako nije, prelaska nije ni bilo.
+      sljedeca = krece && ka === nazad ? nazad : null;
+    } else if (kretanjeKa(sada)) {
+      world.volan.autoT = 0;
+    } else {
+      // Stoji uz liniju: pokazivač još kratko ostaje, pa se gasi.
+      world.volan.autoT += DT;
+      if (world.volan.autoT >= AUTO_INDICATOR_HOLD) sljedeca = null;
+    }
+  }
+  if (sljedeca !== sada) world.volan.autoT = 0;
+  world.volan.autoStrana = sljedeca;
+  return sljedeca;
+}
+
 /**
  * Izbor pravca volanom.
  *
@@ -505,7 +604,13 @@ function preusmjeri(ctx: Ctx, player: Vehicle, stara: Path, noviId: string): voi
  * Zabrana se ne čita iz krivine u trenutku vožnje nego iz šablona — iz istog
  * podatka iz kojeg se linija i crta. Vidi `lib/game/road/zabrane.ts`.
  */
-function preticanje(world: World, ctx: Ctx, player: Vehicle, path: Path): void {
+function preticanje(
+  world: World,
+  ctx: Ctx,
+  player: Vehicle,
+  path: Path,
+  sudiPokazivac: boolean,
+): void {
   const tpl = ctx.tpl as RoadTemplate;
   const lat = player.lateral ?? 0;
   const doSredine = doLinije(path, path.doSredine, player.s);
@@ -521,6 +626,9 @@ function preticanje(world: World, ctx: Ctx, player: Vehicle, path: Path): void {
   }
 
   if (uKontra) {
+    // Prelazak u suprotnu traku je promjena trake, pa se traži pokazivač —
+    // tačno u koraku u kojem je sredina vozila prešla liniju.
+    if (sudiPokazivac && world.volan.kontraT === 0) pokazivacPriPrelasku(world, player, "left");
     world.volan.kontraT += DT;
     if (world.volan.kontraT > MAX_OVERTAKE_TIME) {
       add(world, {
@@ -571,6 +679,7 @@ function preticanje(world: World, ctx: Ctx, player: Vehicle, path: Path): void {
 
   // Vratili smo se u svoju traku.
   if (world.volan.kontraT > 0) {
+    if (sudiPokazivac) pokazivacPriPrelasku(world, player, "right");
     const preteknuti = world.vehicles.find((o) => o.id === world.volan.preticao && !o.done);
     if (preteknuti) {
       const oPath = ctx.paths.get(preteknuti.pathId);
@@ -609,14 +718,56 @@ function preticanje(world: World, ctx: Ctx, player: Vehicle, path: Path): void {
 }
 
 /**
+ * Pokazivač pri prelasku razdjelne linije, kad ga pali vozač.
+ *
+ * Isto pravilo kao pri promjeni trake na autoputu (`laneStep`): pokazivač mora
+ * biti uključen na stranu prelaska, i to bar `INDICATOR_LEAD_TIME` prije nego
+ * što sredina vozila pređe liniju. Sudi se u koraku prelaska — jedan trenutak,
+ * jedno pravilo. Ulazak u suprotnu traku i povratak su dva manevra, pa nose i
+ * dvije oznake faze.
+ */
+function pokazivacPriPrelasku(world: World, v: Vehicle, strana: "left" | "right"): void {
+  const faza = strana === "left" ? "prelazak" : "povratak";
+  const upaljen = world.indicatorLog.filter((e) => e.indicator === strana).at(-1);
+  if (v.indicator !== strana || !upaljen) {
+    add(world, {
+      type: "indicatorMissing",
+      t: world.t,
+      phaseId: faza,
+      details:
+        strana === "left"
+          ? "Prelazak u suprotnu traku bez pokazivača."
+          : "Povratak u svoju traku bez pokazivača.",
+    });
+    return;
+  }
+  const unaprijed = world.t - upaljen.t;
+  if (unaprijed < INDICATOR_LEAD_TIME) {
+    const manevar = strana === "left" ? "prelaska u suprotnu traku" : "povratka u svoju traku";
+    add(world, {
+      type: "indicatorMissing",
+      t: world.t,
+      phaseId: faza,
+      details: `Pokazivač je uključen prekasno — ${unaprijed.toFixed(1)} s prije ${manevar}.`,
+    });
+  }
+}
+
+/**
  * Izlazak sa kolovoza.
  *
  * Sudi se po tijelu vozila, ne po njegovoj sredini: prekršaj je kad točak pređe
  * ivičnu liniju. Kratko i sporo je greška koja se prijavi; dugo ili brzo obara
  * vožnju, jer je to već slijetanje.
  */
-function volanPrekrsaji(world: World, ctx: Ctx, player: Vehicle, path: Path): void {
-  preticanje(world, ctx, player, path);
+function volanPrekrsaji(
+  world: World,
+  ctx: Ctx,
+  player: Vehicle,
+  path: Path,
+  sudiPokazivac: boolean,
+): void {
+  preticanje(world, ctx, player, path, sudiPokazivac);
   const izvan = (player.lateral ?? 0) + CAR_WIDTH / 2 - doLinije(path, path.doIvice, player.s);
   if (izvan <= 0) {
     world.volan.offRoadT = 0;
@@ -664,6 +815,13 @@ function inBox(v: Vehicle, path: Path): boolean {
 export function createWorld(scenario: Scenario, seed: number): World {
   const tpl = scenario.template ?? TEMPLATES[scenario.intersection];
   if (!tpl) throw new Error(`Nepoznata raskrsnica: ${scenario.intersection}`);
+  // Automatski pokazivač se pali po tabeli faza ili uz prelazak razdjelne
+  // linije. Na autoputu se traži uz ZAHTJEV za promjenu trake, a taj zahtjev
+  // simulacija ne može da predvidi — pa se kombinacija odbija, umjesto da se
+  // tamo tiho sudi po pokazivaču koji niko nije palio.
+  if (scenario.pokazivaci === "auto" && tpl.kind === "highway") {
+    throw new Error("Automatski pokazivači ne postoje na autoputu.");
+  }
   // Napravljeni šablon mora biti dostupan i po `id`-u — vidi `templateById`.
   if (scenario.template) registerTemplate(scenario.template);
   const { paths } = compile(tpl);
@@ -777,7 +935,16 @@ export function createWorld(scenario: Scenario, seed: number): World {
     hazardsFired: [],
     reaction: [],
     highway: { tooSlowT: 0, tailgateT: 0, shoulderT: 0 },
-    volan: { offRoadT: 0, kontraT: 0, preticao: null, cutInDo: 0, izborStrana: null, izborT: 0 },
+    volan: {
+      offRoadT: 0,
+      kontraT: 0,
+      preticao: null,
+      cutInDo: 0,
+      izborStrana: null,
+      izborT: 0,
+      autoStrana: null,
+      autoT: 0,
+    },
   };
 }
 
@@ -1157,6 +1324,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   const playerPath = ctx.paths.get(player.pathId)!;
   const playerBefore = player.s;
   const volanom = scenario.upravljanje === "traka";
+  const autoPokazivaci = scenario.pokazivaci === "auto";
   const naVolan = volanom && ctx.tpl.kind === "road";
   const naRaskrsnici =
     volanom && (ctx.tpl.kind === "cross" || ctx.tpl.kind === "roundabout");
@@ -1182,12 +1350,9 @@ export function step(world: World, scenario: Scenario, input: Input): void {
 
     if (v.kind === "player") {
       // Pokazivač je komanda: svaka promjena ide u dnevnik, sa mjestom na
-      // putanji, jer se pravila vezuju za mjesto a ne za vrijeme.
-      const zeljeni = input.indicator ?? null;
-      if (v.indicator !== zeljeni) {
-        v.indicator = zeljeni;
-        world.indicatorLog.push({ t: world.t, s: v.s, indicator: zeljeni });
-      }
+      // putanji, jer se pravila vezuju za mjesto a ne za vrijeme. Kad ga pali
+      // simulacija, upisuje se tek kad se zna kuda se ide — vidi niže.
+      if (!autoPokazivaci) postaviPokazivac(world, v, input.indicator ?? null);
       if (ctx.tpl.kind === "highway") laneStep(world, ctx, v, input);
       // Volan radi samo tamo gdje ga scenario daje. Bez ovog uslova bi isti
       // ulaz pomjerao vozilo i u ispitnim scenarijima, gdje putanja mora da
@@ -1200,6 +1365,13 @@ export function step(world: World, scenario: Scenario, input: Input): void {
         path = ctx.paths.get(v.pathId)!;
       }
       if (volanom) volanKorak(v, path, input);
+      // Automatski pokazivač se računa POSLIJE izbora pravca i poprečnog koraka,
+      // jer oba mijenjaju ono po čemu se zna šta treba: putanju i položaj u
+      // traci. Mjesto upisano u dnevnik je i dalje ono prije pomjeranja, kao i
+      // kod ručnog.
+      if (autoPokazivaci) {
+        postaviPokazivac(world, v, autoPokazivac(world, ctx, scenario, v, path, input));
+      }
       const a = input.throttle * A_MAX - input.brake * B_MAX;
       integrate(v, a, ctx.vTop, ctx.drag);
     } else {
@@ -1242,7 +1414,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
   const putIgraca = ctx.paths.get(player.pathId) ?? playerPath;
   detectViolations(world, ctx, scenario, player, putIgraca, playerBefore);
   if (ctx.tpl.kind === "highway" && !player.done) highwayViolations(world, ctx, player, input);
-  if (naVolan && !player.done) volanPrekrsaji(world, ctx, player, putIgraca);
+  if (naVolan && !player.done) volanPrekrsaji(world, ctx, player, putIgraca, !autoPokazivaci);
   // Pokazivač se ocjenjuje van `detectViolations` jer ta funkcija odustaje čim
   // igrač izađe sa putanje — a posljednja faza (gašenje) se završava baš tada.
   evaluateIndicator(world, scenario, player, putIgraca);
@@ -1863,6 +2035,9 @@ function evaluateIndicator(
   player: Vehicle,
   path: Path,
 ): void {
+  // Kad pokazivač pali simulacija, igrač nije mogao da pogriješi, pa bi ocjena
+  // sudila simulaciji. Dnevnik se i dalje piše — za prikaz i za ponavljanje.
+  if (scenario.pokazivaci === "auto") return;
   const grace = DIFFICULTY[scenario.difficulty].indicatorGrace;
   const prekinuto = world.outcome !== "running";
   for (const ph of phasesFor(path, player.intent, scenario.indicatorRules)) {

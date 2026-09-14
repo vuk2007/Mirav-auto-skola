@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { engineTone } from "./sound";
+import { BLINK_HZ } from "../sim/config";
+import { engineTone, tickTone } from "./sound";
 
 /**
  * Zvučni graf se u testu nema gdje pustiti, ali model obrtaja ima logiku i ona
@@ -49,5 +50,23 @@ describe("motor", () => {
   it("besmislen ulaz ne razbija model", () => {
     expect(engineTone(-5, -1).freq).toBeCloseTo(52, 6);
     expect(engineTone(0, 5).gain).toBeLessThan(0.18);
+  });
+});
+
+describe("klik pokazivača", () => {
+  it("paljenje i gašenje zvuče različito, kao relej", () => {
+    expect(tickTone(true).freq).not.toBe(tickTone(false).freq);
+  });
+
+  it("klik je kratak i visok — ne stapa se sa sljedećim ni sa motorom", () => {
+    for (const upaljen of [true, false]) {
+      const { trajanje, gain, freq } = tickTone(upaljen);
+      // Između dva klika prođe pola treptaja; klik traje manje od četvrtine toga.
+      expect(trajanje).toBeGreaterThan(0);
+      expect(trajanje).toBeLessThan(1 / (BLINK_HZ * 2) / 4);
+      expect(gain).toBeGreaterThan(0);
+      // Motor ne ide iznad 130 Hz, a njegov filtar iznad 800 Hz.
+      expect(freq).toBeGreaterThan(1000);
+    }
   });
 });

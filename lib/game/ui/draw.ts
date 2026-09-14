@@ -136,6 +136,16 @@ export const OKOLINA_LINIJE: Record<string, { boja: string; sirina: number }> = 
   put: { boja: "#cdcfc6", sirina: 2.6 },
 };
 
+/**
+ * Da li pokazivač u trenutku `t` svijetli.
+ *
+ * Mjeri se vremenom simulacije, ne satom: auto na platnu, lampica pored volana i
+ * klik moraju treptati zajedno, a ponavljanje snimka mora treptati isto.
+ */
+export function pokazivacSvijetli(t: number): boolean {
+  return Math.floor(t * BLINK_HZ * 2) % 2 === 0;
+}
+
 export interface View {
   cx: number;
   cy: number;
@@ -1425,7 +1435,7 @@ export function drawScene(
   const naredba = officerAllow(opts.officer ?? undefined, world.t);
   if (naredba) drawOfficer(ctx, v, naredba);
 
-  const blinkOn = Math.floor(world.t * BLINK_HZ * 2) % 2 === 0;
+  const blinkOn = pokazivacSvijetli(world.t);
   // Boja NPC-a se veže za redosljed u scenariju, a ne za redosljed crtanja —
   // inače bi vozilo promijenilo boju čim neko ispred njega izađe.
   const npcOrder = new Map(

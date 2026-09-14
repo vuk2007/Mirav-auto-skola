@@ -1,10 +1,10 @@
 /**
  * Zvuk igre — sintetisan, bez ijednog fajla.
  *
- * Tri stvari trebaju: truba iza leđa dok zadržavaš saobraćaj, udarac pri
- * sudaru, i motor dok se vozi. Sve troje se pravi WebAudio-om umjesto da se u
- * repo ubacuju snimci: nema pitanja licence, nema dodatnog zahtjeva sa mreže i
- * nema binarnog fajla koji niko ne može da pregleda u diffu.
+ * Četiri stvari trebaju: truba iza leđa dok zadržavaš saobraćaj, udarac pri
+ * sudaru, motor dok se vozi i klik pokazivača. Sve se pravi WebAudio-om umjesto
+ * da se u repo ubacuju snimci: nema pitanja licence, nema dodatnog zahtjeva sa
+ * mreže i nema binarnog fajla koji niko ne može da pregleda u diffu.
  *
  * `AudioContext` se pravi tek na prvi zvuk, jer ga pregledači ne dozvoljavaju
  * prije korisničke radnje.
@@ -17,6 +17,12 @@ export interface Sound {
   engine(speed: number, throttle: number): void;
   /** Gasi motor — kad vožnja stane ili ekran ode. */
   engineOff(): void;
+  /**
+   * Klik pokazivača: zove se na svaku promjenu svjetla dok je pokazivač
+   * upaljen. `upaljen` bira ton — relej u autu ne kucne isto kad se svjetlo pali
+   * i kad se gasi.
+   */
+  tick(upaljen: boolean): void;
   setMuted(muted: boolean): void;
   close(): void;
 }
@@ -56,6 +62,19 @@ export function engineTone(speed: number, throttle: number): { freq: number; gai
     // Prazan hod se jedva čuje; puni gas je i dalje tiši od trube (0,18).
     gain: 0.02 + obrtaji * 0.05 + gas * 0.03,
   };
+}
+
+/**
+ * Klik pokazivača: kratak šum kroz uzak filtar, kao relej.
+ *
+ * Izdvojeno iz zvučnog grafa iz istog razloga kao `engineTone` — da bi se moglo
+ * testirati. Pojačanje važi ispred uskog filtra, koji propusti tek mali dio
+ * šuma, pa je broj veći nego kod trube iako se klik čuje tiše. Izmjereno kroz
+ * isti graf u OfflineAudioContext-u: vrh klika je oko 0,08 — malo iznad vrha
+ * motora pod punim gasom (0,07), a četiri puta ispod trube (0,35).
+ */
+export function tickTone(upaljen: boolean): { freq: number; gain: number; trajanje: number } {
+  return { freq: upaljen ? 2200 : 1600, gain: 0.5, trajanje: 0.02 };
 }
 
 type Ctor = typeof AudioContext;
@@ -175,6 +194,33 @@ export function createSound(): Sound {
       const filter = c.createBiquadFilter();
       filter.type = "lowpass";
       filter.frequency.value = 1200;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(c.destination);
+      src.start(t);
+    },
+
+    /** Klik pokazivača — vidi `tickTone`. */
+    tick(upaljen) {
+      const c = ensure();
+      if (!c) return;
+      const { freq, gain: jacina, trajanje } = tickTone(upaljen);
+      const t = c.currentTime;
+      const uzoraka = Math.max(1, Math.floor(c.sampleRate * trajanje));
+      const buffer = c.createBuffer(1, uzoraka, c.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        const k = 1 - i / data.length;
+        data[i] = (Math.random() * 2 - 1) * k * k * k;
+      }
+      const src = c.createBufferSource();
+      src.buffer = buffer;
+      const filter = c.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = freq;
+      filter.Q.value = 5;
+      const gain = c.createGain();
+      gain.gain.value = jacina;
       src.connect(filter);
       filter.connect(gain);
       gain.connect(c.destination);

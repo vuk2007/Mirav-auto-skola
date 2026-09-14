@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DT,
+  INDICATOR_LEAD_TIME,
   MAX_OVERTAKE_TIME,
   ONCOMING_TTC,
   ROAD_LANE_WIDTH,
@@ -156,8 +157,14 @@ describe("kontra traka", () => {
   });
 
   it("kratko preticanje ne pravi nijedan prekršaj", () => {
+    // Pravilno preticanje počinje pokazivačem: upaljen je prije nego što volan
+    // krene, i to duže od roka — inače je i ovo prelazak bez najave.
     const s = put({ npcs: [spori(120, 10)] });
-    const w = vozi(s, MAX_OVERTAKE_TIME - 2, uKontru);
+    const najava = INDICATOR_LEAD_TIME + 0.2;
+    const w = vozi(s, MAX_OVERTAKE_TIME - 2, (x) => ({
+      ...(x.t < najava ? ulaz(0, 0.4) : uKontru(x)),
+      indicator: "left",
+    }));
     expect(w.violations.map((v) => v.type)).toEqual([]);
   });
 });

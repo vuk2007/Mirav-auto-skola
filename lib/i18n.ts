@@ -162,6 +162,12 @@ export interface Dict {
   gameIndicatorRight: string;
   gameIndicatorShortLeft: string;
   gameIndicatorShortRight: string;
+  gameIndicatorMode: string;
+  gameIndicatorAuto: string;
+  gameIndicatorManual: string;
+  gameIndicatorAutoShort: string;
+  gameIndicatorAutoHint: string;
+  gameIndicatorManualHint: string;
   gameMinor: string;
   gameHazardTitle: string;
   gameHazardYielded: string;
@@ -533,6 +539,14 @@ const me: Dict = {
   gameIndicatorRight: "Desno",
   gameIndicatorShortLeft: "L",
   gameIndicatorShortRight: "D",
+  gameIndicatorMode: "Pokazivači pravca",
+  gameIndicatorAuto: "Automatski",
+  gameIndicatorManual: "Ručni",
+  gameIndicatorAutoShort: "Automatski",
+  gameIndicatorAutoHint:
+    "Pokazivač se pali sam, tačno kad treba — pratite kad. Greške pokazivača se ne računaju.",
+  gameIndicatorManualHint:
+    "Pokazivač palite sami: tasteri Q i E ili dugmad pored volana. Greške se računaju, i pri preticanju.",
   gameMinor: "blaga greška",
   gameHazardTitle: "Neko nije poštovao pravila",
   gameHazardYielded:
@@ -898,6 +912,14 @@ const en: Dict = {
   gameIndicatorRight: "Right",
   gameIndicatorShortLeft: "L",
   gameIndicatorShortRight: "R",
+  gameIndicatorMode: "Indicators",
+  gameIndicatorAuto: "Automatic",
+  gameIndicatorManual: "Manual",
+  gameIndicatorAutoShort: "Auto",
+  gameIndicatorAutoHint:
+    "The indicator switches on by itself, exactly when it should — watch when. Indicator mistakes are not counted.",
+  gameIndicatorManualHint:
+    "You switch the indicator on yourself: the Q and E keys or the buttons next to the steering. Mistakes count, overtaking included.",
   gameMinor: "minor fault",
   gameHazardTitle: "Someone broke the rules",
   gameHazardYielded:
@@ -1268,6 +1290,14 @@ const sq: Dict = {
   gameIndicatorRight: "Djathtas",
   gameIndicatorShortLeft: "M",
   gameIndicatorShortRight: "DJ",
+  gameIndicatorMode: "Treguesit e drejtimit",
+  gameIndicatorAuto: "Automatikisht",
+  gameIndicatorManual: "Me dorë",
+  gameIndicatorAutoShort: "Auto",
+  gameIndicatorAutoHint:
+    "Treguesi ndizet vetë, pikërisht kur duhet — vini re kur. Gabimet me treguesin nuk llogariten.",
+  gameIndicatorManualHint:
+    "Treguesin e ndizni vetë: tastet Q dhe E ose butonat pranë timonit. Gabimet llogariten, edhe gjatë tejkalimit.",
   gameMinor: "gabim i lehtë",
   gameHazardTitle: "Dikush nuk i respektoi rregullat",
   gameHazardYielded:
@@ -1640,6 +1670,14 @@ const ru: Dict = {
   gameIndicatorRight: "Направо",
   gameIndicatorShortLeft: "Л",
   gameIndicatorShortRight: "П",
+  gameIndicatorMode: "Указатели поворота",
+  gameIndicatorAuto: "Автоматически",
+  gameIndicatorManual: "Вручную",
+  gameIndicatorAutoShort: "Авто",
+  gameIndicatorAutoHint:
+    "Указатель включается сам, именно тогда, когда нужно, — следите, когда. Ошибки с указателем не засчитываются.",
+  gameIndicatorManualHint:
+    "Указатель включаете вы: клавиши Q и E или кнопки рядом с рулём. Ошибки засчитываются, в том числе при обгоне.",
   gameMinor: "лёгкая ошибка",
   gameHazardTitle: "Кто-то нарушил правила",
   gameHazardYielded:

@@ -8,6 +8,7 @@
 
 import type { Category } from "./categories";
 import { isLang, type Lang } from "./i18n";
+import type { PokazivaciRezim } from "./game/sim/types";
 
 const KEY_LANG = "mirav.lang";
 const KEY_BEST = "mirav.bestExam";
@@ -15,6 +16,7 @@ const KEY_PRACTICE = "mirav.practice";
 const KEY_GAME = "mirav.game";
 const KEY_SHIFT = "mirav.smjena";
 const KEY_TRIP = "mirav.putovanje";
+const KEY_INDICATORS = "mirav.pokazivaci";
 
 function read<T>(key: string): T | null {
   try {
@@ -225,4 +227,21 @@ export function saveTrip(state: unknown): void {
 
 export function clearTrip(): void {
   remove(KEY_TRIP);
+}
+
+// ── Pokazivači u putovanju i ruti ───────────────────────────────────────────
+
+/**
+ * Ko pali pokazivač. Pamti se jer je to navika, a ne izbor po vožnji.
+ *
+ * Bez zapamćenog izbora važi automatski, kako i zadatak traži — a sve što nije
+ * tačno `"rucni"` čita se kao automatski, pa ni pokvaren zapis ne može da uključi
+ * suđenje koje igrač nije izabrao.
+ */
+export function loadPokazivaci(): PokazivaciRezim {
+  return read<unknown>(KEY_INDICATORS) === "rucni" ? "rucni" : "auto";
+}
+
+export function savePokazivaci(rezim: PokazivaciRezim): void {
+  write(KEY_INDICATORS, rezim);
 }

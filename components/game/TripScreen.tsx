@@ -11,7 +11,8 @@ import {
 } from "@/lib/game/road/roadGraph";
 import { CITY_LEVEL, SHIFT_VIEW_HALF } from "@/lib/game/sim/config";
 import { generateSegment } from "@/lib/game/shift/generate";
-import type { RoadTemplate, ViolationType } from "@/lib/game/sim/types";
+import type { PokazivaciRezim, RoadTemplate, ViolationType } from "@/lib/game/sim/types";
+import { pokazivacSvijetli } from "@/lib/game/ui/draw";
 import { VIOLATION_LABEL, zonesForLevel } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
@@ -28,9 +29,10 @@ import {
   type TripState,
 } from "@/lib/game/trip/trip";
 import type { Dict } from "@/lib/i18n";
-import { clearTrip, loadTrip, saveTrip } from "@/lib/storage";
+import { clearTrip, loadPokazivaci, loadTrip, savePokazivaci, saveTrip } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import DriveControls from "./DriveControls";
+import PokazivaciIzbor from "./PokazivaciIzbor";
 import TripMap from "./TripMap";
 import { useVolan } from "./useVolan";
 
@@ -60,8 +62,15 @@ const POLAZISTA = NODES.filter((n) => n.kind === "opstina");
  */
 export default function TripScreen({ onExit }: { onExit: () => void }) {
   const { t } = useApp();
+  /** Ko pali pokazivač — isto podešavanje kao u ruti, i pamti se isto. */
+  const [pokazivaci, setPokazivaci] = useState<PokazivaciRezim>("auto");
+  useEffect(() => setPokazivaci(loadPokazivaci()), []);
+  const promijeniPokazivace = useCallback((rezim: PokazivaciRezim) => {
+    setPokazivaci(rezim);
+    savePokazivaci(rezim);
+  }, []);
   // Cijelo putovanje se vozi volanom — i dionica i raskrsnica kroz grad.
-  const volan = useVolan();
+  const volan = useVolan(true, { pokazivacRukom: pokazivaci === "rucni" });
   const pusti = useCallback(() => volan.release(), [volan]);
   const sound = useMemo(() => createSound(), []);
   const [muted, setMuted] = useState(false);
@@ -108,10 +117,11 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
       return {
         ...generateSegment(grad.seed, CITY_LEVEL, grad.index, { autoput: false }),
         upravljanje: "traka" as const,
+        pokazivaci,
       };
     }
-    return dionicaZa(trip, edge);
-  }, [trip, edge, grad, phase]);
+    return { ...dionicaZa(trip, edge), pokazivaci };
+  }, [trip, edge, grad, phase, pokazivaci]);
   const runner = useMemo(() => {
     // `pokusaj` ulazi ovdje samo da bi poslije sudara nastao NOV svijet.
     // Sjeme ostaje 1, pa se ponavlja ista situacija — mijenja se stanje, ne
@@ -121,6 +131,16 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
   }, [scenario, pokusaj]);
   const tpl = scenario?.template as RoadTemplate | undefined;
   const uGradu = grad !== null;
+
+  /** Stanje pokazivača u simulaciji — za lampice pored volana. */
+  const stanjePokazivaca = useCallback(() => {
+    const world = runner?.world;
+    const strana = world?.vehicles.find((v) => v.kind === "player")?.indicator ?? null;
+    return {
+      strana,
+      svijetli: world !== undefined && strana !== null && pokazivacSvijetli(world.t),
+    };
+  }, [runner]);
 
   const kreni = useCallback(
     (smjer: Smjer) => {
@@ -229,6 +249,8 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
             </span>
           </label>
 
+          <PokazivaciIzbor vrijednost={pokazivaci} promijeni={promijeniPokazivace} t={t} />
+
           <h2 className="font-display mt-4 text-sm font-bold tracking-wide uppercase">
             {t.tripPickStart}
           </h2>
@@ -285,6 +307,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               level={scenario.difficulty}
               sound={sound}
               camera={{ follow: true, half: uGradu ? SHIFT_VIEW_HALF : tpl?.viewHalf }}
+              zvukPokazivaca
               label={uGradu ? t.tripCity : (scenario.title.me ?? t.tripTitle)}
             />
             <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
@@ -304,17 +327,17 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
             steerLabel={t.gameSteer}
             throttleLabel={t.gameThrottle}
             brakeLabel={t.gameBrake}
-            // Kroz grad se pokazivač i dalje pali rukom; automatski dolazi uz
-            // podešavanje u sljedećoj stavci.
-            indicator={
-              uGradu
-                ? {
-                    label: t.gameIndicator,
-                    leftLabel: t.gameIndicatorLeft,
-                    rightLabel: t.gameIndicatorRight,
-                  }
-                : null
-            }
+            // Pokazivač je na ekranu i na otvorenom putu: pri preticanju se
+            // traži isto kao na raskrsnici.
+            indicator={{
+              label: t.gameIndicator,
+              leftLabel: t.gameIndicatorLeft,
+              rightLabel: t.gameIndicatorRight,
+              rezim: pokazivaci,
+              autoLabel: t.gameIndicatorAuto,
+              autoShort: t.gameIndicatorAutoShort,
+              stanje: stanjePokazivaca,
+            }}
           />
         </>
       ) : phase === "sudar" ? (

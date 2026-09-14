@@ -823,6 +823,20 @@ export const DECISION_HOLD = 0.4;
 /** Koliko volan mora biti okrenut da bi se to računalo kao izbor. */
 export const DECISION_STEER = 0.5;
 
+// ── automatski pokazivači (modovi „Putovanje" i „Ruta") ────────────────────
+
+/**
+ * Koliko dugo automatski pokazivač ostaje upaljen kad vozilo stane uz razdjelnu
+ * liniju, a ne pređe je [s].
+ *
+ * Pokazivač se pali kad volan pokaže da vozilo ide ka liniji. Ako tamo stane i
+ * nastavi uz nju, to više nije prelazak nego vožnja uz liniju — a pokazivač koji
+ * bi ostao upaljen obmanjivao bi ostale isto kao žmigavac ostavljen poslije
+ * skretanja. Dvije sekunde su tri treptaja: dovoljno da se vidi namjera vozača
+ * koji čeka priliku, a malo da bi se zaboravio.
+ */
+export const AUTO_INDICATOR_HOLD = 2;
+
 // ── preticanje i puna linija ────────────────────────────────────────────────
 
 /**

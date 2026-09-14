@@ -45,7 +45,14 @@ export interface Volan {
   release: () => void;
 }
 
-export function useVolan(aktivno = true): Volan {
+/**
+ * `pokazivacRukom` isključuje Q i E kad pokazivač pali simulacija: taster koji
+ * ništa ne mijenja samo bi zbunjivao.
+ */
+export function useVolan(
+  aktivno = true,
+  { pokazivacRukom = true }: { pokazivacRukom?: boolean } = {},
+): Volan {
   const inputRef = useRef<Input>({
     throttle: 0,
     brake: 0,
@@ -122,6 +129,8 @@ export function useVolan(aktivno = true): Volan {
     };
     const down = (e: KeyboardEvent) => {
       if (e.key === "q" || e.key === "Q" || e.key === "e" || e.key === "E") {
+        // Kad pokazivač pali simulacija, Q i E nemaju šta da mijenjaju.
+        if (!pokazivacRukom) return;
         e.preventDefault();
         if (!e.repeat) toggleIndicator(e.key === "q" || e.key === "Q" ? "left" : "right");
         return;
@@ -160,7 +169,7 @@ export function useVolan(aktivno = true): Volan {
       window.removeEventListener("blur", blur);
       document.removeEventListener("visibilitychange", blur);
     };
-  }, [aktivno, release, toggleIndicator]);
+  }, [aktivno, pokazivacRukom, release, toggleIndicator]);
 
   // Jedna petlja koja svakog kadra spaja prst i tastaturu u konačnu vrijednost.
   useEffect(() => {
