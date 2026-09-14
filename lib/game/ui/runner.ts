@@ -77,6 +77,10 @@ export function createRunner(scenario: Scenario, seed: number): Runner {
           brake: input.brake,
           indicator: input.indicator,
           changeLane: input.changeLane ?? null,
+          // Volan je ulaz kao i gas: bez njega bi ponavljanje vožnje volanom
+          // vozilo pravo, a igrač je skretao. Scenariji po šini ga nemaju, pa
+          // ni njihov dnevnik ne dobija to polje.
+          ...(input.steer === undefined ? {} : { steer: input.steer }),
         });
         step(runner.world, scenario, input);
         // Zahtjev za promjenu trake vrijedi za TAČNO jedan korak simulacije.
