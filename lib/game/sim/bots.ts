@@ -70,6 +70,17 @@ export function probeWorld(world: World): World {
     // javio dvostruko brže nego što je igrač vozio.
     highway: { ...world.highway },
     volan: { ...world.volan },
+    // Tok saobraćaja pomjera zamišljena mjesta svojih izvora u mjestu. Bez
+    // kopije bi proba pustila vozilo — i pravi svijet ga više nikad ne bi dobio.
+    ...(world.tok
+      ? {
+          tok: {
+            susretni: { ...world.tok.susretni },
+            nas: { ...world.tok.nas },
+            kamiona: world.tok.kamiona,
+          },
+        }
+      : {}),
     events: [],
     violations: [],
   };

@@ -11,7 +11,7 @@
  * ponovo, sa istim sjemenom, pa je i druga vožnja ista situacija.
  */
 
-import { CITY_JUNCTIONS_MAX, CITY_JUNCTIONS_MIN } from "../sim/config";
+import { CITY_JUNCTIONS_MAX, CITY_JUNCTIONS_MIN, type Level } from "../sim/config";
 import { rng } from "../sim/geometry";
 import type { Landmark } from "../road/landmarks";
 import { landmarksAtNode, landmarksOnEdge } from "../road/landmarks";
@@ -80,9 +80,9 @@ export function legSeed(state: TripState, edge: RoadEdge): number {
   return h >>> 0;
 }
 
-/** Scenario dionice koja se sad vozi. */
-export function dionicaZa(state: TripState, edge: RoadEdge): Scenario {
-  return dionica(edge, legSeed(state, edge), obrnuto(state, edge));
+/** Scenario dionice koja se sad vozi; `nivo` bira gustinu saobraćaja. */
+export function dionicaZa(state: TripState, edge: RoadEdge, nivo?: Level): Scenario {
+  return dionica(edge, legSeed(state, edge), obrnuto(state, edge), undefined, nivo);
 }
 
 /**

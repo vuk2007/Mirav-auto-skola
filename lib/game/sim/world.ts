@@ -77,9 +77,28 @@ import {
   AUTO_INDICATOR_HOLD,
   DIO_TIJELA,
   VOZILA,
+  KAMION_ISPRED,
+  USPORENJE_OGRANICENJE,
+  KOLONA_ODSTOJANJE,
+  OZNAKA_DOMET_PUT,
+  SAOBRACAJ_MANJAK,
+  SAOBRACAJ_POPRAVKA,
+  SAOBRACAJ_PROZOR,
+  SAOBRACAJ_U_PROZORU,
+  SAOBRACAJ_VISAK,
+  UBACI_ISPRED,
+  type Level,
 } from "./config";
 import { headingAt, pointAt, polygonsOverlap, rectCorners, right, rng, valueAt } from "./geometry";
 import { zabranjeno } from "../road/zabrane";
+import {
+  izvlacenje,
+  izvuci,
+  najmanjeOgranicenje,
+  srednjiRazmak,
+  tipicnaBrzina,
+  type IzvucenoVozilo,
+} from "./tok";
 import {
   compile,
   crosswalkSpans,
@@ -107,6 +126,8 @@ import type {
   IndicatorEvent,
   Input,
   Intent,
+  IzvorToka,
+  TokSaobracaja,
   CrossIntent,
   Path,
   Pedestrian,
@@ -961,7 +982,7 @@ export function createWorld(scenario: Scenario, seed: number): World {
     };
   });
 
-  return {
+  const world: World = {
     t: 0,
     scenarioId: scenario.id,
     templateId: tpl.id,
@@ -990,6 +1011,11 @@ export function createWorld(scenario: Scenario, seed: number): World {
       autoT: 0,
     },
   };
+  // Saobraćaj na otvorenom putu postoji i prije prvog koraka: prozor oko igrača
+  // se puni odmah, inače bi put na startu bio prazan.
+  const tp = tokPut(tpl, paths, scenario);
+  if (tp) napuniTok(world, tp, vehicles[0]!);
+  return world;
 }
 
 // ── jedan korak ─────────────────────────────────────────────────────────────
@@ -1377,6 +1403,10 @@ export function step(world: World, scenario: Scenario, input: Input): void {
     volanom && (ctx.tpl.kind === "cross" || ctx.tpl.kind === "roundabout");
 
   fireHazards(world, scenario, player);
+  // Tok saobraćaja pušta nova vozila PRIJE kretanja, pa se i ona pomjere u
+  // istom koraku kao i ostala.
+  const tp = tokPut(ctx.tpl, ctx.paths, scenario);
+  if (tp) pustiTok(world, tp, player);
   // Reakcija se mjeri od trenutka kad je događaj postao vidljiv do prvog
   // kočenja. Gas se ne broji: reakcija na opasnost je kočnica.
   if (input.brake > 0) {
@@ -1424,7 +1454,18 @@ export function step(world: World, scenario: Scenario, input: Input): void {
     } else {
       v.indicator = expectedIndicatorAt(path, v.intent, v.s);
       const { limit, vLead, blame } = npcTarget(world, ctx, v, path);
-      const a = accelToward(v, limit, v.cruise ?? ctx.vMax, vLead);
+      // Vozilo toka ne vozi jednu zadatu brzinu nego dio ograničenja koje važi
+      // tamo gdje jeste — ruta prolazi i magistralom i kroz grad.
+      const cilj =
+        v.udioBrzine !== undefined && scenario.tok
+          ? zeljenaBrzina(scenario.tok, v, path)
+          : (v.cruise ?? ctx.vMax);
+      let a = accelToward(v, limit, cilj, vLead);
+      // Bez gasa brzina u modelu ostaje ista, pa vozilo koje je brže od novog
+      // ograničenja mora da uspori samo — blago, kao pred tablom.
+      if (v.udioBrzine !== undefined && v.v > cilj + PREKO_ZELJENE) {
+        a = Math.min(a, -USPORENJE_OGRANICENJE);
+      }
       // Naglo kočenje zbog igrača je događaj, ne samo usporenje — po njemu se
       // prepoznaje oduzeta prednost i kad do sudara ne dođe. Na otvorenom putu
       // nema prvenstva, pa se krivac ne traži po konfliktnim tačkama nego po
@@ -1501,10 +1542,23 @@ function odnesiZaostale(world: World, ctx: Ctx, player: Vehicle): void {
     // drugog — pa nas ispred čeka pet vozila koja niko nikad neće vidjeti.
     if (v.lane !== 1 && gdje > player.s + LOAD_AHEAD * DALEKO_ISPRED) v.done = true;
   }
+  // Vozila toka koja su otišla ne ostaju ni kao zapis: tok ih u toku jedne rute
+  // napravi stotine, a svaki snimak za ponavljanje bi ih inače nosio sve.
+  // Vozila zadata u scenariju ostaju — po njihovom `id`-u se čitaju i događaji.
+  if (world.vehicles.some((v) => v.done && v.udioBrzine !== undefined)) {
+    world.vehicles = world.vehicles.filter((v) => !(v.done && v.udioBrzine !== undefined));
+  }
 }
 
 /** Koliko prozora ispred nas vozilo smije biti prije nego što nas se ne tiče. */
 const DALEKO_ISPRED = 1;
+
+/**
+ * Koliko vozilo toka smije biti brže od brzine koju želi prije nego što počne da
+ * usporava [m/s]. Bez ove margine bi na samoj granici naizmjenično kočilo i
+ * davalo gas.
+ */
+const PREKO_ZELJENE = 0.3;
 
 /** Koliko ispred igrača se pojavi sporije vozilo koje treba sustići [m]. */
 const SPORI_ISPRED = 450;
@@ -1553,6 +1607,395 @@ function postaviUProzor(world: World, v: Vehicle, path: Path, player: Vehicle): 
 /** Najmanji razmak dva vozila koja se u istom trenutku pojave [m]. */
 const RAZMICANJE = 30;
 const RAZMICANJE_KORAKA = 20;
+
+// ── tok saobraćaja ─────────────────────────────────────────────────────────
+
+/** Koliko prije kraja puta tok više ne pušta vozila [m]. */
+const KRAJ_PUTA = 30;
+/**
+ * Koliko oko igrača na startu nema vozila našeg smjera [m].
+ *
+ * Igrač kreće u vožnji: vozilo tik pred haubom bi značilo kočenje u prvoj
+ * sekundi, a tik iza njega sudar prije nego što se išta vidi.
+ */
+const PRAZNO_ISPRED = 80;
+const PRAZNO_IZA = 30;
+/** Najviše vozila koje jedan izvor pusti u jednom koraku — zaštita, ne pravilo. */
+const NAJVISE_PO_KORAKU = 8;
+/** Koliko vozila najviše može imati početno punjenje jednog izvora — zaštita. */
+const NAJVISE_NA_STARTU = 500;
+
+/** Ono što tok treba o putu: opis, nivo i obje trake. */
+interface TokPut {
+  tok: TokSaobracaja;
+  nivo: Level;
+  nasa: Path;
+  susretna: Path;
+}
+
+function tokPut(tpl: Template, paths: ReadonlyMap<string, Path>, scenario: Scenario): TokPut | null {
+  if (!scenario.tok || tpl.kind !== "road") return null;
+  const nasa = paths.get(lanePathId(tpl.id, 0));
+  const susretna = paths.get(lanePathId(tpl.id, 1));
+  if (!nasa || !susretna) return null;
+  return { tok: scenario.tok, nivo: scenario.difficulty, nasa, susretna };
+}
+
+/** Mjesto vozila na putu, u metrima naše trake, bez obzira na to kojom trakom ide. */
+const naPutu = (tp: TokPut, v: Vehicle): number => naRuti(v, v.lane === 1 ? tp.susretna : tp.nasa);
+
+/**
+ * Brzina koju vozilo toka želi na mjestu na kojem jeste [m/s].
+ *
+ * Gleda se toliko unaprijed koliko treba da se blago uspori: vozač tablu vidi
+ * prije nego što ograničenje počne, pa ni vozilo toka ne ulazi u naselje brzinom
+ * sa magistrale.
+ */
+function zeljenaBrzina(tok: TokSaobracaja, v: Vehicle, put: Path): number {
+  const x = naRuti(v, put);
+  const pogled = (v.v * v.v) / (2 * USPORENJE_OGRANICENJE) + v.v;
+  const smjer = v.lane === 1 ? -1 : 1;
+  const ogranicenje = najmanjeOgranicenje(tok.dionice, x, x + smjer * pogled);
+  return Math.min(v.kapaBrzine ?? Infinity, ogranicenje * (v.udioBrzine ?? 1));
+}
+
+/**
+ * Prvo slobodno mjesto za novo vozilo, polazeći od `x` u smjeru `smjer`.
+ *
+ * Slobodno je kad do svakog vozila u traci ima bar `FOLLOW_GAP` od branika do
+ * branika. Ako slobodnog mjesta nema prije `granica`, vraća `null`: izvor tada
+ * čeka sljedeći korak, a ne gura vozilo u drugo.
+ */
+function slobodnoMjesto(
+  world: World,
+  tp: TokPut,
+  traka: 0 | 1,
+  x: number,
+  duzina: number,
+  smjer: 1 | -1,
+  granica: number,
+): number | null {
+  let mjesto = x;
+  for (let i = 0; i < NAJVISE_PO_KORAKU * 4; i++) {
+    if (smjer > 0 ? mjesto > granica : mjesto < granica) return null;
+    const smeta = world.vehicles.find(
+      (o) =>
+        !o.done &&
+        world.t >= o.spawnT &&
+        (o.lane ?? 0) === traka &&
+        Math.abs(naPutu(tp, o) - mjesto) < (o.length + duzina) / 2 + FOLLOW_GAP,
+    );
+    if (!smeta) return mjesto;
+    mjesto = naPutu(tp, smeta) + smjer * ((smeta.length + duzina) / 2 + FOLLOW_GAP);
+  }
+  return null;
+}
+
+/**
+ * Brzina sa kojom vozilo toka nastaje: željena, ali ne veća od one sa koje
+ * stigne blago da uspori iza vozila ispred sebe.
+ */
+function brzinaNastanka(
+  world: World,
+  tp: TokPut,
+  traka: 0 | 1,
+  x: number,
+  duzina: number,
+  zeljena: number,
+): number {
+  const smjer = traka === 1 ? -1 : 1;
+  let najblize = Infinity;
+  let prostor = Infinity;
+  let vIspred = zeljena;
+  for (const o of world.vehicles) {
+    if (o.done || world.t < o.spawnT || (o.lane ?? 0) !== traka) continue;
+    const ispred = (naPutu(tp, o) - x) * smjer;
+    if (ispred <= 0 || ispred >= najblize) continue;
+    najblize = ispred;
+    prostor = ispred - (o.length + duzina) / 2 - FOLLOW_GAP;
+    vIspred = o.v;
+  }
+  if (!Number.isFinite(najblize)) return zeljena;
+  return Math.min(
+    zeljena,
+    Math.sqrt(vIspred * vIspred + 2 * USPORENJE_OGRANICENJE * Math.max(0, prostor)),
+  );
+}
+
+/** Napravi vozilo toka na mjestu `x`; vraća brzinu koju ono želi. */
+function pustiVozilo(
+  world: World,
+  tp: TokPut,
+  id: string,
+  traka: 0 | 1,
+  x: number,
+  iz: IzvucenoVozilo,
+): number {
+  const put = traka === 1 ? tp.susretna : tp.nasa;
+  const mjere = VOZILA[iz.vrsta];
+  const zeljena = Math.min(iz.kapa ?? Infinity, najmanjeOgranicenje(tp.tok.dionice, x, x) * iz.udio);
+  world.vehicles.push({
+    id,
+    kind: "npc",
+    pathId: put.id,
+    s: traka === 1 ? put.length - x : x,
+    v: brzinaNastanka(world, tp, traka, x, mjere.duzina, zeljena),
+    length: mjere.duzina,
+    width: mjere.sirina,
+    vrsta: iz.vrsta,
+    intent: { kind: "lane", index: traka },
+    arm: traka === 1 ? "S" : "N",
+    indicator: null,
+    stopHeld: 0,
+    done: false,
+    spawnT: world.t,
+    lane: traka,
+    laneT: 1,
+    postavljen: true,
+    cruise: zeljena,
+    udioBrzine: iz.udio,
+    ...(iz.kapa === undefined ? {} : { kapaBrzine: iz.kapa }),
+  });
+  return zeljena;
+}
+
+/** Izvor je pustio (ili preskočio) vozilo na mjestu `x`. */
+function pomjeriIzvor(izvor: IzvorToka, x: number, v: number, duzina: number): void {
+  izvor.k += 1;
+  izvor.x = x;
+  izvor.v = v;
+  izvor.duzina = duzina;
+}
+
+/**
+ * Saobraćaj koji već postoji kad vožnja počne: cijeli prozor oko igrača.
+ *
+ * Bez ovoga bi put na startu bio prazan, a gustina bi rasla prvih minut-dva,
+ * dok susretna vozila ne stignu od ivice prozora do igrača.
+ */
+function napuniTok(world: World, tp: TokPut, player: Vehicle): void {
+  const { tok, nivo } = tp;
+  const gdje = player.s;
+  const ispred = Math.min(gdje + LOAD_AHEAD, tp.nasa.length - KRAJ_PUTA);
+  const iza = Math.max(0, gdje - KEEP_BEHIND);
+  // Prvo vozilo ne stoji tačno na ivici prozora: početak se pomjeri za dio
+  // srednjeg razmaka, izvučen iz sjemena, da svaka vožnja ne počne istom slikom.
+  const pomak = izvlacenje(tok.seed, "s", -1)() * srednjiRazmak(nivo);
+  const prazan = (x: number): IzvorToka => ({
+    k: 0,
+    x,
+    v: tipicnaBrzina(tok.dionice, Math.max(0, x)),
+    duzina: VOZILA.auto.duzina,
+  });
+  world.tok = { susretni: prazan(iza - pomak), nas: { k: 0, t: 0 }, kamiona: 0 };
+
+  // Susretna traka, cijelom dužinom prozora.
+  const s = world.tok.susretni;
+  for (let i = 0; i < NAJVISE_NA_STARTU; i++) {
+    const iz = izvuci(tok.seed, tok.dionice, nivo, "s", s.k, s.x, s.duzina);
+    const duzina = VOZILA[iz.vrsta].duzina;
+    const cilj = s.x + iz.razmak;
+    if (cilj > ispred) break;
+    if (cilj < iza) {
+      pomjeriIzvor(s, cilj, tipicnaBrzina(tok.dionice, Math.max(0, cilj)), duzina);
+      continue;
+    }
+    const x = slobodnoMjesto(world, tp, 1, cilj, duzina, 1, ispred);
+    if (x === null) break;
+    pomjeriIzvor(s, x, pustiVozilo(world, tp, `tok-s-${s.k}`, 1, x, iz), duzina);
+  }
+
+  // Naš smjer: isto, samo što oko igrača ostaje prazno. Dalje ga, u toku vožnje,
+  // drži `regulisiNasSmjer`.
+  const nas = world.tok.nas;
+  let mjesto = iza - pomak;
+  let prethodna: number = VOZILA.auto.duzina;
+  for (let i = 0; i < NAJVISE_NA_STARTU; i++) {
+    const iz = izvuci(tok.seed, tok.dionice, nivo, "n", nas.k, mjesto, prethodna);
+    const id = `tok-n-${nas.k}`;
+    nas.k += 1;
+    const duzina = VOZILA[iz.vrsta].duzina;
+    const cilj = mjesto + iz.razmak;
+    if (cilj > ispred) break;
+    mjesto = cilj;
+    prethodna = duzina;
+    const kodIgraca =
+      cilj + duzina / 2 > gdje - player.length / 2 - PRAZNO_IZA &&
+      cilj - duzina / 2 < gdje + player.length / 2 + PRAZNO_ISPRED;
+    if (cilj < iza || kodIgraca) continue;
+    const x = slobodnoMjesto(world, tp, 0, cilj, duzina, 1, ispred);
+    if (x === null) break;
+    pustiVozilo(world, tp, id, 0, x, iz);
+    mjesto = x;
+  }
+}
+
+/** Koliko vozila u traci ima u prozoru gustine oko igrača, ne računajući igrača. */
+function uProzoruTrake(world: World, tp: TokPut, player: Vehicle, traka: 0 | 1): number {
+  const od = player.s - KEEP_BEHIND;
+  const doK = od + SAOBRACAJ_PROZOR;
+  let broj = 0;
+  for (const o of world.vehicles) {
+    if (o.id === player.id || o.done || world.t < o.spawnT || (o.lane ?? 0) !== traka) continue;
+    const x = naPutu(tp, o);
+    if (x >= od && x <= doK) broj += 1;
+  }
+  return broj;
+}
+
+/**
+ * Sredina najveće praznine u našoj traci između `od` i `doK` [m].
+ *
+ * Praznina se mjeri od branika do branika stvarnih vozila — i onih van zadatog
+ * dijela puta, da novo vozilo ne sjedne tik uz nekoga preko granice. `null` ako
+ * nijedna praznina nije dovoljna da novo vozilo sa obje strane ima odstojanje
+ * kakvo se drži u koloni.
+ */
+function najvecaPraznina(
+  world: World,
+  tp: TokPut,
+  od: number,
+  doK: number,
+  duzina: number,
+  brzina: number,
+): number | null {
+  if (doK <= od) return null;
+  const tijela = world.vehicles
+    .filter((o) => !o.done && world.t >= o.spawnT && (o.lane ?? 0) === 0)
+    .map((o) => {
+      const x = naPutu(tp, o);
+      return [x - o.length / 2, x + o.length / 2] as const;
+    })
+    .sort((a, b) => a[0] - b[0]);
+  let najveca = duzina + 2 * (FOLLOW_GAP + brzina * KOLONA_ODSTOJANJE[0]);
+  let najbolja: number | null = null;
+  let slobodnoOd = -Infinity;
+  for (let i = 0; i <= tijela.length; i++) {
+    const tijelo = tijela[i];
+    const lo = Math.max(slobodnoOd, od);
+    const hi = Math.min(tijelo ? tijelo[0] : Infinity, doK);
+    if (hi - lo >= najveca) {
+      najveca = hi - lo;
+      najbolja = (lo + hi) / 2;
+    }
+    if (tijelo) slobodnoOd = Math.max(slobodnoOd, tijelo[1]);
+  }
+  return najbolja;
+}
+
+/**
+ * Gustina našeg smjera: dopuni kad fali, skloni kad je previše. Zašto se naš
+ * smjer drži broja, a susretni teče sam, stoji u `sim/tok.ts`.
+ *
+ * Novo vozilo nastaje u najvećoj praznini ispred igrača, ali ne bliže od
+ * `UBACI_ISPRED` — van kadra i van dometa oznake, kao da je ušlo sa sporednog
+ * puta. Tek ako ispred nema mjesta, traži se iza, isto van dometa. Sklanja se
+ * vozilo toka najdalje od igrača, i to samo van tog istog dometa: ono što igrač
+ * vidi ili na što ga oznaka upozorava ne nestaje.
+ */
+function regulisiNasSmjer(world: World, tp: TokPut, player: Vehicle, cilj: number): void {
+  const nas = world.tok!.nas;
+  if (world.t - nas.t < SAOBRACAJ_POPRAVKA) return;
+  const broj = uProzoruTrake(world, tp, player, 0);
+  const gdje = player.s;
+  const od = gdje - KEEP_BEHIND;
+  const doK = Math.min(od + SAOBRACAJ_PROZOR, tp.nasa.length - KRAJ_PUTA);
+
+  if (broj < cilj - SAOBRACAJ_MANJAK) {
+    nas.t = world.t;
+    const iz = izvuci(tp.tok.seed, tp.tok.dionice, tp.nivo, "n", nas.k, gdje + UBACI_ISPRED, VOZILA.auto.duzina);
+    const duzina = VOZILA[iz.vrsta].duzina;
+    const brzina = tipicnaBrzina(tp.tok.dionice, gdje);
+    const x =
+      najvecaPraznina(world, tp, gdje + UBACI_ISPRED, doK, duzina, brzina) ??
+      najvecaPraznina(world, tp, Math.max(0, od), gdje - OZNAKA_DOMET_PUT, duzina, brzina);
+    if (x === null) return;
+    pustiVozilo(world, tp, `tok-n-${nas.k}`, 0, x, iz);
+    nas.k += 1;
+    return;
+  }
+
+  if (broj > cilj + SAOBRACAJ_VISAK) {
+    nas.t = world.t;
+    let najdalje: Vehicle | null = null;
+    let daljina = 0;
+    for (const o of world.vehicles) {
+      if (o.done || world.t < o.spawnT || (o.lane ?? 0) !== 0 || o.udioBrzine === undefined) continue;
+      const d = naPutu(tp, o) - gdje;
+      if (d < -KEEP_BEHIND || d > SAOBRACAJ_PROZOR - KEEP_BEHIND) continue;
+      if (d <= UBACI_ISPRED && d >= -OZNAKA_DOMET_PUT) continue;
+      if (Math.abs(d) > daljina) {
+        daljina = Math.abs(d);
+        najdalje = o;
+      }
+    }
+    if (najdalje) najdalje.done = true;
+  }
+}
+
+/**
+ * Tok saobraćaja u jednom koraku.
+ *
+ * Zamišljeno posljednje vozilo svakog izvora se pomjeri svojom brzinom, pa izvor
+ * pušta nova vozila dok između njega i ivice prozora ima praznine veće od
+ * sljedeće izvučene. Razlog zašto ovako, a ne po rasporedu, stoji u `sim/tok.ts`.
+ */
+function pustiTok(world: World, tp: TokPut, player: Vehicle): void {
+  const stanje = world.tok;
+  if (!stanje) return;
+  const { tok, nivo } = tp;
+  const gdje = player.s;
+  const ispred = Math.min(gdje + LOAD_AHEAD, tp.nasa.length - KRAJ_PUTA);
+  const [najmanje, najvise] = SAOBRACAJ_U_PROZORU[nivo];
+  // U prozoru se broje oba smjera, pa na jedan smjer ide polovina.
+  const ciljPoSmjeru = (najmanje + najvise) / 4;
+
+  // Susretni: zamišljeno posljednje vozilo ide nama u susret, a novo nastaje
+  // iza njega — dalje od nas.
+  const s = stanje.susretni;
+  s.x -= s.v * DT;
+  let susretnih = uProzoruTrake(world, tp, player, 1);
+  const krajProzora = gdje - KEEP_BEHIND + SAOBRACAJ_PROZOR;
+  for (let i = 0; i < NAJVISE_PO_KORAKU; i++) {
+    const iz = izvuci(tok.seed, tok.dionice, nivo, "s", s.k, s.x, s.duzina);
+    const duzina = VOZILA[iz.vrsta].duzina;
+    const x = slobodnoMjesto(world, tp, 1, s.x + iz.razmak, duzina, 1, ispred);
+    if (x === null) break;
+    // Previše susretnih u prozoru: zbiju se tamo gdje je put sporiji. Izvor tada
+    // vozilo preskoči — zamišljeno mjesto ide dalje, a vozila nema.
+    if (susretnih > ciljPoSmjeru + SAOBRACAJ_VISAK) {
+      pomjeriIzvor(s, x, tipicnaBrzina(tok.dionice, x), duzina);
+      continue;
+    }
+    pomjeriIzvor(s, x, pustiVozilo(world, tp, `tok-s-${s.k}`, 1, x, iz), duzina);
+    if (x <= krajProzora) susretnih += 1;
+  }
+
+  // Naš smjer se drži broja — vidi `regulisiNasSmjer`.
+  regulisiNasSmjer(world, tp, player, ciljPoSmjeru);
+
+  // Kamion na planinskom putu: pojavi se ispred igrača, van kadra.
+  while (stanje.kamiona < tok.kamioni.length && gdje >= tok.kamioni[stanje.kamiona]!) {
+    const k = stanje.kamiona;
+    stanje.kamiona += 1;
+    const cilj = gdje + KAMION_ISPRED;
+    // Kamion koji već vozi ispred je dovoljan: zadatak je da se jedan prati ili
+    // pretekne, a ne da se nanižu jedan za drugim.
+    const vecIma = world.vehicles.some(
+      (o) =>
+        !o.done &&
+        world.t >= o.spawnT &&
+        (o.lane ?? 0) === 0 &&
+        o.vrsta === "kamion" &&
+        naPutu(tp, o) > gdje &&
+        naPutu(tp, o) < cilj + 2 * KAMION_ISPRED,
+    );
+    if (vecIma) continue;
+    const iz = izvuci(tok.seed, tok.dionice, nivo, "k", k, cilj, VOZILA.auto.duzina);
+    const x = slobodnoMjesto(world, tp, 0, cilj, VOZILA.kamion.duzina, 1, ispred);
+    if (x !== null) pustiVozilo(world, tp, `tok-k-${k}`, 0, x, iz);
+  }
+}
 
 /**
  * Poslije koliko sekundi se scenario prekida.

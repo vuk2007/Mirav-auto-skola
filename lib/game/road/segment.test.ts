@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { perfectBot, run } from "../sim/bots";
-import { ONCOMING_GAP, TRIP_SEGMENT_TIME } from "../sim/config";
+import { TRIP_SEGMENT_TIME } from "../sim/config";
 import { compile } from "../sim/intersection";
 import { lanePathId } from "../sim/highway";
 import { curvatureAt } from "../sim/road";
@@ -37,7 +37,7 @@ const poPropisu =
   };
 
 /** Ista dionica bez ijednog vozila — za mjere koje se tiču puta, ne saobraćaja. */
-const prazna = (s: Scenario): Scenario => ({ ...s, npcs: [] });
+const prazna = (s: Scenario): Scenario => ({ ...s, npcs: [], tok: undefined });
 
 describe("šablon dionice", () => {
   it("traje četiri minuta po dozvoljenoj brzini, koliko god ivica bila duga", () => {
@@ -220,14 +220,20 @@ describe("vožnja dionicom", () => {
       const s = dionica(e, 11);
       const tpl = s.template as RoadTemplate;
       expect(compile(tpl).paths.size, e.id).toBe(2);
-      expect(s.npcs.length, e.id).toBeGreaterThan(20);
-      for (const n of s.npcs) {
-        expect(n.spawnAt[0], e.id).toBeLessThan(TRIP_SEGMENT_TIME);
-        expect(n.startS ?? 0, e.id).toBeLessThanOrEqual(tpl.length);
-        expect(n.speed, e.id).toBeGreaterThan(0);
+      // Saobraćaj je opis toka koji pokriva cijelu dionicu; planinska dobija i
+      // zagarantovan kamion, ostale ne.
+      expect(s.tok?.dionice, e.id).toEqual([
+        { od: 0, do: tpl.length, vrsta: e.kind === "planinski" ? "planinski" : "put", vMax: tpl.vMax },
+      ]);
+      expect((s.tok?.kamioni.length ?? 0) > 0, e.id).toBe(e.kind === "planinski");
+      // Svijet mora da se sastavi — tu puca sve što fali putanjama — i već na
+      // startu nosi saobraćaj oko igrača.
+      const world = createWorld(s, 11);
+      expect(world.vehicles.length, e.id).toBeGreaterThan(3);
+      for (const v of world.vehicles) {
+        expect(v.s >= 0 && v.s <= tpl.length * 1.05, `${e.id} ${v.id}`).toBe(true);
+        expect(v.v, `${e.id} ${v.id}`).toBeGreaterThanOrEqual(0);
       }
-      // Svijet mora da se sastavi — tu puca sve što fali putanjama.
-      expect(createWorld(s, 11).vehicles.length).toBe(s.npcs.length + 1);
     }
   });
 
@@ -245,7 +251,9 @@ describe("vožnja dionicom", () => {
       if (!ja) break;
       const predjeno = ja.s;
       for (const v of world.vehicles) {
-        if (v.kind !== "npc" || bilo.has(v.id)) continue;
+        // Mimoilazi se samo susretno vozilo; ono što ide u našem smjeru se
+        // pretiče ili prati.
+        if (v.kind !== "npc" || v.lane !== 1 || bilo.has(v.id)) continue;
         // Susretno vozilo ide unazad po našoj kilometraži: mimoilaženje je
         // trenutak kad mu je preostali put jednak našem pređenom.
         const njegovo = tpl.length - v.s;
@@ -256,12 +264,15 @@ describe("vožnja dionicom", () => {
       }
     }
 
-    expect(mimoilazenja.length).toBeGreaterThan(20);
+    // Na drugom nivou je oko šest susretnih na dva kilometra, i dolaze u
+    // kolonama — pa jedna dionica od četiri minuta ima između petnaest i
+    // trideset mimoilaženja, zavisno od toga koliko kolona naiđe.
+    expect(mimoilazenja.length).toBeGreaterThan(12);
     const prvo = mimoilazenja[0] ?? 0;
     const zadnje = mimoilazenja[mimoilazenja.length - 1] ?? 0;
-    // Prvo mimoilaženje ne može biti odmah: susretno vozilo se sada rađa na
-    // ivici prozora, dva kilometra ispred, pa do susreta treba pola minuta.
-    expect(prvo).toBeLessThan(ONCOMING_GAP * 8);
+    // Prvo mimoilaženje dolazi brzo: saobraćaj već postoji u prozoru kad vožnja
+    // počne, pa se ne čeka da prvo susretno vozilo stigne sa ivice prozora.
+    expect(prvo).toBeLessThan(30);
     expect(zadnje).toBeGreaterThan(TRIP_SEGMENT_TIME * 0.85);
   });
 });

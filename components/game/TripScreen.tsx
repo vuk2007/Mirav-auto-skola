@@ -9,7 +9,7 @@ import {
   type RoadKind,
   type Smjer,
 } from "@/lib/game/road/roadGraph";
-import { CITY_LEVEL, SHIFT_VIEW_HALF } from "@/lib/game/sim/config";
+import { CITY_LEVEL, SAOBRACAJ_NIVO, SHIFT_VIEW_HALF, type Level } from "@/lib/game/sim/config";
 import { generateSegment } from "@/lib/game/shift/generate";
 import type { PokazivaciRezim, RoadTemplate, ViolationType } from "@/lib/game/sim/types";
 import { pokazivacSvijetli } from "@/lib/game/ui/draw";
@@ -29,10 +29,19 @@ import {
   type TripState,
 } from "@/lib/game/trip/trip";
 import type { Dict } from "@/lib/i18n";
-import { clearTrip, loadPokazivaci, loadTrip, savePokazivaci, saveTrip } from "@/lib/storage";
+import {
+  clearTrip,
+  loadPokazivaci,
+  loadSaobracaj,
+  loadTrip,
+  savePokazivaci,
+  saveSaobracaj,
+  saveTrip,
+} from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import DriveControls from "./DriveControls";
 import PokazivaciIzbor from "./PokazivaciIzbor";
+import SaobracajIzbor from "./SaobracajIzbor";
 import TripMap from "./TripMap";
 import { useVolan } from "./useVolan";
 
@@ -68,6 +77,13 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
   const promijeniPokazivace = useCallback((rezim: PokazivaciRezim) => {
     setPokazivaci(rezim);
     savePokazivaci(rezim);
+  }, []);
+  /** Gustina saobraćaja na dionicama — pamti se isto kao i pokazivači. */
+  const [saobracaj, setSaobracaj] = useState<Level>(SAOBRACAJ_NIVO);
+  useEffect(() => setSaobracaj(loadSaobracaj()), []);
+  const promijeniSaobracaj = useCallback((nivo: Level) => {
+    setSaobracaj(nivo);
+    saveSaobracaj(nivo);
   }, []);
   // Cijelo putovanje se vozi volanom — i dionica i raskrsnica kroz grad.
   const volan = useVolan(true, { pokazivacRukom: pokazivaci === "rucni" });
@@ -120,8 +136,8 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
         pokazivaci,
       };
     }
-    return { ...dionicaZa(trip, edge), pokazivaci };
-  }, [trip, edge, grad, phase, pokazivaci]);
+    return { ...dionicaZa(trip, edge, saobracaj), pokazivaci };
+  }, [trip, edge, grad, phase, pokazivaci, saobracaj]);
   const runner = useMemo(() => {
     // `pokusaj` ulazi ovdje samo da bi poslije sudara nastao NOV svijet.
     // Sjeme ostaje 1, pa se ponavlja ista situacija — mijenja se stanje, ne
@@ -250,6 +266,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
           </label>
 
           <PokazivaciIzbor vrijednost={pokazivaci} promijeni={promijeniPokazivace} t={t} />
+          <SaobracajIzbor vrijednost={saobracaj} promijeni={promijeniSaobracaj} t={t} />
 
           <h2 className="font-display mt-4 text-sm font-bold tracking-wide uppercase">
             {t.tripPickStart}

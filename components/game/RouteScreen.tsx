@@ -15,11 +15,13 @@ import { VIOLATION_LABEL } from "@/lib/game/ui/labels";
 import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import type { Dict } from "@/lib/i18n";
-import { loadPokazivaci, savePokazivaci } from "@/lib/storage";
+import { SAOBRACAJ_NIVO, type Level } from "@/lib/game/sim/config";
+import { loadPokazivaci, loadSaobracaj, savePokazivaci, saveSaobracaj } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import MiniMapa from "./MiniMapa";
 import DriveControls from "./DriveControls";
 import PokazivaciIzbor from "./PokazivaciIzbor";
+import SaobracajIzbor from "./SaobracajIzbor";
 import { useVolan } from "./useVolan";
 
 /**
@@ -129,6 +131,13 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
     setPokazivaci(rezim);
     savePokazivaci(rezim);
   }, []);
+  /** Gustina saobraćaja na putu — pamti se isto kao i pokazivači. */
+  const [saobracaj, setSaobracaj] = useState<Level>(SAOBRACAJ_NIVO);
+  useEffect(() => setSaobracaj(loadSaobracaj()), []);
+  const promijeniSaobracaj = useCallback((nivo: Level) => {
+    setSaobracaj(nivo);
+    saveSaobracaj(nivo);
+  }, []);
   // Ruta se vozi volanom: putanja je traka, ne šina.
   const volan = useVolan(true, { pokazivacRukom: pokazivaci === "rucni" });
   const sound = useMemo(() => createSound(), []);
@@ -157,8 +166,8 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
   const zadnji = useRef(0);
 
   const scenario = useMemo(
-    () => (ruta ? { ...rutaScenario(ruta, 1), pokazivaci } : null),
-    [ruta, pokazivaci],
+    () => (ruta ? { ...rutaScenario(ruta, 1, saobracaj), pokazivaci } : null),
+    [ruta, pokazivaci, saobracaj],
   );
   const runner = useMemo(() => {
     // `pokusaj` je ovdje da bi poslije sudara nastao NOV svijet — ista ruta,
@@ -344,6 +353,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
         </div>
 
         <PokazivaciIzbor vrijednost={pokazivaci} promijeni={promijeniPokazivace} t={t} />
+        <SaobracajIzbor vrijednost={saobracaj} promijeni={promijeniSaobracaj} t={t} />
 
         {ruta && faza !== "priprema" && (
           <p className="mt-3 text-sm text-muted">

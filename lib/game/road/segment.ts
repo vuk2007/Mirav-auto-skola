@@ -9,46 +9,34 @@
  * Krivine dolaze iz `curvesFor` i preslikavaju se srazmjerno: krivina na 30.
  * kilometru šezdesetokilometarske ivice ostaje na pola dionice.
  *
- * Šta ovdje NEMA i zašto: nema sporijih vozila u našoj traci. Dok preticanje
- * nije napravljeno, jedno takvo vozilo bi značilo tri minuta vožnje iza njega
- * bez ijednog ispravnog poteza — a pravilo je da svaka situacija mora imati
- * rješenje. Vraćaju se zajedno sa preticanjem.
+ * Saobraćaj se ovdje ne pravi nego OPISUJE (`TokSaobracaja`): vozila nastaju u
+ * toku vožnje, oko igrača, po nivou koji je igrač izabrao. Vidi `sim/tok.ts`.
  */
 
 import {
-  ONCOMING_GAP,
-  SLOW_GAP,
-  SLOW_SHARE,
   ROAD_LATERAL_ACCEL,
   ROAD_TURN_MAX,
   ROAD_TURN_MIN,
+  SAOBRACAJ_NIVO,
   TRIP_SEGMENT_TIME,
   ROAD_LANE_WIDTH,
   ROAD_VIEW_HALF,
 } from "../sim/config";
 import { rng } from "../sim/geometry";
+import { zagarantovaniKamioni } from "../sim/tok";
 import { zabraneNaPutu } from "./zabrane";
 import type { Level } from "../sim/config";
 import type {
+  DionicaToka,
   RoadCurve,
   RoadLandmark,
   RoadTemplate,
   Scenario,
-  ScenarioNpc,
 } from "../sim/types";
 import { landmarksOnEdge } from "./landmarks";
 import { osovina, type EdgeGeometry } from "./edgeGeometry";
 import { sabijenaIvica, type Sabijeno } from "./sabijanje";
 import { curvesFor, type RoadEdge, type RoadKind, nodeById } from "./roadGraph";
-
-/** Koliko je dionica teška — dok nema pravila, ovo samo bira gustinu. */
-const TEZINA: Record<RoadKind, Level> = {
-  autoput: 2,
-  magistrala: 2,
-  regionalni: 2,
-  planinski: 3,
-  gradski: 2,
-};
 
 /** Kratak opis dionice po vrsti puta, na sva četiri jezika. */
 const OPIS: Record<RoadKind, Record<string, string>> = {
@@ -213,90 +201,29 @@ export function roadTemplate(
 }
 
 /**
- * Sporija vozila u našoj traci — nešto što se ima preteći.
- *
- * Postavljaju se tako da ih igrač sustigne otprilike u trenutku `kada`: nastaju
- * unaprijed i voze svojom brzinom, pa ne iskrsnu pred haubom.
- */
-function spora(tpl: RoadTemplate, seed: number): ScenarioNpc[] {
-  const r = rng((seed ^ 0x51ed270b) >>> 0);
-  const out: ScenarioNpc[] = [];
-  const v = tpl.vMax;
-  const trajanje = tpl.length / v;
-  for (let t = SLOW_GAP; t < trajanje; t += SLOW_GAP) {
-    const kada = t + (r() - 0.5) * SLOW_GAP * 0.4;
-    const mjesto = v * kada;
-    if (mjesto > tpl.length) continue;
-    const vs = v * SLOW_SHARE * (0.9 + r() * 0.2);
-    const cilj = mjesto + 30;
-    let spawnT = Math.max(0, kada - 60);
-    let startS = cilj - vs * (kada - spawnT);
-    if (startS < 0) {
-      startS = 0;
-      spawnT = Math.max(0, kada - cilj / Math.max(1, vs));
-    }
-    out.push({
-      arm: "N",
-      intent: { kind: "lane", index: 0 },
-      startS,
-      spawnAt: [spawnT, spawnT],
-      speed: vs,
-    });
-  }
-  return out;
-}
-
-/**
- * Susretna kolona.
- *
- * Za svaki željeni trenutak mimoilaska se računa gdje vozilo mora početi:
- * ako stane u dionicu, kreće odmah sa udaljenijeg kraja, a ako ne stane —
- * dionica je kraća od toga — kreće sa kraja, ali kasnije. Bez ovog računa se
- * susretna vozila skupe u prvoj polovini puta i druga dva minuta su prazna.
- */
-function susretna(tpl: RoadTemplate, seed: number): ScenarioNpc[] {
-  const r = rng((seed ^ 0x9e3779b9) >>> 0);
-  const v = tpl.vMax;
-  const out: ScenarioNpc[] = [];
-  // Koliko dionica traje NIJE više uvijek `TRIP_SEGMENT_TIME`: sa stvarnom
-  // geometrijom dužina zavisi od puta. Susretna kolona mora da prati to
-  // trajanje, inače na dugoj dionici ostane praznih deset minuta.
-  const trajanje = tpl.length / v;
-  for (let t = ONCOMING_GAP; t < trajanje; t += ONCOMING_GAP) {
-    // Razmak se malo koleba, da kolona ne bude metronom.
-    const kada = t + (r() - 0.5) * ONCOMING_GAP * 0.6;
-    const naDionici = tpl.length - 2 * v * kada;
-    const startS = Math.max(0, naDionici);
-    const spawnT = naDionici >= 0 ? 0 : 2 * kada - trajanje;
-    if (spawnT >= trajanje) continue;
-    out.push({
-      arm: "S",
-      intent: { kind: "lane", index: 1 },
-      startS,
-      spawnAt: [Math.max(0, spawnT), Math.max(0, spawnT)],
-      speed: v * (0.85 + r() * 0.15),
-    });
-  }
-  return out;
-}
-
-/**
  * Dionica kao scenario.
  *
  * `obrnuto` je vožnja od `b` prema `a`: geometrija je ista, ali znamenitosti
- * dolaze obrnutim redom i sa druge strane puta.
+ * dolaze obrnutim redom i sa druge strane puta. `nivo` bira gustinu saobraćaja
+ * (`SAOBRACAJ_U_PROZORU`).
  */
 export function dionica(
   edge: RoadEdge,
   seed: number,
   obrnuto = false,
   geom?: EdgeGeometry,
+  nivo: Level = SAOBRACAJ_NIVO,
 ): Scenario {
   const tpl = roadTemplate(edge, seed, obrnuto, geom);
   const naziv = nazivDionice(edge, obrnuto);
   const opis = OPIS[edge.kind];
   const naslov: Record<string, string> = {};
   for (const jezik of Object.keys(opis)) naslov[jezik] = naziv;
+  // Dionica je jedna vrsta puta cijelom dužinom: grad je u putovanju zasebna
+  // vožnja kroz raskrsnice, a ne dio dionice.
+  const dionice: DionicaToka[] = [
+    { od: 0, do: tpl.length, vrsta: edge.kind === "planinski" ? "planinski" : "put", vMax: tpl.vMax },
+  ];
 
   return {
     id: `dionica:${edge.id}${obrnuto ? ":obrnuto" : ""}`,
@@ -310,10 +237,11 @@ export function dionica(
       // Kreće se u vožnji, ne iz mjesta: dionica je sredina puta, ne polazak.
       startV: tpl.vMax * 0.8,
     },
-    npcs: [...susretna(tpl, seed), ...spora(tpl, seed)],
+    npcs: [],
+    tok: { seed: (seed ^ 0x51ed270b) >>> 0, dionice, kamioni: zagarantovaniKamioni(dionice) },
     // Na otvorenom putu se vozi volanom: dionica ima trake, ne šinu.
     upravljanje: "traka",
-    difficulty: TEZINA[edge.kind],
+    difficulty: nivo,
     title: naslov,
     explanation: opis,
   };

@@ -25,6 +25,7 @@ import {
   HORIZONT_UGAO,
   KAMERA_TETIVA,
   LANDMARK_SIZE,
+  OZNAKA_DOMET_PUT,
   ROAD_STEP,
   STEER_TILT,
   ROUTE_STEP,
@@ -1569,6 +1570,12 @@ export function drawScene(
   if (naredba) drawOfficer(ctx, v, naredba);
 
   const blinkOn = pokazivacSvijetli(world.t);
+  // Na otvorenom putu se oznake na ivici kadra ne crtaju odmah nego se skupe, pa
+  // se nacrta po jedna — za najbliže vozilo van kadra u svakoj traci, ispred i
+  // iza. Vidi `OZNAKA_DOMET_PUT`.
+  const naPutu = tpl.kind === "road";
+  const sIgraca = player ? renderS(runner, player.id, player.s) : 0;
+  const oznake = new Map<string, { daljina: number; pos: Point; heading: Point; color: string }>();
 
   for (const veh of world.vehicles) {
     const path = paths.get(veh.pathId);
@@ -1598,6 +1605,16 @@ export function drawScene(
     // koji njegov komad.
     const tijelo = tijeloVozila(tpl, path, stanje);
     if (!tijelo.some((d) => inFrame(v, d.pos))) {
+      if (naPutu && !isPlayer) {
+        // Susretna traka je okrenuta, pa se njeno `s` prevodi na mjesto na putu.
+        const x = veh.lane === 1 ? path.length - stanje.s : stanje.s;
+        const daljina = Math.abs(x - sIgraca);
+        if (daljina > OZNAKA_DOMET_PUT) continue;
+        const kljuc = `${veh.lane ?? 0}${x >= sIgraca ? "+" : "-"}`;
+        const bila = oznake.get(kljuc);
+        if (!bila || daljina < bila.daljina) oznake.set(kljuc, { daljina, pos, heading, color });
+        continue;
+      }
       // I igrač dobija oznaku: na dužem prilazu je na startu van kadra, pa bi
       // inače prvih par sekundi vozio nevidljiv.
       drawEdgeMarker(ctx, v, pos, heading, isPlayer ? PALETTE.blue : color);
@@ -1611,6 +1628,8 @@ export function drawScene(
       highlight: opts.flagVehicleId === veh.id ? PALETTE.red : isPlayer ? PALETTE.paint : null,
     });
   }
+
+  for (const o of oznake.values()) drawEdgeMarker(ctx, v, o.pos, o.heading, o.color);
 }
 
 /** NPC koči ako mu je brzina pala u odnosu na prethodni korak. */

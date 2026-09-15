@@ -213,7 +213,12 @@ describe("dionica putovanja", () => {
         const t = startTrip(od, 3);
         const s = dionicaZa(t, e);
         expect(s.template, e.id).toBeTruthy();
-        expect(s.npcs.length, e.id).toBeGreaterThan(0);
+        // Saobraćaj se ne pravi unaprijed nego teče oko igrača — dionica nosi
+        // njegov opis, i on mora pokriti cijeli put.
+        const duzina = s.template && "length" in s.template ? s.template.length : 0;
+        expect(s.tok?.dionice, e.id).toHaveLength(1);
+        expect(s.tok?.dionice[0]?.od, e.id).toBe(0);
+        expect(s.tok?.dionice[0]?.do, e.id).toBeCloseTo(duzina, 6);
         expect(otherEnd(e, od), e.id).toBe(od === e.a ? e.b : e.a);
       }
     }

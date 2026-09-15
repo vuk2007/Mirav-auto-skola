@@ -168,6 +168,8 @@ export interface Dict {
   gameIndicatorAutoShort: string;
   gameIndicatorAutoHint: string;
   gameIndicatorManualHint: string;
+  gameTrafficLevel: string;
+  gameTrafficHint: string;
   gameMinor: string;
   gameHazardTitle: string;
   gameHazardYielded: string;
@@ -547,6 +549,9 @@ const me: Dict = {
     "Pokazivač se pali sam, tačno kad treba — pratite kad. Greške pokazivača se ne računaju.",
   gameIndicatorManualHint:
     "Pokazivač palite sami: tasteri Q i E ili dugmad pored volana. Greške se računaju, i pri preticanju.",
+  gameTrafficLevel: "Saobraćaj na putu",
+  gameTrafficHint:
+    "1 — rijedak, 5 — gust. Važi za otvoren put i ulice na ruti; raskrsnice kroz grad u putovanju ostaju iste.",
   gameMinor: "blaga greška",
   gameHazardTitle: "Neko nije poštovao pravila",
   gameHazardYielded:
@@ -920,6 +925,9 @@ const en: Dict = {
     "The indicator switches on by itself, exactly when it should — watch when. Indicator mistakes are not counted.",
   gameIndicatorManualHint:
     "You switch the indicator on yourself: the Q and E keys or the buttons next to the steering. Mistakes count, overtaking included.",
+  gameTrafficLevel: "Traffic on the road",
+  gameTrafficHint:
+    "1 — light, 5 — heavy. Applies to the open road and to route streets; town junctions on a trip stay the same.",
   gameMinor: "minor fault",
   gameHazardTitle: "Someone broke the rules",
   gameHazardYielded:
@@ -1298,6 +1306,9 @@ const sq: Dict = {
     "Treguesi ndizet vetë, pikërisht kur duhet — vini re kur. Gabimet me treguesin nuk llogariten.",
   gameIndicatorManualHint:
     "Treguesin e ndizni vetë: tastet Q dhe E ose butonat pranë timonit. Gabimet llogariten, edhe gjatë tejkalimit.",
+  gameTrafficLevel: "Trafiku në rrugë",
+  gameTrafficHint:
+    "1 — i rrallë, 5 — i dendur. Vlen për rrugën e hapur dhe rrugët e itinerarit; kryqëzimet në qytet gjatë udhëtimit mbeten të njëjta.",
   gameMinor: "gabim i lehtë",
   gameHazardTitle: "Dikush nuk i respektoi rregullat",
   gameHazardYielded:
@@ -1678,6 +1689,9 @@ const ru: Dict = {
     "Указатель включается сам, именно тогда, когда нужно, — следите, когда. Ошибки с указателем не засчитываются.",
   gameIndicatorManualHint:
     "Указатель включаете вы: клавиши Q и E или кнопки рядом с рулём. Ошибки засчитываются, в том числе при обгоне.",
+  gameTrafficLevel: "Движение на дороге",
+  gameTrafficHint:
+    "1 — редкое, 5 — плотное. Действует на открытой дороге и на улицах маршрута; перекрёстки в городе во время поездки не меняются.",
   gameMinor: "лёгкая ошибка",
   gameHazardTitle: "Кто-то нарушил правила",
   gameHazardYielded:

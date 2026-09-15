@@ -401,6 +401,14 @@ export interface Vehicle {
    * kaznila baš za ono što je ispravno uradio.
    */
   reckless?: boolean;
+  /**
+   * Vozilo toka: koliki dio dozvoljene brzine drži. Ograničenje se duž rute
+   * mijenja, pa brzina ne može biti jedan broj kao `cruise`. Vozila zadata u
+   * scenariju ovo nemaju.
+   */
+  udioBrzine?: number;
+  /** Najveća brzina bez obzira na ograničenje [m/s] — kamion na planinskom putu. */
+  kapaBrzine?: number;
 }
 
 /**
@@ -513,6 +521,44 @@ export interface ScenarioHazard {
 /** Ko pali pokazivač igrača — vidi `Scenario.pokazivaci`. */
 export type PokazivaciRezim = "auto" | "rucni";
 
+/** Dionica puta u opisu saobraćaja: odakle dokle, kakav je put i koliko se smije. */
+export interface DionicaToka {
+  /** Početak i kraj, u metrima naše trake. */
+  od: number;
+  do: number;
+  /** Po ovome se bira mješavina vozila (`MJESAVINA`). */
+  vrsta: "put" | "planinski" | "grad";
+  /** Dozvoljena brzina [m/s]. */
+  vMax: number;
+}
+
+/**
+ * Saobraćaj na otvorenom putu, kao opis — ne kao spisak vozila.
+ *
+ * Vozila se ne prave unaprijed nego u toku vožnje, na ivicama prozora oko
+ * igrača, iz ovog opisa i nivoa scenarija. Vidi `lib/game/sim/tok.ts`.
+ */
+export interface TokSaobracaja {
+  /** Sjeme iz kojeg se izvlači svako vozilo, po izvoru i rednom broju. */
+  seed: number;
+  /** Dionice puta, poređane i bez rupa. */
+  dionice: DionicaToka[];
+  /** Mjesta na putu na kojima se ispred igrača pojavi kamion [m], poređana. */
+  kamioni: number[];
+}
+
+/** Stanje jednog izvora toka — vidi `pustiTok` u `world.ts`. */
+export interface IzvorToka {
+  /** Redni broj sljedećeg vozila iz ovog izvora. */
+  k: number;
+  /** Zamišljeno mjesto posljednjeg vozila na putu [m]. */
+  x: number;
+  /** Brzina kojom se to zamišljeno mjesto pomjera [m/s]. */
+  v: number;
+  /** Dužina posljednjeg vozila [m] — po njoj se računa razmak u koloni. */
+  duzina: number;
+}
+
 export interface Scenario {
   id: string;
   intersection: string;
@@ -564,6 +610,13 @@ export interface Scenario {
    * scenariju iz istog razloga kao i `upravljanje`: to je ulaz, ne stanje.
    */
   pokazivaci?: PokazivaciRezim;
+  /**
+   * Saobraćaj na otvorenom putu, kao opis toka.
+   *
+   * Stoji u scenariju iz istog razloga kao i `npcs`: to je ulaz u simulaciju.
+   * Vozila iz `npcs` se i dalje prave tačno kako su zadata — tok im se dodaje.
+   */
+  tok?: TokSaobracaja;
   /**
    * Zamjena za `INDICATOR_RULES`, samo za testove.
    *
@@ -713,6 +766,22 @@ export interface World {
    * zakočio poslije toga. `null` znači da još nije zakočio.
    */
   reaction: { at: number; kind: HazardKind; brakedAt: number | null }[];
+  /**
+   * Dokle je stigao tok saobraćaja: po izvoru redni broj sljedećeg vozila i
+   * zamišljeno mjesto posljednjeg. Postoji samo kad scenario ima `tok` — vidi
+   * `pustiTok` u `world.ts`.
+   */
+  tok?: {
+    /** Susretni tok: izvor na daljoj ivici prozora. */
+    susretni: IzvorToka;
+    /**
+     * Naš smjer: redni broj sljedećeg vozila i kad je gustina posljednji put
+     * popravljena [s] — naš smjer se drži broja, vidi `regulisiNasSmjer`.
+     */
+    nas: { k: number; t: number };
+    /** Koliko je zagarantovanih kamiona već prošlo — poslatih ili preskočenih. */
+    kamiona: number;
+  };
 }
 
 export interface IndicatorEvent {

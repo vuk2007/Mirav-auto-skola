@@ -1,6 +1,12 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { KEEP_BEHIND, LOAD_AHEAD, ROAD_STEP } from "@/lib/game/sim/config";
+import {
+  KEEP_BEHIND,
+  LOAD_AHEAD,
+  ROAD_STEP,
+  SAOBRACAJ_NIVO,
+  SAOBRACAJ_U_PROZORU,
+} from "@/lib/game/sim/config";
 import { perfectBot } from "@/lib/game/sim/bots";
 import { compile } from "@/lib/game/sim/intersection";
 import { createWorld, PLAYER_ID, poseOn, step } from "@/lib/game/sim/world";
@@ -15,7 +21,7 @@ import {
   vMaxNaprijed,
   type Ruta,
 } from "@/lib/game/world/ruta";
-import { rutaScenario, uProzoru, vrijemeDo } from "@/lib/game/world/svijet";
+import { rutaScenario, uProzoru, uProzoruGustine, vrijemeDo } from "@/lib/game/world/svijet";
 
 /**
  * Svijet kao jedan koordinatni sistem.
@@ -96,6 +102,8 @@ interface Voznja {
   imaNaN: boolean;
   najviseNPC: number;
   vanProzora: number;
+  /** Prosječan broj vozila u prozoru gustine na posljednjoj trećini rute. */
+  gustinaNaKraju: number;
   prekrsaji: string[];
 }
 
@@ -112,6 +120,7 @@ function provozaj(r: Ruta, seed = 1, zadati?: Scenario): Voznja {
   let imaNaN = false;
   let najviseNPC = 0;
   let vanProzora = 0;
+  const naKraju: number[] = [];
   let koraka = 0;
 
   while (world.outcome === "running" && koraka < 800000) {
@@ -135,6 +144,8 @@ function provozaj(r: Ruta, seed = 1, zadati?: Scenario): Voznja {
       const u = uProzoru(world, r);
       najviseNPC = Math.max(najviseNPC, u.aktivnih);
       vanProzora = Math.max(vanProzora, u.aktivnih - u.uProzoru);
+      const g = uProzoruGustine(world, tpl);
+      if (g.cijeli && igrac.s > (r.duzina * 2) / 3) naKraju.push(g.vozila);
     }
   }
 
@@ -145,6 +156,7 @@ function provozaj(r: Ruta, seed = 1, zadati?: Scenario): Voznja {
     imaNaN,
     najviseNPC,
     vanProzora,
+    gustinaNaKraju: naKraju.length > 0 ? naKraju.reduce((a, b) => a + b, 0) / naKraju.length : 0,
     prekrsaji: world.violations.map((v) => v.type),
   };
 }
@@ -237,6 +249,17 @@ describe("vožnja bez prekida", { timeout: 300000 }, () => {
     }
   });
 
+  it("saobraćaja ima i na posljednjoj trećini rute, u gustini nivoa", () => {
+    // Tok se ne smije potrošiti na početku: i pred kraj rute u prozoru mora biti
+    // onoliko vozila koliko nivo traži. Pojas je širi od ciljanog jer se mjeri
+    // na trećini jedne vožnje, a ne na prosjeku mnogo njih.
+    const [najmanje, najvise] = SAOBRACAJ_U_PROZORU[SAOBRACAJ_NIVO];
+    for (const { a, b, v } of voznje) {
+      expect(v.gustinaNaKraju, `${a}-${b}`).toBeGreaterThan(najmanje * 0.7);
+      expect(v.gustinaNaKraju, `${a}-${b}`).toBeLessThan(najvise * 1.3);
+    }
+  });
+
   it("nema skoka pozicije većeg od metra između dva koraka", () => {
     // Ovo je mjera neprekidnosti svijeta. Skok bi značio da se koordinate negdje
     // resetuju — tačno ono zbog čega je ranije između dionica bio ekran.
@@ -255,7 +278,7 @@ describe("vožnja bez prekida", { timeout: 300000 }, () => {
     // Otkad u našoj traci ima sporijih vozila, vožnja iza njih traje duže — i
     // to je tačno, ali to više nije mjera sabijanja.
     const r = ruta("budva", "kolasin");
-    const prazna = { ...rutaScenario(r, 1), npcs: [] };
+    const prazna = { ...rutaScenario(r, 1), npcs: [], tok: undefined };
     const v = provozaj(r, 1, prazna);
     expect(v.vrijeme / 60).toBeGreaterThan(15);
     expect(v.vrijeme / 60).toBeLessThan(20);
@@ -264,7 +287,7 @@ describe("vožnja bez prekida", { timeout: 300000 }, () => {
   it("saobraćaj usporava vožnju, ali je ne zaustavlja", () => {
     const budva = voznje.find((x) => x.a === "budva")!;
     const r = ruta("budva", "kolasin");
-    const prazna = provozaj(r, 1, { ...rutaScenario(r, 1), npcs: [] });
+    const prazna = provozaj(r, 1, { ...rutaScenario(r, 1), npcs: [], tok: undefined });
     // Iza sporijih vozila se vozi duže, ali ne dvostruko: ko ne pretiče, plaća
     // vremenom. Preticanje dolazi sa botom koji ga zna.
     expect(budva.v.vrijeme).toBeGreaterThan(prazna.vrijeme);
@@ -296,7 +319,7 @@ describe("prozor oko igrača", { timeout: 300000 }, () => {
   });
 });
 
-describe("raspored susretnog saobraćaja", () => {
+describe("saobraćaj na ruti", () => {
   it("vrijeme do kraja rute je zbir vremena po dionicama", () => {
     const r = ruta("herceg-novi", "rozaje");
     const zbir = r.dionice.reduce((a, d) => a + (d.doS - d.odS) / d.vMax, 0);
@@ -304,17 +327,33 @@ describe("raspored susretnog saobraćaja", () => {
     expect(vrijemeDo(r, 0)).toBe(0);
   });
 
-  it("kolona pokriva cijelu rutu, ne samo početak", () => {
-    const r = ruta("ulcinj", "pljevlja");
-    const s = rutaScenario(r, 1);
-    const kasni = s.npcs.filter((n) => n.spawnAt[0] > vrijemeDo(r, r.duzina) * 0.7);
-    expect(kasni.length).toBeGreaterThan(10);
+  it("opis toka pokriva cijelu rutu, bez rupe, sa ograničenjem svake dionice", () => {
+    // Saobraćaj se više ne pravi unaprijed: nastaje oko igrača, iz ovog opisa.
+    // Rupa u opisu bi značila komad rute na kojem ne zna koja je vrsta puta.
+    const r = rutaSaGradovima("ulcinj", "pljevlja");
+    const dionice = rutaScenario(r, 1).tok!.dionice;
+    expect(dionice).toHaveLength(r.dionice.length);
+    expect(dionice[0]!.od).toBe(0);
+    expect(dionice[dionice.length - 1]!.do).toBeCloseTo(r.duzina, 6);
+    dionice.forEach((d, i) => {
+      if (i > 0) expect(d.od).toBeCloseTo(dionice[i - 1]!.do, 6);
+      expect(d.vMax).toBeCloseTo(r.dionice[i]!.vMax, 9);
+      expect(d.vrsta === "grad").toBe(r.dionice[i]!.vrsta === "grad");
+    });
   });
 
   it("isto sjeme daje isti saobraćaj, drugo ga mijenja", () => {
+    // Tok se ne pravi unaprijed, pa se poredi ono što se stvarno vozi: isti
+    // scenario i isti ulaz daju ista vozila na istim mjestima.
     const r = ruta("budva", "kolasin");
-    expect(rutaScenario(r, 7).npcs).toEqual(rutaScenario(r, 7).npcs);
-    expect(rutaScenario(r, 7).npcs).not.toEqual(rutaScenario(r, 8).npcs);
+    const poslije = (seed: number) => {
+      const s = rutaScenario(r, seed);
+      const w = createWorld(s, 1);
+      for (let i = 0; i < 1200; i++) step(w, s, { throttle: 0.4, brake: 0, indicator: null, steer: 0 });
+      return JSON.stringify(w.vehicles.map((v) => [v.id, v.vrsta, v.s, v.v]));
+    };
+    expect(poslije(7)).toBe(poslije(7));
+    expect(poslije(7)).not.toBe(poslije(8));
   });
 });
 

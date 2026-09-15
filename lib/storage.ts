@@ -9,6 +9,7 @@
 import type { Category } from "./categories";
 import { isLang, type Lang } from "./i18n";
 import type { PokazivaciRezim } from "./game/sim/types";
+import { SAOBRACAJ_NIVO, type Level } from "./game/sim/config";
 
 const KEY_LANG = "mirav.lang";
 const KEY_BEST = "mirav.bestExam";
@@ -17,6 +18,7 @@ const KEY_GAME = "mirav.game";
 const KEY_SHIFT = "mirav.smjena";
 const KEY_TRIP = "mirav.putovanje";
 const KEY_INDICATORS = "mirav.pokazivaci";
+const KEY_TRAFFIC = "mirav.saobracaj";
 
 function read<T>(key: string): T | null {
   try {
@@ -244,4 +246,20 @@ export function loadPokazivaci(): PokazivaciRezim {
 
 export function savePokazivaci(rezim: PokazivaciRezim): void {
   write(KEY_INDICATORS, rezim);
+}
+
+// ── Gustina saobraćaja u putovanju i ruti ───────────────────────────────────
+
+/**
+ * Nivo saobraćaja na putu. Pamti se kao i pokazivači: to je izbor igrača, a ne
+ * pojedine vožnje. Sve što nije cijeli broj od 1 do 5 čita se kao podrazumijevani
+ * nivo, pa ni pokvaren zapis ne može da napravi nivo koji ne postoji.
+ */
+export function loadSaobracaj(): Level {
+  const v = read<unknown>(KEY_TRAFFIC);
+  return v === 1 || v === 2 || v === 3 || v === 4 || v === 5 ? v : SAOBRACAJ_NIVO;
+}
+
+export function saveSaobracaj(nivo: Level): void {
+  write(KEY_TRAFFIC, nivo);
 }

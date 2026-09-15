@@ -489,9 +489,6 @@ export const ROAD_LANE_WIDTH = 4.2;
 /** Pola vidnog polja na otvorenom putu [m]. */
 export const ROAD_VIEW_HALF = 34;
 
-/** Na koliko sekundi se u prosjeku mimoiđe susretno vozilo. */
-export const ONCOMING_GAP = 7;
-
 /**
  * Koliko dionica smije da traje prije nego što se prekine, u odnosu na
  * `TRIP_SEGMENT_TIME`.
@@ -925,14 +922,6 @@ export const CUT_IN_WINDOW = 2;
 export const LINE_CROSS_TOL = 0.3;
 
 /**
- * Na koliko se sekundi vožnje pojavi sporije vozilo u našoj traci.
- *
- * Postoji da bi preticanje uopšte imalo smisla: do sada je saobraćaj bio samo
- * susretni, pa se nije imalo šta preteći. Gušći saobraćaj i vrste vozila dolaze
- * kasnije — ovo je najmanje što pravilima treba da se mogu provjeriti.
- */
-export const SLOW_GAP = 150;
-/**
  * Koliko oko sebe se traži vozilo koje pretičemo [m].
  *
  * Ne mjeri se samo ono ispred: dok smo u kontra traci, preteknuti nam je pod
@@ -941,5 +930,157 @@ export const SLOW_GAP = 150;
  */
 export const PRETEKNUT_POJAS = 60;
 
-/** Koliki dio dozvoljene brzine drži sporije vozilo. */
-export const SLOW_SHARE = 0.75;
+// ── gustina i vrste saobraćaja (modovi „Putovanje" i „Ruta") ───────────────
+
+/**
+ * Nivo saobraćaja kad ga igrač nije izabrao.
+ *
+ * Drugi: gušće nego što je putovanje do sada imalo, a i dalje daleko od kolone
+ * kroz koju se ne može proći.
+ */
+export const SAOBRACAJ_NIVO: Level = 2;
+
+/**
+ * Koliko vozila ima u prozoru oko igrača, po nivou — oba smjera zajedno.
+ *
+ * Nivoi 1, 3 i 5 su iz zadatka. Nivoi 2 i 4 su sredina između susjeda, jer ih
+ * zadatak ne navodi.
+ */
+export const SAOBRACAJ_U_PROZORU: Readonly<Record<Level, readonly [number, number]>> = {
+  1: [6, 8],
+  2: [10, 13],
+  3: [14, 18],
+  4: [19, 24],
+  5: [24, 30],
+};
+
+/**
+ * Dužina prozora u kojem se vozila broje [m].
+ *
+ * Počinje `KEEP_BEHIND` iza igrača i ide dva kilometra naprijed — cijeli leži u
+ * dijelu svijeta koji se drži, pa ga brisanje vozila iza leđa ne krnji.
+ */
+export const SAOBRACAJ_PROZOR = 2000;
+
+/**
+ * Prosječan broj vozila u koloni, po nivou.
+ *
+ * Saobraćaj ne dolazi kao metronom nego u kolonama: ko sustigne sporije vozilo,
+ * vozi iza njega. Zato i na gustom putu između kolona ostaje praznina u kojoj se
+ * može preticati. Isti broj vozila ravnomjerno razbacan na svakih sto pedeset
+ * metara ne bi ostavio nijednu — a zadatak traži da se kamion može i preteći.
+ */
+export const KOLONA_PO_NIVOU: Readonly<Record<Level, number>> = { 1: 1.2, 2: 1.5, 3: 2, 4: 2.5, 5: 3 };
+
+/** Odstojanje između vozila u koloni, u sekundama vožnje [najmanje, najviše]. */
+export const KOLONA_ODSTOJANJE: readonly [number, number] = [2, 3];
+
+/** Najmanja i najveća praznina između dvije kolone [m]. */
+export const PRAZNINA_MIN = 80;
+export const PRAZNINA_MAX = 1600;
+
+/**
+ * Koje vrste vozila voze kojim putem, u procentima.
+ *
+ * Kamiona ima najviše na magistrali, a kroz grad skoro nijedan.
+ */
+export const MJESAVINA: Readonly<
+  Record<"put" | "planinski" | "grad", readonly (readonly [VrstaVozila, number])[]>
+> = {
+  put: [
+    ["auto-mali", 22],
+    ["auto", 34],
+    ["auto-veliki", 16],
+    ["kombi", 14],
+    ["kamion", 14],
+  ],
+  planinski: [
+    ["auto-mali", 26],
+    ["auto", 36],
+    ["auto-veliki", 14],
+    ["kombi", 14],
+    ["kamion", 10],
+  ],
+  grad: [
+    ["auto-mali", 32],
+    ["auto", 36],
+    ["auto-veliki", 14],
+    ["kombi", 16],
+    ["kamion", 2],
+  ],
+};
+
+/**
+ * Koliki dio dozvoljene brzine vozi koja vrsta [najmanje, najviše].
+ *
+ * Putnički auti voze blizu ograničenja, kombi nešto sporije, a kamion osjetno
+ * sporije — to su vozila koja se sustižu i pretiču.
+ */
+export const BRZINA_VRSTE: Readonly<Record<VrstaVozila, readonly [number, number]>> = {
+  "auto-mali": [0.85, 1],
+  auto: [0.88, 1],
+  "auto-veliki": [0.88, 1],
+  kombi: [0.8, 0.95],
+  kamion: [0.7, 0.82],
+  autobus: [0.8, 0.92],
+};
+
+/**
+ * Brzina kamiona na planinskom putu [m/s] — od 30 do 40 km/h.
+ *
+ * Iz zadatka: taj kamion se mora preteći ili pratiti. Ne zavisi od ograničenja,
+ * jer ga ne drži propis nego uspon i krivine.
+ */
+export const KAMION_PLANINA: readonly [number, number] = [30 / 3.6, 40 / 3.6];
+
+/**
+ * Koliko ispred igrača se na planinskom putu pojavi kamion [m].
+ *
+ * Van kadra, ali blizu: na razlici od petnaestak km/h igrač ga sustigne za pola
+ * minuta. Dalje od toga bi se zaboravilo da je uopšte stigao. Isto toliko igrač
+ * mora da zađe na planinsku dionicu prije nego što se prvi pojavi.
+ */
+export const KAMION_ISPRED = 150;
+/** Na koliko metara planinskog puta dolazi po jedan zagarantovan kamion [m]. */
+export const KAMION_RAZMAK = 3000;
+/** Planinska dionica kraća od ovoga nema zagarantovan kamion [m]. */
+export const KAMION_NAJKRACA = 800;
+
+/**
+ * Usporenje kojim vozilo toka prelazi na niže ograničenje [m/s²].
+ *
+ * Blago, kao kad vozač vidi tablu: u naselje se ne smije uletjeti brzinom sa
+ * magistrale, ali se ni ne koči kao pred preprekom.
+ */
+export const USPORENJE_OGRANICENJE = 1.5;
+
+/**
+ * Dokle vozilo van kadra na otvorenom putu dobija oznaku na ivici [m].
+ *
+ * Do tamo je bitno za preticanje: šest sekundi (`ONCOMING_TTC`) pri zbirnoj
+ * brzini dvije osamdesetice je dvjesta šezdeset metara. Oznaku dobija samo
+ * najbliže vozilo u svakoj traci, ispred i iza — na gustom putu bi ih inače na
+ * ivici kadra bilo dvadeset, jedna preko druge.
+ */
+export const OZNAKA_DOMET_PUT = 300;
+
+/**
+ * Koliko najbliže ispred igrača se u našu traku ubacuje vozilo kad ih u prozoru
+ * fali [m]: van kadra i van dometa oznake na ivici (`OZNAKA_DOMET_PUT`), da se ne
+ * vidi kako nastaje.
+ */
+export const UBACI_ISPRED = 350;
+
+/**
+ * Koliko vozila u našem smjeru smije da fali, odnosno da bude viška, prije nego
+ * što se broj popravi.
+ *
+ * Bez ovog pojasa bi se na samoj granici naizmjenično dodavalo i sklanjalo po
+ * jedno vozilo. Isti višak važi i za susretni tok: preko njega izvor preskoči
+ * vozilo — u sporom dijelu puta se susretna vozila zbiju.
+ */
+export const SAOBRACAJ_MANJAK = 1;
+export const SAOBRACAJ_VISAK = 2;
+
+/** Najmanje vremena između dvije popravke broja vozila u našem smjeru [s]. */
+export const SAOBRACAJ_POPRAVKA = 1;
