@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:fuzz": "node --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fuzz-rute.mjs",
     "typecheck": "tsc --noEmit",
     "gen:image-sizes": "node scripts/gen-image-sizes.mjs",
     "gen:kazne": "node scripts/gen-kazne-javne.mjs",
