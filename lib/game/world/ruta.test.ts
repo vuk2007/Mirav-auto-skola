@@ -7,7 +7,7 @@ import {
   SAOBRACAJ_NIVO,
   SAOBRACAJ_U_PROZORU,
 } from "@/lib/game/sim/config";
-import { perfectBot } from "@/lib/game/sim/bots";
+import { vozacRute } from "@/lib/game/sim/vozac";
 import { compile } from "@/lib/game/sim/intersection";
 import { createWorld, PLAYER_ID, poseOn, step } from "@/lib/game/sim/world";
 import type { Input, Point, RoadTemplate, Scenario, World } from "@/lib/game/sim/types";
@@ -18,7 +18,6 @@ import {
   kilometraza,
   nadjiRutu,
   napraviRutu,
-  vMaxNaprijed,
   type Ruta,
 } from "@/lib/game/world/ruta";
 import { rutaScenario, uProzoru, uProzoruGustine, vrijemeDo } from "@/lib/game/world/svijet";
@@ -72,28 +71,16 @@ const RUTE: ReadonlyArray<readonly [string, string]> = [
 ];
 
 /**
- * Vozač koji drži ograničenje — i usporava PRIJE nego što ono padne.
+ * Vozač koji drži ograničenje, a ne pretiče — vidi `sim/vozac.ts`.
  *
- * Gleda dvjesta metara ispred sebe, otprilike onoliko koliko se na osamdeset na
- * sat pređe za devet sekundi. Bez toga u naselje ulazi punom brzinom i dobija
- * prekršaj koji nije mogao izbjeći, jer ograničenje pada u jednoj tački.
+ * Isti onaj koji se vozi i u igri i u fuzz testu, samo sa isključenim
+ * preticanjem: ovdje se mjeri put i saobraćaj, a ne manevar. Preticanje se
+ * mjeri posebno, u `sim/vozac.test.ts` i u fuzzu.
  */
-const POGLED = 200;
-
-const poPropisu =
-  (r: Ruta, scenario: Scenario) =>
-  (world: World): Input => {
-    const igrac = world.vehicles.find((v) => v.id === PLAYER_ID);
-    const v = igrac?.v ?? 0;
-    const limit = vMaxNaprijed(r, igrac?.s ?? 0, POGLED);
-    // Osnovu daje savršen vozač, dakle ISTA logika po kojoj voze NPC-ovi: on
-    // drži odstojanje od onoga ko je ispred. Otkad u našoj traci ima sporijih
-    // vozila, vozač koji samo gleda tablu ih zakuca s leđa.
-    const osnova = perfectBot(world, scenario);
-    if (v > limit * 1.02) return { ...osnova, throttle: 0, brake: 0.35 };
-    if (v < limit) return osnova;
-    return { ...osnova, throttle: 0 };
-  };
+const poPropisu = (scenario: Scenario, pretice = false) => {
+  const vozac = vozacRute({ pretice });
+  return (world: World): Input => vozac(world, scenario);
+};
 
 interface Voznja {
   outcome: string;
@@ -104,28 +91,34 @@ interface Voznja {
   vanProzora: number;
   /** Prosječan broj vozila u prozoru gustine na posljednjoj trećini rute. */
   gustinaNaKraju: number;
+  /** Koliko puta je sredina vozila prešla u suprotnu traku. */
+  preticanja: number;
   prekrsaji: string[];
 }
 
 /** Provozaj cijelu rutu i izmjeri sve što nas zanima. */
-function provozaj(r: Ruta, seed = 1, zadati?: Scenario): Voznja {
+function provozaj(r: Ruta, seed = 1, zadati?: Scenario, pretice = false): Voznja {
   const scenario = zadati ?? rutaScenario(r, seed);
   const tpl = scenario.template as RoadTemplate;
   const { paths } = compile(tpl);
   const world = createWorld(scenario, seed);
-  const bot = poPropisu(r, scenario);
+  const bot = poPropisu(scenario, pretice);
 
   let prethodna: Point | null = null;
   let najveciSkok = 0;
   let imaNaN = false;
   let najviseNPC = 0;
   let vanProzora = 0;
+  let preticanja = 0;
+  let uKontri = false;
   const naKraju: number[] = [];
   let koraka = 0;
 
   while (world.outcome === "running" && koraka < 800000) {
     step(world, scenario, bot(world));
     koraka += 1;
+    if (world.volan.kontraT > 0 && !uKontri) preticanja += 1;
+    uKontri = world.volan.kontraT > 0;
     const igrac = world.vehicles.find((v) => v.id === PLAYER_ID)!;
     if (!Number.isFinite(igrac.s) || !Number.isFinite(igrac.v)) {
       imaNaN = true;
@@ -157,6 +150,7 @@ function provozaj(r: Ruta, seed = 1, zadati?: Scenario): Voznja {
     najviseNPC,
     vanProzora,
     gustinaNaKraju: naKraju.length > 0 ? naKraju.reduce((a, b) => a + b, 0) / naKraju.length : 0,
+    preticanja,
     prekrsaji: world.violations.map((v) => v.type),
   };
 }
@@ -282,6 +276,17 @@ describe("vožnja bez prekida", { timeout: 300000 }, () => {
     const v = provozaj(r, 1, prazna);
     expect(v.vrijeme / 60).toBeGreaterThan(15);
     expect(v.vrijeme / 60).toBeLessThan(20);
+  });
+
+  it("i vozač koji pretiče prevozi svaku rutu, bez prekršaja", () => {
+    // Preticanje je manevar u kojem se krši najviše pravila odjednom: puna
+    // linija, susretni saobraćaj, pokazivač, razmak pri vraćanju. Ako ga vozač
+    // odvozi čisto preko cijele rute, pravila i geometrija se slažu.
+    for (const [a, b] of RUTE) {
+      const v = provozaj(ruta(a, b), 1, undefined, true);
+      expect(v.outcome, `${a}-${b}`).toBe("passed");
+      expect(v.prekrsaji, `${a}-${b}`).toEqual([]);
+    }
   });
 
   it("saobraćaj usporava vožnju, ali je ne zaustavlja", () => {
