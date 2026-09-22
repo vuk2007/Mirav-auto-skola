@@ -402,6 +402,19 @@ export function bocneGranice(path: Path, s: number): { lijevo: number; desno: nu
 }
 
 /**
+ * Osa susretne trake, mjerena od ose naše [m] — negativna, jer je ulijevo.
+ *
+ * Nije `-laneWidth`: u krivini se kolovoz širi, pa se i ovo mora čitati iz iste
+ * geometrije iz koje se crta asfalt. Sredina susretne trake je na pola puta
+ * između razdjelne linije i njene spoljne ivice.
+ */
+export function osaSusretne(path: Path, s: number): number {
+  const doSredine = doLinije(path, path.doSredine, s);
+  const preko = path.doPreko ? doLinije(path, path.doPreko, s) : doSredine;
+  return -(doSredine + preko) / 2;
+}
+
+/**
  * Koje trake vozilo zauzima na otvorenom putu.
  *
  * Ne pita se `lane` nego TIJELO: vozilo koje je pola auta preko razdjelne
@@ -1455,9 +1468,15 @@ function accelToward(v: Vehicle, limit: number, vMax: number, vLead = 0): number
     return v.v < vMax ? A_MAX : 0;
   }
   const d = limit - v.s;
-  if (d <= 0) return -B_MAX;
   // (v − vLead)² = 2·a·d  →  a potrebno da se razlika brzina izgubi do `limit`.
   const razlika = Math.max(0, v.v - vLead);
+  // Granica je iza nas. Kočnica tu ima smisla samo ako se razmak i dalje
+  // smanjuje; ako je onaj zbog koga je granica postavljena BRŽI, razmak se sam
+  // otvara i kočenje nema šta da popravi. Bez ovog uslova je svako pošteno
+  // preticanje završavalo tako što preteknuti zakuca kočnicu na punih šest
+  // metara u sekundi na kvadrat — pa se vraćanje sa propisanim razmakom
+  // prijavljivalo kao da je nekog natjeralo da koči.
+  if (d <= 0) return razlika > 0 ? -B_MAX : 0;
   const need = (razlika * razlika) / (2 * Math.max(d, 0.01));
   if (need >= B_MAX) return -B_MAX;
   if (need > A_MAX * 0.5) return -need;

@@ -898,8 +898,19 @@ export const SETTLEMENT_V = 50 / 3.6;
  */
 export const ONCOMING_TTC = 6;
 
-/** Najduže zadržavanje u kontra traci [s]. */
-export const MAX_OVERTAKE_TIME = 8;
+/**
+ * Najduže zadržavanje u kontra traci [s].
+ *
+ * Naš broj, ne ZOBS-ov: zakon ne daje rok nego traži da se vozač vrati čim to
+ * može bez ometanja. Petnaest sekundi je izmjereno, a ne pogođeno. Na pravom
+ * praznom putu je odvožen najbolji mogući manevar — pun gas do ograničenja,
+ * volan, povratak čim se napravi propisan razmak — i on traje: kamion na
+ * sedamdeset posto ograničenja 8,6 s sa osamdeset i 11,3 s na planinskom putu,
+ * a kamion na osamdeset posto čak 14,0 s. Sa ranijih osam sekundi je svako
+ * pošteno preticanje kamiona završavalo prekršajem, pa se pravilo nije moglo
+ * poštovati ni savršenom vožnjom.
+ */
+export const MAX_OVERTAKE_TIME = 15;
 
 /** Najmanji razmak pri vraćanju ispred preteknutog vozila [s]. */
 export const CUT_IN_TIME = 1;
@@ -929,6 +940,66 @@ export const LINE_CROSS_TOL = 0.3;
  * postoji.
  */
 export const PRETEKNUT_POJAS = 60;
+
+// ── vozač rute (bot kojim se mjeri, ne dio igre) ───────────────────
+
+/**
+ * Koliko naprijed vozač gleda ograničenje brzine [m].
+ *
+ * Ograničenje na ruti pada u jednoj tački, a brzina se gubi na putu. Bez
+ * pogleda unaprijed vozač u naselje ulazi punom brzinom i dobija prekršaj koji
+ * nije mogao izbjeći.
+ */
+export const VOZAC_POGLED = 200;
+
+/**
+ * Najmanja razlika brzine zbog koje se uopšte kreće u preticanje [m/s].
+ *
+ * Ispod nje preticanje ne stane u `MAX_OVERTAKE_TIME`: za pedeset metara
+ * razlike pri pet kilometara na čas treba pola minuta u suprotnoj traci.
+ */
+export const PRETICANJE_RAZLIKA = 15 / 3.6;
+
+/**
+ * Koliko se najduže PLANIRA boravak u suprotnoj traci [s].
+ *
+ * Manje od `MAX_OVERTAKE_TIME`, jer je to rok poslije kojeg se prekršaj
+ * prijavljuje — plan koji ga tačno dodiruje pada na prvu nepreciznost.
+ */
+export const PRETICANJE_BUDZET = 12;
+
+/**
+ * Razmak koji se ostavlja preteknutom pri vraćanju [s].
+ *
+ * Veći od `CUT_IN_TIME`, jer se tamo mjeri sam prekršaj, a ovdje se ostavlja i
+ * zaliha za nepreciznost plana. Ne mora biti mnogo veći: onaj ko se vraća brži
+ * je od preteknutog, pa preteknuti po `roadFollowLimit` nema šta da usporava.
+ * Svaka deseninka ovdje košta metre puta u suprotnoj traci.
+ */
+export const PRETICANJE_POVRATAK = 1.3;
+
+/** Zaliha puta koja se dodaje na sve što se pri preticanju mora preći [m]. */
+export const PRETICANJE_ZALIHA = 6;
+
+/**
+ * Koliko vremena do susretnog vozila mora ostati kad se preticanje ZAVRŠI [s].
+ *
+ * Nije `ONCOMING_TTC`: taj prag se mjeri u svakom koraku, pa mora ostati i
+ * poslije cijelog manevra, a ne samo na njegovom početku.
+ */
+export const PRETICANJE_SUSRETNI = ONCOMING_TTC + 2;
+
+/**
+ * Za koliko se vozač zaleti pred preticanje, iznad brzine preticanog [m/s], i
+ * na koliko mu se pri tome primakne [m].
+ *
+ * Zalet nije stil vožnje nego uslov: bez njega se u suprotnu traku ulazi bez
+ * razlike u brzini, pa se prvi dio roka troši na ubrzavanje. Prilaz je iz istog
+ * razloga: svaki metar zaostatka se u suprotnoj traci plaća. Dvadeset metara je
+ * na šezdeset na sat oko sekunde — bliže od toga se ne prilazi ni radi ročnika.
+ */
+export const PRETICANJE_ZALET = 3;
+export const PRETICANJE_PRILAZ = 20;
 
 // ── gustina i vrste saobraćaja (modovi „Putovanje" i „Ruta") ───────────────
 
