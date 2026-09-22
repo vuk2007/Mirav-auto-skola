@@ -33,7 +33,7 @@ import {
   SIGN_LEAD,
   VIEW_HALF,
 } from "../sim/config";
-import { pointAt } from "../sim/geometry";
+import { headingAt, pointAt, valueAt } from "../sim/geometry";
 import {
   compile,
   crosswalkWidth,
@@ -64,11 +64,18 @@ import type {
   World,
 } from "../sim/types";
 import { bezKrakova } from "../sim/types";
-import { HIGHWAY_LANES, laneX } from "../sim/highway";
+import { HIGHWAY_LANES, lanePathId, laneX } from "../sim/highway";
 import { bocnaLinija, centerLine } from "../sim/road";
 import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
-import { officerAllow, poseOn, tijeloVozila, type DioTijela } from "../sim/world";
+import {
+  officerAllow,
+  parkiranaIzmedju,
+  parkiranoTijelo,
+  poseOn,
+  tijeloVozila,
+  type DioTijela,
+} from "../sim/world";
 import { renderS, type Driver } from "./runner";
 import type { Okolina } from "../world/okolina";
 
@@ -97,6 +104,10 @@ export const PALETTE = {
   sanduk: "#ebe8df",
   /** Gradski autobus — boja koju nema nijedno drugo vozilo ni oznaka na putu. */
   autobus: "#1d7a80",
+  /** Parkirani auti — prigušeni, da se ne miješaju sa vozilima u saobraćaju. */
+  parkirano: ["#8e949b", "#a39b8b", "#7d8a96", "#b3aa9b", "#6f7a70"],
+  /** Autobuska stanica: tabla i oznaka na ivičnjaku. */
+  stanica: "#1f5fa8",
 } as const;
 
 /**
@@ -390,6 +401,50 @@ function ikona(src: string): HTMLImageElement | null {
 }
 
 /**
+ * Autobuska stanica: žuta isprekidana linija uz ivičnjak na kojem autobus staje
+ * i plava tabla sa autobusom na trotoaru.
+ *
+ * Bez natpisa: znak se čita sa slike, na svakom jeziku isto. Stanica naše trake
+ * je uz desni ivičnjak, stanica susretne uz lijevi — tamo gdje taj autobus staje.
+ */
+function drawStanica(
+  ctx: CanvasRenderingContext2D,
+  v: View,
+  nasa: Path,
+  s: number,
+  traka: 0 | 1,
+): void {
+  const znak = traka === 0 ? 1 : -1;
+  const ivica = (traka === 0 ? nasa.doIvice : nasa.doPreko) ?? [];
+  const uz = (x: number, odmak: number): Point => {
+    const o = pointAt(nasa.points, nasa.cum, x);
+    const d = rt(headingAt(nasa.points, nasa.cum, x));
+    const b = znak * (valueAt(nasa.cum, ivica, x) + odmak);
+    return { x: o.x + d.x * b, y: o.y + d.y * b };
+  };
+
+  const linija: Point[] = [];
+  for (let x = s - 8; x <= s + 8; x += 1) linija.push(uz(x, -0.35));
+  strokeLine(ctx, v, linija, PALETTE.yellow, 0.22, [1.5, 1]);
+
+  const c = px(v, uz(s, 1.2));
+  const a = Math.max(MIN_SIGN_PX / 2, 0.9 * v.scale);
+  roundedRect(ctx, c.x - a, c.y - a, 2 * a, 2 * a, a * 0.2);
+  ctx.fillStyle = PALETTE.stanica;
+  ctx.fill();
+  // Autobus sa strane: karoserija, prozori, dva točka.
+  ctx.fillStyle = PALETTE.paint;
+  ctx.fillRect(c.x - a * 0.62, c.y - a * 0.42, a * 1.24, a * 0.7);
+  ctx.fillStyle = PALETTE.stanica;
+  ctx.fillRect(c.x - a * 0.48, c.y - a * 0.3, a * 0.96, a * 0.22);
+  ctx.fillStyle = PALETTE.paint;
+  ctx.beginPath();
+  ctx.arc(c.x - a * 0.35, c.y + a * 0.4, a * 0.14, 0, Math.PI * 2);
+  ctx.arc(c.x + a * 0.35, c.y + a * 0.4, a * 0.14, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/**
  * Otvorena dionica.
  *
  * Kolovoz je traka oko osovine, pa se crta kao jedan poligon: lijeva ivica
@@ -439,6 +494,27 @@ function drawRoad(
     const doK = Math.min(points.length - 1, Math.ceil((z.to - odS) / poTacki));
     if (doK - od < 1) continue;
     strokeLine(ctx, v, points.slice(od, doK + 1), PALETTE.paint, 0.18);
+  }
+
+  // Grad: autobuske stanice i parkirani auti uz ivičnjak. Položaj se čita iz
+  // putanje naše trake, kao i u simulaciji — da auto na ekranu stoji tačno tamo
+  // gdje igrač u njega može da udari.
+  const nasa = tpl.stanice || tpl.parkirana ? compile(tpl).paths.get(lanePathId(tpl.id, 0)) : undefined;
+  if (nasa) {
+    const doS = odS + (points.length - 1) * poTacki;
+    for (const st of tpl.stanice ?? []) {
+      if (st.s >= odS && st.s <= doS) drawStanica(ctx, v, nasa, st.s, st.traka);
+    }
+    for (const p of parkiranaIzmedju(tpl, odS, doS)) {
+      const tijelo = parkiranoTijelo(nasa, p);
+      const boja = PALETTE.parkirano[Math.floor(Math.abs(p.s) * 7) % PALETTE.parkirano.length]!;
+      drawVehicle(ctx, v, [tijelo], tijelo.heading, boja, p.vrsta, {
+        braking: false,
+        blink: null,
+        highlight: null,
+        beacon: false,
+      });
+    }
   }
 
   // Tabla sa preporučenom brzinom stoji PRED krivinom i uvijek uz VOZAČEVU

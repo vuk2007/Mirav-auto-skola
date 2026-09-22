@@ -87,6 +87,13 @@ import {
   SAOBRACAJ_U_PROZORU,
   SAOBRACAJ_VISAK,
   UBACI_ISPRED,
+  BUS_POGLED,
+  BUS_POKAZIVAC_POLAZAK,
+  BUS_POKAZIVAC_PRIJE,
+  BUS_STOJI,
+  BUS_USPORENJE_MAX,
+  PARKING_ODMAK,
+  STOJI_ISPRED,
   type Level,
 } from "./config";
 import { headingAt, pointAt, polygonsOverlap, rectCorners, right, rng, valueAt } from "./geometry";
@@ -127,6 +134,7 @@ import type {
   Input,
   Intent,
   IzvorToka,
+  ParkiranoVozilo,
   TokSaobracaja,
   CrossIntent,
   Path,
@@ -300,6 +308,44 @@ export function poseOn(
   return { pos: { x: pos.x + d.x * lat, y: pos.y + d.y * lat }, heading };
 }
 
+/**
+ * Tijelo parkiranog vozila: uz ivičnjak, van kolovoza.
+ *
+ * Unutrašnja ivica mu je `PARKING_ODMAK` iza ivične linije — iza linije naše
+ * trake kad stoji desno, iza spoljne ivice susretne kad stoji lijevo. Mjeri se
+ * iz istih nizova iz kojih se crta asfalt, pa auto i u krivini stoji uz ivičnjak.
+ */
+export function parkiranoTijelo(nasa: Path, p: ParkiranoVozilo): DioTijela {
+  const mjere = VOZILA[p.vrsta];
+  const ivica = valueAt(nasa.cum, (p.strana === "desno" ? nasa.doIvice : nasa.doPreko) ?? [], p.s);
+  const odmak = (ivica + PARKING_ODMAK + mjere.sirina / 2) * (p.strana === "desno" ? 1 : -1);
+  const osa = pointAt(nasa.points, nasa.cum, p.s);
+  const heading = headingAt(nasa.points, nasa.cum, p.s);
+  const d = right(heading);
+  return {
+    pos: { x: osa.x + d.x * odmak, y: osa.y + d.y * odmak },
+    heading,
+    length: mjere.duzina,
+    width: mjere.sirina,
+  };
+}
+
+/** Parkirana vozila čija je sredina između `od` i `doK` — šablon ih drži poređane. */
+export function parkiranaIzmedju(tpl: RoadTemplate, od: number, doK: number): ParkiranoVozilo[] {
+  const sva = tpl.parkirana;
+  if (!sva || sva.length === 0) return [];
+  let lo = 0;
+  let hi = sva.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (sva[mid]!.s < od) lo = mid + 1;
+    else hi = mid;
+  }
+  const out: ParkiranoVozilo[] = [];
+  for (let i = lo; i < sva.length && sva[i]!.s <= doK; i++) out.push(sva[i]!);
+  return out;
+}
+
 /** Komad tijela vozila: pravougaonik sa središtem, smjerom i mjerama [m]. */
 export interface DioTijela {
   pos: Point;
@@ -415,12 +461,26 @@ export function bocnaBrzina(v: number): number {
  * nikakvog centriranja: `lateral` se mijenja samo onoliko koliko volan kaže, i
  * ostaje gdje jeste kad se volan pusti.
  */
-function volanKorak(v: Vehicle, path: Path, input: Input): void {
+function volanKorak(v: Vehicle, path: Path, input: Input, tpl: Template): void {
   const steer = input.steer ?? 0;
   const komanda = Math.abs(steer) < STEER_DEAD_ZONE ? 0 : Math.max(-1, Math.min(1, steer));
   const g = bocneGranice(path, v.s);
   const lat = (v.lateral ?? 0) + komanda * bocnaBrzina(v.v) * DT;
-  const stegnuto = Math.min(g.desno, Math.max(g.lijevo, lat));
+  // Uz parkirani auto nema bankine: desno se staje na ivičnoj liniji. Granica
+  // važi samo za pomjeranje ka njemu — vozilo koje je već dalje ne skače nazad,
+  // nego u parkirani auto udari kao u svako drugo (vidi `detectViolations`).
+  let desno = g.desno;
+  if (tpl.kind === "road" && (v.lane ?? 0) === 0) {
+    const doseg = (v.length + VOZILA.kombi.duzina) / 2;
+    const uzParkirano = parkiranaIzmedju(tpl, v.s - doseg, v.s + doseg).some(
+      (p) => p.strana === "desno" && Math.abs(p.s - v.s) < (v.length + VOZILA[p.vrsta].duzina) / 2,
+    );
+    if (uzParkirano) {
+      const doIvice = valueAt(path.cum, path.doIvice ?? [], v.s) - v.width / 2;
+      desno = Math.max(Math.min(desno, doIvice), v.lateral ?? 0);
+    }
+  }
+  const stegnuto = Math.min(desno, Math.max(g.lijevo, lat));
   v.lateralV = (stegnuto - (v.lateral ?? 0)) / DT;
   v.lateral = stegnuto;
 
@@ -1326,6 +1386,61 @@ function roadFollowLimit(world: World, ctx: Ctx, me: Vehicle, mePath: Path): Tar
 }
 
 /**
+ * Autobus i stanica ispred njega.
+ *
+ * Autobus staje sredinom na stanici svoje trake, stoji `BUS_STOJI` sekundi i
+ * nastavlja. Desni pokazivač pali `BUS_POKAZIVAC_PRIJE` metara prije stanice i
+ * drži ga dok stoji; `BUS_POKAZIVAC_POLAZAK` sekundi prije polaska prebacuje na
+ * lijevi. Stanicu do koje bi morao kočiti jače od `BUS_USPORENJE_MAX` preskače:
+ * nastao je preblizu nje, a naglo kočenje pred stanicom nije ono što se uči.
+ *
+ * Za svako drugo vozilo vraća granicu kakva jeste.
+ */
+function autobusNaStanici(tpl: Template, v: Vehicle, path: Path, granica: Target): Target {
+  if (v.vrsta !== "autobus" || tpl.kind !== "road" || !tpl.stanice) return granica;
+  const traka = v.lane === 1 ? 1 : 0;
+  const smjer = traka === 1 ? -1 : 1;
+  const x = naRuti(v, path);
+  let stanica: number | null = null;
+  let najbliza = Infinity;
+  for (const st of tpl.stanice) {
+    if (st.traka !== traka) continue;
+    const ispred = (st.s - x) * smjer;
+    if (ispred < -1 || ispred > BUS_POGLED || ispred >= najbliza) continue;
+    // Stanica koja je već prošla, ili neka prije nje, više se ne gleda.
+    if (v.stanicaBila !== undefined && (st.s - v.stanicaBila) * smjer <= 0) continue;
+    najbliza = ispred;
+    stanica = st.s;
+  }
+  if (stanica === null) return granica;
+
+  const sStanice = traka === 1 ? path.length - stanica : stanica;
+  const doStanice = sStanice - v.s;
+  const staje = sStanice < granica.limit ? { limit: sStanice, vLead: 0 } : granica;
+  if (doStanice > STANICA_DOSEG) {
+    if ((v.v * v.v) / (2 * doStanice) > BUS_USPORENJE_MAX && (v.stanicaT ?? 0) === 0) {
+      v.stanicaBila = stanica;
+      return granica;
+    }
+    if (doStanice < BUS_POKAZIVAC_PRIJE) v.indicator = "right";
+    return staje;
+  }
+
+  if (v.v < STOPPED_SPEED) v.stanicaT = (v.stanicaT ?? 0) + DT;
+  const stoji = v.stanicaT ?? 0;
+  if (stoji >= BUS_STOJI) {
+    v.stanicaBila = stanica;
+    v.stanicaT = 0;
+    return granica;
+  }
+  v.indicator = stoji >= BUS_STOJI - BUS_POKAZIVAC_POLAZAK ? "left" : "right";
+  return staje;
+}
+
+/** Koliko blizu stanice se autobus smatra da je na njoj [m]. */
+const STANICA_DOSEG = 1.5;
+
+/**
  * Ubrzanje kojim se stiže do `limit` i tu staje, ograničeno na [−B_MAX, A_MAX].
  *
  * `vLead` je brzina onoga zbog koga je granica postavljena. Kod stop-linije i
@@ -1441,7 +1556,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
         izborPravca(world, ctx, v, path, input);
         path = ctx.paths.get(v.pathId)!;
       }
-      if (volanom) volanKorak(v, path, input);
+      if (volanom) volanKorak(v, path, input, ctx.tpl);
       // Automatski pokazivač se računa POSLIJE izbora pravca i poprečnog koraka,
       // jer oba mijenjaju ono po čemu se zna šta treba: putanju i položaj u
       // traci. Mjesto upisano u dnevnik je i dalje ono prije pomjeranja, kao i
@@ -1453,7 +1568,7 @@ export function step(world: World, scenario: Scenario, input: Input): void {
       integrate(v, a, ctx.vTop, ctx.drag);
     } else {
       v.indicator = expectedIndicatorAt(path, v.intent, v.s);
-      const { limit, vLead, blame } = npcTarget(world, ctx, v, path);
+      const { limit, vLead, blame } = autobusNaStanici(ctx.tpl, v, path, npcTarget(world, ctx, v, path));
       // Vozilo toka ne vozi jednu zadatu brzinu nego dio ograničenja koje važi
       // tamo gdje jeste — ruta prolazi i magistralom i kroz grad.
       const cilj =
@@ -2142,6 +2257,22 @@ function detectViolations(
     }
   }
 
+  // Parkirani auti su nepomični, ali tvrdi. Uz njih se bočno ne može (vidi
+  // `volanKorak`), pa u njih udara samo onaj ko vozi bankinom.
+  if (ctx.tpl.kind === "road" && ctx.tpl.parkirana) {
+    const nasa = ctx.paths.get(lanePathId(ctx.tpl.id, 0));
+    const doseg = player.length + VOZILA.kombi.duzina;
+    for (const p of nasa ? parkiranaIzmedju(ctx.tpl, player.s - doseg, player.s + doseg) : []) {
+      const d = parkiranoTijelo(nasa!, p);
+      const parkirano = rectCorners(d.pos, d.heading, d.length, d.width);
+      if (mojeTijelo.some((m) => polygonsOverlap(m, parkirano))) {
+        add(world, { type: "collision", t: world.t, details: "Udario u parkirano vozilo." });
+        world.outcome = "failed";
+        return;
+      }
+    }
+  }
+
   // ── oduzeto prvenstvo ─────────────────────────────────────────────────────
   // Na otvorenom putu prvenstva nema: tamo kočenje zbog nas znači ulazak u
   // tuđu traku ili prerano vraćanje, i o tome sude pravila preticanja. Da se
@@ -2631,6 +2762,23 @@ function pathBlocked(world: World, ctx: Ctx, player: Vehicle, path: Path): boole
   // Igrač tada ispravno stoji i čeka da prekršilac prođe; kazniti ga za to bilo
   // bi tačno ono što se ovom igrom uči da se ne radi.
   if (world.reaction.some((r) => world.t - r.at < HAZARD_WINDOW)) return true;
+
+  // Otvoren put: vozilo koje i samo stoji tik ispred nas u traci — autobus na
+  // stanici, kolona iza njega. Kroz naselje je linija puna, pa se čeka; to je
+  // propisno, a ne zadržavanje saobraćaja.
+  if (ctx.tpl.kind === "road") {
+    const mojeTrake = trakeNaPutu(path, player);
+    const ja = naRuti(player, path);
+    const ceka = world.vehicles.some((o) => {
+      if (o.id === player.id || o.done || world.t < o.spawnT || o.v >= CRAWL_SPEED) return false;
+      if ((o.lane === 1) !== (player.lane === 1)) return false;
+      const oPath = ctx.paths.get(o.pathId);
+      if (!oPath || !shareLane(mojeTrake, trakeNaPutu(oPath, o))) return false;
+      const praznina = naRuti(o, oPath) - ja - (o.length + player.length) / 2;
+      return praznina > -1 && praznina < STOJI_ISPRED;
+    });
+    if (ceka) return true;
+  }
 
   // Pješak na prelazu ispred je razlog da se stoji — čekanje tada nije
   // zadržavanje saobraćaja nego propisno ustupanje.

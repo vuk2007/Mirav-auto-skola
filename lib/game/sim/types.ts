@@ -223,8 +223,32 @@ export interface RoadTemplate {
    * `lib/game/road/zabrane.ts`.
    */
   zabrane?: { from: number; to: number }[];
+  /**
+   * Parkirana vozila uz ivičnjak, poređana po `s`. Nepomična su i nisu u
+   * saobraćaju: igraču su prepreka, a vozila u traci ih ne dodiruju.
+   */
+  parkirana?: ParkiranoVozilo[];
+  /** Autobuske stanice, poređane po `s`. */
+  stanice?: Stanica[];
   geometry: { laneWidth: number };
   viewHalf?: number;
+}
+
+/** Parkirano vozilo uz ivičnjak. */
+export interface ParkiranoVozilo {
+  /** Sredina vozila, u metrima naše trake. */
+  s: number;
+  /** Uz koji ivičnjak, gledano u našem smjeru vožnje. */
+  strana: "lijevo" | "desno";
+  vrsta: VrstaVozila;
+}
+
+/** Autobuska stanica. */
+export interface Stanica {
+  /** Mjesto na putu, u metrima naše trake; tu autobus staje sredinom. */
+  s: number;
+  /** Traka čija je stanica: 0 je naša, 1 susretna. */
+  traka: 0 | 1;
 }
 
 /** Sve vrste raskrsnica koje simulacija poznaje. */
@@ -409,6 +433,13 @@ export interface Vehicle {
   udioBrzine?: number;
   /** Najveća brzina bez obzira na ograničenje [m/s] — kamion na planinskom putu. */
   kapaBrzine?: number;
+  /**
+   * Autobus: mjesto posljednje stanice koju je prošao ili preskočio [m], i
+   * koliko već stoji na sljedećoj [s]. Brojevi, a ne objekat — proba savršenog
+   * vozača kopira vozilo plitko.
+   */
+  stanicaBila?: number;
+  stanicaT?: number;
 }
 
 /**

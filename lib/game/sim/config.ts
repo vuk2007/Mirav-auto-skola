@@ -1002,11 +1002,12 @@ export const MJESAVINA: Readonly<
     ["kamion", 10],
   ],
   grad: [
-    ["auto-mali", 32],
-    ["auto", 36],
-    ["auto-veliki", 14],
-    ["kombi", 16],
+    ["auto-mali", 30],
+    ["auto", 33],
+    ["auto-veliki", 13],
+    ["kombi", 14],
     ["kamion", 2],
+    ["autobus", 8],
   ],
 };
 
@@ -1084,3 +1085,62 @@ export const SAOBRACAJ_VISAK = 2;
 
 /** Najmanje vremena između dvije popravke broja vozila u našem smjeru [s]. */
 export const SAOBRACAJ_POPRAVKA = 1;
+
+// ── grad na ruti: parkirani auti i autobus ─────────────────────────────────
+
+/**
+ * Koliko od ulaza u grad i izlaza iz njega nema ni stanice ni parkiranih auta [m].
+ *
+ * Tu je raskrsnica kojom se u grad ulazi; parkiranje uz nju je zabranjeno, a
+ * stanica tik uz nju bi zaustavljala kolonu nasred raskrsnice.
+ */
+export const GRAD_OD_KRAJA = 60;
+
+/** Razmak autobuskih stanica u jednom smjeru [m]. */
+export const STANICA_RAZMAK = 400;
+
+/**
+ * Koliko prije i poslije stanice nema parkiranih auta, gledano u smjeru vožnje
+ * autobusa [m]. Autobus mora prići ivičnjaku, a dvanaest metara autobusa plus
+ * prilaz je tridesetak metara.
+ */
+export const STANICA_BEZ_PARKINGA_PRIJE = 30;
+export const STANICA_BEZ_PARKINGA_POSLIJE = 15;
+
+/**
+ * Ispod kojeg poluprečnika krivine nema ni parkiranja ni stanice [m].
+ *
+ * U oštroj krivini se ne parkira: auto koje tu stoji ne vidi niko ko dolazi.
+ */
+export const PARKING_MIN_POLUPRECNIK = 80;
+
+/** Koliko je parkirano vozilo odmaknuto od ivične linije, van kolovoza [m]. */
+export const PARKING_ODMAK = 0.2;
+/** Razmak između parkiranih auta u nizu [m, najmanje–najviše]. */
+export const PARKING_RAZMAK: readonly [number, number] = [1, 2.5];
+/** Koliko auta stoji u jednom nizu [najmanje–najviše]. */
+export const PARKING_NIZ: readonly [number, number] = [3, 8];
+/** Praznina između dva niza — ulaz u dvorište, prelaz, hidrant [m]. */
+export const PARKING_PRAZNINA: readonly [number, number] = [15, 40];
+
+/** Koliko autobus stoji na stanici [s]. */
+export const BUS_STOJI = 10;
+/** Sa koje daljine autobus uopšte računa sa stanicom ispred sebe [m]. */
+export const BUS_POGLED = 150;
+/**
+ * Najjače kočenje kojim autobus staje na stanici [m/s²].
+ *
+ * Ako bi do stanice morao kočiti jače — nastao je preblizu nje — tu stanicu
+ * preskače. Autobus koji naglo koči pred stanicom nije ono što se ovdje uči.
+ */
+export const BUS_USPORENJE_MAX = 2.5;
+/** Koliko prije stanice autobus pali desni pokazivač [m]. */
+export const BUS_POKAZIVAC_PRIJE = 60;
+/** Koliko prije polaska sa stanice pali lijevi pokazivač [s]. */
+export const BUS_POKAZIVAC_POLAZAK = 2;
+
+/**
+ * Do koje praznine ispred igrača vozilo koje stoji znači da igrač ne zadržava
+ * saobraćaj nego čeka [m], od branika do branika.
+ */
+export const STOJI_ISPRED = 25;
