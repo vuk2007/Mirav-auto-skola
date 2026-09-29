@@ -230,6 +230,13 @@ export interface RoadTemplate {
   parkirana?: ParkiranoVozilo[];
   /** Autobuske stanice, poređane po `s`. */
   stanice?: Stanica[];
+  /**
+   * Sporedni putevi koji izlaze na ovaj, poređani po `s`.
+   *
+   * Iz OSM-a, ne izmišljeni: mjesto na kojem se na putu sastaje još jedan put.
+   * Tu vozila skreću sa puta i uključuju se na njega — vidi `road/prikljucci.ts`.
+   */
+  prikljucci?: Prikljucak[];
   geometry: { laneWidth: number };
   viewHalf?: number;
 }
@@ -241,6 +248,21 @@ export interface ParkiranoVozilo {
   /** Uz koji ivičnjak, gledano u našem smjeru vožnje. */
   strana: "lijevo" | "desno";
   vrsta: VrstaVozila;
+}
+
+/** Raskrsnica sa sporednim putem. */
+export interface Prikljucak {
+  /** Mjesto raskrsnice, u metrima naše trake. */
+  s: number;
+  /** Na koju stranu sporedni put vodi, gledano u našem smjeru vožnje. */
+  strana: "lijevo" | "desno";
+  /**
+   * Vrsta sporednog puta iz OSM-a (`tertiary`, `unclassified`...).
+   *
+   * Po njoj se zna da li je pred raskrsnicom puna linija (vidi
+   * `PRIKLJUCAK_PUNA_LINIJA`) i koliko se široko crta.
+   */
+  rang: string;
 }
 
 /** Autobuska stanica. */
@@ -440,6 +462,40 @@ export interface Vehicle {
    */
   stanicaBila?: number;
   stanicaT?: number;
+  /**
+   * Vozilo toka koje će skrenuti u sporedni put: indeks raskrsnice u
+   * `RoadTemplate.prikljucci`. Broj, a ne objekat — vidi `stanicaBila`.
+   */
+  skrece?: number;
+  /** Indeks posljednje raskrsnice za koju je odluka već donesena. */
+  odlucio?: number;
+}
+
+/**
+ * Vozilo na sporednom putu uz raskrsnicu.
+ *
+ * Stoji VAN trake, u zasebnom nizu: tako ga nijedno pravilo o traci,
+ * odstojanju i sudaru ne mora znati. Čeka na liniji da se uključi, ili odlazi
+ * pošto je skrenulo — vidi `sim/prikljucci.ts`.
+ */
+export interface VoziloNaSporednom {
+  id: string;
+  /** Indeks raskrsnice u `RoadTemplate.prikljucci`. */
+  j: number;
+  vrsta: VrstaVozila;
+  /** Traka iz koje je skrenulo, odnosno u koju se uključuje. */
+  traka: 0 | 1;
+  /** Sredina vozila, mjereno duž sporednog puta od ivice kolovoza [m]. */
+  u: number;
+  faza: "ceka" | "ulazi" | "odlazi";
+  /** Koliki je dio luka skretanja pređen, od 0 do 1. */
+  f: number;
+  /** Brzina duž sporednog puta [m/s]. */
+  v: number;
+  /** Vozilo koje se uključuje: dio ograničenja i najveća brzina koje će voziti. */
+  udio: number;
+  kapa?: number;
+  indicator: "left" | "right" | null;
 }
 
 /**
@@ -812,7 +868,20 @@ export interface World {
     nas: { k: number; t: number };
     /** Koliko je zagarantovanih kamiona već prošlo — poslatih ili preskočenih. */
     kamiona: number;
+    /**
+     * Indeks sljedeće raskrsnice na kojoj se još nije odlučivalo da li čeka
+     * vozilo koje se uključuje — raskrsnice se obilaze redom kako im igrač
+     * prilazi.
+     */
+    prikljucak: number;
+    /**
+     * Raskrsnice na kojima je vozilo već skrenulo — na svakoj najviše jedno.
+     * Drže se samo one blizu igrača.
+     */
+    izasli: number[];
   };
+  /** Vozila na sporednim putevima uz raskrsnice — vidi `VoziloNaSporednom`. */
+  naSporednom?: VoziloNaSporednom[];
 }
 
 export interface IndicatorEvent {

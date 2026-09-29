@@ -78,6 +78,12 @@ import {
   DIO_TIJELA,
   VOZILA,
   KAMION_ISPRED,
+  PRIKLJUCAK_BRZINA,
+  PRIKLJUCAK_KRAK,
+  PRIKLJUCAK_POJAVA,
+  PRIKLJUCAK_POKAZIVAC,
+  PRIKLJUCAK_PRAZNINA,
+  PRIKLJUCAK_USPORENJE,
   USPORENJE_OGRANICENJE,
   KOLONA_ODSTOJANJE,
   OZNAKA_DOMET_PUT,
@@ -118,6 +124,18 @@ import {
 } from "./intersection";
 import { expectedIndicatorAt, phasesFor } from "./indicatorRules";
 import {
+  brzinaDoSkretanja,
+  cekaNa,
+  duzinaLuka,
+  krajLuka,
+  LUK,
+  NAJDUZE_SKRECE,
+  putDoSkretanja,
+  skreceNa,
+  trakaPrikljucka,
+  vrstaZaSporedni,
+} from "./prikljucci";
+import {
   lanePathId,
   lateralX,
   occupiedLanes,
@@ -135,6 +153,7 @@ import type {
   Intent,
   IzvorToka,
   ParkiranoVozilo,
+  Prikljucak,
   TokSaobracaja,
   CrossIntent,
   Path,
@@ -150,6 +169,7 @@ import type {
   Template,
   Vehicle,
   Violation,
+  VoziloNaSporednom,
   World,
 } from "./types";
 import { bezKrakova, crossIntent } from "./types";
@@ -747,6 +767,7 @@ function preticanje(
   const doSredine = doLinije(path, path.doSredine, player.s);
   const tijeloPreko = lat - CAR_WIDTH / 2 < -doSredine - LINE_CROSS_TOL;
   const uKontra = lat < -doSredine;
+
 
   if (tijeloPreko && zabranjeno(tpl.zabrane, player.s)) {
     add(world, {
@@ -1594,12 +1615,16 @@ export function step(world: World, scenario: Scenario, input: Input): void {
         v.udioBrzine !== undefined && scenario.tok
           ? zeljenaBrzina(scenario.tok, v, path)
           : (v.cruise ?? ctx.vMax);
-      let a = accelToward(v, limit, cilj, vLead);
+      // Skretanje u sporedni put: najava i blago usporavanje do brzine skretanja.
+      const skr = tp ? skretanje(world, tp, player, v) : null;
+      let a = accelToward(v, limit, skr ? Math.min(cilj, skr.cap) : cilj, vLead);
       // Bez gasa brzina u modelu ostaje ista, pa vozilo koje je brže od novog
       // ograničenja mora da uspori samo — blago, kao pred tablom.
       if (v.udioBrzine !== undefined && v.v > cilj + PREKO_ZELJENE) {
         a = Math.min(a, -USPORENJE_OGRANICENJE);
       }
+      if (skr && v.v > skr.cap + PREKO_ZELJENE) a = Math.min(a, -PRIKLJUCAK_USPORENJE);
+      if (skr?.indicator) v.indicator = skr.indicator;
       // Naglo kočenje zbog igrača je događaj, ne samo usporenje — po njemu se
       // prepoznaje oduzeta prednost i kad do sudara ne dođe. Na otvorenom putu
       // nema prvenstva, pa se krivac ne traži po konfliktnim tačkama nego po
@@ -1614,6 +1639,10 @@ export function step(world: World, scenario: Scenario, input: Input): void {
         }
       }
       integrate(v, a, ctx.vTop, ctx.drag);
+      if (skr?.sad) {
+        skreni(world, v);
+        continue;
+      }
     }
 
     // Zaustavljanje na STOP liniji se broji samo dok je vozilo pred njom.
@@ -1759,12 +1788,14 @@ const NAJVISE_PO_KORAKU = 8;
 /** Koliko vozila najviše može imati početno punjenje jednog izvora — zaštita. */
 const NAJVISE_NA_STARTU = 500;
 
-/** Ono što tok treba o putu: opis, nivo i obje trake. */
+/** Ono što tok treba o putu: opis, nivo, obje trake i raskrsnice uz njih. */
 interface TokPut {
   tok: TokSaobracaja;
   nivo: Level;
   nasa: Path;
   susretna: Path;
+  prikljucci: readonly Prikljucak[];
+  laneWidth: number;
 }
 
 function tokPut(tpl: Template, paths: ReadonlyMap<string, Path>, scenario: Scenario): TokPut | null {
@@ -1772,7 +1803,14 @@ function tokPut(tpl: Template, paths: ReadonlyMap<string, Path>, scenario: Scena
   const nasa = paths.get(lanePathId(tpl.id, 0));
   const susretna = paths.get(lanePathId(tpl.id, 1));
   if (!nasa || !susretna) return null;
-  return { tok: scenario.tok, nivo: scenario.difficulty, nasa, susretna };
+  return {
+    tok: scenario.tok,
+    nivo: scenario.difficulty,
+    nasa,
+    susretna,
+    prikljucci: tpl.prikljucci ?? [],
+    laneWidth: tpl.geometry.laneWidth,
+  };
 }
 
 /** Mjesto vozila na putu, u metrima naše trake, bez obzira na to kojom trakom ide. */
@@ -1921,7 +1959,17 @@ function napuniTok(world: World, tp: TokPut, player: Vehicle): void {
     v: tipicnaBrzina(tok.dionice, Math.max(0, x)),
     duzina: VOZILA.auto.duzina,
   });
-  world.tok = { susretni: prazan(iza - pomak), nas: { k: 0, t: 0 }, kamiona: 0 };
+  // Raskrsnice iza igrača se preskaču: vozilo koje bi tamo čekalo niko ne bi
+  // ni vidio.
+  const prvaIspred = tp.prikljucci.findIndex((p) => p.s > gdje);
+  world.tok = {
+    susretni: prazan(iza - pomak),
+    nas: { k: 0, t: 0 },
+    kamiona: 0,
+    prikljucak: prvaIspred < 0 ? tp.prikljucci.length : prvaIspred,
+    izasli: [],
+  };
+  world.naSporednom = [];
 
   // Susretna traka, cijelom dužinom prozora.
   const s = world.tok.susretni;
@@ -2129,7 +2177,280 @@ function pustiTok(world: World, tp: TokPut, player: Vehicle): void {
     const x = slobodnoMjesto(world, tp, 0, cilj, VOZILA.kamion.duzina, 1, ispred);
     if (x !== null) pustiVozilo(world, tp, `tok-k-${k}`, 0, x, iz);
   }
+
+  // Raskrsnice sa sporednim putem: ko čeka da se uključi, i kako se kreću oni
+  // koji su van trake.
+  pustiNaSporedni(world, tp, player);
+  pomjeriSporedne(world, tp, player);
 }
+
+// ── raskrsnice sa sporednim putem ──────────────────────────────────────────
+//
+// Zašto ovako, stoji u `sim/prikljucci.ts`. Ukratko: samo skretanja udesno, a
+// vozila van trake su u zasebnom nizu, pa ih pravila trake ne vide.
+
+/** Najmanji razmak do vozila koje prilazi raskrsnici, i kad stoji [m]. */
+const PRIKLJUCAK_BLIZU = 30;
+/** Ubrzanje vozila koje kreće sa sporednog puta [m/s²]. */
+const SPOREDNI_UBRZANJE = 2;
+/** Najveća brzina na luku uključivanja [m/s]. */
+const SPOREDNI_BRZINA = 6;
+/** Najveća brzina niz sporedni put, pošto je vozilo skrenulo [m/s]. */
+const SPOREDNI_ODLAZI = 8;
+/**
+ * Koliko najviše traje luk uključivanja, od linije do trake [s].
+ *
+ * Odluka se donosi na liniji, a vozilo u traci je tek na kraju luka: za to
+ * vrijeme igrač koji dolazi pređe svoj dio puta, pa se prag za njega uvećava.
+ */
+const VRIJEME_LUKA = 3;
+
+/**
+ * Prva raskrsnica ispred mjesta `x` u smjeru `smjer` koja opslužuje traku
+ * `traka`, sa svojim indeksom. Raskrsnice su poređane po `s`.
+ */
+function sljedecaRaskrsnica(
+  niz: readonly Prikljucak[],
+  x: number,
+  traka: 0 | 1,
+  smjer: 1 | -1,
+): { p: Prikljucak; j: number } | null {
+  let lo = 0;
+  let hi = niz.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (niz[mid]!.s <= x) lo = mid + 1;
+    else hi = mid;
+  }
+  if (smjer > 0) {
+    for (let j = lo; j < niz.length; j++) if (trakaPrikljucka(niz[j]!) === traka) return { p: niz[j]!, j };
+  } else {
+    for (let j = lo - 1; j >= 0; j--) if (trakaPrikljucka(niz[j]!) === traka) return { p: niz[j]!, j };
+  }
+  return null;
+}
+
+/**
+ * Skretanje vozila toka u sporedni put: odluka, usporavanje i pokazivač.
+ *
+ * Vraća najveću brzinu koju vozilo sada smije, pokazivač koji pali i da li je
+ * stiglo do luka; `null` kad vozilo ne skreće.
+ *
+ * Na raskrsnici skreće najviše jedno vozilo (`skreceNa`), i to prvo koje stigne
+ * do mjesta odluke dok je raskrsnica u kadru igrača — skretanje koje niko ne
+ * vidi samo bi prorijedilo saobraćaj. Mjesto odluke je daljina sa koje se
+ * stigne blago usporiti: vozilo koje je za to preblizu ne skreće, kao što ni
+ * autobus ne staje na stanici do koje bi morao naglo kočiti. Zagarantovani
+ * kamion na planini ne skreće nikad: on je zadatak, ne saobraćaj.
+ */
+function skretanje(
+  world: World,
+  tp: TokPut,
+  player: Vehicle,
+  v: Vehicle,
+): { cap: number; indicator: "right" | null; sad: boolean } | null {
+  if (v.udioBrzine === undefined || v.id.startsWith("tok-k-")) return null;
+  if (v.length > NAJDUZE_SKRECE) return null;
+  const traka: 0 | 1 = v.lane === 1 ? 1 : 0;
+  const smjer: 1 | -1 = traka === 1 ? -1 : 1;
+  const x = naPutu(tp, v);
+
+  if (v.skrece === undefined) {
+    const sljedeca = sljedecaRaskrsnica(tp.prikljucci, x, traka, smjer);
+    if (!sljedeca || sljedeca.j === v.odlucio) return null;
+    const doLuka = (sljedeca.p.s - x) * smjer - LUK;
+    if (doLuka > Math.max(PRIKLJUCAK_POKAZIVAC, putDoSkretanja(v.v)) + 30) return null;
+    v.odlucio = sljedeca.j;
+    if (doLuka < putDoSkretanja(v.v)) return null;
+    const stanje = world.tok;
+    if (!stanje || stanje.izasli.includes(sljedeca.j)) return null;
+    if (!skreceNa(tp.tok.seed, tp.nivo, sljedeca.j)) return null;
+    const odIgraca = sljedeca.p.s - player.s;
+    if (odIgraca > PRIKLJUCAK_POJAVA || odIgraca < -LUK) return null;
+    stanje.izasli.push(sljedeca.j);
+    v.skrece = sljedeca.j;
+  }
+
+  const p = tp.prikljucci[v.skrece];
+  if (!p) return null;
+  const doRaskrsnice = (p.s - x) * smjer;
+  const doLuka = doRaskrsnice - LUK;
+  return {
+    cap: brzinaDoSkretanja(doLuka),
+    indicator: doRaskrsnice <= PRIKLJUCAK_POKAZIVAC ? "right" : null,
+    sad: doLuka <= 0,
+  };
+}
+
+/** Vozilo je stiglo na luk: izlazi iz trake i odlazi niz sporedni put. */
+function skreni(world: World, v: Vehicle): void {
+  v.done = true;
+  const na = world.naSporednom ?? (world.naSporednom = []);
+  na.push({
+    id: v.id,
+    j: v.skrece!,
+    vrsta: v.vrsta ?? "auto",
+    traka: v.lane === 1 ? 1 : 0,
+    u: 0,
+    faza: "odlazi",
+    f: 0,
+    v: Math.max(v.v, PRIKLJUCAK_BRZINA * 0.8),
+    udio: v.udioBrzine ?? 1,
+    indicator: "right",
+  });
+}
+
+/**
+ * Vozila koja čekaju na sporednom putu: najviše jedno po raskrsnici, kad joj
+ * igrač priđe na `PRIKLJUCAK_POJAVA` — u kadru, da se vidi kako čeka.
+ */
+function pustiNaSporedni(world: World, tp: TokPut, player: Vehicle): void {
+  const stanje = world.tok;
+  if (!stanje) return;
+  const na = world.naSporednom ?? (world.naSporednom = []);
+  // Raskrsnice daleko iza igrača više ne trebaju pamćenje.
+  if (stanje.izasli.length > 0) {
+    stanje.izasli = stanje.izasli.filter((j) => (tp.prikljucci[j]?.s ?? 0) > player.s - KEEP_BEHIND);
+  }
+  while (stanje.prikljucak < tp.prikljucci.length) {
+    const j = stanje.prikljucak;
+    const p = tp.prikljucci[j]!;
+    if (p.s > player.s + PRIKLJUCAK_POJAVA) break;
+    stanje.prikljucak += 1;
+    if (!cekaNa(tp.tok.seed, tp.nivo, j)) continue;
+    const iz = izvuci(tp.tok.seed, tp.tok.dionice, tp.nivo, "u", j, p.s, VOZILA.auto.duzina);
+    na.push({
+      id: `tok-u-${j}`,
+      j,
+      vrsta: vrstaZaSporedni(iz.vrsta),
+      traka: trakaPrikljucka(p),
+      u: 0,
+      faza: "ceka",
+      f: 0,
+      v: 0,
+      udio: iz.udio,
+      ...(iz.kapa === undefined ? {} : { kapa: iz.kapa }),
+      // Uključuje se udesno, pa i pokazivač gori udesno dok čeka.
+      indicator: "right",
+    });
+  }
+}
+
+/**
+ * Da li se vozilo sa sporednog puta smije uključiti na raskrsnici `p`.
+ *
+ * Nema prednost, pa čeka dok svako ko prilazi raskrsnici u traci u koju ulazi
+ * ne bude dalje od `PRIKLJUCAK_PRAZNINA`. I iza raskrsnice mora biti mjesta: ne
+ * ulazi se nikome na zadnji branik.
+ *
+ * Igrač u SUSRETNOJ traci je onaj ko pretiče: i on je na glavnom putu, i i
+ * njemu se ustupa. Dok njome dolazi, u tu traku se ne ulazi, ma koliko daleko
+ * bio — izmjereno bez toga, vozilo se uključilo pred vozačem koji je pretjecao
+ * i zateklo ga na šest sekundi do susreta. Igrač u svojoj traci susretnu ne
+ * zauzima i ne smeta joj.
+ */
+function slobodnoZaUlaz(world: World, tp: TokPut, player: Vehicle, p: Prikljucak, duzina: number): boolean {
+  const traka = trakaPrikljucka(p);
+  const smjer = traka === 1 ? -1 : 1;
+  const prostorIspred = LUK + duzina + FOLLOW_GAP;
+  for (const o of world.vehicles) {
+    if (o.done || world.t < o.spawnT) continue;
+    const jeIgrac = o.id === player.id;
+    if (!jeIgrac && (o.lane ?? 0) !== traka) continue;
+    if (jeIgrac && traka === 1) {
+      if (igracPretice(tp, o) && o.s < p.s) return false;
+      continue;
+    }
+    // Igrač se mjeri u SVOM smjeru vožnje, ma kojom trakom išao.
+    const smjerO = jeIgrac ? 1 : smjer;
+    const rel = (naPutu(tp, o) - p.s) * smjerO;
+    if (rel < 0) {
+      const daljina = -rel - o.length / 2;
+      const potrebno = o.v * (PRIKLJUCAK_PRAZNINA + (jeIgrac ? VRIJEME_LUKA : 0));
+      if (daljina < Math.max(PRIKLJUCAK_BLIZU, potrebno)) return false;
+    } else if (rel - o.length / 2 < prostorIspred) {
+      // Već je prošao raskrsnicu: smeta samo ako je tik iza nje.
+      return false;
+    }
+  }
+  return true;
+}
+
+/** Da li igrač tijelom zauzima susretnu traku — dakle pretiče. */
+function igracPretice(tp: TokPut, igrac: Vehicle): boolean {
+  return trakeNaPutu(tp.nasa, igrac).includes(1);
+}
+
+/**
+ * Dokle vozilo na luku još može da stane, a da ne uđe u kolovoz — dio luka.
+ *
+ * Pola luka je linija čekanja do ivice kolovoza; do tu se odluka o ulasku može
+ * povući. Poslije toga je već u traci.
+ */
+const LUK_POVRATAK = 0.5;
+
+/** Kretanje vozila van trake: čekanje, luk uključivanja, odlazak. */
+function pomjeriSporedne(world: World, tp: TokPut, player: Vehicle): void {
+  const na = world.naSporednom;
+  if (!na || na.length === 0) return;
+  const ostaju: VoziloNaSporednom[] = [];
+  for (const x of na) {
+    const p = tp.prikljucci[x.j];
+    if (!p) continue;
+    // Raskrsnica je daleko iza igrača: ko tu čeka ili odlazi, više se ne vidi.
+    if (p.s < player.s - KEEP_BEHIND) continue;
+    const luk = duzinaLuka(tp.nasa, p, tp.laneWidth, x.vrsta);
+
+    if (x.faza === "odlazi") {
+      const v = Math.min(SPOREDNI_ODLAZI, x.v + DT);
+      const f = x.f + (v * DT) / luk;
+      const u = f >= 1 ? x.u + v * DT : 0;
+      if (u > PRIKLJUCAK_KRAK) continue;
+      ostaju.push({ ...x, v, f: Math.min(1, f), u, indicator: f >= 1 ? null : "right" });
+      continue;
+    }
+
+    const duzina = VOZILA[x.vrsta].duzina;
+    if (x.faza === "ceka") {
+      ostaju.push(slobodnoZaUlaz(world, tp, player, p, duzina) ? { ...x, faza: "ulazi", v: 0 } : x);
+      continue;
+    }
+
+    // Uključuje se u susretnu traku, a igrač je u međuvremenu u nju prešao:
+    // dok je još van kolovoza, staje i pušta ga.
+    if (x.traka === 1 && x.f < LUK_POVRATAK && igracPretice(tp, player) && player.s < p.s) {
+      ostaju.push({ ...x, v: 0 });
+      continue;
+    }
+    // Uključuje se: luk od linije do trake, pa u traku.
+    const v = Math.min(SPOREDNI_BRZINA, x.v + SPOREDNI_UBRZANJE * DT);
+    const f = x.f + (v * DT) / luk;
+    if (f < 1) {
+      ostaju.push({ ...x, v, f });
+      continue;
+    }
+    const traka = x.traka;
+    const mjesto = krajLuka(p, "ulazi");
+    // Posljednja provjera na samom ulasku: dok je vozilo prelazilo luk, neko
+    // je mogao stići. Tada ostaje na kraju luka i čeka.
+    const zauzeto = world.vehicles.some(
+      (o) =>
+        !o.done &&
+        world.t >= o.spawnT &&
+        (o.lane ?? 0) === traka &&
+        Math.abs(naPutu(tp, o) - mjesto) < (o.length + duzina) / 2 + FOLLOW_GAP,
+    );
+    if (zauzeto) {
+      ostaju.push({ ...x, v: 0, f: 0.999 });
+      continue;
+    }
+    pustiVozilo(world, tp, x.id, traka, mjesto, { vrsta: x.vrsta, udio: x.udio, kapa: x.kapa, razmak: 0 });
+    // Kreće brzinom sa luka, a ne željenom: vozilo tek izlazi iz skretanja.
+    world.vehicles[world.vehicles.length - 1]!.v = v;
+  }
+  world.naSporednom = ostaju;
+}
+
 
 /**
  * Poslije koliko sekundi se scenario prekida.

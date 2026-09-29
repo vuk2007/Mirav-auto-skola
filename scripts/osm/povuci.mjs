@@ -46,6 +46,11 @@ async function glavno() {
   datumi.ulice = ulice.osm3s?.timestamp_osm_base ?? null;
   await spasi("ulice", ulice);
 
+  console.log("Sporedni putevi (seoski i stambeni) — za raskrsnice na magistrali:");
+  const sporedni = await poMrezi("sporedni", U.OKVIR, 3, 3, U.sporedni);
+  datumi.sporedni = sporedni.datum;
+  await spasi("sporedni", sporedni);
+
   console.log("Voda:");
   const voda = await poMrezi("voda", U.OKVIR, 2, 2, U.voda);
   datumi.voda = voda.datum;

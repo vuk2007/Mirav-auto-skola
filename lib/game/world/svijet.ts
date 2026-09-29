@@ -26,6 +26,7 @@ import type { Level } from "../sim/config";
 import type { DionicaToka, RoadTemplate, Scenario, TokSaobracaja, World } from "../sim/types";
 import { PLAYER_ID } from "../sim/world";
 import { parkiranaNaRuti, staniceNaRuti } from "./grad";
+import { punaPred } from "../road/prikljucci";
 import { kilometraza, type Ruta } from "./ruta";
 
 /** Šablon otvorenog puta za cijelu rutu. */
@@ -53,12 +54,18 @@ export function rutaTemplate(ruta: Ruta): RoadTemplate {
       duzina: ruta.duzina,
       krivine: ruta.krivine,
       vMaxNa: (s) => ruta.vMaxNa(s),
-      raskrsnice: ruta.dionice.flatMap((d, i) => (i === 0 ? [] : [d.odS])).concat(ruta.duzina),
+      raskrsnice: ruta.dionice
+        .flatMap((d, i) => (i === 0 ? [] : [d.odS]))
+        .concat(ruta.duzina)
+        // Raskrsnica sa regionalnim ili većim putem nosi punu liniju pred sobom;
+        // seoski put ne — vidi `PRIKLJUCAK_PUNA_LINIJA`.
+        .concat(ruta.prikljucci.filter(punaPred).map((p) => p.s)),
     }),
     // Grad: autobuske stanice i parkirani auti uz ivičnjak, isti pri svakoj
     // vožnji iste rute — vidi `world/grad.ts`.
     stanice: staniceNaRuti(ruta),
     parkirana: parkiranaNaRuti(ruta, staniceNaRuti(ruta)),
+    prikljucci: ruta.prikljucci,
     geometry: { laneWidth: ROAD_LANE_WIDTH },
     viewHalf: ROAD_VIEW_HALF,
   };

@@ -18,6 +18,9 @@ import {
   EDGE_MARKER_INSET,
   MIN_CAR_PX,
   MIN_SIGN_PX,
+  PRIKLJUCAK_KRAK,
+  VOZILA,
+  PRIKLJUCAK_SIRINA,
   LANDMARK_OFFSET,
   HORIZONT_NAJVISE,
   HORIZONT_RAZMAK,
@@ -59,6 +62,7 @@ import type {
   RoundaboutTemplate,
   ScenarioOfficer,
   Template,
+  Prikljucak,
   Vehicle,
   VrstaVozila,
   World,
@@ -76,6 +80,7 @@ import {
   tijeloVozila,
   type DioTijela,
 } from "../sim/world";
+import { pozaNaSporednom, sporedniPut } from "../sim/prikljucci";
 import { renderS, type Driver } from "./runner";
 import type { Okolina } from "../world/okolina";
 
@@ -445,6 +450,40 @@ function drawStanica(
 }
 
 /**
+ * Sporedni put uz raskrsnicu: komad asfalta od ivice kolovoza, linija na
+ * kojoj se čeka i trougao „ustupi prvenstvo" — sporedni put nema prednost.
+ *
+ * Asfalt počinje malo unutar ivice kolovoza, pa prekrije ivičnu liniju: na
+ * raskrsnici je ona prekinuta, kao i na terenu. Mjesto i pravac dolaze iz
+ * `sporedniPut`, istog računa po kojem se vozila na njemu kreću.
+ */
+function drawSporedni(ctx: CanvasRenderingContext2D, v: View, nasa: Path, p: Prikljucak, laneWidth: number): void {
+  const { usce, van, uzduz } = sporedniPut(nasa, p, laneWidth);
+  const w = (PRIKLJUCAK_SIRINA[p.rang] ?? 5) / 2;
+  const tacka = (duz: number, pop: number): Point => ({
+    x: usce.x + van.x * duz + uzduz.x * pop,
+    y: usce.y + van.y * duz + uzduz.y * pop,
+  });
+  fillPoly(ctx, v, [tacka(-0.35, -w - 1), tacka(-0.35, w + 1), tacka(1.6, w), tacka(PRIKLJUCAK_KRAK, w), tacka(PRIKLJUCAK_KRAK, -w), tacka(1.6, -w)], PALETTE.asphalt);
+  // Linija na kojoj se čeka: isprekidana, poprijeko, na kraju bankine.
+  strokeLine(ctx, v, [tacka(1.8, -w + 0.3), tacka(1.8, w - 0.3)], PALETTE.paint, 0.3, [0.6, 0.4]);
+  // Trougao je desno od onoga ko čeka — a on gleda ka putu, dakle u `-van`.
+  const desno = rt({ x: -van.x, y: -van.y });
+  const c = px(v, { x: usce.x + van.x * 2.6 + desno.x * (w + 1.2), y: usce.y + van.y * 2.6 + desno.y * (w + 1.2) });
+  const a = Math.max(MIN_SIGN_PX / 2, 0.9 * v.scale);
+  ctx.beginPath();
+  ctx.moveTo(c.x - a, c.y - a * 0.75);
+  ctx.lineTo(c.x + a, c.y - a * 0.75);
+  ctx.lineTo(c.x, c.y + a);
+  ctx.closePath();
+  ctx.fillStyle = PALETTE.paint;
+  ctx.fill();
+  ctx.lineWidth = Math.max(1.5, a * 0.22);
+  ctx.strokeStyle = PALETTE.red;
+  ctx.stroke();
+}
+
+/**
  * Otvorena dionica.
  *
  * Kolovoz je traka oko osovine, pa se crta kao jedan poligon: lijeva ivica
@@ -498,10 +537,16 @@ function drawRoad(
 
   // Grad: autobuske stanice i parkirani auti uz ivičnjak. Položaj se čita iz
   // putanje naše trake, kao i u simulaciji — da auto na ekranu stoji tačno tamo
-  // gdje igrač u njega može da udari.
-  const nasa = tpl.stanice || tpl.parkirana ? compile(tpl).paths.get(lanePathId(tpl.id, 0)) : undefined;
+  // gdje igrač u njega može da udari. Isto važi i za sporedne puteve.
+  const nasa =
+    tpl.stanice || tpl.parkirana || tpl.prikljucci
+      ? compile(tpl).paths.get(lanePathId(tpl.id, 0))
+      : undefined;
   if (nasa) {
     const doS = odS + (points.length - 1) * poTacki;
+    for (const p of tpl.prikljucci ?? []) {
+      if (p.s >= odS && p.s <= doS) drawSporedni(ctx, v, nasa, p, tpl.geometry.laneWidth);
+    }
     for (const st of tpl.stanice ?? []) {
       if (st.s >= odS && st.s <= doS) drawStanica(ctx, v, nasa, st.s, st.traka);
     }
@@ -1703,6 +1748,33 @@ export function drawScene(
       beacon: Boolean(veh.emergency) && Math.floor(world.t * BLINK_HZ * 4) % 2 === 0,
       highlight: opts.flagVehicleId === veh.id ? PALETTE.red : isPlayer ? PALETTE.paint : null,
     });
+  }
+
+  // Vozila na sporednim putevima: čekaju na liniji, ili skreću. Nisu u traci,
+  // pa ih petlja iznad ne vidi — vidi `sim/prikljucci.ts`.
+  if (tpl.kind === "road" && world.naSporednom && world.naSporednom.length > 0) {
+    const nasa = paths.get(lanePathId(tpl.id, 0));
+    for (const x of nasa ? world.naSporednom : []) {
+      const p = tpl.prikljucci?.[x.j];
+      if (!p || !nasa) continue;
+      const { pos, heading } = pozaNaSporednom(nasa, p, tpl.geometry.laneWidth, x);
+      if (!inFrame(v, pos)) continue;
+      const mjere = VOZILA[x.vrsta];
+      drawVehicle(
+        ctx,
+        v,
+        [{ pos, heading, length: mjere.duzina, width: mjere.sirina }],
+        heading,
+        bojaVozila({ id: x.id } as Vehicle),
+        x.vrsta,
+        {
+          braking: x.faza === "ceka",
+          blink: x.indicator && blinkOn ? x.indicator : null,
+          beacon: false,
+          highlight: null,
+        },
+      );
+    }
   }
 
   for (const o of oznake.values()) drawEdgeMarker(ctx, v, o.pos, o.heading, o.color);

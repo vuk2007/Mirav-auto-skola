@@ -53,6 +53,25 @@ out body;
 >;
 out skel qt;`;
 
+/**
+ * Sporedni putevi po cijeloj zemlji: seoski (`unclassified`) i stambeni
+ * (`residential`).
+ *
+ * Ne ulaze u mrezu za trazenje rute — magistrala se trazi po krupnim putevima —
+ * nego sluze samo da se vidi GDJE na magistralu izlazi sporedni put. Bez njih
+ * se od raskrsnica vide samo one sa regionalnim putem, jedna na pet i po
+ * kilometara, a upravo seoski putevi su ono sto na magistrali stvarno cini
+ * raskrsnicu. Prilazni putevi (`service`, `track`) se ne povlace: po zakonu to
+ * nije raskrsnica nego prikljucak prilaznog puta.
+ */
+export const sporedni = (okvir = OKVIR) => `[out:json][timeout:900];
+(
+  way[highway~"^(unclassified|residential)$"](${okvir});
+);
+out body;
+>;
+out skel qt;`;
+
 /** Voda: more, jezera, rijeke. */
 export const voda = (okvir = OKVIR) => `[out:json][timeout:900];
 (

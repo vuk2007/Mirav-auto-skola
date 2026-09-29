@@ -978,6 +978,14 @@ export const PRETICANJE_BUDZET = 12;
  */
 export const PRETICANJE_POVRATAK = 1.3;
 
+/**
+ * Usporenje sa kojim se, poslije preticanja, stiže vozilo ispred [m/s²].
+ *
+ * Iz suprotne trake se izlazi brže od kolone u koju se vraća: mjesta mora biti
+ * toliko da se iza vozila ispred uspori ovim usporenjem, a ne punom kočnicom.
+ */
+export const PRETICANJE_KOCENJE = 3;
+
 /** Zaliha puta koja se dodaje na sve što se pri preticanju mora preći [m]. */
 export const PRETICANJE_ZALIHA = 6;
 
@@ -1215,3 +1223,116 @@ export const BUS_POKAZIVAC_POLAZAK = 2;
  * saobraćaj nego čeka [m], od branika do branika.
  */
 export const STOJI_ISPRED = 25;
+
+// ── raskrsnice sa sporednim putem (modovi „Putovanje" i „Ruta") ────────────
+
+/**
+ * Najmanji razmak dvije raskrsnice na istoj strani sabijenog puta [m].
+ *
+ * Sabijanje skraćuje put nekoliko puta, a raskrsnice ostaju gdje jesu: dva
+ * seoska puta na trista metara stvarnog puta bi na sabijenom stajala na
+ * sedamdesetak. Bliže od ovoga se spajaju i ostaje krupniji put.
+ */
+export const PRIKLJUCAK_RAZMAK = 150;
+
+/**
+ * Koliko od kraja dionice raskrsnice nema [m].
+ *
+ * Kraj dionice je ulaz u mjesto — sam po sebi raskrsnica, sa punom linijom
+ * pred njom. Sporedni put tik uz njega bi bio ista raskrsnica drugi put.
+ */
+export const PRIKLJUCAK_OD_KRAJA = 100;
+
+/**
+ * Pred kojim sporednim putevima je razdjelna linija puna.
+ *
+ * Zadatak traži punu liniju `NO_OVERTAKE_BEFORE_JUNCTION` metara pred
+ * raskrsnicom. Primjenjuje se na raskrsnice sa regionalnim ili većim putem;
+ * seoski i stambeni put na magistrali je bez pune linije, kako je najčešće i
+ * obilježeno na terenu. Odluka od 29. septembra 2026.
+ */
+export const PRIKLJUCAK_PUNA_LINIJA: readonly string[] = [
+  "motorway",
+  "trunk",
+  "primary",
+  "secondary",
+  "tertiary",
+];
+
+/**
+ * Vjerovatnoća da na raskrsnici jedno vozilo skrene u sporedni put, po nivou.
+ *
+ * Po RASKRSNICI, ne po vozilu, i isto koliko i uključivanje: saobraćaj između
+ * dva mjesta se održava, koliko izađe toliko i uđe. Izmjereno sa vjerovatnoćom
+ * po vozilu: na Herceg Novom — Rožajama je skrenulo 237 vozila a uključilo se
+ * 47, i gustina na nivou 3 je pala ispod donje granice.
+ *
+ * Skreće se samo udesno — sa naše trake u put na desnoj strani, sa susretne u
+ * put na lijevoj. Skretanje ulijevo presijeca drugu traku, a to na otvorenom
+ * putu u ovoj igri nije ono što se uči.
+ */
+export const PRIKLJUCAK_IZLAZ: Readonly<Record<Level, number>> = {
+  1: 0.15,
+  2: 0.25,
+  3: 0.35,
+  4: 0.45,
+  5: 0.55,
+};
+
+/**
+ * Vjerovatnoća da na raskrsnici čeka vozilo koje se uključuje, po nivou.
+ *
+ * Isto kao i izlaz, samo udesno: iz puta na desnoj strani u našu traku, iz
+ * puta na lijevoj u susretnu.
+ */
+export const PRIKLJUCAK_ULAZ: Readonly<Record<Level, number>> = {
+  1: 0.15,
+  2: 0.25,
+  3: 0.35,
+  4: 0.45,
+  5: 0.55,
+};
+
+/** Brzina kojom se skreće u sporedni put [m/s]. */
+export const PRIKLJUCAK_BRZINA = 20 / 3.6;
+
+/**
+ * Usporenje pred skretanjem [m/s²].
+ *
+ * Blago, jer se skretanje najavljuje: pokazivač i usporavanje, ne naglo
+ * kočenje — ono po zakonu nije dozvoljeno bez opasnosti.
+ */
+export const PRIKLJUCAK_USPORENJE = 1.8;
+
+/** Koliko prije raskrsnice vozilo koje skreće pali pokazivač [m]. */
+export const PRIKLJUCAK_POKAZIVAC = 80;
+
+/**
+ * Koliko vremena do raskrsnice mora imati svako vozilo koje joj prilazi, da bi
+ * se vozilo sa sporednog puta uključilo ispred njega [s].
+ *
+ * Vozilo na sporednom putu nema prednost i kreće iz mjesta: kad se uključi,
+ * onaj koji dolazi mora da ga sustiže, a ne da koči. Osam sekundi je na
+ * osamdeset na sat oko sto osamdeset metara.
+ */
+export const PRIKLJUCAK_PRAZNINA = 8;
+
+/**
+ * Na kojoj udaljenosti ispred igrača se pojavi vozilo koje čeka na sporednom
+ * putu [m] — u kadru, da se vidi kako čeka.
+ */
+export const PRIKLJUCAK_POJAVA = 300;
+
+/** Dužina sporednog puta koja se crta uz raskrsnicu [m]. */
+export const PRIKLJUCAK_KRAK = 45;
+
+/** Širina sporednog puta koja se crta, po vrsti [m]. */
+export const PRIKLJUCAK_SIRINA: Readonly<Record<string, number>> = {
+  motorway: 7,
+  trunk: 7,
+  primary: 7,
+  secondary: 6.5,
+  tertiary: 6,
+  unclassified: 5,
+  residential: 5,
+};

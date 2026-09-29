@@ -4,6 +4,8 @@ import { duzina, naDuzini, uprosti } from "./lib/geom.mjs";
 import { iseciLiniju, iseciPoligon, povrsina } from "./lib/iseci.mjs";
 import { podijeli } from "./lib/mreza.mjs";
 import { NODES } from "./lib/graf.mjs";
+import { prikljucci } from "./lib/prikljucci.mjs";
+import { napraviMrezu } from "./lib/rutiranje.mjs";
 
 /**
  * Testovi za pripremu OSM podataka.
@@ -184,5 +186,53 @@ describe("dijeljenje okvira na mrezu", () => {
     expect(Math.min(...brojevi.map((b) => b[1]))).toBeCloseTo(18.3, 3);
     expect(Math.max(...brojevi.map((b) => b[2]))).toBeCloseTo(43.62, 3);
     expect(Math.max(...brojevi.map((b) => b[3]))).toBeCloseTo(20.45, 3);
+  });
+});
+
+describe("raskrsnice duz ivice", () => {
+  /**
+   * Mala mreza: ruta ide duz x ose od cvora 1 do 5, na po 100 m. Na nju
+   * izlaze putevi koji jesu i koji nisu raskrsnice. Koordinate su u stepenima
+   * jer mreza projektuje sama; 0.001 stepen je ovdje ~80-110 m.
+   */
+  const cvor = (id, x, y) => ({ type: "node", id, lat: 42 + y * 0.0009, lon: 19 + x * 0.00122 });
+  const put = (id, nodes, tags) => ({ type: "way", id, nodes, tags: { highway: "tertiary", ...tags } });
+  const elementi = [
+    ...[1, 2, 3, 4, 5].map((i) => cvor(i, i, 0)),
+    cvor(20, 2, 1), // lijevo od cvora 2, pod pravim uglom
+    cvor(30, 3, -1), // desno od cvora 3
+    cvor(40, 4.9, 0.05), // skoro paralelno uz cvor 4 — druga kolovozna traka
+    cvor(41, 4, -1), // desno od cvora 4, ali put iste oznake kao ruta
+    put(100, [1, 2, 3, 4, 5], { ref: "M-2" }),
+    put(200, [2, 20], {}),
+    put(300, [3, 30], { highway: "unclassified" }),
+    put(400, [4, 40], { oneway: "yes" }),
+    put(410, [4, 41], { ref: "M-2" }),
+  ];
+  const mreza = napraviMrezu(elementi, { tertiary: 1, unclassified: 1 });
+  const oznake = new Map(elementi.filter((e) => e.type === "way").map((e) => [e.id, e.tags]));
+  const opis = (w) => ({ ref: oznake.get(w)?.ref ?? "", jednosmjeran: oznake.get(w)?.oneway === "yes" });
+  const nadji = () => prikljucci(mreza, [1, 2, 3, 4, 5], { putevi: [100, 100, 100, 100], opis });
+
+  it("nalazi pravi sporedni put sa obje strane, u smjeru ivice", () => {
+    const p = nadji();
+    expect(p.map((x) => x.strana)).toEqual(["lijevo", "desno"]);
+    expect(p[0].s).toBeLessThan(p[1].s);
+    expect(p[1].rang).toBe("unclassified");
+  });
+
+  it("odbacuje drugu kolovoznu traku i put iste oznake kao ruta", () => {
+    // Cvor 4 ima dvije grane, i nijedna nije raskrsnica.
+    const p = nadji();
+    expect(p).toHaveLength(2);
+  });
+
+  it("spaja bliske na istoj strani i ne dira krajeve", () => {
+    const p = prikljucci(mreza, [1, 2, 3, 4, 5], { putevi: [100, 100, 100, 100], opis, spoji: 150 });
+    // Lijevo i desno su na razlicitim stranama, pa ostaju oba i kad su blizu.
+    expect(p).toHaveLength(2);
+    const bezKrajeva = prikljucci(mreza, [1, 2, 3, 4, 5], { putevi: [100, 100, 100, 100], opis, odKraja: 150 });
+    // Oba su na ~100 i ~200 m od pocetka rute duge ~400 m: prvi pada u kraj.
+    expect(bezKrajeva.map((x) => x.strana)).toEqual(["desno"]);
   });
 });

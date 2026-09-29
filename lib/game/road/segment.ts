@@ -14,6 +14,7 @@
  */
 
 import {
+  PRIKLJUCAK_OD_KRAJA,
   ROAD_LATERAL_ACCEL,
   ROAD_TURN_MAX,
   ROAD_TURN_MIN,
@@ -36,6 +37,7 @@ import type {
 import { landmarksOnEdge } from "./landmarks";
 import { osovina, type EdgeGeometry } from "./edgeGeometry";
 import { sabijenaIvica, type Sabijeno } from "./sabijanje";
+import { prikljucciIvice, prorijedi, punaPred } from "./prikljucci";
 import { curvesFor, type RoadEdge, type RoadKind, nodeById } from "./roadGraph";
 
 /** Kratak opis dionice po vrsti puta, na sva četiri jezika. */
@@ -162,6 +164,13 @@ export function roadTemplate(
     // predavale već okrenute: kad je povratak bio prvi poziv za tu ivicu, u keš
     // je kao odlazak ulazio povratak, pa su OBA smjera vozila pogrešnu stranu.
     const sabijeno = sabijenaIvica(geom.id, osovina(geom), obrnuto);
+    // Raskrsnice sa sporednim putem, bez onih tik uz krajeve: kraj dionice je
+    // i sam raskrsnica, ili ulaz u mjesto.
+    const prikljucci = prorijedi(
+      prikljucciIvice(geom, sabijeno, obrnuto).filter(
+        (p) => p.s >= PRIKLJUCAK_OD_KRAJA && p.s <= sabijeno.duzina - PRIKLJUCAK_OD_KRAJA,
+      ),
+    );
     return {
       kind: "road",
       id: `road:${edge.id}:${seed >>> 0}${obrnuto ? ":obrnuto" : ""}:osm`,
@@ -176,9 +185,11 @@ export function roadTemplate(
         duzina: sabijeno.duzina,
         krivine: sabijeno.krivine,
         // Dionica ima jedno ograničenje, pa naselja u njoj nema; kraj dionice
-        // je uvijek raskrsnica ili mjesto u koje se stiže.
-        raskrsnice: [sabijeno.duzina],
+        // je uvijek raskrsnica ili mjesto u koje se stiže. Uz njega i
+        // raskrsnice sa regionalnim ili većim putem — vidi `PRIKLJUCAK_PUNA_LINIJA`.
+        raskrsnice: [sabijeno.duzina, ...prikljucci.filter(punaPred).map((p) => p.s)],
       }),
+      prikljucci,
       geometry: { laneWidth: ROAD_LANE_WIDTH },
       viewHalf: ROAD_VIEW_HALF,
     };

@@ -29,6 +29,7 @@ import {
   HIGHWAY_DRAG,
   INDICATOR_LEAD_TIME,
   PRETICANJE_BUDZET,
+  PRETICANJE_KOCENJE,
   PRETICANJE_POVRATAK,
   PRETICANJE_PRILAZ,
   PRETICANJE_RAZLIKA,
@@ -90,7 +91,13 @@ function punaLinija(tpl: RoadTemplate, od: number, doK: number): boolean {
 /** Položaj vozila duž puta, u metrima naše trake. */
 const naPutu = (v: Vehicle, p: Path): number => (v.lane === 1 ? p.length - v.s : v.s);
 
-/** Vozilo u našoj traci ispred nas, sa razmakom od branika do branika. */
+/**
+ * Vozilo u našoj traci ispred vozila `me`, sa razmakom od branika do branika.
+ *
+ * Igrač se ne broji kad se traži vozilo ispred NEKOG DRUGOG: po `lane` je on
+ * uvijek u našoj traci, pa bi u preticanju sam sebi bio „vozilo ispred
+ * preteknutog".
+ */
 function sporiIspred(
   world: World,
   paths: ReadonlyMap<string, Path>,
@@ -99,6 +106,7 @@ function sporiIspred(
   let naj: { v: Vehicle; d: number } | null = null;
   for (const o of world.vehicles) {
     if (o.id === me.id || o.done || world.t < o.spawnT || o.lane === 1) continue;
+    if (o.id === PLAYER_ID && me.id !== PLAYER_ID) continue;
     const p = paths.get(o.pathId);
     if (!p) continue;
     const d = naPutu(o, p) - me.s - (me.length + o.length) / 2;
@@ -108,20 +116,36 @@ function sporiIspred(
   return naj;
 }
 
-/** Najbliže susretno vozilo ispred nas, mjereno duž puta. */
+/**
+ * Najbliže susretno vozilo ispred nas, mjereno duž puta — sa brzinom kojom
+ * nam prilazi.
+ *
+ * Broji se i vozilo koje upravo skreće sa sporednog puta u susretnu traku: ono
+ * se vidi, i za pola luka je u traci. Brzina mu se računa kao ograničenje, jer
+ * će je tek razviti — u planu je to strože nego stvarno.
+ */
 function susretnoIspred(
   world: World,
+  tpl: RoadTemplate,
   paths: ReadonlyMap<string, Path>,
   me: Vehicle,
-): { v: Vehicle; d: number } | null {
-  let naj: { v: Vehicle; d: number } | null = null;
+): { v: number; d: number } | null {
+  let naj: { v: number; d: number } | null = null;
   for (const o of world.vehicles) {
     if (o.id === me.id || o.done || world.t < o.spawnT || o.lane !== 1) continue;
     const p = paths.get(o.pathId);
     if (!p) continue;
     const d = naPutu(o, p) - me.s;
     if (d <= 0) continue;
-    if (!naj || d < naj.d) naj = { v: o, d };
+    if (!naj || d < naj.d) naj = { v: o.v, d };
+  }
+  for (const x of world.naSporednom ?? []) {
+    if (x.traka !== 1 || x.faza !== "ulazi") continue;
+    const p = tpl.prikljucci?.[x.j];
+    if (!p) continue;
+    const d = p.s - me.s;
+    if (d <= 0) continue;
+    if (!naj || d < naj.d) naj = { v: tpl.vMaxNa ? tpl.vMaxNa(p.s) : tpl.vMax, d };
   }
   return naj;
 }
@@ -166,15 +190,20 @@ function planPreticanja(
   limit: number,
   cilj: number,
 ): Plan | null {
-  const uMax = limit - spori.v.v;
+  // Brzina preteknutog: ona kojom vozi, ili ona kojom HOĆE da vozi, šta je
+  // veće. Vozilo koje trenutno koči iza nekoga ubrzaće čim mu se put otvori —
+  // izmjereno, plan je krenuo na vozilo od 35 km/h koje je kočilo iza auta što
+  // je skretalo u sporedni put, a ono je za tri sekunde vozilo 55, pa se
+  // preticanje razvuklo i završilo u koloni ispred.
+  const vL = zeljenaBrzina(spori.v, limit);
+  const uMax = limit - vL;
   if (uMax < PRETICANJE_RAZLIKA) return null;
 
   // Razlika puta: od sadašnjeg razmaka iza njega do razmaka ispred njega.
-  const put =
-    spori.d + me.length + spori.v.length + PRETICANJE_POVRATAK * spori.v.v + PRETICANJE_ZALIHA;
+  const put = spori.d + me.length + spori.v.length + PRETICANJE_POVRATAK * vL + PRETICANJE_ZALIHA;
   // Sa kojom razlikom brzine se ulazi u suprotnu traku: sa onom koja se već
   // ima, ili sa zaletom ako se do tada stigne ubrzati.
-  const u0 = Math.max(0, Math.min(uMax, Math.max(me.v - spori.v.v, PRETICANJE_ZALET)));
+  const u0 = Math.max(0, Math.min(uMax, Math.max(me.v - vL, PRETICANJE_ZALET)));
   // Volan: od razdjelne linije do ose suprotne trake i nazad. Osa je na širini
   // trake od naše, a linija na pola te širine — zajedno jedna širina trake.
   const volan = Math.abs(cilj) / bocnaBrzina(limit);
@@ -182,16 +211,16 @@ function planPreticanja(
   if (kontra > PRETICANJE_BUDZET) return null;
 
   // Dokle se stigne dok manevar traje, računajući i najavu prije njega.
-  const doKle = me.s + me.v * NAJAVA + put + spori.v.v * kontra + PRETICANJE_ZALIHA;
+  const doKle = me.s + me.v * NAJAVA + put + vL * kontra + PRETICANJE_ZALIHA;
   if (doKle > tpl.length) return null;
   if (punaLinija(tpl, me.s, doKle)) return null;
   if (ogranicenjeNaprijed(tpl, me.s, doKle - me.s) < limit - 0.01) return null;
 
   // Susretni saobraćaj. Prilazi se ZBIROM brzina, i to cijelo vrijeme manevra:
   // prag mora ostati ispunjen i u posljednjem koraku, ne samo u prvom.
-  const susretno = susretnoIspred(world, paths, me);
+  const susretno = susretnoIspred(world, tpl, paths, me);
   if (susretno) {
-    const zbir = limit + Math.max(susretno.v.v, 0);
+    const zbir = limit + Math.max(susretno.v, 0);
     if (susretno.d < zbir * (NAJAVA + kontra + PRETICANJE_SUSRETNI)) return null;
   }
 
@@ -202,11 +231,56 @@ function planPreticanja(
   if (sljedeci) {
     const t = NAJAVA + kontra;
     // Sve se mjeri od sredine preteknutog u ovom trenutku.
-    const mi = spori.v.v * t + PRETICANJE_POVRATAK * spori.v.v + (me.length + spori.v.length) / 2;
+    const mi = vL * t + PRETICANJE_POVRATAK * vL + (me.length + spori.v.length) / 2;
     const on = sljedeci.d + (spori.v.length + sljedeci.v.length) / 2 + sljedeci.v.v * t;
-    if (on - mi - (me.length + sljedeci.v.length) / 2 < CUT_IN_TIME * limit) return null;
+    if (on - mi - (me.length + sljedeci.v.length) / 2 < potrebnoIspred(limit, sljedeci.v.v)) return null;
   }
   return { kontra, put };
+}
+
+/** Brzina kojom vozilo vozi, ili kojom hoće da vozi — šta je veće, do ograničenja. */
+const zeljenaBrzina = (o: Vehicle, limit: number): number =>
+  Math.min(limit, Math.max(o.v, o.cruise ?? o.v));
+
+/**
+ * Koliko mjesta mora ostati ispred nas kad se vratimo u svoju traku [m].
+ *
+ * Toliko da se iza vozila ispred stigne blago usporiti na njegovu brzinu — iz
+ * suprotne trake se izlazi brže od kolone — i ne manje od razmaka u kojem se
+ * vraćanje ispred nekoga sudi kao prekršaj (`CUT_IN_TIME`).
+ */
+function potrebnoIspred(nasaBrzina: number, njegova: number): number {
+  const razlika = Math.max(0, nasaBrzina - njegova);
+  return Math.max(CUT_IN_TIME * njegova, FOLLOW_GAP + (razlika * razlika) / (2 * PRETICANJE_KOCENJE));
+}
+
+/**
+ * Hoće li, kad stignemo `razmak` ispred preteknutog, biti mjesta ispred nas.
+ *
+ * Provjerava se u svakom koraku u suprotnoj traci, a ne samo u planu: i vozilo
+ * ispred preteknutog mijenja brzinu, a kolona se zbija. Predviđa se trenutak
+ * povratka i gdje će tada biti vozilo ispred preteknutog.
+ */
+function imaMjestaZaPovratak(
+  world: World,
+  paths: ReadonlyMap<string, Path>,
+  me: Vehicle,
+  meta: Vehicle,
+  iza: number,
+  razmak: number,
+  limit: number,
+): boolean {
+  const sljedeci = sporiIspred(world, paths, meta);
+  if (!sljedeci) return true;
+  // Isti model kao u planu (`planPreticanja`): preteknuti vozi brzinom kojom
+  // želi, a mi do povratka ubrzavamo. Da se računa drugačije, plan bi rekao
+  // „kreni" a ova provjera odmah „odustani".
+  const vMeta = zeljenaBrzina(meta, limit);
+  const uMax = Math.max(0.5, limit - vMeta);
+  const t = vrijemeZa(Math.max(0, razmak - iza), Math.max(0, me.v - vMeta), uMax, me.v);
+  const odMete = sljedeci.d + (meta.length + sljedeci.v.length) / 2 + (sljedeci.v.v - vMeta) * t;
+  const prostor = odMete - razmak - (me.length + sljedeci.v.length) / 2;
+  return prostor >= potrebnoIspred(limit, sljedeci.v.v);
 }
 
 /**
@@ -222,6 +296,8 @@ export function vozacRute({ pretice = true }: VozacOpcije = {}): Bot {
   let odKada = 0;
   let desniOd: number | null = null;
   let metaId: string | null = null;
+  /** U suprotnoj traci je odlučeno da se vraća IZA preteknutog. */
+  let odustao = false;
 
   return (world, scenario) => {
     const osnova = perfectBot(world, scenario);
@@ -352,20 +428,41 @@ export function vozacRute({ pretice = true }: VozacOpcije = {}): Bot {
       const spreman = desniOd !== null && world.t - desniOd >= NAJAVA;
       const isteklo = world.volan.kontraT > PRETICANJE_BUDZET;
 
+      // Ima li ispred mjesta za povratak? Ako ga neće biti, odustaje se dok smo
+      // još iza preteknutog, ili pored njega — izmjereno bez ovoga, vozač se
+      // vratio pravo u kolonu koja je vozila 38 km/h.
+      if (!odustao && meta && iza < razmak && !imaMjestaZaPovratak(world, paths, me, meta, iza, razmak, limit)) {
+        // Sredina vozila još nije prešla liniju: to nije odustajanje od
+        // preticanja nego od prelaska — nazad u svoju traku. Pokazivač se sudi
+        // tek kad sredina pređe, pa ovdje nijedno pravilo nije ni počelo.
+        if (world.volan.kontraT === 0) {
+          faza = "vozi";
+          metaId = null;
+          desniOd = null;
+          return poOgranicenju({ ...osnova, indicator: null, steer: volanKa(0) });
+        }
+        odustao = true;
+      }
+
       // Rok je istekao a već smo ispred njega: vraća se i sa manjim razmakom od
       // planiranog. Kraće vraćanje je sitnica (`cutIn` je `minor` i ne obara
       // vožnju dok preteknuti ne mora da koči), a dalje stajanje u suprotnoj
       // traci nije.
-      if (spreman && (iza >= razmak || isteklo)) {
+      if (!odustao && spreman && (iza >= razmak || isteklo)) {
         faza = "povratak";
         return poOgranicenju({ ...osnova, indicator: "right", steer: volanKa(0) });
       }
-      // Rok je istekao, a nije se stiglo ispred: koči i vrati se IZA njega.
-      // Preticanje koje ne uspije nije prekršaj; zadržavanje u suprotnoj traci
-      // jeste.
-      if (isteklo && iza < 0) {
+      // Odustajanje, ili rok istekao a nije se stiglo ispred: koči i vrati se
+      // IZA njega. Preticanje koje ne uspije nije prekršaj; zadržavanje u
+      // suprotnoj traci i povratak u kolonu jesu.
+      if (odustao || (isteklo && iza < 0)) {
         if (desniOd === null) desniOd = world.t;
-        const nazad = spreman && iza < -razmak - FOLLOW_GAP;
+        const izaNjega = meta ? -((me.length + meta.length) / 2 + FOLLOW_GAP + meta.v * 0.5) : Infinity;
+        const nazad = spreman && iza < izaNjega;
+        if (nazad) {
+          faza = "povratak";
+          odustao = false;
+        }
         return {
           ...osnova,
           throttle: 0,
@@ -392,6 +489,7 @@ export function vozacRute({ pretice = true }: VozacOpcije = {}): Bot {
     faza = "vozi";
     metaId = null;
     desniOd = null;
+    odustao = false;
     return { ...ulaz, indicator: null };
   };
 }

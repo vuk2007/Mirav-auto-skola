@@ -28,6 +28,13 @@ export interface EdgeGeometry {
   tacaka: number;
   /** Osovina puta, `[x, y]` u metrima. */
   g: [number, number][];
+  /**
+   * Sporedni putevi koji izlaze na ivicu, u smjeru od `a` prema `b`.
+   *
+   * `s` je u metrima po istoj mjeri kao `duzinaM`. Nema ga u fajlovima
+   * napravljenim prije nego što ga je skripta počela da bilježi.
+   */
+  prikljucci?: { s: number; strana: "lijevo" | "desno"; rang: string }[];
 }
 
 /** Tačke geometrije kao `Point[]`, u smjeru od `a` prema `b`. */
@@ -52,6 +59,15 @@ export function parseGeometry(raw: unknown): EdgeGeometry | null {
   for (const t of v.g) {
     if (!Array.isArray(t) || t.length !== 2) return null;
     if (typeof t[0] !== "number" || typeof t[1] !== "number") return null;
+  }
+  if (v.prikljucci !== undefined) {
+    if (!Array.isArray(v.prikljucci)) return null;
+    for (const p of v.prikljucci as unknown[]) {
+      if (typeof p !== "object" || p === null) return null;
+      const q = p as Record<string, unknown>;
+      if (typeof q.s !== "number" || typeof q.rang !== "string") return null;
+      if (q.strana !== "lijevo" && q.strana !== "desno") return null;
+    }
   }
   return raw as EdgeGeometry;
 }

@@ -31,6 +31,7 @@ import {
   rangPuta,
   trazi,
 } from "./lib/rutiranje.mjs";
+import { prikljucci } from "./lib/prikljucci.mjs";
 
 const IZLAZ = join(process.cwd(), "public", "data", "osm", "edgeGeometry");
 const IZVJESTAJ = join(process.cwd(), "scripts", "osm", "izvjestaj");
@@ -68,6 +69,14 @@ const RAZMAK_KANDIDATA = 300;
 const MNOZILAC_LIJEPLJENJA = 3;
 /** Uproscavanje geometrije ivice [m]. */
 const TOL = 5;
+/**
+ * Koliko od krajeva ivice se prikljucci ne biljeze [m].
+ *
+ * Kraj ivice je u gradu, a gradski dio se u igri vozi kicmom, ne ivicom. Tamo
+ * je svaki cvor raskrsnica, i to nije ono sto se trazi — trazi se sporedni put
+ * koji izlazi na magistralu izmedju dva mjesta.
+ */
+const PRIKLJUCCI_OD_KRAJA = 150;
 /** Preko ovoga se koordinata cvora prijavljuje kao sumnjiva [m]. */
 const PRAG_KOORDINATE = 1000;
 /**
@@ -92,6 +101,10 @@ const kandidati = (cvor, mreza, opcije = {}) =>
 
 // -- glavno ------------------------------------------------------------------
 
+/** Oznake i jednosmjernost sporednih puteva — vidi `lib/prikljucci.mjs`. */
+const oznakeSporednih = new Map();
+const jednosmjerniSporedni = new Set();
+
 async function glavno() {
   const put = join(KES, "putevi.json");
   if (!existsSync(put)) throw new Error("Nema putevi.json — pokreni prvo: npm run osm:povuci");
@@ -101,13 +114,35 @@ async function glavno() {
   const mreza = napraviMrezu(sirovo.elements);
   console.log(`  cvorova: ${mreza.susjedi.size}, segmenata: ${mreza.ivica}`);
 
+  // Seoski i stambeni putevi: ne ulaze u trazenje rute, nego samo pokazuju gdje
+  // na magistralu izlazi sporedni put. Bez njih se vide samo raskrsnice sa
+  // regionalnim putem. Ako keša nema, prikljucci se racunaju bez njih.
+  const putSporedni = join(KES, "sporedni.json");
+  let sporedna = null;
+  if (existsSync(putSporedni)) {
+    const sp = JSON.parse(await readFile(putSporedni, "utf8"));
+    sporedna = napraviMrezu(sp.elements, { unclassified: 1, residential: 1 });
+    for (const el of sp.elements) {
+      if (el.type !== "way") continue;
+      if (el.tags?.ref) oznakeSporednih.set(el.id, el.tags.ref);
+      if (el.tags?.oneway === "yes") jednosmjerniSporedni.add(el.id);
+    }
+    console.log(`  sporednih cvorova: ${sporedna.susjedi.size}`);
+  } else {
+    console.log("  (nema sporedni.json — prikljucci samo sa regionalnim i vecim putevima)");
+  }
+
   // Oznake puteva (M-2, E65...) — po njima se koridor prepoznaje na oko.
   const oznake = new Map();
+  // Jednosmjerni putevi — po njima se druga kolovozna traka razlikuje od
+  // sporednog puta (vidi `lib/prikljucci.mjs`).
+  const jednosmjerni = new Set();
   // Rang svake ivice — po njemu se vidi od cega je ruta sastavljena.
   const rangovi = new Map();
   for (const el of sirovo.elements) {
     if (el.type !== "way") continue;
     if (el.tags?.ref) oznake.set(el.id, el.tags.ref);
+    if (el.tags?.oneway === "yes" || el.tags?.junction === "roundabout") jednosmjerni.add(el.id);
     const r = rangPuta(el.tags);
     if (r) rangovi.set(el.id, r);
   }
@@ -220,6 +255,17 @@ async function glavno() {
       },
         tacaka: uprosceno.length,
         g: uprosceno.map(([x, y]) => [dm(x), dm(y)]),
+        // Sporedni putevi duz ivice, u smjeru od `a` prema `b` — vidi
+        // `lib/prikljucci.mjs`. Mjesto je u metrima po istoj mjeri kao `duzinaM`.
+        prikljucci: prikljucci(mreza, ruta.cvorovi, {
+          odKraja: PRIKLJUCCI_OD_KRAJA,
+          putevi: ruta.putevi,
+          opis: (w) => ({
+            ref: oznake.get(w) ?? oznakeSporednih.get(w) ?? "",
+            jednosmjeran: jednosmjerni.has(w) || jednosmjerniSporedni.has(w),
+          }),
+          sporedna,
+        }),
       }),
     );
 

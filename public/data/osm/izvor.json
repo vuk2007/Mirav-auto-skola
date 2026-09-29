@@ -6,6 +6,7 @@
   "stanjeBaze": {
     "putevi": "2026-09-09T08:53:17Z",
     "ulice": "2026-09-09T09:04:23Z",
+    "sporedni": "2026-05-31T22:37:44Z",
     "voda": "2026-09-09T09:06:26Z",
     "zelenilo": "2026-07-28T02:16:18Z",
     "vrhovi": "2026-06-01T08:52:28Z",
@@ -22,5 +23,6 @@
   "najmanjaPovrsina": 2000,
   "tileova": 8218,
   "vrhova": 4593,
-  "granicaKomada": 172
+  "granicaKomada": 172,
+  "sporedniZa": "raskrsnice na ivicama (edgeGeometry.prikljucci), preuzeto 2026-09-29"
 }

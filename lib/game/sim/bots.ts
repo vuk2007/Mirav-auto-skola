@@ -78,9 +78,15 @@ export function probeWorld(world: World): World {
             susretni: { ...world.tok.susretni },
             nas: { ...world.tok.nas },
             kamiona: world.tok.kamiona,
+            prikljucak: world.tok.prikljucak,
+            izasli: [...world.tok.izasli],
           },
         }
       : {}),
+    // Vozila na sporednim putevima se pomjeraju u mjestu (niz se zamjenjuje, a
+    // vozila u njemu se ne diraju) — plitka kopija niza je dovoljna, ali mora
+    // postojati, inače bi proba pustila vozilo u traku umjesto prave vožnje.
+    ...(world.naSporednom ? { naSporednom: world.naSporednom.map((x) => ({ ...x })) } : {}),
     events: [],
     violations: [],
   };

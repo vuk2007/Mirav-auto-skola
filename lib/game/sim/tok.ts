@@ -46,8 +46,14 @@ import {
 import { rng } from "./geometry";
 import type { DionicaToka, VrstaVozila } from "./types";
 
-/** Odakle je vozilo toka: susretni tok, naš smjer, zagarantovani kamion. Slovo ide i u `id`. */
-export type IzvorSlovo = "s" | "n" | "k";
+/**
+ * Odakle je vozilo toka: susretni tok, naš smjer, zagarantovani kamion, vozilo
+ * koje se uključuje sa sporednog puta. Slovo ide i u `id`.
+ *
+ * `c` i `i` nisu vozila nego odluke na raskrsnici — čeka li tu neko, skreće li
+ * vozilo — i imaju svoja slova da ne dijele niz brojeva sa vozilom `u`.
+ */
+export type IzvorSlovo = "s" | "n" | "k" | "u" | "c" | "i";
 
 /**
  * Tipična brzina vozila u toku, kao dio ograničenja.

@@ -33,14 +33,16 @@ import {
   ROUTE_JOIN_WINDOW,
   ROUTE_STEP,
   MIN_ROUTE_RADIUS,
+  PRIKLJUCAK_OD_KRAJA,
   SPEED_LIMIT_KMH_BY_ROAD,
 } from "../sim/config";
-import type { Point, RoadCurve, RoadLandmark } from "../sim/types";
+import type { Point, Prikljucak, RoadCurve, RoadLandmark } from "../sim/types";
 import { osovina, type EdgeGeometry } from "../road/edgeGeometry";
 import { krozGrad, ulazZaIvicu, type Kicma } from "../road/kicma";
 import { edgeById, edgesAt, otherEnd, type RoadEdge } from "../road/roadGraph";
 import { preuzorkuj, sabijenaIvica, zaobli, type Sabijeno } from "../road/sabijanje";
 import { landmarksOnEdge } from "../road/landmarks";
+import { prikljucciIvice, prorijedi } from "../road/prikljucci";
 
 /** Jedna dionica rute, sa mjestom koje zauzima duž cijele rute. */
 export interface RutaDionica {
@@ -89,6 +91,8 @@ export interface Ruta {
   stvarnaDuzina: number;
   krivine: RoadCurve[];
   landmarks: RoadLandmark[];
+  /** Raskrsnice sa sporednim putem, poređane po `s` — vidi `road/prikljucci.ts`. */
+  prikljucci: Prikljucak[];
   /** Najveća dozvoljena brzina na cijeloj ruti [m/s]. */
   vMax: number;
   /** Dionica na mjestu `s`. */
@@ -529,6 +533,7 @@ export function napraviRutu(
 
   const krivine: RoadCurve[] = [];
   const landmarks: RoadLandmark[] = [];
+  const prikljucci: Prikljucak[] = [];
   for (const d of dionice) {
     /**
      * Mjesto na dionici → mjesto na ruti.
@@ -553,6 +558,16 @@ export function napraviRutu(
     // Znamenitosti stoje uz ivice; gradska dionica ih nema — ono što je u gradu
     // vezano je za sam čvor i prikazuje se na dolasku, ne pored puta.
     if (!d.edge) continue;
+    // Raskrsnice sa sporednim putem — samo između mjesta, ne uz sam ulaz u
+    // mjesto: kraj dionice je i sam raskrsnica.
+    const g = geom.get(d.edge.id);
+    for (const p of g ? prikljucciIvice(g, d.sabijeno, d.obrnuto) : []) {
+      const mjesto = p.s - d.skinuto;
+      if (mjesto < 0) continue;
+      const s = naRuti(mjesto);
+      if (s - d.odS < PRIKLJUCAK_OD_KRAJA || d.doS - s < PRIKLJUCAK_OD_KRAJA) continue;
+      prikljucci.push({ ...p, s });
+    }
     for (const l of landmarksOnEdge(d.edge.id, d.obrnuto)) {
       if (l.at.kind !== "edge") continue;
       const udio = l.at.atKm / d.edge.km;
@@ -563,6 +578,7 @@ export function napraviRutu(
   }
   krivine.sort((a, b) => a.atS - b.atS);
   landmarks.sort((a, b) => a.atS - b.atS);
+  const prorijedjeni = prorijedi(prikljucci);
 
   const dionicaNa = (s: number): RutaDionica => {
     for (const d of dionice) if (s < d.doS) return d;
@@ -586,6 +602,7 @@ export function napraviRutu(
     stvarnaDuzina: dionice.reduce((a, d) => a + d.sabijeno.stvarnaDuzina, 0),
     krivine,
     landmarks,
+    prikljucci: prorijedjeni,
     vMax: Math.max(...dionice.map((d) => d.vMax)),
     dionicaNa,
     vMaxNa: (s) => dionicaNa(s).vMax,

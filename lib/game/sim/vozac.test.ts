@@ -31,6 +31,8 @@ interface Opcije {
   /** Susretno vozilo, mjereno od našeg početka [m]. */
   susretno?: number;
   vMax?: number;
+  /** Kolona ispred sporijeg: koliko ispred njega počinje, koliko vozila, kojim razmakom i brzinom. */
+  kolona?: { od: number; koliko: number; razmak: number; udio: number };
 }
 
 function put({
@@ -40,6 +42,7 @@ function put({
   zabrane,
   susretno,
   vMax = 80 / 3.6,
+  kolona,
 }: Opcije = {}): { scenario: Scenario; brzina: number } {
   broj += 1;
   const duzina = 6000;
@@ -68,6 +71,16 @@ function put({
       vrsta,
     },
   ];
+  for (let i = 0; i < (kolona?.koliko ?? 0); i++) {
+    npcs.push({
+      arm: "N",
+      intent: { kind: "lane", index: 0 },
+      startS: ispred + kolona!.od + i * kolona!.razmak,
+      spawnAt: [0, 0],
+      speed: vMax * kolona!.udio,
+      fiksno: true,
+    });
+  }
   if (susretno !== undefined) {
     npcs.push({
       arm: "S",
@@ -169,6 +182,17 @@ describe("preticanje sporijeg vozila", () => {
       return JSON.stringify([v.igrac.s, v.igrac.v, v.igrac.lateral, v.preticanja]);
     };
     expect(trag()).toBe(trag());
+  });
+});
+
+describe("kolona ispred preteknutog", () => {
+  it("ne vraća se u kolonu: ili ne kreće, ili se vraća sa mjestom ispred sebe", () => {
+    // Kamion na 56 km/h sustiže kolonu od tri auta na 40 km/h. Izmjereno prije
+    // ispravke: vozač je pretekao onog pred sobom i vratio se pravo u kolonu.
+    const { scenario } = put({ kolona: { od: 70, koliko: 3, razmak: 30, udio: 0.5 } });
+    const v = vozi(scenario, 120);
+    expect(v.world.violations.map((x) => `${x.type}: ${x.details}`)).toEqual([]);
+    expect(v.world.outcome).not.toBe("failed");
   });
 });
 

@@ -36,6 +36,7 @@ Tačno ono što je zadato i ništa više — bez zgrada, bez POI-ja, bez adresa:
 | --- | --- |
 | `putevi` | `motorway`…`tertiary` sa vezama, plus `junction=roundabout` |
 | `ulice` | `residential`, `unclassified`, `living_street` u krugu oko centara opština |
+| `sporedni` | `unclassified`, `residential` po cijeloj zemlji — samo za raskrsnice na ivicama, ne ulaze u traženje rute |
 | `voda` | `natural=water`, `natural=coastline`, `waterway=river` |
 | `zelenilo` | `natural=wood`, `landuse` = forest, farmland, vineyard, residential, industrial |
 | `vrhovi` | `natural=peak` sa imenom i visinom |
@@ -62,7 +63,7 @@ public/data/osm/
   izvor.json                  datum, licenca, parametri obrade
   vrhovi.json                 vrhovi sa imenom i visinom
   tiles/<x>_<y>.json          okolina, isječena na 2×2 km
-  edgeGeometry/<ivica>.json   geometrija svake ivice grafa
+  edgeGeometry/<ivica>.json   geometrija svake ivice grafa, i raskrsnice duž nje (`prikljucci`)
 scripts/osm/izvjestaj/
   ivice-za-provjeru.md        ivice na kojima se OSM i graf ne slažu
   kicme-kandidati.md          kružni tokovi i raskrsnice po gradovima
@@ -77,3 +78,17 @@ zato nisu WGS84 GeoJSON i ne treba ih tako učitavati.
 Ne mijenja `lib/game/road/roadGraph.ts`. Ako OSM kaže da ivica ide drugim
 koridorom nego graf, ili da je dvostruko duža, to ide na spisak za provjeru —
 graf je podatak koji unosi škola, a ne nešto što skripta smije da popravi.
+
+## Raskrsnice duž ivice
+
+Raskrsnica u OSM-u nije posebno označena: to je samo čvor koji dijele dva
+puta. `lib/prikljucci.mjs` zato uzima svaki čvor rute ivice i gleda njegove
+susjede koji nisu na ruti — svaki je jedan sporedni put. Seoski i stambeni
+putevi (`sporedni.json`) služe samo za to, u traženje rute ne ulaze.
+
+Nije svaki takav susjed raskrsnica. Izmjereno na svih 54 ivica: od 943 grane
+sa krupnijim putevima, 388 je nosilo istu oznaku puta kao sama ruta, a uglovi
+su imali tri vrha — oko 90° i blizu 0° i 180°. Ovi drugi su druga kolovozna
+traka istog puta i ulivne trake uz nju. Odbacuje se grana sa istom oznakom
+puta i jednosmjerna grana skoro paralelna sa rutom. Poslije toga, sa seoskim
+putevima: 2718 raskrsnica na 1385 km, jedna na pola kilometra.
