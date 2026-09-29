@@ -1411,3 +1411,24 @@ export const KAMERA_NAPRIJED = 0.12;
 
 /** Brzina na kojoj je pomak kamere unaprijed najveći [m/s]. */
 export const KAMERA_NAPRIJED_BRZINA = 100 / 3.6;
+
+// ── mjerilo crtanja (`/igra/bench`) ─────────────────────────────────────────
+
+/**
+ * Ruta po kojoj se mjeri crtanje: od mora preko Cetinja i Podgorice do
+ * planine — obala, dva grada, planinski zavoji, najviše okoline na jednoj ruti
+ * srednje dužine. Uvijek ista, da se brojevi iz dva mjerenja mogu porediti.
+ */
+export const BENCH_OD = "budva";
+export const BENCH_DO = "kolasin";
+/** Najgušći saobraćaj — najviše vozila za nacrtati. */
+export const BENCH_NIVO = 5;
+/** Na koliko sekundi vožnje se uzima tačka mjerenja [s]. */
+export const BENCH_TACKE_S = 120;
+/** Koliko se kadrova mjeri na svakoj tački — tri sekunde na 60 fps. */
+export const BENCH_KADROVA = 180;
+/**
+ * Veličina platna [CSS px] — kvadrat širok kao ekran telefona. Stalna, da
+ * mjerenje na računaru i na telefonu crta isti broj piksela.
+ */
+export const BENCH_PLATNO = 360;
