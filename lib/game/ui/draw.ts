@@ -20,10 +20,7 @@ import {
   KAMERA_NAPRIJED,
   KAMERA_NAPRIJED_BRZINA,
   MIN_SIGN_PX,
-  OKO_LIJEVO,
-  PRIKLJUCAK_KRAK,
   VOZILA,
-  PRIKLJUCAK_SIRINA,
   LANDMARK_OFFSET,
   HORIZONT_NAJVISE,
   HORIZONT_RAZMAK,
@@ -32,14 +29,11 @@ import {
   KAMERA_TETIVA,
   LANDMARK_SIZE,
   OZNAKA_DOMET_PUT,
-  ROAD_STEP,
   STEER_TILT,
-  ROUTE_STEP,
-  OKOLINA_POJAS,
   SIGN_LEAD,
   VIEW_HALF,
 } from "../sim/config";
-import { headingAt, pointAt, rectCorners, valueAt } from "../sim/geometry";
+import { pointAt } from "../sim/geometry";
 import {
   compile,
   crosswalkWidth,
@@ -72,7 +66,6 @@ import type {
 } from "../sim/types";
 import { bezKrakova } from "../sim/types";
 import { HIGHWAY_LANES, lanePathId, laneX } from "../sim/highway";
-import { bocnaLinija, centerLine } from "../sim/road";
 import { ringPorts } from "../sim/roundabout";
 import { phasesFor } from "../sim/indicatorRules";
 import {
@@ -81,11 +74,32 @@ import {
   parkiranoTijelo,
   poseOn,
   tijeloVozila,
-  zaklanjaci,
   type DioTijela,
 } from "../sim/world";
-import { pozaNaSporednom, sporedniPut } from "../sim/prikljucci";
+import { pozaNaSporednom } from "../sim/prikljucci";
 import { renderS, type Driver } from "./runner";
+import {
+  bankina,
+  brojTacaka,
+  dugoVozilo,
+  komadPuta,
+  kolovoz,
+  linijePuta,
+  mjestoTrouglaSporednog,
+  mul,
+  okolinaLinija,
+  okolinaTrake,
+  plus,
+  rt,
+  sjeneZaklona,
+  sporedniTlo,
+  stanicaLinija,
+  uPoligonu,
+  uzIvicnjakStanice,
+  worldRect,
+  type KomadPuta,
+  type Slikar,
+} from "./slikar";
 import type { Okolina } from "../world/okolina";
 
 /** Boje su iste kao tokeni u `app/globals.css` — scena mora da liči na sajt. */
@@ -120,48 +134,6 @@ export const PALETTE = {
   /** Ono što vozač ne vidi iza kamiona — blago zatamnjeno, ne crno. */
   sjena: "rgba(20, 24, 32, 0.26)",
 } as const;
-
-/**
- * Boje okoline pored puta.
- *
- * Shematski, po dvije-tri boje: cilj nije slika prirode nego da se sa vozačkog
- * mjesta odmah vidi šta je s koje strane — voda, šuma, naselje. Sve je nešto
- * tamnije od trave, da put ostane najsvjetlije što se vidi.
- */
-export const OKOLINA_BOJE: Record<string, string> = {
-  voda: "#8ab8dd",
-  suma: "#8aa478",
-  njiva: "#ddd5a6",
-  vinograd: "#c6bf88",
-  naselje: "#c8c3ba",
-  industrija: "#b3aea6",
-};
-
-/**
- * Šta se rasipa po traci okoline, da ne bude prazna boja.
- *
- * Sve je shematsko i sve je jeftino: krug za drvo, pravougaonik za kuću, kratka
- * crta za talas. Mjesta se biraju iz položaja, ne iz slučaja — isti komad puta
- * uvijek izgleda isto, i pri ponovnoj vožnji i pri ponavljanju snimka.
- */
-export const OKOLINA_SITNO: Record<
-  string,
-  { boja: string; oblik: "drvo" | "kuca" | "talas" | "brazda"; razmak: number; velicina: number }
-> = {
-  suma: { boja: "#5f7a4c", oblik: "drvo", razmak: 11, velicina: 3 },
-  naselje: { boja: "#9a938a", oblik: "kuca", razmak: 24, velicina: 8 },
-  industrija: { boja: "#867f77", oblik: "kuca", razmak: 32, velicina: 12 },
-  voda: { boja: "#bcdcf2", oblik: "talas", razmak: 14, velicina: 5 },
-  njiva: { boja: "#bdb47e", oblik: "brazda", razmak: 9, velicina: 7 },
-  vinograd: { boja: "#a49b62", oblik: "brazda", razmak: 6, velicina: 6 },
-};
-
-/** Boje linijskih pojava: obala, rijeka i sporedne ulice. */
-export const OKOLINA_LINIJE: Record<string, { boja: string; sirina: number }> = {
-  obala: { boja: "#7fb0d8", sirina: 1.2 },
-  rijeka: { boja: "#9ec6e8", sirina: 4 },
-  put: { boja: "#cdcfc6", sirina: 2.6 },
-};
 
 /**
  * Da li pokazivač u trenutku `t` svijetli.
@@ -218,7 +190,7 @@ export function viewFor(widthPx: number, heightPx: number, half = VIEW_HALF): Vi
  * centriran na ishodište — prati igrača u smjeni, a na autoputu je ishodište
  * na početku dionice, sto metara iza njega.
  */
-const inFrame = (v: View, p: Point): boolean => {
+export const inFrame = (v: View, p: Point): boolean => {
   const q = px(v, p);
   return q.x >= 0 && q.x <= v.wPx && q.y >= 0 && q.y <= v.hPx;
 };
@@ -239,7 +211,7 @@ const inFrame = (v: View, p: Point): boolean => {
  * Uz `px` ide i `screenAngle`: sve što se crta rotacijom oko svoje ose mora
  * dobiti isti obrt.
  */
-const px = (v: View, p: Point): Point => {
+export const px = (v: View, p: Point): Point => {
   const dx = p.x - v.wx;
   const dy = p.y - v.wy;
   if (v.rot === 0) return { x: v.cx - dx * v.scale, y: v.cy - dy * v.scale };
@@ -252,13 +224,7 @@ const px = (v: View, p: Point): Point => {
 };
 
 /** Ugao smjera na ekranu — isti obrt kao `px`, uključujući okretanje kadra. */
-const screenAngle = (v: View, h: Point): number => Math.atan2(-h.y, -h.x) + v.rot;
-
-/** Vektor okrenut za 90° udesno (u sistemu gdje `y` raste nadolje). */
-const rt = (h: Point): Point => ({ x: -h.y, y: h.x });
-
-const mul = (p: Point, k: number): Point => ({ x: p.x * k, y: p.y * k });
-const plus = (a: Point, b: Point): Point => ({ x: a.x + b.x, y: a.y + b.y });
+export const screenAngle = (v: View, h: Point): number => Math.atan2(-h.y, -h.x) + v.rot;
 
 /** `roundRect` nema u starijim mobilnim pregledačima — tamo ćošak ostaje oštar. */
 function roundedRect(
@@ -272,18 +238,6 @@ function roundedRect(
   ctx.beginPath();
   if (typeof ctx.roundRect === "function") ctx.roundRect(x, y, w, h, r);
   else ctx.rect(x, y, w, h);
-}
-
-/** Pravougaonik zadat centrom, smjerom i dimenzijama u metrima. */
-function worldRect(c: Point, h: Point, len: number, wid: number): Point[] {
-  const f = mul(h, len / 2);
-  const s = mul(rt(h), wid / 2);
-  return [
-    { x: c.x + f.x + s.x, y: c.y + f.y + s.y },
-    { x: c.x + f.x - s.x, y: c.y + f.y - s.y },
-    { x: c.x - f.x - s.x, y: c.y - f.y - s.y },
-    { x: c.x - f.x + s.x, y: c.y - f.y + s.y },
-  ];
 }
 
 function fillPoly(ctx: CanvasRenderingContext2D, v: View, pts: readonly Point[], color: string) {
@@ -397,6 +351,21 @@ function strokeLine(
   ctx.lineDashOffset = 0;
 }
 
+/** Slikar koji crta pravo na platno, kadar po kadar — vidi `slikar.ts`. */
+function canvasSlikar(ctx: CanvasRenderingContext2D, v: View): Slikar {
+  return {
+    scale: v.scale,
+    poligon: (tacke, boja) => fillPoly(ctx, v, tacke, boja),
+    linija: (tacke, boja, sirina, crtice, odDuzine) => strokeLine(ctx, v, tacke, boja, sirina, crtice, odDuzine),
+    krug: (c, r, boja) => fillCircle(ctx, v, c, r, boja),
+    uKadru: (tacke, rub = 0) => uKadru(v, tacke, rub * v.scale),
+    blizuKadra: (p, rub) => {
+      const q = px(v, p);
+      return q.x >= -rub && q.x <= v.wPx + rub && q.y >= -rub && q.y <= v.hPx + rub;
+    },
+  };
+}
+
 /**
  * Keš ikona znamenitosti.
  *
@@ -409,7 +378,7 @@ function strokeLine(
  */
 const IKONE = new Map<string, HTMLImageElement>();
 
-function ikona(src: string): HTMLImageElement | null {
+export function ikona(src: string): HTMLImageElement | null {
   if (typeof Image === "undefined") return null;
   let img = IKONE.get(src);
   if (!img) {
@@ -427,27 +396,8 @@ function ikona(src: string): HTMLImageElement | null {
  * Bez natpisa: znak se čita sa slike, na svakom jeziku isto. Stanica naše trake
  * je uz desni ivičnjak, stanica susretne uz lijevi — tamo gdje taj autobus staje.
  */
-function drawStanica(
-  ctx: CanvasRenderingContext2D,
-  v: View,
-  nasa: Path,
-  s: number,
-  traka: 0 | 1,
-): void {
-  const znak = traka === 0 ? 1 : -1;
-  const ivica = (traka === 0 ? nasa.doIvice : nasa.doPreko) ?? [];
-  const uz = (x: number, odmak: number): Point => {
-    const o = pointAt(nasa.points, nasa.cum, x);
-    const d = rt(headingAt(nasa.points, nasa.cum, x));
-    const b = znak * (valueAt(nasa.cum, ivica, x) + odmak);
-    return { x: o.x + d.x * b, y: o.y + d.y * b };
-  };
-
-  const linija: Point[] = [];
-  for (let x = s - 8; x <= s + 8; x += 1) linija.push(uz(x, -0.35));
-  strokeLine(ctx, v, linija, PALETTE.yellow, 0.22, [1.5, 1]);
-
-  const c = px(v, uz(s, 1.2));
+function drawStanica(ctx: CanvasRenderingContext2D, v: View, znak: Point): void {
+  const c = px(v, znak);
   const a = Math.max(MIN_SIGN_PX / 2, 0.9 * v.scale);
   roundedRect(ctx, c.x - a, c.y - a, 2 * a, 2 * a, a * 0.2);
   ctx.fillStyle = PALETTE.stanica;
@@ -472,19 +422,8 @@ function drawStanica(
  * raskrsnici je ona prekinuta, kao i na terenu. Mjesto i pravac dolaze iz
  * `sporedniPut`, istog računa po kojem se vozila na njemu kreću.
  */
-function drawSporedni(ctx: CanvasRenderingContext2D, v: View, nasa: Path, p: Prikljucak, laneWidth: number): void {
-  const { usce, van, uzduz } = sporedniPut(nasa, p, laneWidth);
-  const w = (PRIKLJUCAK_SIRINA[p.rang] ?? 5) / 2;
-  const tacka = (duz: number, pop: number): Point => ({
-    x: usce.x + van.x * duz + uzduz.x * pop,
-    y: usce.y + van.y * duz + uzduz.y * pop,
-  });
-  fillPoly(ctx, v, [tacka(-0.35, -w - 1), tacka(-0.35, w + 1), tacka(1.6, w), tacka(PRIKLJUCAK_KRAK, w), tacka(PRIKLJUCAK_KRAK, -w), tacka(1.6, -w)], PALETTE.asphalt);
-  // Linija na kojoj se čeka: isprekidana, poprijeko, na kraju bankine.
-  strokeLine(ctx, v, [tacka(1.8, -w + 0.3), tacka(1.8, w - 0.3)], PALETTE.paint, 0.3, [0.6, 0.4]);
-  // Trougao je desno od onoga ko čeka — a on gleda ka putu, dakle u `-van`.
-  const desno = rt({ x: -van.x, y: -van.y });
-  const c = px(v, { x: usce.x + van.x * 2.6 + desno.x * (w + 1.2), y: usce.y + van.y * 2.6 + desno.y * (w + 1.2) });
+function drawTrougao(ctx: CanvasRenderingContext2D, v: View, mjesto: Point): void {
+  const c = px(v, mjesto);
   const a = Math.max(MIN_SIGN_PX / 2, 0.9 * v.scale);
   ctx.beginPath();
   ctx.moveTo(c.x - a, c.y - a * 0.75);
@@ -515,7 +454,7 @@ function drawRoad(
   // a u kadru ih stane stotinjak; račun bočnih linija i proširenja nad cijelom
   // osovinom je u svakom kadru koštao dvadesetak kadrova u sekundi — izmjereno
   // na Herceg Novi — Rožaje: 41 umjesto 60.
-  const svih = tpl.centerline?.length ?? Math.round(tpl.length / ROAD_STEP) + 1;
+  const svih = brojTacaka(tpl);
   const poTacki = tpl.length / Math.max(1, svih - 1);
   const domet = v.half * 3;
   const i0 = sIgraca === undefined ? 0 : Math.max(0, Math.floor((sIgraca - domet) / poTacki));
@@ -523,60 +462,87 @@ function drawRoad(
     sIgraca === undefined
       ? Number.POSITIVE_INFINITY
       : Math.min(svih - 1, Math.ceil((sIgraca + domet) / poTacki));
-  const { points, heading } = centerLine(tpl, i0, i1);
-  const odS = i0 * poTacki;
+  const komad = komadPuta(tpl, i0, i1);
   const pola = tpl.geometry.laneWidth;
 
   // Bočni odmak ide kroz `bocnaLinija` iz `sim/road.ts`, dakle kroz isti račun
   // kojim se prave i trake po kojima se vozi: kolovoz se u krivini proširuje, a
   // ako se asfalt i traka proširuju iz dva izvora, vozilo vozi van puta.
-  const traka = (o: number) => bocnaLinija(points, heading, o);
-  const bankina = [...traka(pola + 1.6), ...traka(-pola - 1.6).reverse()];
-  fillPoly(ctx, v, bankina, PALETTE.kerb);
-  fillPoly(ctx, v, [...traka(pola), ...traka(-pola).reverse()], PALETTE.asphalt);
+  const slikar = canvasSlikar(ctx, v);
+  bankina(slikar, tpl, komad, PALETTE.kerb);
+  kolovoz(slikar, tpl, komad, PALETTE.asphalt);
+  linijePuta(slikar, tpl, komad, PALETTE.paint);
 
-  // Ivične linije su uvijek pune. Razdjelna je isprekidana tamo gdje se smije
-  // preticati, a puna tamo gdje ne smije — i to iz `tpl.zabrane`, iz istog
-  // podatka po kojem se i sudi. Da se linija crta iz jednog računa a sudi po
-  // drugom, igrač bi dobijao prekršaj tamo gdje na ekranu piše da smije.
-  strokeLine(ctx, v, traka(pola - 0.2), PALETTE.paint, 0.16);
-  strokeLine(ctx, v, traka(-pola + 0.2), PALETTE.paint, 0.16);
-  // Crtice stoje na putu, ne na isječku: isječak počinje malo iza igrača i
-  // pomjera se sa njim, pa su crtice mjerene od njega putovale sa autom — prva
-  // je uvijek bila šest-sedam metara ispred, i razdjelna linija nije promicala.
-  strokeLine(ctx, v, points, PALETTE.paint, 0.16, [4, 7], odS);
-  for (const z of tpl.zabrane ?? []) {
-    // Zabrane su u koordinatama cijele dionice, a crta se samo isječak.
-    const od = Math.max(0, Math.floor((z.from - odS) / poTacki));
-    const doK = Math.min(points.length - 1, Math.ceil((z.to - odS) / poTacki));
-    if (doK - od < 1) continue;
-    strokeLine(ctx, v, points.slice(od, doK + 1), PALETTE.paint, 0.18);
-  }
-
-  // Grad: autobuske stanice i parkirani auti uz ivičnjak. Položaj se čita iz
-  // putanje naše trake, kao i u simulaciji — da auto na ekranu stoji tačno tamo
-  // gdje igrač u njega može da udari. Isto važi i za sporedne puteve.
-  const nasa =
-    tpl.stanice || tpl.parkirana || tpl.prikljucci
-      ? compile(tpl).paths.get(lanePathId(tpl.id, 0))
-      : undefined;
-  if (nasa) {
-    const doS = odS + (points.length - 1) * poTacki;
-    for (const p of tpl.prikljucci ?? []) {
-      if (p.s >= odS && p.s <= doS) drawSporedni(ctx, v, nasa, p, tpl.geometry.laneWidth);
-    }
-    for (const st of tpl.stanice ?? []) {
-      if (st.s >= odS && st.s <= doS) drawStanica(ctx, v, nasa, st.s, st.traka);
-    }
-    for (const p of parkiranaIzmedju(tpl, odS, doS)) {
-      const tijelo = parkiranoTijelo(nasa, p);
-      const boja = PALETTE.parkirano[Math.floor(Math.abs(p.s) * 7) % PALETTE.parkirano.length]!;
-      drawVehicle(ctx, v, [tijelo], tijelo.heading, boja, p.vrsta, {
+  const nasa = nasaTraka(tpl);
+  for (const x of stvariUzPut(tpl, komad)) {
+    if (x.vrsta === "sporedni") {
+      sporedniTlo(slikar, nasa!, x.p, pola, PALETTE.asphalt, PALETTE.paint);
+      drawTrougao(ctx, v, x.trougao);
+    } else if (x.vrsta === "stanica") {
+      stanicaLinija(slikar, nasa!, x.s, x.traka, PALETTE.yellow);
+      drawStanica(ctx, v, x.znak);
+    } else if (x.vrsta === "parkirano") {
+      drawVehicle(ctx, v, [x.tijelo], x.tijelo.heading, x.boja, x.tip, {
         braking: false,
         blink: null,
         highlight: null,
         beacon: false,
       });
+    } else if (x.vrsta === "tabla") {
+      drawTabla(ctx, v, x.c, x.brzina);
+    } else {
+      drawZnamenitost(ctx, v, x.c, x.ime, x.ikona);
+    }
+  }
+}
+
+/**
+ * Putanja naše trake — po njoj stoje stanice, parkirani auti i sporedni putevi,
+ * kao i u simulaciji: auto na ekranu mora stajati tačno tamo gdje igrač u njega
+ * može da udari.
+ */
+export function nasaTraka(tpl: RoadTemplate): Path | undefined {
+  return tpl.stanice || tpl.parkirana || tpl.prikljucci
+    ? compile(tpl).paths.get(lanePathId(tpl.id, 0))
+    : undefined;
+}
+
+/** Nešto što stoji uz put, u koordinatama svijeta, redom kojim se crta. */
+export type UzPut =
+  | { vrsta: "sporedni"; p: Prikljucak; trougao: Point }
+  | { vrsta: "stanica"; s: number; traka: 0 | 1; znak: Point }
+  | { vrsta: "parkirano"; tijelo: DioTijela; boja: string; tip: VrstaVozila | undefined }
+  | { vrsta: "tabla"; c: Point; brzina: number }
+  | { vrsta: "znamenitost"; c: Point; ime: string; ikona: string };
+
+/**
+ * Šta stoji uz komad puta: sporedni putevi, stanice, parkirani auti, table
+ * krivina i znamenitosti. Tabla je pravilo, pa ide prije znamenitosti — ukras
+ * je ne smije pokriti.
+ */
+export function stvariUzPut(tpl: RoadTemplate, komad: KomadPuta): UzPut[] {
+  const { points, heading, odS, poTacki } = komad;
+  const pola = tpl.geometry.laneWidth;
+  const out: UzPut[] = [];
+
+  // Grad: autobuske stanice i parkirani auti uz ivičnjak. Položaj se čita iz
+  // putanje naše trake, kao i u simulaciji — da auto na ekranu stoji tačno tamo
+  // gdje igrač u njega može da udari. Isto važi i za sporedne puteve.
+  const nasa = nasaTraka(tpl);
+  if (nasa) {
+    const doS = odS + (points.length - 1) * poTacki;
+    for (const p of tpl.prikljucci ?? []) {
+      if (p.s >= odS && p.s <= doS) out.push({ vrsta: "sporedni", p, trougao: mjestoTrouglaSporednog(nasa, p, pola) });
+    }
+    for (const st of tpl.stanice ?? []) {
+      if (st.s >= odS && st.s <= doS) {
+        out.push({ vrsta: "stanica", s: st.s, traka: st.traka, znak: uzIvicnjakStanice(nasa, st.traka, st.s, 1.2) });
+      }
+    }
+    for (const p of parkiranaIzmedju(tpl, odS, doS)) {
+      const tijelo = parkiranoTijelo(nasa, p);
+      const boja = PALETTE.parkirano[Math.floor(Math.abs(p.s) * 7) % PALETTE.parkirano.length]!;
+      out.push({ vrsta: "parkirano", tijelo, boja, tip: p.vrsta });
     }
   }
 
@@ -584,67 +550,78 @@ function drawRoad(
   // DESNU stranu — tako stoje znaci na putu, bez obzira na to na koju stranu
   // krivina ide. Postavljena tačno na početak luka bila bi prekasna: na
   // pedeset na sat se pedeset metara pređe za tri i po sekunde.
-  const korak = poTacki;
   for (const k of tpl.curves) {
-    const i = Math.round((Math.max(0, k.atS - k.arc / 2 - SIGN_LEAD) - odS) / korak);
+    const i = Math.round((Math.max(0, k.atS - k.arc / 2 - SIGN_LEAD) - odS) / poTacki);
     if (i < 0 || i > points.length - 1) continue;
     const p = points[i];
     const u = heading[Math.min(i, heading.length - 1)] ?? 0;
     if (!p) continue;
     const odmak = -(pola + 1);
-    const c = { x: p.x + Math.cos(u) * odmak, y: p.y - Math.sin(u) * odmak };
-    const q = px(v, c);
-    const r = Math.max(MIN_SIGN_PX / 2, 1.15 * v.scale);
-    ctx.beginPath();
-    ctx.arc(q.x, q.y, r, 0, Math.PI * 2);
-    ctx.fillStyle = PALETTE.paint;
-    ctx.fill();
-    ctx.lineWidth = Math.max(2, r * 0.18);
-    ctx.strokeStyle = PALETTE.red;
-    ctx.stroke();
-    ctx.fillStyle = PALETTE.ink;
-    ctx.font = `600 ${Math.round(r)}px system-ui, sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(String(k.advisorySpeed), q.x, q.y);
+    out.push({ vrsta: "tabla", c: { x: p.x + Math.cos(u) * odmak, y: p.y - Math.sin(u) * odmak }, brzina: k.advisorySpeed });
   }
 
   // Znamenitosti stoje iza bankine, na svojoj strani puta, sa natpisom ispod.
-  // Namjerno se crtaju POSLIJE tabli: tabla je pravilo i ne smije da je
-  // pokrije ukras.
   for (const z of tpl.landmarks) {
-    const i = Math.round((z.atS - odS) / korak);
+    const i = Math.round((z.atS - odS) / poTacki);
     if (i < 0 || i > points.length - 1) continue;
     const p = points[i];
     const u = heading[i] ?? 0;
     if (!p) continue;
     const odmak = (z.side === "left" ? 1 : -1) * (pola + LANDMARK_OFFSET);
-    const c = { x: p.x + Math.cos(u) * odmak, y: p.y - Math.sin(u) * odmak };
-    const q = px(v, c);
-    const w = LANDMARK_SIZE * v.scale;
-    if (q.x < -w || q.x > v.wPx + w || q.y < -w || q.y > v.hPx + w) continue;
-
-    roundedRect(ctx, q.x - w / 2, q.y - w / 2, w, w, w * 0.18);
-    ctx.fillStyle = PALETTE.paint;
-    ctx.fill();
-    ctx.lineWidth = Math.max(1, w * 0.06);
-    ctx.strokeStyle = PALETTE.ink;
-    ctx.stroke();
-
-    const slika = ikona(z.icon);
-    if (slika) ctx.drawImage(slika, q.x - w * 0.4, q.y - w * 0.4, w * 0.8, w * 0.8);
-
-    const visina = Math.max(9, w * 0.26);
-    ctx.font = `600 ${Math.round(visina)}px system-ui, sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    const sirina = ctx.measureText(z.name).width + visina * 0.8;
-    roundedRect(ctx, q.x - sirina / 2, q.y + w * 0.58, sirina, visina * 1.5, visina * 0.35);
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
-    ctx.fill();
-    ctx.fillStyle = PALETTE.ink;
-    ctx.fillText(z.name, q.x, q.y + w * 0.58 + visina * 0.25);
+    out.push({
+      vrsta: "znamenitost",
+      c: { x: p.x + Math.cos(u) * odmak, y: p.y - Math.sin(u) * odmak },
+      ime: z.name,
+      ikona: z.icon,
+    });
   }
+  return out;
+}
+
+/** Tabla sa preporučenom brzinom pred krivinom. */
+function drawTabla(ctx: CanvasRenderingContext2D, v: View, c: Point, brzina: number): void {
+  const q = px(v, c);
+  const r = Math.max(MIN_SIGN_PX / 2, 1.15 * v.scale);
+  ctx.beginPath();
+  ctx.arc(q.x, q.y, r, 0, Math.PI * 2);
+  ctx.fillStyle = PALETTE.paint;
+  ctx.fill();
+  ctx.lineWidth = Math.max(2, r * 0.18);
+  ctx.strokeStyle = PALETTE.red;
+  ctx.stroke();
+  ctx.fillStyle = PALETTE.ink;
+  ctx.font = `600 ${Math.round(r)}px system-ui, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(String(brzina), q.x, q.y);
+}
+
+/** Znamenitost: bijela pločica sa ikonom i natpis ispod. */
+function drawZnamenitost(ctx: CanvasRenderingContext2D, v: View, c: Point, ime: string, src: string): void {
+  const q = px(v, c);
+  const w = LANDMARK_SIZE * v.scale;
+  if (q.x < -w || q.x > v.wPx + w || q.y < -w || q.y > v.hPx + w) return;
+
+  roundedRect(ctx, q.x - w / 2, q.y - w / 2, w, w, w * 0.18);
+  ctx.fillStyle = PALETTE.paint;
+  ctx.fill();
+  ctx.lineWidth = Math.max(1, w * 0.06);
+  ctx.strokeStyle = PALETTE.ink;
+  ctx.stroke();
+
+  const slika = ikona(src);
+  if (slika) ctx.drawImage(slika, q.x - w * 0.4, q.y - w * 0.4, w * 0.8, w * 0.8);
+
+  const visina = Math.max(9, w * 0.26);
+  ctx.font = `600 ${Math.round(visina)}px system-ui, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  const sirina = ctx.measureText(ime).width + visina * 0.8;
+  roundedRect(ctx, q.x - sirina / 2, q.y + w * 0.58, sirina, visina * 1.5, visina * 0.35);
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.fill();
+  ctx.fillStyle = PALETTE.ink;
+  ctx.fillText(ime, q.x, q.y + w * 0.58 + visina * 0.25);
 }
 
 function drawHighway(ctx: CanvasRenderingContext2D, v: View, tpl: HighwayTemplate): void {
@@ -1005,7 +982,7 @@ function bojaVozila(veh: Vehicle): string {
  * crta uvećano, jer je čitljivost preča od razmjere. Faktor je isti za sve
  * vrste, da mali auto, kombi i kamion ostanu u razmjeri jedan prema drugom.
  */
-const uvecanje = (v: View): number =>
+export const uvecanje = (v: View): number =>
   Math.max(MIN_CAR_PX, CAR_LENGTH * v.scale) / (CAR_LENGTH * v.scale);
 
 function drawVehicle(
@@ -1112,29 +1089,6 @@ function drawDugoVozilo(
   vrsta: VrstaVozila | undefined,
   opts: { braking: boolean; blink: "left" | "right" | null; highlight: string | null },
 ): void {
-  const prvi = tijelo[0];
-  const zadnji = tijelo[tijelo.length - 1];
-  if (!prvi || !zadnji) return;
-  const pola = (prvi.width * uvecanje(v)) / 2;
-  const kraj = (d: DioTijela, koliko: number): Point => plus(d.pos, mul(d.heading, koliko));
-
-  // Presjeci od zadnjeg branika do prednjeg. Na spoju dva komada se uzima
-  // sredina njihovih krajeva i srednji smjer, da obris nema zub.
-  const presjeci: { c: Point; h: Point }[] = [{ c: kraj(prvi, -prvi.length / 2), h: prvi.heading }];
-  for (let i = 0; i + 1 < tijelo.length; i++) {
-    const a = tijelo[i]!;
-    const b = tijelo[i + 1]!;
-    const h = plus(a.heading, b.heading);
-    const d = Math.hypot(h.x, h.y) || 1;
-    presjeci.push({
-      c: mul(plus(kraj(a, a.length / 2), kraj(b, -b.length / 2)), 0.5),
-      h: { x: h.x / d, y: h.y / d },
-    });
-  }
-  presjeci.push({ c: kraj(zadnji, zadnji.length / 2), h: zadnji.heading });
-  const bok = (p: { c: Point; h: Point }, znak: number): Point => plus(p.c, mul(rt(p.h), pola * znak));
-  const obris = [...presjeci.map((p) => bok(p, 1)), ...presjeci.map((p) => bok(p, -1)).reverse()];
-
   if (opts.highlight) {
     const duzina = tijelo.reduce((a, d) => a + d.length, 0);
     const q = px(v, tijelo[Math.floor(tijelo.length / 2)]!.pos);
@@ -1144,47 +1098,21 @@ function drawDugoVozilo(
     ctx.lineWidth = Math.max(2, duzina * v.scale * 0.04);
     ctx.stroke();
   }
-
-  fillPoly(ctx, v, obris, vrsta === "autobus" ? PALETTE.autobus : PALETTE.sanduk);
-  strokeLine(ctx, v, [...obris, obris[0]!], "rgba(0,0,0,0.4)", 0.06);
-
-  const naprijed = zadnji.heading;
-  const nos = kraj(zadnji, zadnji.length / 2);
-  if (vrsta === "autobus") {
-    // Prozori duž oba boka, pa vjetrobran preko skoro cijele širine.
-    for (const d of tijelo) {
-      for (const znak of [1, -1]) {
-        const c = plus(d.pos, mul(rt(d.heading), (pola - 0.45) * znak));
-        fillPoly(ctx, v, worldRect(c, d.heading, d.length * 0.78, 0.5), "rgba(255,255,255,0.45)");
-      }
-    }
-    fillPoly(ctx, v, worldRect(kraj(zadnji, zadnji.length / 2 - 0.5), naprijed, 0.6, pola * 1.6), "rgba(255,255,255,0.75)");
-  } else {
-    // Kamion: kabina u boji vozila ispred svijetlog sanduka.
-    const kabina = Math.min(2.4, zadnji.length);
-    fillPoly(ctx, v, worldRect(plus(nos, mul(naprijed, -kabina / 2)), naprijed, kabina, pola * 2), color);
-    fillPoly(ctx, v, worldRect(plus(nos, mul(naprijed, -0.75)), naprijed, 0.5, pola * 1.4), "rgba(255,255,255,0.7)");
-  }
-
-  // Stop svjetla na zadnjem kraju.
-  const rep = kraj(prvi, -prvi.length / 2 + 0.2);
-  for (const znak of [1, -1]) {
-    fillPoly(
-      ctx,
-      v,
-      worldRect(plus(rep, mul(rt(prvi.heading), pola * 0.62 * znak)), prvi.heading, 0.4, pola * 0.5),
-      opts.braking ? "#ff3b30" : "rgba(0,0,0,0.35)",
-    );
-  }
-
-  if (opts.blink) {
-    // Pokazivač na prednjem i zadnjem uglu, na strani na koju se ide.
-    const znak = opts.blink === "right" ? 1 : -1;
-    const r = Math.max(1.5 / v.scale, pola * 0.3);
-    fillCircle(ctx, v, plus(kraj(zadnji, zadnji.length / 2 - 0.4), mul(rt(naprijed), pola * znak)), r, PALETTE.yellow);
-    fillCircle(ctx, v, plus(kraj(prvi, -prvi.length / 2 + 0.4), mul(rt(prvi.heading), pola * znak)), r, PALETTE.yellow);
-  }
+  dugoVozilo(canvasSlikar(ctx, v), tijelo, uvecanje(v), color, vrsta, opts, BOJE_DUGOG);
 }
+
+/** Boje dugog vozila iz palete scene. */
+export const BOJE_DUGOG = {
+  sanduk: PALETTE.sanduk,
+  autobus: PALETTE.autobus,
+  stop: "#ff3b30",
+  stopUgaseno: "rgba(0,0,0,0.35)",
+  pokazivac: PALETTE.yellow,
+  obrub: "rgba(0,0,0,0.4)",
+  staklo: "rgba(255,255,255,0.75)",
+  stakloKamiona: "rgba(255,255,255,0.7)",
+  prozor: "rgba(255,255,255,0.45)",
+};
 
 /**
  * Oznaka na ivici kadra za vozilo koje još nije u kadru.
@@ -1320,146 +1248,83 @@ function drawOkolina(
   tpl: RoadTemplate,
   okolina: Okolina,
 ): void {
-  const { points, heading } = centerLine(tpl);
-  const korak = tpl.length / Math.max(1, points.length - 1);
-  const odIvice = tpl.geometry.laneWidth + 1.6;
-
-  for (const traka of okolina.trake) {
-    const i0 = Math.max(0, Math.floor(traka.odS / korak));
-    const i1 = Math.min(points.length - 1, Math.ceil(traka.doS / korak));
-    if (i1 - i0 < 1) continue;
-    // Kadar je uzak: komad koji ni jednim krajem ne dodiruje ekran se preskače
-    // prije nego što se za njega išta izračuna.
-    if (!uKadru(v, [points[i0]!, points[i1]!])) continue;
-
-    for (const [strana, vrsta] of [
-      [1, traka.lijevo],
-      [-1, traka.desno],
-    ] as const) {
-      if (!vrsta) continue;
-      const boja = OKOLINA_BOJE[vrsta];
-      if (!boja) continue;
-      const blize: Point[] = [];
-      const dalje: Point[] = [];
-      for (let i = i0; i <= i1; i++) {
-        const p = points[i]!;
-        const u = heading[i] ?? 0;
-        const cos = Math.cos(u);
-        const sin = Math.sin(u);
-        blize.push({ x: p.x + cos * odIvice * strana, y: p.y - sin * odIvice * strana });
-        dalje.push({
-          x: p.x + cos * OKOLINA_POJAS * strana,
-          y: p.y - sin * OKOLINA_POJAS * strana,
-        });
-      }
-      fillPoly(ctx, v, [...blize, ...dalje.reverse()], boja);
-      drawSitno(ctx, v, points, heading, i0, i1, strana, vrsta, odIvice);
-    }
-  }
-
-  for (const linija of okolina.linije) {
-    const stil = OKOLINA_LINIJE[linija.k];
-    if (!stil) continue;
-    if (!uKadru(v, linija.tacke)) continue;
-    strokeLine(ctx, v, linija.tacke, stil.boja, stil.sirina);
-  }
+  const slikar = canvasSlikar(ctx, v);
+  okolinaTrake(slikar, tpl, okolina);
+  for (const linija of okolina.linije) okolinaLinija(slikar, linija);
 }
 
-/**
- * Broj iz cijelog broja, uvijek isti za isti ulaz.
- *
- * Služi da drvo ili kuća stoje na istom mjestu pri svakoj vožnji: mjesto se
- * računa iz položaja, a ne iz `Math.random`. Bez toga bi se okolina mrdala
- * između dva kadra i ponavljanje snimka ne bi izgledalo isto.
- */
-function sjeme(a: number, b: number): number {
-  let h = Math.imul(a ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(b + 0x165667b1, 0xc2b2ae35);
-  h ^= h >>> 15;
-  h = Math.imul(h, 0x2545f491);
-  h ^= h >>> 13;
-  return ((h >>> 0) % 10000) / 10000;
-}
-
-/** Sitni sadržaj u traci okoline: drveće, kuće, talasi, brazde. */
-function drawSitno(
-  ctx: CanvasRenderingContext2D,
-  v: View,
-  points: readonly Point[],
-  heading: readonly number[],
-  i0: number,
-  i1: number,
-  strana: 1 | -1,
-  vrsta: string,
-  odIvice: number,
-): void {
-  const stil = OKOLINA_SITNO[vrsta];
-  if (!stil) return;
-  // Na sitnoj razmjeri se ovo ionako ne raspoznaje, a košta.
-  if (stil.velicina * v.scale < 3) return;
-
-  const korakTacaka = Math.max(1, Math.round(stil.razmak / Math.max(0.5, ROUTE_STEP)));
-  const sirina = OKOLINA_POJAS - odIvice;
-  ctx.fillStyle = stil.boja;
-
-  for (let i = i0; i <= i1; i += korakTacaka) {
-    const p = points[i]!;
-    const u = heading[i] ?? 0;
-    const cos = Math.cos(u);
-    const sin = Math.sin(u);
-    // Dva reda po koraku, na različitim odmacima od puta.
-    for (let red = 0; red < 2; red++) {
-      const t = sjeme(i, red * 7 + (strana > 0 ? 1 : 2));
-      const odmak = odIvice + (0.15 + 0.7 * t) * sirina;
-      const uzduz = (sjeme(i + 31, red) - 0.5) * stil.razmak;
-      const c = {
-        x: p.x + cos * odmak * strana - sin * uzduz,
-        y: p.y - sin * odmak * strana - cos * uzduz,
-      };
-      const q = px(v, c);
-      if (q.x < -40 || q.x > v.wPx + 40 || q.y < -40 || q.y > v.hPx + 40) continue;
-      const r = stil.velicina * v.scale * (0.75 + 0.5 * sjeme(i, red + 3));
-
-      if (stil.oblik === "drvo") {
-        ctx.beginPath();
-        ctx.arc(q.x, q.y, r / 2, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (stil.oblik === "kuca") {
-        ctx.save();
-        ctx.translate(q.x, q.y);
-        ctx.rotate(screenAngle(v, { x: cos, y: -sin }));
-        ctx.fillRect(-r / 2, -r * 0.35, r, r * 0.7);
-        ctx.restore();
-      } else {
-        // Talas i brazda su kratke crte poprijeko na put.
-        ctx.save();
-        ctx.translate(q.x, q.y);
-        ctx.rotate(screenAngle(v, { x: cos, y: -sin }) + (stil.oblik === "talas" ? Math.PI / 2 : 0));
-        ctx.fillRect(-r / 2, -Math.max(1, 0.25 * v.scale) / 2, r, Math.max(1, 0.25 * v.scale));
-        ctx.restore();
-      }
-    }
-  }
-}
-
-/**
- * Vrhovi na horizontu.
- *
- * Planina je kilometrima daleko i u kadru od sedamdeset metara je nema. Ali sa
- * puta se vidi, i po njoj se zna gdje si — zato se crta na IVICI kadra, u
- * pravcu u kojem stvarno leži, sa imenom i visinom.
- *
- * Pravac se računa u STVARNIM koordinatama: gdje je vozilo u prirodi i kuda
- * gleda. Sabijeni svijet o stranama svijeta ne zna ništa.
- */
+/** Vrhovi na horizontu — raspored je u `rasporedHorizonta`. */
 function drawHorizont(
   ctx: CanvasRenderingContext2D,
   v: View,
   okolina: Okolina,
   s: number,
 ): void {
-  if (okolina.vrhovi.length === 0) return;
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = HORIZONT_FONT;
+
+  for (const n of rasporedHorizonta(v, okolina, s, (t) => ctx.measureText(t).width)) {
+    ctx.globalAlpha = n.alpha;
+
+    ctx.beginPath();
+    ctx.moveTo(n.q.x - 8, n.q.y + 6);
+    ctx.lineTo(n.q.x, n.q.y - 7);
+    ctx.lineTo(n.q.x + 8, n.q.y + 6);
+    ctx.closePath();
+    ctx.fillStyle = PALETTE.ink;
+    ctx.fill();
+
+    ctx.fillStyle = PALETTE.panel;
+    ctx.strokeStyle = PALETTE.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(n.tx - n.sirina / 2, n.ty - 9, n.sirina, 18);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = PALETTE.ink;
+    ctx.fillText(n.natpis, n.tx, n.ty);
+  }
+  ctx.restore();
+}
+
+/** Slova natpisa vrhova na horizontu. */
+export const HORIZONT_FONT = "600 12px system-ui, sans-serif";
+
+/** Jedan natpis vrha: trougao na ivici kadra i tabla ispod njega [px]. */
+export interface NatpisVrha {
+  /** Vrh trougla — gdje zrak ka vrhu probija ivicu kadra. */
+  q: { x: number; y: number };
+  /** Sredina table. */
+  tx: number;
+  ty: number;
+  sirina: number;
+  natpis: string;
+  alpha: number;
+}
+
+/**
+ * Vrhovi na horizontu: koji se ispisuju i gdje.
+ *
+ * Planina je kilometrima daleko i u kadru od sedamdeset metara je nema. Ali sa
+ * puta se vidi, i po njoj se zna gdje si — zato se crta na IVICI kadra, u
+ * pravcu u kojem stvarno leži, sa imenom i visinom.
+ *
+ * Pravac se računa u STVARNIM koordinatama: gdje je vozilo u prirodi i kuda
+ * gleda. Sabijeni svijet o stranama svijeta ne zna ništa. `sirinaTeksta` mjeri
+ * natpis slovima `HORIZONT_FONT` [px] — mjeri ga renderer.
+ */
+export function rasporedHorizonta(
+  v: View,
+  okolina: Okolina,
+  s: number,
+  sirinaTeksta: (tekst: string) => number,
+): NatpisVrha[] {
+  if (okolina.vrhovi.length === 0) return [];
   const poza = okolina.poza(s);
-  if (!poza) return;
+  if (!poza) return [];
 
   const vozac = Math.atan2(poza.smjer.y, poza.smjer.x);
   const cx = v.wPx / 2;
@@ -1479,15 +1344,10 @@ function drawHorizont(
     .filter((x) => Math.abs(x.ugao) < HORIZONT_UGAO)
     .sort((a, b) => b.vrh.visina - b.daljina / 20 - (a.vrh.visina - a.daljina / 20));
 
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = "600 12px system-ui, sans-serif";
-
+  const out: NatpisVrha[] = [];
   const zauzeto: { x: number; y: number }[] = [];
-  let ispisanih = 0;
   for (const { vrh, ugao, daljina } of kandidati) {
-    if (ispisanih >= HORIZONT_NAJVISE) break;
+    if (out.length >= HORIZONT_NAJVISE) break;
     const q = naIviciKadra(v, cx, cy, ugao);
     // Dva vrha u istom pravcu daju dva natpisa jedan preko drugog. Ono što je
     // niže rangirano se preskače — bolje jedno čitko ime nego dva nečitka.
@@ -1495,39 +1355,23 @@ function drawHorizont(
       continue;
     }
     zauzeto.push(q);
-    ispisanih += 1;
-
-    // Što je vrh dalji, to je blijeđi — bliska planina se nameće, daleka se
-    // nazire.
-    ctx.globalAlpha = Math.max(0.55, 1 - daljina / 40000);
 
     const natpis = `${vrh.ime} ${vrh.visina}`;
-    const sirina = ctx.measureText(natpis).width + 12;
+    const sirina = sirinaTeksta(natpis) + 12;
     // Tabla ide ispod trougla, a uz ivicu se pomjera unutra da ne izađe iz
     // kadra.
-    const tx = Math.min(v.wPx - sirina / 2 - 3, Math.max(sirina / 2 + 3, q.x));
-    const ty = Math.min(v.hPx - 12, Math.max(24, q.y + 14));
-
-    ctx.beginPath();
-    ctx.moveTo(q.x - 8, q.y + 6);
-    ctx.lineTo(q.x, q.y - 7);
-    ctx.lineTo(q.x + 8, q.y + 6);
-    ctx.closePath();
-    ctx.fillStyle = PALETTE.ink;
-    ctx.fill();
-
-    ctx.fillStyle = PALETTE.panel;
-    ctx.strokeStyle = PALETTE.line;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.rect(tx - sirina / 2, ty - 9, sirina, 18);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = PALETTE.ink;
-    ctx.fillText(natpis, tx, ty);
+    out.push({
+      q,
+      tx: Math.min(v.wPx - sirina / 2 - 3, Math.max(sirina / 2 + 3, q.x)),
+      ty: Math.min(v.hPx - 12, Math.max(24, q.y + 14)),
+      sirina,
+      natpis,
+      // Što je vrh dalji, to je blijeđi — bliska planina se nameće, daleka se
+      // nazire.
+      alpha: Math.max(0.55, 1 - daljina / 40000),
+    });
   }
-  ctx.restore();
+  return out;
 }
 
 /**
@@ -1556,7 +1400,7 @@ function naIviciKadra(
 }
 
 /** Da li polilinija uopšte dodiruje kadar — gruba provjera po okviru. */
-function uKadru(v: View, tacke: readonly Point[]): boolean {
+function uKadru(v: View, tacke: readonly Point[], rubPx = 0): boolean {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -1568,7 +1412,7 @@ function uKadru(v: View, tacke: readonly Point[]): boolean {
     if (q.x > maxX) maxX = q.x;
     if (q.y > maxY) maxY = q.y;
   }
-  return maxX >= 0 && minX <= v.wPx && maxY >= 0 && minY <= v.hPx;
+  return maxX >= -rubPx && minX <= v.wPx + rubPx && maxY >= -rubPx && minY <= v.hPx + rubPx;
 }
 
 // ── Scena ───────────────────────────────────────────────────────────────────
@@ -1625,47 +1469,7 @@ export function drawScene(
   const tpl = templateById(world.templateId);
   if (!tpl) return;
   const { paths } = compile(tpl);
-  const v = viewFor(widthPx, heightPx, opts.camera?.half ?? tpl.viewHalf);
-  if (opts.camera?.follow) {
-    const igrac = world.vehicles.find((x) => x.kind === "player");
-    const p = igrac ? paths.get(igrac.pathId) : undefined;
-    if (igrac && p) {
-      // Kamera prati OSU TRAKE, ne samo vozilo: kad se auto pomjeri u stranu,
-      // mora se vidjeti da se pomjerio. Da kadar ide za njim, put bi klizio
-      // ispod auta, a igrač ne bi imao po čemu da zna gdje je u traci.
-      const stanje = { ...igrac, s: renderS(runner, igrac.id, igrac.s), lateral: 0 };
-      const poza = poseOn(tpl, p, stanje);
-      const poz = poza.pos;
-      // Igrač stoji na 62% visine — dvije trećine kadra su ono ispred njega, a
-      // ispred je NAGORE (vidi `px`). Predznaci prate okrenuti kadar.
-      // Na autoputu se prati samo uzduž: da kadar klizi i bočno pri promjeni
-      // trake značilo bi da se pomjera put, a ne vozilo.
-      if (opts.camera.rotate) {
-        // Kadar se okreće oko igrača tako da mu je pravac uvijek nagore.
-        //
-        // Smjer se NE uzima iz `poseOn`: on ga mjeri preko pola metra, pa je
-        // stepenast — mijenja se skokom na svakom tjemenu polilinije, i vozilo
-        // u krivini poskakuje. Ovdje se mjeri preko tetive od `KAMERA_TETIVA`
-        // metara, pa se ugao mijenja glatko.
-        const sSad = renderS(runner, igrac.id, igrac.s);
-        const a = pointAt(p.points, p.cum, Math.max(0, sSad - KAMERA_TETIVA / 2));
-        const b = pointAt(p.points, p.cum, Math.min(p.length, sSad + KAMERA_TETIVA / 2));
-        v.wx = poz.x;
-        v.wy = poz.y;
-        v.cx = widthPx / 2;
-        // Brže se vidi dalje: igrač se spušta niz ekran srazmjerno brzini. Brzina
-        // se u modelu mijenja glatko, pa i kadar klizi, bez trzaja.
-        const naprijed = opts.camera.naprijed
-          ? KAMERA_NAPRIJED * Math.min(1, Math.max(0, igrac.v) / KAMERA_NAPRIJED_BRZINA)
-          : 0;
-        v.cy = heightPx * (0.62 + naprijed);
-        v.rot = -Math.PI / 2 - Math.atan2(-(b.y - a.y), -(b.x - a.x));
-      } else {
-        v.cx = widthPx / 2 + (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
-        v.cy = heightPx * 0.62 + poz.y * v.scale;
-      }
-    }
-  }
+  const v = kamera(runner, tpl, paths, widthPx, heightPx, opts.camera);
 
   const player = world.vehicles.find((x) => x.kind === "player");
 
@@ -1717,11 +1521,113 @@ export function drawScene(
   const naredba = officerAllow(opts.officer ?? undefined, world.t);
   if (naredba) drawOfficer(ctx, v, naredba);
 
+  const scena = scenaVozila(runner, tpl, paths, v, opts);
+  for (const poligon of scena.sjene) fillPoly(ctx, v, poligon, PALETTE.sjena);
+  for (const x of scena.redom) {
+    if (x.vrsta === "vozilo") drawVehicle(ctx, v, x.tijelo, x.smjer, x.color, x.tip, x.stanje);
+    else drawEdgeMarker(ctx, v, x.pos, x.heading, x.color);
+  }
+}
+
+/**
+ * Kadar: gdje je kamera, koliko je okrenuta i koliko piksela ima metar.
+ *
+ * Isti račun za svaki renderer — kamera je dio onoga ŠTA se vidi, ne onoga
+ * čime se crta.
+ */
+export function kamera(
+  runner: Driver,
+  tpl: Template,
+  paths: ReadonlyMap<string, Path>,
+  widthPx: number,
+  heightPx: number,
+  camera: DrawOptions["camera"],
+): View {
+  const world = runner.world;
+  const v = viewFor(widthPx, heightPx, camera?.half ?? tpl.viewHalf);
+  if (!camera?.follow) return v;
+  const igrac = world.vehicles.find((x) => x.kind === "player");
+  const p = igrac ? paths.get(igrac.pathId) : undefined;
+  if (!igrac || !p) return v;
+  // Kamera prati OSU TRAKE, ne samo vozilo: kad se auto pomjeri u stranu,
+  // mora se vidjeti da se pomjerio. Da kadar ide za njim, put bi klizio
+  // ispod auta, a igrač ne bi imao po čemu da zna gdje je u traci.
+  const stanje = { ...igrac, s: renderS(runner, igrac.id, igrac.s), lateral: 0 };
+  const poza = poseOn(tpl, p, stanje);
+  const poz = poza.pos;
+  // Igrač stoji na 62% visine — dvije trećine kadra su ono ispred njega, a
+  // ispred je NAGORE (vidi `px`). Predznaci prate okrenuti kadar.
+  // Na autoputu se prati samo uzduž: da kadar klizi i bočno pri promjeni
+  // trake značilo bi da se pomjera put, a ne vozilo.
+  if (camera.rotate) {
+    // Kadar se okreće oko igrača tako da mu je pravac uvijek nagore.
+    //
+    // Smjer se NE uzima iz `poseOn`: on ga mjeri preko pola metra, pa je
+    // stepenast — mijenja se skokom na svakom tjemenu polilinije, i vozilo
+    // u krivini poskakuje. Ovdje se mjeri preko tetive od `KAMERA_TETIVA`
+    // metara, pa se ugao mijenja glatko.
+    const sSad = renderS(runner, igrac.id, igrac.s);
+    const a = pointAt(p.points, p.cum, Math.max(0, sSad - KAMERA_TETIVA / 2));
+    const b = pointAt(p.points, p.cum, Math.min(p.length, sSad + KAMERA_TETIVA / 2));
+    v.wx = poz.x;
+    v.wy = poz.y;
+    v.cx = widthPx / 2;
+    // Brže se vidi dalje: igrač se spušta niz ekran srazmjerno brzini. Brzina
+    // se u modelu mijenja glatko, pa i kadar klizi, bez trzaja.
+    const naprijed = camera.naprijed
+      ? KAMERA_NAPRIJED * Math.min(1, Math.max(0, igrac.v) / KAMERA_NAPRIJED_BRZINA)
+      : 0;
+    v.cy = heightPx * (0.62 + naprijed);
+    v.rot = -Math.PI / 2 - Math.atan2(-(b.y - a.y), -(b.x - a.x));
+  } else {
+    v.cx = widthPx / 2 + (tpl.kind === "highway" ? 0 : poz.x) * v.scale;
+    v.cy = heightPx * 0.62 + poz.y * v.scale;
+  }
+  return v;
+}
+
+/** Stanje svjetala i obruba jednog vozila u kadru. */
+export interface StanjeVozila {
+  braking: boolean;
+  blink: "left" | "right" | null;
+  beacon: boolean;
+  highlight: string | null;
+}
+
+/** Jedna stvar za nacrtati, redom kojim se crta. */
+export type ZaCrtanje =
+  | {
+      vrsta: "vozilo";
+      tijelo: DioTijela[];
+      smjer: Point;
+      color: string;
+      tip: VrstaVozila | undefined;
+      stanje: StanjeVozila;
+    }
+  | { vrsta: "oznaka"; pos: Point; heading: Point; color: string };
+
+/**
+ * Vozila u kadru, sjene iza kamiona i oznake na ivici kadra — ŠTA se crta, i
+ * kojim redom. Kako se crta, zna renderer.
+ */
+export function scenaVozila(
+  runner: Driver,
+  tpl: Template,
+  paths: ReadonlyMap<string, Path>,
+  v: View,
+  opts: DrawOptions,
+): { sjene: Point[][]; redom: ZaCrtanje[] } {
+  const world = runner.world;
+  const player = world.vehicles.find((x) => x.kind === "player");
+  const redom: ZaCrtanje[] = [];
+
   // Sjena iza kamiona: dio puta koji vozač ne vidi. Crta se ispod vozila, a
   // vozila čija je sredina u njoj se ne crtaju — ni njihova oznaka na ivici
   // kadra. Isti spisak zaklanjača po kojem se sudi preglednost.
-  const sjene = tpl.kind === "road" && player ? sjeneZaklona(runner, tpl, paths, player) : null;
-  for (const poligon of sjene?.poligoni ?? []) fillPoly(ctx, v, poligon, PALETTE.sjena);
+  const sjene =
+    tpl.kind === "road" && player
+      ? sjeneZaklona(world, tpl, paths, player, (x) => renderS(runner, x.id, x.s))
+      : null;
   const uSjeni = (id: string, pos: Point): boolean =>
     sjene !== null && !sjene.zaklanjaci.has(id) && sjene.poligoni.some((pol) => uPoligonu(pos, pol));
 
@@ -1774,15 +1680,22 @@ export function drawScene(
       }
       // I igrač dobija oznaku: na dužem prilazu je na startu van kadra, pa bi
       // inače prvih par sekundi vozio nevidljiv.
-      drawEdgeMarker(ctx, v, pos, heading, isPlayer ? PALETTE.blue : color);
+      redom.push({ vrsta: "oznaka", pos, heading, color: isPlayer ? PALETTE.blue : color });
       continue;
     }
 
-    drawVehicle(ctx, v, tijelo, smjer, color, veh.vrsta, {
-      braking: isPlayer ? Boolean(opts.playerBraking) : brakingNow(runner, veh),
-      blink: veh.indicator && blinkOn ? veh.indicator : null,
-      beacon: Boolean(veh.emergency) && Math.floor(world.t * BLINK_HZ * 4) % 2 === 0,
-      highlight: opts.flagVehicleId === veh.id ? PALETTE.red : isPlayer ? PALETTE.paint : null,
+    redom.push({
+      vrsta: "vozilo",
+      tijelo,
+      smjer,
+      color,
+      tip: veh.vrsta,
+      stanje: {
+        braking: isPlayer ? Boolean(opts.playerBraking) : brakingNow(runner, veh),
+        blink: veh.indicator && blinkOn ? veh.indicator : null,
+        beacon: Boolean(veh.emergency) && Math.floor(world.t * BLINK_HZ * 4) % 2 === 0,
+        highlight: opts.flagVehicleId === veh.id ? PALETTE.red : isPlayer ? PALETTE.paint : null,
+      },
     });
   }
 
@@ -1796,91 +1709,24 @@ export function drawScene(
       const { pos, heading } = pozaNaSporednom(nasa, p, tpl.geometry.laneWidth, x);
       if (!inFrame(v, pos) || uSjeni(x.id, pos)) continue;
       const mjere = VOZILA[x.vrsta];
-      drawVehicle(
-        ctx,
-        v,
-        [{ pos, heading, length: mjere.duzina, width: mjere.sirina }],
-        heading,
-        bojaVozila({ id: x.id } as Vehicle),
-        x.vrsta,
-        {
+      redom.push({
+        vrsta: "vozilo",
+        tijelo: [{ pos, heading, length: mjere.duzina, width: mjere.sirina }],
+        smjer: heading,
+        color: bojaVozila({ id: x.id } as Vehicle),
+        tip: x.vrsta,
+        stanje: {
           braking: x.faza === "ceka",
           blink: x.indicator && blinkOn ? x.indicator : null,
           beacon: false,
           highlight: null,
         },
-      );
+      });
     }
   }
 
-  for (const o of oznake.values()) drawEdgeMarker(ctx, v, o.pos, o.heading, o.color);
-}
-
-/** Dužina sjene iza vozila koje zaklanja [m] — dalje od kadra ionako. */
-const SJENA_DUZINA = 400;
-
-/**
- * Sjene iza vozila koja igraču zaklanjaju suprotnu traku.
- *
- * Sjena je ono što se sa vozačevog mjesta ne vidi: između dva zraka iz oka
- * kroz krajnje uglove tijela vozila, i dalje od njega. Crta se sa položajem
- * kakav je na ekranu (`renderS`), a zaklanjači su isti oni po kojima se sudi.
- */
-function sjeneZaklona(
-  runner: Driver,
-  tpl: RoadTemplate,
-  paths: ReadonlyMap<string, Path>,
-  player: Vehicle,
-): { poligoni: Point[][]; zaklanjaci: Set<string> } | null {
-  const put = paths.get(player.pathId);
-  if (!put) return null;
-  const spisak = zaklanjaci(runner.world, paths, player);
-  if (spisak.length === 0) return null;
-  const ja = { ...player, s: renderS(runner, player.id, player.s) };
-  const { pos, heading } = poseOn(tpl, put, ja);
-  const d = rt(heading);
-  const oko = { x: pos.x - d.x * OKO_LIJEVO, y: pos.y - d.y * OKO_LIJEVO };
-  const poligoni: Point[][] = [];
-  for (const { vozilo } of spisak) {
-    const p = paths.get(vozilo.pathId);
-    if (!p) continue;
-    const tijelo = tijeloVozila(tpl, p, { ...vozilo, s: renderS(runner, vozilo.id, vozilo.s) });
-    const uglovi = tijelo.flatMap((t) => rectCorners(t.pos, t.heading, t.length, t.width));
-    // Uglovi se porede po uglu gledanja, mjereno od pravca ka sredini vozila —
-    // tako nema skoka preko ±180°.
-    const sredina = {
-      x: uglovi.reduce((a, u) => a + u.x, 0) / uglovi.length,
-      y: uglovi.reduce((a, u) => a + u.y, 0) / uglovi.length,
-    };
-    const rx = sredina.x - oko.x;
-    const ry = sredina.y - oko.y;
-    const ugao = (u: Point) => Math.atan2(rx * (u.y - oko.y) - ry * (u.x - oko.x), rx * (u.x - oko.x) + ry * (u.y - oko.y));
-    let min = uglovi[0]!;
-    let max = uglovi[0]!;
-    for (const u of uglovi) {
-      if (ugao(u) < ugao(min)) min = u;
-      if (ugao(u) > ugao(max)) max = u;
-    }
-    const dalje = (u: Point): Point => {
-      const dx = u.x - oko.x;
-      const dy = u.y - oko.y;
-      const n = Math.hypot(dx, dy) || 1;
-      return { x: u.x + (dx / n) * SJENA_DUZINA, y: u.y + (dy / n) * SJENA_DUZINA };
-    };
-    poligoni.push([min, dalje(min), dalje(max), max]);
-  }
-  return { poligoni, zaklanjaci: new Set(spisak.map((z) => z.vozilo.id)) };
-}
-
-/** Da li je tačka u poligonu — zrak udesno, broje se presjeci. */
-function uPoligonu(p: Point, poligon: readonly Point[]): boolean {
-  let unutra = false;
-  for (let i = 0, j = poligon.length - 1; i < poligon.length; j = i++) {
-    const a = poligon[i]!;
-    const b = poligon[j]!;
-    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) unutra = !unutra;
-  }
-  return unutra;
+  for (const o of oznake.values()) redom.push({ vrsta: "oznaka", pos: o.pos, heading: o.heading, color: o.color });
+  return { sjene: sjene?.poligoni ?? [], redom };
 }
 
 /** NPC koči ako mu je brzina pala u odnosu na prethodni korak. */

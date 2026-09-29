@@ -58,3 +58,27 @@ export function createCanvasRenderer(canvas: HTMLCanvasElement): Renderer | null
     },
   };
 }
+
+/** Čime se crta: Canvas 2D ili WebGL (PixiJS). */
+export type VrstaRenderera = "canvas" | "pixi";
+
+/**
+ * Renderer za platno.
+ *
+ * Pixi se uvozi tek ovdje, dinamički: stranice koje ga ne traže (kviz, ispitni
+ * ekrani) ne učitavaju ni bajt njega. Ako WebGL nije dostupan, vraća se Canvas
+ * 2D — igra se ne smije prekinuti zbog načina crtanja.
+ */
+export async function napraviRenderer(
+  vrsta: VrstaRenderera,
+  canvas: HTMLCanvasElement,
+  opcije: { zaSnimak?: boolean } = {},
+): Promise<{ renderer: Renderer; vrsta: VrstaRenderera } | null> {
+  if (vrsta === "pixi") {
+    const { createPixiRenderer } = await import("./pixiRenderer");
+    const r = await createPixiRenderer(canvas, opcije);
+    if (r) return { renderer: r, vrsta: "pixi" };
+  }
+  const r = createCanvasRenderer(canvas);
+  return r ? { renderer: r, vrsta: "canvas" } : null;
+}

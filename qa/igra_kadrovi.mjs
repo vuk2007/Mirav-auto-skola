@@ -20,13 +20,18 @@ const URL = "http://localhost:3100/igra/bench";
 const PRAG = 48;
 const [radnja, a, b] = process.argv.slice(2);
 
-const browser = await chromium.launch();
+// Pravi grafički čip: bez ovih zastavica headless Chromium crta WebGL (a i
+// Canvas) softverski, kroz SwiftShader — i brojevi i slika bi bili tuđi.
+const browser = await chromium.launch({ args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });
 const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
 
 if (radnja === "snimi") {
   const greske = [];
   page.on("pageerror", (e) => greske.push(e.message));
+  page.on("console", (m) => {
+    if (m.type() === "error") greske.push(m.text());
+  });
   await page.goto(`${URL}?render=${a}&kadrovi=1`, { waitUntil: "networkidle" });
   await page.waitForFunction(() => window.__bench !== undefined, null, { timeout: 15 * 60 * 1000, polling: 1000 });
   const kadrovi = await page.evaluate(() => window.__benchKadrovi ?? []);

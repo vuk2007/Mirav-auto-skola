@@ -20,7 +20,9 @@ const URL = "http://localhost:3100/igra/bench";
 const RENDERERI = process.argv.slice(2).length > 0 ? process.argv.slice(2) : ["canvas"];
 const USPORENJA = [1, 4];
 
-const browser = await chromium.launch();
+// Pravi grafički čip: bez ovih zastavica headless Chromium crta WebGL (a i
+// Canvas) softverski, kroz SwiftShader — i brojevi i slika bi bili tuđi.
+const browser = await chromium.launch({ args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });
 const redovi = [];
 for (const render of RENDERERI) {
   for (const usporenje of USPORENJA) {

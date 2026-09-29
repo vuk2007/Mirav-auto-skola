@@ -703,6 +703,13 @@ export const KEEP_BEHIND = 500;
  */
 export const OKOLINA_POJAS = 95;
 
+/**
+ * Na svakoj koliko tačke osovine se pipa traka okoline kad se provjerava da li
+ * je u kadru. Dvadeset metara na ruti — mnogo manje od kadra, pa okvir tih
+ * tačaka ne promaši traku koja kroz kadar prolazi.
+ */
+export const OKOLINA_UZORAK = 10;
+
 /** Stranica ćelije u rešetki nad stvarnom osovinom [m]. */
 export const OKOLINA_RESETKA = 100;
 
@@ -1432,3 +1439,16 @@ export const BENCH_KADROVA = 180;
  * mjerenje na računaru i na telefonu crta isti broj piksela.
  */
 export const BENCH_PLATNO = 360;
+
+// ── WebGL (PixiJS) na otvorenom putu ───────────────────────────────────────
+
+/**
+ * Dužina komada statičnog svijeta [m]: okolina, bankina, kolovoz i linije se
+ * grade jednom po komadu, a kamera ih samo pomjera. Kraći komad znači manje
+ * posla kad jedan tek uđe u kadar; duži, manje komada za provjeriti.
+ */
+export const PIXI_KOMAD = 200;
+/** Koliko sagrađenih komada se najviše drži; najdavnije viđeni se ruše. */
+export const PIXI_KOMADA_NAJVISE = 48;
+/** Stranica ćelije mreže u koju se svrstavaju linije okoline [m]. */
+export const PIXI_CELIJA = 250;

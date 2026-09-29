@@ -14,7 +14,7 @@ import { vozacRute } from "@/lib/game/sim/vozac";
 import { step } from "@/lib/game/sim/world";
 import type { RoadTemplate } from "@/lib/game/sim/types";
 import { fps, statistika, type Statistika } from "@/lib/game/ui/bench";
-import { createCanvasRenderer, dprUredjaja, type Renderer } from "@/lib/game/ui/renderer";
+import { dprUredjaja, napraviRenderer, type Renderer } from "@/lib/game/ui/renderer";
 import { createRunner } from "@/lib/game/ui/runner";
 import { nadjiRutu, napraviRutu } from "@/lib/game/world/ruta";
 import { rutaScenario } from "@/lib/game/world/svijet";
@@ -58,12 +58,6 @@ declare global {
   }
 }
 
-/** Renderer po imenu iz adrese — danas postoji samo Canvas 2D. */
-function napraviRenderer(vrsta: string, canvas: HTMLCanvasElement): Renderer | null {
-  if (vrsta === "canvas") return createCanvasRenderer(canvas);
-  return null;
-}
-
 /** Pusti pregledač da odahne između komada dugog računa. */
 const predah = () => new Promise<void>((r) => setTimeout(r, 0));
 
@@ -91,10 +85,18 @@ export default function BenchScreen() {
 
     const mjeri = async () => {
       const adresa = new URLSearchParams(window.location.search);
-      const vrsta = adresa.get("render") ?? "canvas";
+      const trazeno = adresa.get("render") === "pixi" ? "pixi" : "canvas";
       const kadrovi: string[] | null = adresa.get("kadrovi") === "1" ? [] : null;
-      renderer = napraviRenderer(vrsta, canvas);
-      if (!renderer) throw new Error(`nepoznat renderer: ${vrsta}`);
+      const napravljen = await napraviRenderer(trazeno, canvas, { zaSnimak: kadrovi !== null });
+      if (!napravljen) throw new Error("platno ne daje ni WebGL ni Canvas 2D");
+      renderer = napravljen.renderer;
+      // Ako je tražen WebGL a dobijen Canvas, to se mora vidjeti u rezultatu.
+      const vrsta = napravljen.vrsta;
+      if (otkazano) {
+        // Efekat je otkazan dok se renderer pravio — čišćenje ga nije ni vidjelo.
+        renderer.destroy();
+        return;
+      }
       const dpr = dprUredjaja();
       renderer.resize(BENCH_PLATNO, BENCH_PLATNO, dpr);
 
