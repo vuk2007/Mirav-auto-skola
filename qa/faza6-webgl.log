@@ -1,0 +1,36 @@
+# node igra_webgl.mjs
+{
+  "rutaWebgl": {
+    "platno": "webgl",
+    "brzina": "64 -> 50 km/h",
+    "fps": 59,
+    "pao": false,
+    "greske": []
+  },
+  "rutaCanvas": {
+    "platno": "2d",
+    "brzina": "64 -> 50 km/h",
+    "fps": 60,
+    "pao": false,
+    "greske": []
+  },
+  "ispit": {
+    "platno": "2d",
+    "greske": []
+  },
+  "putovanje": {
+    "naDionici": "webgl",
+    "uGradu": null,
+    "pao": false,
+    "greske": []
+  }
+}
+# SAMO=putovanje node igra_webgl.mjs (dionica do grada traje duze od 8 min pri 60 % ogranicenja)
+{
+  "putovanje": {
+    "naDionici": "webgl",
+    "uGradu": "2d",
+    "pao": false,
+    "greske": []
+  }
+}

@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DIFFICULTY, HORN_AT, HUD_HZ, type Level } from "@/lib/game/sim/config";
 import type { Input, Outcome, ScenarioOfficer } from "@/lib/game/sim/types";
-import { drawScene, pokazivacSvijetli } from "@/lib/game/ui/draw";
+import { templateById } from "@/lib/game/sim/intersection";
+import { pokazivacSvijetli } from "@/lib/game/ui/draw";
+import { dprUredjaja, napraviRenderer, type Renderer, type VrstaRenderera } from "@/lib/game/ui/renderer";
 import type { Sound } from "@/lib/game/ui/sound";
 import type { Okolina } from "@/lib/game/world/okolina";
 import type { Driver } from "@/lib/game/ui/runner";
@@ -84,6 +86,15 @@ export default function GameCanvas({
   label,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // Otvoreni put se crta na WebGL-u, sve ostalo na Canvas 2D (vidi
+  // `renderer.ts`). `?render=canvas` u adresi traži Canvas i na putu — za
+  // poređenje i za slučaj da WebGL na nekom uređaju zakaže.
+  const [prinudnoCanvas, setPrinudnoCanvas] = useState(false);
+  useEffect(() => {
+    setPrinudnoCanvas(new URLSearchParams(window.location.search).get("render") === "canvas");
+  }, []);
+  const vrsta: VrstaRenderera =
+    !prinudnoCanvas && templateById(runner.world.templateId)?.kind === "road" ? "pixi" : "canvas";
   // Callback-ovi kroz ref: petlja se pokreće jednom i ne smije da se restartuje
   // svaki put kad roditelj napravi novu funkciju.
   const onHudRef = useRef(onHud);
@@ -110,8 +121,9 @@ export default function GameCanvas({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    let renderer: Renderer | null = null;
+    let otkazano = false;
+    let observer: ResizeObserver | null = null;
 
     let raf = 0;
     let last = 0;
@@ -126,16 +138,10 @@ export default function GameCanvas({
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       cssW = rect.width;
       cssH = rect.height;
-      canvas.width = Math.round(cssW * dpr);
-      canvas.height = Math.round(cssH * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      renderer?.resize(cssW, cssH, dprUredjaja());
     };
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(canvas);
 
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
@@ -180,7 +186,7 @@ export default function GameCanvas({
         soundRef.current.crash();
       }
 
-      drawScene(ctx, runner, cssW, cssH, {
+      renderer?.draw(runner, {
         playerBraking: inputRef.current.brake > 0,
         flagVehicleId: flagRef.current,
         officer: officerRef.current,
@@ -208,19 +214,38 @@ export default function GameCanvas({
         onFinishRef.current(runner.world.outcome);
       }
     };
-    raf = requestAnimationFrame(frame);
+    // Petlja kreće tek kad je renderer spreman: WebGL se pravi asinhrono
+    // (Pixi se tada i učitava), a vožnja ne smije teći dok se ne vidi.
+    void napraviRenderer(vrsta, canvas).then((napravljen) => {
+      if (!napravljen) return;
+      if (otkazano) {
+        napravljen.renderer.destroy();
+        return;
+      }
+      renderer = napravljen.renderer;
+      resize();
+      observer = new ResizeObserver(resize);
+      observer.observe(canvas);
+      raf = requestAnimationFrame(frame);
+    });
 
     return () => {
+      otkazano = true;
       cancelAnimationFrame(raf);
-      observer.disconnect();
+      observer?.disconnect();
+      renderer?.destroy();
+      renderer = null;
     };
     // `okolinaRef` je `ref` i ne mijenja se, pa petlja zbog njega ne kreće
     // ispočetka; stoji ovdje samo da bi pravilo o zavisnostima bilo zadovoljeno
     // bez gašenja provjere.
-  }, [runner, inputRef, okolinaRef]);
+  }, [runner, inputRef, okolinaRef, vrsta]);
 
   return (
     <canvas
+      // Isto platno ne može imati i WebGL i 2D kontekst: kad se vrsta
+      // promijeni (dionica → grad), React pravi novo.
+      key={vrsta}
       ref={canvasRef}
       role="img"
       aria-label={label}
