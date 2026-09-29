@@ -9,7 +9,7 @@ import {
   type RoadKind,
   type Smjer,
 } from "@/lib/game/road/roadGraph";
-import { CITY_LEVEL, SAOBRACAJ_NIVO, SHIFT_VIEW_HALF, type Level } from "@/lib/game/sim/config";
+import { CITY_LEVEL, SAOBRACAJ_NIVO, SHIFT_VIEW_HALF, V_MAX_DEFAULT, type Level } from "@/lib/game/sim/config";
 import { generateSegment } from "@/lib/game/shift/generate";
 import type { PokazivaciRezim, RoadTemplate, ViolationType } from "@/lib/game/sim/types";
 import { pokazivacSvijetli } from "@/lib/game/ui/draw";
@@ -38,6 +38,8 @@ import {
   saveSaobracaj,
   saveTrip,
 } from "@/lib/storage";
+import Brzinomjer from "./Brzinomjer";
+import DebugPreklop from "./DebugPreklop";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import DriveControls from "./DriveControls";
 import PokazivaciIzbor from "./PokazivaciIzbor";
@@ -147,6 +149,8 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
   }, [scenario, pokusaj]);
   const tpl = scenario?.template as RoadTemplate | undefined;
   const uGradu = grad !== null;
+  // Dev preklop čita svijet kroz funkciju: runner se mijenja sa vožnjom.
+  const citajSvijet = useCallback(() => runner?.world ?? null, [runner]);
 
   /** Stanje pokazivača u simulaciji — za lampice pored volana. */
   const stanjePokazivaca = useCallback(() => {
@@ -323,13 +327,36 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               indicatorZones={uGradu ? zonesForLevel(CITY_LEVEL, t) : null}
               level={scenario.difficulty}
               sound={sound}
-              camera={{ follow: true, half: uGradu ? SHIFT_VIEW_HALF : tpl?.viewHalf }}
+              // Na otvorenom putu kadar prati smjer i gleda dalje što se brže vozi,
+              // kao i na ruti. Kroz grad ostaje kako je: tamo se vozi kroz
+              // raskrsnice, i kadar se ne okreće.
+              camera={
+                uGradu
+                  ? { follow: true, half: SHIFT_VIEW_HALF }
+                  : { follow: true, rotate: true, naprijed: true, half: tpl?.viewHalf }
+              }
               zvukPokazivaca
               label={uGradu ? t.tripCity : (scenario.title.me ?? t.tripTitle)}
             />
+            <DebugPreklop
+              svijet={citajSvijet}
+              template={scenario.template}
+              inputRef={volan.inputRef}
+              dionica={uGradu ? undefined : edge?.id}
+            />
             <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
               <div className="flex gap-2">
-                <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
+                <Brzinomjer
+                  brzina={hud.speedKmh}
+                  ogranicenje={
+                    uGradu
+                      ? (scenario.vMax ?? V_MAX_DEFAULT) * 3.6
+                      : tpl
+                        ? tpl.vMax * 3.6
+                        : null
+                  }
+                  t={t}
+                />
                 <Hud label={t.gameTime} value={`${hud.t.toFixed(0)} s`} />
               </div>
               <p className="max-w-[15rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">

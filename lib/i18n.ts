@@ -103,6 +103,7 @@ export interface Dict {
   gameStart: string;
   gameRetry: string;
   gameSpeed: string;
+  gameSpeedLimit: string;
   gameTime: string;
   gameQuality: string;
   gamePickLead: string;
@@ -474,6 +475,7 @@ const me: Dict = {
   gameOpen: "Otvori igru",
   gameRetry: "Pokušaj ponovo",
   gameSpeed: "Brzina",
+  gameSpeedLimit: "ograničenje",
   gameTime: "Vrijeme",
   gameQuality: "Iznad idealnog vremena",
   gamePickLead:
@@ -851,6 +853,7 @@ const en: Dict = {
   gameOpen: "Open the game",
   gameRetry: "Try again",
   gameSpeed: "Speed",
+  gameSpeedLimit: "limit",
   gameTime: "Time",
   gameQuality: "Above the ideal time",
   gamePickLead:
@@ -1233,6 +1236,7 @@ const sq: Dict = {
   gameOpen: "Hap lojën",
   gameRetry: "Provo përsëri",
   gameSpeed: "Shpejtësia",
+  gameSpeedLimit: "kufiri",
   gameTime: "Koha",
   gameQuality: "Mbi kohën ideale",
   gamePickLead:
@@ -1617,6 +1621,7 @@ const ru: Dict = {
   gameOpen: "Открыть игру",
   gameRetry: "Ещё раз",
   gameSpeed: "Скорость",
+  gameSpeedLimit: "ограничение",
   gameTime: "Время",
   gameQuality: "Сверх идеального времени",
   gamePickLead:

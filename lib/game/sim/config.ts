@@ -1379,3 +1379,35 @@ export const PREGLEDNOST_REAKCIJA = 1;
  * Koliko je vozačevo oko lijevo od sredine vozila [m] — vozač sjedi lijevo.
  */
 export const OKO_LIJEVO = 0.35;
+
+// ── haptika klizača (modovi „Putovanje" i „Ruta") ──────────────────────────
+
+/**
+ * Trajanje vibracije kad prst uhvati klizač [ms].
+ *
+ * Kratko — dodir, ne zujanje: potvrda da je klizač uhvaćen, jer se na ekranu
+ * pod prstom ne vidi.
+ */
+export const HAPTIKA_DODIR = 12;
+
+/**
+ * Trajanje vibracije kad gas pređe u kočnicu ili obratno [ms].
+ *
+ * Sredina klizača se prstom ne osjeti, a baš tu se mijenja šta klizač radi.
+ */
+export const HAPTIKA_PRELAZ = 6;
+
+// ── kamera (modovi „Putovanje" i „Ruta") ───────────────────────────────────
+
+/**
+ * Za koliko se, najviše, igrač spusti niz ekran kad vozi brzo — dio visine
+ * kadra.
+ *
+ * Zadatak: „kamera prati smjer, sa malim pomakom unaprijed proporcionalnim
+ * brzini". Na mjestu igrač stoji na 62 % visine; na `KAMERA_NAPRIJED_BRZINA`
+ * je dvanaest posto niže, pa se ispred vidi toliko više puta.
+ */
+export const KAMERA_NAPRIJED = 0.12;
+
+/** Brzina na kojoj je pomak kamere unaprijed najveći [m/s]. */
+export const KAMERA_NAPRIJED_BRZINA = 100 / 3.6;

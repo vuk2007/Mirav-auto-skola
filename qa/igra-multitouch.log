@@ -1,0 +1,12 @@
+PASS  kontrola: povlačenje van klizača (DIV) skroluje stranicu (0 → 85 px)
+PASS  dodir za provjeru skrola pada baš na volan
+PASS  povlačenje po volanu ne skroluje stranicu (54 → 54 px)
+PASS  oba klizača su na ekranu
+PASS  volan pomjeren udesno dok se drži i gas (-32 → 4 px)
+PASS  gas pomjeren nagore dok se drži i volan (-24 → -57 px)
+PASS  auto ubrzava dok su oba prsta na klizačima (64 → 71 km/h)
+PASS  pušten volan se vraća u sredinu
+PASS  haptika: svaki uhvaćen klizač vibrira (3 poziva)
+PASS  nijedna greška u konzoli
+
+SVE PROSLO

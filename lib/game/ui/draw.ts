@@ -17,6 +17,8 @@ import {
   CAR_LENGTH,
   EDGE_MARKER_INSET,
   MIN_CAR_PX,
+  KAMERA_NAPRIJED,
+  KAMERA_NAPRIJED_BRZINA,
   MIN_SIGN_PX,
   OKO_LIJEVO,
   PRIKLJUCAK_KRAK,
@@ -1591,8 +1593,12 @@ export interface DrawOptions {
    * punih krugova, pa bi bez okretanja vozilo klizilo bočno preko ekrana, a
    * lijevo i desno bi zamijenili mjesta. Raskrsnica ga ne traži — tamo se ulazi
    * uvijek sa istog kraka.
+   *
+   * `naprijed` spušta igrača niz ekran srazmjerno brzini, pa se brže vidi
+   * dalje — vidi `KAMERA_NAPRIJED`. Ima smisla samo uz `rotate`, jer je tada
+   * „naprijed" uvijek nagore.
    */
-  camera?: { follow: boolean; half?: number; rotate?: boolean };
+  camera?: { follow: boolean; half?: number; rotate?: boolean; naprijed?: boolean };
 }
 
 /** Nacrtaj cijelu scenu — svejedno je da li se vozi ili se ponavlja snimak. */
@@ -1635,7 +1641,12 @@ export function drawScene(
         v.wx = poz.x;
         v.wy = poz.y;
         v.cx = widthPx / 2;
-        v.cy = heightPx * 0.62;
+        // Brže se vidi dalje: igrač se spušta niz ekran srazmjerno brzini. Brzina
+        // se u modelu mijenja glatko, pa i kadar klizi, bez trzaja.
+        const naprijed = opts.camera.naprijed
+          ? KAMERA_NAPRIJED * Math.min(1, Math.max(0, igrac.v) / KAMERA_NAPRIJED_BRZINA)
+          : 0;
+        v.cy = heightPx * (0.62 + naprijed);
         v.rot = -Math.PI / 2 - Math.atan2(-(b.y - a.y), -(b.x - a.x));
       } else {
         v.cx = widthPx / 2 + (tpl.kind === "highway" ? 0 : poz.x) * v.scale;

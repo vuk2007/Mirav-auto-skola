@@ -19,6 +19,8 @@ import { SAOBRACAJ_NIVO, type Level } from "@/lib/game/sim/config";
 import { loadPokazivaci, loadSaobracaj, savePokazivaci, saveSaobracaj } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import MiniMapa from "./MiniMapa";
+import Brzinomjer from "./Brzinomjer";
+import DebugPreklop from "./DebugPreklop";
 import DriveControls from "./DriveControls";
 import PokazivaciIzbor from "./PokazivaciIzbor";
 import SaobracajIzbor from "./SaobracajIzbor";
@@ -176,6 +178,8 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
     return scenario ? createRunner(scenario, 1) : null;
   }, [scenario, pokusaj]);
   const tpl = scenario?.template as RoadTemplate | undefined;
+  // Dev preklop čita svijet kroz funkciju: runner se mijenja sa vožnjom.
+  const citajSvijet = useCallback(() => runner?.world ?? null, [runner]);
 
   /** Stanje pokazivača u simulaciji — za lampice pored volana. */
   const stanjePokazivaca = useCallback(() => {
@@ -267,14 +271,19 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
             level={scenario.difficulty}
             sound={sound}
             // Kadar se okreće: bez toga bi se na ruti vozilo bočno preko ekrana.
-            camera={{ follow: true, rotate: true, half: tpl.viewHalf }}
+            // i gleda se dalje što se brže vozi.
+            camera={{ follow: true, rotate: true, naprijed: true, half: tpl.viewHalf }}
             okolinaRef={okolinaRef}
             zvukPokazivaca
             label={ruta.cvorovi.map((c) => nodeById(c)?.name ?? c).join(" — ")}
           />
           <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
             <div className="flex gap-2">
-              <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
+              <Brzinomjer
+                brzina={hud.speedKmh}
+                ogranicenje={ruta ? ruta.vMaxNa(hud.s) * 3.6 : null}
+                t={t}
+              />
               <Hud
                 label={t.rutaLegs}
                 value={`${redni}/${ruta.dionice.length}`}
@@ -292,6 +301,12 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
                   : `${nodeById(dionica.od)?.name ?? dionica.od} → ${nodeById(dionica.do)?.name ?? dionica.do} · ${Math.round(dionica.vMax * 3.6)} km/h`}
             </p>
           </div>
+          <DebugPreklop
+            svijet={citajSvijet}
+            template={tpl}
+            inputRef={volan.inputRef}
+            dionica={dionica ? (dionica.edge?.id ?? `grad:${dionica.grad}`) : undefined}
+          />
           {/* Mini mapa stoji dolje desno, van puta i van HUD-a: pogleda se kad
               zatreba, a ne zaklanja ono čime se vozi. */}
           {granica.length > 0 && (

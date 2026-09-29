@@ -42,7 +42,7 @@ interface GameCanvasProps {
    * `rotate` uz to okreće kadar tako da je vozačev pravac uvijek nagore; traži
    * ga ruta, gdje se smjer mijenja duž cijele vožnje.
    */
-  camera?: { follow: boolean; half?: number; rotate?: boolean };
+  camera?: { follow: boolean; half?: number; rotate?: boolean; naprijed?: boolean };
   /**
    * Okolina pored puta, preslikana u koordinate rute.
    *

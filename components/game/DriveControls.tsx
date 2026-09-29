@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { HAPTIKA_DODIR, HAPTIKA_PRELAZ, STEER_DEAD_ZONE } from "@/lib/game/sim/config";
 import type { PokazivaciRezim } from "@/lib/game/sim/types";
+import { haptika } from "@/lib/game/ui/haptika";
 import type { Volan } from "./useVolan";
 
 /**
@@ -40,6 +42,9 @@ interface DriveControlsProps {
   disabled?: boolean;
 }
 
+/** Strana klizača: +1 ili −1 van mrtve zone, 0 u njoj. */
+const strana = (v: number): number => (Math.abs(v) < STEER_DEAD_ZONE ? 0 : Math.sign(v));
+
 /** Upali ili ugasi lampicu mimo Reacta; atribut se dira samo kad se promijeni. */
 function lampa(el: HTMLElement | null, svijetli: boolean): void {
   if (!el) return;
@@ -73,6 +78,8 @@ export default function DriveControls({
   // toga ne smije da kreće ispočetka.
   const indicatorRef = useRef(indicator);
   indicatorRef.current = indicator;
+  /** Na kojoj strani sredine je gas bio: +1 gas, −1 kočnica, 0 mrtva zona. */
+  const gasStrana = useRef(0);
 
   useEffect(() => {
     let raf = 0;
@@ -117,11 +124,22 @@ export default function DriveControls({
     onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
       if (disabled) return;
       e.preventDefault();
-      volan.pocniDodir(koji, e.pointerId, izPolozaja(e, uspravno));
+      const v = izPolozaja(e, uspravno);
+      volan.pocniDodir(koji, e.pointerId, v);
+      // Dodir potvrđuje da je klizač uhvaćen — pod prstom se to ne vidi.
+      haptika(HAPTIKA_DODIR);
+      if (koji === "gas") gasStrana.current = strana(v);
     },
     onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => {
       if (disabled || e.buttons === 0) return;
-      volan.pomjeri(e.pointerId, izPolozaja(e, uspravno));
+      const v = izPolozaja(e, uspravno);
+      volan.pomjeri(e.pointerId, v);
+      // Gas je prešao u kočnicu, ili obratno: sredina se prstom ne osjeti.
+      if (koji === "gas") {
+        const sada = strana(v);
+        if (sada !== 0 && gasStrana.current !== 0 && sada !== gasStrana.current) haptika(HAPTIKA_PRELAZ);
+        if (sada !== 0) gasStrana.current = sada;
+      }
     },
     onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
   });
@@ -192,6 +210,7 @@ export default function DriveControls({
         <div className="pointer-events-none absolute inset-y-4 left-1/2 w-0.5 -translate-x-1/2 bg-line" />
         <div
           ref={volanKvaka}
+          data-kvaka="volan"
           className="pointer-events-none absolute top-1/2 left-1/2 flex h-20 w-16 items-center justify-center rounded bg-blue"
         >
           <span className="h-8 w-0.5 rounded bg-white/70" />
@@ -215,6 +234,7 @@ export default function DriveControls({
         <div className="pointer-events-none absolute inset-x-4 top-1/2 h-0.5 -translate-y-1/2 bg-line" />
         <div
           ref={gasKvaka}
+          data-kvaka="gas"
           className="pointer-events-none absolute top-1/2 left-1/2 flex h-12 w-16 items-center justify-center rounded bg-green"
         >
           <span className="h-0.5 w-8 rounded bg-white/70" />
