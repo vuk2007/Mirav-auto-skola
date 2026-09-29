@@ -79,7 +79,10 @@ function nadjiRjesenje(s: Scenario, seed: number): { from: number; to: number } 
  */
 const BEZ_AUTOPUTA = SCENARIOS.filter((s) => TEMPLATES[s.intersection]?.kind !== "highway");
 
-describe("igrivost sa dvije pedale", () => {
+// Jedan slučaj traje oko dvije sekunde, ali pod punim opterećenjem mašine
+// (cijeli paket paralelno, uz druge programe) izmjereno je i preko šest —
+// podrazumijevanih pet sekundi je tada lažan pad, ne greška u scenariju.
+describe("igrivost sa dvije pedale", { timeout: 30000 }, () => {
   for (const s of BEZ_AUTOPUTA) {
     // Sjemena mijenjaju trenutak nastanka NPC-a unutar prozora; scenario mora
     // biti rješiv u cijelom prozoru, a ne samo za jedno sjeme.
