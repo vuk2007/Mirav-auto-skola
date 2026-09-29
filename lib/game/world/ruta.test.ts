@@ -10,7 +10,7 @@ import {
 import { vozacRute } from "@/lib/game/sim/vozac";
 import { compile } from "@/lib/game/sim/intersection";
 import { createWorld, PLAYER_ID, poseOn, step } from "@/lib/game/sim/world";
-import type { Input, Point, RoadTemplate, Scenario, World } from "@/lib/game/sim/types";
+import type { Input, Point, RoadTemplate, Scenario, ScenarioNpc, World } from "@/lib/game/sim/types";
 import { EDGES, NODES } from "@/lib/game/road/roadGraph";
 import { parseGeometry, type EdgeGeometry } from "@/lib/game/road/edgeGeometry";
 import { parseKicma, type Kicma } from "@/lib/game/road/kicma";
@@ -445,5 +445,32 @@ describe("gradske dionice u ruti", { timeout: 300000 }, () => {
       expect(uGradu / r.duzina, `${a}-${b}`).toBeLessThan(0.25);
       expect(uGradu, `${a}-${b}`).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("preticanje na ruti Podgorica — Nikšić", { timeout: 300000 }, () => {
+  it("sa sporim vozilom ispred: vozač koji pretiče stiže bez prekršaja, i brže od onoga koji ne pretiče", () => {
+    // Iz zadatka (odjeljak 5): isti put, isto sjeme, isto sporo vozilo ispred —
+    // kamion od 45 km/h, dvjesta pedeset metara pred igračem, uz rijedak
+    // saobraćaj u oba smjera.
+    const r = rutaSaGradovima("podgorica", "niksic");
+    const spori: ScenarioNpc = {
+      arm: "N",
+      intent: { kind: "lane", index: 0 },
+      startS: 250,
+      spawnAt: [0, 0],
+      speed: 45 / 3.6,
+      fiksno: true,
+      vrsta: "kamion",
+    };
+    const s = { ...rutaScenario(r, 1, 1), npcs: [spori] };
+    const sa = provozaj(r, 1, s, true);
+    const bez = provozaj(r, 1, s, false);
+    expect(bez.outcome).toBe("passed");
+    expect(bez.prekrsaji).toEqual([]);
+    expect(sa.outcome).toBe("passed");
+    expect(sa.prekrsaji).toEqual([]);
+    expect(sa.preticanja).toBeGreaterThan(0);
+    expect(sa.vrijeme).toBeLessThan(bez.vrijeme);
   });
 });

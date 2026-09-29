@@ -1,0 +1,25 @@
+fuzz: 3 rute × 100 sjemena, nivo 5, 8 radnika
+  15/300 voznji, 0 padova, 48 s
+  30/300 voznji, 0 padova, 89 s
+  45/300 voznji, 0 padova, 127 s
+  60/300 voznji, 0 padova, 166 s
+  75/300 voznji, 0 padova, 198 s
+  90/300 voznji, 0 padova, 237 s
+  105/300 voznji, 0 padova, 321 s
+  120/300 voznji, 0 padova, 411 s
+  135/300 voznji, 0 padova, 506 s
+  150/300 voznji, 0 padova, 612 s
+  165/300 voznji, 0 padova, 698 s
+  180/300 voznji, 0 padova, 788 s
+  195/300 voznji, 0 padova, 873 s
+  210/300 voznji, 0 padova, 954 s
+  225/300 voznji, 0 padova, 1036 s
+  240/300 voznji, 0 padova, 1115 s
+  255/300 voznji, 0 padova, 1188 s
+  270/300 voznji, 0 padova, 1265 s
+  285/300 voznji, 0 padova, 1343 s
+  300/300 voznji, 0 padova, 1455 s
+  budva-kolasin         100 voznji, 7 preticanja, najduze u kontri 9.7 s, prosjek 22.8 min, gustina 25.4 (23.7-27.2; cilj 24-30)
+  herceg-novi-rozaje    100 voznji, 118 preticanja, najduze u kontri 12.7 s, prosjek 48.7 min, gustina 25.4 (24.4-26.7; cilj 24-30)
+  ulcinj-pljevlja       100 voznji, 27 preticanja, najduze u kontri 9.3 s, prosjek 48.5 min, gustina 25.4 (24.2-26.6; cilj 24-30)
+sve proslo: 300 voznji bez ijednog prekrsaja (1455 s)
