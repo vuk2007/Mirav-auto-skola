@@ -5,6 +5,8 @@ import { useApp } from "@/components/AppProvider";
 import type { Landmark } from "@/lib/game/road/landmarks";
 import {
   NODES,
+  nodeById,
+  otherEnd,
   type RoadEdge,
   type RoadKind,
   type Smjer,
@@ -235,6 +237,10 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
 
   const putokaz = trip ? smjerovi(trip) : null;
   const mjesto = trip ? gdjeSam(trip) : undefined;
+  // Ulice kroz koje se vozi su u mjestu u koje se STIŽE (vidi `gradskaVoznja`);
+  // putovanje se tamo upisuje tek kad se grad pređe, pa `mjesto` je do tada
+  // još polazište.
+  const gradUlica = trip && edge ? nodeById(otherEnd(edge, trip.at)) : undefined;
 
   if (!trip || phase === "polazak") {
     return (
@@ -361,7 +367,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               </div>
               <p className="max-w-[15rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
                 {grad
-                  ? `${t.tripCity} ${grad.index + 1}/${grad.count} — ${mjesto?.name ?? ""}`
+                  ? `${t.tripCity} ${grad.index + 1}/${grad.count} — ${gradUlica?.name ?? ""}`
                   : scenario.title.me}
               </p>
             </div>
