@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { perfectBot, run } from "../sim/bots";
 import { TRIP_SEGMENT_TIME } from "../sim/config";
 import { compile } from "../sim/intersection";
@@ -478,5 +478,27 @@ describe("dionica sa stvarnom geometrijom", { timeout: 60000 }, () => {
       const sudar = world.violations.some((v) => v.type === "collision");
       expect(sudar, id).toBe(false);
     }
+  });
+});
+
+describe("smjer dionice sa stvarnom geometrijom", () => {
+  it("povratak ide od `b`, i kad je on prvi poziv za tu ivicu", async () => {
+    // Svjež modul znači prazan keš sabijanja: redoslijed poziva je upravo ono
+    // što se mjeri, pa ga drugi testovi ne smiju unaprijed popuniti.
+    vi.resetModules();
+    const svjez = await import("./segment");
+    const { sabijenaIvica } = await import("./sabijanje");
+    const e = ivica("andrijevica--plav");
+    const g = parseGeometry(
+      JSON.parse(readFileSync(`public/data/osm/edgeGeometry/${e.id}.json`, "utf8")),
+    )!;
+    svjez.roadTemplate(e, 1, true, g);
+    const a = { x: g.g[0]![0], y: g.g[0]![1] };
+    const b = { x: g.g.at(-1)![0], y: g.g.at(-1)![1] };
+    const d = (p: { x: number; y: number }, q: { x: number; y: number }) => Math.hypot(p.x - q.x, p.y - q.y);
+    const nazad = sabijenaIvica(e.id, [], true).stvarne[0]!;
+    const naprijed = sabijenaIvica(e.id, [], false).stvarne[0]!;
+    expect(d(nazad, b)).toBeLessThan(50);
+    expect(d(naprijed, a)).toBeLessThan(50);
   });
 });

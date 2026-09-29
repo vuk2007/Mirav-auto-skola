@@ -157,7 +157,11 @@ export function roadTemplate(
   // Dužina više nije fiksna nego onolika kolika ispadne poslije sabijanja —
   // Podgorica — Zeta je minut i po, Žabljak — Plužine trinaest.
   if (geom) {
-    const sabijeno = sabijenaIvica(geom.id, osovina(geom, obrnuto), obrnuto);
+    // Tačke se sabijanju UVIJEK predaju od `a` prema `b` — keš čuva odlazak i
+    // povratak izvodi okretanjem (vidi `sabijenaIvica`). Ranije su se ovdje
+    // predavale već okrenute: kad je povratak bio prvi poziv za tu ivicu, u keš
+    // je kao odlazak ulazio povratak, pa su OBA smjera vozila pogrešnu stranu.
+    const sabijeno = sabijenaIvica(geom.id, osovina(geom), obrnuto);
     return {
       kind: "road",
       id: `road:${edge.id}:${seed >>> 0}${obrnuto ? ":obrnuto" : ""}:osm`,
