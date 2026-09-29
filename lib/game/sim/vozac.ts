@@ -24,6 +24,7 @@
 
 import {
   A_MAX,
+  CAR_WIDTH,
   CUT_IN_TIME,
   FOLLOW_GAP,
   HIGHWAY_DRAG,
@@ -36,6 +37,7 @@ import {
   PRETICANJE_SUSRETNI,
   PRETICANJE_ZALET,
   PRETICANJE_ZALIHA,
+  PREGLEDNOST_REAKCIJA,
   ROLL_RESISTANCE,
   SPEEDING_FACTOR,
   VOZAC_POGLED,
@@ -51,6 +53,12 @@ type Faza = "vozi" | "prilaz" | "najava" | "kontra" | "povratak";
 
 /** Koliko pokazivač gori prije nego što volan krene [s]. */
 const NAJAVA = INDICATOR_LEAD_TIME + 0.25;
+
+/**
+ * Koliko najduže vozač čeka da mu se suprotna traka otvori pogledu, pošto je
+ * izvirio [s]. Ako se ni tada ne vidi dovoljno, odustaje.
+ */
+const CEKA_POGLED = 2;
 
 /** Korak kojim se pretražuje puna linija i ograničenje ispred [m]. */
 const KORAK = 10;
@@ -404,7 +412,21 @@ export function vozacRute({ pretice = true }: VozacOpcije = {}): Bot {
         return poOgranicenju({ ...osnova, indicator: null, steer: volanKa(0) });
       }
       const gas: Input = { ...osnova, throttle: 1, brake: 0, indicator: "left" };
-      if (preostalo > 0) return poOgranicenju({ ...gas, steer: volanKa(0) });
+      // Izviri: dok gori pokazivač, vozač se pomjeri na lijevu ivicu svoje
+      // trake — tijelo ostaje ispred linije — da vidi suprotnu traku pored
+      // vozila ispred. U nju kreće tek kad se ona vidi dovoljno daleko, i to
+      // bar `PREGLEDNOST_REAKCIJA`; vidi pravilo u `preglednost` u `world.ts`.
+      // Osa je širina trake lijevo, linija pola te širine.
+      const izviri = cilj / 2 + CAR_WIDTH / 2 + 0.15;
+      const vidi = world.volan.pregledT >= PREGLEDNOST_REAKCIJA;
+      if (preostalo > 0 || !vidi) {
+        if (!vidi && world.t - odKada > NAJAVA + CEKA_POGLED) {
+          faza = "vozi";
+          metaId = null;
+          return poOgranicenju({ ...osnova, indicator: null, steer: volanKa(0) });
+        }
+        return poOgranicenju({ ...gas, steer: volanKa(izviri) });
+      }
       faza = "kontra";
       odKada = world.t;
       return poOgranicenju({ ...gas, steer: volanKa(cilj) });

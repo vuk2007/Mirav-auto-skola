@@ -78,6 +78,11 @@ import {
   DIO_TIJELA,
   VOZILA,
   KAMION_ISPRED,
+  OKO_LIJEVO,
+  PREGLEDNOST_DOMET,
+  PREGLEDNOST_REAKCIJA,
+  PREGLEDNOST_VRIJEME,
+  ZAKLANJA_POGLED,
   PRIKLJUCAK_BRZINA,
   PRIKLJUCAK_KRAK,
   PRIKLJUCAK_POJAVA,
@@ -213,6 +218,9 @@ export const PENALTY_REF: Readonly<Record<Violation["type"], string | null>> = {
   // članove, mijenja se ovdje.
   crossingSolidLine: "signalizacija",
   unsafeOvertake: "preticanje-opasno",
+  // Ulazak u suprotnu traku bez preglednosti je ista stavka kao opasno
+  // preticanje: oba su preticanje kad se ne zna da je suprotna traka slobodna.
+  overtakeNoVisibility: "preticanje-opasno",
   overtakeTooLong: "preticanje",
   cutIn: "preticanje",
 };
@@ -746,6 +754,65 @@ function preusmjeri(ctx: Ctx, player: Vehicle, stara: Path, noviId: string): voi
 }
 
 /**
+ * Dokle vozač vidi suprotnu traku [m], mjereno duž puta od sebe.
+ *
+ * Zaklanjaju visoka vozila u našoj traci ispred (`ZAKLANJA_POGLED`). Pogled je
+ * prava linija od vozačevog oka do ose suprotne trake, i zaklonjen je ako
+ * prolazi kroz tijelo vozila ispred. Na pravom putu je to jedan izraz, iz
+ * sličnih trouglova: oko, lijeva ivica zadnjeg branika i tačka na osi
+ * suprotne trake leže na istoj pravoj. Krivine ovdje ne ulaze — u krivini je
+ * linija ionako puna, pa se preticati ne smije ni bez kamiona.
+ *
+ * Posljedica je ujedno i cilj: vidi se DALJE kad se odmakne od kamiona, ili
+ * kad se pomjeri ulijevo u svojoj traci. Kamion ne zaklanja cijeli pogled,
+ * nego sjenu iza sebe. Dvadeset metara iza kamiona se iz sredine trake vidi
+ * šezdesetak metara suprotne, a sa lijeve ivice svoje trake preko kilometra.
+ */
+export function preglednost(
+  world: World,
+  paths: ReadonlyMap<string, Path>,
+  igrac: Vehicle,
+  put: Path,
+): number {
+  const oko = (igrac.lateral ?? 0) - OKO_LIJEVO;
+  const osa = osaSusretne(put, igrac.s);
+  let najdalje = Infinity;
+  for (const { vozilo: o, doZadnjeg } of zaklanjaci(world, paths, igrac)) {
+    const lijevaIvica = (o.lateral ?? 0) - o.width / 2;
+    najdalje = Math.min(najdalje, ((oko - osa) * doZadnjeg) / (oko - lijevaIvica));
+  }
+  return najdalje;
+}
+
+/**
+ * Vozila koja igraču zaklanjaju suprotnu traku, sa daljinom do njihovog
+ * zadnjeg branika [m]: visoka, u našoj traci ispred, na `PREGLEDNOST_DOMET`,
+ * i to samo ona čija je lijeva ivica lijevo od vozačevog oka. Isti spisak
+ * koristi i crtanje sjene — da se na ekranu ne sakrije ono što se po pravilu
+ * vidi, ni obratno.
+ */
+export function zaklanjaci(
+  world: World,
+  paths: ReadonlyMap<string, Path>,
+  igrac: Vehicle,
+): { vozilo: Vehicle; doZadnjeg: number }[] {
+  const oko = (igrac.lateral ?? 0) - OKO_LIJEVO;
+  const out: { vozilo: Vehicle; doZadnjeg: number }[] = [];
+  for (const o of world.vehicles) {
+    if (o.id === igrac.id || o.done || world.t < o.spawnT || o.lane === 1) continue;
+    if (!o.vrsta || !ZAKLANJA_POGLED.includes(o.vrsta)) continue;
+    const p = paths.get(o.pathId);
+    if (!p) continue;
+    const doZadnjeg = naRuti(o, p) - o.length / 2 - igrac.s;
+    if (doZadnjeg <= 0 || doZadnjeg > PREGLEDNOST_DOMET) continue;
+    // Oko je lijevo od njegove lijeve ivice: pogled prolazi pored njega.
+    if (oko <= (o.lateral ?? 0) - o.width / 2) continue;
+    out.push({ vozilo: o, doZadnjeg });
+  }
+  return out;
+}
+
+/**
  * Pravila preticanja.
  *
  * Sve se mjeri od RAZDJELNE LINIJE, jer je ona jedina stvarna granica na
@@ -768,6 +835,26 @@ function preticanje(
   const tijeloPreko = lat - CAR_WIDTH / 2 < -doSredine - LINE_CROSS_TOL;
   const uKontra = lat < -doSredine;
 
+  // Preglednost. U suprotnu traku se ulazi tek kad se ona vidi dovoljno
+  // daleko — zbirom brzina, isti prag po kojem se sudi nebezbjedno preticanje —
+  // i to neprekidno bar `PREGLEDNOST_REAKCIJA`, vrijeme da se pogleda. Sudi se
+  // u koraku u kojem tijelo pređe liniju: jedan trenutak, jedno pravilo.
+  const vidi = preglednost(world, ctx.paths, player, path);
+  const dozvoljeno = tpl.vMaxNa ? tpl.vMaxNa(player.s) : tpl.vMax;
+  const treba = (player.v + dozvoljeno) * PREGLEDNOST_VRIJEME;
+  world.volan.pregledM = vidi;
+  world.volan.pregledT = vidi >= treba ? world.volan.pregledT + DT : 0;
+  if (tijeloPreko && !world.volan.tijeloPreko && world.volan.pregledT < PREGLEDNOST_REAKCIJA) {
+    add(world, {
+      type: "overtakeNoVisibility",
+      t: world.t,
+      details:
+        `Ušao u suprotnu traku a da se nije vidjelo dovoljno daleko: vozilo ispred je ` +
+        `zaklanjalo pogled, a trebalo je vidjeti ${treba.toFixed(0)} m bar ` +
+        `${PREGLEDNOST_REAKCIJA} s prije prelaska. Odmakni se, ili se pomjeri ulijevo u svojoj traci.`,
+    });
+  }
+  world.volan.tijeloPreko = tijeloPreko;
 
   if (tijeloPreko && zabranjeno(tpl.zabrane, player.s)) {
     add(world, {
@@ -1103,6 +1190,11 @@ export function createWorld(scenario: Scenario, seed: number): World {
       izborT: 0,
       autoStrana: null,
       autoT: 0,
+      pregledM: Infinity,
+      // Vožnja počinje u toku: vozač je do tada gledao put, pa se ne traži da
+      // prvo sekundu gleda prije nego što smije da pretekne.
+      pregledT: PREGLEDNOST_REAKCIJA,
+      tijeloPreko: false,
     },
   };
   // Saobraćaj na otvorenom putu postoji i prije prvog koraka: prozor oko igrača

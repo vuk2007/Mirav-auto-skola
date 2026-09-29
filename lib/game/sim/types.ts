@@ -755,6 +755,7 @@ export type ViolationType =
   | "offRoad"
   | "crossingSolidLine"
   | "unsafeOvertake"
+  | "overtakeNoVisibility"
   | "overtakeTooLong"
   | "cutIn";
 
@@ -847,6 +848,14 @@ export interface World {
      */
     autoStrana: "left" | "right" | null;
     autoT: number;
+    /**
+     * Preglednost suprotne trake: dokle se vidi [m], i koliko dugo se neprekidno
+     * vidi dovoljno daleko [s]. Vidi `preglednost` u `world.ts`.
+     */
+    pregledM: number;
+    pregledT: number;
+    /** Da li je tijelo vozila u prošlom koraku bilo preko razdjelne linije. */
+    tijeloPreko: boolean;
   };
   /**
    * Mjerenje reakcije: kad je događaj postao vidljiv i kad je igrač prvi put

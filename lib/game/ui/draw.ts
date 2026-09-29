@@ -18,6 +18,7 @@ import {
   EDGE_MARKER_INSET,
   MIN_CAR_PX,
   MIN_SIGN_PX,
+  OKO_LIJEVO,
   PRIKLJUCAK_KRAK,
   VOZILA,
   PRIKLJUCAK_SIRINA,
@@ -36,7 +37,7 @@ import {
   SIGN_LEAD,
   VIEW_HALF,
 } from "../sim/config";
-import { headingAt, pointAt, valueAt } from "../sim/geometry";
+import { headingAt, pointAt, rectCorners, valueAt } from "../sim/geometry";
 import {
   compile,
   crosswalkWidth,
@@ -78,6 +79,7 @@ import {
   parkiranoTijelo,
   poseOn,
   tijeloVozila,
+  zaklanjaci,
   type DioTijela,
 } from "../sim/world";
 import { pozaNaSporednom, sporedniPut } from "../sim/prikljucci";
@@ -113,6 +115,8 @@ export const PALETTE = {
   parkirano: ["#8e949b", "#a39b8b", "#7d8a96", "#b3aa9b", "#6f7a70"],
   /** Autobuska stanica: tabla i oznaka na ivičnjaku. */
   stanica: "#1f5fa8",
+  /** Ono što vozač ne vidi iza kamiona — blago zatamnjeno, ne crno. */
+  sjena: "rgba(20, 24, 32, 0.26)",
 } as const;
 
 /**
@@ -1690,6 +1694,14 @@ export function drawScene(
   const naredba = officerAllow(opts.officer ?? undefined, world.t);
   if (naredba) drawOfficer(ctx, v, naredba);
 
+  // Sjena iza kamiona: dio puta koji vozač ne vidi. Crta se ispod vozila, a
+  // vozila čija je sredina u njoj se ne crtaju — ni njihova oznaka na ivici
+  // kadra. Isti spisak zaklanjača po kojem se sudi preglednost.
+  const sjene = tpl.kind === "road" && player ? sjeneZaklona(runner, tpl, paths, player) : null;
+  for (const poligon of sjene?.poligoni ?? []) fillPoly(ctx, v, poligon, PALETTE.sjena);
+  const uSjeni = (id: string, pos: Point): boolean =>
+    sjene !== null && !sjene.zaklanjaci.has(id) && sjene.poligoni.some((pol) => uPoligonu(pos, pol));
+
   const blinkOn = pokazivacSvijetli(world.t);
   // Na otvorenom putu se oznake na ivici kadra ne crtaju odmah nego se skupe, pa
   // se nacrta po jedna — za najbliže vozilo van kadra u svakoj traci, ispred i
@@ -1718,6 +1730,7 @@ export function drawScene(
           y: heading.x * Math.sin(nagib) + heading.y * Math.cos(nagib),
         };
     const isPlayer = veh.kind === "player";
+    if (!isPlayer && uSjeni(veh.id, pos)) continue;
     // Boja se veže za samo vozilo, a ne za redosljed crtanja — inače bi vozilo
     // promijenilo boju čim neko ispred njega izađe. Vidi `bojaVozila`.
     const color = isPlayer ? PALETTE.blue : veh.emergency ? PALETTE.emergency : bojaVozila(veh);
@@ -1758,7 +1771,7 @@ export function drawScene(
       const p = tpl.prikljucci?.[x.j];
       if (!p || !nasa) continue;
       const { pos, heading } = pozaNaSporednom(nasa, p, tpl.geometry.laneWidth, x);
-      if (!inFrame(v, pos)) continue;
+      if (!inFrame(v, pos) || uSjeni(x.id, pos)) continue;
       const mjere = VOZILA[x.vrsta];
       drawVehicle(
         ctx,
@@ -1778,6 +1791,73 @@ export function drawScene(
   }
 
   for (const o of oznake.values()) drawEdgeMarker(ctx, v, o.pos, o.heading, o.color);
+}
+
+/** Dužina sjene iza vozila koje zaklanja [m] — dalje od kadra ionako. */
+const SJENA_DUZINA = 400;
+
+/**
+ * Sjene iza vozila koja igraču zaklanjaju suprotnu traku.
+ *
+ * Sjena je ono što se sa vozačevog mjesta ne vidi: između dva zraka iz oka
+ * kroz krajnje uglove tijela vozila, i dalje od njega. Crta se sa položajem
+ * kakav je na ekranu (`renderS`), a zaklanjači su isti oni po kojima se sudi.
+ */
+function sjeneZaklona(
+  runner: Driver,
+  tpl: RoadTemplate,
+  paths: ReadonlyMap<string, Path>,
+  player: Vehicle,
+): { poligoni: Point[][]; zaklanjaci: Set<string> } | null {
+  const put = paths.get(player.pathId);
+  if (!put) return null;
+  const spisak = zaklanjaci(runner.world, paths, player);
+  if (spisak.length === 0) return null;
+  const ja = { ...player, s: renderS(runner, player.id, player.s) };
+  const { pos, heading } = poseOn(tpl, put, ja);
+  const d = rt(heading);
+  const oko = { x: pos.x - d.x * OKO_LIJEVO, y: pos.y - d.y * OKO_LIJEVO };
+  const poligoni: Point[][] = [];
+  for (const { vozilo } of spisak) {
+    const p = paths.get(vozilo.pathId);
+    if (!p) continue;
+    const tijelo = tijeloVozila(tpl, p, { ...vozilo, s: renderS(runner, vozilo.id, vozilo.s) });
+    const uglovi = tijelo.flatMap((t) => rectCorners(t.pos, t.heading, t.length, t.width));
+    // Uglovi se porede po uglu gledanja, mjereno od pravca ka sredini vozila —
+    // tako nema skoka preko ±180°.
+    const sredina = {
+      x: uglovi.reduce((a, u) => a + u.x, 0) / uglovi.length,
+      y: uglovi.reduce((a, u) => a + u.y, 0) / uglovi.length,
+    };
+    const rx = sredina.x - oko.x;
+    const ry = sredina.y - oko.y;
+    const ugao = (u: Point) => Math.atan2(rx * (u.y - oko.y) - ry * (u.x - oko.x), rx * (u.x - oko.x) + ry * (u.y - oko.y));
+    let min = uglovi[0]!;
+    let max = uglovi[0]!;
+    for (const u of uglovi) {
+      if (ugao(u) < ugao(min)) min = u;
+      if (ugao(u) > ugao(max)) max = u;
+    }
+    const dalje = (u: Point): Point => {
+      const dx = u.x - oko.x;
+      const dy = u.y - oko.y;
+      const n = Math.hypot(dx, dy) || 1;
+      return { x: u.x + (dx / n) * SJENA_DUZINA, y: u.y + (dy / n) * SJENA_DUZINA };
+    };
+    poligoni.push([min, dalje(min), dalje(max), max]);
+  }
+  return { poligoni, zaklanjaci: new Set(spisak.map((z) => z.vozilo.id)) };
+}
+
+/** Da li je tačka u poligonu — zrak udesno, broje se presjeci. */
+function uPoligonu(p: Point, poligon: readonly Point[]): boolean {
+  let unutra = false;
+  for (let i = 0, j = poligon.length - 1; i < poligon.length; j = i++) {
+    const a = poligon[i]!;
+    const b = poligon[j]!;
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) unutra = !unutra;
+  }
+  return unutra;
 }
 
 /** NPC koči ako mu je brzina pala u odnosu na prethodni korak. */

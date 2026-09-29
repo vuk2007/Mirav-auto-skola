@@ -34,6 +34,7 @@ export const VIOLATION_LABEL: Readonly<Record<ViolationType, keyof Dict>> = {
   offRoad: "vioOffRoad",
   crossingSolidLine: "vioCrossingSolidLine",
   unsafeOvertake: "vioUnsafeOvertake",
+  overtakeNoVisibility: "vioOvertakeNoVisibility",
   overtakeTooLong: "vioOvertakeTooLong",
   cutIn: "vioCutIn",
 };

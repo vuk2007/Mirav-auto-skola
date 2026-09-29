@@ -141,6 +141,7 @@ export interface Dict {
   vioOffRoad: string;
   vioCrossingSolidLine: string;
   vioUnsafeOvertake: string;
+  vioOvertakeNoVisibility: string;
   vioOvertakeTooLong: string;
   vioCutIn: string;
   gameSteer: string;
@@ -514,6 +515,7 @@ const me: Dict = {
   vioOffRoad: "Izlazak sa kolovoza",
   vioCrossingSolidLine: "Prelazak preko pune linije",
   vioUnsafeOvertake: "Nebezbjedno preticanje",
+  vioOvertakeNoVisibility: "U suprotnu traku bez preglednosti",
   vioOvertakeTooLong: "Predugo u suprotnoj traci",
   vioCutIn: "Naglo vraćanje ispred preteknutog",
   gameSteer: "Volan",
@@ -890,6 +892,7 @@ const en: Dict = {
   vioOffRoad: "Leaving the carriageway",
   vioCrossingSolidLine: "Crossing a solid line",
   vioUnsafeOvertake: "Unsafe overtaking",
+  vioOvertakeNoVisibility: "Into the oncoming lane without a clear view",
   vioOvertakeTooLong: "Too long in the oncoming lane",
   vioCutIn: "Cutting in after overtaking",
   gameSteer: "Steering",
@@ -1271,6 +1274,7 @@ const sq: Dict = {
   vioOffRoad: "Dalje nga rruga",
   vioCrossingSolidLine: "Kalim mbi vijën e plotë",
   vioUnsafeOvertake: "Tejkalim i pasigurt",
+  vioOvertakeNoVisibility: "Në korsinë e kundërt pa dukshmëri",
   vioOvertakeTooLong: "Shumë gjatë në korsinë e kundërt",
   vioCutIn: "Kthim i papritur para automjetit të tejkaluar",
   gameSteer: "Timoni",
@@ -1654,6 +1658,7 @@ const ru: Dict = {
   vioOffRoad: "Съезд с проезжей части",
   vioCrossingSolidLine: "Пересечение сплошной линии",
   vioUnsafeOvertake: "Опасный обгон",
+  vioOvertakeNoVisibility: "Выезд на встречную без обзора",
   vioOvertakeTooLong: "Слишком долго на встречной полосе",
   vioCutIn: "Резкое возвращение перед обогнанным",
   gameSteer: "Руль",

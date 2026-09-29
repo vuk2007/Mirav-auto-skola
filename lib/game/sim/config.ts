@@ -1336,3 +1336,46 @@ export const PRIKLJUCAK_SIRINA: Readonly<Record<string, number>> = {
   unclassified: 5,
   residential: 5,
 };
+
+// ── preglednost: zaklon kamiona i autobusa (modovi „Putovanje" i „Ruta") ───
+
+/**
+ * Koja vozila zaklanjaju pogled na suprotnu traku.
+ *
+ * Visoka: kamion i autobus. Preko putničkog auta i kombija se vidi — vozač
+ * sjedi dovoljno visoko, a oni su dovoljno niski — pa njih pravilo ne dira.
+ */
+export const ZAKLANJA_POGLED: readonly VrstaVozila[] = ["kamion", "autobus"];
+
+/**
+ * Dokle ispred igrača se traži vozilo koje zaklanja [m]. Dalje od toga je
+ * sjena preuska da bi išta zaklonila od onoga što se na putu tiče igrača.
+ */
+export const PREGLEDNOST_DOMET = 300;
+
+/**
+ * Koliko sekundi susretnog saobraćaja mora da se vidi prije ulaska u suprotnu
+ * traku — računato zbirom brzina, sa susretnim na ograničenju.
+ *
+ * Isti prag po kojem se sudi nebezbjedno preticanje (`ONCOMING_TTC`): ako se
+ * suprotna traka vidi toliko daleko, onda vozilo koje se nije vidjelo nije
+ * moglo biti bliže od toga praga. Tako se nijedan pad ne može dogoditi zbog
+ * onoga što igrač nije imao kako da vidi.
+ */
+export const PREGLEDNOST_VRIJEME = ONCOMING_TTC;
+
+/**
+ * Koliko dugo, neprekidno, suprotna traka mora da se vidi prije nego što tijelo
+ * vozila pređe liniju [s].
+ *
+ * Vrijeme da se pogleda. Bez njega bi pravilo bilo mrtvo: dok volan prevlači
+ * auto ka liniji, vozač u jednom trenutku izađe iza kamiona i sve vidi — ali
+ * tada je već krenuo. Vidi se ili iz dovoljnog odstojanja, ili pomjeranjem na
+ * lijevu ivicu svoje trake i kratkim zadržavanjem tu.
+ */
+export const PREGLEDNOST_REAKCIJA = 1;
+
+/**
+ * Koliko je vozačevo oko lijevo od sredine vozila [m] — vozač sjedi lijevo.
+ */
+export const OKO_LIJEVO = 0.35;
