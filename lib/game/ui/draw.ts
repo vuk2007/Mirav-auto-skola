@@ -365,7 +365,13 @@ function drawRoundabout(ctx: CanvasRenderingContext2D, v: View, tpl: RoundaboutT
  * Traka za ubrzavanje i traka za usporavanje se crtaju punom bojom kolovoza, a
  * dio spoljne trake van njih blijedi — tako se vidi gdje ona zaista postoji.
  */
-/** Polilinija u svijetu, debljine zadate u metrima. */
+/**
+ * Polilinija u svijetu, debljine zadate u metrima.
+ *
+ * `odDuzine` [m] je koliko je puta prije prve tačke: šablon crtica se mjeri od
+ * tamo, a ne od prve tačke. Treba kad se crta isječak dužeg puta — bez toga
+ * crtice počinju od ivice isječka, a on se pomjera sa igračem.
+ */
 function strokeLine(
   ctx: CanvasRenderingContext2D,
   v: View,
@@ -373,11 +379,13 @@ function strokeLine(
   color: string,
   width: number,
   dash?: [number, number],
+  odDuzine = 0,
 ): void {
   if (pts.length < 2) return;
   ctx.strokeStyle = color;
   ctx.lineWidth = Math.max(1, width * v.scale);
   ctx.setLineDash(dash ? [dash[0] * v.scale, dash[1] * v.scale] : []);
+  ctx.lineDashOffset = dash ? odDuzine * v.scale : 0;
   ctx.beginPath();
   pts.forEach((p, i) => {
     const q = px(v, p);
@@ -386,6 +394,7 @@ function strokeLine(
   });
   ctx.stroke();
   ctx.setLineDash([]);
+  ctx.lineDashOffset = 0;
 }
 
 /**
@@ -532,7 +541,10 @@ function drawRoad(
   // drugom, igrač bi dobijao prekršaj tamo gdje na ekranu piše da smije.
   strokeLine(ctx, v, traka(pola - 0.2), PALETTE.paint, 0.16);
   strokeLine(ctx, v, traka(-pola + 0.2), PALETTE.paint, 0.16);
-  strokeLine(ctx, v, points, PALETTE.paint, 0.16, [4, 7]);
+  // Crtice stoje na putu, ne na isječku: isječak počinje malo iza igrača i
+  // pomjera se sa njim, pa su crtice mjerene od njega putovale sa autom — prva
+  // je uvijek bila šest-sedam metara ispred, i razdjelna linija nije promicala.
+  strokeLine(ctx, v, points, PALETTE.paint, 0.16, [4, 7], odS);
   for (const z of tpl.zabrane ?? []) {
     // Zabrane su u koordinatama cijele dionice, a crta se samo isječak.
     const od = Math.max(0, Math.floor((z.from - odS) / poTacki));

@@ -50,6 +50,11 @@ declare global {
      * usporenjem bi trajalo višestruko duže.
      */
     __benchFaza?: (faza: "vozim" | "mjerim") => Promise<void>;
+    /**
+     * Uz `?kadrovi=1`: posljednji kadar sa svake tačke, kao PNG. Po njima se
+     * provjerava da dva renderera, ili dvije verzije istog, crtaju istu sliku.
+     */
+    __benchKadrovi?: string[];
   }
 }
 
@@ -85,7 +90,9 @@ export default function BenchScreen() {
     if (!canvas) return;
 
     const mjeri = async () => {
-      const vrsta = new URLSearchParams(window.location.search).get("render") ?? "canvas";
+      const adresa = new URLSearchParams(window.location.search);
+      const vrsta = adresa.get("render") ?? "canvas";
+      const kadrovi: string[] | null = adresa.get("kadrovi") === "1" ? [] : null;
       renderer = napraviRenderer(vrsta, canvas);
       if (!renderer) throw new Error(`nepoznat renderer: ${vrsta}`);
       const dpr = dprUredjaja();
@@ -148,6 +155,7 @@ export default function BenchScreen() {
           requestAnimationFrame(kadar);
         });
         await window.__benchFaza?.("vozim");
+        if (kadrovi) kadrovi.push(await renderer!.snimak());
         if (otkazano) return;
         tacke.push({ t: doT, crtanje: statistika(crtanje), fps: fps(razmaci) });
         sviCrtanje.push(...crtanje);
@@ -161,6 +169,7 @@ export default function BenchScreen() {
         tacke,
         ukupno: { crtanje: statistika(sviCrtanje), fps: fps(sviRazmaci) },
       };
+      if (kadrovi) window.__benchKadrovi = kadrovi;
       window.__bench = r;
       setRezultat(r);
       setStanje("gotovo");

@@ -13,6 +13,11 @@ export interface Renderer {
   /** Postavi veličinu platna u CSS pikselima; gustina piksela je `dpr`. */
   resize(cssW: number, cssH: number, dpr: number): void;
   draw(runner: Driver, opts: DrawOptions): void;
+  /**
+   * Posljednji nacrtani kadar kao PNG (`data:` adresa) — za poređenje dva
+   * renderera piksel po piksel. Zove se odmah poslije `draw`.
+   */
+  snimak(): Promise<string>;
   destroy(): void;
 }
 
@@ -44,6 +49,9 @@ export function createCanvasRenderer(canvas: HTMLCanvasElement): Renderer | null
     },
     draw(runner, opts) {
       drawScene(ctx, runner, w, h, opts);
+    },
+    snimak() {
+      return Promise.resolve(canvas.toDataURL("image/png"));
     },
     destroy() {
       // Canvas 2D nema ništa svoje da oslobodi.
