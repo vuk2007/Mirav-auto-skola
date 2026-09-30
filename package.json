@@ -21,7 +21,9 @@
     "osm:povuci": "node --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/povuci.mjs",
     "osm:pripremi": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/pripremi.mjs",
     "osm:ivice": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/ivice.mjs",
-    "osm:kicme": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/kicme.mjs"
+    "osm:kicme": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/kicme.mjs",
+    "osm:grad:povuci": "node --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/povuciGrad.mjs",
+    "osm:grad:pripremi": "node --max-old-space-size=6144 --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/osm/pripremiGrad.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

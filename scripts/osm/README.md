@@ -92,3 +92,33 @@ su imali tri vrha — oko 90° i blizu 0° i 180°. Ovi drugi su druga kolovozna
 traka istog puta i ulivne trake uz nju. Odbacuje se grana sa istom oznakom
 puta i jednosmjerna grana skoro paralelna sa rutom. Poslije toga, sa seoskim
 putevima: 2718 raskrsnica na 1385 km, jedna na pola kilometra.
+
+## Grad u razmjeri 1:1 (faza 6)
+
+```bash
+npm run osm:grad:povuci -- podgorica     # sirovi OSM za okvir grada u .cache/
+npm run osm:grad:pripremi -- podgorica   # paket grada u public/data/grad/
+```
+
+Za grad se povlači ono što traži zadatak faze 6 (odjeljak 2): sve ulice
+(`highway=*` osim pješačkih staza, stepenica i prolaza kroz parking) sa
+oznakama, čvorovi pravila (STOP, „ustupi", semafor, prelaz, usporivač,
+stajalište), zgrade, površine i objekti. Okvir grada je u `gradovi.mjs`.
+
+Izlaz je **jedan binarni paket po gradu** (`lib/game/grad/paket.ts`, isti modul
+ga piše i čita), sa otiskom sadržaja u imenu: `podgorica-<otisak>.bin`. Mreža
+ulica mora biti cijela u memoriji prije vožnje, a stotine malih zahtjeva po
+vožnji bi trošile kvotu na Vercel-u — jedan fajl se kešira zauvijek
+(`next.config.mjs`). Tile-ovi od 500 m su indeks unutar paketa. Spisak
+`gradovi.json` kaže koji je fajl tekući.
+
+Sve se siječe na okvir grada sa rubom od 500 m: Overpass vraća cijelu liniju
+koja zalazi u okvir, pa je Morača stigla sa 45 km toka.
+
+`izvjestaj/grad-<grad>.md` pokazuje pokrivenost oznaka (`lanes`, `maxspeed`,
+`turn:lanes`…) i povezanost mreže. Šablon zona je u
+`public/data/grad/cityZones/<grad>.json`; poligone crta škola u editoru.
+
+Zamka: `lib/geom.mjs` radi nad tačkama `[x, y]`. Dat mu `{x, y}`, računa NaN i od
+svake linije ostavi dva kraja — prva obrada je tako izgubila krivine i sve
+površine.

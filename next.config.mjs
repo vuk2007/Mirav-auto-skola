@@ -47,6 +47,14 @@ const nextConfig = {
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
       },
       {
+        // Paket grada nosi otisak sadržaja u imenu (`podgorica-<otisak>.bin`):
+        // novi podaci su nova adresa, pa se ovaj smije keširati zauvijek — jedan
+        // zahtjev po gradu, jednom. Spisak `gradovi.json` nema ovo zaglavlje,
+        // da bi nova verzija bila vidljiva odmah.
+        source: "/data/grad/:fajl([a-z-]+-[0-9a-f]{10}\\.bin)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
         // Mjerilo crtanja igre — razvojni alat, isto van pretrage.
         source: "/igra/bench",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
