@@ -7,7 +7,9 @@ import {
   GRAD_IZLAZ_POTVRDA,
   GRAD_LIJEVO_TRAJE,
   GRAD_SIRINA_TRAKE,
+  GRAD_SKRETANJE_UGAO,
   GRAD_STAJALISTE_DUZINA,
+  INDICATOR_OFF_AFTER,
   GRAD_STAJANJE_TRAJE,
   GRAD_SUDIJA_DO_ULICE,
   GRAD_SUPROTNO_BRZINA,
@@ -22,7 +24,7 @@ import {
   type Level,
 } from "../sim/config";
 import type { Point } from "../sim/types";
-import type { Mreza } from "./mreza";
+import type { Ivica, Mreza } from "./mreza";
 import { BEZ, type Paket } from "./paket";
 import { najblizaOsa, type Povrsina } from "./povrsina";
 import { prekrsenaZabrana, svjetlo, type Raskrsnice, type Svjetlo, type Zabrana } from "./raskrsnica";
@@ -51,7 +53,12 @@ export type VrstaGradskogPrekrsaja =
   | "polukruzno"
   | "speeding"
   | "wrongSide"
-  | "parkingViolation";
+  | "parkingViolation"
+  | "indicatorMissing"
+  | "indicatorWrong"
+  | "indicatorLate"
+  | "indicatorLeftOn"
+  | "wrongLaneForTurn";
 
 export interface GradskiPrekrsaj {
   vrsta: VrstaGradskogPrekrsaja;
@@ -120,19 +127,32 @@ interface Prilaz {
   zutoPrekasno: boolean;
 }
 
+type Strana = "left" | "right";
+
 /** Prolaz kroz raskrsnicu: odakle je auto ušao. */
 interface Prolaz {
   r: number;
   ivica: number;
   cvor: number;
   pravac: Point;
+  /** Žmigavac kad je auto ulazio u raskrsnicu, i prvi upaljen tek unutra. */
+  zmigavacNaUlazu: Strana | null;
+  upaljenUnutra: Strana | null;
+  /** Strelice trake iz koje je ušao; `null` bez strelica. */
+  strelice: string[] | null;
 }
 
 export interface Sudija {
   prekrsaji: GradskiPrekrsaj[];
+  /** Žmigavac u prošlom koraku. */
+  zmigavac: Strana | null;
+  /** Poslije skretanja: strana žmigavca koji treba ugasiti, i pređeno od izlaska [m]. */
+  poslijeSkretanja: { strana: Strana; predjeno: number } | null;
   nivo: Level;
   prilaz: Prilaz | null;
   prolaz: Prolaz | null;
+  /** Strelice trake u kojoj je auto bio u prošlom koraku van raskrsnice. */
+  traka: string[] | null;
   /** Ivica i smjer u prošlom koraku (van raskrsnice). */
   ivica: number | null;
   smjer: 1 | -1;
@@ -149,9 +169,12 @@ export interface Sudija {
 export function noviSudija(nivo: Level): Sudija {
   return {
     prekrsaji: [],
+    zmigavac: null,
+    poslijeSkretanja: null,
     nivo,
     prilaz: null,
     prolaz: null,
+    traka: null,
     ivica: null,
     smjer: 1,
     suprotnoT: 0,
@@ -220,8 +243,44 @@ function prijavi(
   s.prekrsaji.push({ vrsta, ozbiljnost, t, x: st.x, y: st.y, detalji });
 }
 
-/** Jedan korak suđenja, poslije koraka vožnje. `t` je vrijeme simulacije. */
-export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number): void {
+/**
+ * Strelice trake u kojoj je auto, u smjeru vožnje — iz OSM `turn:lanes`, ali
+ * samo kad broj traka odgovara ulici (isto kao crtanje strelica). `null` kad
+ * strelica nema.
+ */
+function streliceTrake(iv: Ivica, gleda: 1 | -1, bok: number): string[] | null {
+  const opis = gleda === 1 ? iv.skretanjaNaprijed : iv.skretanjaNazad;
+  const svoje = gleda === 1 ? iv.trakeNaprijed : iv.trakeNazad;
+  const n = iv.trakeNaprijed + iv.trakeNazad;
+  if (!opis || n === 0 || iv.sirina < n * GRAD_SIRINA_TRAKE - 1e-6) return null;
+  const po = opis.split("|");
+  if (po.length !== svoje) return null;
+  const traka = iv.sirina / n;
+  // Svoje trake su desno u smjeru vožnje: od (pola − svoje × traka) do pola.
+  const bokT = bok * gleda;
+  const j = Math.max(0, Math.min(svoje - 1, Math.floor((bokT - (iv.sirina / 2 - svoje * traka)) / traka)));
+  return po[j]!.split(";").map((x) => x.trim());
+}
+
+type Manevar = "lijevo" | "pravo" | "desno" | "polukruzno";
+
+/** Da li strelice trake dozvoljavaju manevar. Traka bez strelice (`none`) je za pravo. */
+function dozvoljava(strelice: string[], manevar: Manevar): boolean {
+  return strelice.some((x) => {
+    if (x === "" || x === "none" || x === "through" || x.startsWith("merge_to")) return manevar === "pravo";
+    if (x.endsWith("left")) return manevar === "lijevo" || manevar === "polukruzno";
+    if (x.endsWith("right")) return manevar === "desno";
+    if (x === "reverse") return manevar === "polukruzno";
+    return false;
+  });
+}
+
+/**
+ * Jedan korak suđenja, poslije koraka vožnje. `t` je vrijeme simulacije,
+ * `zmigavac` je ono što je igrač upalio.
+ */
+export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, zmigavac: Strana | null = null): void {
+  s.zmigavac = zmigavac;
   const osa = najblizaOsa(g.povrsina, st.x, st.y, GRAD_SUDIJA_DO_ULICE);
   if (!osa) return;
   const iv = g.mreza.ivice[osa.ivica]!;
@@ -288,8 +347,17 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number):
     const staro = g.mreza.ivice[s.ivica]!;
     // Ulaz u raskrsnicu sa ivice na kojoj je auto bio, preko njenog kraja u toj raskrsnici.
     const cvor = g.raskrsnice.uCvoru[staro.b] === r && s.smjer === 1 ? staro.b : staro.a;
-    s.prolaz = { r, ivica: s.ivica, cvor, pravac: glava };
+    s.prolaz = {
+      r,
+      ivica: s.ivica,
+      cvor,
+      pravac: glava,
+      zmigavacNaUlazu: zmigavac,
+      upaljenUnutra: null,
+      strelice: s.traka,
+    };
   }
+  if (s.prolaz && zmigavac && !s.prolaz.zmigavacNaUlazu && !s.prolaz.upaljenUnutra) s.prolaz.upaljenUnutra = zmigavac;
   if (r === null && s.prolaz && !josURaskrsnici) {
     const p = s.prolaz;
     s.prolaz = null;
@@ -313,8 +381,24 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number):
           break;
         }
       }
-      // Polukružno: izašao nazad na krak sa kojeg je ušao.
+      // Manevar po promjeni pravca; pozitivan ugao je udesno (`y` na jug).
+      const ugao =
+        (Math.atan2(p.pravac.x * glava.y - p.pravac.y * glava.x, p.pravac.x * glava.x + p.pravac.y * glava.y) * 180) /
+        Math.PI;
       const okrenuo = glava.x * p.pravac.x + glava.y * p.pravac.y < -0.5;
+      const manevar: Manevar =
+        okrenuo && osa.ivica === p.ivica
+          ? "polukruzno"
+          : ugao > GRAD_SKRETANJE_UGAO
+            ? "desno"
+            : ugao < -GRAD_SKRETANJE_UGAO
+              ? "lijevo"
+              : "pravo";
+      sudiZmigavac(g, s, st, t, p, manevar, iv.kruzni);
+      // Traka za skretanje: strelice trake iz koje je ušao moraju dozvoljavati manevar.
+      if (p.strelice && !dozvoljava(p.strelice, manevar)) {
+        prijavi(s, st, t, "wrongLaneForTurn", { manevar, strelice: p.strelice.join(";") });
+      }
       if (okrenuo && osa.ivica === p.ivica && g.raskrsnice.lista[p.r]!.plan) {
         prijavi(s, st, t, "polukruzno", { gdje: "semafor" });
       }
@@ -359,6 +443,18 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number):
     }
     s.ivica = osa.ivica;
     s.smjer = gleda;
+    s.traka = streliceTrake(iv, gleda, osa.bok);
+  }
+
+  // ── žmigavac ostavljen poslije skretanja ────────────────────────────────
+  if (s.poslijeSkretanja && !s.prolaz) {
+    s.poslijeSkretanja.predjeno += Math.abs(st.v) * DT;
+    // Ugašen, ili se već najavljuje sljedeća raskrsnica: u redu.
+    if (zmigavac !== s.poslijeSkretanja.strana || s.prilaz) s.poslijeSkretanja = null;
+    else if (s.poslijeSkretanja.predjeno >= INDICATOR_OFF_AFTER) {
+      prijavi(s, st, t, "indicatorLeftOn", { zmigavac }, "minor");
+      s.poslijeSkretanja = null;
+    }
   }
 
   // ── brzina ──────────────────────────────────────────────────────────────
@@ -398,4 +494,36 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number):
     s.stojiT = 0;
     s.stojiPrijavljeno = false;
   }
+}
+
+/**
+ * Žmigavac kroz raskrsnicu, kao u fazi 5: za skretanje mora biti upaljen na
+ * pravu stranu najkasnije kad auto uđe u raskrsnicu (`indicatorMissing`,
+ * `indicatorWrong`, a upaljen tek unutra `indicatorLate`); za vožnju pravo ne
+ * smije biti upaljen (blag). U kružnom toku se ovdje sudi samo izlazak iz
+ * prstena (desni); ulazak zavisi od izlaza na koji se ide.
+ */
+function sudiZmigavac(
+  g: GradZaSudiju,
+  s: Sudija,
+  st: SlobodnoVozilo,
+  t: number,
+  p: Prolaz,
+  manevar: Manevar,
+  izasaoNaPrsten: boolean,
+): void {
+  const r = g.raskrsnice.lista[p.r]!;
+  if (r.kruzni && izasaoNaPrsten) return;
+  const trazeno: Strana | null = r.kruzni ? "right" : manevar === "desno" ? "right" : manevar === "pravo" ? null : "left";
+  const kruzni = r.kruzni ? 1 : 0;
+  if (trazeno === null) {
+    if (p.zmigavacNaUlazu) prijavi(s, st, t, "indicatorWrong", { manevar, zmigavac: p.zmigavacNaUlazu }, "minor");
+    return;
+  }
+  if (p.zmigavacNaUlazu === trazeno) {
+    // Ispravno.
+  } else if (p.zmigavacNaUlazu) prijavi(s, st, t, "indicatorWrong", { manevar, zmigavac: p.zmigavacNaUlazu, kruzni });
+  else if (p.upaljenUnutra === trazeno) prijavi(s, st, t, "indicatorLate", { manevar, kruzni });
+  else prijavi(s, st, t, "indicatorMissing", { manevar, kruzni });
+  s.poslijeSkretanja = { strana: trazeno, predjeno: 0 };
 }

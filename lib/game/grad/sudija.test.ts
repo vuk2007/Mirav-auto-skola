@@ -67,6 +67,12 @@ interface Voznja {
   /** Početna brzina [m/s]. */
   v0?: number;
   nivo?: Level;
+  /**
+   * Žmigavac: strana — upaljen do 10 m iza centra raskrsnice (putanje sa
+   * juga ga prolaze na `s` ≈ 140), pa ugašen, kao što vozač uradi; ili
+   * funkcija položaja na putanji.
+   */
+  zmigavac?: "left" | "right" | ((s: number) => "left" | "right" | null);
   /** Gdje da stane (sredina auta, `s` na putanji) u trenutku `t`; `null` — ne staje. */
   stani?: (t: number, s: number) => number | null;
   trajanje?: number;
@@ -97,7 +103,8 @@ function vozi_(G: GradZaSudiju, v: Voznja) {
     korakSlobodno(G.povrsina, st, vozi(st, p, sP, { brzina: v.brzina, staniNa: v.stani?.(t, sP) ?? null }));
     if (st.udar) udara += 1;
     t += DT;
-    sudi(G, s, st, t);
+    const z = typeof v.zmigavac === "function" ? v.zmigavac(sP) : sP < 150 ? (v.zmigavac ?? null) : null;
+    sudi(G, s, st, t, z);
   }
   return { vrste: s.prekrsaji.map((x) => x.vrsta), prekrsaji: s.prekrsaji, udara, t };
 }
@@ -160,7 +167,7 @@ describe("sudija: semafor", () => {
     const linija = 140 - s.r.kraci[ks]!.stopD! - CAR_LENGTH / 2 - 0.5;
     // Auto na 4 m/s stiže do linije 2 s poslije početka zelenog.
     const t0 = prelaz(s.r, ks, "crveno", "zeleno") - linija / 4 + 2;
-    const x = vozi_(s.G, { put: SA_JUGA_POLUKRUZNO, brzina: 4, v0: 4, t0 });
+    const x = vozi_(s.G, { put: SA_JUGA_POLUKRUZNO, brzina: 4, v0: 4, t0, zmigavac: "left" });
     expect(x.udara).toBe(0);
     expect(x.vrste).toEqual(["polukruzno"]);
   });
@@ -190,7 +197,7 @@ describe("sudija: STOP", () => {
 
   it("polukružno bez semafora, van mosta i tunela — nije prekršaj", () => {
     const bez = grad(SIROKE);
-    const x = vozi_(bez.G, { put: SA_JUGA_POLUKRUZNO, brzina: 4 });
+    const x = vozi_(bez.G, { put: SA_JUGA_POLUKRUZNO, brzina: 4, zmigavac: "left" });
     expect(x.udara).toBe(0);
     expect(x.vrste).toEqual([]);
   });
@@ -222,14 +229,14 @@ describe("sudija: smjer, zabrane, strana", () => {
 
   it("zabrana skretanja lijevo: lijevo je prekršaj, desno i pravo nisu", () => {
     const { G } = grad([], [], [["no_left_turn", JUG, 0, ZAPAD]]);
-    expect(vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 5 }).vrste).toEqual(["zabranaSkretanja"]);
-    expect(vozi_(G, { put: SA_JUGA_DESNO, brzina: 4 }).vrste).toEqual([]);
+    expect(vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 5, zmigavac: "left" }).vrste).toEqual(["zabranaSkretanja"]);
+    expect(vozi_(G, { put: SA_JUGA_DESNO, brzina: 4, zmigavac: "right" }).vrste).toEqual([]);
     expect(vozi_(G, { put: SA_JUGA_PRAVO, brzina: 8 }).vrste).toEqual([]);
   });
 
   it("samo pravo: skretanje desno je prekršaj", () => {
     const { G } = grad([], [], [["only_straight_on", JUG, 0, 3]]); // 3: sjeverni krak
-    const x = vozi_(G, { put: SA_JUGA_DESNO, brzina: 4 });
+    const x = vozi_(G, { put: SA_JUGA_DESNO, brzina: 4, zmigavac: "right" });
     expect(x.vrste).toEqual(["zabranaSkretanja"]);
     expect(x.prekrsaji[0]!.detalji.znak).toBe("only_straight_on");
   });
@@ -309,9 +316,69 @@ describe("sudija: determinizam", () => {
   it("ista vožnja — isti prekršaji, u isto vrijeme", () => {
     const { G, r } = grad([], [{ vrsta: "traffic_signals", cvor: 0 }]);
     const t0 = prelaz(r, krakSa(r, JUG), "zuto", "crveno");
-    const a = vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 7, v0: 7, t0 });
-    const b = vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 7, v0: 7, t0 });
+    const a = vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 7, v0: 7, t0, zmigavac: "left" });
+    const b = vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 7, v0: 7, t0, zmigavac: "left" });
     expect(a.prekrsaji).toEqual(b.prekrsaji);
     expect(a.prekrsaji.length).toBeGreaterThan(0);
+  });
+});
+
+describe("sudija: žmigavac (kao u fazi 5)", () => {
+  const { G } = grad();
+  /** `s` na putanji sa juga u centru raskrsnice — tu je auto već ušao. */
+  const centar = 140;
+
+  it("skretanje sa upaljenim žmigavcem na pravu stranu — ispravno", () => {
+    expect(vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 5, zmigavac: "left" }).vrste).toEqual([]);
+    expect(vozi_(G, { put: SA_JUGA_DESNO, brzina: 4, zmigavac: "right" }).vrste).toEqual([]);
+  });
+
+  it("bez žmigavca — indicatorMissing; pogrešna strana — indicatorWrong", () => {
+    expect(vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 5 }).vrste).toEqual(["indicatorMissing"]);
+    expect(vozi_(G, { put: SA_JUGA_DESNO, brzina: 4, zmigavac: "left" }).vrste).toEqual(["indicatorWrong"]);
+  });
+
+  it("upaljen tek u raskrsnici — indicatorLate", () => {
+    const x = vozi_(G, { put: SA_JUGA_LIJEVO, brzina: 5, zmigavac: (s) => (s > centar && s < 150 ? "left" : null) });
+    expect(x.vrste).toEqual(["indicatorLate"]);
+  });
+
+  it("pravo sa upaljenim žmigavcem — blag prekršaj", () => {
+    const x = vozi_(G, { put: SA_JUGA_PRAVO, brzina: 8, zmigavac: "right" });
+    expect(x.vrste).toEqual(["indicatorWrong"]);
+    expect(x.prekrsaji[0]!.ozbiljnost).toBe("minor");
+  });
+
+  it("ostavljen upaljen poslije skretanja — indicatorLeftOn (blag)", () => {
+    const x = vozi_(G, { put: SA_JUGA_DESNO, brzina: 4, zmigavac: "right" });
+    expect(x.vrste).toEqual([]);
+    // Isti manevar, ali žmigavac ostaje upaljen i poslije raskrsnice.
+    const dalje = vozi_(G, { put: SA_JUGA_DESNO, brzina: 5, zmigavac: () => "right" });
+    expect(dalje.vrste).toEqual(["indicatorLeftOn"]);
+    expect(dalje.prekrsaji[0]!.ozbiljnost).toBe("minor");
+  });
+});
+
+describe("sudija: traka za skretanje (strelice)", () => {
+  // Južni krak jednosmjeran ka centru, dvije trake: lijeva „samo lijevo", desna „pravo i desno".
+  const { G } = grad([{}, { smjer: 1, trake: 2 }], []);
+  const iv = G.mreza.ivice[JUG]!;
+  iv.skretanjaNaprijed = "left|through;right";
+  iv.trakeNaprijed = 2;
+  iv.trakeNazad = 0;
+  const L = -GRAD_SIRINA_TRAKE / 2;
+  const D = GRAD_SIRINA_TRAKE / 2;
+
+  it("pravo iz lijeve trake (samo lijevo) — prekršaj; iz desne — ispravno", () => {
+    expect(vozi_(G, { put: [{ x: L, y: 140 }, { x: L, y: 20 }, { x: T, y: -20 }, { x: T, y: -140 }], brzina: 7 }).vrste).toEqual([
+      "wrongLaneForTurn",
+    ]);
+    expect(vozi_(G, { put: [{ x: D, y: 140 }, { x: T, y: -140 }], brzina: 7 }).vrste).toEqual([]);
+  });
+
+  it("lijevo iz lijeve trake — ispravno", () => {
+    // Luk od 6 m iz lijeve trake u desnu traku zapadnog kraka (y = −T).
+    const put = [{ x: L, y: 140 }, { x: L, y: 10 }, ...luk(L - 6, -T + 6, 6, 0, -Math.PI / 2), { x: -140, y: -T }];
+    expect(vozi_(G, { put, brzina: 5, zmigavac: "left" }).vrste).toEqual([]);
   });
 });

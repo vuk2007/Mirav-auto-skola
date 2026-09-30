@@ -1917,3 +1917,8 @@ export const GRAD_VOZAC_USPORENJE = 2.5;
  * još ovoliko dalje [m] — polukružno smije kratko zaći u susjedni krak.
  */
 export const GRAD_IZLAZ_POTVRDA = 6;
+/**
+ * Promjena pravca kroz raskrsnicu veća od ovoga [°] je skretanje (traži
+ * žmigavac); manja je vožnja pravo.
+ */
+export const GRAD_SKRETANJE_UGAO = 30;

@@ -27,31 +27,31 @@
     },
     {
       "sek": 40,
-      "kmh": 8,
+      "kmh": 7,
       "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     },
     {
       "sek": 50,
-      "kmh": 4,
+      "kmh": 3,
       "ulica": "Vučedolska",
       "fps": 60
     },
     {
-      "sek": 60,
-      "kmh": 8,
+      "sek": 63,
+      "kmh": 0,
       "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     },
     {
-      "sek": 70,
-      "kmh": 9,
+      "sek": 72,
+      "kmh": 0,
       "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     },
     {
-      "sek": 80,
-      "kmh": 3,
+      "sek": 81,
+      "kmh": 0,
       "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     }
@@ -61,13 +61,12 @@
     "ulica": "Vučedolska",
     "fps": 53
   },
-  "skretanja": 3,
+  "skretanja": 2,
   "prekrsaji": [
     "Prekoračenje dozvoljene brzine",
-    "Zaustavljanje na zabranjenom mjestu",
-    "Vožnja u suprotnom smjeru jednosmjerne ulice"
+    "Zaustavljanje na zabranjenom mjestu"
   ],
-  "izvlacenja": 5,
+  "izvlacenja": 6,
   "rikverc": {
     "kmhUnazad": 10,
     "natpis": true,

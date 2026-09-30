@@ -27,6 +27,7 @@ import type { BojeDekora } from "@/lib/game/grad/dekor";
 import type { Palete, ZonaPalete } from "@/lib/game/grad/zgrade";
 import type { BojeOsvjetljenja, DobaDana, GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
 import { haptika } from "@/lib/game/ui/haptika";
+import { zmigavacSvijetli } from "@/lib/game/ui/zmigavac";
 import { dprUredjaja } from "@/lib/game/ui/renderer";
 import Brzinomjer from "./Brzinomjer";
 import DriveControls from "./DriveControls";
@@ -67,7 +68,8 @@ const KARTICA_MS = 6000;
  */
 export default function GradScreen({ onExit }: { onExit: () => void }) {
   const { t } = useApp();
-  const volan = useVolan(true, { pokazivacRukom: false });
+  // Žmigavac pali igrač (Q/E i dugmad) — sudija ga traži pri skretanju (5e).
+  const volan = useVolan(true, { pokazivacRukom: true });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [faza, setFaza] = useState<Faza>("ucitavam");
   const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null });
@@ -77,6 +79,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const [kartica, setKartica] = useState<GradskiPrekrsaj | null>(null);
   const [nivo, setNivo] = useState<Level>(GRAD_NIVO);
   const nivoRef = useRef<Level>(GRAD_NIVO);
+  /** Vrijeme simulacije — po njemu trepću i lampica pored volana i žmigavac na autu. */
+  const simTRef = useRef(0);
   nivoRef.current = nivo;
   const inputRef = volan.inputRef;
   // Udaljavanje kadra — da se grad može pregledati, ne samo voziti. Ide kroz
@@ -191,7 +195,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           korakSlobodno(povrsina, st, inputRef.current, { kisa: uslovRef.current.kisa });
           koraka_ += 1;
           sudija.nivo = nivoRef.current;
-          sudi(zaSudiju, sudija, st, koraka_ * DT);
+          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator);
+          simTRef.current = koraka_ * DT;
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
           bioUdar = st.udar;
@@ -233,6 +238,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             koci: inputRef.current.brake > 0,
             rikverc: st.rikverc,
             tocak: st.tocak,
+            zmigavac: inputRef.current.indicator,
           },
         });
 
@@ -436,6 +442,15 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         steerLabel={t.gameSteer}
         throttleLabel={t.gameThrottle}
         brakeLabel={t.gameBrake}
+        indicator={{
+          label: t.gameIndicator,
+          leftLabel: t.gameIndicatorLeft,
+          rightLabel: t.gameIndicatorRight,
+          rezim: "rucni",
+          autoLabel: t.gameIndicatorAuto,
+          autoShort: t.gameIndicatorAutoShort,
+          stanje: () => ({ strana: inputRef.current.indicator, svijetli: zmigavacSvijetli(simTRef.current) }),
+        }}
       />
     </div>
   );

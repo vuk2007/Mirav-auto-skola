@@ -43,6 +43,7 @@ import { svjetlo, type Raskrsnice } from "../grad/raskrsnica";
 import type { Temena } from "../grad/temena";
 import type { CrtezPravila, Semafor, Znak } from "../grad/znakovi";
 import { tekstureZnakova } from "./tekstureZnakova";
+import { zmigavacSvijetli } from "./zmigavac";
 import { krajeviLinija, linijeIvice, streliceIvice, zebra, type Poligon } from "../grad/oznake";
 import type { Povrsina } from "../grad/povrsina";
 import {
@@ -303,6 +304,8 @@ export interface GradScena {
     rikverc: boolean;
     /** Ugao prednjih točkova [rad], pozitivno udesno — da se vidi šta volan radi. */
     tocak: number;
+    /** Upaljen žmigavac — trepće na uglovima auta. */
+    zmigavac: "left" | "right" | null;
   };
 }
 
@@ -827,6 +830,12 @@ export async function createGradRenderer(
       const stop = igrac.rikverc ? "#ffffff" : igrac.koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
       dinamika.rect(-CAR_LENGTH / 2, -CAR_WIDTH * 0.42, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
       dinamika.rect(-CAR_LENGTH / 2, CAR_WIDTH * 0.2, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
+      // Žmigavac: narandžasti ugao sprijeda i pozadi, na strani koja je upaljena.
+      if (igrac.zmigavac && zmigavacSvijetli(simT)) {
+        const w = igrac.zmigavac === "left" ? -CAR_WIDTH / 2 : CAR_WIDTH / 2 - 0.3;
+        dinamika.rect(CAR_LENGTH / 2 - 0.35, w, 0.35, 0.3).fill("#ffa21a");
+        dinamika.rect(-CAR_LENGTH / 2, w, 0.35, 0.3).fill("#ffa21a");
+      }
       dinamika.resetTransform();
 
       // Farovi: meki izduženi snop ispred auta (sjaj razvučen u elipsu), jači

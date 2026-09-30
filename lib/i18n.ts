@@ -252,6 +252,14 @@ export interface Dict {
   gradRuleStopZebra: string;
   gradRuleStopJunction: string;
   gradRuleStopBus: string;
+  vioWrongLane: string;
+  gradRuleIndicatorMissing: string;
+  gradRuleIndicatorWrong: string;
+  gradRuleIndicatorLate: string;
+  gradRuleIndicatorStraight: string;
+  gradRuleIndicatorLeftOn: string;
+  gradRuleIndicatorRoundabout: string;
+  gradRuleWrongLane: string;
   rutaFrom: string;
   rutaTo: string;
   rutaPrepare: string;
@@ -680,6 +688,14 @@ const me: Dict = {
   gradRuleStopZebra: "Na pješačkom prelazu se ne zaustavlja.",
   gradRuleStopJunction: "U raskrsnici se ne zaustavlja, osim kad to traži saobraćaj.",
   gradRuleStopBus: "Na autobuskom stajalištu se ne zaustavlja.",
+  vioWrongLane: "Skretanje iz pogrešne trake",
+  gradRuleIndicatorMissing: "Prije skretanja žmigavac se pali na stranu skretanja — najkasnije kad auto uđe u raskrsnicu.",
+  gradRuleIndicatorWrong: "Žmigavac je bio upaljen na pogrešnu stranu.",
+  gradRuleIndicatorLate: "Žmigavac je upaljen tek u raskrsnici — kasno za druge da vide namjeru.",
+  gradRuleIndicatorStraight: "Za vožnju pravo žmigavac se ne pali.",
+  gradRuleIndicatorLeftOn: "Poslije skretanja žmigavac se gasi.",
+  gradRuleIndicatorRoundabout: "Pri izlasku iz kružnog toka pali se desni žmigavac.",
+  gradRuleWrongLane: "Strelice na kolovozu određuju kuda se iz trake smije — iz ove trake nije ovim pravcem.",
   rutaFrom: "Odakle",
   rutaTo: "Dokle",
   rutaPrepare: "Pripremam put…",
@@ -1098,6 +1114,14 @@ const en: Dict = {
   gradRuleStopZebra: "You may not stop on a pedestrian crossing.",
   gradRuleStopJunction: "You may not stop in a junction unless traffic makes you.",
   gradRuleStopBus: "You may not stop at a bus stop.",
+  vioWrongLane: "Turning from the wrong lane",
+  gradRuleIndicatorMissing: "Before a turn the indicator goes on to the side of the turn — at the latest when the car enters the junction.",
+  gradRuleIndicatorWrong: "The indicator was on to the wrong side.",
+  gradRuleIndicatorLate: "The indicator went on only inside the junction — too late for others to see the intention.",
+  gradRuleIndicatorStraight: "You do not indicate when going straight.",
+  gradRuleIndicatorLeftOn: "After a turn the indicator is switched off.",
+  gradRuleIndicatorRoundabout: "When leaving a roundabout you indicate right.",
+  gradRuleWrongLane: "The arrows on the road say where each lane may go — this lane does not go this way.",
   rutaFrom: "From",
   rutaTo: "To",
   rutaPrepare: "Preparing the road…",
@@ -1521,6 +1545,14 @@ const sq: Dict = {
   gradRuleStopZebra: "Në vendkalimin e këmbësorëve nuk ndalohet.",
   gradRuleStopJunction: "Në kryqëzim nuk ndalohet, përveç kur e kërkon trafiku.",
   gradRuleStopBus: "Në stacionin e autobusit nuk ndalohet.",
+  vioWrongLane: "Kthesë nga korsia e gabuar",
+  gradRuleIndicatorMissing: "Para kthesës sinjali ndizet në anën e kthesës — më së voni kur makina hyn në kryqëzim.",
+  gradRuleIndicatorWrong: "Sinjali ishte ndezur në anën e gabuar.",
+  gradRuleIndicatorLate: "Sinjali u ndez vetëm brenda kryqëzimit — vonë që të tjerët ta shohin qëllimin.",
+  gradRuleIndicatorStraight: "Kur ngisni drejt, sinjali nuk ndizet.",
+  gradRuleIndicatorLeftOn: "Pas kthesës sinjali fiket.",
+  gradRuleIndicatorRoundabout: "Kur del nga rrethrrotullimi ndizet sinjali i djathtë.",
+  gradRuleWrongLane: "Shigjetat në rrugë tregojnë ku lejohet të shkohet nga çdo korsi — nga kjo korsi jo në këtë drejtim.",
   rutaFrom: "Nga",
   rutaTo: "Deri",
   rutaPrepare: "Po përgatis rrugën…",
@@ -1946,6 +1978,14 @@ const ru: Dict = {
   gradRuleStopZebra: "На пешеходном переходе останавливаться нельзя.",
   gradRuleStopJunction: "На перекрёстке останавливаться нельзя, если этого не требует движение.",
   gradRuleStopBus: "На автобусной остановке останавливаться нельзя.",
+  vioWrongLane: "Поворот не из той полосы",
+  gradRuleIndicatorMissing: "Перед поворотом указатель включают в сторону поворота — не позже въезда на перекрёсток.",
+  gradRuleIndicatorWrong: "Указатель был включён не в ту сторону.",
+  gradRuleIndicatorLate: "Указатель включён только на перекрёстке — слишком поздно, чтобы другие увидели намерение.",
+  gradRuleIndicatorStraight: "При движении прямо указатель не включают.",
+  gradRuleIndicatorLeftOn: "После поворота указатель выключают.",
+  gradRuleIndicatorRoundabout: "При выезде с кругового движения включают правый указатель.",
+  gradRuleWrongLane: "Стрелки на дороге показывают, куда можно ехать из каждой полосы — из этой полосы в эту сторону нельзя.",
   rutaFrom: "Откуда",
   rutaTo: "Куда",
   rutaPrepare: "Готовлю дорогу…",
