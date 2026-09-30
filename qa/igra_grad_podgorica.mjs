@@ -9,6 +9,7 @@
 //    se mijenja, kadrovi teku;
 //  - volan okreće auto (3c): skretanje volanom mijenja ulicu;
 //  - rikverc: kočnica držana u mjestu vozi unazad, a na ekranu piše „Rikverc";
+//  - doba dana i kiša (4d): snimci, i napomena o dužem zaustavnom putu po kiši;
 //  - nijedna greška u konzoli.
 // Snimci se prave svakih nekoliko sekundi — za pregled mape (stop tačka).
 
@@ -135,6 +136,16 @@ for (let i = 0; i < 25; i++) {
 const natpisPoslije = (await page.locator("main").innerText()).includes("Rikverc");
 await pedala(false, false);
 izvj.rikverc = { kmhUnazad: unazad.kmh, natpis, kmhNaprijedPoslije: naprijed.kmh, natpisPoslije };
+
+// Doba dana i vrijeme (4d): snimak svakog, i napomena o kiši na ekranu.
+izvj.osvjetljenje = {};
+for (const [dugme, ime] of [["Sumrak", "sumrak"], ["Noć", "noc"], ["Kiša", "kisa-noc"], ["Dan", "kisa-dan"]]) {
+  await page.getByRole("button", { name: dugme, exact: true }).click();
+  await page.waitForTimeout(800);
+  await page.locator("main canvas").locator("..").screenshot({ path: `grad-${ime}.png` });
+  izvj.osvjetljenje[ime] = (await page.locator("main").innerText()).includes("zaustavni put je duži");
+}
+await page.getByRole("button", { name: "Sunce", exact: true }).click();
 
 // Pregled mape: kadar se udaljava do kraja, snimak na svakom stepenu.
 for (let z = 1; z <= 4; z++) {

@@ -1804,3 +1804,21 @@ export const GRAD_PARKING_PROLAZ = 6;
 export const GRAD_PARKING_ZAUZETO = 0.6;
 /** Visina parkiranog auta [m] — i krov auta se naginje u 2.5D. */
 export const GRAD_AUTO_VISINA = 1.45;
+
+// ── doba dana i vrijeme (faza 6, stavka 4d) ────────────────────────────────
+
+/**
+ * Po kiši kočnica daje ovoliki dio `B_MAX` — zaustavni put je duži (zadatak,
+ * odjeljak 1). Igraču se to kaže na ekranu dok pada kiša.
+ */
+export const GRAD_KISA_KOCENJE = 0.8;
+/** Koliki dio prozora svijetli uveče i noću (po sjemenu zgrade, sprata i prozora). */
+export const GRAD_PROZORI_UPALJENI = { dan: 0, sumrak: 0.18, noc: 0.42 } as const;
+/** Poluprečnik svjetla ulične lampe na tlu [m]. */
+export const GRAD_LAMPA_SVJETLO = 9;
+/** Dužina snopa farova [m] i ugao (pola otvora) [°]. */
+export const GRAD_FAROVI_DUZINA = 26;
+export const GRAD_FAROVI_UGAO = 22;
+/** Broj kapi kiše na ekranu i njihova brzina [px/s]. */
+export const GRAD_KISA_KAPI = 140;
+export const GRAD_KISA_BRZINA = 900;

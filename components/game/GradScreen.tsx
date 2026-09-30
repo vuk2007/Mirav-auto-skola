@@ -17,7 +17,7 @@ import { napraviPovrsinu, ulicaNa, type Povrsina } from "@/lib/game/grad/povrsin
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
 import type { BojeDekora } from "@/lib/game/grad/dekor";
 import type { Palete, ZonaPalete } from "@/lib/game/grad/zgrade";
-import type { GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
+import type { BojeOsvjetljenja, DobaDana, GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
 import { haptika } from "@/lib/game/ui/haptika";
 import { dprUredjaja } from "@/lib/game/ui/renderer";
 import Brzinomjer from "./Brzinomjer";
@@ -66,6 +66,11 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const [zum, setZum] = useState(0);
   const zumRef = useRef(0);
   zumRef.current = zum;
+  // Doba dana i vrijeme (stavka 4d): bira igrač; kiša mijenja i kočenje.
+  const [doba, setDoba] = useState<DobaDana>("dan");
+  const [kisa, setKisa] = useState(false);
+  const uslovRef = useRef({ doba, kisa });
+  uslovRef.current = { doba, kisa };
 
   useEffect(() => {
     let otkazano = false;
@@ -83,7 +88,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       // Izgled zgrada je podatak: palete i zone (sa paletom po zoni).
       const [spisak, palete, zone] = await Promise.all([
         json<Record<string, { fajl: string }>>("/data/grad/gradovi.json"),
-        json<Palete & { dekor: BojeDekora }>("/data/grad/palete.json"),
+        json<Palete & { dekor: BojeDekora; osvjetljenje: BojeOsvjetljenja }>("/data/grad/palete.json"),
         json<{ zone: ZonaPalete[] }>(`/data/grad/cityZones/${GRAD}.json`),
       ]);
       const fajl = spisak[GRAD]?.fajl;
@@ -146,7 +151,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         let koraka = 0;
         while (acc >= DT && koraka < 8) {
           prije = sada;
-          korakSlobodno(povrsina, st, inputRef.current);
+          korakSlobodno(povrsina, st, inputRef.current, { kisa: uslovRef.current.kisa });
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
           bioUdar = st.udar;
@@ -180,6 +185,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         };
         renderer?.draw({
           kadar: k,
+          osvjetljenje: { ...uslovRef.current, sekunde: now / 1000 },
           igrac: {
             pos,
             heading: sada.heading,
@@ -287,8 +293,60 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               {t.gradStreet}: {hud.ulica || t.gradUnnamed}
               {hud.fps !== null ? ` · ${hud.fps.toFixed(0)} fps` : ""}
             </p>
+            {kisa && (
+              <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
+                {t.gradRainNote}
+              </p>
+            )}
           </div>
         )}
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+        <fieldset className="flex items-center gap-1">
+          <legend className="sr-only">{t.gradTimeOfDay}</legend>
+          <span className="mr-1 text-muted" aria-hidden>
+            {t.gradTimeOfDay}:
+          </span>
+          {(
+            [
+              ["dan", t.gradDay],
+              ["sumrak", t.gradDusk],
+              ["noc", t.gradNight],
+            ] as const
+          ).map(([d, ime]) => (
+            <button
+              key={d}
+              type="button"
+              aria-pressed={doba === d}
+              onClick={() => setDoba(d)}
+              className={`rounded border px-2 py-1 font-semibold ${doba === d ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+            >
+              {ime}
+            </button>
+          ))}
+        </fieldset>
+        <fieldset className="flex items-center gap-1">
+          <legend className="sr-only">{t.gradWeather}</legend>
+          <span className="mr-1 text-muted" aria-hidden>
+            {t.gradWeather}:
+          </span>
+          {(
+            [
+              [false, t.gradSun],
+              [true, t.gradRain],
+            ] as const
+          ).map(([k, ime]) => (
+            <button
+              key={ime}
+              type="button"
+              aria-pressed={kisa === k}
+              onClick={() => setKisa(k)}
+              className={`rounded border px-2 py-1 font-semibold ${kisa === k ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+            >
+              {ime}
+            </button>
+          ))}
+        </fieldset>
       </div>
       <p className="text-sm text-muted">{t.gradHint}</p>
       <DriveControls

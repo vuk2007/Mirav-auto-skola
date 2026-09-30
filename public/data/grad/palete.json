@@ -1,5 +1,5 @@
 {
-  "napomena": "Palete zgrada za GTA izgled grada (faza 6, stavka 4). Zona iz cityZones/<grad>.json bira paletu poljem `paleta`; zgrada van nacrtanih zona dobija paletu po svojoj vrsti (`automatski`). Boja se iz niza bira po sjemenu zgrade, pa ista zgrada uvijek ima istu boju. `dekor` su boje stabala, parkiranih auta, rasvjete, klupa i kontejnera — iste za cijeli grad.",
+  "napomena": "Palete zgrada za GTA izgled grada (faza 6, stavka 4). Zona iz cityZones/<grad>.json bira paletu poljem `paleta`; zgrada van nacrtanih zona dobija paletu po svojoj vrsti (`automatski`). Boja se iz niza bira po sjemenu zgrade, pa ista zgrada uvijek ima istu boju. `dekor` su boje stabala, parkiranih auta, rasvjete, klupa i kontejnera — iste za cijeli grad. `osvjetljenje` su nijanse cijelog grada po dobu dana i vremenu (množe se sa bojom), i boje svjetala.",
   "palete": {
     "centar-oker": {
       "ime": "Centar: topli mediteranski beton i oker",
@@ -128,5 +128,16 @@
       "#3e6b3c",
       "#5a5f63"
     ]
+  },
+  "osvjetljenje": {
+    "dan": "#ffffff",
+    "sumrak": "#e8c6ae",
+    "noc": "#3d4770",
+    "kisa": "#aab4bf",
+    "kisaNoc": "#353d5c",
+    "prozor": "#ffd98a",
+    "lampa": "#ffcf7a",
+    "farovi": "#fff1c4",
+    "stop": "#ff3b30"
   }
 }

@@ -9,6 +9,7 @@ import {
   GRAD_IVICNJAK_OKRET,
   GRAD_IVICNJAK_UGAO,
   GRAD_IVICNJAK_USPORENJE,
+  GRAD_KISA_KOCENJE,
   GRAD_MEDJUOSOVINSKO,
   GRAD_RIKVERC_A,
   GRAD_RIKVERC_CEKANJE,
@@ -114,10 +115,20 @@ export function autoNaPovrsini(p: Povrsina, x: number, y: number, ugao: number):
   return true;
 }
 
+/**
+ * Uslovi vožnje koji mijenjaju fiziku. Kiša skraćuje kočenje
+ * (`GRAD_KISA_KOCENJE`) — isti ulaz, duži zaustavni put.
+ */
+export interface UsloviVoznje {
+  kisa: boolean;
+}
+export const SUVO: UsloviVoznje = { kisa: false };
+
 /** Pedale: brzina u ovom koraku, i rikverc koji se ubacuje ili izbacuje. */
-function pedale(st: SlobodnoVozilo, input: Input): void {
+function pedale(st: SlobodnoVozilo, input: Input, uslovi: UsloviVoznje): void {
   const gas = input.throttle;
   const kocnica = input.brake;
+  const bMax = uslovi.kisa ? B_MAX * GRAD_KISA_KOCENJE : B_MAX;
   if (!st.rikverc) {
     // U mjestu, kočnica držana `GRAD_RIKVERC_CEKANJE` i bez gasa: rikverc.
     if (st.v <= 0.01 && kocnica >= GRAD_RIKVERC_PEDALA && gas === 0) {
@@ -133,19 +144,19 @@ function pedale(st: SlobodnoVozilo, input: Input): void {
   }
   if (!st.rikverc) {
     const k = { v: Math.max(0, st.v), s: 0 };
-    integrate(k, gas * A_MAX - kocnica * B_MAX, GRAD_V_TOP, GRAD_DRAG);
+    integrate(k, gas * A_MAX - kocnica * bMax, GRAD_V_TOP, GRAD_DRAG);
     st.v = k.v;
   } else {
     // Unazad su uloge pedala obrnute: kočnica je gas unazad, gas koči.
     const k = { v: Math.max(0, -st.v), s: 0 };
-    integrate(k, kocnica * GRAD_RIKVERC_A - gas * B_MAX, GRAD_RIKVERC_V, GRAD_DRAG);
+    integrate(k, kocnica * GRAD_RIKVERC_A - gas * bMax, GRAD_RIKVERC_V, GRAD_DRAG);
     st.v = -k.v;
   }
 }
 
 /** Jedan korak (`DT`). Mijenja `st` na mjestu. */
-export function korakSlobodno(p: Povrsina, st: SlobodnoVozilo, input: Input): void {
-  pedale(st, input);
+export function korakSlobodno(p: Povrsina, st: SlobodnoVozilo, input: Input, uslovi: UsloviVoznje = SUVO): void {
+  pedale(st, input, uslovi);
 
   // Točkovi idu ka onome što volan traži, brzinom `GRAD_VOLAN_BRZINA`, i nikad
   // preko onoga što brzina dopušta.

@@ -1,9 +1,27 @@
-import { AlphaFilter, Application, Container, earcut, Geometry, Graphics, Mesh, Shader, UniformGroup } from "pixi.js";
+import {
+  AlphaFilter,
+  Application,
+  Container,
+  earcut,
+  Geometry,
+  Graphics,
+  Mesh,
+  Shader,
+  Sprite,
+  Texture,
+  UniformGroup,
+} from "pixi.js";
 import {
   CAR_LENGTH,
   CAR_WIDTH,
   GRAD_2_5D,
   GRAD_2_5D_NAJVISE,
+  GRAD_FAROVI_DUZINA,
+  GRAD_FAROVI_UGAO,
+  GRAD_KISA_BRZINA,
+  GRAD_KISA_KAPI,
+  GRAD_LAMPA_SVJETLO,
+  GRAD_PROZORI_UPALJENI,
   GRAD_KOMADA_NAJVISE,
   GRAD_MEDJUOSOVINSKO,
   GRAD_PROZOR_PIKSELA,
@@ -96,9 +114,11 @@ in vec2 aPosition;
 in float aVisina;
 in vec3 aBoja;
 in float aZid;
+in float aSjeme;
 out vec3 vBoja;
 out float vZid;
 out float vVisina;
+out float vSjeme;
 uniform mat3 uProjectionMatrix;
 uniform mat3 uWorldTransformMatrix;
 uniform mat3 uTransformMatrix;
@@ -113,37 +133,114 @@ void main() {
   vBoja = aBoja;
   vZid = aZid;
   vVisina = aVisina;
+  vSjeme = aSjeme;
 }
 `;
 /**
  * Prozori: na zidu (`vZid ≥ 0`) pravougaonici u mreži sprat × razmak prozora.
  * Kad je sprat na ekranu sitan, prozori blijede (`uProzori`), da se iz daleka
  * ne pretvore u šum.
+ *
+ * Doba dana je nijansa sloja (`tint`), koju Pixi predaje kao `uColor`: sve se
+ * množi njome. Upaljen prozor (dio `uUpaljeno`, po sjemenu zgrade, sprata i
+ * kolone) svijetli sam — njega nijansa ne tamni.
  */
 const FRAGMENT_2_5D = `
 in vec3 vBoja;
 in float vZid;
 in float vVisina;
+in float vSjeme;
 out vec4 finalColor;
+uniform vec4 uColor;
 uniform float uSprat;
 uniform float uRazmak;
 uniform float uProzori;
+uniform float uUpaljeno;
+uniform vec3 uBojaProzora;
 void main() {
-  vec3 c = vBoja;
+  vec3 c = vBoja * uColor.rgb;
   if (vZid >= 0.0) {
     float sprat = fract(vVisina / uSprat);
     float kolona = fract(vZid / uRazmak);
     float prozor = step(0.38, sprat) * step(sprat, 0.82) * step(0.22, kolona) * step(kolona, 0.78);
-    c = mix(c, vec3(0.28, 0.34, 0.42), prozor * 0.6 * uProzori);
+    c = mix(c, vec3(0.28, 0.34, 0.42) * uColor.rgb, prozor * 0.6 * uProzori);
+    vec3 celija = vec3(floor(vZid / uRazmak), floor(vVisina / uSprat), vSjeme * 997.0);
+    float h = fract(sin(dot(celija, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+    c = mix(c, uBojaProzora, prozor * step(h, uUpaljeno) * uProzori);
   }
-  finalColor = vec4(c, 1.0);
+  finalColor = vec4(c, uColor.a);
 }
 `;
 
+/** Nijanse grada po dobu dana i vremenu, i boje svjetala (`palete.json`). */
+export interface BojeOsvjetljenja {
+  dan: string;
+  sumrak: string;
+  noc: string;
+  kisa: string;
+  kisaNoc: string;
+  prozor: string;
+  lampa: string;
+  farovi: string;
+  stop: string;
+}
+
 /** Izgled zgrada: palete i zone iz podataka. */
 export interface IzgledGrada {
-  palete: Palete & { dekor: BojeDekora };
+  palete: Palete & { dekor: BojeDekora; osvjetljenje: BojeOsvjetljenja };
   zone: ZonaPalete[];
+}
+
+export type DobaDana = "dan" | "sumrak" | "noc";
+
+/** Doba dana i vrijeme koje se crta; `sekunde` pokreću kišu. */
+export interface Osvjetljenje {
+  doba: DobaDana;
+  kisa: boolean;
+  sekunde: number;
+}
+
+/** Proizvod dvije boje `#rrggbb` — kiša u sumrak je sumrak pod oblakom. */
+function pomnozi(a: string, b: string): number {
+  const x = parseInt(a.slice(1), 16);
+  const y = parseInt(b.slice(1), 16);
+  let c = 0;
+  for (const pomak of [16, 8, 0]) c |= Math.round((((x >> pomak) & 255) * ((y >> pomak) & 255)) / 255) << pomak;
+  return c;
+}
+
+/** `#rrggbb` u tri broja 0–1 — za uniformu shadera. */
+function rgb01(hex: string): [number, number, number] {
+  const v = parseInt(hex.slice(1), 16);
+  return [((v >> 16) & 255) / 255, ((v >> 8) & 255) / 255, (v & 255) / 255];
+}
+
+/**
+ * Svjetlost, jednom po crtaču: bijela u središtu (`cx`, u pikselima od lijeve
+ * ivice teksture od 128), providna na ivici. Lampa ima središte u sredini;
+ * snop farova na lijevoj ivici — najjači tik ispred haube, pa blijedi naprijed.
+ */
+function teksturaSjaja(cx = 64): Texture {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d")!;
+  const r = g.createRadialGradient(cx, 64, 0, cx, 64, 128 - cx);
+  r.addColorStop(0, "rgba(255,255,255,1)");
+  r.addColorStop(0.45, "rgba(255,255,255,0.45)");
+  r.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = r;
+  g.fillRect(0, 0, 128, 128);
+  if (cx !== 64) {
+    // Snop blijedi i poprijeko, da nema tvrdih bočnih ivica.
+    const poprijeko = g.createLinearGradient(0, 0, 0, 128);
+    poprijeko.addColorStop(0, "rgba(0,0,0,0)");
+    poprijeko.addColorStop(0.5, "rgba(0,0,0,1)");
+    poprijeko.addColorStop(1, "rgba(0,0,0,0)");
+    g.globalCompositeOperation = "destination-in";
+    g.fillStyle = poprijeko;
+    g.fillRect(0, 0, 128, 128);
+  }
+  return Texture.from(c);
 }
 
 /**
@@ -181,6 +278,7 @@ export interface GradKadar {
 
 export interface GradScena {
   kadar: GradKadar;
+  osvjetljenje: Osvjetljenje;
   igrac: {
     pos: Point;
     heading: Point;
@@ -300,7 +398,25 @@ export async function createGradRenderer(
   const sDekor = new Container();
   const sZgrade = new Container();
   const dinamika = new Graphics();
-  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sSjene, sDekor, sZgrade, dinamika);
+  // Svjetla (lampe, farovi) se sabiraju sa onim ispod (`add`), i ne tamne:
+  // idu iznad tla i oznaka, a ispod dekora i zgrada — svijetli ulica, ne krov.
+  const sSvjetla = new Container();
+  sSvjetla.blendMode = "add";
+  const farovi = new Graphics();
+  sSvjetla.addChild(farovi);
+  // Kiša je preko ekrana, ne u svijetu: kapi ne rotiraju sa kamerom.
+  const kisa = new Graphics();
+  const sjaj = teksturaSjaja();
+  const boje = izgled.palete.osvjetljenje;
+  const tSnop = teksturaSjaja(0);
+  const snop = new Sprite(tSnop);
+  snop.anchor.set(0, 0.5);
+  snop.tint = boje.farovi;
+  sSvjetla.addChild(snop);
+  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sSvjetla, sIznad, sSjene, sDekor, sZgrade, dinamika);
+  /** Slojevi koje doba dana tamni (sve osim svjetala i sjenki). */
+  const osvijetljeni: Container[] = [sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sDekor, sZgrade, dinamika];
+  const sjenkaFilter = sSjene.filters![0] as AlphaFilter;
 
   // Oznake na kolovozu: linije staju pred raskrsnicom; prelazi su objekti paketa.
   const odsjeci = krajeviLinija(mreza);
@@ -314,6 +430,8 @@ export async function createGradRenderer(
     uSprat: { value: GRAD_SPRAT, type: "f32" },
     uRazmak: { value: GRAD_PROZOR_RAZMAK, type: "f32" },
     uProzori: { value: 1, type: "f32" },
+    uUpaljeno: { value: 0, type: "f32" },
+    uBojaProzora: { value: new Float32Array(rgb01(boje.prozor)), type: "vec3<f32>" },
   });
   const shader = Shader.from({
     gl: { vertex: VERTEX_2_5D, fragment: FRAGMENT_2_5D, name: "grad-2-5d" },
@@ -328,12 +446,13 @@ export async function createGradRenderer(
         aVisina: { buffer: t.visina, format: "float32" },
         aBoja: { buffer: t.boja, format: "float32x3" },
         aZid: { buffer: t.zid, format: "float32" },
+        aSjeme: { buffer: t.sjeme, format: "float32" },
       },
       indexBuffer: t.indeksi,
     });
     return new Mesh({ geometry, shader });
   };
-  app.stage.addChild(svijet);
+  app.stage.addChild(svijet, kisa);
 
   const sagradjeni = new Map<number, Sagradjen>();
   let kadar = 0;
@@ -427,6 +546,16 @@ export async function createGradRenderer(
     );
     const dekor = mesh(d.dekor) ?? new Container();
     const sjeneDekora = mesh(d.sjene) ?? new Container();
+    const lampe = new Container();
+    for (const l of d.lampe) {
+      const sp = new Sprite(sjaj);
+      sp.anchor.set(0.5);
+      sp.position.set(l.x, l.y);
+      sp.width = sp.height = 2 * GRAD_LAMPA_SVJETLO;
+      sp.tint = boje.lampa;
+      sp.alpha = 0.55;
+      lampe.addChild(sp);
+    }
     sPovrsine.addChild(povrsine);
     sVoda.addChild(voda);
     sTrotoari.addChild(trotoari);
@@ -435,9 +564,10 @@ export async function createGradRenderer(
     sIznad.addChild(iznad);
     sSjene.addChild(sjene, sjeneDekora);
     sDekor.addChild(dekor);
+    sSvjetla.addChild(lampe);
     sZgrade.addChild(zgrade);
     return {
-      slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, sjeneDekora, dekor, zgrade],
+      slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, sjeneDekora, dekor, zgrade, lampe],
       vidjen: kadar,
     };
   };
@@ -489,7 +619,7 @@ export async function createGradRenderer(
       app.renderer.resize(cssW, cssH, dpr);
     },
 
-    draw({ kadar: k, igrac }) {
+    draw({ kadar: k, igrac, osvjetljenje: o }) {
       kadar += 1;
       const pogled = vidljivo(k);
       vidljivih = 0;
@@ -518,13 +648,33 @@ export async function createGradRenderer(
       // Nagib zgrada: od sredine ekrana, srazmjerno visini i obrnuto kadru —
       // udaljen kadar je kao kamera koja se podigla, pa se zgrade naginju manje.
       const sredina = sredinaEkrana(k);
-      const u = uniforme.uniforms as { uKamera: Float32Array; uFaktor: number; uProzori: number };
+      const u = uniforme.uniforms as { uKamera: Float32Array; uFaktor: number; uProzori: number; uUpaljeno: number };
       u.uKamera[0] = sredina.x;
       u.uKamera[1] = sredina.y;
       u.uFaktor = (GRAD_2_5D * 2 * k.scale) / Math.max(1, Math.min(w, h));
       // Sprat od `GRAD_PROZOR_PIKSELA` piksela i manje: prozora nema; duplo veći: puni.
       const spratPx = GRAD_SPRAT * k.scale;
       u.uProzori = Math.max(0, Math.min(1, spratPx / GRAD_PROZOR_PIKSELA - 1));
+
+      // Doba dana i vrijeme: nijansa, sjenke samo uz sunce, svjetla kad je mrak.
+      const nijansa =
+        o.doba === "dan"
+          ? o.kisa
+            ? pomnozi(boje.kisa, "#ffffff")
+            : pomnozi(boje.dan, "#ffffff")
+          : o.doba === "sumrak"
+            ? pomnozi(boje.sumrak, o.kisa ? boje.kisa : "#ffffff")
+            : pomnozi(o.kisa ? boje.kisaNoc : boje.noc, "#ffffff");
+      for (const c of osvijetljeni) c.tint = nijansa;
+      // Golo tlo je pozadina crtača, van svih slojeva — i nju tamni doba dana.
+      app.renderer.background.color = pomnozi(BOJE.tlo, "#" + nijansa.toString(16).padStart(6, "0"));
+      const sunce = o.kisa ? 0 : o.doba === "dan" ? 1 : o.doba === "sumrak" ? 0.5 : 0;
+      sSjene.visible = sunce > 0;
+      sjenkaFilter.alpha = GRAD_SJENKA_ALFA * sunce;
+      const mrak = o.doba !== "dan";
+      sSvjetla.visible = mrak || o.kisa;
+      for (const x of sagradjeni.values()) x.slojevi[10]!.visible = x.slojevi[0]!.visible && mrak;
+      u.uUpaljeno = GRAD_PROZORI_UPALJENI[o.doba];
 
       dinamika.clear();
       const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
@@ -561,6 +711,39 @@ export async function createGradRenderer(
       dinamika.rect(-CAR_LENGTH / 2, CAR_WIDTH * 0.2, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
       dinamika.resetTransform();
 
+      // Farovi: meki izduženi snop ispred auta (sjaj razvučen u elipsu), jači
+      // u mraku nego po danu kad pada kiša. Upaljeni u mraku i po kiši, kao
+      // što propis traži.
+      farovi.clear();
+      snop.visible = sSvjetla.visible;
+      if (sSvjetla.visible) {
+        const d = GRAD_FAROVI_DUZINA;
+        const naprijed = CAR_LENGTH / 2 - 0.3;
+        snop.position.set(igrac.pos.x + cos * naprijed, igrac.pos.y + sin * naprijed);
+        snop.rotation = ugao;
+        snop.width = d;
+        snop.height = 2 * Math.tan((GRAD_FAROVI_UGAO * Math.PI) / 180) * d;
+        snop.alpha = mrak ? 0.7 : 0.25;
+        if (igrac.koci && !igrac.rikverc) {
+          const zx = igrac.pos.x - cos * (CAR_LENGTH / 2 + 1);
+          const zy = igrac.pos.y - sin * (CAR_LENGTH / 2 + 1);
+          farovi.circle(zx, zy, 2.2).fill({ color: boje.stop, alpha: 0.35 });
+        }
+      }
+
+      // Kiša: kose kapi preko ekrana, pomjeraju se sa vremenom.
+      kisa.clear();
+      if (o.kisa) {
+        for (let i = 0; i < GRAD_KISA_KAPI; i++) {
+          const a = Math.sin(i * 12.9898) * 43758.5453;
+          const b = Math.sin(i * 78.233) * 12345.6789;
+          const x = (((a - Math.floor(a)) * (w + 40) + o.sekunde * GRAD_KISA_BRZINA * 0.2) % (w + 40)) - 20;
+          const y = (((b - Math.floor(b)) * (h + 40) + o.sekunde * GRAD_KISA_BRZINA) % (h + 40)) - 20;
+          kisa.moveTo(x, y).lineTo(x - 3, y + 13);
+        }
+        kisa.stroke({ width: 1, color: "#d4dde9", alpha: 0.45 });
+      }
+
       // Kamera: isto kao `px` u `draw.ts` — okretanje za `rot` i još pola kruga.
       svijet.position.set(k.cx, k.cy);
       svijet.pivot.set(k.wx, k.wy);
@@ -574,6 +757,8 @@ export async function createGradRenderer(
     destroy() {
       for (const t of [...sagradjeni.keys()]) srusi(t);
       shader.destroy();
+      sjaj.destroy(true);
+      tSnop.destroy(true);
       app.destroy({ removeView: false }, { children: true });
     },
   };

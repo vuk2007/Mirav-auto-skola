@@ -313,6 +313,7 @@ export function geometrijaZgrada(zgrade: readonly Zgrada[], triangulisi: Triangu
   const g = new Graditelj();
   const redom = [...zgrade].sort((a, b) => a.visina - b.visina || a.sjeme - b.sjeme);
   for (const z of redom) {
+    g.sjeme = z.sjeme / 2 ** 32;
     const krov = rgb(z.krov);
     // Hale i magacini su bez prozora; sve ostalo ih ima po spratovima.
     prizma(g, z.osnova, 0, z.visina, rgb(z.zid), krov, triangulisi, z.grupa !== "industrija");

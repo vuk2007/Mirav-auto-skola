@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  B_MAX,
   DT,
   GRAD_BOCNO_UBRZANJE,
+  GRAD_KISA_KOCENJE,
   GRAD_RIKVERC_CEKANJE,
   GRAD_RIKVERC_V,
   GRAD_SIRINA_TRAKE,
@@ -200,6 +202,30 @@ describe("grad: rikverc", () => {
     for (let i = 0; i < koraci(0.5); i++) korakSlobodno(P, st, ulaz(0, 1, 1));
     // Naprijed desni volan povećava ugao; unazad ga smanjuje.
     expect(st.ugao).toBeLessThan(prije);
+  });
+});
+
+describe("grad: kiša", () => {
+  it("po kiši je zaustavni put duži — kočnica daje GRAD_KISA_KOCENJE od B_MAX", () => {
+    const zaustavni = (kisa: boolean) => {
+      const st = slobodnoNaIvici(P, 0, 1, 5);
+      while (st.v < 40 / 3.6) korakSlobodno(P, st, ulaz(1, 0), { kisa });
+      const y0 = st.y;
+      let koraka = 0;
+      while (st.v > 0) {
+        korakSlobodno(P, st, ulaz(0, 1), { kisa });
+        koraka += 1;
+      }
+      return { put: y0 - st.y, koraka };
+    };
+    const suvo = zaustavni(false);
+    const mokro = zaustavni(true);
+    // Isto usporenje puta faktor: put i vrijeme rastu za 1/faktor.
+    expect(mokro.put / suvo.put).toBeCloseTo(1 / GRAD_KISA_KOCENJE, 1);
+    expect(mokro.koraka).toBeGreaterThan(suvo.koraka);
+    // Na suvom: v²/(2·B_MAX), uz jedan korak zaokruživanja.
+    const v = 40 / 3.6;
+    expect(suvo.put).toBeGreaterThan((v * v) / (2 * B_MAX) - v * DT);
   });
 });
 

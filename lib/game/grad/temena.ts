@@ -35,6 +35,8 @@ export interface Temena {
    * i po visini crta prozore. `−1` za krov, detalje i zidove bez prozora.
    */
   zid: Float32Array;
+  /** Sjeme zgrade u [0, 1) — koji prozori noću svijetle. 0 za dekor. */
+  sjeme: Float32Array;
   indeksi: Uint32Array;
 }
 
@@ -43,12 +45,16 @@ export class Graditelj {
   v: number[] = [];
   b: number[] = [];
   z: number[] = [];
+  sj: number[] = [];
   i: number[] = [];
+  /** Sjeme koje dobija svako sljedeće teme (vidi `Temena.sjeme`). */
+  sjeme = 0;
   teme(x: number, y: number, h: number, boja: readonly [number, number, number], zid = -1): number {
     this.p.push(x, y);
     this.v.push(h);
     this.b.push(boja[0], boja[1], boja[2]);
     this.z.push(zid);
+    this.sj.push(this.sjeme);
     return this.v.length - 1;
   }
   gotovo(): Temena {
@@ -57,6 +63,7 @@ export class Graditelj {
       visina: new Float32Array(this.v),
       boja: new Float32Array(this.b),
       zid: new Float32Array(this.z),
+      sjeme: new Float32Array(this.sj),
       indeksi: new Uint32Array(this.i),
     };
   }

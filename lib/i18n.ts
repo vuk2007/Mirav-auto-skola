@@ -224,6 +224,14 @@ export interface Dict {
   gradZoomIn: string;
   gradZoomOut: string;
   gradReverse: string;
+  gradTimeOfDay: string;
+  gradDay: string;
+  gradDusk: string;
+  gradNight: string;
+  gradWeather: string;
+  gradSun: string;
+  gradRain: string;
+  gradRainNote: string;
   rutaFrom: string;
   rutaTo: string;
   rutaPrepare: string;
@@ -624,6 +632,14 @@ const me: Dict = {
   gradZoomIn: "Približi",
   gradZoomOut: "Udalji",
   gradReverse: "Rikverc",
+  gradTimeOfDay: "Doba dana",
+  gradDay: "Dan",
+  gradDusk: "Sumrak",
+  gradNight: "Noć",
+  gradWeather: "Vrijeme",
+  gradSun: "Sunce",
+  gradRain: "Kiša",
+  gradRainNote: "Kiša: kočnica drži slabije — zaustavni put je duži.",
   rutaFrom: "Odakle",
   rutaTo: "Dokle",
   rutaPrepare: "Pripremam put…",
@@ -1014,6 +1030,14 @@ const en: Dict = {
   gradZoomIn: "Zoom in",
   gradZoomOut: "Zoom out",
   gradReverse: "Reverse",
+  gradTimeOfDay: "Time of day",
+  gradDay: "Day",
+  gradDusk: "Dusk",
+  gradNight: "Night",
+  gradWeather: "Weather",
+  gradSun: "Sun",
+  gradRain: "Rain",
+  gradRainNote: "Rain: the brakes grip less — the stopping distance is longer.",
   rutaFrom: "From",
   rutaTo: "To",
   rutaPrepare: "Preparing the road…",
@@ -1409,6 +1433,14 @@ const sq: Dict = {
   gradZoomIn: "Afro",
   gradZoomOut: "Largo",
   gradReverse: "Mbrapsht",
+  gradTimeOfDay: "Koha e ditës",
+  gradDay: "Ditë",
+  gradDusk: "Muzg",
+  gradNight: "Natë",
+  gradWeather: "Moti",
+  gradSun: "Diell",
+  gradRain: "Shi",
+  gradRainNote: "Shi: frenat kapin më pak — distanca e ndalimit është më e gjatë.",
   rutaFrom: "Nga",
   rutaTo: "Deri",
   rutaPrepare: "Po përgatis rrugën…",
@@ -1806,6 +1838,14 @@ const ru: Dict = {
   gradZoomIn: "Приблизить",
   gradZoomOut: "Отдалить",
   gradReverse: "Задний ход",
+  gradTimeOfDay: "Время суток",
+  gradDay: "День",
+  gradDusk: "Сумерки",
+  gradNight: "Ночь",
+  gradWeather: "Погода",
+  gradSun: "Солнце",
+  gradRain: "Дождь",
+  gradRainNote: "Дождь: тормоза держат хуже — тормозной путь длиннее.",
   rutaFrom: "Откуда",
   rutaTo: "Куда",
   rutaPrepare: "Готовлю дорогу…",

@@ -80,6 +80,8 @@ export interface UlazDekora {
 export interface GeometrijaDekora {
   dekor: Temena;
   sjene: Temena;
+  /** Tačke na tlu ispod svjetiljki — noću tu pada svjetlo (stavka 4d). */
+  lampe: Point[];
 }
 
 const OSMOUGAO = Array.from({ length: 8 }, (_, k) => ((k + 0.5) * Math.PI) / 4);
@@ -232,6 +234,7 @@ export function geometrijaDekora(u: UlazDekora, triangulisi: Triangulacija): Geo
   }
 
   // ── uz ulice: rasvjeta i kontejneri, na trotoaru ──
+  const lampe: Point[] = [];
   const stub = rgb(boje.stub);
   const svjetiljka = rgb(boje.svjetiljka);
   for (const { iv, odA, odB } of u.ivice) {
@@ -254,6 +257,7 @@ export function geometrijaDekora(u: UlazDekora, triangulisi: Triangulacija): Geo
           // Svjetiljka: krak nad kolovoz, na vrhu stuba.
           const k = 0.9;
           const glava = pravougaonik(x - nx * k, y - ny * k, 0.35, 1.6, Math.atan2(ny, nx));
+          lampe.push({ x: x - nx * k * 1.5, y: y - ny * k * 1.5 });
           prizma(g, glava, GRAD_RASVJETA_VISINA, GRAD_RASVJETA_VISINA + 0.2, puta(svjetiljka, 0.8), svjetiljka, triangulisi);
         }
       }
@@ -273,7 +277,7 @@ export function geometrijaDekora(u: UlazDekora, triangulisi: Triangulacija): Geo
     }
   }
 
-  return { dekor: g.gotovo(), sjene: s.gotovo() };
+  return { dekor: g.gotovo(), sjene: s.gotovo(), lampe };
 }
 
 /**
