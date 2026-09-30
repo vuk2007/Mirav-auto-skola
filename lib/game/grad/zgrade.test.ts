@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { earcut } from "pixi.js";
 import { describe, expect, it } from "vitest";
 import {
   GRAD_KROV,
@@ -15,7 +14,7 @@ import type { Point } from "../sim/types";
 import { napraviMrezu } from "./mreza";
 import { procitaj, prazniNizovi, type Paket } from "./paket";
 import { naPovrsini, napraviPovrsinu, odmakniOdUlice } from "./povrsina";
-import { KRST, mreza as testMreza } from "./testMreza";
+import { KRST, mreza as testMreza, lepeza } from "./testMreza";
 import {
   geometrijaSjenki,
   geometrijaZgrada,
@@ -34,7 +33,7 @@ import {
  */
 const JAVNO = join(import.meta.dirname, "..", "..", "..", "public", "data", "grad");
 const PALETE = JSON.parse(readFileSync(join(JAVNO, "palete.json"), "utf8")) as Palete;
-const triangulisi = (ravno: number[]) => earcut(ravno);
+const triangulisi = lepeza;
 
 /** Paket sa zadatim zgradama (osnova, vrsta, spratovi, visina u dm). */
 function paketZgrada(zgrade: { osnova: Point[]; vrsta?: string; spratovi?: number; visinaDm?: number }[]): Paket {

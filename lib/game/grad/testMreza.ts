@@ -124,3 +124,18 @@ export function testPaket(
   const paket = { zaglavlje: { klase, stringovi, vrsteObjekata }, n } as unknown as Paket;
   return { paket, mreza: napraviMrezu(paket) };
 }
+
+/**
+ * Trouglovi prstena „lepezom" iz prve tačke — za testove. Tačna za konveksne
+ * oblike (pravougaonik, osmougao); na udubljenom da ispravne indekse, a
+ * pogrešne trouglove, pa testovi na pravim zgradama provjeravaju samo
+ * brojeve i indekse. Igra trougliće pravi Pixijevim `earcut`-om; testovi ga
+ * ne uvoze, jer učitavanje cijelog Pixija u vitest radniku kvari susjedne
+ * testove (izmjereno: „Cannot read properties of undefined (reading 'config')").
+ */
+export function lepeza(ravno: number[]): number[] {
+  const n = ravno.length / 2;
+  const i: number[] = [];
+  for (let k = 1; k + 1 < n; k++) i.push(0, k, k + 1);
+  return i;
+}

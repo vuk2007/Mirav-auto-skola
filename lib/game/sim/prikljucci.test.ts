@@ -177,7 +177,9 @@ describe("skretanje u sporedni put", () => {
   });
 });
 
-describe("uključivanje sa sporednog puta", () => {
+// Duge simulacije sa saobraćajem: pod opterećenjem mašine traju duže od
+// podrazumijevanih 5 s, kao i `playable.test.ts`.
+describe("uključivanje sa sporednog puta", { timeout: 30000 }, () => {
   it("ne ulazi pred nekoga ko je bliže od propisanog vremena", () => {
     // Od odluke do ulaska prođe luk skretanja, pa se od praga oduzima vrijeme
     // za njega — nekoliko sekundi pri brzini kojom se kreće iz mjesta.
@@ -245,7 +247,7 @@ describe("zagarantovani kamion na planini", () => {
   });
 });
 
-describe("ponovljivost i proba", () => {
+describe("ponovljivost i proba", { timeout: 30000 }, () => {
   it("isto sjeme daje ista skretanja i ista uključivanja", () => {
     const a = vozi(put(niz(), { seed: 3 }), 120);
     const b = vozi(put(niz(), { seed: 3 }), 120);

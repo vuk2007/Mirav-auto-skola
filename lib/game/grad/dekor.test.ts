@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { earcut } from "pixi.js";
 import { describe, expect, it } from "vitest";
 import {
   GRAD_DRVORED_RAZMAK,
@@ -17,7 +16,7 @@ import { geometrijaDekora, type BojeDekora, type UlazDekora } from "./dekor";
 import { krajeviLinija } from "./oznake";
 import { prazniNizovi, type Paket } from "./paket";
 import { naPovrsini, napraviPovrsinu } from "./povrsina";
-import { KRST } from "./testMreza";
+import { KRST, lepeza } from "./testMreza";
 import type { Temena } from "./temena";
 import type { Zgrada } from "./zgrade";
 
@@ -29,7 +28,7 @@ import type { Zgrada } from "./zgrade";
 const JAVNO = join(import.meta.dirname, "..", "..", "..", "public", "data", "grad");
 const BOJE = (JSON.parse(readFileSync(join(JAVNO, "palete.json"), "utf8")) as { dekor: BojeDekora }).dekor;
 const P = napraviPovrsinu(KRST);
-const triangulisi = (r: number[]) => earcut(r);
+const triangulisi = lepeza;
 const ODSJECI = krajeviLinija(KRST);
 
 const kvadrat = (x: number, y: number, a: number): Point[] => [

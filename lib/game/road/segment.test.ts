@@ -167,7 +167,9 @@ describe("putanje dionice", () => {
   });
 });
 
-describe("vožnja dionicom", () => {
+// Četiri minuta simulirane vožnje: pod opterećenjem mašine traje duže od
+// podrazumijevanih 5 s, kao i `playable.test.ts`.
+describe("vožnja dionicom", { timeout: 30000 }, () => {
   it("po propisu se pređe za oko četiri minuta i bez ijednog prekršaja", () => {
     for (const id of ["podgorica--danilovgrad", "njegusi--kotor", "plav--gusinje"]) {
       const e = ivica(id);
