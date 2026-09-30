@@ -31,6 +31,9 @@ import { uprosti as uprostiNiz } from "./lib/geom.mjs";
 import { iseciLiniju, iseciPoligon } from "./lib/iseci.mjs";
 import { GRADOVI } from "./gradovi.mjs";
 import { ULICE_BEZ } from "./upitiGrad.mjs";
+import { napraviMrezu } from "../../lib/game/grad/mreza.ts";
+import { krajeviLinija } from "../../lib/game/grad/oznake.ts";
+import { napraviRaskrsnice } from "../../lib/game/grad/raskrsnica.ts";
 import {
   IVICA_KRUZNI,
   IVICA_MOST,
@@ -38,6 +41,7 @@ import {
   IVICA_VOZNA,
   BEZ,
   NIZOVI,
+  procitaj as procitajPaket,
   zapisi,
 } from "../../lib/game/grad/paket.ts";
 
@@ -668,6 +672,17 @@ for (const i of vozne) {
 }
 const komponente = [...velicine.values()].sort((a, b) => b - a);
 
+// Raskrsnice i odakle im je prednost — metrika izvedenih pravila, koja treba
+// da opada kako editor (stavka 6) potvrđuje znakove (zadatak, odjeljak 5).
+// Paket se čita isto kao u igri, iz bajtova koji su upravo zapisani.
+const paketIgre = procitajPaket(bajtovi.buffer.slice(bajtovi.byteOffset, bajtovi.byteOffset + bajtovi.byteLength));
+const mrezaIgre = napraviMrezu(paketIgre);
+const rsk = napraviRaskrsnice(paketIgre, mrezaIgre, krajeviLinija(mrezaIgre));
+const kontrolaBroj = {};
+for (const r of rsk.lista) {
+  for (const k of r.kraci) if (k.ulaz) kontrolaBroj[`${k.kontrola} (${k.izvor})`] = (kontrolaBroj[`${k.kontrola} (${k.izvor})`] ?? 0) + 1;
+}
+
 const glavne = putevi.filter((w) => ["primary", "secondary", "trunk", "tertiary"].includes(w.tags.highway));
 const obBroj = (v) => n.obVrsta.filter((x) => x === VRSTE_OBJEKATA.indexOf(v)).length;
 izvj.push(
@@ -693,6 +708,10 @@ izvj.push(
   `- \`priority_road\` na putevima: ${putevi.filter((w) => w.tags.priority_road).length}`,
   "",
   `Mjesto objekata pravila u mreži (znak, semafor, prelaz, usporivač): na ivici ${izvjestajMjesta.naIvici}, u čvoru mreže ${izvjestajMjesta.uCvoru}, van vozne mreže ${izvjestajMjesta.bez}.`,
+  "",
+  `Raskrsnice: ${rsk.lista.length} (od više čvorova ${rsk.lista.filter((r) => r.cvorovi.length > 1).length}, sa semaforom ${rsk.lista.filter((r) => r.plan).length}, kružnih ${rsk.lista.filter((r) => r.kruzni).length}). **Izvedeno:** prioritet u ${rsk.lista.filter((r) => r.inferredPriority).length}, faze semafora u ${rsk.lista.filter((r) => r.inferredPhases).length}.`,
+  "",
+  "Ulazi u raskrsnice po kontroli: " + Object.entries(kontrolaBroj).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(", "),
   "",
   `Zabrane skretanja: uzeto ${izvjestajZabrana.uzeto}; preko puta (ne čvora, za sada bez suda) ${izvjestajZabrana.prekoPuta}; ne važe za auto ${izvjestajZabrana.izuzetakAuto}; van mreže ${izvjestajZabrana.vanMreze}; bez vrste ili članova ${izvjestajZabrana.nepoznato}.`,
   "",

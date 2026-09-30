@@ -1822,3 +1822,49 @@ export const GRAD_FAROVI_UGAO = 22;
 /** Broj kapi kiše na ekranu i njihova brzina [px/s]. */
 export const GRAD_KISA_KAPI = 140;
 export const GRAD_KISA_BRZINA = 900;
+
+// ── raskrsnice u gradu: kontrola i semafori (faza 6, stavka 5) ────────────
+
+/**
+ * Raskrsnica dva bulevara je u OSM-u nekoliko čvorova (svaka kolovozna traka
+ * je svoj put). Čvorovi raskrsnica spojeni voznom ivicom ne dužom od ovoga [m]
+ * su jedna raskrsnica — jedan semaforski plan, jedna prednost.
+ */
+export const GRAD_KLASTER_IVICA = 30;
+/** Najveći razmak dva čvora iste raskrsnice [m] — da se niz bliskih raskrsnica duž ulice ne spoji u jednu. */
+export const GRAD_KLASTER_PRECNIK = 45;
+/** Znak ili semafor na kraku važi za raskrsnicu ako je od nje ovoliko ili bliže [m]. */
+export const GRAD_ZNAK_DO = 60;
+/**
+ * Klase glavnih i sporednih ulica za izvedeni prioritet (zadatak, odjeljak 5):
+ * sporedna koja se bez znaka spaja na glavnu ustupa, uz `inferredPriority`.
+ */
+export const GRAD_KLASE_GLAVNE: readonly string[] = [
+  "trunk",
+  "trunk_link",
+  "primary",
+  "primary_link",
+  "secondary",
+  "secondary_link",
+];
+export const GRAD_KLASE_SPOREDNE: readonly string[] = ["residential", "living_street", "service", "unclassified", "track"];
+/**
+ * Izvedeni semaforski plan (OSM zna da semafor postoji, ali ne i faze):
+ * zeleno za glavnu i za ostale ose [s], žuto [s], sve crveno između faza [s].
+ */
+export const GRAD_SEMAFOR_ZELENO_GLAVNO = 24;
+export const GRAD_SEMAFOR_ZELENO = 16;
+export const GRAD_SEMAFOR_ZUTO = 3;
+export const GRAD_SEMAFOR_SVE_CRVENO = 2;
+/** Krakovi čije se ose razlikuju manje od ovoga [°] dobijaju zeleno zajedno. */
+export const GRAD_SEMAFOR_ISTA_OSA = 35;
+/** Stop-linija stoji ovoliko ispred zebre na istom kraku [m]. */
+export const GRAD_STOP_ISPRED_ZEBRE = 1;
+/**
+ * Semafor na kraku, dalje od ivice raskrsnice od ovoga [m] a uz sam prelaz
+ * (`GRAD_PJESACKI_SEMAFOR_PRELAZ`), je pješački semafor na sredini ulice — OSM
+ * ga označava isto kao semafor raskrsnice. On ne upravlja raskrsnicom; dolazi
+ * sa pješacima (stavka 8).
+ */
+export const GRAD_PJESACKI_SEMAFOR_OD = 15;
+export const GRAD_PJESACKI_SEMAFOR_PRELAZ = 6;

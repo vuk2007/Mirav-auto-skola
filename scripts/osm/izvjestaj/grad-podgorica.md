@@ -21,6 +21,10 @@ Oznake na ulicama (udio OSM puteva):
 
 Mjesto objekata pravila u mreži (znak, semafor, prelaz, usporivač): na ivici 2011, u čvoru mreže 338, van vozne mreže 101.
 
+Raskrsnice: 5588 (od više čvorova 192, sa semaforom 43, kružnih 182). **Izvedeno:** prioritet u 540, faze semafora u 43.
+
+Ulazi u raskrsnice po kontroli: desna (pravilo) 14976, glavni (izvedeno) 736, ustupi (izvedeno) 546, glavni (osm) 221, semafor (osm) 116, stop (osm) 84, ustupi (osm) 71
+
 Zabrane skretanja: uzeto 45; preko puta (ne čvora, za sada bez suda) 11; ne važe za auto 0; van mreže 1; bez vrste ili članova 1.
 
 Klase: motorway 14, primary 890, secondary 773, tertiary 607, motorway_link 19, primary_link 20, secondary_link 10, unclassified 246, residential 6207, service 3204, track 552, pedestrian 52, cycleway 494
