@@ -1,35 +1,97 @@
 {
-  "napomena": "Palete zgrada za GTA izgled grada (faza 6, stavka 4). Zona iz cityZones/<grad>.json bira paletu poljem `paleta`; zgrada van nacrtanih zona dobija paletu po svojoj vrsti (`automatski`). Boja se iz niza bira po sjemenu zgrade, pa ista zgrada uvijek ima istu boju.",
+  "napomena": "Palete zgrada za GTA izgled grada (faza 6, stavka 4). Zona iz cityZones/<grad>.json bira paletu poljem `paleta`; zgrada van nacrtanih zona dobija paletu po svojoj vrsti (`automatski`). Boja se iz niza bira po sjemenu zgrade, pa ista zgrada uvijek ima istu boju. `dekor` su boje stabala, parkiranih auta, rasvjete, klupa i kontejnera — iste za cijeli grad.",
   "palete": {
     "centar-oker": {
       "ime": "Centar: topli mediteranski beton i oker",
-      "krov": ["#cbb690", "#d6c29c", "#bea67f", "#cfb48c", "#c4ae8a"],
-      "zid": ["#e4cfa6", "#dcc293", "#ead8b5", "#d8c09a"],
-      "detalj": ["#8d8577", "#9d958a", "#7c766c"]
+      "krov": [
+        "#cbb690",
+        "#d6c29c",
+        "#bea67f",
+        "#cfb48c",
+        "#c4ae8a"
+      ],
+      "zid": [
+        "#e4cfa6",
+        "#dcc293",
+        "#ead8b5",
+        "#d8c09a"
+      ],
+      "detalj": [
+        "#8d8577",
+        "#9d958a",
+        "#7c766c"
+      ]
     },
     "soc-blok": {
       "ime": "Soc-blokovi: sivo-bijeli beton (Blok 5, 6, 9, Stari aerodrom)",
-      "krov": ["#b9b7b2", "#c4c2bc", "#aeaca6", "#cfccc5"],
-      "zid": ["#dcdad4", "#e6e4de", "#cfcdc6"],
-      "detalj": ["#8d8f93", "#a4a7ab", "#6f7276"]
+      "krov": [
+        "#b9b7b2",
+        "#c4c2bc",
+        "#aeaca6",
+        "#cfccc5"
+      ],
+      "zid": [
+        "#dcdad4",
+        "#e6e4de",
+        "#cfcdc6"
+      ],
+      "detalj": [
+        "#8d8f93",
+        "#a4a7ab",
+        "#6f7276"
+      ]
     },
     "crveni-krov": {
       "ime": "Starije kuće: crvenkasti crijep (Stara varoš, Drač, kuće po obodu)",
-      "krov": ["#b5563d", "#c0634a", "#a84b36", "#c77a5a", "#b86a4e"],
-      "zid": ["#e8dcc6", "#e2d2b8", "#efe6d4", "#d9c6a8"],
-      "detalj": ["#8b5a4a", "#6e6e6e"]
+      "krov": [
+        "#b5563d",
+        "#c0634a",
+        "#a84b36",
+        "#c77a5a",
+        "#b86a4e"
+      ],
+      "zid": [
+        "#e8dcc6",
+        "#e2d2b8",
+        "#efe6d4",
+        "#d9c6a8"
+      ],
+      "detalj": [
+        "#8b5a4a",
+        "#6e6e6e"
+      ]
     },
     "industrija": {
       "ime": "Hale i magacini: lim i beton",
-      "krov": ["#9aa0a6", "#8c939a", "#a7adb3", "#949a90"],
-      "zid": ["#b8bcc0", "#c4c7ca"],
-      "detalj": ["#6c7278", "#5d6369"]
+      "krov": [
+        "#9aa0a6",
+        "#8c939a",
+        "#a7adb3",
+        "#949a90"
+      ],
+      "zid": [
+        "#b8bcc0",
+        "#c4c7ca"
+      ],
+      "detalj": [
+        "#6c7278",
+        "#5d6369"
+      ]
     },
     "javna": {
       "ime": "Javne zgrade: škole, bolnice, crkve",
-      "krov": ["#c7b9a0", "#bfae92", "#cdbfa8"],
-      "zid": ["#e9e1d2", "#e2d8c4"],
-      "detalj": ["#8a8378"]
+      "krov": [
+        "#c7b9a0",
+        "#bfae92",
+        "#cdbfa8"
+      ],
+      "zid": [
+        "#e9e1d2",
+        "#e2d8c4"
+      ],
+      "detalj": [
+        "#8a8378"
+      ]
     }
   },
   "automatski": {
@@ -39,5 +101,32 @@
     "industrija": "industrija",
     "javna": "javna",
     "ostalo": "centar-oker"
+  },
+  "dekor": {
+    "krosnja": [
+      "#6f9a4e",
+      "#7aa555",
+      "#628f45",
+      "#86ad5f",
+      "#5c8540"
+    ],
+    "auto": [
+      "#d9d9d6",
+      "#2b2d31",
+      "#8e949b",
+      "#b3202a",
+      "#1f4e8c",
+      "#f2f2ef",
+      "#5b6770",
+      "#6b4f2e",
+      "#c9b27c"
+    ],
+    "stub": "#55595e",
+    "svjetiljka": "#d8d4c8",
+    "klupa": "#8a6440",
+    "kontejner": [
+      "#3e6b3c",
+      "#5a5f63"
+    ]
   }
 }

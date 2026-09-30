@@ -15,6 +15,7 @@ import { napraviMrezu, najblizaIvica } from "@/lib/game/grad/mreza";
 import { procitaj, type Paket } from "@/lib/game/grad/paket";
 import { napraviPovrsinu, ulicaNa, type Povrsina } from "@/lib/game/grad/povrsina";
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
+import type { BojeDekora } from "@/lib/game/grad/dekor";
 import type { Palete, ZonaPalete } from "@/lib/game/grad/zgrade";
 import type { GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
 import { haptika } from "@/lib/game/ui/haptika";
@@ -82,7 +83,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       // Izgled zgrada je podatak: palete i zone (sa paletom po zoni).
       const [spisak, palete, zone] = await Promise.all([
         json<Record<string, { fajl: string }>>("/data/grad/gradovi.json"),
-        json<Palete>("/data/grad/palete.json"),
+        json<Palete & { dekor: BojeDekora }>("/data/grad/palete.json"),
         json<{ zone: ZonaPalete[] }>(`/data/grad/cityZones/${GRAD}.json`),
       ]);
       const fajl = spisak[GRAD]?.fajl;

@@ -1756,3 +1756,51 @@ export const GRAD_ZEBRA_VRSTE: readonly string[] = ["uncontrolled", "zebra", "ma
 /** Strelice na traci: koliko prije linija raskrsnice počinju, i dužina strelice [m]. */
 export const GRAD_STRELICA_OD_KRAJA = 6;
 export const GRAD_STRELICA_DUZINA = 5;
+
+// ── dekor grada (faza 6, stavka 4c) ─────────────────────────────────────────
+
+/** Razmak stabala u drvoredu (OSM `natural=tree_row`) [m]. */
+export const GRAD_DRVORED_RAZMAK = 8;
+/**
+ * Koliko m² površine pripada jednom stablu, po vrsti površine. Šuma je rjeđa
+ * nego što bi bila u stvarnosti: brdo Gorica bi inače bilo stotine hiljada
+ * temena, a iz vazduha ionako izgleda kao zelena masa.
+ */
+export const GRAD_STABLO_PO_POVRSINI: Readonly<Record<string, number>> = {
+  park: 140,
+  suma: 110,
+  groblje: 220,
+  igraliste: 400,
+  trava: 900,
+};
+/** Najviše stabala po tile-u — gornja granica za brzinu crtanja. */
+export const GRAD_STABALA_NAJVISE = 1800;
+/** Krošnja: poluprečnik [m] od–do, i visina [m] od–do. */
+export const GRAD_KROSNJA_R = [1.8, 3.4] as const;
+export const GRAD_KROSNJA_H = [5, 10] as const;
+/** Ulična rasvjeta: razmak stubova [m], visina stuba [m]. */
+export const GRAD_RASVJETA_RAZMAK = 32;
+export const GRAD_RASVJETA_VISINA = 8;
+/** Klase ulica koje imaju uličnu rasvjetu (dekor; noću svijetli, stavka 4d). */
+export const GRAD_RASVJETA_KLASE: readonly string[] = [
+  "motorway",
+  "trunk",
+  "primary",
+  "secondary",
+  "tertiary",
+  "residential",
+  "unclassified",
+  "living_street",
+];
+/** Kontejneri uz stambene ulice: jedan na ovoliko metara ulice, po sjemenu [m]. */
+export const GRAD_KONTEJNER_RAZMAK = 140;
+/** Klupa u parku: jedna na ovoliko m² parka. */
+export const GRAD_KLUPA_PO_POVRSINI = 900;
+/** Parking: dubina mjesta, širina mjesta i prolaz između redova [m]. */
+export const GRAD_PARKING_DUBINA = 5;
+export const GRAD_PARKING_SIRINA = 2.6;
+export const GRAD_PARKING_PROLAZ = 6;
+/** Koliki dio parking mjesta je zauzet (po sjemenu). */
+export const GRAD_PARKING_ZAUZETO = 0.6;
+/** Visina parkiranog auta [m] — i krov auta se naginje u 2.5D. */
+export const GRAD_AUTO_VISINA = 1.45;

@@ -15,6 +15,8 @@ import {
 } from "../sim/config";
 import type { Point } from "../sim/types";
 import type { Paket } from "../grad/paket";
+import { geometrijaDekora, type BojeDekora } from "../grad/dekor";
+import type { Temena } from "../grad/temena";
 import { krajeviLinija, linijeIvice, streliceIvice, zebra, type Poligon } from "../grad/oznake";
 import type { Povrsina } from "../grad/povrsina";
 import {
@@ -22,7 +24,6 @@ import {
   geometrijaZgrada,
   zgrada,
   type Palete,
-  type Temena,
   type Zgrada,
   type ZonaPalete,
 } from "../grad/zgrade";
@@ -141,7 +142,7 @@ void main() {
 
 /** Izgled zgrada: palete i zone iz podataka. */
 export interface IzgledGrada {
-  palete: Palete;
+  palete: Palete & { dekor: BojeDekora };
   zone: ZonaPalete[];
 }
 
@@ -294,9 +295,12 @@ export async function createGradRenderer(
   // tako preklop dvije sjenke nije tamniji od jedne.
   const sSjene = new Container();
   sSjene.filters = [new AlphaFilter({ alpha: GRAD_SJENKA_ALFA })];
+  // Dekor (drveće, rasvjeta, parkirani auti) ide ispod zgrada: visoka zgrada
+  // se naginje preko stabla, a ne obrnuto.
+  const sDekor = new Container();
   const sZgrade = new Container();
   const dinamika = new Graphics();
-  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sSjene, sZgrade, dinamika);
+  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sSjene, sDekor, sZgrade, dinamika);
 
   // Oznake na kolovozu: linije staju pred raskrsnicom; prelazi su objekti paketa.
   const odsjeci = krajeviLinija(mreza);
@@ -407,15 +411,35 @@ export async function createGradRenderer(
     }
     const zgrade = mesh(geometrijaZgrada(lista, triangulisi)) ?? new Container();
     const sjene = mesh(geometrijaSjenki(lista, triangulisi)) ?? new Container();
+    const d = geometrijaDekora(
+      {
+        paket,
+        povrsina,
+        povrsine: tile.povrsine,
+        linije: tile.linije,
+        ivice: tile.ivice
+          .filter((i) => mreza.ivice[i]!.vozna)
+          .map((i) => ({ iv: mreza.ivice[i]!, odA: odsjeci[2 * i]!, odB: odsjeci[2 * i + 1]! })),
+        zgrade: lista,
+        boje: izgled.palete.dekor,
+      },
+      triangulisi,
+    );
+    const dekor = mesh(d.dekor) ?? new Container();
+    const sjeneDekora = mesh(d.sjene) ?? new Container();
     sPovrsine.addChild(povrsine);
     sVoda.addChild(voda);
     sTrotoari.addChild(trotoari);
     sUlice.addChild(ulice);
     sOznake.addChild(oznake);
     sIznad.addChild(iznad);
-    sSjene.addChild(sjene);
+    sSjene.addChild(sjene, sjeneDekora);
+    sDekor.addChild(dekor);
     sZgrade.addChild(zgrade);
-    return { slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, zgrade], vidjen: kadar };
+    return {
+      slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, sjeneDekora, dekor, zgrade],
+      vidjen: kadar,
+    };
   };
 
   const srusi = (t: number) => {
