@@ -15,7 +15,7 @@
     },
     {
       "sek": 20,
-      "kmh": 2,
+      "kmh": 0,
       "ulica": "Vučedolska",
       "fps": 60
     },
@@ -51,7 +51,7 @@
     },
     {
       "sek": 80,
-      "kmh": 1,
+      "kmh": 0,
       "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     }
@@ -59,21 +59,20 @@
   "start": {
     "kmh": 0,
     "ulica": "Vučedolska",
-    "fps": 55
+    "fps": 56
   },
-  "skretanja": 5,
+  "skretanja": 6,
   "izvlacenja": 5,
   "rikverc": {
     "kmhUnazad": 11,
     "natpis": true,
-    "kmhNaprijedPoslije": 16,
+    "kmhNaprijedPoslije": 15,
     "natpisPoslije": false
   },
   "zumFps": 60,
   "ulice": [
     "Vučedolska",
-    "Bulevar Stanka Dragojevića",
-    "bez imena"
+    "Bulevar Stanka Dragojevića"
   ],
   "greske": []
 }

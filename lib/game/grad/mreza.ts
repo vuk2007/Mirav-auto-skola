@@ -31,6 +31,16 @@ export interface Ivica {
   sirina: number;
   /** Da li je broj traka iz OSM-a ili pretpostavljen po klasi. */
   trakePoznate: boolean;
+  /**
+   * Trake u smjeru `a → b` i `b → a`. Kad OSM ne kaže podjelu, dvosmjerna
+   * ulica se dijeli na pola (neparan broj: jedna više u smjeru `a → b`). Ovo je
+   * mjera za crtanje oznaka; pravila ne sude po pretpostavljenom broju.
+   */
+  trakeNaprijed: number;
+  trakeNazad: number;
+  /** `turn:lanes` u smjeru `a → b` i `b → a`, lijevo nadesno; prazno kad ih nema. */
+  skretanjaNaprijed: string;
+  skretanjaNazad: string;
   vozna: boolean;
   kruzni: boolean;
   ime: string;
@@ -45,12 +55,24 @@ export interface Mreza {
   izCvora: number[][];
 }
 
-/** Širina kolovoza ivice [m]. */
-function sirinaKolovoza(p: Paket, i: number, klasa: string): { sirina: number; poznate: boolean } {
+/** Širina kolovoza ivice [m] i broj traka po smjeru. */
+function sirinaKolovoza(
+  p: Paket,
+  i: number,
+  klasa: string,
+): { sirina: number; poznate: boolean; naprijed: number; nazad: number } {
   const n = p.n;
   const poznato = n.ivTrake[i]! || n.ivTrakeNaprijed[i]! + n.ivTrakeNazad[i]!;
   const trake = poznato || GRAD_TRAKE_PO_KLASI[klasa] || 2;
-  return { sirina: Math.max(GRAD_NAJUZA_ULICA, trake * GRAD_SIRINA_TRAKE), poznate: poznato > 0 };
+  const smjer = n.ivSmjer[i]!;
+  let naprijed: number;
+  let nazad: number;
+  if (smjer > 0) [naprijed, nazad] = [trake, 0];
+  else if (smjer < 0) [naprijed, nazad] = [0, trake];
+  else if (n.ivTrakeNaprijed[i]! > 0 && n.ivTrakeNazad[i]! > 0) [naprijed, nazad] = [n.ivTrakeNaprijed[i]!, n.ivTrakeNazad[i]!];
+  else if (trake < 2) [naprijed, nazad] = [1, 1]; // uska dvosmjerna: po traka u svakom smjeru, bez linije
+  else [naprijed, nazad] = [Math.ceil(trake / 2), Math.floor(trake / 2)];
+  return { sirina: Math.max(GRAD_NAJUZA_ULICA, trake * GRAD_SIRINA_TRAKE), poznate: poznato > 0, naprijed, nazad };
 }
 
 export function napraviMrezu(p: Paket): Mreza {
@@ -64,7 +86,7 @@ export function napraviMrezu(p: Paket): Mreza {
     for (let k = n.ivOd[i]!; k < n.ivOd[i + 1]!; k++) tacke.push({ x: n.ivXY[2 * k]!, y: n.ivXY[2 * k + 1]! });
     const cum = cumulative(tacke);
     const klasa = p.zaglavlje.klase[n.ivKlasa[i]!] ?? "road";
-    const { sirina, poznate } = sirinaKolovoza(p, i, klasa);
+    const { sirina, poznate, naprijed, nazad } = sirinaKolovoza(p, i, klasa);
     const smjer = n.ivSmjer[i]!;
     ivice.push({
       i,
@@ -77,6 +99,10 @@ export function napraviMrezu(p: Paket): Mreza {
       smjer: smjer > 0 ? 1 : smjer < 0 ? -1 : 0,
       sirina,
       trakePoznate: poznate,
+      trakeNaprijed: naprijed,
+      trakeNazad: nazad,
+      skretanjaNaprijed: p.zaglavlje.stringovi[n.ivTrakeSkretanja[i]!] ?? "",
+      skretanjaNazad: p.zaglavlje.stringovi[n.ivTrakeSkretanjaNazad[i]!] ?? "",
       vozna: (n.ivZastavice[i]! & IVICA_VOZNA) !== 0,
       kruzni: (n.ivZastavice[i]! & IVICA_KRUZNI) !== 0,
       ime: p.zaglavlje.stringovi[n.ivIme[i]!] ?? "",

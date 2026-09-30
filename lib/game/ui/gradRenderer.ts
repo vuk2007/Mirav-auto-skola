@@ -11,9 +11,11 @@ import {
   GRAD_SJENKA_ALFA,
   GRAD_SPRAT,
   GRAD_TROTOAR,
+  GRAD_ZEBRA_VRSTE,
 } from "../sim/config";
 import type { Point } from "../sim/types";
 import type { Paket } from "../grad/paket";
+import { krajeviLinija, linijeIvice, streliceIvice, zebra, type Poligon } from "../grad/oznake";
 import type { Povrsina } from "../grad/povrsina";
 import {
   geometrijaSjenki,
@@ -47,6 +49,7 @@ const BOJE = {
   trotoar: "#d3cec4",
   asfalt: "#8a8984",
   pjesacka: "#cfc6b6",
+  oznaka: "#f2f0ea",
   voda: "#9cc7e6",
   igrac: "#2f6fd0",
 } as const;
@@ -199,6 +202,7 @@ export interface GradRenderer {
 interface Tile {
   okvir: Okvir;
   zgrade: [number, number];
+  objekti: [number, number];
   povrsine: [number, number];
   linije: [number, number];
   ivice: number[];
@@ -243,6 +247,7 @@ export async function createGradRenderer(
     tileovi.push({
       okvir: prazanOkvir(),
       zgrade: opseg(n.zgTileOd, t),
+      objekti: opseg(n.obTileOd, t),
       povrsine: opseg(n.pvTileOd, t),
       linije: opseg(n.lnTileOd, t),
       ivice: [],
@@ -283,6 +288,7 @@ export async function createGradRenderer(
   const sVoda = new Container();
   const sTrotoari = new Container();
   const sUlice = new Container();
+  const sOznake = new Container();
   const sIznad = new Container();
   // Sjenke se crtaju punom crnom, a providnost dobija cijeli sloj odjednom —
   // tako preklop dvije sjenke nije tamniji od jedne.
@@ -290,7 +296,12 @@ export async function createGradRenderer(
   sSjene.filters = [new AlphaFilter({ alpha: GRAD_SJENKA_ALFA })];
   const sZgrade = new Container();
   const dinamika = new Graphics();
-  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sIznad, sSjene, sZgrade, dinamika);
+  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sSjene, sZgrade, dinamika);
+
+  // Oznake na kolovozu: linije staju pred raskrsnicom; prelazi su objekti paketa.
+  const odsjeci = krajeviLinija(mreza);
+  const vrstaPrelaza = z.vrsteObjekata.indexOf("crossing");
+  const zebraKodovi = new Set(GRAD_ZEBRA_VRSTE.map((v) => z.stringovi.indexOf(v)).filter((k) => k >= 0));
 
   const uniforme = new UniformGroup({
     uKamera: { value: new Float32Array(2), type: "vec2<f32>" },
@@ -373,6 +384,22 @@ export async function createGradRenderer(
       trotoari.stroke({ width: 2 * TROTOAR, color: BOJE.trotoar, cap: "round" });
       ulice.poly([u.a.x, u.a.y, u.b.x, u.b.y, u.c.x, u.c.y]).fill(BOJE.asfalt);
     }
+    const oznake = new Graphics();
+    const oboji = (poligoni: Poligon[]) => {
+      for (const p of poligoni) oznake.poly(p.flatMap((t) => [t.x, t.y]));
+      if (poligoni.length > 0) oznake.fill(BOJE.oznaka);
+    };
+    for (const i of tile.ivice) {
+      const iv = mreza.ivice[i]!;
+      if (!iv.vozna) continue;
+      oboji(linijeIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
+      oboji(streliceIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
+    }
+    for (let o = tile.objekti[0]; o < tile.objekti[1]; o++) {
+      if (n.obVrsta[o] !== vrstaPrelaza || !zebraKodovi.has(n.obPodatak[o]!)) continue;
+      oboji(zebra(povrsina, n.obXY[2 * o]!, n.obXY[2 * o + 1]!));
+    }
+
     const lista: Zgrada[] = [];
     for (let i = tile.zgrade[0]; i < tile.zgrade[1]; i++) {
       const z = zgrada(paket, i, povrsina, izgled.palete, izgled.zone);
@@ -384,10 +411,11 @@ export async function createGradRenderer(
     sVoda.addChild(voda);
     sTrotoari.addChild(trotoari);
     sUlice.addChild(ulice);
+    sOznake.addChild(oznake);
     sIznad.addChild(iznad);
     sSjene.addChild(sjene);
     sZgrade.addChild(zgrade);
-    return { slojevi: [povrsine, voda, trotoari, ulice, iznad, sjene, zgrade], vidjen: kadar };
+    return { slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, zgrade], vidjen: kadar };
   };
 
   const srusi = (t: number) => {

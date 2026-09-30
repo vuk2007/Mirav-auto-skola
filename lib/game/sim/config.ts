@@ -1726,3 +1726,33 @@ export const GRAD_PROZOR_RAZMAK = 2.6;
  * puni. Iz daleka bi mreža prozora bila samo treperenje.
  */
 export const GRAD_PROZOR_PIKSELA = 5;
+
+// ── oznake na kolovozu (faza 6, stavka 4b) ─────────────────────────────────
+
+/**
+ * Širina linije na kolovozu [m]. Stvarna je 0,10–0,15 m; ovdje je na gornjoj
+ * granici, jer su i trake šire nego u stvarnosti (`GRAD_SIRINA_TRAKE`).
+ */
+export const GRAD_LINIJA_SIRINA = 0.15;
+/** Isprekidana linija u gradu: crtica i razmak [m]. */
+export const GRAD_CRTICA = 3;
+export const GRAD_CRTICA_RAZMAK = 5;
+/**
+ * Linije staju ovoliko prije raskrsnice, preko pola najšire poprečne ulice [m]
+ * — u samoj raskrsnici nema linija.
+ */
+export const GRAD_LINIJE_OD_RASKRSNICE = 1;
+/** Zebra: dubina (duž ulice), širina pruge i razmak [m]. */
+export const GRAD_ZEBRA_DUBINA = 3;
+export const GRAD_ZEBRA_PRUGA = 0.5;
+/** Najdalje od osovine ulice [m] na kojem se čvor prelaza još vezuje za tu ulicu. */
+export const GRAD_ZEBRA_DO_ULICE = 3;
+/**
+ * Vrste prelaza (`crossing=*`) koje su obilježene zebrom. `unmarked`, `no`,
+ * `informal` nisu, a prelaz bez vrste (`yes` ili ništa) se ne crta — ne zna se
+ * da li ga ima na asfaltu, a nacrtan prelaz je i pravilo (stavka 5).
+ */
+export const GRAD_ZEBRA_VRSTE: readonly string[] = ["uncontrolled", "zebra", "marked", "traffic_signals"];
+/** Strelice na traci: koliko prije linija raskrsnice počinju, i dužina strelice [m]. */
+export const GRAD_STRELICA_OD_KRAJA = 6;
+export const GRAD_STRELICA_DUZINA = 5;

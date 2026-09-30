@@ -228,10 +228,10 @@ export function naPovrsini(p: Povrsina, x: number, y: number): boolean {
  * Kod jednako bliskih, onaj sa manjim indeksom — da odgovor ne zavisi od reda
  * obilaska ćelija.
  */
-function najbliziSegment(p: Povrsina, x: number, y: number): number {
+function najbliziSegment(p: Povrsina, x: number, y: number, do_ = GRAD_ULICA_DO): number {
   const cx = celija(x);
   const cy = celija(y);
-  let naj = GRAD_ULICA_DO * GRAD_ULICA_DO;
+  let naj = do_ * do_;
   let seg = -1;
   for (let ox = -1; ox <= 1; ox++) {
     for (let oy = -1; oy <= 1; oy++) {
@@ -252,6 +252,35 @@ function najbliziSegment(p: Povrsina, x: number, y: number): number {
 export function ulicaNa(p: Povrsina, x: number, y: number): number | null {
   const j = najbliziSegment(p, x, y);
   return j < 0 ? null : p.segIvica[j]!;
+}
+
+/**
+ * Najbliža osovina vozne ulice do `do_` metara: ivica, tačka na osovini,
+ * pravac (u smjeru crtanja) i pola širine kolovoza. `null` kad je nema.
+ */
+export function najblizaOsa(
+  p: Povrsina,
+  x: number,
+  y: number,
+  do_: number,
+): { ivica: number; tacka: Point; pravac: Point; pola: number } | null {
+  const j = najbliziSegment(p, x, y, do_);
+  if (j < 0) return null;
+  const s = p.seg;
+  const ax = s[5 * j]!;
+  const ay = s[5 * j + 1]!;
+  const dx = s[5 * j + 2]! - ax;
+  const dy = s[5 * j + 3]! - ay;
+  const l2 = dx * dx + dy * dy;
+  if (l2 === 0) return null;
+  const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2));
+  const l = Math.sqrt(l2);
+  return {
+    ivica: p.segIvica[j]!,
+    tacka: { x: ax + dx * t, y: ay + dy * t },
+    pravac: { x: dx / l, y: dy / l },
+    pola: s[5 * j + 4]!,
+  };
 }
 
 /** Pravac osovine ulice najbliže tački (jedinični, u smjeru crtanja); `null` van ulica. */
