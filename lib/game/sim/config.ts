@@ -1885,3 +1885,35 @@ export const GRAD_SEMAFOR_VISINA = 3.5;
 export const GRAD_SEMAFOR_VELICINA = 1.4;
 /** Znakovi bliži od ovoga [m] dijele jedan stub. */
 export const GRAD_ZNAK_ISTI_STUB = 1.5;
+
+// ── sudija u gradu (faza 6, stavka 5d) ─────────────────────────────────────
+
+/**
+ * Tolerancija brzine po nivou [km/h] (zadatak, odjeljak 5: nivo 1 +10, nivo 5
+ * +3; između ravnomjerno).
+ */
+export const GRAD_TOLERANCIJA_BRZINE: Readonly<Record<Level, number>> = { 1: 10, 2: 8, 3: 6, 4: 4, 5: 3 };
+/** Ograničenje u naselju kad ga OSM i zona nemaju [km/h] (ZOBS; `cityZones` → `podrazumijevano`). */
+export const GRAD_BRZINA_PODRAZUMIJEVANA = 50;
+/** Nivo slobodne vožnje po gradu dok ga igrač ne promijeni. */
+export const GRAD_NIVO: Level = 3;
+/** Koliko dugo mora trajati prekoračenje da bi se prijavilo [s] — ne trzaj pedale. */
+export const GRAD_BRZINA_TRAJE = 1;
+/** Pogrešan smjer u jednosmjernoj: koliko dugo i od koje brzine [s, m/s]. */
+export const GRAD_SUPROTNO_TRAJE = 1;
+export const GRAD_SUPROTNO_BRZINA = 1;
+/** Lijeva strana dvosmjerne ulice: koliko dugo je dozvoljeno (odluka korisnika) [s]. */
+export const GRAD_LIJEVO_TRAJE = 3;
+/** Zaustavljanje na zebri, u raskrsnici, na stajalištu: koliko dugo je dozvoljeno (odluka korisnika) [s]. */
+export const GRAD_STAJANJE_TRAJE = 2;
+/** Dužina autobuskog stajališta duž ulice [m]; stajalište je na strani na kojoj je OSM tačka. */
+export const GRAD_STAJALISTE_DUZINA = 20;
+/** Najdalje od osovine ulice [m] na kojem se auto još vezuje za tu ulicu. */
+export const GRAD_SUDIJA_DO_ULICE = 12;
+/** Usporenje kojim vozač-bot u gradu staje [m/s²] — udobno, ispod `B_MAX`. */
+export const GRAD_VOZAC_USPORENJE = 2.5;
+/**
+ * Izlazak iz raskrsnice na krak se potvrđuje tek kad je auto cijeli van nje i
+ * još ovoliko dalje [m] — polukružno smije kratko zaći u susjedni krak.
+ */
+export const GRAD_IZLAZ_POTVRDA = 6;

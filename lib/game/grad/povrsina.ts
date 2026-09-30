@@ -39,6 +39,8 @@ export interface Povrsina {
   seg: Float64Array;
   /** Ivica kojoj segment pripada. */
   segIvica: Uint32Array;
+  /** Redni broj segmenta unutar njegove ivice — za položaj duž ivice. */
+  segK: Uint32Array;
   /** Po ćeliji: indeksi segmenata i (negativni, −1 − i) uglova koji je dodiruju. */
   celije: Map<number, number[]>;
 }
@@ -63,6 +65,7 @@ export function napraviPovrsinu(m: Mreza): Povrsina {
   for (const iv of vozne) brojSeg += Math.max(0, iv.tacke.length - 1);
   const seg = new Float64Array(brojSeg * 5);
   const segIvica = new Uint32Array(brojSeg);
+  const segK = new Uint32Array(brojSeg);
   const celije = new Map<number, number[]>();
 
   let j = 0;
@@ -73,6 +76,7 @@ export function napraviPovrsinu(m: Mreza): Povrsina {
       const b = iv.tacke[k + 1]!;
       seg.set([a.x, a.y, b.x, b.y, pola], 5 * j);
       segIvica[j] = iv.i;
+      segK[j] = k;
       upisi(celije, Math.min(a.x, b.x) - pola, Math.min(a.y, b.y) - pola, Math.max(a.x, b.x) + pola, Math.max(a.y, b.y) + pola, j);
       j += 1;
     }
@@ -92,7 +96,7 @@ export function napraviPovrsinu(m: Mreza): Povrsina {
       uglovi.push(u);
     }
   }
-  return { mreza: m, uglovi, seg, segIvica, celije };
+  return { mreza: m, uglovi, seg, segIvica, segK, celije };
 }
 
 /** Krak raskrsnice: pravac ulice iz čvora (jedinični) i pola njene širine. */
@@ -263,7 +267,7 @@ export function najblizaOsa(
   x: number,
   y: number,
   do_: number,
-): { ivica: number; tacka: Point; pravac: Point; pola: number } | null {
+): { ivica: number; tacka: Point; pravac: Point; pola: number; s: number; bok: number } | null {
   const j = najbliziSegment(p, x, y, do_);
   if (j < 0) return null;
   const s = p.seg;
@@ -277,6 +281,10 @@ export function najblizaOsa(
   const l = Math.sqrt(l2);
   return {
     ivica: p.segIvica[j]!,
+    /** Metara od početka ivice (`a`) do tačke na osovini. */
+    s: p.mreza.ivice[p.segIvica[j]!]!.cum[p.segK[j]!]! + t * l,
+    /** Koliko je tačka desno od osovine (u smjeru `a → b`) [m]; lijevo je negativno. */
+    bok: ((x - ax) * -dy + (y - ay) * dx) / l,
     tacka: { x: ax + dx * t, y: ay + dy * t },
     pravac: { x: dx / l, y: dy / l },
     pola: s[5 * j + 4]!,

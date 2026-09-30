@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { SCENARIOS, scenarioById } from "@/lib/game/scenarios";
@@ -8,9 +9,14 @@ import { loadGameProgress, saveGameAttempt, type GameProgressMap } from "@/lib/s
 import GameScreen from "./GameScreen";
 import ScenarioPicker from "./ScenarioPicker";
 import ShiftScreen from "./ShiftScreen";
-import GradScreen from "./GradScreen";
 import RouteScreen from "./RouteScreen";
 import TripScreen from "./TripScreen";
+
+/**
+ * Grad (faza 6) se učitava tek kad se otvori: model raskrsnica, sudija,
+ * zgrade i dekor su desetine kilobajta koje ostali modovi igre ne trebaju.
+ */
+const GradScreen = dynamic(() => import("./GradScreen"), { ssr: false });
 
 /**
  * Igra „Prođi raskrsnicu" — spisak situacija i jedna situacija u toku.

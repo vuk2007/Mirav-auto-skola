@@ -10,6 +10,7 @@
 //  - volan okreće auto (3c): skretanje volanom mijenja ulicu;
 //  - rikverc: kočnica držana u mjestu vozi unazad, a na ekranu piše „Rikverc";
 //  - doba dana i kiša (4d): snimci, i napomena o dužem zaustavnom putu po kiši;
+//  - sudija (5d): kartica prekršaja se pojavi, brojač broji (robot vozi naslijepo);
 //  - nijedna greška u konzoli.
 // Snimci se prave svakih nekoliko sekundi — za pregled mape (stop tačka).
 
@@ -65,6 +66,7 @@ let fazaDo = 0;
 let strana = "ArrowRight";
 let stojiOd = null;
 izvj.skretanja = 0;
+izvj.prekrsaji = [];
 izvj.izvlacenja = 0;
 while (Date.now() - pocetak < 90000) {
   const s = await stanje();
@@ -105,6 +107,15 @@ while (Date.now() - pocetak < 90000) {
     }
   }
   ulice.add(s.ulica);
+  // Kartica prekršaja (stavka 5d): snimak prve, i naslovi svih viđenih.
+  const alert = page.getByRole("alert");
+  if (await alert.count()) {
+    const naslov = (await alert.locator("p").first().innerText()).trim();
+    if (!izvj.prekrsaji.includes(naslov)) {
+      izvj.prekrsaji.push(naslov);
+      if (izvj.prekrsaji.length === 1) await page.locator("main canvas").locator("..").screenshot({ path: "grad-prekrsaj.png" });
+    }
+  }
   if (sek > 10 * (snimak + 1)) {
     snimak += 1;
     await page.locator("main canvas").locator("..").screenshot({ path: `grad-${String(snimak).padStart(2, "0")}.png` });
@@ -154,6 +165,7 @@ for (let z = 1; z <= 4; z++) {
   await page.locator("main canvas").locator("..").screenshot({ path: `grad-zum-${z}.png` });
 }
 izvj.zumFps = (await stanje()).fps;
+izvj.brojPrekrsaja = Number(/Prekršaji: (\d+)/.exec(await page.locator("main").innerText())?.[1] ?? -1);
 izvj.ulice = [...ulice];
 izvj.greske = greske;
 await browser.close();

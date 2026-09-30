@@ -1,7 +1,7 @@
 import { GRAD_ZEBRA_VRSTE } from "../sim/config";
 import type { Point } from "../sim/types";
 import { napraviMrezu, type Mreza } from "./mreza";
-import { BEZ, IVICA_KRUZNI, IVICA_VOZNA, prazniNizovi, type Paket } from "./paket";
+import { BEZ, IVICA_KRUZNI, IVICA_MOST, IVICA_VOZNA, prazniNizovi, type Paket } from "./paket";
 
 /**
  * Mala mreža za testove: čvorovi i ivice kao prave linije između njih. Sve
@@ -59,6 +59,7 @@ export interface TestIvica {
   smjer?: -1 | 0 | 1;
   trake?: number;
   kruzni?: boolean;
+  most?: boolean;
 }
 
 export interface TestObjekat {
@@ -96,7 +97,9 @@ export function testPaket(
   n.ivTrakeNaprijed = new Uint8Array(ivice.length);
   n.ivTrakeNazad = new Uint8Array(ivice.length);
   n.ivBrzina = new Uint8Array(ivice.length);
-  n.ivZastavice = new Uint8Array(ivice.map((e) => IVICA_VOZNA | (e.kruzni ? IVICA_KRUZNI : 0)));
+  n.ivZastavice = new Uint8Array(
+    ivice.map((e) => IVICA_VOZNA | (e.kruzni ? IVICA_KRUZNI : 0) | (e.most ? IVICA_MOST : 0)),
+  );
   n.ivSloj = new Int8Array(ivice.length);
   n.ivIme = new Uint16Array(ivice.length);
   n.ivTrakeSkretanja = new Uint16Array(ivice.length);

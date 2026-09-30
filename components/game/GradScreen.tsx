@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import {
   DT,
+  GRAD_BRZINA_PODRAZUMIJEVANA,
+  GRAD_NIVO,
   GRAD_POLA_KADRA,
   GRAD_ZUM,
   HUD_HZ,
   KAMERA_NAPRIJED,
   KAMERA_NAPRIJED_BRZINA,
+  type Level,
 } from "@/lib/game/sim/config";
 import type { Point } from "@/lib/game/sim/types";
 import { napraviMrezu, najblizaIvica } from "@/lib/game/grad/mreza";
@@ -16,7 +19,9 @@ import { procitaj, type Paket } from "@/lib/game/grad/paket";
 import { krajeviLinija } from "@/lib/game/grad/oznake";
 import { napraviPovrsinu, ulicaNa, type Povrsina } from "@/lib/game/grad/povrsina";
 import { napraviRaskrsnice, zabraneSkretanja } from "@/lib/game/grad/raskrsnica";
+import { gradZaSudiju, noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { crtezPravila } from "@/lib/game/grad/znakovi";
+import { naslovPrekrsaja, praviloPrekrsaja } from "@/lib/game/ui/gradPrekrsaji";
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
 import type { BojeDekora } from "@/lib/game/grad/dekor";
 import type { Palete, ZonaPalete } from "@/lib/game/grad/zgrade";
@@ -47,6 +52,10 @@ interface Hud {
 
 /** Trzaj telefona pri udaru u ivičnjak [ms] — samo kad udar počne, ne dok struže. */
 const UDAR_HAPTIKA = 30;
+/** Trzaj telefona pri prekršaju [ms]. */
+const PREKRSAJ_HAPTIKA = 80;
+/** Koliko dugo se kartica zadnjeg prekršaja vidi preko mape [ms]. */
+const KARTICA_MS = 6000;
 
 /**
  * Slobodna vožnja kroz Podgoricu, u razmjeri 1:1 — faza 6, stavka 3.
@@ -63,6 +72,12 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const [faza, setFaza] = useState<Faza>("ucitavam");
   const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null });
   const [ogranicenje, setOgranicenje] = useState<number | null>(null);
+  // Sudija (stavka 5d): prekršaji ove vožnje, zadnji se kratko prikaže.
+  const [prekrsaji, setPrekrsaji] = useState<GradskiPrekrsaj[]>([]);
+  const [kartica, setKartica] = useState<GradskiPrekrsaj | null>(null);
+  const [nivo, setNivo] = useState<Level>(GRAD_NIVO);
+  const nivoRef = useRef<Level>(GRAD_NIVO);
+  nivoRef.current = nivo;
   const inputRef = volan.inputRef;
   // Udaljavanje kadra — da se grad može pregledati, ne samo voziti. Ide kroz
   // `ref`, jer ga petlja čita svakog kadra.
@@ -74,6 +89,12 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const [kisa, setKisa] = useState(false);
   const uslovRef = useRef({ doba, kisa });
   uslovRef.current = { doba, kisa };
+
+  useEffect(() => {
+    if (!kartica) return;
+    const id = window.setTimeout(() => setKartica(null), KARTICA_MS);
+    return () => window.clearTimeout(id);
+  }, [kartica]);
 
   useEffect(() => {
     let otkazano = false;
@@ -106,6 +127,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const raskrsnice = napraviRaskrsnice(paket, mreza, odsjeci);
       const zabrane = zabraneSkretanja(paket);
       const crtez = crtezPravila(povrsina, raskrsnice, zabrane, odsjeci);
+      const zaSudiju = gradZaSudiju(paket, povrsina, raskrsnice, zabrane, odsjeci);
+      const sudija = noviSudija(nivoRef.current);
+      let prijavljeno = 0;
       if (otkazano) return;
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -166,6 +190,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           prije = sada;
           korakSlobodno(povrsina, st, inputRef.current, { kisa: uslovRef.current.kisa });
           koraka_ += 1;
+          sudija.nivo = nivoRef.current;
+          sudi(zaSudiju, sudija, st, koraka_ * DT);
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
           bioUdar = st.udar;
@@ -222,7 +248,15 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           ulica = ulicaNa(povrsina, st.x, st.y) ?? ulica;
           const iv = mreza.ivice[ulica]!;
           setHud({ kmh: Math.abs(st.v) * 3.6, ulica: iv.ime, rikverc: st.rikverc, fps: debug ? fps : null });
-          setOgranicenje(iv.brzina);
+          // Ograničenje po kojem sudija sudi: iz OSM-a, a bez njega ono u naselju.
+          setOgranicenje(iv.brzina ?? GRAD_BRZINA_PODRAZUMIJEVANA);
+          if (sudija.prekrsaji.length > prijavljeno) {
+            const novi = sudija.prekrsaji.slice(prijavljeno);
+            prijavljeno = sudija.prekrsaji.length;
+            setPrekrsaji([...sudija.prekrsaji]);
+            setKartica(novi[novi.length - 1]!);
+            haptika(PREKRSAJ_HAPTIKA);
+          }
         }
       };
       raf = requestAnimationFrame(kadar);
@@ -266,6 +300,19 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             <p className="rounded border border-line bg-panel px-3 py-2 text-sm font-semibold">
               {faza === "ucitavam" ? t.gradLoading : faza === "bezWebgl" ? t.gradNoWebgl : t.gradFailed}
             </p>
+          </div>
+        )}
+        {faza === "voznja" && kartica && (
+          <div
+            role="alert"
+            className={`absolute top-2 right-2 max-w-[18rem] rounded border p-2 text-xs shadow ${
+              kartica.ozbiljnost === "fail" ? "border-red bg-red-soft" : "border-line bg-paper"
+            }`}
+          >
+            <p className={`font-display font-bold ${kartica.ozbiljnost === "fail" ? "text-red" : "text-muted"}`}>
+              {naslovPrekrsaja(kartica, t)}
+            </p>
+            <p className="mt-1">{praviloPrekrsaja(kartica, t)}</p>
           </div>
         )}
         {faza === "voznja" && (
@@ -313,6 +360,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
                 {t.gradRainNote}
               </p>
             )}
+            <p className="rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold" aria-live="polite">
+              {t.gradViolations}: {prekrsaji.length}
+            </p>
           </div>
         )}
       </div>
@@ -337,6 +387,23 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               className={`rounded border px-2 py-1 font-semibold ${doba === d ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
             >
               {ime}
+            </button>
+          ))}
+        </fieldset>
+        <fieldset className="flex items-center gap-1">
+          <legend className="sr-only">{t.gradLevel}</legend>
+          <span className="mr-1 text-muted" aria-hidden>
+            {t.gradLevel}:
+          </span>
+          {([1, 2, 3, 4, 5] as const).map((n) => (
+            <button
+              key={n}
+              type="button"
+              aria-pressed={nivo === n}
+              onClick={() => setNivo(n)}
+              className={`h-8 w-8 rounded border font-semibold ${nivo === n ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+            >
+              {n}
             </button>
           ))}
         </fieldset>

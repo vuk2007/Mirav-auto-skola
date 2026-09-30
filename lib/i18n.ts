@@ -232,6 +232,26 @@ export interface Dict {
   gradSun: string;
   gradRain: string;
   gradRainNote: string;
+  gradLevel: string;
+  gradViolations: string;
+  vioWrongWay: string;
+  vioTurnBan: string;
+  vioUTurn: string;
+  vioWrongSide: string;
+  vioStopping: string;
+  gradRuleRed: string;
+  gradRuleAmber: string;
+  gradRuleStop: string;
+  gradRuleWrongWay: string;
+  gradRuleTurnBan: string;
+  gradRuleUTurnSignal: string;
+  gradRuleUTurnBridge: string;
+  gradRuleUTurnTunnel: string;
+  gradRuleSpeeding: string;
+  gradRuleWrongSide: string;
+  gradRuleStopZebra: string;
+  gradRuleStopJunction: string;
+  gradRuleStopBus: string;
   rutaFrom: string;
   rutaTo: string;
   rutaPrepare: string;
@@ -640,6 +660,26 @@ const me: Dict = {
   gradSun: "Sunce",
   gradRain: "Kiša",
   gradRainNote: "Kiša: kočnica drži slabije — zaustavni put je duži.",
+  gradLevel: "Nivo",
+  gradViolations: "Prekršaji",
+  vioWrongWay: "Vožnja u suprotnom smjeru jednosmjerne ulice",
+  vioTurnBan: "Skretanje tamo gdje znak zabranjuje",
+  vioUTurn: "Polukružno okretanje gdje je zabranjeno",
+  vioWrongSide: "Vožnja lijevom stranom kolovoza",
+  vioStopping: "Zaustavljanje na zabranjenom mjestu",
+  gradRuleRed: "Na crveno se ne prelazi stop-linija.",
+  gradRuleAmber: "Na žuto se prolazi samo kad se ne može bezbjedno stati — a ovdje se moglo.",
+  gradRuleStop: "Na znak STOP auto mora potpuno stati ispred stop-linije.",
+  gradRuleWrongWay: "Jednosmjernom ulicom se vozi samo u dozvoljenom smjeru — na njenom ulazu stoji znak zabrane ulaska.",
+  gradRuleTurnBan: "Znak na tom kraku raskrsnice zabranjuje ovaj pravac.",
+  gradRuleUTurnSignal: "Polukružno okretanje je zabranjeno u raskrsnici sa semaforom.",
+  gradRuleUTurnBridge: "Polukružno okretanje je zabranjeno na mostu.",
+  gradRuleUTurnTunnel: "Polukružno okretanje je zabranjeno u tunelu.",
+  gradRuleSpeeding: "Ograničenje je {ogranicenje} km/h, a auto je vozio {brzina} km/h.",
+  gradRuleWrongSide: "U dvosmjernoj ulici vozi se desnom stranom; lijevom samo kratko, pri preticanju ili zaobilaženju.",
+  gradRuleStopZebra: "Na pješačkom prelazu se ne zaustavlja.",
+  gradRuleStopJunction: "U raskrsnici se ne zaustavlja, osim kad to traži saobraćaj.",
+  gradRuleStopBus: "Na autobuskom stajalištu se ne zaustavlja.",
   rutaFrom: "Odakle",
   rutaTo: "Dokle",
   rutaPrepare: "Pripremam put…",
@@ -1038,6 +1078,26 @@ const en: Dict = {
   gradSun: "Sun",
   gradRain: "Rain",
   gradRainNote: "Rain: the brakes grip less — the stopping distance is longer.",
+  gradLevel: "Level",
+  gradViolations: "Violations",
+  vioWrongWay: "Driving the wrong way on a one-way street",
+  vioTurnBan: "Turning where a sign forbids it",
+  vioUTurn: "U-turn where it is forbidden",
+  vioWrongSide: "Driving on the left side of the road",
+  vioStopping: "Stopping where it is forbidden",
+  gradRuleRed: "You may not cross the stop line on red.",
+  gradRuleAmber: "On amber you go on only when you cannot stop safely — here you could.",
+  gradRuleStop: "At a STOP sign the car must stop completely before the stop line.",
+  gradRuleWrongWay: "A one-way street is driven only in the allowed direction — a no-entry sign stands at its entrance.",
+  gradRuleTurnBan: "A sign on that arm of the junction forbids this direction.",
+  gradRuleUTurnSignal: "U-turns are forbidden at a junction with traffic lights.",
+  gradRuleUTurnBridge: "U-turns are forbidden on a bridge.",
+  gradRuleUTurnTunnel: "U-turns are forbidden in a tunnel.",
+  gradRuleSpeeding: "The limit is {ogranicenje} km/h and the car was doing {brzina} km/h.",
+  gradRuleWrongSide: "On a two-way street you keep right; the left side only briefly, to overtake or pass an obstacle.",
+  gradRuleStopZebra: "You may not stop on a pedestrian crossing.",
+  gradRuleStopJunction: "You may not stop in a junction unless traffic makes you.",
+  gradRuleStopBus: "You may not stop at a bus stop.",
   rutaFrom: "From",
   rutaTo: "To",
   rutaPrepare: "Preparing the road…",
@@ -1441,6 +1501,26 @@ const sq: Dict = {
   gradSun: "Diell",
   gradRain: "Shi",
   gradRainNote: "Shi: frenat kapin më pak — distanca e ndalimit është më e gjatë.",
+  gradLevel: "Niveli",
+  gradViolations: "Shkeljet",
+  vioWrongWay: "Ngasje në drejtim të kundërt në rrugë njëkahëshe",
+  vioTurnBan: "Kthesë aty ku shenja e ndalon",
+  vioUTurn: "Kthim prapa aty ku është i ndaluar",
+  vioWrongSide: "Ngasje në anën e majtë të rrugës",
+  vioStopping: "Ndalim në vend të ndaluar",
+  gradRuleRed: "Me dritë të kuqe nuk kalohet vija e ndalimit.",
+  gradRuleAmber: "Me dritë të verdhë kalohet vetëm kur nuk mund të ndalosh në siguri — këtu mundeshe.",
+  gradRuleStop: "Te shenja STOP makina duhet të ndalojë plotësisht para vijës së ndalimit.",
+  gradRuleWrongWay: "Rruga njëkahëshe ngiset vetëm në drejtimin e lejuar — në hyrje të saj është shenja e ndalimit të hyrjes.",
+  gradRuleTurnBan: "Shenja në atë krah të kryqëzimit e ndalon këtë drejtim.",
+  gradRuleUTurnSignal: "Kthimi prapa është i ndaluar në kryqëzim me semafor.",
+  gradRuleUTurnBridge: "Kthimi prapa është i ndaluar në urë.",
+  gradRuleUTurnTunnel: "Kthimi prapa është i ndaluar në tunel.",
+  gradRuleSpeeding: "Kufiri është {ogranicenje} km/h, ndërsa makina ecte me {brzina} km/h.",
+  gradRuleWrongSide: "Në rrugë dykahëshe ngiset në anën e djathtë; në të majtën vetëm shkurt, për parakalim ose anashkalim.",
+  gradRuleStopZebra: "Në vendkalimin e këmbësorëve nuk ndalohet.",
+  gradRuleStopJunction: "Në kryqëzim nuk ndalohet, përveç kur e kërkon trafiku.",
+  gradRuleStopBus: "Në stacionin e autobusit nuk ndalohet.",
   rutaFrom: "Nga",
   rutaTo: "Deri",
   rutaPrepare: "Po përgatis rrugën…",
@@ -1846,6 +1926,26 @@ const ru: Dict = {
   gradSun: "Солнце",
   gradRain: "Дождь",
   gradRainNote: "Дождь: тормоза держат хуже — тормозной путь длиннее.",
+  gradLevel: "Уровень",
+  gradViolations: "Нарушения",
+  vioWrongWay: "Движение против направления одностороннего движения",
+  vioTurnBan: "Поворот там, где знак запрещает",
+  vioUTurn: "Разворот там, где он запрещён",
+  vioWrongSide: "Движение по левой стороне дороги",
+  vioStopping: "Остановка в запрещённом месте",
+  gradRuleRed: "На красный нельзя пересекать стоп-линию.",
+  gradRuleAmber: "На жёлтый проезжают, только если нельзя безопасно остановиться — а здесь было можно.",
+  gradRuleStop: "У знака STOP машина должна полностью остановиться перед стоп-линией.",
+  gradRuleWrongWay: "По улице с односторонним движением едут только в разрешённом направлении — на въезде стоит знак «въезд запрещён».",
+  gradRuleTurnBan: "Знак на этом въезде в перекрёсток запрещает это направление.",
+  gradRuleUTurnSignal: "Разворот запрещён на перекрёстке со светофором.",
+  gradRuleUTurnBridge: "Разворот запрещён на мосту.",
+  gradRuleUTurnTunnel: "Разворот запрещён в тоннеле.",
+  gradRuleSpeeding: "Ограничение {ogranicenje} км/ч, а машина ехала {brzina} км/ч.",
+  gradRuleWrongSide: "На улице с двусторонним движением едут по правой стороне; по левой — только коротко, при обгоне или объезде.",
+  gradRuleStopZebra: "На пешеходном переходе останавливаться нельзя.",
+  gradRuleStopJunction: "На перекрёстке останавливаться нельзя, если этого не требует движение.",
+  gradRuleStopBus: "На автобусной остановке останавливаться нельзя.",
   rutaFrom: "Откуда",
   rutaTo: "Куда",
   rutaPrepare: "Готовлю дорогу…",

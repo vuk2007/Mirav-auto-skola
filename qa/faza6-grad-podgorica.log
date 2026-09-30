@@ -1,57 +1,57 @@
 {
   "paketi": [
     {
-      "url": "podgorica-1e58ca1184.bin",
+      "url": "podgorica-f7d6cb7fed.bin",
       "status": 200,
       "kes": "public, max-age=31536000, immutable"
     }
   ],
   "snimci": [
     {
-      "sek": 10,
-      "kmh": 28,
-      "ulica": "Vučedolska",
-      "fps": 60
-    },
-    {
-      "sek": 20,
-      "kmh": 2,
-      "ulica": "Vučedolska",
-      "fps": 60
-    },
-    {
-      "sek": 30,
-      "kmh": 0,
-      "ulica": "Vučedolska",
-      "fps": 60
-    },
-    {
-      "sek": 40,
-      "kmh": 16,
-      "ulica": "Vučedolska",
-      "fps": 60
-    },
-    {
-      "sek": 50,
-      "kmh": 3,
-      "ulica": "Vučedolska",
-      "fps": 60
-    },
-    {
-      "sek": 60,
-      "kmh": 29,
-      "ulica": "Vučedolska",
-      "fps": 60
-    },
-    {
-      "sek": 70,
+      "sek": 35,
       "kmh": 0,
       "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     },
     {
-      "sek": 80,
+      "sek": 35,
+      "kmh": 0,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 35,
+      "kmh": 0,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 40,
       "kmh": 8,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 50,
+      "kmh": 4,
+      "ulica": "Vučedolska",
+      "fps": 60
+    },
+    {
+      "sek": 60,
+      "kmh": 8,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 70,
+      "kmh": 9,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 80,
+      "kmh": 3,
       "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     }
@@ -61,12 +61,17 @@
     "ulica": "Vučedolska",
     "fps": 53
   },
-  "skretanja": 5,
-  "izvlacenja": 7,
+  "skretanja": 3,
+  "prekrsaji": [
+    "Prekoračenje dozvoljene brzine",
+    "Zaustavljanje na zabranjenom mjestu",
+    "Vožnja u suprotnom smjeru jednosmjerne ulice"
+  ],
+  "izvlacenja": 5,
   "rikverc": {
     "kmhUnazad": 10,
     "natpis": true,
-    "kmhNaprijedPoslije": 18,
+    "kmhNaprijedPoslije": 15,
     "natpisPoslije": false
   },
   "osvjetljenje": {
@@ -76,6 +81,7 @@
     "kisa-dan": true
   },
   "zumFps": 60,
+  "brojPrekrsaja": 9,
   "ulice": [
     "Vučedolska",
     "Bulevar Stanka Dragojevića"

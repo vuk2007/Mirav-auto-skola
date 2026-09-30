@@ -6,7 +6,7 @@ import {
 } from "../sim/config";
 import { cumulative } from "../sim/geometry";
 import type { Point } from "../sim/types";
-import { IVICA_KRUZNI, IVICA_VOZNA, type Paket } from "./paket";
+import { IVICA_KRUZNI, IVICA_MOST, IVICA_TUNEL, IVICA_VOZNA, type Paket } from "./paket";
 
 /**
  * Mreža ulica grada, iz paketa: čvorovi (raskrsnice i krajevi ulica) i ivice
@@ -43,6 +43,9 @@ export interface Ivica {
   skretanjaNazad: string;
   vozna: boolean;
   kruzni: boolean;
+  /** Most ili tunel — tu je polukružno okretanje zabranjeno. */
+  most: boolean;
+  tunel: boolean;
   ime: string;
   /** Ograničenje iz OSM-a [km/h]; `null` kad ga nema. */
   brzina: number | null;
@@ -105,6 +108,8 @@ export function napraviMrezu(p: Paket): Mreza {
       skretanjaNazad: p.zaglavlje.stringovi[n.ivTrakeSkretanjaNazad[i]!] ?? "",
       vozna: (n.ivZastavice[i]! & IVICA_VOZNA) !== 0,
       kruzni: (n.ivZastavice[i]! & IVICA_KRUZNI) !== 0,
+      most: (n.ivZastavice[i]! & IVICA_MOST) !== 0,
+      tunel: (n.ivZastavice[i]! & IVICA_TUNEL) !== 0,
       ime: p.zaglavlje.stringovi[n.ivIme[i]!] ?? "",
       brzina: n.ivBrzina[i]! > 0 ? n.ivBrzina[i]! : null,
     });
