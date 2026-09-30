@@ -9,50 +9,56 @@
   "snimci": [
     {
       "sek": 10,
-      "kmh": 42,
+      "kmh": 28,
       "ulica": "Vučedolska",
       "fps": 60
     },
     {
       "sek": 20,
-      "kmh": 42,
+      "kmh": 2,
       "ulica": "Vučedolska",
       "fps": 60
     },
     {
       "sek": 30,
-      "kmh": 42,
-      "ulica": "Bulevar Stanka Dragojevića",
+      "kmh": 0,
+      "ulica": "Vučedolska",
       "fps": 60
     },
     {
       "sek": 40,
-      "kmh": 42,
-      "ulica": "Bulevar Stanka Dragojevića",
+      "kmh": 15,
+      "ulica": "Vučedolska",
       "fps": 60
     },
     {
       "sek": 50,
-      "kmh": 42,
-      "ulica": "Vaka Đurovića",
+      "kmh": 3,
+      "ulica": "Vučedolska",
       "fps": 60
     },
     {
       "sek": 60,
-      "kmh": 42,
-      "ulica": "Vaka Đurovića",
+      "kmh": 28,
+      "ulica": "Vučedolska",
       "fps": 60
     },
     {
       "sek": 70,
-      "kmh": 42,
-      "ulica": "bez imena",
+      "kmh": 28,
+      "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     },
     {
       "sek": 80,
-      "kmh": 42,
-      "ulica": "Njegoševa",
+      "kmh": 3,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 90,
+      "kmh": 0,
+      "ulica": "Bulevar Stanka Dragojevića",
       "fps": 60
     }
   ],
@@ -61,14 +67,19 @@
     "ulica": "Vučedolska",
     "fps": 58
   },
+  "skretanja": 5,
+  "izvlacenja": 5,
+  "rikverc": {
+    "kmhUnazad": 10,
+    "natpis": true,
+    "kmhNaprijedPoslije": 15,
+    "natpisPoslije": false
+  },
   "zumFps": 60,
   "ulice": [
     "Vučedolska",
     "Bulevar Stanka Dragojevića",
-    "Vaka Đurovića",
-    "bez imena",
-    "Njegoševa",
-    "Bulevar Ivana Crnojevića"
+    "bez imena"
   ],
   "greske": []
 }

@@ -1463,8 +1463,16 @@ export const PIXI_CELIJA = 250;
 export const GRAD_V_TOP = ROAD_V_TOP;
 export const GRAD_DRAG = HIGHWAY_DRAG;
 
-/** Širina jedne saobraćajne trake u gradu kad je broj traka poznat [m]. */
-export const GRAD_SIRINA_TRAKE = 3.25;
+/**
+ * Širina jedne saobraćajne trake u gradu [m] — IGRAČKA mjera, ne stvarna.
+ *
+ * Stvarna gradska traka je oko 3,25 m, i tako je bilo u prvoj verziji grada:
+ * na ekranu telefona to izgleda kao da auto (koji je stvarne veličine, 4,4 ×
+ * 1,8 m) jedva staje u ulicu. Igre odozgo (GTA 1/2) zato šire kolovoz, a auto
+ * ostavljaju kakav jeste; ovdje je traka šira za trećinu. Zgrade ostaju na
+ * stvarnim mjestima — grad je i dalje Podgorica 1:1, samo su ulice malo šire.
+ */
+export const GRAD_SIRINA_TRAKE = 4.25;
 
 /**
  * Broj traka kad ga OSM nema — po klasi ulice, za cijeli kolovoz dvosmjerne
@@ -1500,7 +1508,7 @@ export const GRAD_TRAKE_PO_KLASI: Readonly<Record<string, number>> = {
  * Najuža ulica [m] — servisni prolaz sa jednom trakom je i dalje dovoljno
  * širok za jedan auto.
  */
-export const GRAD_NAJUZA_ULICA = 3.5;
+export const GRAD_NAJUZA_ULICA = 4.5;
 
 /**
  * Na kojoj udaljenosti od raskrsnice volan bira izlaz [m]. Pedeset metara na
@@ -1531,17 +1539,81 @@ export const GRAD_ZAOBLJENJE_UDIO = 0.45;
 /** Na koliko tačaka se luk kroz raskrsnicu crta i prelazi. */
 export const GRAD_LUK_TACAKA = 16;
 /**
- * Pola vidnog polja u gradu [m]. Šire nego na otvorenom putu (34 m): ulice su
- * kraće, i raskrsnica ispred mora da se vidi prije nego što se do nje stigne.
+ * Pola vidnog polja u gradu [m] — skoro kao na otvorenom putu (34 m). Sa 48 m
+ * auto je na ekranu telefona bio sitan, pa se činilo da ulice nisu u
+ * razmjeri sa njim. Raskrsnica ispred se i dalje vidi na vrijeme: kamera je
+ * pomaknuta naprijed (`KAMERA_NAPRIJED`).
  */
-export const GRAD_POLA_KADRA = 48;
+export const GRAD_POLA_KADRA = 36;
 /** Koliko sagrađenih tile-ova grada se najviše drži; najdavnije viđeni se ruše. */
 export const GRAD_KOMADA_NAJVISE = 36;
-/** Koliko metara izabranog izlaza se prikazuje ispred igrača. */
-export const GRAD_PREGLED_IZLAZA = 18;
 /**
  * Stepeni udaljavanja kadra u slobodnoj vožnji kroz grad — množe
- * `GRAD_POLA_KADRA`. Na osmostrukom se vidi oko 770 m: dovoljno da se pregleda
+ * `GRAD_POLA_KADRA`. Na najdaljem se vidi oko 790 m: dovoljno da se pregleda
  * kvart, a da tile-ova u kadru ne bude više nego što ih se drži.
  */
-export const GRAD_ZUM = [1, 2, 4, 8] as const;
+export const GRAD_ZUM = [1, 2, 4, 8, 11] as const;
+
+// ── slobodna vožnja u gradu (faza 6, stavka 3c) ────────────────────────────
+
+/**
+ * Međuosovinsko rastojanje [m] — srednji putnički auto. Njime se računa koliko
+ * se auto okrene za pređeni metar pri datom uglu točkova (model bicikla).
+ */
+export const GRAD_MEDJUOSOVINSKO = 2.7;
+/**
+ * Najveći ugao prednjih točkova [°]. Sa `GRAD_MEDJUOSOVINSKO` daje poluprečnik
+ * okretanja zadnje osovine oko 3,9 m — kao u pravom autu.
+ */
+export const GRAD_VOLAN_UGAO = 35;
+/**
+ * Najveće bočno ubrzanje [m/s²] koje volan dopušta. Na brzini se ugao točkova
+ * zato sužava: na 30 km/h ulica se može skrenuti, na 60 ne može — mora se
+ * usporiti prije skretanja, kao u stvarnosti.
+ */
+export const GRAD_BOCNO_UBRZANJE = 7;
+/**
+ * Koliko brzo se točkovi okreću [°/s] — volan se ne prebaci u jednom kadru.
+ * Brzo, jer tastatura i klizač već imaju svoje kašnjenje (`STEER_KEY_RISE`);
+ * dva kašnjenja jedno na drugom tjeraju auto preko skretanja.
+ */
+export const GRAD_VOLAN_BRZINA = 240;
+/** Najveća brzina unazad [m/s]. */
+export const GRAD_RIKVERC_V = 15 / 3.6;
+/** Ubrzanje unazad pri punoj pedali [m/s²]. */
+export const GRAD_RIKVERC_A = 1.5;
+/**
+ * Koliko dugo se kočnica drži u mjestu [s] dok se ne ubaci rikverc. Kratko
+ * kočenje do zaustavljanja zato nikad ne pokrene auto unazad.
+ */
+export const GRAD_RIKVERC_CEKANJE = 0.3;
+/** Koliko pritisnuta pedala se računa kao namjera (rikverc, pa naprijed). */
+export const GRAD_RIKVERC_PEDALA = 0.3;
+/**
+ * Zaobljen ugao raskrsnice [m]: ivičnjak je u uglu između dvije susjedne
+ * ulice zasječen koso, ovoliko od tjemena duž obje ulice. Bez toga je ugao
+ * trotoara oštar, a desno skretanje ga zakači i kad je vozač uradio sve kako
+ * treba.
+ */
+export const GRAD_UGAO_ZASJEK = 3;
+/**
+ * Ugao između susjednih ulica [°] u kojem se ugao zasijeca. Van njega nema
+ * ugla: ulica koja samo nastavlja (skoro 180°), ili dvije ulice pod tako oštrim
+ * uglom da bi tjeme bilo daleko od raskrsnice.
+ */
+export const GRAD_UGAO_ZASJEK_OD = 25;
+export const GRAD_UGAO_ZASJEK_DO = 155;
+/**
+ * Najveći ugao između auta i ivičnjaka [°] pod kojim auto klizi uz ivičnjak,
+ * umjesto da stane. Kao u igrama odozgo: okrznuti trotoar ne smije da ubije
+ * vožnju; čeoni udar je ipak udar.
+ */
+export const GRAD_IVICNJAK_UGAO = 50;
+/** Usporenje dok auto struže uz ivičnjak [m/s²]. */
+export const GRAD_IVICNJAK_USPORENJE = 4;
+/** Koliko brzo ivičnjak poravnava auto sa ulicom [°/s]. */
+export const GRAD_IVICNJAK_OKRET = 90;
+/** Ćelija indeksa površine po kojoj se vozi [m]. */
+export const GRAD_POVRSINA_CELIJA = 40;
+/** Najdalje od ulice [m] na kojem se još kaže u kojoj je ulici auto. */
+export const GRAD_ULICA_DO = 25;

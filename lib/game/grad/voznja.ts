@@ -7,7 +7,6 @@ import {
   GRAD_DRAG,
   GRAD_LUK_TACAKA,
   GRAD_ODLUKA,
-  GRAD_PREGLED_IZLAZA,
   GRAD_PUN_VOLAN_UGAO,
   GRAD_V_TOP,
   GRAD_ZAKLJUCAJ,
@@ -21,9 +20,10 @@ import type { Input, Point } from "../sim/types";
 import { najveciBok, pocetniBok, type Ivica, type Mreza } from "./mreza";
 
 /**
- * Igračev auto u gradu: vožnja bilo kojom ulicom, BEZ pravila (faza 6,
- * stavka 3). Pravila, drugi učesnici i sud dolaze u stavkama 5 i 7; ovdje je
- * samo geometrija — da se grad može provozati i pogledati.
+ * Vožnja po grafu ulica: auto koje ide ivicom, a na raskrsnici bira izlaz
+ * (faza 6, stavka 3b). Igrač se od stavke 3c vozi slobodno (`slobodno.ts`) —
+ * skreće gdje okrene volan. Ovo ostaje za vozila koja idu ulicama po grafu
+ * (drugi učesnici, stavka 7), i sa istim testovima.
  *
  * Auto je uvijek na jednoj ivici mreže (u smjeru `smjer`, `s` metara od
  * početka u tom smjeru, `bok` metara desno od osovine), ili na luku kroz
@@ -279,28 +279,4 @@ export function poza(m: Mreza, st: GradVozilo): { pos: Point; heading: Point } {
     };
   }
   return naBoku(m.ivice[st.ivica]!, st.smjer, st.s, st.bok);
-}
-
-/**
- * Putanja kroz izabrani izlaz, da se vidi šta je volan izabrao — kao putanja
- * igrača na raskrsnici u fazi 5: od auta do raskrsnice, pa dio izlaza.
- * `null` dok izbora nema.
- */
-export function pregledIzbora(m: Mreza, st: GradVozilo): Point[] | null {
-  const cilj = st.luk?.cilj ?? st.izbor;
-  if (!cilj) return null;
-  const tacke: Point[] = [];
-  if (st.luk) {
-    for (let i = 0; i < st.luk.tacke.length; i++) if (st.luk.cum[i]! >= st.luk.s) tacke.push(st.luk.tacke[i]!);
-  } else {
-    const iv = m.ivice[st.ivica]!;
-    for (let s = st.s; s < iv.duzina; s += 2) tacke.push(tackaNaIvici(iv, st.smjer, s));
-    tacke.push(tackaNaIvici(iv, st.smjer, iv.duzina));
-  }
-  const izlaz = m.ivice[cilj.ivica]!;
-  const od = st.luk ? st.luk.ulazS : 0;
-  for (let s = od; s <= Math.min(izlaz.duzina, od + GRAD_PREGLED_IZLAZA); s += 2) {
-    tacke.push(tackaNaIvici(izlaz, cilj.smjer, s));
-  }
-  return tacke.length >= 2 ? tacke : null;
 }

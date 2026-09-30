@@ -11,10 +11,12 @@ import {
   KAMERA_NAPRIJED_BRZINA,
 } from "@/lib/game/sim/config";
 import type { Point } from "@/lib/game/sim/types";
-import { napraviMrezu, najblizaIvica, type Mreza } from "@/lib/game/grad/mreza";
+import { napraviMrezu, najblizaIvica } from "@/lib/game/grad/mreza";
 import { procitaj, type Paket } from "@/lib/game/grad/paket";
-import { korak, novoVozilo, poza, pregledIzbora, type GradVozilo } from "@/lib/game/grad/voznja";
+import { napraviPovrsinu, ulicaNa, type Povrsina } from "@/lib/game/grad/povrsina";
+import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
 import type { GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
+import { haptika } from "@/lib/game/ui/haptika";
 import { dprUredjaja } from "@/lib/game/ui/renderer";
 import Brzinomjer from "./Brzinomjer";
 import DriveControls from "./DriveControls";
@@ -24,8 +26,8 @@ import { useVolan } from "./useVolan";
 const GRAD = "podgorica";
 
 /**
- * Koliko brzo kamera sustiže smjer auta [s]. Smjer na ulici se mijenja skokom
- * na svakoj tački OSM linije; kamera koja ga prati tačno bi se trzala.
+ * Koliko brzo kamera sustiže smjer auta [s]. Kamera koja prati auto tačno
+ * vrti cijeli grad sa svakim pokretom volana; ovako se okreće mekše.
  */
 const KAMERA_SMIRENJE = 0.25;
 
@@ -34,22 +36,27 @@ type Faza = "ucitavam" | "voznja" | "greska" | "bezWebgl";
 interface Hud {
   kmh: number;
   ulica: string;
+  rikverc: boolean;
   fps: number | null;
 }
+
+/** Trzaj telefona pri udaru u ivičnjak [ms] — samo kad udar počne, ne dok struže. */
+const UDAR_HAPTIKA = 30;
 
 /**
  * Slobodna vožnja kroz Podgoricu, u razmjeri 1:1 — faza 6, stavka 3.
  *
  * Bez pravila i bez drugih vozila: ovo je da se grad pogleda i provoza, prije
  * nego što dobije izgled (stavka 4) i pravila (stavka 5). Vozi se istim volanom
- * i gasom kao Ruta; pred raskrsnicom volan bira izlaz.
+ * i gasom kao Ruta, ali slobodno (stavka 3c): volan okreće točkove i skreće se
+ * gdje igrač skrene; kočnica držana u mjestu ubacuje rikverc.
  */
 export default function GradScreen({ onExit }: { onExit: () => void }) {
   const { t } = useApp();
   const volan = useVolan(true, { pokazivacRukom: false });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [faza, setFaza] = useState<Faza>("ucitavam");
-  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", fps: null });
+  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null });
   const [ogranicenje, setOgranicenje] = useState<number | null>(null);
   const inputRef = volan.inputRef;
   // Udaljavanje kadra — da se grad može pregledati, ne samo voziti. Ide kroz
@@ -72,13 +79,14 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const odgovor = await fetch(`/data/grad/${fajl}`);
       if (!odgovor.ok) throw new Error(`paket grada: HTTP ${odgovor.status}`);
       const paket: Paket = procitaj(await odgovor.arrayBuffer());
-      const mreza: Mreza = napraviMrezu(paket);
+      const mreza = napraviMrezu(paket);
+      const povrsina: Povrsina = napraviPovrsinu(mreza);
       if (otkazano) return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       // Pixi se učitava tek ovdje — ostatak igre ga ne plaća u početnom paketu.
       const { createGradRenderer } = await import("@/lib/game/ui/gradRenderer");
-      renderer = await createGradRenderer(canvas, paket, mreza);
+      renderer = await createGradRenderer(canvas, paket, povrsina);
       if (otkazano) {
         renderer?.destroy();
         return;
@@ -91,8 +99,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       // Start: najbliža ulica Trgu nezavisnosti (ishodište paketa).
       const start = najblizaIvica(mreza, { x: 0, y: 0 });
       if (!start) throw new Error("mreža nema nijednu voznu ulicu");
-      const st: GradVozilo = novoVozilo(mreza, start.ivica, 1, start.s);
-      let prije = poza(mreza, st);
+      const st: SlobodnoVozilo = slobodnoNaIvici(povrsina, start.ivica, 1, start.s);
+      let prije = pozaSlobodno(st);
       let sada = prije;
       let ugaoKamere = Math.atan2(sada.heading.y, sada.heading.x);
 
@@ -116,6 +124,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       let kadrova = 0;
       let odFps = performance.now();
       let fps: number | null = null;
+      let bioUdar = false;
+      let ulica = start.ivica;
       const kadar = (now: number) => {
         raf = requestAnimationFrame(kadar);
         const dt = zadnji === 0 ? 0 : Math.min(0.25, (now - zadnji) / 1000);
@@ -124,8 +134,10 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         let koraka = 0;
         while (acc >= DT && koraka < 8) {
           prije = sada;
-          korak(mreza, st, inputRef.current);
-          sada = poza(mreza, st);
+          korakSlobodno(povrsina, st, inputRef.current);
+          sada = pozaSlobodno(st);
+          if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
+          bioUdar = st.udar;
           acc -= DT;
           koraka += 1;
         }
@@ -142,8 +154,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         ugaoKamere += razlika * Math.min(1, dt / KAMERA_SMIRENJE);
 
         // Kamera kao na otvorenom putu: pravac vožnje nagore, igrač na 62 %
-        // visine, i niže što se brže vozi.
-        const naprijed = KAMERA_NAPRIJED * Math.min(1, st.v / KAMERA_NAPRIJED_BRZINA);
+        // visine, i niže što se brže vozi. Unazad kamera ostaje iza auta.
+        const naprijed = KAMERA_NAPRIJED * Math.min(1, Math.max(0, st.v) / KAMERA_NAPRIJED_BRZINA);
         const hx = Math.cos(ugaoKamere);
         const hy = Math.sin(ugaoKamere);
         const k: GradKadar = {
@@ -156,8 +168,13 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         };
         renderer?.draw({
           kadar: k,
-          igrac: { pos, heading: sada.heading, koci: inputRef.current.brake > 0 },
-          pregled: pregledIzbora(mreza, st),
+          igrac: {
+            pos,
+            heading: sada.heading,
+            koci: inputRef.current.brake > 0,
+            rikverc: st.rikverc,
+            tocak: st.tocak,
+          },
         });
 
         kadrova += 1;
@@ -168,8 +185,10 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         }
         if (now - zadnjiHud > 1000 / HUD_HZ) {
           zadnjiHud = now;
-          const iv = mreza.ivice[st.luk ? st.luk.cilj.ivica : st.ivica]!;
-          setHud({ kmh: st.v * 3.6, ulica: iv.ime, fps: debug ? fps : null });
+          // Van ulice (ne bi trebalo da se desi) ostaje zadnja poznata.
+          ulica = ulicaNa(povrsina, st.x, st.y) ?? ulica;
+          const iv = mreza.ivice[ulica]!;
+          setHud({ kmh: Math.abs(st.v) * 3.6, ulica: iv.ime, rikverc: st.rikverc, fps: debug ? fps : null });
           setOgranicenje(iv.brzina);
         }
       };
@@ -241,7 +260,17 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         {faza === "voznja" && (
           <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
             {/* Ograničenje samo kad ga OSM zna — bez pretpostavke, pravila još nema. */}
-            <Brzinomjer brzina={hud.kmh} ogranicenje={ogranicenje} t={t} />
+            <div className="flex items-start gap-2">
+              <Brzinomjer brzina={hud.kmh} ogranicenje={ogranicenje} t={t} />
+              {hud.rikverc && (
+                <p
+                  className="rounded border border-line bg-panel/90 px-2 py-1 text-xs font-bold"
+                  aria-live="polite"
+                >
+                  R · {t.gradReverse}
+                </p>
+              )}
+            </div>
             <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
               {t.gradStreet}: {hud.ulica || t.gradUnnamed}
               {hud.fps !== null ? ` · ${hud.fps.toFixed(0)} fps` : ""}

@@ -3,8 +3,10 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { segmentIntersection } from "../sim/geometry";
 import type { Point } from "../sim/types";
-import { napraviMrezu } from "./mreza";
+import { napraviMrezu, najblizaIvica } from "./mreza";
 import { IVICA_MOST, IVICA_TUNEL, procitaj, type Paket } from "./paket";
+import { napraviPovrsinu } from "./povrsina";
+import { autoNaPovrsini, slobodnoNaIvici } from "./slobodno";
 
 /**
  * Konzistentnost svijeta — zadatak, odjeljak 8: sve ulice povezane u jedan
@@ -97,5 +99,31 @@ describe("Podgorica: paket grada", () => {
     }
     expect(prelaza).toBeGreaterThan(0);
     expect(bezMosta).toEqual([]);
+  });
+});
+
+describe("Podgorica: površina za slobodnu vožnju", () => {
+  const povrsina = napraviPovrsinu(mreza);
+
+  it("start (ulica najbliža Trgu nezavisnosti) je cijelim autom na asfaltu", () => {
+    const start = najblizaIvica(mreza, { x: 0, y: 0 })!;
+    const st = slobodnoNaIvici(povrsina, start.ivica, 1, start.s);
+    expect(autoNaPovrsini(povrsina, st.x, st.y, st.ugao)).toBe(true);
+  });
+
+  it("auto staje u desnu traku skoro svake vozne ulice (na polovini, oba smjera)", () => {
+    let ulica = 0;
+    const ne: string[] = [];
+    for (const iv of mreza.ivice) {
+      if (!iv.vozna || iv.duzina < 20) continue;
+      ulica += 1;
+      for (const smjer of [1, -1] as const) {
+        const st = slobodnoNaIvici(povrsina, iv.i, smjer, iv.duzina / 2);
+        if (!autoNaPovrsini(povrsina, st.x, st.y, st.ugao)) ne.push(`${iv.ime || iv.klasa} (OSM ${paket.n.ivOsm[iv.i]})`);
+      }
+    }
+    // Izmjereno 140 od 20 462 (0,7 %): skoro sve servisni prolazi od jedne
+    // trake, gdje je polovina ulice baš u oštroj krivini.
+    expect(ne.length / (2 * ulica)).toBeLessThan(0.01);
   });
 });

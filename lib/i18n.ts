@@ -223,6 +223,7 @@ export interface Dict {
   gradHint: string;
   gradZoomIn: string;
   gradZoomOut: string;
+  gradReverse: string;
   rutaFrom: string;
   rutaTo: string;
   rutaPrepare: string;
@@ -619,9 +620,10 @@ const me: Dict = {
   gradNoWebgl: "Ovaj uređaj ne daje WebGL, a grad se crta samo njime.",
   gradStreet: "Ulica",
   gradUnnamed: "bez imena",
-  gradHint: "Volan pred raskrsnicom bira kuda se ide — plava linija pokazuje izbor.",
+  gradHint: "Volan okreće auto kao u pravom autu — skreni gdje hoćeš, ali uspori prije skretanja. Kočnica držana dok auto stoji ubacuje rikverc; gas ga vraća naprijed.",
   gradZoomIn: "Približi",
   gradZoomOut: "Udalji",
+  gradReverse: "Rikverc",
   rutaFrom: "Odakle",
   rutaTo: "Dokle",
   rutaPrepare: "Pripremam put…",
@@ -1008,9 +1010,10 @@ const en: Dict = {
   gradNoWebgl: "This device has no WebGL, and the city is drawn only with it.",
   gradStreet: "Street",
   gradUnnamed: "unnamed",
-  gradHint: "Steer before a junction to choose the way — the blue line shows the choice.",
+  gradHint: "The wheel turns the car like a real one — turn wherever you like, but slow down before a turn. Hold the brake while stopped to reverse; the throttle takes you forward again.",
   gradZoomIn: "Zoom in",
   gradZoomOut: "Zoom out",
+  gradReverse: "Reverse",
   rutaFrom: "From",
   rutaTo: "To",
   rutaPrepare: "Preparing the road…",
@@ -1402,9 +1405,10 @@ const sq: Dict = {
   gradNoWebgl: "Kjo pajisje nuk ka WebGL, dhe qyteti vizatohet vetëm me të.",
   gradStreet: "Rruga",
   gradUnnamed: "pa emër",
-  gradHint: "Timoni para kryqëzimit zgjedh drejtimin — vija blu tregon zgjedhjen.",
+  gradHint: "Timoni e kthen makinën si një makinë të vërtetë — kthehu ku të duash, por ngadalëso para kthesës. Mbaj frenin kur makina është e ndalur për të ecur mbrapsht; gazi të çon përsëri përpara.",
   gradZoomIn: "Afro",
   gradZoomOut: "Largo",
+  gradReverse: "Mbrapsht",
   rutaFrom: "Nga",
   rutaTo: "Deri",
   rutaPrepare: "Po përgatis rrugën…",
@@ -1798,9 +1802,10 @@ const ru: Dict = {
   gradNoWebgl: "На этом устройстве нет WebGL, а город рисуется только с ним.",
   gradStreet: "Улица",
   gradUnnamed: "без названия",
-  gradHint: "Руль перед перекрёстком выбирает направление — синяя линия показывает выбор.",
+  gradHint: "Руль поворачивает машину как настоящую — поворачивайте где хотите, но сбавляйте скорость перед поворотом. Удерживайте тормоз на месте, чтобы включить задний ход; газ снова везёт вперёд.",
   gradZoomIn: "Приблизить",
   gradZoomOut: "Отдалить",
+  gradReverse: "Задний ход",
   rutaFrom: "Откуда",
   rutaTo: "Куда",
   rutaPrepare: "Готовлю дорогу…",

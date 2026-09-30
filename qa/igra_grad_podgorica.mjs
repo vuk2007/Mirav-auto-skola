@@ -1,4 +1,4 @@
-// Podgorica u razmjeri 1:1 — slobodna vožnja bez pravila (faza 6, stavka 3).
+﻿// Podgorica u razmjeri 1:1 — slobodna vožnja bez pravila (faza 6, stavke 3b i 3c).
 //
 // Pokretanje: `npx next start -p 3100` u jednom terminalu, pa se ova skripta
 // kopira u folder u kojem je `npm i playwright` već urađen i pokrene odatle.
@@ -7,7 +7,8 @@
 //  - paket grada stiže jednim zahtjevom i sa zaglavljem za trajno keširanje;
 //  - grad se crta (WebGL, pravi grafički čip) i vozi: brzina raste, ulica
 //    se mijenja, kadrovi teku;
-//  - volan pred raskrsnicom mijenja ulicu;
+//  - volan okreće auto (3c): skretanje volanom mijenja ulicu;
+//  - rikverc: kočnica držana u mjestu vozi unazad, a na ekranu piše „Rikverc";
 //  - nijedna greška u konzoli.
 // Snimci se prave svakih nekoliko sekundi — za pregled mape (stop tačka).
 
@@ -46,37 +47,61 @@ const izvj = { paketi, snimci: [] };
 izvj.start = await stanje();
 await page.locator("main canvas").locator("..").screenshot({ path: "grad-00.png" });
 
-// Vožnja: gas do ~40 km/h, pa se drži; svakih nekoliko sekundi volan na
-// jednu stranu (do raskrsnice), da se vidi skretanje i više ulica.
+// Vožnja: gas do ~30 km/h; svakih 12 s uspori na petnaestak, pa volan na
+// jednu stranu (naizmjenično) sekundu i po — skretanje gdje god se zateklo.
+// Ivičnjak koji se okrzne auto samo uspori; čeoni udar se rješava rikvercom.
 const ulice = new Set([izvj.start.ulica]);
-let gas = false;
 const pocetak = Date.now();
 let snimak = 0;
-let strana = null;
-let stranaDo = 0;
+let drzi = { gas: false, koc: false };
+const pedala = async (gas, koc) => {
+  if (gas !== drzi.gas) await (gas ? page.keyboard.down("ArrowUp") : page.keyboard.up("ArrowUp"));
+  if (koc !== drzi.koc) await (koc ? page.keyboard.down("ArrowDown") : page.keyboard.up("ArrowDown"));
+  drzi = { gas, koc };
+};
+let faza = "vozi";
+let fazaDo = 0;
+let strana = "ArrowRight";
+let stojiOd = null;
+izvj.skretanja = 0;
+izvj.izvlacenja = 0;
 while (Date.now() - pocetak < 90000) {
   const s = await stanje();
-  if (s.kmh < 38 && !gas) {
-    await page.keyboard.down("ArrowUp");
-    gas = true;
-  } else if (s.kmh >= 42 && gas) {
-    await page.keyboard.up("ArrowUp");
-    gas = false;
-  }
-  if (s.kmh > 48) {
-    await page.keyboard.down("ArrowDown");
-    await page.waitForTimeout(120);
-    await page.keyboard.up("ArrowDown");
-  }
   const sek = (Date.now() - pocetak) / 1000;
-  // Svakih 15 s: 6 s volan na jednu stranu (naizmjenično), pa pravo.
-  if (strana === null && sek > 8 && Math.floor(sek) % 15 === 0) {
-    strana = (Math.floor(sek / 15) % 2 === 0) ? "ArrowRight" : "ArrowLeft";
-    stranaDo = Date.now() + 6000;
-    await page.keyboard.down(strana);
-  } else if (strana !== null && Date.now() > stranaDo) {
-    await page.keyboard.up(strana);
-    strana = null;
+  const sad = Date.now();
+  if (faza === "vozi") {
+    await pedala(s.kmh < 28, s.kmh > 34);
+    if (sek > 6 && sek % 12 < 0.3) faza = "uspori";
+    // Zaglavljen (čeono u ivičnjak): dvije sekunde unazad, pa dalje.
+    if (s.kmh < 1 && drzi.gas) stojiOd ??= sad;
+    else stojiOd = null;
+    if (stojiOd !== null && sad - stojiOd > 1500) {
+      faza = "rikverc";
+      fazaDo = sad + 2500;
+      stojiOd = null;
+      izvj.izvlacenja += 1;
+    }
+  } else if (faza === "uspori") {
+    await pedala(false, s.kmh > 15);
+    if (s.kmh <= 15) {
+      faza = "skreni";
+      fazaDo = sad + 1500;
+      strana = strana === "ArrowRight" ? "ArrowLeft" : "ArrowRight";
+      await page.keyboard.down(strana);
+      izvj.skretanja += 1;
+    }
+  } else if (faza === "skreni") {
+    await pedala(s.kmh < 14, false);
+    if (sad > fazaDo) {
+      await page.keyboard.up(strana);
+      faza = "vozi";
+    }
+  } else if (faza === "rikverc") {
+    await pedala(false, true);
+    if (sad > fazaDo) {
+      await pedala(false, false);
+      faza = "vozi";
+    }
   }
   ulice.add(s.ulica);
   if (sek > 10 * (snimak + 1)) {
@@ -84,13 +109,35 @@ while (Date.now() - pocetak < 90000) {
     await page.locator("main canvas").locator("..").screenshot({ path: `grad-${String(snimak).padStart(2, "0")}.png` });
     izvj.snimci.push({ sek: Math.round(sek), ...s });
   }
-  await page.waitForTimeout(150);
+  await page.waitForTimeout(100);
 }
-if (gas) await page.keyboard.up("ArrowUp");
-if (strana) await page.keyboard.up(strana);
+await page.keyboard.up(strana);
+
+// Rikverc: zaustavi se, pa drži kočnicu — auto ide unazad i piše „Rikverc".
+await pedala(false, true);
+// Auto prvo stane, pa se poslije `GRAD_RIKVERC_CEKANJE` ubaci rikverc.
+await page.waitForFunction(() => (document.querySelector("main")?.innerText ?? "").includes("Rikverc"), null, { timeout: 15000 });
+await page.waitForTimeout(2500);
+const unazad = await stanje();
+const natpis = (await page.locator("main").innerText()).includes("Rikverc");
+await page.locator("main canvas").locator("..").screenshot({ path: "grad-rikverc.png" });
+await pedala(false, false);
+await pedala(true, false);
+// Gas u rikvercu prvo zaustavi auto, pa ga vrati naprijed. Koliko će daleko
+// stići zavisi od toga šta je ispred (robot vozi naslijepo), pa se bilježi
+// najveća brzina, ne krajnja.
+let naprijed = { kmh: 0 };
+for (let i = 0; i < 25; i++) {
+  const s = await stanje();
+  if (s.kmh > naprijed.kmh) naprijed = s;
+  await page.waitForTimeout(100);
+}
+const natpisPoslije = (await page.locator("main").innerText()).includes("Rikverc");
+await pedala(false, false);
+izvj.rikverc = { kmhUnazad: unazad.kmh, natpis, kmhNaprijedPoslije: naprijed.kmh, natpisPoslije };
 
 // Pregled mape: kadar se udaljava do kraja, snimak na svakom stepenu.
-for (let z = 1; z <= 3; z++) {
+for (let z = 1; z <= 4; z++) {
   await page.getByRole("button", { name: /^Udalji$/ }).click();
   await page.waitForTimeout(1500);
   await page.locator("main canvas").locator("..").screenshot({ path: `grad-zum-${z}.png` });

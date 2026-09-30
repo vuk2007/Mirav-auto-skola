@@ -1,13 +1,19 @@
 import { Application, Container, Graphics } from "pixi.js";
-import { CAR_LENGTH, CAR_WIDTH, GRAD_KOMADA_NAJVISE } from "../sim/config";
+import { CAR_LENGTH, CAR_WIDTH, GRAD_KOMADA_NAJVISE, GRAD_MEDJUOSOVINSKO } from "../sim/config";
 import type { Point } from "../sim/types";
-import type { Mreza } from "../grad/mreza";
 import type { Paket } from "../grad/paket";
+import type { Povrsina } from "../grad/povrsina";
 
 /**
  * Crtanje grada u razmjeri 1:1 na WebGL-u (faza 6, stavka 3): bez pravila i bez
  * „GTA izgleda" — to je stavka 4. Ovdje je grad kao karta: površine, voda,
  * ulice sa trotoarom, zgrade kao osnove.
+ *
+ * Asfalt je tačno `Povrsina` po kojoj se vozi: kolovoz oko osovine i zasječeni
+ * uglovi raskrsnice. Gdje se na slici vidi ivičnjak, tu auto i udara. Zato se ulice
+ * crtaju preko zgrada: kolovoz je u igri širi nego u stvarnosti
+ * (`GRAD_SIRINA_TRAKE`), a zgrada koja bi ga prekrila sakrila bi asfalt po
+ * kojem se vozi.
  *
  * Paket grada je podijeljen na tile-ove od 500 m. Svaki tile se gradi tek kad
  * uđe u kadar, jednom, u koordinatama svijeta; kamera onda samo pomjera
@@ -24,7 +30,6 @@ const BOJE = {
   zgradaIvica: "#a2978a",
   voda: "#9cc7e6",
   igrac: "#2f6fd0",
-  pregled: "#2f6fd0",
 } as const;
 
 /** Površine po vrsti iz paketa. Vrsta koje nema ne crta se. */
@@ -88,9 +93,15 @@ export interface GradKadar {
 
 export interface GradScena {
   kadar: GradKadar;
-  igrac: { pos: Point; heading: Point; koci: boolean };
-  /** Putanja kroz izabrani izlaz ispred igrača, ili `null`. */
-  pregled: Point[] | null;
+  igrac: {
+    pos: Point;
+    heading: Point;
+    koci: boolean;
+    /** Upaljena bijela svjetla za vožnju unazad. */
+    rikverc: boolean;
+    /** Ugao prednjih točkova [rad], pozitivno udesno — da se vidi šta volan radi. */
+    tocak: number;
+  };
 }
 
 export interface GradRenderer {
@@ -107,6 +118,7 @@ interface Tile {
   povrsine: [number, number];
   linije: [number, number];
   ivice: number[];
+  uglovi: number[];
 }
 
 interface Sagradjen {
@@ -117,8 +129,9 @@ interface Sagradjen {
 export async function createGradRenderer(
   canvas: HTMLCanvasElement,
   paket: Paket,
-  mreza: Mreza,
+  povrsina: Povrsina,
 ): Promise<GradRenderer | null> {
+  const mreza = povrsina.mreza;
   const app = new Application();
   try {
     await app.init({
@@ -148,6 +161,7 @@ export async function createGradRenderer(
       povrsine: opseg(n.pvTileOd, t),
       linije: opseg(n.lnTileOd, t),
       ivice: [],
+      uglovi: [],
     });
   }
   const tileZa = (x: number, y: number) => {
@@ -172,6 +186,11 @@ export async function createGradRenderer(
     tile.ivice.push(iv.i);
     for (const p of iv.tacke) prosiri(tile.okvir, p.x, p.y, iv.sirina / 2 + TROTOAR);
   }
+  for (const [i, u] of povrsina.uglovi.entries()) {
+    const tile = tileovi[tileZa(u.c.x, u.c.y)]!;
+    tile.uglovi.push(i);
+    for (const p of [u.a, u.b, u.c]) prosiri(tile.okvir, p.x, p.y, TROTOAR);
+  }
 
   // ── slojevi ───────────────────────────────────────────────────────────────
   const svijet = new Container();
@@ -182,7 +201,7 @@ export async function createGradRenderer(
   const sIznad = new Container();
   const sZgrade = new Container();
   const dinamika = new Graphics();
-  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sIznad, sZgrade, dinamika);
+  svijet.addChild(sPovrsine, sVoda, sZgrade, sTrotoari, sUlice, sIznad, dinamika);
   app.stage.addChild(svijet);
 
   const sagradjeni = new Map<number, Sagradjen>();
@@ -229,6 +248,14 @@ export async function createGradRenderer(
       trotoari.stroke({ width: iv.sirina + 2 * TROTOAR, color: BOJE.trotoar, cap: "round", join: "round" });
       linija(ulice, iv.tacke);
       ulice.stroke({ width: iv.sirina, color: iv.vozna ? BOJE.asfalt : BOJE.pjesacka, cap: "round", join: "round" });
+    }
+    // Zasječen ugao: trotoar prati kosi ivičnjak (linija širine dva trotoara,
+    // čiju unutrašnju polovinu prekrije asfalt), a asfalt popuni trougao.
+    for (const i of tile.uglovi) {
+      const u = povrsina.uglovi[i]!;
+      trotoari.moveTo(u.a.x, u.a.y).lineTo(u.b.x, u.b.y);
+      trotoari.stroke({ width: 2 * TROTOAR, color: BOJE.trotoar, cap: "round" });
+      ulice.poly([u.a.x, u.a.y, u.b.x, u.b.y, u.c.x, u.c.y]).fill(BOJE.asfalt);
     }
     const zgrade = new Graphics();
     for (let i = tile.zgrade[0]; i < tile.zgrade[1]; i++) {
@@ -279,7 +306,7 @@ export async function createGradRenderer(
       app.renderer.resize(cssW, cssH, dpr);
     },
 
-    draw({ kadar: k, igrac, pregled }) {
+    draw({ kadar: k, igrac }) {
       kadar += 1;
       const pogled = vidljivo(k);
       vidljivih = 0;
@@ -306,20 +333,36 @@ export async function createGradRenderer(
       }
 
       dinamika.clear();
-      if (pregled && pregled.length >= 2) {
-        linija(dinamika, pregled);
-        dinamika.stroke({ width: 1.2, color: BOJE.pregled, alpha: 0.55, cap: "round", join: "round" });
-      }
       const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
       const cos = Math.cos(ugao);
       const sin = Math.sin(ugao);
       dinamika.setTransform(cos, sin, -sin, cos, igrac.pos.x, igrac.pos.y);
+      // Prednji točkovi, ispod karoserije: vire sa strane kad su okrenuti.
+      const osovina = GRAD_MEDJUOSOVINSKO / 2;
+      const tc = Math.cos(igrac.tocak);
+      const ts = Math.sin(igrac.tocak);
+      const tDuz = 0.34;
+      const tPop = 0.11;
+      for (const strana of [-1, 1]) {
+        const cx = osovina;
+        const cy = strana * (CAR_WIDTH / 2 - 0.12);
+        dinamika
+          .poly([
+            cx + tDuz * tc - tPop * ts, cy + tDuz * ts + tPop * tc,
+            cx - tDuz * tc - tPop * ts, cy - tDuz * ts + tPop * tc,
+            cx - tDuz * tc + tPop * ts, cy - tDuz * ts - tPop * tc,
+            cx + tDuz * tc + tPop * ts, cy + tDuz * ts - tPop * tc,
+          ])
+          .fill("#1d1d1f");
+      }
       dinamika
         .roundRect(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH, CAR_WIDTH * 0.25)
         .fill(BOJE.igrac)
         .stroke({ width: 0.08, color: "rgba(0,0,0,0.4)" });
       dinamika.rect(CAR_LENGTH * 0.1, -CAR_WIDTH * 0.34, CAR_LENGTH * 0.2, CAR_WIDTH * 0.68).fill("rgba(255,255,255,0.7)");
-      const stop = igrac.koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
+      // Zadnja svjetla: crvena kad se koči, bijela u rikvercu. U rikvercu kočnica
+      // vozi unazad, pa crveno tada ne bi značilo ništa.
+      const stop = igrac.rikverc ? "#ffffff" : igrac.koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
       dinamika.rect(-CAR_LENGTH / 2, -CAR_WIDTH * 0.42, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
       dinamika.rect(-CAR_LENGTH / 2, CAR_WIDTH * 0.2, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
       dinamika.resetTransform();
