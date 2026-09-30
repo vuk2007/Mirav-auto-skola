@@ -1452,3 +1452,96 @@ export const PIXI_KOMAD = 200;
 export const PIXI_KOMADA_NAJVISE = 48;
 /** Stranica ćelije mreže u koju se svrstavaju linije okoline [m]. */
 export const PIXI_CELIJA = 250;
+
+// ── grad u razmjeri 1:1 (faza 6, `lib/game/grad/`) ─────────────────────────
+
+/**
+ * Najveća brzina i otpor u gradu — isti kao na otvorenom putu: bulevarima se
+ * vozi i 60–80 km/h, a ispitni `V_TOP` sa gradskim otporom zakiva auto na
+ * šezdesetak. Isti auto mora da se vozi isto na ruti i u gradu.
+ */
+export const GRAD_V_TOP = ROAD_V_TOP;
+export const GRAD_DRAG = HIGHWAY_DRAG;
+
+/** Širina jedne saobraćajne trake u gradu kad je broj traka poznat [m]. */
+export const GRAD_SIRINA_TRAKE = 3.25;
+
+/**
+ * Broj traka kad ga OSM nema — po klasi ulice, za cijeli kolovoz dvosmjerne
+ * ulice. Jednosmjerna polovina bulevara (`oneway`) dobija isti broj, jer je u
+ * Podgorici glavna ulica po pravilu dvije trake u jednom smjeru.
+ *
+ * Ovo NIJE podatak o ulici nego samo mjera za crtanje i kretanje: pravila o
+ * trakama (stavka 5) ne sude po pretpostavljenom broju.
+ */
+export const GRAD_TRAKE_PO_KLASI: Readonly<Record<string, number>> = {
+  motorway: 4,
+  trunk: 4,
+  primary: 2,
+  secondary: 2,
+  tertiary: 2,
+  motorway_link: 1,
+  trunk_link: 1,
+  primary_link: 1,
+  secondary_link: 1,
+  tertiary_link: 1,
+  unclassified: 2,
+  residential: 2,
+  living_street: 2,
+  road: 2,
+  service: 1,
+  track: 1,
+  pedestrian: 2,
+  cycleway: 1,
+  busway: 1,
+};
+
+/**
+ * Najuža ulica [m] — servisni prolaz sa jednom trakom je i dalje dovoljno
+ * širok za jedan auto.
+ */
+export const GRAD_NAJUZA_ULICA = 3.5;
+
+/**
+ * Na kojoj udaljenosti od raskrsnice volan bira izlaz [m]. Pedeset metara na
+ * pedeset na sat su tri i po sekunde — dovoljno da se izbor vidi i promijeni.
+ */
+export const GRAD_ODLUKA = 50;
+
+/**
+ * Koliko prije raskrsnice se izbor zaključava [m]. Poslije toga volan više ne
+ * mijenja pravac, samo položaj u traci — da auto ne skrene tamo gdje ga je
+ * trzaj volana u posljednjem trenutku poslao.
+ */
+export const GRAD_ZAKLJUCAJ = 6;
+
+/**
+ * Ugao skretanja koji traži pun volan [°]. Volan na pola traži skretanje pod
+ * pola toga, pa se na raskrsnici sa pet krakova može izabrati i koso.
+ */
+export const GRAD_PUN_VOLAN_UGAO = 100;
+
+/**
+ * Koliko luk kroz raskrsnicu počinje prije čvora i završava poslije njega [m] —
+ * najviše; na kratkoj ivici manje (vidi `GRAD_ZAOBLJENJE_UDIO`).
+ */
+export const GRAD_ZAOBLJENJE = 7;
+/** Najveći dio ivice koji luk kroz raskrsnicu smije da pojede, sa svake strane. */
+export const GRAD_ZAOBLJENJE_UDIO = 0.45;
+/** Na koliko tačaka se luk kroz raskrsnicu crta i prelazi. */
+export const GRAD_LUK_TACAKA = 16;
+/**
+ * Pola vidnog polja u gradu [m]. Šire nego na otvorenom putu (34 m): ulice su
+ * kraće, i raskrsnica ispred mora da se vidi prije nego što se do nje stigne.
+ */
+export const GRAD_POLA_KADRA = 48;
+/** Koliko sagrađenih tile-ova grada se najviše drži; najdavnije viđeni se ruše. */
+export const GRAD_KOMADA_NAJVISE = 36;
+/** Koliko metara izabranog izlaza se prikazuje ispred igrača. */
+export const GRAD_PREGLED_IZLAZA = 18;
+/**
+ * Stepeni udaljavanja kadra u slobodnoj vožnji kroz grad — množe
+ * `GRAD_POLA_KADRA`. Na osmostrukom se vidi oko 770 m: dovoljno da se pregleda
+ * kvart, a da tile-ova u kadru ne bude više nego što ih se drži.
+ */
+export const GRAD_ZUM = [1, 2, 4, 8] as const;

@@ -8,6 +8,7 @@ import { loadGameProgress, saveGameAttempt, type GameProgressMap } from "@/lib/s
 import GameScreen from "./GameScreen";
 import ScenarioPicker from "./ScenarioPicker";
 import ShiftScreen from "./ShiftScreen";
+import GradScreen from "./GradScreen";
 import RouteScreen from "./RouteScreen";
 import TripScreen from "./TripScreen";
 
@@ -26,6 +27,7 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
   const [shift, setShift] = useState(false);
   const [trip, setTrip] = useState(false);
   const [ruta, setRuta] = useState(false);
+  const [grad, setGrad] = useState(false);
 
   useEffect(() => {
     setProgress(loadGameProgress());
@@ -74,7 +76,9 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
         </div>
       )}
 
-      {ruta ? (
+      {grad ? (
+        <GradScreen onExit={() => setGrad(false)} />
+      ) : ruta ? (
         <RouteScreen onExit={() => setRuta(false)} />
       ) : trip ? (
         <TripScreen onExit={() => setTrip(false)} />
@@ -130,6 +134,22 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
               className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
             >
               {t.rutaStart}
+            </button>
+          </section>
+
+          {/* Grad u razmjeri 1:1 (faza 6) — za sada probna vožnja bez pravila,
+              da se Podgorica pogleda dok se gradi. */}
+          <section className="panel flex flex-col gap-3 border-t-4 border-t-green p-4 sm:flex-row sm:items-center">
+            <div className="flex-1">
+              <h2 className="text-lg font-bold">{t.gradTitle}</h2>
+              <p className="mt-1 text-sm text-muted">{t.gradDesc}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setGrad(true)}
+              className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
+            >
+              {t.gradStart}
             </button>
           </section>
 

@@ -212,6 +212,17 @@ export interface Dict {
   rutaTitle: string;
   rutaDesc: string;
   rutaStart: string;
+  gradTitle: string;
+  gradDesc: string;
+  gradStart: string;
+  gradLoading: string;
+  gradFailed: string;
+  gradNoWebgl: string;
+  gradStreet: string;
+  gradUnnamed: string;
+  gradHint: string;
+  gradZoomIn: string;
+  gradZoomOut: string;
   rutaFrom: string;
   rutaTo: string;
   rutaPrepare: string;
@@ -600,6 +611,17 @@ const me: Dict = {
   rutaDesc:
     "Cijela ruta u jednom potezu, po stvarnim putevima Crne Gore. Bez zastajanja između dionica.",
   rutaStart: "Vozi rutu",
+  gradTitle: "Podgorica — slobodna vožnja (probno)",
+  gradDesc: "Cijela Podgorica iz OpenStreetMap-a, u stvarnoj veličini. Za sada bez pravila i bez drugih vozila — samo ulice, da se grad pogleda.",
+  gradStart: "Vozi po Podgorici",
+  gradLoading: "Učitavam grad…",
+  gradFailed: "Grad nije učitan.",
+  gradNoWebgl: "Ovaj uređaj ne daje WebGL, a grad se crta samo njime.",
+  gradStreet: "Ulica",
+  gradUnnamed: "bez imena",
+  gradHint: "Volan pred raskrsnicom bira kuda se ide — plava linija pokazuje izbor.",
+  gradZoomIn: "Približi",
+  gradZoomOut: "Udalji",
   rutaFrom: "Odakle",
   rutaTo: "Dokle",
   rutaPrepare: "Pripremam put…",
@@ -978,6 +1000,17 @@ const en: Dict = {
   rutaDesc:
     "A whole route in one go, along the real roads of Montenegro. No stopping between legs.",
   rutaStart: "Drive the route",
+  gradTitle: "Podgorica — free drive (preview)",
+  gradDesc: "All of Podgorica from OpenStreetMap, at real scale. No rules and no other vehicles yet — just the streets, to look around the city.",
+  gradStart: "Drive around Podgorica",
+  gradLoading: "Loading the city…",
+  gradFailed: "The city did not load.",
+  gradNoWebgl: "This device has no WebGL, and the city is drawn only with it.",
+  gradStreet: "Street",
+  gradUnnamed: "unnamed",
+  gradHint: "Steer before a junction to choose the way — the blue line shows the choice.",
+  gradZoomIn: "Zoom in",
+  gradZoomOut: "Zoom out",
   rutaFrom: "From",
   rutaTo: "To",
   rutaPrepare: "Preparing the road…",
@@ -1361,6 +1394,17 @@ const sq: Dict = {
   rutaDesc:
     "I gjithë itinerari pa ndërprerje, nëpër rrugët e vërteta të Malit të Zi. Pa ndalesa mes pjesëve.",
   rutaStart: "Ngis itinerarin",
+  gradTitle: "Podgorica — ngasje e lirë (provë)",
+  gradDesc: "E gjithë Podgorica nga OpenStreetMap, në madhësi reale. Ende pa rregulla dhe pa automjete të tjera — vetëm rrugët, për ta parë qytetin.",
+  gradStart: "Ngis nëpër Podgoricë",
+  gradLoading: "Po ngarkohet qyteti…",
+  gradFailed: "Qyteti nuk u ngarkua.",
+  gradNoWebgl: "Kjo pajisje nuk ka WebGL, dhe qyteti vizatohet vetëm me të.",
+  gradStreet: "Rruga",
+  gradUnnamed: "pa emër",
+  gradHint: "Timoni para kryqëzimit zgjedh drejtimin — vija blu tregon zgjedhjen.",
+  gradZoomIn: "Afro",
+  gradZoomOut: "Largo",
   rutaFrom: "Nga",
   rutaTo: "Deri",
   rutaPrepare: "Po përgatis rrugën…",
@@ -1746,6 +1790,17 @@ const ru: Dict = {
   rutaDesc:
     "Весь маршрут за один раз, по настоящим дорогам Черногории. Без остановок между участками.",
   rutaStart: "Проехать маршрут",
+  gradTitle: "Подгорица — свободная езда (пробно)",
+  gradDesc: "Вся Подгорица из OpenStreetMap в реальном масштабе. Пока без правил и без других машин — только улицы, чтобы осмотреть город.",
+  gradStart: "Ехать по Подгорице",
+  gradLoading: "Загружаю город…",
+  gradFailed: "Город не загрузился.",
+  gradNoWebgl: "На этом устройстве нет WebGL, а город рисуется только с ним.",
+  gradStreet: "Улица",
+  gradUnnamed: "без названия",
+  gradHint: "Руль перед перекрёстком выбирает направление — синяя линия показывает выбор.",
+  gradZoomIn: "Приблизить",
+  gradZoomOut: "Отдалить",
   rutaFrom: "Откуда",
   rutaTo: "Куда",
   rutaPrepare: "Готовлю дорогу…",

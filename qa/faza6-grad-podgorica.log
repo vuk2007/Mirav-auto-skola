@@ -1,0 +1,74 @@
+{
+  "paketi": [
+    {
+      "url": "podgorica-1e58ca1184.bin",
+      "status": 200,
+      "kes": "public, max-age=31536000, immutable"
+    }
+  ],
+  "snimci": [
+    {
+      "sek": 10,
+      "kmh": 42,
+      "ulica": "Vučedolska",
+      "fps": 60
+    },
+    {
+      "sek": 20,
+      "kmh": 42,
+      "ulica": "Vučedolska",
+      "fps": 60
+    },
+    {
+      "sek": 30,
+      "kmh": 42,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 40,
+      "kmh": 42,
+      "ulica": "Bulevar Stanka Dragojevića",
+      "fps": 60
+    },
+    {
+      "sek": 50,
+      "kmh": 42,
+      "ulica": "Vaka Đurovića",
+      "fps": 60
+    },
+    {
+      "sek": 60,
+      "kmh": 42,
+      "ulica": "Vaka Đurovića",
+      "fps": 60
+    },
+    {
+      "sek": 70,
+      "kmh": 42,
+      "ulica": "bez imena",
+      "fps": 60
+    },
+    {
+      "sek": 80,
+      "kmh": 42,
+      "ulica": "Njegoševa",
+      "fps": 60
+    }
+  ],
+  "start": {
+    "kmh": 0,
+    "ulica": "Vučedolska",
+    "fps": 58
+  },
+  "zumFps": 60,
+  "ulice": [
+    "Vučedolska",
+    "Bulevar Stanka Dragojevića",
+    "Vaka Đurovića",
+    "bez imena",
+    "Njegoševa",
+    "Bulevar Ivana Crnojevića"
+  ],
+  "greske": []
+}

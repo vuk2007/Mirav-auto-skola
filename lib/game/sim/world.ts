@@ -9,6 +9,7 @@
  * `structuredClone(world)` je valjan snimak za ponavljanje.
  */
 
+import { bocnaBrzina, integrate } from "./dinamika";
 import {
   A_MAX,
   B_MAX,
@@ -39,7 +40,6 @@ import {
   KEEP_BEHIND,
   LOAD_AHEAD,
   MAX_SCENARIO_SECONDS,
-  ROLL_RESISTANCE,
   SPEEDING_FACTOR,
   STOPPED_SPEED,
   STOP_DWELL,
@@ -54,10 +54,6 @@ import {
   V_TOP,
   YELLOW_COMMIT_TTC,
   LANE_WIDTH,
-  LAT_SPEED_FAST,
-  LAT_SPEED_SLOW,
-  LAT_SPEED_V_FAST,
-  LAT_SPEED_V_SLOW,
   DECISION_HOLD,
   DECISION_LEAD,
   DECISION_STEER,
@@ -483,17 +479,9 @@ function doLinije(path: Path, niz: readonly number[] | undefined, s: number): nu
   return Math.max(mjereno, CAR_WIDTH / 2 + OFF_ROAD_MARGIN);
 }
 
-/**
- * Bočna brzina pri punom volanu [m/s].
- *
- * Raste sa brzinom: na deset na sat se volan okreće mnogo a auto se pomjeri
- * malo, na osamdeset je obrnuto.
- */
-export function bocnaBrzina(v: number): number {
-  const t = (v - LAT_SPEED_V_SLOW) / (LAT_SPEED_V_FAST - LAT_SPEED_V_SLOW);
-  const k = Math.min(1, Math.max(0, t));
-  return LAT_SPEED_SLOW + (LAT_SPEED_FAST - LAT_SPEED_SLOW) * k;
-}
+// `bocnaBrzina` je u `dinamika.ts`, zajednička sa gradom; izvozi se i odavde,
+// jer je dosadašnji korisnici uvoze iz `world.ts`.
+export { bocnaBrzina };
 
 /**
  * Jedan korak volana.
@@ -1594,17 +1582,6 @@ function accelToward(v: Vehicle, limit: number, vMax: number, vLead = 0): number
   if (need >= B_MAX) return -B_MAX;
   if (need > A_MAX * 0.5) return -need;
   return v.v < vMax ? A_MAX : 0;
-}
-
-/**
- * Brzina se steže na ono što vozilo MOŽE (`V_TOP`), ne na ono što SMIJE.
- * Zbog toga prekoračenje uopšte može da se desi i da se prijavi.
- */
-function integrate(v: Vehicle, a: number, top = V_TOP, coeff = DRAG_COEFF): void {
-  const drag = coeff * v.v + (v.v > 0.01 ? ROLL_RESISTANCE : 0);
-  const acc = a - (a > 0 ? drag : 0);
-  v.v = Math.max(0, Math.min(top, v.v + acc * DT));
-  v.s += v.v * DT;
 }
 
 /** Jedan korak simulacije. Mijenja `world` na mjestu. */
