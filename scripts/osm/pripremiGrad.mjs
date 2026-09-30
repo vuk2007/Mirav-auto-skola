@@ -36,6 +36,7 @@ import {
   IVICA_MOST,
   IVICA_TUNEL,
   IVICA_VOZNA,
+  BEZ,
   NIZOVI,
   zapisi,
 } from "../../lib/game/grad/paket.ts";
@@ -286,6 +287,15 @@ const cvorZa = (osmId) => {
 const klaseSve = [...new Set(putevi.map((w) => w.tags.highway))];
 const klase = [...KLASE.filter((k) => klaseSve.includes(k)), ...klaseSve.filter((k) => !KLASE.includes(k)).sort()];
 
+// Čvorovi pravila (znak, semafor, prelaz) — da se zna na kojoj su ivici i
+// koliko od njenog početka, a ne samo gdje stoje.
+const pravilaEl = await ucitaj(kljucGrada, "pravila");
+const idPravila = new Set(pravilaEl.map((el) => el.id));
+/** OSM čvor pravila → mjesta na ivicama: { ivica, s }. */
+const pravilaNaIvici = new Map();
+/** „put:čvor" → ivica tog puta koja dodiruje taj čvor mreže — za zabrane skretanja. */
+const ivicaPutaUCvoru = new Map();
+
 const iv = {
   A: [], B: [], Od: [0], XY: [], Klasa: [], Smjer: [], Trake: [], TrakeNaprijed: [], TrakeNazad: [],
   Brzina: [], Zastavice: [], Sloj: [], Ime: [], TrakeSkretanja: [], TrakeSkretanjaNazad: [], Osm: [],
@@ -325,6 +335,24 @@ for (const w of putevi) {
       continue;
     }
     const prosto = uprosti(tacke, UPROSTI_ULICE);
+    const ovaIvica = iv.A.length;
+    // Mjesto čvora pravila na ivici: dužina duž OSM linije, svedena na dužinu
+    // uprošćene linije koju igra vozi — razlika je nekoliko centimetara.
+    const duzOsm = [0];
+    for (let k = 1; k < tacke.length; k++) {
+      duzOsm.push(duzOsm[k - 1] + Math.hypot(tacke[k].x - tacke[k - 1].x, tacke[k].y - tacke[k - 1].y));
+    }
+    let duzProsto = 0;
+    for (let k = 1; k < prosto.length; k++) duzProsto += Math.hypot(prosto[k].x - prosto[k - 1].x, prosto[k].y - prosto[k - 1].y);
+    const razmjer = duzOsm[duzOsm.length - 1] > 0 ? duzProsto / duzOsm[duzOsm.length - 1] : 1;
+    for (let k = od; k <= i; k++) {
+      if (!idPravila.has(w.nodes[k])) continue;
+      const mjesta = pravilaNaIvici.get(w.nodes[k]) ?? [];
+      mjesta.push({ ivica: ovaIvica, s: duzOsm[k - od] * razmjer, kraj: k === od || k === i });
+      pravilaNaIvici.set(w.nodes[k], mjesta);
+    }
+    ivicaPutaUCvoru.set(`${w.id}:${w.nodes[od]}`, ovaIvica);
+    ivicaPutaUCvoru.set(`${w.id}:${w.nodes[i]}`, ovaIvica);
     iv.A.push(cvorZa(w.nodes[od]));
     iv.B.push(cvorZa(w.nodes[i]));
     for (const p of prosto) iv.XY.push(p.x, p.y);
@@ -349,21 +377,92 @@ const ivica = iv.A.length;
 
 // ── objekti: znaci, semafori, prelazi, stajališta, pumpe, bogomolje ──────────
 
-const ob = { XY: [], Vrsta: [], Podatak: [], tile: [] };
-const dodajObjekat = (vrsta, p, podatak) => {
+const ob = { XY: [], Vrsta: [], Podatak: [], tile: [], Ivica: [], S: [], Cvor: [] };
+const bezPozicije = { ivica: BEZ, s: 0, cvor: BEZ };
+const dodajObjekat = (vrsta, p, podatak, mjesto = bezPozicije) => {
   ob.XY.push(p.x, p.y);
   ob.Vrsta.push(VRSTE_OBJEKATA.indexOf(vrsta));
   ob.Podatak.push(stringovi.kod(podatak ?? ""));
   ob.tile.push(tileZa(p));
+  ob.Ivica.push(mjesto.ivica);
+  ob.S.push(mjesto.s);
+  ob.Cvor.push(mjesto.cvor);
 };
-for (const el of await ucitaj(kljucGrada, "pravila")) {
+/**
+ * Gdje je čvor pravila u mreži: u čvoru mreže (raskrsnica, kraj ulice) ili na
+ * jednoj ivici. Čvor koji nije na nijednoj povučenoj ulici (pješačka staza,
+ * van okvira) ostaje bez mjesta.
+ */
+const izvjestajMjesta = { naIvici: 0, uCvoru: 0, bez: 0 };
+const mjestoPravila = (id) => {
+  const mjesta = pravilaNaIvici.get(id) ?? [];
+  if (mjesta.length === 0) {
+    izvjestajMjesta.bez += 1;
+    return bezPozicije;
+  }
+  if (mjesta.some((m) => m.kraj) && cvorIndeks.has(id)) {
+    izvjestajMjesta.uCvoru += 1;
+    return { ivica: BEZ, s: 0, cvor: cvorIndeks.get(id) };
+  }
+  izvjestajMjesta.naIvici += 1;
+  return { ivica: mjesta[0].ivica, s: mjesta[0].s, cvor: BEZ };
+};
+for (const el of pravilaEl) {
   const t = el.tags ?? {};
-  const p = lok(el.lat, el.lon);
-  if (t.highway === "stop" || t.highway === "give_way") dodajObjekat(t.highway, p, t.direction);
-  else if (t.highway === "traffic_signals") dodajObjekat("traffic_signals", p, t["traffic_signals:direction"] ?? t.direction);
-  else if (t.highway === "crossing" || t.crossing) dodajObjekat("crossing", p, t.crossing ?? t["crossing:markings"]);
-  else if (t.highway === "bus_stop" || t.public_transport === "platform") dodajObjekat("bus_stop", p, t.name);
-  else if (t.traffic_calming) dodajObjekat("traffic_calming", p, t.traffic_calming);
+  // Čvor koji je dio ulice uzima položaj iz odgovora za ulice: pravila i ulice
+  // stižu u različitim upitima, ponekad sa različitih mirrora i sa različitim
+  // stanjem baze, a znak mora stajati tačno na čvoru mreže u kojem je.
+  const naUlici = cvoroviOsm.get(el.id);
+  const p = naUlici ? lok(naUlici.lat, naUlici.lon) : lok(el.lat, el.lon);
+  if (t.highway === "stop" || t.highway === "give_way") dodajObjekat(t.highway, p, t.direction, mjestoPravila(el.id));
+  else if (t.highway === "traffic_signals") {
+    dodajObjekat("traffic_signals", p, t["traffic_signals:direction"] ?? t.direction, mjestoPravila(el.id));
+  } else if (t.highway === "crossing" || t.crossing) {
+    dodajObjekat("crossing", p, t.crossing ?? t["crossing:markings"], mjestoPravila(el.id));
+  } else if (t.highway === "bus_stop" || t.public_transport === "platform") dodajObjekat("bus_stop", p, t.name);
+  else if (t.traffic_calming) dodajObjekat("traffic_calming", p, t.traffic_calming, mjestoPravila(el.id));
+}
+
+// ── zabrane skretanja: sa ivice, preko čvora, na ivicu ──────────────────────
+
+const rs = { Vrsta: [], Od: [], Cvor: [], Do: [] };
+const izvjestajZabrana = { uzeto: 0, prekoPuta: 0, izuzetakAuto: 0, vanMreze: 0, nepoznato: 0 };
+for (const el of await ucitaj(kljucGrada, "zabrane")) {
+  const t = el.tags ?? {};
+  const vrsta = t["restriction:motorcar"] ?? t.restriction;
+  if (!vrsta) {
+    izvjestajZabrana.nepoznato += 1;
+    continue;
+  }
+  if ((t.except ?? "").split(";").includes("motorcar")) {
+    izvjestajZabrana.izuzetakAuto += 1;
+    continue;
+  }
+  const clan = (uloga) => (el.members ?? []).filter((m) => m.role === uloga);
+  const [sa] = clan("from");
+  const [preko] = clan("via");
+  const [na] = clan("to");
+  if (!sa || !preko || !na || sa.type !== "way" || na.type !== "way") {
+    izvjestajZabrana.nepoznato += 1;
+    continue;
+  }
+  // Zabrana preko puta (a ne čvora) je rijetka i traži dvije raskrsnice; za
+  // sada se broji, ne crta i ne sudi.
+  if (preko.type !== "node") {
+    izvjestajZabrana.prekoPuta += 1;
+    continue;
+  }
+  const od = ivicaPutaUCvoru.get(`${sa.ref}:${preko.ref}`);
+  const do_ = ivicaPutaUCvoru.get(`${na.ref}:${preko.ref}`);
+  if (od === undefined || do_ === undefined || !cvorIndeks.has(preko.ref)) {
+    izvjestajZabrana.vanMreze += 1;
+    continue;
+  }
+  rs.Vrsta.push(stringovi.kod(vrsta));
+  rs.Od.push(od);
+  rs.Cvor.push(cvorIndeks.get(preko.ref));
+  rs.Do.push(do_);
+  izvjestajZabrana.uzeto += 1;
 }
 const objektiEl = await ucitaj(kljucGrada, "objekti");
 for (const el of objektiEl) {
@@ -501,6 +600,13 @@ const n = {
   obVrsta: new Uint8Array(obRed.map(({ i }) => ob.Vrsta[i])),
   obPodatak: new Uint16Array(obRed.map(({ i }) => ob.Podatak[i])),
   obTileOd: obT.tileOd,
+  obIvica: new Uint32Array(obRed.map(({ i }) => ob.Ivica[i])),
+  obS: new Float32Array(obRed.map(({ i }) => ob.S[i])),
+  obCvor: new Uint32Array(obRed.map(({ i }) => ob.Cvor[i])),
+  rsVrsta: new Uint16Array(rs.Vrsta),
+  rsOd: new Uint32Array(rs.Od),
+  rsCvor: new Uint32Array(rs.Cvor),
+  rsDo: new Uint32Array(rs.Do),
 };
 if (Object.keys(n).length !== Object.keys(NIZOVI).length) throw new Error("paket nema sve nizove");
 if (stringovi.niz.length > 65535) throw new Error("previše stringova za u16");
@@ -585,6 +691,10 @@ izvj.push(
   `- sve ulice: \`lanes\` ${udio(putevi, (w) => w.tags.lanes)}, \`maxspeed\` ${udio(putevi, (w) => w.tags.maxspeed)}, \`oneway\` ${udio(putevi, (w) => w.tags.oneway)}, \`turn:lanes\` ${udio(putevi, (w) => w.tags["turn:lanes"] || w.tags["turn:lanes:forward"])}, \`name\` ${udio(putevi, (w) => w.tags.name)}`,
   `- glavne (trunk…tertiary, ${glavne.length}): \`lanes\` ${udio(glavne, (w) => w.tags.lanes)}, \`maxspeed\` ${udio(glavne, (w) => w.tags.maxspeed)}, jednosmjerne ${udio(glavne, (w) => ["yes", "-1"].includes(w.tags.oneway))}`,
   `- \`priority_road\` na putevima: ${putevi.filter((w) => w.tags.priority_road).length}`,
+  "",
+  `Mjesto objekata pravila u mreži (znak, semafor, prelaz, usporivač): na ivici ${izvjestajMjesta.naIvici}, u čvoru mreže ${izvjestajMjesta.uCvoru}, van vozne mreže ${izvjestajMjesta.bez}.`,
+  "",
+  `Zabrane skretanja: uzeto ${izvjestajZabrana.uzeto}; preko puta (ne čvora, za sada bez suda) ${izvjestajZabrana.prekoPuta}; ne važe za auto ${izvjestajZabrana.izuzetakAuto}; van mreže ${izvjestajZabrana.vanMreze}; bez vrste ili članova ${izvjestajZabrana.nepoznato}.`,
   "",
   "Klase: " + klase.map((k, i) => `${k} ${n.ivKlasa.filter((x) => x === i).length}`).join(", "),
   "",

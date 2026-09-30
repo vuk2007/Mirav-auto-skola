@@ -1,6 +1,6 @@
 # Podgorica — paket grada
 
-Okvir upita 42.395,19.195,42.485,19.315; stanje baze 2026-09-30T07:56:06Z. Paket `podgorica-1e58ca1184.bin`: 2.78 MB, 441 tile-ova po 500 m (21 × 21).
+Okvir upita 42.395,19.195,42.485,19.315; stanje baze 2026-09-30T16:33:46Z. Paket `podgorica-f7d6cb7fed.bin`: 2.82 MB, 441 tile-ova po 500 m (21 × 21).
 
 | | broj | napomena |
 |---|---|---|
@@ -18,5 +18,9 @@ Oznake na ulicama (udio OSM puteva):
 - sve ulice: `lanes` 30 %, `maxspeed` 16 %, `oneway` 25 %, `turn:lanes` 9 %, `name` 33 %
 - glavne (trunk…tertiary, 1501): `lanes` 98 %, `maxspeed` 62 %, jednosmjerne 66 %
 - `priority_road` na putevima: 0
+
+Mjesto objekata pravila u mreži (znak, semafor, prelaz, usporivač): na ivici 2011, u čvoru mreže 338, van vozne mreže 101.
+
+Zabrane skretanja: uzeto 45; preko puta (ne čvora, za sada bez suda) 11; ne važe za auto 0; van mreže 1; bez vrste ili članova 1.
 
 Klase: motorway 14, primary 890, secondary 773, tertiary 607, motorway_link 19, primary_link 20, secondary_link 10, unclassified 246, residential 6207, service 3204, track 552, pedestrian 52, cycleway 494

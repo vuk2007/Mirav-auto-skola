@@ -20,7 +20,7 @@
 
 /** Oznaka na početku fajla — da se greška u putanji ne pročita kao grad. */
 const MAGIJA = "MRVG";
-export const VERZIJA_PAKETA = 1;
+export const VERZIJA_PAKETA = 2;
 
 type VrstaNiza = "f32" | "u32" | "u16" | "u8" | "i8";
 type Niz = Float32Array | Uint32Array | Uint16Array | Uint8Array | Int8Array;
@@ -85,7 +85,25 @@ export const NIZOVI = {
   /** Dodatni podatak kao indeks u `stringovi` (smjer znaka, vrsta prelaza). */
   obPodatak: "u16",
   obTileOd: "u32",
+  /**
+   * Gdje objekat pravila (znak, semafor, prelaz) stoji u mreži: na ivici
+   * (`obIvica`, `obS` metara od njenog početka `a`), ili u čvoru mreže
+   * (`obCvor`). `BEZ` kad nije na voznoj ulici. Smjer znaka (`obPodatak`:
+   * forward/backward) je u smjeru OSM puta, a to je smjer ivice `a → b`.
+   */
+  obIvica: "u32",
+  obS: "f32",
+  obCvor: "u32",
+  // Zabrane skretanja (OSM `type=restriction`): sa ivice, preko čvora, na ivicu.
+  /** Vrsta (`no_left_turn`, `only_straight_on`…) kao indeks u `stringovi`. */
+  rsVrsta: "u16",
+  rsOd: "u32",
+  rsCvor: "u32",
+  rsDo: "u32",
 } as const satisfies Record<string, VrstaNiza>;
+
+/** Oznaka „nema" u `obIvica` i `obCvor`. */
+export const BEZ = 0xffffffff;
 
 export type ImeNiza = keyof typeof NIZOVI;
 type TipNiza<K extends ImeNiza> = InstanceType<(typeof KONSTRUKTOR)[(typeof NIZOVI)[K]]>;

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { segmentIntersection } from "../sim/geometry";
 import type { Point } from "../sim/types";
 import { napraviMrezu, najblizaIvica } from "./mreza";
-import { IVICA_MOST, IVICA_TUNEL, procitaj, type Paket } from "./paket";
+import { BEZ, IVICA_MOST, IVICA_TUNEL, procitaj, type Paket } from "./paket";
 import { napraviPovrsinu } from "./povrsina";
 import { autoNaPovrsini, slobodnoNaIvici } from "./slobodno";
 
@@ -99,6 +99,46 @@ describe("Podgorica: paket grada", () => {
     }
     expect(prelaza).toBeGreaterThan(0);
     expect(bezMosta).toEqual([]);
+  });
+});
+
+describe("Podgorica: pravila u mreži (stavka 5a)", () => {
+  it("znak, semafor i prelaz stoje na ivici (unutar njene dužine) ili u čvoru mreže", () => {
+    const n = paket.n;
+    let naMrezi = 0;
+    for (let o = 0; o < n.obVrsta.length; o++) {
+      const iv = n.obIvica[o]!;
+      const c = n.obCvor[o]!;
+      expect(iv === BEZ || c === BEZ, `objekat ${o}: i ivica i čvor`).toBe(true);
+      if (iv !== BEZ) {
+        expect(iv).toBeLessThan(mreza.ivice.length);
+        const s = n.obS[o]!;
+        expect(s >= -0.01 && s <= mreza.ivice[iv]!.duzina + 0.01, `objekat ${o}: s ${s}`).toBe(true);
+        naMrezi += 1;
+      }
+      if (c !== BEZ) {
+        expect(c).toBeLessThan(mreza.cvorovi.length);
+        const p = mreza.cvorovi[c]!;
+        // Položaj čvora pravila se uzima iz ulica, pa je tačno u čvoru mreže.
+        expect(Math.hypot(p.x - n.obXY[2 * o]!, p.y - n.obXY[2 * o + 1]!)).toBeLessThan(0.01);
+        naMrezi += 1;
+      }
+    }
+    // Izmjereno: 2 349 od 2 450 objekata pravila je na voznoj ili pješačkoj mreži.
+    expect(naMrezi).toBeGreaterThan(2000);
+  });
+
+  it("zabrana skretanja: obje ivice dodiruju čvor preko kojeg se skreće", () => {
+    const n = paket.n;
+    expect(n.rsOd.length).toBeGreaterThan(30);
+    for (let r = 0; r < n.rsOd.length; r++) {
+      const c = n.rsCvor[r]!;
+      for (const i of [n.rsOd[r]!, n.rsDo[r]!]) {
+        const iv = mreza.ivice[i]!;
+        expect(iv.a === c || iv.b === c, `zabrana ${r}`).toBe(true);
+      }
+      expect(paket.zaglavlje.stringovi[n.rsVrsta[r]!]).toMatch(/^(no|only)_/);
+    }
   });
 });
 

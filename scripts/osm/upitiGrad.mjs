@@ -63,6 +63,16 @@ export const pravila = (okvir) => `[out:json][timeout:600];
 out body;`;
 
 /**
+ * Zabrane skretanja: relacije `type=restriction` (sa puta, preko čvora, na
+ * put). Samo članovi po id-u — geometriju puteva već imaju `ulice`.
+ */
+export const zabrane = (okvir) => `[out:json][timeout:600];
+(
+  relation[type=restriction](${okvir});
+);
+out body;`;
+
+/**
  * Zgrade: oblik, spratnost, visina. Ime samo za javne — škole, bolnice,
  * tržne centre, stadion, pozorište — i to se bira pri obradi, ne ovdje.
  */
