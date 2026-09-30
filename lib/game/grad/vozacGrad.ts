@@ -1,4 +1,4 @@
-import { GRAD_MEDJUOSOVINSKO, GRAD_RIKVERC_PEDALA, GRAD_VOZAC_USPORENJE } from "../sim/config";
+import { B_MAX, GRAD_MEDJUOSOVINSKO, GRAD_RIKVERC_PEDALA, GRAD_VOZAC_USPORENJE } from "../sim/config";
 import { cumulative, pointAt } from "../sim/geometry";
 import type { Input, Point } from "../sim/types";
 import { najveciTocak, type SlobodnoVozilo } from "./slobodno";
@@ -58,7 +58,9 @@ export interface Cilj {
  */
 export function vozi(st: SlobodnoVozilo, p: Putanja, sNaPutanji: number, cilj: Cilj): Input {
   const v = Math.max(0, st.v);
-  const naprijed = Math.max(4, v * 0.9);
+  // Pogled naprijed: kratak pri maloj brzini (uska skretanja — duži bi sjekao
+  // ugao i zakačio ivičnjak), duži pri većoj (mirno držanje trake).
+  const naprijed = Math.max(2.2, Math.min(12, 1.2 + 0.55 * v));
   const meta = pointAt(p.tacke, p.cum, Math.min(p.duzina, sNaPutanji + naprijed));
   // Pure pursuit: ugao ka meti od zadnje osovine, pa ugao točkova.
   const pola = GRAD_MEDJUOSOVINSKO / 2;
@@ -73,6 +75,12 @@ export function vozi(st: SlobodnoVozilo, p: Putanja, sNaPutanji: number, cilj: C
   if (cilj.staniNa !== null) {
     const doStajanja = cilj.staniNa - sNaPutanji;
     zeljena = doStajanja <= 0.3 ? 0 : Math.min(zeljena, Math.sqrt(2 * GRAD_VOZAC_USPORENJE * Math.max(0, doStajanja - 0.3)));
+    // Zaustavljanje bliže nego što udobno usporenje stigne (žuto upaljeno
+    // blizu): kočnica onoliko koliko treba, do `B_MAX`.
+    const treba = (v * v) / (2 * Math.max(0.1, doStajanja - 0.3));
+    if (v > 0.3 && treba > GRAD_VOZAC_USPORENJE) {
+      return { throttle: 0, brake: Math.min(1, (treba * 1.15) / B_MAX), indicator: null, steer };
+    }
   }
   const razlika = zeljena - v;
   // Stojeći drži kočnicu slabije od praga rikverca — inače bi poslije

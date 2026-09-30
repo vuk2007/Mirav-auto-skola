@@ -6,12 +6,14 @@ import {
   GRAD_BRZINA_TRAJE,
   GRAD_IZLAZ_POTVRDA,
   GRAD_LIJEVO_TRAJE,
+  GRAD_PRILAZ_DO,
   GRAD_SIRINA_TRAKE,
   GRAD_SKRETANJE_UGAO,
   GRAD_STAJALISTE_DUZINA,
   INDICATOR_OFF_AFTER,
   GRAD_STAJANJE_TRAJE,
   GRAD_SUDIJA_DO_ULICE,
+  GRAD_SUDIJA_NEODLUCNO,
   GRAD_SUPROTNO_BRZINA,
   GRAD_SUPROTNO_TRAJE,
   GRAD_TOLERANCIJA_BRZINE,
@@ -24,10 +26,11 @@ import {
   type Level,
 } from "../sim/config";
 import type { Point } from "../sim/types";
-import type { Ivica, Mreza } from "./mreza";
+import { pravacKraja, ugaoSkretanja, type Ivica, type Mreza } from "./mreza";
 import { BEZ, type Paket } from "./paket";
-import { najblizaOsa, type Povrsina } from "./povrsina";
-import { prekrsenaZabrana, svjetlo, type Raskrsnice, type Svjetlo, type Zabrana } from "./raskrsnica";
+import { najblizaOsa, oseBlizu, type OsaBlizu, type Povrsina } from "./povrsina";
+import { prekrsenaZabrana, svjetlo, type Krak, type Raskrsnice, type Svjetlo, type Zabrana } from "./raskrsnica";
+import { headingAt, pointAt } from "../sim/geometry";
 import type { SlobodnoVozilo } from "./slobodno";
 
 /**
@@ -119,6 +122,9 @@ interface Prilaz {
   kljuc: string;
   r: number;
   k: number;
+  /** Stop-linija: tačka na osovini kraka i pravac vožnje ka raskrsnici tu. */
+  linija: Point;
+  pravac: Point;
   /** Nos auta do stop-linije u prošlom koraku [m]; negativno je preko. */
   doLinije: number;
   stajao: number;
@@ -140,10 +146,17 @@ interface Prolaz {
   upaljenUnutra: Strana | null;
   /** Strelice trake iz koje je ušao; `null` bez strelica. */
   strelice: string[] | null;
+  /**
+   * Izlazni krak: prva ivica na kojoj je auto kad izađe iz raskrsnice — ne ona
+   * na kojoj je kad se izlaz potvrdi (kratak krak je tada već iza njega).
+   */
+  izlaz: OsaBlizu | null;
 }
 
 export interface Sudija {
   prekrsaji: GradskiPrekrsaj[];
+  /** Za dijagnozu: svaki prolaz kroz raskrsnicu kako ga sudija vidi. */
+  dnevnik?: (prolaz: { r: number; ulaz: number; izlaz: number; manevar: string; t: number }) => void;
   /** Žmigavac u prošlom koraku. */
   zmigavac: Strana | null;
   /** Poslije skretanja: strana žmigavca koji treba ugasiti, i pređeno od izlaska [m]. */
@@ -153,6 +166,8 @@ export interface Sudija {
   prolaz: Prolaz | null;
   /** Strelice trake u kojoj je auto bio u prošlom koraku van raskrsnice. */
   traka: string[] | null;
+  /** Ulica na kojoj je auto (praćenje, vidi `ulicaAuta`). */
+  ivicaAuta: number | null;
   /** Ivica i smjer u prošlom koraku (van raskrsnice). */
   ivica: number | null;
   smjer: 1 | -1;
@@ -175,6 +190,7 @@ export function noviSudija(nivo: Level): Sudija {
     prilaz: null,
     prolaz: null,
     traka: null,
+    ivicaAuta: null,
     ivica: null,
     smjer: 1,
     suprotnoT: 0,
@@ -244,6 +260,128 @@ function prijavi(
 }
 
 /**
+ * Stop-linija kraka kao na slici: tačka na osovini kraka `stopD` od
+ * raskrsnice, i pravac vožnje ka raskrsnici na tom mjestu. Linija je poprečna
+ * na taj pravac.
+ */
+export function stopLinija(g: { mreza: Mreza }, k: Krak): { linija: Point; pravac: Point } {
+  const iv = g.mreza.ivice[k.ivica]!;
+  const sE = k.kraj === 1 ? iv.duzina - k.stopD! : k.stopD!;
+  const h = headingAt(iv.tacke, iv.cum, sE);
+  return { linija: pointAt(iv.tacke, iv.cum, sE), pravac: k.kraj === 1 ? h : { x: -h.x, y: -h.y } };
+}
+
+/**
+ * Koliko je nos auta pred stop-linijom [m], mjereno duž pravca kraka;
+ * negativno — prešao je. Ne zavisi od toga na kojoj je ivici auto: u
+ * krivini ispred linije projekcija na osovinu bi auto u unutrašnjoj traci
+ * „pomakla" naprijed.
+ */
+function nosDoLinije(st: SlobodnoVozilo, linija: Point, pravac: Point): number {
+  const nx = st.x + Math.cos(st.ugao) * (CAR_LENGTH / 2);
+  const ny = st.y + Math.sin(st.ugao) * (CAR_LENGTH / 2);
+  return -((nx - linija.x) * pravac.x + (ny - linija.y) * pravac.y);
+}
+
+/**
+ * Krak raskrsnice `r` do kojeg vodi vožnja po ivici `ivica` u smjeru `smjer`:
+ * ta ivica ako joj je kraj u `r`, ili sljedeća niz ulicu kroz čvorove koji
+ * nisu raskrsnice. `null` kad ulica ne vodi u `r`.
+ */
+function krakKaRaskrsnici(g: GradZaSudiju, ivica: number, smjer: 1 | -1, r: number): { ivica: number; cvor: number } | null {
+  let e = ivica;
+  let sm = smjer;
+  for (let korak = 0; korak < 10; korak++) {
+    const iv = g.mreza.ivice[e]!;
+    const cvor = sm === 1 ? iv.b : iv.a;
+    if (g.raskrsnice.uCvoru[cvor] === r) return { ivica: e, cvor };
+    if (g.raskrsnice.uCvoru[cvor]! >= 0) return null;
+    const dalje = (g.mreza.izCvora[cvor] ?? []).filter((j) => j !== e && g.mreza.ivice[j]!.vozna);
+    if (dalje.length !== 1) return null;
+    e = dalje[0]!;
+    sm = g.mreza.ivice[e]!.a === cvor ? 1 : -1;
+  }
+  return null;
+}
+
+/**
+ * Kontrolisani krak (sa stop-linijom) ispred auta: na kraju ivice na kojoj je,
+ * ili dalje niz istu ulicu kroz čvorove koji nisu raskrsnice, do
+ * `GRAD_PRILAZ_DO` metara. `doKraja` je put od sredine auta do kraja kraka u
+ * raskrsnici.
+ */
+function krakIspred(g: GradZaSudiju, ivica: number, gleda: 1 | -1, sNaIvici: number): { r: number; k: number; doKraja: number } | null {
+  let e = ivica;
+  let smjer = gleda;
+  let iv = g.mreza.ivice[e]!;
+  let doKraja = smjer === 1 ? iv.duzina - sNaIvici : sNaIvici;
+  for (let korak = 0; korak < 30 && doKraja <= GRAD_PRILAZ_DO; korak++) {
+    const kr = g.raskrsnice.krakIvice.get(`${e}:${smjer === 1 ? 1 : 0}`);
+    if (kr) {
+      const k = g.raskrsnice.lista[kr[0]]!.kraci[kr[1]]!;
+      return k.ulaz && k.stopD !== null ? { r: kr[0], k: kr[1], doKraja } : null;
+    }
+    const cvor = smjer === 1 ? iv.b : iv.a;
+    if (g.raskrsnice.uCvoru[cvor]! >= 0) return null;
+    // Nastavak iste ulice: tačno jedna druga vozna ivica u čvoru.
+    const dalje = (g.mreza.izCvora[cvor] ?? []).filter((j) => j !== e && g.mreza.ivice[j]!.vozna);
+    if (dalje.length !== 1) return null;
+    e = dalje[0]!;
+    iv = g.mreza.ivice[e]!;
+    smjer = iv.a === cvor ? 1 : -1;
+    doKraja += iv.duzina;
+  }
+  return null;
+}
+
+/**
+ * Na kojoj je ulici auto. Najbliža osovina nije dovoljna: dvije kolovozne
+ * trake bulevara, proširene, gotovo se dodiruju, pa bi auto uz spoljnu ivicu
+ * svoje trake bio bliži osovini suprotne. Zato: ulica na kojoj je auto bio
+ * ostaje dok je auto na njenom asfaltu; inače, od ulica na čijem je asfaltu,
+ * ona čiji pravac se najbolje slaže sa autom; inače najbliža.
+ */
+function ulicaAuta(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo): { osa: OsaBlizu; smijeNegdje: boolean } | null {
+  const ose = oseBlizu(g.povrsina, st.x, st.y, GRAD_SUDIJA_DO_ULICE);
+  if (ose.length === 0) return null;
+  const naAsfaltu = ose.filter((o) => o.d <= o.pola + 0.5);
+  // Stara ulica se drži samo dok je auto uz nju, ne iza njenog kraja: na
+  // kratkoj ivici bi inače sudija „kasnio" za autom.
+  const prosla =
+    s.ivicaAuta === null
+      ? undefined
+      : naAsfaltu.find((o) => o.ivica === s.ivicaAuta && o.s > 0.3 && o.s < g.mreza.ivice[o.ivica]!.duzina - 0.3);
+  const c = Math.cos(st.ugao);
+  const sn = Math.sin(st.ugao);
+  // Kretanje duž ose: kuda auto ide (rikverc je suprotno od kuda gleda).
+  const znak = st.v >= 0 ? 1 : -1;
+  const slaganje = (o: OsaBlizu) => Math.abs(o.pravac.x * c + o.pravac.y * sn);
+  /** Da li se po osi smije u smjeru u kojem se auto kreće. */
+  const dozvoljeno = (o: OsaBlizu) => {
+    const smjer = g.mreza.ivice[o.ivica]!.smjer;
+    return smjer === 0 || Math.sign((o.pravac.x * c + o.pravac.y * sn) * znak) === smjer;
+  };
+  let izbor: OsaBlizu;
+  if (prosla) izbor = prosla;
+  else if (naAsfaltu.length === 0) izbor = ose[0]!;
+  else {
+    // Najbolje poravnate ose na čijem je asfaltu auto. Kad su dvije skoro
+    // jednako blizu (proširene kolovozne trake bulevara se preklapaju), prednost
+    // ima ona kojom se u tom smjeru smije; kad je jedna jasno bliža, ona.
+    const poravnate = naAsfaltu.filter((o) => slaganje(o) > 0.8);
+    const kandidati = poravnate.length > 0 ? poravnate : naAsfaltu;
+    const najbliza = kandidati[0]!;
+    const skoroJednako = kandidati.filter((o) => o.d - najbliza.d < GRAD_SUDIJA_NEODLUCNO);
+    izbor = skoroJednako.find(dozvoljeno) ?? najbliza;
+  }
+  s.ivicaAuta = izbor.ivica;
+  // Da li je auto na asfaltu neke poravnate ulice kojom se u tom smjeru smije
+  // — tada nije „u suprotnom smjeru", ma koja osovina bila bliža.
+  const smijeNegdje = naAsfaltu.some((o) => slaganje(o) > 0.8 && dozvoljeno(o));
+  return { osa: izbor, smijeNegdje };
+}
+
+/**
  * Strelice trake u kojoj je auto, u smjeru vožnje — iz OSM `turn:lanes`, ali
  * samo kad broj traka odgovara ulici (isto kao crtanje strelica). `null` kad
  * strelica nema.
@@ -281,8 +419,9 @@ function dozvoljava(strelice: string[], manevar: Manevar): boolean {
  */
 export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, zmigavac: Strana | null = null): void {
   s.zmigavac = zmigavac;
-  const osa = najblizaOsa(g.povrsina, st.x, st.y, GRAD_SUDIJA_DO_ULICE);
-  if (!osa) return;
+  const naUlici = ulicaAuta(g, s, st);
+  if (!naUlici) return;
+  const osa = naUlici.osa;
   const iv = g.mreza.ivice[osa.ivica]!;
   const glava = { x: Math.cos(st.ugao), y: Math.sin(st.ugao) };
   // Smjer auta duž ivice (kuda gleda), i kuda se stvarno kreće (rikverc).
@@ -295,19 +434,17 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
   const josURaskrsnici = s.prolaz ? raskrsnicaNa(g, osa.ivica, osa.s, GRAD_IZLAZ_POTVRDA) === s.prolaz.r : false;
 
   // ── prilaz: stop-linija, crveno, žuto, STOP ─────────────────────────────
-  const kraj: 0 | 1 = gleda === 1 ? 1 : 0;
-  const krak = r === null ? g.raskrsnice.krakIvice.get(`${osa.ivica}:${kraj}`) : undefined;
-  const kontrolisan = krak ? g.raskrsnice.lista[krak[0]]!.kraci[krak[1]]! : null;
+  // Kontrolisani krak se traži i dalje niz ulicu: krak ispred semafora je u
+  // OSM-u često kratka ivica, a auto je još na prethodnoj.
+  const ispred = r === null ? krakIspred(g, osa.ivica, gleda, osa.s) : null;
   if (s.prilaz) {
     const p = s.prilaz;
     const k = g.raskrsnice.lista[p.r]!.kraci[p.k]!;
-    const ki = g.mreza.ivice[k.ivica]!;
-    // Prilaz traje dok je auto na kraku ili tek zašao u raskrsnicu iza linije.
-    const naKraku = osa.ivica === k.ivica || r === p.r;
-    if (!naKraku) s.prilaz = null;
+    // Prilaz traje dok je taj krak ispred auta, ili dok je auto u raskrsnici.
+    const traje = (ispred && ispred.r === p.r && ispred.k === p.k) || r === p.r;
+    if (!traje) s.prilaz = null;
     else {
-      const doKraja = osa.ivica === k.ivica ? (k.kraj === 1 ? ki.duzina - osa.s : osa.s) : -1;
-      const doLinije = doKraja - k.stopD! - CAR_LENGTH / 2;
+      const doLinije = nosDoLinije(st, p.linija, p.pravac);
       const sv = svjetlo(g.raskrsnice.lista[p.r]!, p.k, t);
       if (sv === "zuto" && p.svjetlo === "zeleno") {
         // Žuto je upaljeno: da li je tada bilo kasno za zaustavljanje?
@@ -326,17 +463,20 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
       p.svjetlo = sv;
     }
   }
-  if (!s.prilaz && kontrolisan && kontrolisan.ulaz && kontrolisan.stopD !== null && krak) {
-    const doKraja = kraj === 1 ? iv.duzina - osa.s : osa.s;
-    const doLinije = doKraja - kontrolisan.stopD - CAR_LENGTH / 2;
+  if (!s.prilaz && ispred) {
+    const k = g.raskrsnice.lista[ispred.r]!.kraci[ispred.k]!;
+    const { linija, pravac } = stopLinija(g, k);
+    const doLinije = nosDoLinije(st, linija, pravac);
     if (doLinije > 0) {
       s.prilaz = {
-        kljuc: `${osa.ivica}:${kraj}`,
-        r: krak[0],
-        k: krak[1],
+        kljuc: `${k.ivica}:${k.kraj}`,
+        r: ispred.r,
+        k: ispred.k,
+        linija,
+        pravac,
         doLinije,
         stajao: 0,
-        svjetlo: svjetlo(g.raskrsnice.lista[krak[0]]!, krak[1], t),
+        svjetlo: svjetlo(g.raskrsnice.lista[ispred.r]!, ispred.k, t),
         zutoPrekasno: false,
       };
     }
@@ -344,64 +484,63 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
 
   // ── prolaz kroz raskrsnicu: zabrana skretanja, polukružno ────────────────
   if (r !== null && !s.prolaz && s.ivica !== null) {
-    const staro = g.mreza.ivice[s.ivica]!;
-    // Ulaz u raskrsnicu sa ivice na kojoj je auto bio, preko njenog kraja u toj raskrsnici.
-    const cvor = g.raskrsnice.uCvoru[staro.b] === r && s.smjer === 1 ? staro.b : staro.a;
+    // Ulaz u raskrsnicu: krak je ivica kojom je auto dolazio, a ako ona ne
+    // dodiruje raskrsnicu (kratak krak iza čvora bez raskrsnice), krak do kojeg
+    // ona vodi. Ne ivica pod autom: u desnom skretanju auto siječe ugao i
+    // bliži je osovini ulice u koju skreće.
+    const krak = krakKaRaskrsnici(g, s.ivica, s.smjer, r) ?? {
+      ivica: osa.ivica,
+      cvor: g.raskrsnice.uCvoru[iv.b] === r && (g.raskrsnice.uCvoru[iv.a] !== r || gleda === 1) ? iv.b : iv.a,
+    };
     s.prolaz = {
       r,
-      ivica: s.ivica,
-      cvor,
+      ivica: krak.ivica,
+      cvor: krak.cvor,
       pravac: glava,
       zmigavacNaUlazu: zmigavac,
       upaljenUnutra: null,
       strelice: s.traka,
+      izlaz: null,
     };
   }
   if (s.prolaz && zmigavac && !s.prolaz.zmigavacNaUlazu && !s.prolaz.upaljenUnutra) s.prolaz.upaljenUnutra = zmigavac;
+  // Iz raskrsnice pravo u drugu (čvorovi prstena, raskrsnice tik jedna uz
+  // drugu): prolaz kroz prvu se završava ovdje, a počinje prolaz kroz drugu.
+  if (r !== null && s.prolaz && r !== s.prolaz.r) {
+    const izlaz = s.prolaz.izlaz ?? osa;
+    zavrsiProlaz(g, s, st, t, s.prolaz, izlaz, g.mreza.ivice[izlaz.ivica]!, glava);
+    s.prolaz = {
+      r,
+      ivica: osa.ivica,
+      cvor: g.raskrsnice.uCvoru[iv.b] === r ? iv.b : iv.a,
+      pravac: glava,
+      zmigavacNaUlazu: zmigavac,
+      upaljenUnutra: null,
+      strelice: null,
+      izlaz: null,
+    };
+  }
+  // Izlazni krak: zadnja ivica pod autom koja dodiruje raskrsnicu (ne
+  // unutrašnja, ne ulazna — osim polukružnog, kad auto po njoj ide nazad).
+  // Kratak krak je cijeli u raskrsnici, pa je auto pri izlasku već dalje.
+  if (s.prolaz) {
+    const rs = g.raskrsnice.lista[s.prolaz.r]!;
+    const dodiruje = g.raskrsnice.uCvoru[iv.a] === s.prolaz.r || g.raskrsnice.uCvoru[iv.b] === s.prolaz.r;
+    const nazad = osa.ivica === s.prolaz.ivica && glava.x * s.prolaz.pravac.x + glava.y * s.prolaz.pravac.y < -0.5;
+    if (dodiruje && !rs.unutrasnje.includes(osa.ivica) && (osa.ivica !== s.prolaz.ivica || nazad)) s.prolaz.izlaz = osa;
+  }
   if (r === null && s.prolaz && !josURaskrsnici) {
     const p = s.prolaz;
     s.prolaz = null;
-    if (osa.ivica !== p.ivica || gleda !== s.smjer) {
-      // Izlaz: ivica i njen kraj u raskrsnici.
-      const cvorIzlaza = g.raskrsnice.uCvoru[iv.a] === p.r ? iv.a : iv.b;
-      const put = putKrozRaskrsnicu(g, p.r, p.cvor, cvorIzlaza);
-      const koraci: [number, number, number][] = [];
-      let od = p.ivica;
-      let cvor = p.cvor;
-      for (const [i, c] of put) {
-        koraci.push([od, cvor, i]);
-        od = i;
-        cvor = c;
-      }
-      koraci.push([od, cvor, osa.ivica]);
-      for (const [a, c, b] of koraci) {
-        const z = prekrsenaZabrana(g.zabrane, a, c, b);
-        if (z) {
-          prijavi(s, st, t, "zabranaSkretanja", { znak: z.vrsta });
-          break;
-        }
-      }
-      // Manevar po promjeni pravca; pozitivan ugao je udesno (`y` na jug).
-      const ugao =
-        (Math.atan2(p.pravac.x * glava.y - p.pravac.y * glava.x, p.pravac.x * glava.x + p.pravac.y * glava.y) * 180) /
-        Math.PI;
-      const okrenuo = glava.x * p.pravac.x + glava.y * p.pravac.y < -0.5;
-      const manevar: Manevar =
-        okrenuo && osa.ivica === p.ivica
-          ? "polukruzno"
-          : ugao > GRAD_SKRETANJE_UGAO
-            ? "desno"
-            : ugao < -GRAD_SKRETANJE_UGAO
-              ? "lijevo"
-              : "pravo";
-      sudiZmigavac(g, s, st, t, p, manevar, iv.kruzni);
-      // Traka za skretanje: strelice trake iz koje je ušao moraju dozvoljavati manevar.
-      if (p.strelice && !dozvoljava(p.strelice, manevar)) {
-        prijavi(s, st, t, "wrongLaneForTurn", { manevar, strelice: p.strelice.join(";") });
-      }
-      if (okrenuo && osa.ivica === p.ivica && g.raskrsnice.lista[p.r]!.plan) {
-        prijavi(s, st, t, "polukruzno", { gdje: "semafor" });
-      }
+    // Izlazni krak: zapamćen, ili (kad auto nikad nije bio na njemu — kratak
+    // krak) krak do kojeg se od sadašnje ivice stiže unazad niz ulicu.
+    let izlaz = p.izlaz ?? osa;
+    if (!p.izlaz) {
+      const krak = krakKaRaskrsnici(g, osa.ivica, gleda === 1 ? -1 : 1, p.r);
+      if (krak) izlaz = { ...osa, ivica: krak.ivica };
+    }
+    if (izlaz.ivica !== p.ivica || gleda !== s.smjer) {
+      zavrsiProlaz(g, s, st, t, p, izlaz, g.mreza.ivice[izlaz.ivica]!, glava);
     }
   }
 
@@ -412,7 +551,7 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
       prijavi(s, st, t, "polukruzno", { gdje: iv.most ? "most" : "tunel" });
     }
     // Pogrešan smjer u jednosmjernoj: kretanje suprotno od dozvoljenog.
-    const dozvoljen = iv.smjer === 0 || iv.smjer === krece;
+    const dozvoljen = iv.smjer === 0 || iv.smjer === krece || naUlici.smijeNegdje;
     if (!dozvoljen && Math.abs(st.v) > GRAD_SUPROTNO_BRZINA) {
       s.suprotnoT += DT;
       if (s.suprotnoT >= GRAD_SUPROTNO_TRAJE && s.suprotnoIvica !== osa.ivica) {
@@ -458,7 +597,10 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
   }
 
   // ── brzina ──────────────────────────────────────────────────────────────
-  const ogranicenje = iv.brzina ?? GRAD_BRZINA_PODRAZUMIJEVANA;
+  // U raskrsnici važi ograničenje ulice kojom je auto došao — ne poprečne,
+  // čija osovina može biti najbliža.
+  const ulicaBrzine = r !== null && s.ivica !== null ? g.mreza.ivice[s.ivica]! : iv;
+  const ogranicenje = ulicaBrzine.brzina ?? GRAD_BRZINA_PODRAZUMIJEVANA;
   const kmh = Math.abs(st.v) * 3.6;
   if (kmh > ogranicenje + GRAD_TOLERANCIJA_BRZINE[s.nivo]) {
     s.brzinaT += DT;
@@ -473,7 +615,8 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
   }
 
   // ── zaustavljanje: zebra, raskrsnica, stajalište ────────────────────────
-  if (Math.abs(st.v) < STOPPED_SPEED) {
+  // Auto koje još nije krenulo (start vožnje) ne „zaustavlja se" nigdje.
+  if (Math.abs(st.v) < STOPPED_SPEED && st.predjeno > CAR_LENGTH) {
     s.stojiT += DT;
     if (s.stojiT >= GRAD_STAJANJE_TRAJE && !s.stojiPrijavljeno) {
       // Ispred stop-linije se čeka — to nije zaustavljanje na zabranjenom mjestu.
@@ -526,4 +669,65 @@ function sudiZmigavac(
   else if (p.upaljenUnutra === trazeno) prijavi(s, st, t, "indicatorLate", { manevar, kruzni });
   else prijavi(s, st, t, "indicatorMissing", { manevar, kruzni });
   s.poslijeSkretanja = { strana: trazeno, predjeno: 0 };
+}
+
+/**
+ * Izlaz iz raskrsnice na ivicu `osa`: zabrana skretanja (i kroz unutrašnje
+ * ivice), manevar po promjeni pravca, žmigavac, traka za skretanje,
+ * polukružno na semaforu.
+ */
+function zavrsiProlaz(
+  g: GradZaSudiju,
+  s: Sudija,
+  st: SlobodnoVozilo,
+  t: number,
+  p: Prolaz,
+  osa: OsaBlizu,
+  iv: Ivica,
+  glava: Point,
+): void {
+  // Izlaz: ivica i njen kraj u raskrsnici.
+  const cvorIzlaza = g.raskrsnice.uCvoru[iv.a] === p.r ? iv.a : iv.b;
+  const put = putKrozRaskrsnicu(g, p.r, p.cvor, cvorIzlaza);
+  const koraci: [number, number, number][] = [];
+  let od = p.ivica;
+  let cvor = p.cvor;
+  for (const [i, c] of put) {
+    koraci.push([od, cvor, i]);
+    od = i;
+    cvor = c;
+  }
+  koraci.push([od, cvor, osa.ivica]);
+  for (const [a, c, b] of koraci) {
+    const z = prekrsenaZabrana(g.zabrane, a, c, b);
+    if (z) {
+      prijavi(s, st, t, "zabranaSkretanja", { znak: z.vrsta });
+      break;
+    }
+  }
+  // Manevar iz rasporeda ulica: pravac ulaznog kraka ka čvoru i izlaznog od
+  // čvora (isto kao bot). Polukružno: izlaz nazad na isti krak.
+  const okrenuo = glava.x * p.pravac.x + glava.y * p.pravac.y < -0.5;
+  const ulazna = g.mreza.ivice[p.ivica]!;
+  const ugao = ugaoSkretanja(
+    pravacKraja(ulazna, ulazna.b === p.cvor ? 1 : -1, true),
+    pravacKraja(iv, iv.a === cvorIzlaza ? 1 : -1, false),
+  );
+  const manevar: Manevar =
+    okrenuo && osa.ivica === p.ivica
+      ? "polukruzno"
+      : ugao > GRAD_SKRETANJE_UGAO
+        ? "desno"
+        : ugao < -GRAD_SKRETANJE_UGAO
+          ? "lijevo"
+          : "pravo";
+  s.dnevnik?.({ r: p.r, ulaz: p.ivica, izlaz: osa.ivica, manevar, t });
+  sudiZmigavac(g, s, st, t, p, manevar, iv.kruzni);
+  // Traka za skretanje: strelice trake iz koje je ušao moraju dozvoljavati manevar.
+  if (p.strelice && !dozvoljava(p.strelice, manevar)) {
+    prijavi(s, st, t, "wrongLaneForTurn", { manevar, strelice: p.strelice.join(";") });
+  }
+  if (okrenuo && osa.ivica === p.ivica && g.raskrsnice.lista[p.r]!.plan) {
+    prijavi(s, st, t, "polukruzno", { gdje: "semafor" });
+  }
 }

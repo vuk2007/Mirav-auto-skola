@@ -4,7 +4,7 @@ import {
   GRAD_SIRINA_TRAKE,
   GRAD_TRAKE_PO_KLASI,
 } from "../sim/config";
-import { cumulative } from "../sim/geometry";
+import { cumulative, pointAt } from "../sim/geometry";
 import type { Point } from "../sim/types";
 import { IVICA_KRUZNI, IVICA_MOST, IVICA_TUNEL, IVICA_VOZNA, type Paket } from "./paket";
 
@@ -151,4 +151,28 @@ export function najblizaIvica(m: Mreza, p: Point): { ivica: number; s: number; d
     }
   }
   return naj;
+}
+
+/**
+ * Pravac vožnje po ivici blizu njenog kraja: na ulazu u čvor (`naKraju`) ili na
+ * izlazu iz njega — mjeren do tačke nekoliko metara dalje, a ne po prvom
+ * segmentu (OSM zna imati tačku na pola metra od čvora). `smjer` 1 je `a → b`.
+ *
+ * Po ovome i sudija i bot određuju manevar u raskrsnici — lijevo, pravo,
+ * desno — iz rasporeda ulica, ne iz ugla auta: skretanje je izlazak na drugi
+ * krak, koliko god auto zaokrenuo.
+ */
+export function pravacKraja(iv: Ivica, smjer: 1 | -1, naKraju: boolean): Point {
+  const d = Math.min(8, iv.duzina / 2);
+  const sA = smjer === 1 ? (naKraju ? iv.duzina - d : 0) : naKraju ? d : iv.duzina;
+  const sB = smjer === 1 ? (naKraju ? iv.duzina : d) : naKraju ? 0 : iv.duzina - d;
+  const a = pointAt(iv.tacke, iv.cum, sA);
+  const b = pointAt(iv.tacke, iv.cum, sB);
+  const l = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+  return { x: (b.x - a.x) / l, y: (b.y - a.y) / l };
+}
+
+/** Ugao skretanja [°] sa pravca `od` na `do_`; pozitivan je udesno (`y` na jug). */
+export function ugaoSkretanja(od: Point, do_: Point): number {
+  return (Math.atan2(od.x * do_.y - od.y * do_.x, od.x * do_.x + od.y * do_.y) * 180) / Math.PI;
 }

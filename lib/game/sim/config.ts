@@ -1922,3 +1922,55 @@ export const GRAD_IZLAZ_POTVRDA = 6;
  * žmigavac); manja je vožnja pravo.
  */
 export const GRAD_SKRETANJE_UGAO = 30;
+
+// ── savršeni bot u gradu (faza 6, stavka 5f) ───────────────────────────────
+
+/** Koliko ispod ograničenja bot vozi (dio ograničenja). */
+export const GRAD_BOT_REZERVA_BRZINE = 0.1;
+/** Bočno ubrzanje u krivini koje bot sebi dozvoljava [m/s²] — udobno, ispod granice gume. */
+export const GRAD_BOT_BOCNO = 2.5;
+/** Koliko prije raskrsnice bot pali žmigavac [m] (faza 5: `INDICATOR_LEAD` = 20). */
+export const GRAD_BOT_ZMIGAVAC_PRIJE = 30;
+/**
+ * Dvije osovine bliže od ovoga po udaljenosti [m] su „jednako blizu" — auto je
+ * na preklopu dvije proširene kolovozne trake, pa sudija bira onu kojom se u
+ * tom smjeru smije. Jasno bliža osovina odlučuje sama.
+ */
+export const GRAD_SUDIJA_NEODLUCNO = 1.5;
+/**
+ * Čvorovi raskrsnica bliži od ovoga [m] su uvijek jedna raskrsnica — smaknut
+ * priključak dvije sporedne ulice; odvojene bi se preklapale.
+ */
+export const GRAD_KLASTER_BLIZU = 12;
+/**
+ * Poluprečnici luka kojim bot skreće u raskrsnici [m], redom kojim se probaju:
+ * prvi koji je sa rezervom na asfaltu. Svi su veći od najmanjeg koji auto može
+ * (3,9 m), da ga pogled naprijed prati bez punog volana; širi luk koristi
+ * širinu raskrsnice kad uska ulica ulazi u široku.
+ */
+export const GRAD_BOT_POLUPRECNICI: readonly number[] = [5.5, 8, 11, 4.5];
+/**
+ * Rezerva oko auta [m] sa kojom bot provjerava da je luk kroz raskrsnicu na
+ * asfaltu: vozač malo odstupa od putanje, a zadnji kraj u krivini ide užim
+ * lukom od sredine auta (oko pola metra na luku od 5,5 m).
+ */
+export const GRAD_BOT_REZERVA_LUKA = 0.8;
+/** Koliko bot ide unazad kad zakači ivičnjak i stane [m], i najveća brzina unazad [m/s]. */
+export const GRAD_BOT_IZVLACENJE = 2;
+export const GRAD_BOT_IZVLACENJE_BRZINA = 0.8;
+/**
+ * Koliko daleko niz ulicu [m] sudija traži stop-liniju ispred auta — i kroz
+ * čvorove koji nisu raskrsnice (krak je u OSM-u često kratka ivica).
+ */
+export const GRAD_PRILAZ_DO = 150;
+/** Najkraća nasumična ruta bota u gradu [m] — kraća ne prođe dovoljno raskrsnica. */
+export const GRAD_FUZZ_NAJKRACA = 400;
+/** Na komadu ulice kraćem od ovoga [m] bot ne mijenja traku. */
+export const GRAD_BOT_NAJKRACA_PROMJENA = 20;
+/** Koliko prije raskrsnice [m] bot već vozi u traci za manevar, i kroz čvorove bez raskrsnice. */
+export const GRAD_BOT_TRAKA_UNAPRIJED = 150;
+/**
+ * Najveći prečnik raskrsnice [m] kad se spajaju čvorovi čije se raskrsnice
+ * preklapaju — veći od `GRAD_KLASTER_PRECNIK`: tu razdvajanje nije moguće.
+ */
+export const GRAD_KLASTER_PRECNIK_PREKLOP = 80;

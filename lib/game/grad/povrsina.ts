@@ -343,3 +343,61 @@ export function odmakniOdUlice(p: Povrsina, t: Point): Point {
   }
   return x === t.x && y === t.y ? t : { x, y };
 }
+
+/** Osovina ulice blizu tačke — kandidat za „na kojoj je ulici auto". */
+export interface OsaBlizu {
+  ivica: number;
+  tacka: Point;
+  pravac: Point;
+  pola: number;
+  /** Metara od početka ivice (`a`). */
+  s: number;
+  /** Desno od osovine u smjeru `a → b` [m]. */
+  bok: number;
+  /** Udaljenost od osovine [m]. */
+  d: number;
+}
+
+/**
+ * Sve vozne ivice čija je osovina bliža od `do_` metara, sa najbližom tačkom
+ * na svakoj (po ivici jedna — najbliži njen segment). Redom po udaljenosti,
+ * pa po broju ivice.
+ */
+export function oseBlizu(p: Povrsina, x: number, y: number, do_: number): OsaBlizu[] {
+  const cx = celija(x);
+  const cy = celija(y);
+  const najbolje = new Map<number, OsaBlizu>();
+  for (let ox = -1; ox <= 1; ox++) {
+    for (let oy = -1; oy <= 1; oy++) {
+      for (const j of p.celije.get(kljuc(cx + ox, cy + oy)) ?? []) {
+        if (j < 0) continue;
+        const s = p.seg;
+        const ax = s[5 * j]!;
+        const ay = s[5 * j + 1]!;
+        const dx = s[5 * j + 2]! - ax;
+        const dy = s[5 * j + 3]! - ay;
+        const l2 = dx * dx + dy * dy;
+        if (l2 === 0) continue;
+        const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2));
+        const qx = ax + dx * t;
+        const qy = ay + dy * t;
+        const d = Math.hypot(qx - x, qy - y);
+        if (d > do_) continue;
+        const iv = p.segIvica[j]!;
+        const bilo = najbolje.get(iv);
+        if (bilo && bilo.d <= d) continue;
+        const l = Math.sqrt(l2);
+        najbolje.set(iv, {
+          ivica: iv,
+          tacka: { x: qx, y: qy },
+          pravac: { x: dx / l, y: dy / l },
+          pola: s[5 * j + 4]!,
+          s: p.mreza.ivice[iv]!.cum[p.segK[j]!]! + t * l,
+          bok: ((x - ax) * -dy + (y - ay) * dx) / l,
+          d,
+        });
+      }
+    }
+  }
+  return [...najbolje.values()].sort((a, b) => a.d - b.d || a.ivica - b.ivica);
+}

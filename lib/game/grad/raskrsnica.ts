@@ -1,8 +1,11 @@
 import {
+  CAR_LENGTH,
   GRAD_KLASE_GLAVNE,
   GRAD_KLASE_SPOREDNE,
+  GRAD_KLASTER_BLIZU,
   GRAD_KLASTER_IVICA,
   GRAD_KLASTER_PRECNIK,
+  GRAD_KLASTER_PRECNIK_PREKLOP,
   GRAD_PJESACKI_SEMAFOR_OD,
   GRAD_PJESACKI_SEMAFOR_PRELAZ,
   GRAD_SEMAFOR_ISTA_OSA,
@@ -149,13 +152,14 @@ function naKolovoznojTraci(m: Mreza, c: number, osim: number): boolean {
 }
 
 /**
- * Čvorovi raskrsnica spojeni kratkom voznom ivicom idu u jednu raskrsnicu —
- * ali samo kad su oba na jednosmjernoj kolovoznoj traci: to je raskrsnica
- * bulevara, koju OSM crta kao nekoliko čvorova. Dvije bliske T-raskrsnice u
- * stambenoj ulici ostaju dvije. Raskrsnica ne smije preći
+ * Čvorovi raskrsnica spojeni kratkom voznom ivicom idu u jednu raskrsnicu:
+ * kad su oba na jednosmjernoj kolovoznoj traci (raskrsnica bulevara, koju OSM
+ * crta kao nekoliko čvorova), ili kad su bliži od `GRAD_KLASTER_BLIZU` (smaknut
+ * priključak — raskrsnice bi se preklapale). Dvije T-raskrsnice u stambenoj
+ * ulici na 20 m ostaju dvije. Raskrsnica ne smije preći
  * `GRAD_KLASTER_PRECNIK`; ivice se uzimaju od najkraće.
  */
-function grupisi(m: Mreza, jeste: boolean[]): { grupa: Int32Array; unutrasnje: Set<number> } {
+function grupisi(m: Mreza, jeste: boolean[], odsjeci: Float32Array): { grupa: Int32Array; unutrasnje: Set<number> } {
   const roditelj = new Int32Array(m.cvorovi.length).map((_, i) => i);
   const clanovi = new Map<number, number[]>();
   const nadji = (x: number): number => {
@@ -170,9 +174,12 @@ function grupisi(m: Mreza, jeste: boolean[]): { grupa: Int32Array; unutrasnje: S
         iv.a !== iv.b &&
         jeste[iv.a] &&
         jeste[iv.b] &&
-        iv.duzina <= GRAD_KLASTER_IVICA &&
-        naKolovoznojTraci(m, iv.a, iv.i) &&
-        naKolovoznojTraci(m, iv.b, iv.i),
+        // Bulevar sa dvije kolovozne trake; ili čvorovi tako blizu da im se
+        // raskrsnice preklapaju (smaknuti priključci sporednih ulica).
+        // Ili tako blizu da auto između njih ne može biti cijeli van raskrsnice.
+        (iv.duzina <= GRAD_KLASTER_BLIZU ||
+          iv.duzina < odsjeci[2 * iv.i]! + odsjeci[2 * iv.i + 1]! + CAR_LENGTH ||
+          (iv.duzina <= GRAD_KLASTER_IVICA && naKolovoznojTraci(m, iv.a, iv.i) && naKolovoznojTraci(m, iv.b, iv.i))),
     )
     .sort((x, y) => x.duzina - y.duzina || x.i - y.i);
   const unutrasnje = new Set<number>();
@@ -193,7 +200,10 @@ function grupisi(m: Mreza, jeste: boolean[]): { grupa: Int32Array; unutrasnje: S
         precnik = Math.max(precnik, Math.hypot(p.x - q.x, p.y - q.y));
       }
     }
-    if (precnik > GRAD_KLASTER_PRECNIK) continue;
+    // Čvorovi čije se raskrsnice preklapaju moraju biti jedna raskrsnica — auto
+    // između njih nikad nije van raskrsnice — pa smiju u veću; bulevar ne.
+    const preklop = iv.duzina <= GRAD_KLASTER_BLIZU || iv.duzina < odsjeci[2 * iv.i]! + odsjeci[2 * iv.i + 1]! + CAR_LENGTH;
+    if (precnik > (preklop ? GRAD_KLASTER_PRECNIK_PREKLOP : GRAD_KLASTER_PRECNIK)) continue;
     roditelj[ra] = rb;
     clanovi.set(rb, [...A, ...B]);
     clanovi.delete(ra);
@@ -240,7 +250,7 @@ export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array): Ra
   const n = p.n;
   const z = p.zaglavlje;
   const jeste = cvoroviRaskrsnica(m);
-  const { grupa, unutrasnje } = grupisi(m, jeste);
+  const { grupa, unutrasnje } = grupisi(m, jeste, odsjeci);
 
   const poIvici = new Map<number, number[]>();
   const uCvoruObj = new Map<number, number[]>();

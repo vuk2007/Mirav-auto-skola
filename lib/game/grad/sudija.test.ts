@@ -173,6 +173,38 @@ describe("sudija: semafor", () => {
   });
 });
 
+describe("sudija: krak je kratka ivica (čvor bez raskrsnice ispred semafora)", () => {
+  // Južni krak je dvije ivice: od juga do čvora 5 (y = 7), pa 7 m do centra.
+  // Auto koji čeka na liniji je sredinom još na prvoj ivici.
+  const cvorovi: Point[] = [...CVOROVI, { x: 0, y: 7 }];
+  const ivice: TestIvica[] = [
+    { a: 1, b: 0 },
+    { a: 2, b: 5 },
+    { a: 3, b: 0 },
+    { a: 4, b: 0 },
+    { a: 5, b: 0 },
+  ];
+  const { paket, mreza } = testPaket(cvorovi, ivice, [{ vrsta: "traffic_signals", cvor: 0 }]);
+  const povrsina = napraviPovrsinu(mreza);
+  const odsjeci = krajeviLinija(mreza);
+  const R = napraviRaskrsnice(paket, mreza, odsjeci);
+  const G = gradZaSudiju(paket, povrsina, R, zabraneSkretanja(paket), odsjeci);
+  const r = R.lista[0]!;
+  const k = r.kraci.findIndex((x) => x.ivica === 4 && x.kraj === 1);
+  const naLiniji = 140 - r.kraci[k]!.stopD! - CAR_LENGTH / 2 - 0.5;
+
+  it("prolazak na crveno se vidi i sa prethodne ivice", () => {
+    const t0 = prelaz(r, k, "zuto", "crveno");
+    expect(vozi_(G, { put: SA_JUGA_PRAVO, brzina: 11, v0: 11, t0 }).vrste).toEqual(["redLight"]);
+  });
+
+  it("čekanje na liniji, pa zeleno — bez prekršaja", () => {
+    const t0 = prelaz(r, k, "zuto", "crveno");
+    const x = vozi_(G, { put: SA_JUGA_PRAVO, brzina: 11, t0, stani: (t) => (svjetlo(r, k, t) === "zeleno" ? null : naLiniji) });
+    expect(x.vrste).toEqual([]);
+  });
+});
+
 describe("sudija: STOP", () => {
   const { G, r } = grad([], [{ vrsta: "stop", podatak: "forward", ivica: JUG, s: 140 }]);
   const stopD = r.kraci[krakSa(r, JUG)]!.stopD!;
