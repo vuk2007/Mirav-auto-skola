@@ -1,13 +1,34 @@
-import { Application, Container, Graphics } from "pixi.js";
-import { CAR_LENGTH, CAR_WIDTH, GRAD_KOMADA_NAJVISE, GRAD_MEDJUOSOVINSKO } from "../sim/config";
+import { AlphaFilter, Application, Container, earcut, Geometry, Graphics, Mesh, Shader, UniformGroup } from "pixi.js";
+import {
+  CAR_LENGTH,
+  CAR_WIDTH,
+  GRAD_2_5D,
+  GRAD_2_5D_NAJVISE,
+  GRAD_KOMADA_NAJVISE,
+  GRAD_MEDJUOSOVINSKO,
+  GRAD_PROZOR_PIKSELA,
+  GRAD_PROZOR_RAZMAK,
+  GRAD_SJENKA_ALFA,
+  GRAD_SPRAT,
+  GRAD_TROTOAR,
+} from "../sim/config";
 import type { Point } from "../sim/types";
 import type { Paket } from "../grad/paket";
 import type { Povrsina } from "../grad/povrsina";
+import {
+  geometrijaSjenki,
+  geometrijaZgrada,
+  zgrada,
+  type Palete,
+  type Temena,
+  type Zgrada,
+  type ZonaPalete,
+} from "../grad/zgrade";
 
 /**
- * Crtanje grada u razmjeri 1:1 na WebGL-u (faza 6, stavka 3): bez pravila i bez
- * „GTA izgleda" — to je stavka 4. Ovdje je grad kao karta: površine, voda,
- * ulice sa trotoarom, zgrade kao osnove.
+ * Crtanje grada u razmjeri 1:1 na WebGL-u (faza 6, stavke 3 i 4): površine,
+ * voda, ulice sa trotoarom, i zgrade u lažnom 2.5D kao u GTA 1/2 — zidovi i
+ * krov koji se naginju od sredine ekrana, detalji na krovu, sjenke.
  *
  * Asfalt je tačno `Povrsina` po kojoj se vozi: kolovoz oko osovine i zasječeni
  * uglovi raskrsnice. Gdje se na slici vidi ivičnjak, tu auto i udara. Zato se ulice
@@ -20,14 +41,12 @@ import type { Povrsina } from "../grad/povrsina";
  * kontejner, isto kao na otvorenom putu (`pixiRenderer.ts`).
  */
 
-/** Boje grada — privremene, dok stavka 4 ne donese palete po zoni. */
+/** Boje tla i ulica. Boje zgrada su podatak, po zoni (`palete.json`). */
 const BOJE = {
   tlo: "#e8e4dc",
   trotoar: "#d3cec4",
   asfalt: "#8a8984",
   pjesacka: "#cfc6b6",
-  zgrada: "#c2b8a8",
-  zgradaIvica: "#a2978a",
   voda: "#9cc7e6",
   igrac: "#2f6fd0",
 } as const;
@@ -61,8 +80,73 @@ const LINIJE: Record<string, { boja: string; iznad: boolean }> = {
   drvored: { boja: "#8fb779", iznad: true },
 };
 
-/** Trotoar sa svake strane kolovoza [m]. */
-const TROTOAR = 1.6;
+const TROTOAR = GRAD_TROTOAR;
+
+/**
+ * Lažni 2.5D: teme na visini `h` se pomjera od sredine ekrana (`uKamera`, u
+ * metrima svijeta) za `h × uFaktor` puta svoju udaljenost od nje — što je
+ * zgrada viša i dalje od sredine, to se više nagne. Tlo (`h = 0`) stoji.
+ */
+const VERTEX_2_5D = `
+in vec2 aPosition;
+in float aVisina;
+in vec3 aBoja;
+in float aZid;
+out vec3 vBoja;
+out float vZid;
+out float vVisina;
+uniform mat3 uProjectionMatrix;
+uniform mat3 uWorldTransformMatrix;
+uniform mat3 uTransformMatrix;
+uniform vec2 uKamera;
+uniform float uFaktor;
+uniform float uNajvise;
+void main() {
+  float k = min(aVisina * uFaktor, uNajvise);
+  vec2 p = aPosition + (aPosition - uKamera) * k;
+  mat3 mvp = uProjectionMatrix * uWorldTransformMatrix * uTransformMatrix;
+  gl_Position = vec4((mvp * vec3(p, 1.0)).xy, 0.0, 1.0);
+  vBoja = aBoja;
+  vZid = aZid;
+  vVisina = aVisina;
+}
+`;
+/**
+ * Prozori: na zidu (`vZid ≥ 0`) pravougaonici u mreži sprat × razmak prozora.
+ * Kad je sprat na ekranu sitan, prozori blijede (`uProzori`), da se iz daleka
+ * ne pretvore u šum.
+ */
+const FRAGMENT_2_5D = `
+in vec3 vBoja;
+in float vZid;
+in float vVisina;
+out vec4 finalColor;
+uniform float uSprat;
+uniform float uRazmak;
+uniform float uProzori;
+void main() {
+  vec3 c = vBoja;
+  if (vZid >= 0.0) {
+    float sprat = fract(vVisina / uSprat);
+    float kolona = fract(vZid / uRazmak);
+    float prozor = step(0.38, sprat) * step(sprat, 0.82) * step(0.22, kolona) * step(kolona, 0.78);
+    c = mix(c, vec3(0.28, 0.34, 0.42), prozor * 0.6 * uProzori);
+  }
+  finalColor = vec4(c, 1.0);
+}
+`;
+
+/** Izgled zgrada: palete i zone iz podataka. */
+export interface IzgledGrada {
+  palete: Palete;
+  zone: ZonaPalete[];
+}
+
+/**
+ * Koliko metara van kadra tile još mora da se crta — visoka zgrada iza ivice
+ * kadra naginje se u njega.
+ */
+const NAGIB_REZERVA = 40;
 
 interface Okvir {
   minX: number;
@@ -122,7 +206,7 @@ interface Tile {
 }
 
 interface Sagradjen {
-  slojevi: Graphics[];
+  slojevi: Container[];
   vidjen: number;
 }
 
@@ -130,6 +214,7 @@ export async function createGradRenderer(
   canvas: HTMLCanvasElement,
   paket: Paket,
   povrsina: Povrsina,
+  izgled: IzgledGrada,
 ): Promise<GradRenderer | null> {
   const mreza = povrsina.mreza;
   const app = new Application();
@@ -199,9 +284,40 @@ export async function createGradRenderer(
   const sTrotoari = new Container();
   const sUlice = new Container();
   const sIznad = new Container();
+  // Sjenke se crtaju punom crnom, a providnost dobija cijeli sloj odjednom —
+  // tako preklop dvije sjenke nije tamniji od jedne.
+  const sSjene = new Container();
+  sSjene.filters = [new AlphaFilter({ alpha: GRAD_SJENKA_ALFA })];
   const sZgrade = new Container();
   const dinamika = new Graphics();
-  svijet.addChild(sPovrsine, sVoda, sZgrade, sTrotoari, sUlice, sIznad, dinamika);
+  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sIznad, sSjene, sZgrade, dinamika);
+
+  const uniforme = new UniformGroup({
+    uKamera: { value: new Float32Array(2), type: "vec2<f32>" },
+    uFaktor: { value: 0, type: "f32" },
+    uNajvise: { value: GRAD_2_5D_NAJVISE, type: "f32" },
+    uSprat: { value: GRAD_SPRAT, type: "f32" },
+    uRazmak: { value: GRAD_PROZOR_RAZMAK, type: "f32" },
+    uProzori: { value: 1, type: "f32" },
+  });
+  const shader = Shader.from({
+    gl: { vertex: VERTEX_2_5D, fragment: FRAGMENT_2_5D, name: "grad-2-5d" },
+    resources: { gradUniforme: uniforme },
+  });
+  const triangulisi = (ravno: number[]) => earcut(ravno);
+  const mesh = (t: Temena): Mesh<Geometry, Shader> | null => {
+    if (t.indeksi.length === 0) return null;
+    const geometry = new Geometry({
+      attributes: {
+        aPosition: { buffer: t.polozaj, format: "float32x2" },
+        aVisina: { buffer: t.visina, format: "float32" },
+        aBoja: { buffer: t.boja, format: "float32x3" },
+        aZid: { buffer: t.zid, format: "float32" },
+      },
+      indexBuffer: t.indeksi,
+    });
+    return new Mesh({ geometry, shader });
+  };
   app.stage.addChild(svijet);
 
   const sagradjeni = new Map<number, Sagradjen>();
@@ -257,25 +373,31 @@ export async function createGradRenderer(
       trotoari.stroke({ width: 2 * TROTOAR, color: BOJE.trotoar, cap: "round" });
       ulice.poly([u.a.x, u.a.y, u.b.x, u.b.y, u.c.x, u.c.y]).fill(BOJE.asfalt);
     }
-    const zgrade = new Graphics();
+    const lista: Zgrada[] = [];
     for (let i = tile.zgrade[0]; i < tile.zgrade[1]; i++) {
-      if (poligon(zgrade, n.zgOd, n.zgXY, i)) {
-        zgrade.fill(BOJE.zgrada).stroke({ width: 0.3, color: BOJE.zgradaIvica, join: "miter" });
-      }
+      const z = zgrada(paket, i, povrsina, izgled.palete, izgled.zone);
+      if (z) lista.push(z);
     }
+    const zgrade = mesh(geometrijaZgrada(lista, triangulisi)) ?? new Container();
+    const sjene = mesh(geometrijaSjenki(lista, triangulisi)) ?? new Container();
     sPovrsine.addChild(povrsine);
     sVoda.addChild(voda);
     sTrotoari.addChild(trotoari);
     sUlice.addChild(ulice);
     sIznad.addChild(iznad);
+    sSjene.addChild(sjene);
     sZgrade.addChild(zgrade);
-    return { slojevi: [povrsine, voda, trotoari, ulice, iznad, zgrade], vidjen: kadar };
+    return { slojevi: [povrsine, voda, trotoari, ulice, iznad, sjene, zgrade], vidjen: kadar };
   };
 
   const srusi = (t: number) => {
     const x = sagradjeni.get(t);
     if (!x) return;
-    for (const g of x.slojevi) g.destroy();
+    for (const g of x.slojevi) {
+      // Mesh dijeli shader sa svima; ruši se samo njegova geometrija.
+      if (g instanceof Mesh) g.geometry.destroy();
+      g.destroy();
+    }
     sagradjeni.delete(t);
   };
 
@@ -294,9 +416,18 @@ export async function createGradRenderer(
     ] as const) {
       const a = -(sx - k.cx) / k.scale;
       const b = -(sy - k.cy) / k.scale;
-      prosiri(o, k.wx + a * cos + b * sin, k.wy - a * sin + b * cos, 10);
+      prosiri(o, k.wx + a * cos + b * sin, k.wy - a * sin + b * cos, NAGIB_REZERVA);
     }
     return o;
+  };
+
+  /** Tačka svijeta u sredini ekrana — od nje se zgrade naginju. */
+  const sredinaEkrana = (k: GradKadar): Point => {
+    const cos = Math.cos(k.rot);
+    const sin = Math.sin(k.rot);
+    const a = -(w / 2 - k.cx) / k.scale;
+    const b = -(h / 2 - k.cy) / k.scale;
+    return { x: k.wx + a * cos + b * sin, y: k.wy - a * sin + b * cos };
   };
 
   return {
@@ -331,6 +462,17 @@ export async function createGradRenderer(
           if (x.vidjen !== kadar) srusi(t);
         }
       }
+
+      // Nagib zgrada: od sredine ekrana, srazmjerno visini i obrnuto kadru —
+      // udaljen kadar je kao kamera koja se podigla, pa se zgrade naginju manje.
+      const sredina = sredinaEkrana(k);
+      const u = uniforme.uniforms as { uKamera: Float32Array; uFaktor: number; uProzori: number };
+      u.uKamera[0] = sredina.x;
+      u.uKamera[1] = sredina.y;
+      u.uFaktor = (GRAD_2_5D * 2 * k.scale) / Math.max(1, Math.min(w, h));
+      // Sprat od `GRAD_PROZOR_PIKSELA` piksela i manje: prozora nema; duplo veći: puni.
+      const spratPx = GRAD_SPRAT * k.scale;
+      u.uProzori = Math.max(0, Math.min(1, spratPx / GRAD_PROZOR_PIKSELA - 1));
 
       dinamika.clear();
       const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
@@ -379,6 +521,7 @@ export async function createGradRenderer(
 
     destroy() {
       for (const t of [...sagradjeni.keys()]) srusi(t);
+      shader.destroy();
       app.destroy({ removeView: false }, { children: true });
     },
   };

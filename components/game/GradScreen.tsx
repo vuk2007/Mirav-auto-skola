@@ -15,6 +15,7 @@ import { napraviMrezu, najblizaIvica } from "@/lib/game/grad/mreza";
 import { procitaj, type Paket } from "@/lib/game/grad/paket";
 import { napraviPovrsinu, ulicaNa, type Povrsina } from "@/lib/game/grad/povrsina";
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
+import type { Palete, ZonaPalete } from "@/lib/game/grad/zgrade";
 import type { GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
 import { haptika } from "@/lib/game/ui/haptika";
 import { dprUredjaja } from "@/lib/game/ui/renderer";
@@ -73,7 +74,17 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
     const debug = new URLSearchParams(window.location.search).get("debug") === "1";
 
     const pokreni = async () => {
-      const spisak = (await (await fetch("/data/grad/gradovi.json")).json()) as Record<string, { fajl: string }>;
+      const json = async <T,>(url: string): Promise<T> => {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+        return (await r.json()) as T;
+      };
+      // Izgled zgrada je podatak: palete i zone (sa paletom po zoni).
+      const [spisak, palete, zone] = await Promise.all([
+        json<Record<string, { fajl: string }>>("/data/grad/gradovi.json"),
+        json<Palete>("/data/grad/palete.json"),
+        json<{ zone: ZonaPalete[] }>(`/data/grad/cityZones/${GRAD}.json`),
+      ]);
       const fajl = spisak[GRAD]?.fajl;
       if (!fajl) throw new Error(`nema paketa za ${GRAD}`);
       const odgovor = await fetch(`/data/grad/${fajl}`);
@@ -86,7 +97,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       if (!canvas) return;
       // Pixi se učitava tek ovdje — ostatak igre ga ne plaća u početnom paketu.
       const { createGradRenderer } = await import("@/lib/game/ui/gradRenderer");
-      renderer = await createGradRenderer(canvas, paket, povrsina);
+      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: zone.zone });
       if (otkazano) {
         renderer?.destroy();
         return;

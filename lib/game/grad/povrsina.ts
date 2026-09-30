@@ -1,5 +1,7 @@
 import {
+  GRAD_ODMAK_NAJVISE,
   GRAD_POVRSINA_CELIJA,
+  GRAD_TROTOAR,
   GRAD_UGAO_ZASJEK,
   GRAD_UGAO_ZASJEK_DO,
   GRAD_UGAO_ZASJEK_OD,
@@ -260,4 +262,47 @@ export function pravacUlice(p: Povrsina, x: number, y: number): { x: number; y: 
   const dy = p.seg[5 * j + 3]! - p.seg[5 * j + 1]!;
   const d = Math.hypot(dx, dy);
   return d > 0 ? { x: dx / d, y: dy / d } : null;
+}
+
+/**
+ * Tačka odmaknuta od svih kolovoza do ivice trotoara — za uglove zgrada, jer su
+ * ulice u igri šire nego u stvarnosti. Tačka dublje od `GRAD_ODMAK_NAJVISE` u
+ * servisnom putu ostaje gdje jeste: to je prolaz kroz zgradu, ne greška
+ * širenja. Dva prolaza, jer odmak od jedne ulice može da gurne tačku u drugu.
+ */
+const PROLAZI = new Set(["service", "track"]);
+export function odmakniOdUlice(p: Povrsina, t: Point): Point {
+  let x = t.x;
+  let y = t.y;
+  for (let prolaz = 0; prolaz < 2; prolaz++) {
+    const cx = celija(x);
+    const cy = celija(y);
+    for (let ox = -1; ox <= 1; ox++) {
+      for (let oy = -1; oy <= 1; oy++) {
+        for (const j of p.celije.get(kljuc(cx + ox, cy + oy)) ?? []) {
+          if (j < 0) continue;
+          const granica = p.seg[5 * j + 4]! + GRAD_TROTOAR;
+          const d2 = udaljenost2(p, j, x, y);
+          if (d2 >= granica * granica || d2 === 0) continue;
+          const d = Math.sqrt(d2);
+          // Prolaz kroz zgradu je servisni put; stambena ulica duboko u kući je
+          // netačna OSM linija uske ulice, i kuća se odmiče do kraja.
+          if (granica - d > GRAD_ODMAK_NAJVISE && PROLAZI.has(p.mreza.ivice[p.segIvica[j]!]!.klasa)) continue;
+          // Najbliža tačka osovine, pa od nje napolje do granice.
+          const s = p.seg;
+          const ax = s[5 * j]!;
+          const ay = s[5 * j + 1]!;
+          const dx = s[5 * j + 2]! - ax;
+          const dy = s[5 * j + 3]! - ay;
+          const l2 = dx * dx + dy * dy;
+          const u = l2 > 0 ? Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2)) : 0;
+          const qx = ax + dx * u;
+          const qy = ay + dy * u;
+          x = qx + ((x - qx) / d) * granica;
+          y = qy + ((y - qy) / d) * granica;
+        }
+      }
+    }
+  }
+  return x === t.x && y === t.y ? t : { x, y };
 }

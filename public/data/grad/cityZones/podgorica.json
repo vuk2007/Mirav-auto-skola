@@ -1,17 +1,19 @@
 {
   "grad": "podgorica",
-  "napomena": "Šablon zona iz zadatka (faza 6, odjeljak 3). Poligone i atribute crta škola u editoru; ovdje su samo imena obaveznog obuhvata. Prazan poligon znači da zona još nije nacrtana. Koordinate su lokalni metri paketa grada (x na istok, y na jug, ishodište Trg nezavisnosti).",
+  "napomena": "Šablon zona iz zadatka (faza 6, odjeljak 3). `paleta` je id iz ../palete.json (predlog po zadatku, odjeljak 1; mijenja se u editoru). Poligone i atribute crta škola u editoru; ovdje su samo imena obaveznog obuhvata. Prazan poligon znači da zona još nije nacrtana. Koordinate su lokalni metri paketa grada (x na istok, y na jug, ishodište Trg nezavisnosti).",
   "podrazumijevano": {
     "speedLimit": 50,
     "speedLimitIzvor": "ZOBS: u naselju 50 km/h, osim ako znak kaže drugačije"
   },
   "zone": [
-    { "id": "centar", "ime": "Centar (Trg nezavisnosti do Morače, Stara varoš do Sahat kule)", "poligon": [], "paleta": null, "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
+    { "id": "centar", "ime": "Centar (Trg nezavisnosti do Morače, Stara varoš do Sahat kule)", "poligon": [], "paleta": "centar-oker", "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
     { "id": "bulevari", "ime": "Glavni bulevari cijelom dužinom", "poligon": [], "paleta": null, "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
-    { "id": "blok-9-delta", "ime": "Blok kod Delta City-ja (Cetinjski put / Blok 9)", "poligon": [], "paleta": null, "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
-    { "id": "blok-5", "ime": "Blok 5", "poligon": [], "paleta": null, "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
-    { "id": "blok-6", "ime": "Blok 6", "poligon": [], "paleta": null, "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
-    { "id": "stari-aerodrom", "ime": "Stari aerodrom", "poligon": [], "paleta": null, "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
+    { "id": "blok-9-delta", "ime": "Blok kod Delta City-ja (Cetinjski put / Blok 9)", "poligon": [], "paleta": "soc-blok", "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
+    { "id": "blok-5", "ime": "Blok 5", "poligon": [], "paleta": "soc-blok", "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
+    { "id": "blok-6", "ime": "Blok 6", "poligon": [], "paleta": "soc-blok", "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
+    { "id": "stari-aerodrom", "ime": "Stari aerodrom", "poligon": [], "paleta": "soc-blok", "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
+    { "id": "stara-varos", "ime": "Stara varoš (paleta crvenog crijepa)", "poligon": [], "paleta": "crveni-krov", "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
+    { "id": "drac", "ime": "Drač (paleta crvenog crijepa)", "poligon": [], "paleta": "crveni-krov", "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false },
     { "id": "tehnicke-skole", "ime": "Zona oko tehničkih škola — školska zona 30 km/h", "poligon": [], "paleta": null, "speedLimit": null, "pedestrianDensity": null, "trafficDensity": null, "handAuthored": false }
   ]
 }

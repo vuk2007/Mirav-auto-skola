@@ -13,7 +13,7 @@ export function mreza(cvorovi: Point[], ivice: [number, number, string?][]): Mre
   n.ivB = new Uint32Array(ivice.map((e) => e[1]));
   n.ivOd = new Uint32Array(ivice.map((_, i) => 2 * i).concat([2 * ivice.length]));
   n.ivXY = new Float32Array(ivice.flatMap(([a, b]) => [cvorovi[a]!.x, cvorovi[a]!.y, cvorovi[b]!.x, cvorovi[b]!.y]));
-  const klase = ["residential", "pedestrian"];
+  const klase = ["residential", "pedestrian", "service"];
   n.ivKlasa = new Uint8Array(ivice.map((e) => klase.indexOf(e[2] ?? "residential")));
   n.ivSmjer = new Int8Array(ivice.length);
   n.ivTrake = new Uint8Array(ivice.length).fill(2);

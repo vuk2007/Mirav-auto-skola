@@ -1617,3 +1617,112 @@ export const GRAD_IVICNJAK_OKRET = 90;
 export const GRAD_POVRSINA_CELIJA = 40;
 /** Najdalje od ulice [m] na kojem se još kaže u kojoj je ulici auto. */
 export const GRAD_ULICA_DO = 25;
+
+// ── GTA izgled grada (faza 6, stavka 4) ─────────────────────────────────────
+
+/** Trotoar sa svake strane kolovoza [m] — crta se i od njega se odmiču zgrade. */
+export const GRAD_TROTOAR = 1.6;
+/**
+ * Najviše koliko se ugao zgrade odmiče od ulice [m]. Ulice su šire nego u
+ * stvarnosti (`GRAD_SIRINA_TRAKE`), pa bi zgrada na stvarnom mjestu stajala na
+ * asfaltu; njen ugao se zato pomjera do ivice trotoara. Dublje od ovoga u
+ * servisnom putu nije greška širenja nego prolaz kroz zgradu (OSM
+ * `building_passage`) — ostaje. Kod ostalih ulica se odmiče do kraja: kuća
+ * duboko u stambenoj ulici je netačna OSM linija uske ulice po obodu grada.
+ */
+export const GRAD_ODMAK_NAJVISE = 3.5;
+/** Visina sprata [m]. */
+export const GRAD_SPRAT = 3;
+/** Krov i parapet iznad posljednjeg sprata [m]. */
+export const GRAD_KROV = 0.6;
+/**
+ * Broj spratova kad ga OSM nema, po vrsti zgrade (`building=*`) — iz zadatka,
+ * odjeljak 1, i dopunjeno za vrste kojih u Podgorici ima. Vrsta `yes` (90 %
+ * zgrada) nije ovdje: njoj se sprat procjenjuje po površini osnove.
+ */
+export const GRAD_SPRATOVI_PO_VRSTI: Readonly<Record<string, number>> = {
+  residential: 3,
+  apartments: 6,
+  dormitory: 4,
+  hotel: 5,
+  commercial: 2,
+  retail: 1,
+  supermarket: 1,
+  kiosk: 1,
+  office: 5,
+  government: 4,
+  public: 3,
+  industrial: 1,
+  warehouse: 1,
+  manufacture: 1,
+  service: 1,
+  school: 2,
+  kindergarten: 1,
+  college: 3,
+  university: 4,
+  hospital: 4,
+  clinic: 3,
+  church: 2,
+  chapel: 1,
+  mosque: 2,
+  temple: 2,
+  house: 2,
+  detached: 2,
+  terrace: 2,
+  shed: 1,
+  garage: 1,
+  garages: 1,
+  carport: 1,
+  roof: 1,
+  greenhouse: 1,
+  hut: 1,
+  stable: 1,
+  guardhouse: 1,
+  construction: 1,
+  ruins: 1,
+  sport: 2,
+  sports_hall: 3,
+  stadium: 3,
+  grandstand: 2,
+  parking: 3,
+  train_station: 2,
+  clock_tower: 6,
+  transformer_tower: 2,
+};
+/**
+ * Spratnost zgrade vrste `yes` po površini osnove [m², spratova]: prvi prag
+ * koji je površina ne prelazi. Mala osnova je kuća ili garaža, srednja stambena
+ * zgrada, a ogromna je hala ili tržni centar — oni su niski.
+ */
+export const GRAD_SPRATOVI_PO_POVRSINI: readonly (readonly [number, number])[] = [
+  [40, 1],
+  [200, 2],
+  [700, 4],
+  [2000, 6],
+  [Infinity, 2],
+];
+/**
+ * Lažni 2.5D (GTA 1/2): krov se pomjera od sredine ekrana za
+ * `visina × GRAD_2_5D / pola kadra`. Zgrada visoka koliko je pola kadra, na
+ * ivici kadra, nagne se za trećinu te udaljenosti.
+ */
+export const GRAD_2_5D = 0.35;
+/** Najveći nagib (dio udaljenosti od sredine) — da neboder ne pređe preko ekrana. */
+export const GRAD_2_5D_NAJVISE = 0.6;
+/** Pravac u kojem padaju sjenke (jedinični, `y` na jug): sunce sa jugozapada. */
+export const GRAD_SJENKA_PRAVAC = { x: 0.8, y: -0.6 } as const;
+/** Dužina sjenke po metru visine [m]. */
+export const GRAD_SJENKA_DUZINA = 0.45;
+/** Koliko je sjenka tamna (0 nevidljiva, 1 crna). */
+export const GRAD_SJENKA_ALFA = 0.22;
+/** Jedan detalj na krovu (klima, dimnjak, rezervoar) na ovoliko m² krova. */
+export const GRAD_DETALJ_POVRSINA = 80;
+/** Najviše detalja na jednom krovu. */
+export const GRAD_DETALJA_NAJVISE = 6;
+/** Razmak prozora duž zida [m]. */
+export const GRAD_PROZOR_RAZMAK = 2.6;
+/**
+ * Visina sprata na ekranu [px] ispod koje prozori nestaju; na dvostrukoj su
+ * puni. Iz daleka bi mreža prozora bila samo treperenje.
+ */
+export const GRAD_PROZOR_PIKSELA = 5;
