@@ -13,7 +13,10 @@ import {
 import type { Point } from "@/lib/game/sim/types";
 import { napraviMrezu, najblizaIvica } from "@/lib/game/grad/mreza";
 import { procitaj, type Paket } from "@/lib/game/grad/paket";
+import { krajeviLinija } from "@/lib/game/grad/oznake";
 import { napraviPovrsinu, ulicaNa, type Povrsina } from "@/lib/game/grad/povrsina";
+import { napraviRaskrsnice, zabraneSkretanja } from "@/lib/game/grad/raskrsnica";
+import { crtezPravila } from "@/lib/game/grad/znakovi";
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
 import type { BojeDekora } from "@/lib/game/grad/dekor";
 import type { Palete, ZonaPalete } from "@/lib/game/grad/zgrade";
@@ -98,12 +101,17 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const paket: Paket = procitaj(await odgovor.arrayBuffer());
       const mreza = napraviMrezu(paket);
       const povrsina: Povrsina = napraviPovrsinu(mreza);
+      // Pravila raskrsnica (stavka 5): jedan model — po njemu se crta i sudi.
+      const odsjeci = krajeviLinija(mreza);
+      const raskrsnice = napraviRaskrsnice(paket, mreza, odsjeci);
+      const zabrane = zabraneSkretanja(paket);
+      const crtez = crtezPravila(povrsina, raskrsnice, zabrane, odsjeci);
       if (otkazano) return;
       const canvas = canvasRef.current;
       if (!canvas) return;
       // Pixi se učitava tek ovdje — ostatak igre ga ne plaća u početnom paketu.
       const { createGradRenderer } = await import("@/lib/game/ui/gradRenderer");
-      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: zone.zone });
+      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: zone.zone }, { raskrsnice, crtez });
       if (otkazano) {
         renderer?.destroy();
         return;
@@ -113,8 +121,11 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         return;
       }
 
-      // Start: najbliža ulica Trgu nezavisnosti (ishodište paketa).
-      const start = najblizaIvica(mreza, { x: 0, y: 0 });
+      // Start: najbliža ulica Trgu nezavisnosti (ishodište paketa). Za
+      // provjeru (`?debug=1&gdje=x,y`) start je najbliža ulica zadatoj tački.
+      const gdje = debug ? new URLSearchParams(window.location.search).get("gdje")?.split(",").map(Number) : undefined;
+      const tacka = gdje && gdje.length === 2 && gdje.every(Number.isFinite) ? { x: gdje[0]!, y: gdje[1]! } : { x: 0, y: 0 };
+      const start = najblizaIvica(mreza, tacka);
       if (!start) throw new Error("mreža nema nijednu voznu ulicu");
       const st: SlobodnoVozilo = slobodnoNaIvici(povrsina, start.ivica, 1, start.s);
       let prije = pozaSlobodno(st);
@@ -142,6 +153,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       let odFps = performance.now();
       let fps: number | null = null;
       let bioUdar = false;
+      /** Koraci simulacije od početka — njima teče vrijeme semafora, ne satom. */
+      let koraka_ = 0;
       let ulica = start.ivica;
       const kadar = (now: number) => {
         raf = requestAnimationFrame(kadar);
@@ -152,6 +165,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         while (acc >= DT && koraka < 8) {
           prije = sada;
           korakSlobodno(povrsina, st, inputRef.current, { kisa: uslovRef.current.kisa });
+          koraka_ += 1;
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
           bioUdar = st.udar;
@@ -185,6 +199,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         };
         renderer?.draw({
           kadar: k,
+          simT: koraka_ * DT,
           osvjetljenje: { ...uslovRef.current, sekunde: now / 1000 },
           igrac: {
             pos,

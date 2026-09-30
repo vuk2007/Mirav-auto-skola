@@ -10,7 +10,7 @@ import type { Point } from "../sim/types";
 import type { Ivica } from "./mreza";
 import { krajeviLinija, linijeIvice, linijeTraka, streliceIvice, zebra } from "./oznake";
 import { naPovrsini, napraviPovrsinu } from "./povrsina";
-import { KRST } from "./testMreza";
+import { KRST, mreza as testMreza } from "./testMreza";
 
 /**
  * Oznake na kolovozu — stavka 4b. Krst iz `testMreza.ts`: centar (0, 0), ivica
@@ -30,6 +30,38 @@ describe("oznake: gdje linije staju", () => {
     // Ivica 0 ide od juga (a, slijepi kraj) do centra (b, raskrsnica sa četiri kraka).
     expect(ODSJECI[0]).toBe(0);
     expect(ODSJECI[1]).toBeCloseTo(TRAKA + GRAD_LINIJE_OD_RASKRSNICE, 6);
+  });
+});
+
+describe("oznake: odvojak pod oštrim uglom", () => {
+  it("raskrsnica na odvojku počinje tek kad kolovoz odvojka izađe sa asfalta glavne ulice", () => {
+    // Glavna ulica istok–zapad kroz čvor 0; odvojak pod 20° od istočnog kraka.
+    const u = (20 * Math.PI) / 180;
+    const m = testMreza(
+      [
+        { x: 0, y: 0 },
+        { x: 100, y: 0 },
+        { x: -100, y: 0 },
+        { x: 100 * Math.cos(u), y: 100 * Math.sin(u) },
+      ],
+      [
+        [0, 1],
+        [2, 0],
+        [0, 3],
+      ],
+    );
+    const od = krajeviLinija(m);
+    const odvojak = m.ivice[2]!;
+    const d = od[2 * 2 + 0]!;
+    // Pod pravim uglom bi bilo pola glavne + 1 m; pod 20° mnogo više.
+    expect(d).toBeGreaterThan(2 * (TRAKA + GRAD_LINIJE_OD_RASKRSNICE));
+    const h = { x: Math.cos(u), y: Math.sin(u) };
+    const n = { x: -h.y, y: h.x };
+    for (const w of [-odvojak.sirina / 2, 0, odvojak.sirina / 2]) {
+      const q = { x: h.x * d + n.x * w, y: h.y * d + n.y * w };
+      // Udaljenost od osovine glavne (y = 0) je bar pola glavne + 1 m.
+      expect(Math.abs(q.y)).toBeGreaterThanOrEqual(TRAKA + GRAD_LINIJE_OD_RASKRSNICE - 0.01);
+    }
   });
 });
 

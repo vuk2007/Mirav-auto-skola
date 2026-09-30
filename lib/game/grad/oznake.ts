@@ -31,8 +31,13 @@ export type Poligon = Point[];
 
 /**
  * Za svaku ivicu: koliko metara od početka (`a`) i od kraja (`b`) linije ne
- * idu, jer je tu raskrsnica — preko pola najšire druge ulice koja se u tom
- * čvoru sastaje. Čvor sa dvije ulice (nastavak iste) nije raskrsnica.
+ * idu, jer je tu raskrsnica. Čvor sa dvije ulice (nastavak iste) nije
+ * raskrsnica.
+ *
+ * Raskrsnica na kraku počinje tamo gdje su osovina i obje ivice kolovoza kraka
+ * izašle sa asfalta svih ostalih krakova tog čvora (uz `GRAD_LINIJE_OD_RASKRSNICE`).
+ * Pod pravim uglom to je pola najšire druge ulice; odvojak pod oštrim uglom
+ * mnogo duže ostaje na asfaltu glavne ulice — i tu linija ne smije stajati.
  */
 export function krajeviLinija(m: Mreza): Float32Array {
   const od = new Float32Array(2 * m.ivice.length);
@@ -46,12 +51,47 @@ export function krajeviLinija(m: Mreza): Float32Array {
     }
     if (kraci.length < 3) continue;
     for (const k of kraci) {
+      const iv = m.ivice[k.ivica]!;
       let pola = 0;
       for (const d of kraci) if (d !== k) pola = Math.max(pola, d.pola);
-      od[2 * k.ivica + k.kraj] = pola + GRAD_LINIJE_OD_RASKRSNICE;
+      const najmanje = pola + GRAD_LINIJE_OD_RASKRSNICE;
+      const najvise = Math.max(najmanje, Math.min(iv.duzina / 2, 60));
+      let d = najmanje;
+      for (; d < najvise; d += 0.5) {
+        const s = k.kraj === 0 ? d : iv.duzina - d;
+        const { k: seg, t } = naSegmentu(iv, s);
+        const { d: n } = pravacSegmenta(iv, seg);
+        const a = iv.tacke[seg]!;
+        const b = iv.tacke[seg + 1]!;
+        const p = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+        const tacke = [p, { x: p.x + n.x * k.pola, y: p.y + n.y * k.pola }, { x: p.x - n.x * k.pola, y: p.y - n.y * k.pola }];
+        const slobodno = kraci.every(
+          (drugi) =>
+            drugi === k ||
+            drugi.ivica === k.ivica ||
+            tacke.every((q) => udaljenostOdIvice(m.ivice[drugi.ivica]!, q) >= drugi.pola + GRAD_LINIJE_OD_RASKRSNICE - 1e-6),
+        );
+        if (slobodno) break;
+      }
+      od[2 * k.ivica + k.kraj] = d;
     }
   }
   return od;
+}
+
+/** Najmanja udaljenost tačke od osovine ivice. */
+function udaljenostOdIvice(iv: Ivica, q: Point): number {
+  let naj = Infinity;
+  for (let k = 0; k + 1 < iv.tacke.length; k++) {
+    const a = iv.tacke[k]!;
+    const b = iv.tacke[k + 1]!;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const l2 = dx * dx + dy * dy;
+    const t = l2 > 0 ? Math.max(0, Math.min(1, ((q.x - a.x) * dx + (q.y - a.y) * dy) / l2)) : 0;
+    naj = Math.min(naj, Math.hypot(a.x + dx * t - q.x, a.y + dy * t - q.y));
+  }
+  return naj;
 }
 
 // ── pomoćno: tačke duž ivice, sa bočnim pomakom ─────────────────────────────

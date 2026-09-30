@@ -1868,3 +1868,20 @@ export const GRAD_STOP_ISPRED_ZEBRE = 1;
  */
 export const GRAD_PJESACKI_SEMAFOR_OD = 15;
 export const GRAD_PJESACKI_SEMAFOR_PRELAZ = 6;
+
+// ── crtanje pravila (faza 6, stavka 5c) ────────────────────────────────────
+
+/** Debljina stop-linije duž ulice [m]. */
+export const GRAD_LINIJA_STOP = 0.5;
+/** Crtica linije „ustupi prvenstvo" poprijeko ulice [m] (razmak iste dužine). */
+export const GRAD_LINIJA_USTUPI_CRTICA = 0.6;
+/** Visina znaka na stubu [m] — po njoj se znak naginje u 2.5D. */
+export const GRAD_ZNAK_VISINA = 2.4;
+/** Širina znaka u svijetu [m], i najmanje [px] koliko se crta da ostane čitljiv. */
+export const GRAD_ZNAK_VELICINA = 1.2;
+export const GRAD_ZNAK_NAJMANJE_PX = 22;
+/** Visina semafora [m] i njegova glava u svijetu [m]. */
+export const GRAD_SEMAFOR_VISINA = 3.5;
+export const GRAD_SEMAFOR_VELICINA = 1.4;
+/** Znakovi bliži od ovoga [m] dijele jedan stub. */
+export const GRAD_ZNAK_ISTI_STUB = 1.5;

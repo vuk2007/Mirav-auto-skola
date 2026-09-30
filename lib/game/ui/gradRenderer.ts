@@ -28,13 +28,21 @@ import {
   GRAD_PROZOR_RAZMAK,
   GRAD_SJENKA_ALFA,
   GRAD_SPRAT,
+  GRAD_SEMAFOR_VELICINA,
+  GRAD_SEMAFOR_VISINA,
   GRAD_TROTOAR,
   GRAD_ZEBRA_VRSTE,
+  GRAD_ZNAK_NAJMANJE_PX,
+  GRAD_ZNAK_VELICINA,
+  GRAD_ZNAK_VISINA,
 } from "../sim/config";
 import type { Point } from "../sim/types";
 import type { Paket } from "../grad/paket";
 import { geometrijaDekora, type BojeDekora } from "../grad/dekor";
+import { svjetlo, type Raskrsnice } from "../grad/raskrsnica";
 import type { Temena } from "../grad/temena";
+import type { CrtezPravila, Semafor, Znak } from "../grad/znakovi";
+import { tekstureZnakova } from "./tekstureZnakova";
 import { krajeviLinija, linijeIvice, streliceIvice, zebra, type Poligon } from "../grad/oznake";
 import type { Povrsina } from "../grad/povrsina";
 import {
@@ -276,8 +284,16 @@ export interface GradKadar {
   scale: number;
 }
 
+/** Pravila raskrsnica koja se crtaju — isti model po kojem se sudi. */
+export interface PravilaZaCrtanje {
+  raskrsnice: Raskrsnice;
+  crtez: CrtezPravila;
+}
+
 export interface GradScena {
   kadar: GradKadar;
+  /** Vrijeme simulacije [s] — po njemu rade semafori. */
+  simT: number;
   osvjetljenje: Osvjetljenje;
   igrac: {
     pos: Point;
@@ -306,11 +322,18 @@ interface Tile {
   linije: [number, number];
   ivice: number[];
   uglovi: number[];
+  pune: number[];
+  isprekidane: number[];
+  znakovi: number[];
+  semafori: number[];
 }
 
 interface Sagradjen {
   slojevi: Container[];
   vidjen: number;
+  /** Znakovi i semafori tile-a: sprite, i gdje mu je podnožje. */
+  znakovi: { sprite: Sprite; z: Znak }[];
+  semafori: { sprite: Sprite; sjaj: Sprite; sem: Semafor }[];
 }
 
 export async function createGradRenderer(
@@ -318,6 +341,7 @@ export async function createGradRenderer(
   paket: Paket,
   povrsina: Povrsina,
   izgled: IzgledGrada,
+  pravila: PravilaZaCrtanje,
 ): Promise<GradRenderer | null> {
   const mreza = povrsina.mreza;
   const app = new Application();
@@ -351,6 +375,10 @@ export async function createGradRenderer(
       linije: opseg(n.lnTileOd, t),
       ivice: [],
       uglovi: [],
+      pune: [],
+      isprekidane: [],
+      znakovi: [],
+      semafori: [],
     });
   }
   const tileZa = (x: number, y: number) => {
@@ -380,6 +408,20 @@ export async function createGradRenderer(
     tile.uglovi.push(i);
     for (const p of [u.a, u.b, u.c]) prosiri(tile.okvir, p.x, p.y, TROTOAR);
   }
+  // Pravila raskrsnica: linije, znakovi i semafori po tile-u, po prvoj tački.
+  const crtez = pravila.crtez;
+  crtez.pune.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.pune.push(i));
+  crtez.isprekidane.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.isprekidane.push(i));
+  crtez.znakovi.forEach((zn, i) => {
+    const t = tileovi[tileZa(zn.x, zn.y)]!;
+    t.znakovi.push(i);
+    prosiri(t.okvir, zn.x, zn.y, 2);
+  });
+  crtez.semafori.forEach((sm, i) => {
+    const t = tileovi[tileZa(sm.x, sm.y)]!;
+    t.semafori.push(i);
+    prosiri(t.okvir, sm.x, sm.y, 2);
+  });
 
   // ── slojevi ───────────────────────────────────────────────────────────────
   const svijet = new Container();
@@ -397,6 +439,11 @@ export async function createGradRenderer(
   // se naginje preko stabla, a ne obrnuto.
   const sDekor = new Container();
   const sZgrade = new Container();
+  // Znakovi i semafori iznad zgrada: moraju se vidjeti, kao ikone u GTA.
+  const sZnakovi = new Container();
+  const stubovi = new Graphics();
+  sZnakovi.addChild(stubovi);
+  const teksture = tekstureZnakova();
   const dinamika = new Graphics();
   // Svjetla (lampe, farovi) se sabiraju sa onim ispod (`add`), i ne tamne:
   // idu iznad tla i oznaka, a ispod dekora i zgrada — svijetli ulica, ne krov.
@@ -413,9 +460,9 @@ export async function createGradRenderer(
   snop.anchor.set(0, 0.5);
   snop.tint = boje.farovi;
   sSvjetla.addChild(snop);
-  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sSvjetla, sIznad, sSjene, sDekor, sZgrade, dinamika);
+  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sSvjetla, sIznad, sSjene, sDekor, sZgrade, sZnakovi, dinamika);
   /** Slojevi koje doba dana tamni (sve osim svjetala i sjenki). */
-  const osvijetljeni: Container[] = [sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sDekor, sZgrade, dinamika];
+  const osvijetljeni: Container[] = [sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sDekor, sZgrade, sZnakovi, dinamika];
   const sjenkaFilter = sSjene.filters![0] as AlphaFilter;
 
   // Oznake na kolovozu: linije staju pred raskrsnicom; prelazi su objekti paketa.
@@ -522,6 +569,32 @@ export async function createGradRenderer(
       if (n.obVrsta[o] !== vrstaPrelaza || !zebraKodovi.has(n.obPodatak[o]!)) continue;
       oboji(zebra(povrsina, n.obXY[2 * o]!, n.obXY[2 * o + 1]!));
     }
+    oboji(tile.pune.map((i) => crtez.pune[i]!));
+    oboji(tile.isprekidane.map((i) => crtez.isprekidane[i]!));
+
+    // Znakovi i semafori: sprite-ovi koje `draw` svakog kadra uspravi prema
+    // ekranu i nagne u 2.5D. Sjaj semafora ide u sloj svjetala.
+    const znakoviC = new Container();
+    const sjajeviC = new Container();
+    const znakoviT = tile.znakovi.map((i) => {
+      const z = crtez.znakovi[i]!;
+      const sprite = new Sprite(teksture.znak[z.vrsta]);
+      sprite.anchor.set(0.5);
+      znakoviC.addChild(sprite);
+      return { sprite, z };
+    });
+    const semaforiT = tile.semafori.map((i) => {
+      const sem = crtez.semafori[i]!;
+      const sprite = new Sprite(teksture.semafor.crveno);
+      sprite.anchor.set(0.5);
+      const sj = new Sprite(sjaj);
+      sj.anchor.set(0.5);
+      sj.width = sj.height = 5;
+      sj.alpha = 0.8;
+      znakoviC.addChild(sprite);
+      sjajeviC.addChild(sj);
+      return { sprite, sjaj: sj, sem };
+    });
 
     const lista: Zgrada[] = [];
     for (let i = tile.zgrade[0]; i < tile.zgrade[1]; i++) {
@@ -566,9 +639,13 @@ export async function createGradRenderer(
     sDekor.addChild(dekor);
     sSvjetla.addChild(lampe);
     sZgrade.addChild(zgrade);
+    sZnakovi.addChild(znakoviC);
+    sSvjetla.addChild(sjajeviC);
     return {
-      slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, sjeneDekora, dekor, zgrade, lampe],
+      slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, sjeneDekora, dekor, zgrade, lampe, znakoviC, sjajeviC],
       vidjen: kadar,
+      znakovi: znakoviT,
+      semafori: semaforiT,
     };
   };
 
@@ -619,7 +696,7 @@ export async function createGradRenderer(
       app.renderer.resize(cssW, cssH, dpr);
     },
 
-    draw({ kadar: k, igrac, osvjetljenje: o }) {
+    draw({ kadar: k, igrac, osvjetljenje: o, simT }) {
       kadar += 1;
       const pogled = vidljivo(k);
       vidljivih = 0;
@@ -673,7 +750,48 @@ export async function createGradRenderer(
       sjenkaFilter.alpha = GRAD_SJENKA_ALFA * sunce;
       const mrak = o.doba !== "dan";
       sSvjetla.visible = mrak || o.kisa;
-      for (const x of sagradjeni.values()) x.slojevi[10]!.visible = x.slojevi[0]!.visible && mrak;
+      for (const x of sagradjeni.values()) {
+        x.slojevi[10]!.visible = x.slojevi[0]!.visible && mrak;
+        x.slojevi[12]!.visible = x.slojevi[0]!.visible && mrak;
+      }
+
+      // Znakovi i semafori: uspravni prema ekranu, podignuti na stub i nagnuti
+      // kao zgrade (isti račun kao u shaderu), i nikad sitniji od
+      // `GRAD_ZNAK_NAJMANJE_PX` — znak koji se ne pročita ne može da se poštuje.
+      stubovi.clear();
+      const naNagibu = (x: number, y: number, h: number) => {
+        const f = Math.min(h * u.uFaktor, GRAD_2_5D_NAJVISE);
+        return { x: x + (x - sredina.x) * f, y: y + (y - sredina.y) * f };
+      };
+      const uspravno = -(k.rot + Math.PI);
+      const velicina = (m: number) => Math.max(m, GRAD_ZNAK_NAJMANJE_PX / k.scale);
+      for (const x of sagradjeni.values()) {
+        if (!x.slojevi[0]!.visible) continue;
+        for (const { sprite, z } of x.znakovi) {
+          const v = naNagibu(z.x, z.y, GRAD_ZNAK_VISINA);
+          stubovi.moveTo(z.x, z.y).lineTo(v.x, v.y);
+          // Više znakova na istom stubu: svaki sljedeći iznad, prema vrhu ekrana.
+          const vel = velicina(GRAD_ZNAK_VELICINA);
+          const gore = vel * 1.05 * z.nivo;
+          sprite.position.set(v.x + Math.sin(uspravno) * gore, v.y - Math.cos(uspravno) * gore);
+          sprite.rotation = uspravno;
+          sprite.width = sprite.height = vel;
+        }
+        for (const { sprite, sjaj: sj, sem } of x.semafori) {
+          const v = naNagibu(sem.x, sem.y, GRAD_SEMAFOR_VISINA);
+          stubovi.moveTo(sem.x, sem.y).lineTo(v.x, v.y);
+          const stanje = svjetlo(pravila.raskrsnice.lista[sem.raskrsnica]!, sem.krak, simT) ?? "crveno";
+          sprite.texture = teksture.semafor[stanje];
+          sprite.position.set(v.x, v.y);
+          sprite.rotation = uspravno;
+          const vis = velicina(GRAD_SEMAFOR_VELICINA);
+          sprite.height = vis;
+          sprite.width = (vis * 40) / 96;
+          sj.position.set(v.x, v.y);
+          sj.tint = stanje === "zeleno" ? "#34c759" : stanje === "zuto" ? "#ffcc00" : "#ff3b30";
+        }
+      }
+      stubovi.stroke({ width: 0.12, color: "#4a4d52" });
       u.uUpaljeno = GRAD_PROZORI_UPALJENI[o.doba];
 
       dinamika.clear();
@@ -759,6 +877,7 @@ export async function createGradRenderer(
       shader.destroy();
       sjaj.destroy(true);
       tSnop.destroy(true);
+      teksture.unisti();
       app.destroy({ removeView: false }, { children: true });
     },
   };

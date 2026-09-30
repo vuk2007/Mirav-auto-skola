@@ -5,7 +5,10 @@ import { segmentIntersection } from "../sim/geometry";
 import type { Point } from "../sim/types";
 import { napraviMrezu, najblizaIvica } from "./mreza";
 import { BEZ, IVICA_MOST, IVICA_TUNEL, procitaj, type Paket } from "./paket";
-import { napraviPovrsinu } from "./povrsina";
+import { krajeviLinija } from "./oznake";
+import { naPovrsini, napraviPovrsinu } from "./povrsina";
+import { napraviRaskrsnice, zabraneSkretanja } from "./raskrsnica";
+import { crtezPravila } from "./znakovi";
 import { autoNaPovrsini, slobodnoNaIvici } from "./slobodno";
 
 /**
@@ -165,5 +168,20 @@ describe("Podgorica: površina za slobodnu vožnju", () => {
     // Izmjereno 140 od 20 462 (0,7 %): skoro sve servisni prolazi od jedne
     // trake, gdje je polovina ulice baš u oštroj krivini.
     expect(ne.length / (2 * ulica)).toBeLessThan(0.01);
+  });
+});
+
+describe("Podgorica: znakovi i semafori (stavka 5c)", () => {
+  const povrsina = napraviPovrsinu(mreza);
+  const odsjeci = krajeviLinija(mreza);
+  const r = napraviRaskrsnice(paket, mreza, odsjeci);
+  const c = crtezPravila(povrsina, r, zabraneSkretanja(paket), odsjeci);
+
+  it("stub znaka i semafora je na trotoaru, ne na kolovozu", () => {
+    const stubovi = [...c.znakovi, ...c.semafori];
+    const naAsfaltu = stubovi.filter((z) => naPovrsini(povrsina, z.x, z.y));
+    // Izmjereno 19 od 1 850 (1 %): gdje se proširene ulice preklapaju sa obje
+    // strane kraka, stuba bez asfalta nema.
+    expect(naAsfaltu.length / stubovi.length).toBeLessThan(0.02);
   });
 });
