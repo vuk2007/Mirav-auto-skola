@@ -1922,6 +1922,11 @@ export const GRAD_IZLAZ_POTVRDA = 6;
  * žmigavac); manja je vožnja pravo.
  */
 export const GRAD_SKRETANJE_UGAO = 30;
+/**
+ * Promjena pravca kroz raskrsnicu veća od ovoga [°] je polukružno okretanje
+ * — i kad auto izađe na drugi krak (okret preko razdjelnog pojasa bulevara).
+ */
+export const GRAD_POLUKRUZNO_UGAO = 150;
 
 // ── savršeni bot u gradu (faza 6, stavka 5f) ───────────────────────────────
 
