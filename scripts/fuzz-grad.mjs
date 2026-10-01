@@ -14,9 +14,12 @@
  *
  * Izlaz je 0 kad je sve prošlo, 1 kad nije — sa rutom, sjemenom i
  * prekršajem, da se pad ponovi jednom vožnjom.
+ *
+ * Grad je OSM paket SA ručnim izmjenama iz editora (overlay), kao u igri:
+ * bot mora čisto voziti i po pravilima koja je postavio čovjek.
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -28,23 +31,22 @@ const nivo = Number(process.argv[3] ?? 5);
 const sjeme = Number(process.argv[4] ?? 1);
 
 const { procitaj } = await import(`${KOD}grad/paket.ts`);
-const { napraviMrezu } = await import(`${KOD}grad/mreza.ts`);
-const { napraviPovrsinu } = await import(`${KOD}grad/povrsina.ts`);
-const { krajeviLinija } = await import(`${KOD}grad/oznake.ts`);
-const { napraviRaskrsnice, zabraneSkretanja } = await import(`${KOD}grad/raskrsnica.ts`);
-const { gradZaSudiju } = await import(`${KOD}grad/sudija.ts`);
+const { procitajOverlay } = await import(`${KOD}grad/overlay.ts`);
+const { svijetGrada } = await import(`${KOD}grad/svijet.ts`);
 const { nasumicnaRuta, odveziRutu, planBota } = await import(`${KOD}grad/botGrad.ts`);
 const { rng } = await import(`${KOD}sim/geometry.ts`);
 
 const spisak = JSON.parse(readFileSync(join(JAVNO, "gradovi.json"), "utf8"));
 const b = readFileSync(join(JAVNO, spisak.podgorica.fajl));
-const paket = procitaj(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
-const mreza = napraviMrezu(paket);
-const povrsina = napraviPovrsinu(mreza);
-const odsjeci = krajeviLinija(mreza);
-const raskrsnice = napraviRaskrsnice(paket, mreza, odsjeci);
-const zabrane = zabraneSkretanja(paket);
-const grad = gradZaSudiju(paket, povrsina, raskrsnice, zabrane, odsjeci);
+const fajlOverlaya = join(JAVNO, "overrides", "podgorica.json");
+const overlay = existsSync(fajlOverlaya) ? procitajOverlay(JSON.parse(readFileSync(fajlOverlaya, "utf8"))) : null;
+const svijet = svijetGrada(procitaj(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)), overlay);
+const { mreza, povrsina, raskrsnice, zabrane, zaSudiju: grad } = svijet;
+console.log(
+  overlay
+    ? `Overlay: ${overlay.izmjene.length} izmjena, nevezanih ${svijet.nevezane.length}.`
+    : "Overlay: nema ga — čist OSM.",
+);
 
 const slucajno = rng(sjeme);
 const padovi = [];

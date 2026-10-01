@@ -1,12 +1,27 @@
 import {
   CAR_WIDTH,
   GRAD_NAJUZA_ULICA,
+  GRAD_POLUKRUZNO_UGAO,
+  GRAD_SKRETANJE_UGAO,
   GRAD_SIRINA_TRAKE,
   GRAD_TRAKE_PO_KLASI,
 } from "../sim/config";
 import { cumulative, pointAt } from "../sim/geometry";
 import type { Point } from "../sim/types";
-import { IVICA_KRUZNI, IVICA_MOST, IVICA_TUNEL, IVICA_VOZNA, type Paket } from "./paket";
+import {
+  IVICA_BUS_NAPRIJED,
+  IVICA_BUS_NAZAD,
+  IVICA_KRUZNI,
+  IVICA_MOST,
+  IVICA_TUNEL,
+  IVICA_UKLONJENA,
+  IVICA_VOZNA,
+  IVICA_ZATVORENA,
+  LINIJA_BEZ,
+  LINIJA_DVOSTRUKA,
+  LINIJA_PUNA,
+  type Paket,
+} from "./paket";
 
 /**
  * Mreža ulica grada, iz paketa: čvorovi (raskrsnice i krajevi ulica) i ivice
@@ -49,6 +64,20 @@ export interface Ivica {
   ime: string;
   /** Ograničenje iz OSM-a [km/h]; `null` kad ga nema. */
   brzina: number | null;
+  /** OSM id puta od kojeg je ivica; 0 za ulicu koju je dodao overlay. */
+  osm: number;
+  /** Gradilište (overlay): crta se sa ogradom, ne vozi se. */
+  zatvorena: boolean;
+  /** Overlay ju je uklonio (greška u OSM-u): ne crta se, ne vozi se. */
+  uklonjena: boolean;
+  /** Krajnja desna traka u smjeru `a → b` (`naprijed`) / `b → a` je autobuska (overlay). */
+  busNaprijed: boolean;
+  busNazad: boolean;
+  /** Razdjelna linija smjerova: iz overlay-a, inače isprekidana. */
+  linija: "isprekidana" | "puna" | "dvostruka" | "bez";
+  /** Metara pune razdjelne linije, i punih linija između traka, pred svakim krajem u raskrsnici (overlay). */
+  punaPrije: number;
+  trakePrije: number;
 }
 
 export interface Mreza {
@@ -91,6 +120,8 @@ export function napraviMrezu(p: Paket): Mreza {
     const klasa = p.zaglavlje.klase[n.ivKlasa[i]!] ?? "road";
     const { sirina, poznate, naprijed, nazad } = sirinaKolovoza(p, i, klasa);
     const smjer = n.ivSmjer[i]!;
+    const zastavice = n.ivZastavice[i]!;
+    const linija = n.ivLinija[i] ?? 0;
     ivice.push({
       i,
       a: n.ivA[i]!,
@@ -106,12 +137,20 @@ export function napraviMrezu(p: Paket): Mreza {
       trakeNazad: nazad,
       skretanjaNaprijed: p.zaglavlje.stringovi[n.ivTrakeSkretanja[i]!] ?? "",
       skretanjaNazad: p.zaglavlje.stringovi[n.ivTrakeSkretanjaNazad[i]!] ?? "",
-      vozna: (n.ivZastavice[i]! & IVICA_VOZNA) !== 0,
-      kruzni: (n.ivZastavice[i]! & IVICA_KRUZNI) !== 0,
-      most: (n.ivZastavice[i]! & IVICA_MOST) !== 0,
-      tunel: (n.ivZastavice[i]! & IVICA_TUNEL) !== 0,
+      vozna: (zastavice & IVICA_VOZNA) !== 0,
+      kruzni: (zastavice & IVICA_KRUZNI) !== 0,
+      most: (zastavice & IVICA_MOST) !== 0,
+      tunel: (zastavice & IVICA_TUNEL) !== 0,
       ime: p.zaglavlje.stringovi[n.ivIme[i]!] ?? "",
       brzina: n.ivBrzina[i]! > 0 ? n.ivBrzina[i]! : null,
+      osm: n.ivOsm[i] ?? 0,
+      zatvorena: (zastavice & IVICA_ZATVORENA) !== 0,
+      uklonjena: (zastavice & IVICA_UKLONJENA) !== 0,
+      busNaprijed: (zastavice & IVICA_BUS_NAPRIJED) !== 0,
+      busNazad: (zastavice & IVICA_BUS_NAZAD) !== 0,
+      linija: linija === LINIJA_PUNA ? "puna" : linija === LINIJA_DVOSTRUKA ? "dvostruka" : linija === LINIJA_BEZ ? "bez" : "isprekidana",
+      punaPrije: n.ivPunaPrije[i] ?? 0,
+      trakePrije: n.ivTrakePrije[i] ?? 0,
     });
     izCvora[n.ivA[i]!]!.push(i);
     if (n.ivB[i]! !== n.ivA[i]!) izCvora[n.ivB[i]!]!.push(i);
@@ -175,4 +214,32 @@ export function pravacKraja(iv: Ivica, smjer: 1 | -1, naKraju: boolean): Point {
 /** Ugao skretanja [°] sa pravca `od` na `do_`; pozitivan je udesno (`y` na jug). */
 export function ugaoSkretanja(od: Point, do_: Point): number {
   return (Math.atan2(od.x * do_.y - od.y * do_.x, od.x * do_.x + od.y * do_.y) * 180) / Math.PI;
+}
+
+export type Manevar = "lijevo" | "pravo" | "desno" | "polukruzno";
+
+/**
+ * Manevar iz rasporeda ulica: sa ivice `ulazna` koja u raskrsnicu ulazi preko
+ * čvora `cvorUlaza`, na ivicu `izlazna` koja iz nje izlazi preko `cvorIzlaza`.
+ * Ovim pravilom sude sudija i bot, i po njemu overlay pretvara znak („zabrana
+ * skretanja lijevo") u izlaze koje zabranjuje — pa znak znači tačno ono za šta
+ * se sudi.
+ */
+export function manevarKrakova(ulazna: Ivica, cvorUlaza: number, izlazna: Ivica, cvorIzlaza: number): Manevar {
+  const ugao = ugaoSkretanja(
+    pravacKraja(ulazna, ulazna.b === cvorUlaza ? 1 : -1, true),
+    pravacKraja(izlazna, izlazna.a === cvorIzlaza ? 1 : -1, false),
+  );
+  return manevarIzUgla(ugao);
+}
+
+/** Manevar po uglu skretanja [°]: preko `GRAD_POLUKRUZNO_UGAO` je polukružno. */
+export function manevarIzUgla(ugao: number): Manevar {
+  return Math.abs(ugao) > GRAD_POLUKRUZNO_UGAO
+    ? "polukruzno"
+    : ugao > GRAD_SKRETANJE_UGAO
+      ? "desno"
+      : ugao < -GRAD_SKRETANJE_UGAO
+        ? "lijevo"
+        : "pravo";
 }

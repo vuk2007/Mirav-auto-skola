@@ -2004,3 +2004,19 @@ export const GRAD_BOT_TRAKA_UNAPRIJED = 150;
  * preklapaju — veći od `GRAD_KLASTER_PRECNIK`: tu razdvajanje nije moguće.
  */
 export const GRAD_KLASTER_PRECNIK_PREKLOP = 80;
+
+// ── Editor i overlay grada (faza 6, stavka 6) ─────────────────────────────
+/**
+ * Sidro izmjene u overlay-u je tačka (i OSM id puta), ne indeks u paketu:
+ * indeksi se mijenjaju sa svakim novim paketom iz OSM-a, tačke ne. Izmjena se
+ * veže za čvor bliži od ovoga [m]…
+ */
+export const GRAD_SIDRO_CVOR = 4;
+/** …i za ulicu čija je osovina bliža od ovoga [m]. Dalje: izmjena je „nevezana" i editor je pokazuje. */
+export const GRAD_SIDRO_ULICE = 6;
+/** Zebra koju overlay uklanja: postojeći prelaz na ulici bliži od ovoga sidru [m]. */
+export const GRAD_SIDRO_PRELAZ = 4;
+/** Vrsta OSM prelaza kojom overlay dodaje obilježeni pješački prelaz (jedna od `GRAD_ZEBRA_VRSTE`). */
+export const GRAD_OVERLAY_ZEBRA = "zebra";
+/** Najviše metara pune linije pred raskrsnicom koje overlay može zadati (stane u bajt paketa). */
+export const GRAD_PUNA_PRIJE_NAJVISE = 250;

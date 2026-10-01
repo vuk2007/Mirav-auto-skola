@@ -14,17 +14,17 @@ import {
   type Level,
 } from "@/lib/game/sim/config";
 import type { Point } from "@/lib/game/sim/types";
-import { napraviMrezu, najblizaIvica } from "@/lib/game/grad/mreza";
-import { procitaj, type Paket } from "@/lib/game/grad/paket";
-import { krajeviLinija } from "@/lib/game/grad/oznake";
-import { napraviPovrsinu, ulicaNa, type Povrsina } from "@/lib/game/grad/povrsina";
-import { napraviRaskrsnice, zabraneSkretanja } from "@/lib/game/grad/raskrsnica";
-import { gradZaSudiju, noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
-import { crtezPravila } from "@/lib/game/grad/znakovi";
+import { najblizaIvica } from "@/lib/game/grad/mreza";
+import { ucitajOverlay } from "@/lib/game/grad/ucitajOverlay";
+import { zoneGrada, type Zona } from "@/lib/game/grad/overlay";
+import { procitaj } from "@/lib/game/grad/paket";
+import { ulicaNa } from "@/lib/game/grad/povrsina";
+import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
+import { svijetGrada } from "@/lib/game/grad/svijet";
 import { naslovPrekrsaja, praviloPrekrsaja } from "@/lib/game/ui/gradPrekrsaji";
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
 import type { BojeDekora } from "@/lib/game/grad/dekor";
-import type { Palete, ZonaPalete } from "@/lib/game/grad/zgrade";
+import type { Palete } from "@/lib/game/grad/zgrade";
 import type { BojeOsvjetljenja, DobaDana, GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
 import { haptika } from "@/lib/game/ui/haptika";
 import { zmigavacSvijetli } from "@/lib/game/ui/zmigavac";
@@ -114,24 +114,21 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         return (await r.json()) as T;
       };
       // Izgled zgrada je podatak: palete i zone (sa paletom po zoni).
-      const [spisak, palete, zone] = await Promise.all([
+      const [spisak, palete, zone, overlay] = await Promise.all([
         json<Record<string, { fajl: string }>>("/data/grad/gradovi.json"),
         json<Palete & { dekor: BojeDekora; osvjetljenje: BojeOsvjetljenja }>("/data/grad/palete.json"),
-        json<{ zone: ZonaPalete[] }>(`/data/grad/cityZones/${GRAD}.json`),
+        json<{ zone: Zona[] }>(`/data/grad/cityZones/${GRAD}.json`),
+        ucitajOverlay(GRAD),
       ]);
       const fajl = spisak[GRAD]?.fajl;
       if (!fajl) throw new Error(`nema paketa za ${GRAD}`);
       const odgovor = await fetch(`/data/grad/${fajl}`);
       if (!odgovor.ok) throw new Error(`paket grada: HTTP ${odgovor.status}`);
-      const paket: Paket = procitaj(await odgovor.arrayBuffer());
-      const mreza = napraviMrezu(paket);
-      const povrsina: Povrsina = napraviPovrsinu(mreza);
-      // Pravila raskrsnica (stavka 5): jedan model — po njemu se crta i sudi.
-      const odsjeci = krajeviLinija(mreza);
-      const raskrsnice = napraviRaskrsnice(paket, mreza, odsjeci);
-      const zabrane = zabraneSkretanja(paket);
-      const crtez = crtezPravila(povrsina, raskrsnice, zabrane, odsjeci);
-      const zaSudiju = gradZaSudiju(paket, povrsina, raskrsnice, zabrane, odsjeci);
+      // OSM paket, pa ručne izmjene iz editora (stavka 6) — jedan model po
+      // kojem se crta i sudi (stavka 5).
+      const svijet = svijetGrada(procitaj(await odgovor.arrayBuffer()), overlay);
+      const { paket, mreza, povrsina, raskrsnice, crtez, zaSudiju } = svijet;
+      const zoneSvijeta = overlay ? zoneGrada(zone.zone, overlay) : zone.zone;
       const sudija = noviSudija(nivoRef.current);
       let prijavljeno = 0;
       if (otkazano) return;
@@ -139,7 +136,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       if (!canvas) return;
       // Pixi se učitava tek ovdje — ostatak igre ga ne plaća u početnom paketu.
       const { createGradRenderer } = await import("@/lib/game/ui/gradRenderer");
-      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: zone.zone }, { raskrsnice, crtez });
+      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: zoneSvijeta }, { raskrsnice, crtez });
       if (otkazano) {
         renderer?.destroy();
         return;

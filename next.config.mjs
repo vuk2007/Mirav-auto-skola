@@ -8,6 +8,13 @@ const FRAME_ANCESTORS = ["'self'", "https://mirav.me", "https://*.mirav.me"];
 const nextConfig = {
   reactStrictMode: true,
 
+  // Fajlovi `*.dev.ts(x)` su rute samo uz `npm run dev` (editor grada piše
+  // overlay u repozitorijum). Produkcijski build ih ne vidi: na Vercel-u nema
+  // ni rute ni serverske funkcije. `dev.*` mora biti ispred `ts`/`tsx`, da se
+  // `route.dev.ts` čita kao `route`, a ne kao `route.dev`.
+  pageExtensions:
+    process.env.NODE_ENV === "development" ? ["dev.ts", "dev.tsx", "tsx", "ts", "jsx", "js"] : ["tsx", "ts", "jsx", "js"],
+
   images: {
     // Slike se serviraju kakve jesu, bez Vercel optimizacije (WebP/resize).
     // Razlog: Hobby plan ima mjesečnu kvotu transformacija, a baza ima 281

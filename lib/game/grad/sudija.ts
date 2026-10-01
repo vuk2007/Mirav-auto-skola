@@ -8,7 +8,6 @@ import {
   GRAD_LIJEVO_TRAJE,
   GRAD_PRILAZ_DO,
   GRAD_SIRINA_TRAKE,
-  GRAD_POLUKRUZNO_UGAO,
   GRAD_PRSTEN_IZLAZ,
   GRAD_PRSTEN_RUB,
   GRAD_PRSTEN_SREDINA,
@@ -29,7 +28,7 @@ import {
   type Level,
 } from "../sim/config";
 import type { Point } from "../sim/types";
-import { pravacKraja, ugaoSkretanja, type Ivica, type Mreza } from "./mreza";
+import { manevarIzUgla, manevarKrakova, pravacKraja, ugaoSkretanja, type Ivica, type Manevar, type Mreza } from "./mreza";
 import { BEZ, type Paket } from "./paket";
 import { najblizaOsa, oseBlizu, type OsaBlizu, type Povrsina } from "./povrsina";
 import { prekrsenaZabrana, svjetlo, type Krak, type Raskrsnice, type Svjetlo, type Zabrana } from "./raskrsnica";
@@ -484,8 +483,6 @@ function streliceTrake(iv: Ivica, gleda: 1 | -1, bok: number): string[] | null {
   return po[j]!.split(";").map((x) => x.trim());
 }
 
-type Manevar = "lijevo" | "pravo" | "desno" | "polukruzno";
-
 /** Da li strelice trake dozvoljavaju manevar. Traka bez strelice (`none`) je za pravo. */
 function dozvoljava(strelice: string[], manevar: Manevar): boolean {
   return strelice.some((x) => {
@@ -832,9 +829,7 @@ function sudiPrsten(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, p
   const pr = s.prsten;
   s.prsten = null;
   const ul = g.mreza.ivice[pr.ulazIvica]!;
-  const u = ugaoSkretanja(pravacKraja(ul, ul.b === pr.ulazCvor ? 1 : -1, true), pravacKraja(iv, iv.a === cvorIzlaza ? 1 : -1, false));
-  const manevar: Manevar =
-    Math.abs(u) > GRAD_POLUKRUZNO_UGAO ? "polukruzno" : u > GRAD_SKRETANJE_UGAO ? "desno" : u < -GRAD_SKRETANJE_UGAO ? "lijevo" : "pravo";
+  const manevar = manevarKrakova(ul, pr.ulazCvor, iv, cvorIzlaza);
   const treba = manevar === "lijevo" || manevar === "polukruzno" ? "unutra" : "spolja";
   // Uzorci od ulaska u raskrsnicu izlaza (uz `GRAD_PRSTEN_IZLAZ` prije) se ne
   // broje: tu auto iz unutrašnje trake već prelazi ka izlazu.
@@ -896,14 +891,7 @@ function zavrsiProlaz(
   );
   // Polukružno je i okret preko razdjelnog pojasa bulevara: drugi krak, ali
   // pravac skoro suprotan.
-  const manevar: Manevar =
-    (okrenuo && osa.ivica === p.ivica) || Math.abs(ugao) > GRAD_POLUKRUZNO_UGAO
-      ? "polukruzno"
-      : ugao > GRAD_SKRETANJE_UGAO
-        ? "desno"
-        : ugao < -GRAD_SKRETANJE_UGAO
-          ? "lijevo"
-          : "pravo";
+  const manevar: Manevar = okrenuo && osa.ivica === p.ivica ? "polukruzno" : manevarIzUgla(ugao);
   s.dnevnik?.({ r: p.r, ulaz: p.ivica, izlaz: osa.ivica, manevar, t });
   sudiZmigavac(g, s, st, t, p, manevar, iv.kruzni);
   sudiPrsten(g, s, st, t, p, ulazna, iv, cvorIzlaza);

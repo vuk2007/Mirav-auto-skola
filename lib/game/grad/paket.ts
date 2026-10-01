@@ -58,6 +58,15 @@ export const NIZOVI = {
   ivTrakeSkretanja: "u16",
   ivTrakeSkretanjaNazad: "u16",
   ivOsm: "u32",
+  /**
+   * Razdjelna linija smjerova (overlay, stavka 6), vidi `LINIJA_*`; 0 kad je
+   * nema u izmjenama — tada se crta isprekidana.
+   */
+  ivLinija: "u8",
+  /** Metara pune razdjelne linije pred svakim krajem ivice u raskrsnici (overlay). */
+  ivPunaPrije: "u8",
+  /** Metara punih linija između traka istog smjera pred raskrsnicom (overlay). */
+  ivTrakePrije: "u8",
   // Zgrade: prsten osnove, spratnost, visina, vrsta, ime (samo javne).
   zgOd: "u32",
   zgXY: "f32",
@@ -102,6 +111,12 @@ export const NIZOVI = {
   rsDo: "u32",
 } as const satisfies Record<string, VrstaNiza>;
 
+/**
+ * Nizovi kojih u starijem paketu nema: čita se nula za svaku ivicu. Uvedeni
+ * su sa editorom (stavka 6); OSM ih ne puni, puni ih overlay.
+ */
+const NEOBAVEZNI_IVICE: readonly ImeNiza[] = ["ivLinija", "ivPunaPrije", "ivTrakePrije"];
+
 /** Oznaka „nema" u `obIvica` i `obCvor`. */
 export const BEZ = 0xffffffff;
 
@@ -115,6 +130,20 @@ export const IVICA_MOST = 2;
 export const IVICA_TUNEL = 4;
 /** Ivicom se vozi autom — pješačka zona, biciklistička staza i slično nisu. */
 export const IVICA_VOZNA = 8;
+/** Zatvorena ulica (gradilište): crta se sa ogradom, auto u nju ne može. Iz overlay-a. */
+export const IVICA_ZATVORENA = 16;
+/** Ulica koju je overlay uklonio (greška u OSM-u): ne crta se i ne vozi. */
+export const IVICA_UKLONJENA = 32;
+/** Krajnja desna traka u smjeru `a → b` / `b → a` je autobuska. Iz overlay-a. */
+export const IVICA_BUS_NAPRIJED = 64;
+export const IVICA_BUS_NAZAD = 128;
+
+/** Razdjelna linija smjerova (`ivLinija`). */
+export const LINIJA_PODRAZUMIJEVANA = 0;
+export const LINIJA_ISPREKIDANA = 1;
+export const LINIJA_PUNA = 2;
+export const LINIJA_DVOSTRUKA = 3;
+export const LINIJA_BEZ = 4;
 
 export interface ZaglavljePaketa {
   verzija: number;
@@ -156,6 +185,9 @@ const poravnaj = (x: number) => (x + 3) & ~3;
 export function zapisi(zaglavlje: ZaglavljeBezNizova, n: Nizovi): Uint8Array {
   const raspored: Record<string, [number, number]> = {};
   let pomak = 0;
+  for (const ime of NEOBAVEZNI_IVICE) {
+    if (!n[ime]) (n as Record<ImeNiza, Niz>)[ime] = new KONSTRUKTOR[NIZOVI[ime]](n.ivA.length);
+  }
   for (const ime of Object.keys(NIZOVI) as ImeNiza[]) {
     const niz = n[ime] as Niz;
     raspored[ime] = [pomak, niz.length];
@@ -191,6 +223,10 @@ export function procitaj(bajtovi: ArrayBuffer): Paket {
   const n = {} as Record<ImeNiza, Niz>;
   for (const ime of Object.keys(NIZOVI) as ImeNiza[]) {
     const mjesto = zaglavlje.nizovi[ime];
+    if (!mjesto && NEOBAVEZNI_IVICE.includes(ime)) {
+      n[ime] = new KONSTRUKTOR[NIZOVI[ime]](n.ivA!.length);
+      continue;
+    }
     if (!mjesto) throw new Error(`paket grada nema niz ${ime}`);
     const K = KONSTRUKTOR[NIZOVI[ime]];
     n[ime] = new K(bajtovi, pocetak + mjesto[0], mjesto[1]);

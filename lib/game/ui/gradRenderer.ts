@@ -544,6 +544,8 @@ export async function createGradRenderer(
     const ulice = new Graphics();
     for (const i of tile.ivice) {
       const iv = mreza.ivice[i]!;
+      // Ulica koju je editor uklonio (greška u OSM-u) ne postoji.
+      if (iv.uklonjena) continue;
       linija(trotoari, iv.tacke);
       trotoari.stroke({ width: iv.sirina + 2 * TROTOAR, color: BOJE.trotoar, cap: "round", join: "round" });
       linija(ulice, iv.tacke);

@@ -19,7 +19,8 @@ import {
   GRAD_ZNAK_DO,
 } from "../sim/config";
 import type { Point } from "../sim/types";
-import type { Ivica, Mreza } from "./mreza";
+import type { Ivica, Manevar, Mreza } from "./mreza";
+import type { PlanOverlayaVezan, PravilaOverlaya } from "./overlay";
 import { BEZ, type Paket } from "./paket";
 
 /**
@@ -30,8 +31,8 @@ import { BEZ, type Paket } from "./paket";
  * čvorova blizu jedan drugog, kad je svaka kolovozna traka bulevara svoj put.
  *
  * Kontrola ulaza sa svakog kraka ide redom (zadatak, odjeljak 5): izmjena iz
- * editora (stavka 6) → znak ili semafor iz OSM-a → izvedeno pravilo → pravilo
- * desne strane. Izvedeno (sporedna ulica na glavnu, ulaz u kružni tok, semafor
+ * editora (overlay, stavka 6) → znak ili semafor iz OSM-a → izvedeno pravilo
+ * → pravilo desne strane. Izvedeno (sporedna ulica na glavnu, ulaz u kružni tok, semafor
  * bez faza) nosi zastavicu `inferred*`, crta se kao pravi znak i sudi se po
  * onome što je nacrtano.
  */
@@ -39,8 +40,11 @@ import { BEZ, type Paket } from "./paket";
 /** Kako se ulazi u raskrsnicu sa kraka. */
 export type Kontrola = "semafor" | "stop" | "ustupi" | "glavni" | "desna";
 
-/** Odakle je kontrola: znak iz OSM-a, ili izvedena (`inferred*`), ili pravilo desne strane. */
-export type IzvorKontrole = "osm" | "izvedeno" | "pravilo";
+/**
+ * Odakle je kontrola: ručno iz editora (overlay), znak iz OSM-a, izvedena
+ * (`inferred*`), ili pravilo desne strane.
+ */
+export type IzvorKontrole = "overlay" | "osm" | "izvedeno" | "pravilo";
 
 export interface Krak {
   /** Ivica kraka i njen kraj koji dodiruje raskrsnicu: 0 je `a`, 1 je `b`. */
@@ -64,8 +68,14 @@ export interface Krak {
 
 export interface FazaSemafora {
   zeleno: number;
-  /** Krakovi (indeksi u `kraci`) koji u ovoj fazi imaju zeleno. */
+  /** Krakovi (indeksi u `kraci`) koji u ovoj fazi imaju zeleno za sve manevre. */
   kraci: number[];
+  /** Krakovi sa zelenim samo za neke manevre (svjetlo sa strelicom za traku) — iz editora. */
+  djelimicno: { krak: number; manevri: Manevar[] }[];
+  /** Zelena dopunska strelica: smije se u njenom pravcu, uz ustupanje, i kad je glavno crveno. */
+  strelice: { krak: number; manevri: Manevar[] }[];
+  /** Zeleno za pješake preko ovih krakova (stavka 8). */
+  pjesaci: number[];
 }
 
 export interface PlanSemafora {
@@ -73,6 +83,9 @@ export interface PlanSemafora {
   /** Trajanje cijelog ciklusa [s] i pomak ciklusa ove raskrsnice [s]. */
   ciklus: number;
   pomak: number;
+  /** Žuto i „sve crveno" poslije svake faze [s]. */
+  zuto: number;
+  sveCrveno: number;
 }
 
 export interface Raskrsnica {
@@ -246,7 +259,7 @@ function objektiKraka(p: Paket, poIvici: Map<number, number[]>, iv: Ivica, kraj:
  * počinje raskrsnica na svakom kraju ivice — tu je stop-linija kad je znak
  * nema na svom mjestu.
  */
-export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array): Raskrsnice {
+export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array, overlay?: PravilaOverlaya): Raskrsnice {
   const n = p.n;
   const z = p.zaglavlje;
   const jeste = cvoroviRaskrsnica(m);
@@ -335,7 +348,7 @@ export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array): Ra
       inferredPriority: false,
       inferredPhases: false,
     };
-    odrediKontrolu(p, m, r, poIvici, cvorovi.flatMap((c) => uCvoruObj.get(c) ?? []), odsjeci);
+    odrediKontrolu(p, m, r, poIvici, cvorovi.flatMap((c) => uCvoruObj.get(c) ?? []), odsjeci, overlay);
     r.kraci.forEach((k, j) => krakIvice.set(`${k.ivica}:${k.kraj}`, [id, j]));
     lista.push(r);
   }
@@ -349,29 +362,46 @@ function odrediKontrolu(
   poIvici: Map<number, number[]>,
   uCvorovima: number[],
   odsjeci: Float32Array,
+  overlay: PravilaOverlaya | undefined,
 ): void {
   const z = p.zaglavlje;
   const n = p.n;
   const naKraku = r.kraci.map((k) => (k.ulaz ? objektiKraka(p, poIvici, m.ivice[k.ivica]!, k.kraj) : []));
   const uCvoru = uCvorovima.map((o) => z.vrsteObjekata[n.obVrsta[o]!]);
+  // Semafor iz editora: plan, ili `null` — semafora tu nema (greška u OSM-u).
+  const ovSemafor = overlay ? (r.cvorovi.map((c) => overlay.semafori.get(c)).find(Boolean) ?? null) : null;
+  const bezSemafora = ovSemafor !== null && ovSemafor.plan === null;
 
-  const semaforUCvoru = uCvoru.includes("traffic_signals");
+  const semaforUCvoru = !bezSemafora && uCvoru.includes("traffic_signals");
   // Pješački semafor na sredini ulice nije semafor raskrsnice (vidi
   // `GRAD_PJESACKI_SEMAFOR_OD`).
   const semaforNaKraku = naKraku.map(
     (l, j) =>
-      l.find((o) => {
-        if (o.vrsta !== "traffic_signals") return false;
-        const k = r.kraci[j]!;
-        const daleko = o.d > odsjeci[2 * k.ivica + k.kraj]! + GRAD_PJESACKI_SEMAFOR_OD;
-        const uzPrelaz = l.some((c) => c.vrsta === "crossing" && Math.abs(c.d - o.d) <= GRAD_PJESACKI_SEMAFOR_PRELAZ);
-        return !(daleko && uzPrelaz);
-      }) ?? null,
+      (!bezSemafora &&
+        l.find((o) => {
+          if (o.vrsta !== "traffic_signals") return false;
+          const k = r.kraci[j]!;
+          const daleko = o.d > odsjeci[2 * k.ivica + k.kraj]! + GRAD_PJESACKI_SEMAFOR_OD;
+          const uzPrelaz = l.some((c) => c.vrsta === "crossing" && Math.abs(c.d - o.d) <= GRAD_PJESACKI_SEMAFOR_PRELAZ);
+          return !(daleko && uzPrelaz);
+        })) ||
+      null,
   );
   const znakNaKraku = naKraku.map((l) => l.find((o) => o.vrsta === "stop" || o.vrsta === "give_way") ?? null);
   const ulazi = r.kraci.map((k, j) => (k.ulaz ? j : -1)).filter((j) => j >= 0);
 
-  if (semaforUCvoru || semaforNaKraku.some(Boolean)) {
+  if (ovSemafor?.plan) {
+    // Plan iz editora: krakovi u njemu su pod semaforom; ostali (desni
+    // odvojak) ustupaju, izvedeno — kao kad je semafor samo na krakovima.
+    const plan = planIzOverlaya(r, ovSemafor.plan);
+    const uPlanu = new Set(plan.faze.flatMap((f) => [...f.kraci, ...f.djelimicno.map((d) => d.krak), ...f.strelice.map((d) => d.krak)]));
+    for (const j of ulazi) {
+      const k = r.kraci[j]!;
+      [k.kontrola, k.izvor] = uPlanu.has(j) ? ["semafor", "overlay"] : ["ustupi", "izvedeno"];
+    }
+    plan.faze.forEach((f, i) => f.kraci.forEach((j) => (r.kraci[j]!.faza ??= i)));
+    r.plan = plan;
+  } else if (semaforUCvoru || semaforNaKraku.some(Boolean)) {
     // Semaforisana raskrsnica. Krak bez svog semafora (desni odvojak, prilaz
     // iz dvorišta) kad je semafor samo na krakovima: ustupa, izvedeno.
     for (const j of ulazi) {
@@ -431,6 +461,20 @@ function odrediKontrolu(
     // Inače: pravilo desne strane, bez znakova.
   }
 
+  // Kontrola iz editora ima prednost nad svim gore — osim na kraku pod
+  // semaforom: tu se mijenja plan semafora, ne znak.
+  if (overlay) {
+    for (const j of ulazi) {
+      const k = r.kraci[j]!;
+      const ov = overlay.kontrole.get(`${k.ivica}:${k.kraj}`);
+      if (!ov || k.kontrola === "semafor") continue;
+      k.kontrola = ov.kontrola;
+      k.izvor = "overlay";
+    }
+  }
+  // Izvedeno je ono što nije ni iz editora, ni iz OSM-a, ni pravilo desne strane.
+  r.inferredPriority = r.kraci.some((k) => k.ulaz && k.izvor === "izvedeno");
+
   // Stop-linije: gdje je znak ili semafor (OSM ga stavlja na liniju), ali ne
   // u raskrsnici; bez njega na ivici raskrsnice. Pa ispred zebre na kraku.
   r.kraci.forEach((k, j) => {
@@ -469,29 +513,82 @@ function planSemafora(r: Raskrsnica): PlanSemafora {
     if (g) g.kraci.push(j);
     else ose.push({ osa, kraci: [j], glavna: rang(k.klasa) === 2 });
   }
-  const faze = ose.map((o, i) => ({
+  const faze: FazaSemafora[] = ose.map((o, i) => ({
     zeleno: i === 0 || o.glavna ? GRAD_SEMAFOR_ZELENO_GLAVNO : GRAD_SEMAFOR_ZELENO,
     kraci: o.kraci.sort((a, b) => a - b),
+    djelimicno: [],
+    strelice: [],
+    pjesaci: [],
   }));
   faze.forEach((f, i) => f.kraci.forEach((j) => (r.kraci[j]!.faza = i)));
   const ciklus = faze.reduce((s, f) => s + f.zeleno + GRAD_SEMAFOR_ZUTO + GRAD_SEMAFOR_SVE_CRVENO, 0);
-  return { faze, ciklus, pomak: hes(r.cvorovi[0]!) % Math.max(1, Math.round(ciklus)) };
+  return {
+    faze,
+    ciklus,
+    pomak: hes(r.cvorovi[0]!) % Math.max(1, Math.round(ciklus)),
+    zuto: GRAD_SEMAFOR_ZUTO,
+    sveCrveno: GRAD_SEMAFOR_SVE_CRVENO,
+  };
 }
 
-/** Svjetlo za krak `krak` u trenutku `t` [s simulacije]. Krak bez semafora: `null`. */
-export function svjetlo(r: Raskrsnica, krak: number, t: number): Svjetlo | null {
-  const faza = r.kraci[krak]?.faza;
-  if (!r.plan || faza === null || faza === undefined) return null;
-  let u = (((t + r.plan.pomak) % r.plan.ciklus) + r.plan.ciklus) % r.plan.ciklus;
-  for (let i = 0; i < r.plan.faze.length; i++) {
-    const f = r.plan.faze[i]!;
-    if (u < f.zeleno) return i === faza ? "zeleno" : "crveno";
+/** Plan iz editora: ključevi krakova („ivica:kraj") u indekse krakova ove raskrsnice. */
+function planIzOverlaya(r: Raskrsnica, p: PlanOverlayaVezan): PlanSemafora {
+  const indeks = new Map(r.kraci.map((k, j) => [`${k.ivica}:${k.kraj}`, j]));
+  const j = (kljuc: string) => indeks.get(kljuc) ?? -1;
+  const faze: FazaSemafora[] = p.faze.map((f) => ({
+    zeleno: f.zeleno,
+    kraci: f.kraci.filter((x) => x.manevri === null).map((x) => j(x.kljuc)).filter((x) => x >= 0),
+    djelimicno: f.kraci.flatMap((x) => (x.manevri !== null && j(x.kljuc) >= 0 ? [{ krak: j(x.kljuc), manevri: x.manevri }] : [])),
+    strelice: f.strelice.flatMap((x) => (j(x.kljuc) >= 0 ? [{ krak: j(x.kljuc), manevri: x.manevri }] : [])),
+    pjesaci: f.pjesaci.map(j).filter((x) => x >= 0),
+  }));
+  const ciklus = faze.reduce((s, f) => s + f.zeleno + p.zuto + p.sveCrveno, 0);
+  return { faze, ciklus, pomak: ((p.pomak % ciklus) + ciklus) % ciklus, zuto: p.zuto, sveCrveno: p.sveCrveno };
+}
+
+/** Faza ciklusa u trenutku `t`, i dio faze: zeleno, žuto, ili „sve crveno" poslije nje. */
+function uCiklusu(plan: PlanSemafora, t: number): { i: number; dio: "zeleno" | "zuto" | "sveCrveno" } {
+  let u = (((t + plan.pomak) % plan.ciklus) + plan.ciklus) % plan.ciklus;
+  for (let i = 0; i < plan.faze.length; i++) {
+    const f = plan.faze[i]!;
+    if (u < f.zeleno) return { i, dio: "zeleno" };
     u -= f.zeleno;
-    if (u < GRAD_SEMAFOR_ZUTO) return i === faza ? "zuto" : "crveno";
-    u -= GRAD_SEMAFOR_ZUTO + GRAD_SEMAFOR_SVE_CRVENO;
-    if (u < 0) return "crveno";
+    if (u < plan.zuto) return { i, dio: "zuto" };
+    u -= plan.zuto;
+    if (u < plan.sveCrveno) return { i, dio: "sveCrveno" };
+    u -= plan.sveCrveno;
   }
-  return "crveno";
+  return { i: plan.faze.length - 1, dio: "sveCrveno" };
+}
+
+/** Da li faza daje zeleno kraku — za sve manevre, ili za `manevar` (svjetlo sa strelicom). */
+function zelenoUFazi(f: FazaSemafora, krak: number, manevar: Manevar | null): boolean {
+  return f.kraci.includes(krak) || (manevar !== null && f.djelimicno.some((d) => d.krak === krak && d.manevri.includes(manevar)));
+}
+
+/**
+ * Svjetlo za krak `krak` u trenutku `t` [s simulacije]. Krak bez semafora:
+ * `null`. Sa `manevar` važi i svjetlo sa strelicom za taj manevar (zasebno
+ * svjetlo trake); bez njega samo glavno. Krak koji ima zeleno i u sljedećoj
+ * fazi ne dobija žuto između njih.
+ */
+export function svjetlo(r: Raskrsnica, krak: number, t: number, manevar: Manevar | null = null): Svjetlo | null {
+  const plan = r.plan;
+  if (!plan || r.kraci[krak]?.kontrola !== "semafor") return null;
+  const { i, dio } = uCiklusu(plan, t);
+  const f = plan.faze[i]!;
+  if (!zelenoUFazi(f, krak, manevar)) return "crveno";
+  if (dio === "zeleno") return "zeleno";
+  if (plan.faze.length > 1 && zelenoUFazi(plan.faze[(i + 1) % plan.faze.length]!, krak, manevar)) return "zeleno";
+  return dio === "zuto" ? "zuto" : "crveno";
+}
+
+/** Gori li zelena dopunska strelica za `manevar` sa kraka `krak` — samo dok traje zeleno njene faze. */
+export function zelenaStrelica(r: Raskrsnica, krak: number, t: number, manevar: Manevar): boolean {
+  const plan = r.plan;
+  if (!plan || r.kraci[krak]?.kontrola !== "semafor") return false;
+  const { i, dio } = uCiklusu(plan, t);
+  return dio === "zeleno" && plan.faze[i]!.strelice.some((d) => d.krak === krak && d.manevri.includes(manevar));
 }
 
 // ── zabrane skretanja ──────────────────────────────────────────────────────
