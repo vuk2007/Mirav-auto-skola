@@ -1927,6 +1927,21 @@ export const GRAD_SKRETANJE_UGAO = 30;
  * — i kad auto izađe na drugi krak (okret preko razdjelnog pojasa bulevara).
  */
 export const GRAD_POLUKRUZNO_UGAO = 150;
+/**
+ * Traka u prstenu dvotračnog kružnog toka se gleda na sredini ivice prstena,
+ * na ovoliko metara od nje [m] — najdalje od priključaka.
+ */
+export const GRAD_PRSTEN_SREDINA = 1;
+/**
+ * Auto čija je sredina bliže liniji između traka prstena od ovoga [m] se ne
+ * broji ni u jednu traku.
+ */
+export const GRAD_PRSTEN_RUB = 0.3;
+/**
+ * Traka u prstenu se ne broji od ovoliko metara [m] prije ulaska u raskrsnicu
+ * izlaza: auto iz unutrašnje trake tu već prelazi ka izlazu.
+ */
+export const GRAD_PRSTEN_IZLAZ = 2;
 
 // ── savršeni bot u gradu (faza 6, stavka 5f) ───────────────────────────────
 

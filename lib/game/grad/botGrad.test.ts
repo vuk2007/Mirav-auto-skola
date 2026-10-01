@@ -10,7 +10,7 @@ import { procitaj } from "./paket";
 import { napraviPovrsinu } from "./povrsina";
 import { napraviRaskrsnice, prekrsenaZabrana, zabraneSkretanja } from "./raskrsnica";
 import { gradZaSudiju } from "./sudija";
-import { testPaket, type TestObjekat } from "./testMreza";
+import { kruzniTok, testPaket, type TestObjekat } from "./testMreza";
 
 /**
  * Savršeni bot u gradu — stavka 5f: vozi rutu od-do po pravilima, i sudija mu
@@ -93,6 +93,27 @@ describe("grad: savršeni bot", () => {
     expect(koraci.length).toBeGreaterThan(2);
     expect(x.stigao).toBe(true);
     expect(x.prekrsaji).toEqual([]);
+  });
+});
+
+describe("grad: savršeni bot u dvotračnom kružnom toku", () => {
+  const { cvorovi, ivice } = kruzniTok();
+  const { paket, mreza } = testPaket(cvorovi, ivice);
+  const povrsina = napraviPovrsinu(mreza);
+  const odsjeci = krajeviLinija(mreza);
+  const r = napraviRaskrsnice(paket, mreza, odsjeci);
+  const z = zabraneSkretanja(paket);
+  const G = gradZaSudiju(paket, povrsina, r, z, odsjeci);
+
+  it("sa juga desno, pravo i lijevo — prava traka u prstenu, bez prekršaja", () => {
+    // Istok (ivica 8), sjever (11), zapad (10), svaki put od prstena napolje.
+    for (const izlaz of [8, 11, 10]) {
+      const koraci = ruta(mreza, r, z, { ivica: 9, smjer: 1 }, { ivica: izlaz, smjer: -1 });
+      expect(koraci).not.toBeNull();
+      const x = odveziRutu(G, povrsina, planBota(G, koraci!), 0, 5, 600);
+      expect(x.stigao, `izlaz ${izlaz}`).toBe(true);
+      expect(x.prekrsaji, `izlaz ${izlaz}`).toEqual([]);
+    }
   });
 });
 

@@ -12,8 +12,9 @@ import { krajeviLinija } from "./oznake";
 import { napraviPovrsinu } from "./povrsina";
 import { napraviRaskrsnice, svjetlo, zabraneSkretanja, type Raskrsnica } from "./raskrsnica";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
+import { planBota, ruta } from "./botGrad";
 import { gradZaSudiju, noviSudija, sudi, type GradZaSudiju } from "./sudija";
-import { testPaket, type TestIvica, type TestObjekat } from "./testMreza";
+import { kruzniTok, testPaket, type TestIvica, type TestObjekat } from "./testMreza";
 import { naPutanji, putanja, vozi } from "./vozacGrad";
 
 /**
@@ -412,5 +413,41 @@ describe("sudija: traka za skretanje (strelice)", () => {
     // Luk od 6 m iz lijeve trake u desnu traku zapadnog kraka (y = −T).
     const put = [{ x: L, y: 140 }, { x: L, y: 10 }, ...luk(L - 6, -T + 6, 6, 0, -Math.PI / 2), { x: -140, y: -T }];
     expect(vozi_(G, { put, brzina: 5, zmigavac: "left" }).vrste).toEqual([]);
+  });
+});
+
+describe("sudija: dvotračni kružni tok (traka u prstenu)", () => {
+  // Prsten poluprečnika 60 m, dvije trake; ulaz sa juga (ivica 9). Putanja je
+  // bota (prava traka), a dio prstena dalje od priključaka se pomjeri u drugu
+  // traku: za 2 · 2,3 m radijalno (traka na uglu osmougla).
+  const { cvorovi, ivice } = kruzniTok(60);
+  const { paket, mreza } = testPaket(cvorovi, ivice);
+  const povrsina = napraviPovrsinu(mreza);
+  const odsjeci = krajeviLinija(mreza);
+  const r = napraviRaskrsnice(paket, mreza, odsjeci);
+  const z = zabraneSkretanja(paket);
+  const G = gradZaSudiju(paket, povrsina, r, z, odsjeci);
+  const pomak = (2 * T) / Math.cos(Math.PI / 8);
+  /** Putanja bota sa juga do izlaza; tačke prstena između uglova `od`–`do_` [°] pomjerene za `d` radijalno. */
+  function putanjaBota(izlaz: number, od: number, do_: number, d: number): Point[] {
+    const koraci = ruta(mreza, r, z, { ivica: 9, smjer: 1 }, { ivica: izlaz, smjer: -1 })!;
+    return planBota(G, koraci).put.tacke.map((q) => {
+      const rr = Math.hypot(q.x, q.y);
+      const u = (Math.atan2(q.y, q.x) * 180) / Math.PI;
+      if (rr < 50 || rr > 66 || u < od || u > do_) return q;
+      return { x: (q.x * (rr + d)) / rr, y: (q.y * (rr + d)) / rr };
+    });
+  }
+  const traka = (put: Point[]) =>
+    vozi_(G, { put, brzina: 8 }).prekrsaji.find((p) => p.vrsta === "laneDisciplineRoundabout")?.detalji;
+
+  it("lijevo (izlaz na zapad) spoljnom trakom — prekršaj; unutrašnjom — ispravno", () => {
+    expect(traka(putanjaBota(10, -150, 70, pomak))).toEqual({ manevar: "lijevo", traka: "spolja" });
+    expect(traka(putanjaBota(10, -150, 70, 0))).toBeUndefined();
+  });
+
+  it("desno (izlaz na istok) unutrašnjom trakom — prekršaj; spoljnom — ispravno", () => {
+    expect(traka(putanjaBota(8, 10, 70, -pomak))).toEqual({ manevar: "desno", traka: "unutra" });
+    expect(traka(putanjaBota(8, 10, 70, 0))).toBeUndefined();
   });
 });

@@ -21,6 +21,7 @@ const NASLOV: Readonly<Record<VrstaGradskogPrekrsaja, keyof Dict>> = {
   indicatorLate: "vioIndicatorLate",
   indicatorLeftOn: "vioIndicatorLeftOn",
   wrongLaneForTurn: "vioWrongLane",
+  laneDisciplineRoundabout: "vioRoundaboutLane",
 };
 
 export function naslovPrekrsaja(p: GradskiPrekrsaj, t: Dict): string {
@@ -56,5 +57,7 @@ export function praviloPrekrsaja(p: GradskiPrekrsaj, t: Dict): string {
       return t.gradRuleIndicatorLeftOn;
     case "wrongLaneForTurn":
       return t.gradRuleWrongLane;
+    case "laneDisciplineRoundabout":
+      return d.traka === "unutra" ? t.gradRuleRoundaboutOuter : t.gradRuleRoundaboutInner;
   }
 }

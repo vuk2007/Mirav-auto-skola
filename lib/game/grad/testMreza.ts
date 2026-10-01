@@ -142,3 +142,20 @@ export function lepeza(ravno: number[]): number[] {
   for (let k = 1; k + 1 < n; k++) i.push(0, k, k + 1);
   return i;
 }
+
+/**
+ * Dvotračni kružni tok za testove: prsten je osmougao poluprečnika `R` oko
+ * (0, 0), smjer vožnje sa centrom lijevo (čvor k → k − 1, k na uglu k·45°),
+ * dvije poznate trake. Četiri dvosmjerna kraka do poluprečnika `R + 100`:
+ * ivice 8 (istok), 9 (jug), 10 (zapad), 11 (sjever), svaka od spoljnog čvora
+ * ka prstenu.
+ */
+export function kruzniTok(R = 60): { cvorovi: Point[]; ivice: TestIvica[] } {
+  const ugao = (k: number, r: number): Point => ({ x: r * Math.cos((k * Math.PI) / 4), y: r * Math.sin((k * Math.PI) / 4) });
+  const cvorovi = [...Array.from({ length: 8 }, (_, k) => ugao(k, R)), ...[0, 2, 4, 6].map((k) => ugao(k, R + 100))];
+  const ivice: TestIvica[] = [
+    ...Array.from({ length: 8 }, (_, k) => ({ a: k, b: (k + 7) % 8, smjer: 1 as const, trake: 2, kruzni: true })),
+    ...[0, 1, 2, 3].map((j) => ({ a: 8 + j, b: 2 * j })),
+  ];
+  return { cvorovi, ivice };
+}

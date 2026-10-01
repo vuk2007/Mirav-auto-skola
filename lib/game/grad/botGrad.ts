@@ -166,10 +166,33 @@ export function ruta(m: Mreza, r: Raskrsnice, zabrane: Map<string, Zabrana[]>, o
         // dozvoljava sudija kažnjava (`wrongLaneForTurn`). Gleda se pri izlasku
         // iz raskrsnice, manevar od ulaznog kraka (kroz unutrašnje ivice
         // strelice opisuju cijeli manevar, kao kod sudije).
-        if (rc >= 0 && !r.lista[rc]!.unutrasnje.includes(j)) {
-          const uR = ulazUR ? ugao(ulazUR, pravacKraja(f, smjer, false)) : u;
-          const manevar = uR > GRAD_SKRETANJE_UGAO ? "desno" : uR < -GRAD_SKRETANJE_UGAO ? "lijevo" : "pravo";
-          const dozvole = streliceZa(m.ivice[ulazniKorak.ivica]!, ulazniKorak.smjer, manevar);
+        // Kružni tok: strelice prilaza važe za izlaz iz prstena, ne za ulazak.
+        if (rc >= 0 && !r.lista[rc]!.unutrasnje.includes(j) && !(f.kruzni && !iv.kruzni)) {
+          let prilaz = ulazniKorak;
+          if (m.ivice[ulazniKorak.ivica]!.kruzni && !f.kruzni) {
+            // Izlaz iz prstena. Prilaz: unazad kroz prsten (kružne ivice i
+            // unutrašnje ivice raskrsnica na njemu), pa kroz unutrašnje ivice
+            // raskrsnice ulaska — do kraka kojim se u nju ušlo (kao sudija).
+            let p: Korak | undefined = ulazniKorak;
+            const uPrstenu = (x: Korak): boolean => {
+              if (m.ivice[x.ivica]!.kruzni) return true;
+              const rx = r.uCvoru[kraj(m.ivice[x.ivica]!, x.smjer)]!;
+              const pr = prethodni.get(kljuc(x));
+              return rx >= 0 && r.lista[rx]!.unutrasnje.includes(x.ivica) && !!pr && uPrstenu(pr);
+            };
+            while (p && uPrstenu(p)) p = prethodni.get(kljuc(p));
+            while (p) {
+              const rp = r.uCvoru[kraj(m.ivice[p.ivica]!, p.smjer)]!;
+              const pp = prethodni.get(kljuc(p));
+              if (!pp || rp < 0 || !r.lista[rp]!.unutrasnje.includes(p.ivica)) break;
+              p = pp;
+            }
+            if (p) prilaz = p;
+          }
+          const uR = prilaz !== ulazniKorak || !ulazUR ? ugao(pravacKraja(m.ivice[prilaz.ivica]!, prilaz.smjer, true), pravacKraja(f, smjer, false)) : ugao(ulazUR, pravacKraja(f, smjer, false));
+          const manevar =
+            Math.abs(uR) > GRAD_POLUKRUZNO_UGAO ? "lijevo" : uR > GRAD_SKRETANJE_UGAO ? "desno" : uR < -GRAD_SKRETANJE_UGAO ? "lijevo" : "pravo";
+          const dozvole = streliceZa(m.ivice[prilaz.ivica]!, prilaz.smjer, manevar);
           if (dozvole && !dozvole.includes(true)) continue;
         }
         if (ulazUR && !r.lista[rc]!.unutrasnje.includes(j) && Math.abs(ugao(ulazUR, pravacKraja(f, smjer, false))) > 135) continue;
@@ -421,6 +444,12 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
   const manevarIz = (u: number) => (u > GRAD_SKRETANJE_UGAO ? "desno" : u < -GRAD_SKRETANJE_UGAO ? "lijevo" : "pravo");
   const prolazi: ProlazBota[] = [];
   const manevarNaKraju = new Map<number, "lijevo" | "pravo" | "desno">();
+  // Kružni tok: manevar od kraka kojim se ulazi u raskrsnicu ulaska u prsten
+  // do izlaza iz prstena (puni krug se vozi kao lijevo) — kao kod sudije. Po
+  // njemu se bira traka na prilazu (strelice prilaza kružnom toku opisuju
+  // izlaz) i u prstenu: unutrašnja za lijevo, spoljna za ostalo.
+  const krozKruzni = new Map<number, { od: number; izlaz: number; manevar: "lijevo" | "pravo" | "desno" }>();
+  const kruzna = (x: number) => m.ivice[koraci[x]!.ivica]!.kruzni;
   /** Za ulazni korak raskrsnice: izlazni korak; koraci između su unutar nje. */
   const izlazIz = new Map<number, number>();
   const unutrasnjiKorak = new Set<number>();
@@ -435,6 +464,7 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
     );
     const manevar = manevarIz(u);
     const kruzni = r.lista[rs]!.kruzni;
+
     // Kružni tok: žmigavac se ovdje traži samo za izlazak iz prstena (desni).
     const izPrstena = kruzni && m.ivice[koraci[i]!.ivica]!.kruzni && !m.ivice[koraci[j]!.ivica]!.kruzni;
     // Ulazak u prsten: bez žmigavca (sudija ga ne gleda). Mimo prstena (ni
@@ -459,6 +489,23 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
     );
     manevarNaKraju.set(i, prolazi[prolazi.length - 1]!.manevarStrelica);
   }
+  // Ulazak u prsten (prolaz sa nekružne na kružnu ivicu) i izlazak iz njega
+  // (prvi sljedeći prolaz sa kružne na nekružnu) — tako ih vidi sudija, i kad
+  // OSM samo dio prstena označi kao kružni tok.
+  for (let a = 0; a < prolazi.length; a++) {
+    const p = prolazi[a]!;
+    if (kruzna(p.ulaz) || !kruzna(p.izlaz)) continue;
+    const q = prolazi.slice(a + 1).find((x) => kruzna(x.ulaz) && !kruzna(x.izlaz));
+    if (!q) continue;
+    const uk = ugao(
+      pravacKraja(m.ivice[koraci[p.ulaz]!.ivica]!, koraci[p.ulaz]!.smjer, true),
+      pravacKraja(m.ivice[koraci[q.izlaz]!.ivica]!, koraci[q.izlaz]!.smjer, false),
+    );
+    const mk = Math.abs(uk) > GRAD_POLUKRUZNO_UGAO || uk < -GRAD_SKRETANJE_UGAO ? "lijevo" : uk > GRAD_SKRETANJE_UGAO ? "desno" : "pravo";
+    krozKruzni.set(p.ulaz, { od: p.izlaz, izlaz: q.izlaz, manevar: mk });
+    p.manevarStrelica = mk;
+    manevarNaKraju.set(p.ulaz, mk);
+  }
   // Luk kroz raskrsnicu: od ulaznog kraka preko pravih unutrašnjih ivica.
   for (let i = 0; i + 1 < koraci.length; i++) {
     const rs = raskrsnicaNaKraju(i);
@@ -480,6 +527,12 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
       if (dalje > GRAD_BOT_TRAKA_UNAPRIJED) break;
       if (!manevarNaKraju.has(k)) manevarNaKraju.set(k, p.manevarStrelica);
     }
+  }
+
+  // Traka u prstenu: unutrašnja za lijevo i puni krug, spoljna za desno i
+  // pravo (kao sudija, `laneDisciplineRoundabout`).
+  for (const k of krozKruzni.values()) {
+    for (let x = k.od; x < k.izlaz; x++) manevarNaKraju.set(x, k.manevar === "lijevo" ? "lijevo" : "desno");
   }
 
   // ── 2. putanja: sredina trake po ivicama, luk kroz raskrsnice ──
