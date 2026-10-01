@@ -1937,11 +1937,21 @@ export const GRAD_BOT_BOCNO = 2.5;
 /** Koliko prije raskrsnice bot pali žmigavac [m] (faza 5: `INDICATOR_LEAD` = 20). */
 export const GRAD_BOT_ZMIGAVAC_PRIJE = 30;
 /**
- * Dvije osovine bliže od ovoga po udaljenosti [m] su „jednako blizu" — auto je
- * na preklopu dvije proširene kolovozne trake, pa sudija bira onu kojom se u
- * tom smjeru smije. Jasno bliža osovina odlučuje sama.
+ * Ruta bota se ne vraća u raskrsnicu iz koje je izašla prije manje od ovoliko
+ * metara puta [m]: kratka petlja oko bloka je polukružno okretanje.
  */
-export const GRAD_SUDIJA_NEODLUCNO = 1.5;
+export const GRAD_BOT_PETLJA = 80;
+/**
+ * Najviše koliko [m] od čvora bot napušta traku za luk kroz raskrsnicu, ma
+ * koliko dug bio odsječak raskrsnice na tom kraku.
+ */
+export const GRAD_BOT_ODSJEK_NAJVISE = 15;
+/**
+ * Rezerva [m] oko mjesta gdje sudija vidi ulazak u raskrsnicu i izlazak iz
+ * nje: bot ne vozi tačno po putanji, pa žmigavac pali i gasi pedalj ranije
+ * odnosno kasnije.
+ */
+export const GRAD_BOT_ZMIGAVAC_REZERVA = 1.5;
 /**
  * Čvorovi raskrsnica bliži od ovoga [m] su uvijek jedna raskrsnica — smaknut
  * priključak dvije sporedne ulice; odvojene bi se preklapale.

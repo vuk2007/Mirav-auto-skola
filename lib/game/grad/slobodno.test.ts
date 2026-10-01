@@ -47,8 +47,9 @@ describe("grad: površina po kojoj se vozi", () => {
     // Iza kosog ivičnjaka više nije: zasjek je 3 m duž obje ulice.
     expect(naPovrsini(P, POLA + 2, POLA + 2)).toBe(false);
     expect(naPovrsini(P, POLA + 3, 20)).toBe(false);
-    // Sva četiri ugla krsta, i nijedan drugi.
-    expect(P.uglovi).toHaveLength(4);
+    // Sva četiri ugla krsta, i nijedan drugi: svaki je zasjek i trougao od
+    // čvora do zasjeka (pokriva procjep uz izlomljene ivice kolovoza).
+    expect(P.uglovi).toHaveLength(8);
   });
 
   it("ulica na tački je ivica čija je osovina najbliža", () => {

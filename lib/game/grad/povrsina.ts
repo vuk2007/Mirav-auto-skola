@@ -177,11 +177,13 @@ function uglovRaskrsnice(m: Mreza, c: number): Ugao[] {
     const t = (rx * -B.uy - ry * -B.ux) / det;
     const cx = p.x + nAx * A.pola + t * A.ux;
     const cy = p.y + nAy * A.pola + t * A.uy;
-    uglovi.push({
-      c: { x: cx, y: cy },
-      a: { x: cx + A.ux * GRAD_UGAO_ZASJEK, y: cy + A.uy * GRAD_UGAO_ZASJEK },
-      b: { x: cx + B.ux * GRAD_UGAO_ZASJEK, y: cy + B.uy * GRAD_UGAO_ZASJEK },
-    });
+    const ua = { x: cx + A.ux * GRAD_UGAO_ZASJEK, y: cy + A.uy * GRAD_UGAO_ZASJEK };
+    const ub = { x: cx + B.ux * GRAD_UGAO_ZASJEK, y: cy + B.uy * GRAD_UGAO_ZASJEK };
+    uglovi.push({ c: { x: cx, y: cy }, a: ua, b: ub });
+    // I trougao od čvora do zasjeka: ivice kolovoza tik uz čvor nisu prave
+    // (OSM izlomi ulicu na metar od raskrsnice), pa između njih i zasjeka
+    // ostane procjep od par decimetara — rupa u asfaltu u koju auto udari.
+    uglovi.push({ c: { x: p.x, y: p.y }, a: ua, b: ub });
   }
   return uglovi;
 }

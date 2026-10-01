@@ -14,7 +14,6 @@ import {
   INDICATOR_OFF_AFTER,
   GRAD_STAJANJE_TRAJE,
   GRAD_SUDIJA_DO_ULICE,
-  GRAD_SUDIJA_NEODLUCNO,
   GRAD_SUPROTNO_BRZINA,
   GRAD_SUPROTNO_TRAJE,
   GRAD_TOLERANCIJA_BRZINE,
@@ -170,6 +169,8 @@ export interface Sudija {
   prekrsaji: GradskiPrekrsaj[];
   /** Za dijagnozu: svaki prolaz kroz raskrsnicu kako ga sudija vidi. */
   dnevnik?: (prolaz: { r: number; ulaz: number; izlaz: number; manevar: string; t: number }) => void;
+  /** Ulazak u raskrsnicu `r` (početak prolaza) — za bota, koji po tome pali žmigavac. */
+  naUlazu?: (r: number) => void;
   /** Žmigavac u prošlom koraku. */
   zmigavac: Strana | null;
   /** Poslije skretanja: strana žmigavca koji treba ugasiti, i pređeno od izlaska [m]. */
@@ -430,14 +431,12 @@ function ulicaAuta(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo): { osa: OsaBl
   if (prosla) izbor = prosla;
   else if (naAsfaltu.length === 0) izbor = ose[0]!;
   else {
-    // Najbolje poravnate ose na čijem je asfaltu auto. Kad su dvije skoro
-    // jednako blizu (proširene kolovozne trake bulevara se preklapaju), prednost
-    // ima ona kojom se u tom smjeru smije; kad je jedna jasno bliža, ona.
+    // Najbolje poravnate ose na čijem je asfaltu auto. Prednost ima ona kojom
+    // se u tom smjeru smije: proširene kolovozne trake bulevara se preklapaju,
+    // i auto na svojoj traci zna biti bliže osovini suprotne. Inače najbliža.
     const poravnate = naAsfaltu.filter((o) => slaganje(o) > 0.8);
     const kandidati = poravnate.length > 0 ? poravnate : naAsfaltu;
-    const najbliza = kandidati[0]!;
-    const skoroJednako = kandidati.filter((o) => o.d - najbliza.d < GRAD_SUDIJA_NEODLUCNO);
-    izbor = skoroJednako.find(dozvoljeno) ?? najbliza;
+    izbor = kandidati.find(dozvoljeno) ?? kandidati[0]!;
   }
   s.ivicaAuta = izbor.ivica;
   // Da li je auto na asfaltu neke poravnate ulice kojom se u tom smjeru smije
@@ -571,6 +570,7 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
       izlaz: null,
       prviKorak: null,
     };
+    s.naUlazu?.(r);
   }
   if (s.prolaz && zmigavac && !s.prolaz.zmigavacNaUlazu && !s.prolaz.upaljenUnutra) s.prolaz.upaljenUnutra = zmigavac;
   // Iz raskrsnice pravo u drugu (čvorovi prstena, raskrsnice tik jedna uz
@@ -580,10 +580,17 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
     // „vidi", i već je na ivici iza druge.
     const izlaz = { ...osa, ivica: spojnaIvica(g, s.prolaz.r, r, s.prolaz.izlaz?.ivica ?? osa.ivica) };
     zavrsiProlaz(g, s, st, t, s.prolaz, izlaz, g.mreza.ivice[izlaz.ivica]!, glava);
+    // Ulaz u drugu: krak do kojeg se od izlaza iz prve stiže niz ulicu (ista
+    // spojna ivica, ili zadnja u lancu kroz čvorove koji nisu raskrsnice) —
+    // ne ivica pod autom, koja može biti krak iza druge.
+    const spojna = g.mreza.ivice[izlaz.ivica]!;
+    const ulazU =
+      krakKaRaskrsnici(g, spojna.i, g.raskrsnice.uCvoru[spojna.a] === s.prolaz.r ? 1 : -1, r) ??
+      ({ ivica: osa.ivica, cvor: g.raskrsnice.uCvoru[iv.b] === r ? iv.b : iv.a } as const);
     s.prolaz = {
       r,
-      ivica: osa.ivica,
-      cvor: g.raskrsnice.uCvoru[iv.b] === r ? iv.b : iv.a,
+      ivica: ulazU.ivica,
+      cvor: ulazU.cvor,
       pravac: glava,
       zmigavacNaUlazu: zmigavac,
       upaljenUnutra: null,
@@ -591,6 +598,7 @@ export function sudi(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, 
       izlaz: null,
       prviKorak: null,
     };
+    s.naUlazu?.(r);
   }
   // Izlazni krak: zadnja ivica pod autom koja dodiruje raskrsnicu (ne
   // unutrašnja, ne ulazna — osim polukružnog, kad auto po njoj ide nazad).
@@ -748,8 +756,12 @@ function sudiZmigavac(
 ): void {
   const r = g.raskrsnice.lista[p.r]!;
   if (r.kruzni && izasaoNaPrsten) return;
-  const trazeno: Strana | null = r.kruzni ? "right" : manevar === "desno" ? "right" : manevar === "pravo" ? null : "left";
-  const kruzni = r.kruzni ? 1 : 0;
+  // Izlazak iz prstena: samo kad se dolazi iz prstena. Kroz raskrsnicu
+  // kružnog toka mimo prstena (dva kraka bez dodira sa njim) sudi se kao
+  // kroz običnu.
+  const izPrstena = r.kruzni && g.mreza.ivice[p.ivica]!.kruzni;
+  const trazeno: Strana | null = izPrstena ? "right" : manevar === "desno" ? "right" : manevar === "pravo" ? null : "left";
+  const kruzni = izPrstena ? 1 : 0;
   if (trazeno === null) {
     if (p.zmigavacNaUlazu) prijavi(s, st, t, "indicatorWrong", { manevar, zmigavac: p.zmigavacNaUlazu }, "minor");
     return;

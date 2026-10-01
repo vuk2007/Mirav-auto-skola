@@ -55,7 +55,7 @@ let izvlacenja = 0;
 const pocetak = Date.now();
 for (let n = 0; n < ruta; n++) {
   const koraci = nasumicnaRuta(mreza, raskrsnice, zabrane, slucajno);
-  const plan = planBota(povrsina, raskrsnice, odsjeci, koraci);
+  const plan = planBota(grad, koraci);
   // Semafori u različitim fazama: početak vožnje u nasumičnom trenutku ciklusa.
   const t0 = slucajno() * 300;
   const x = odveziRutu(grad, povrsina, plan, t0, nivo, 1800);
