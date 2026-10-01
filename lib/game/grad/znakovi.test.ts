@@ -4,7 +4,7 @@ import type { Point } from "../sim/types";
 import { krajeviLinija } from "./oznake";
 import { naPovrsini, napraviPovrsinu, type Povrsina } from "./povrsina";
 import { napraviRaskrsnice, zabraneSkretanja } from "./raskrsnica";
-import { testPaket, type TestIvica, type TestObjekat } from "./testMreza";
+import { kruzniTok, testPaket, type TestIvica, type TestObjekat } from "./testMreza";
 import { crtezPravila, trakeUlaza } from "./znakovi";
 
 /**
@@ -78,6 +78,24 @@ describe("crtanje pravila", () => {
     expect(z[0]!.x).toBeLessThan(-GRAD_SIRINA_TRAKE);
     expect(z[0]!.y).toBeGreaterThan(0);
     expect(naPovrsini(P, z[0]!.x, z[0]!.y)).toBe(false);
+  });
+
+  it("kružni tok: na svakom ulazu izveden znak kružnog toka uz ustupanje; na prstenu nema zabrane ulaska", () => {
+    const { cvorovi, ivice } = kruzniTok();
+    const { paket, mreza } = testPaket(cvorovi, ivice);
+    const odsjeci = krajeviLinija(mreza);
+    const povrsina = napraviPovrsinu(mreza);
+    const c = crtezPravila(povrsina, napraviRaskrsnice(paket, mreza, odsjeci), zabraneSkretanja(paket), odsjeci);
+    expect(c.znakovi.filter((z) => z.vrsta === "zabranaUlaska")).toEqual([]);
+    const kt = c.znakovi.filter((z) => z.vrsta === "kruzniTok");
+    expect(kt).toHaveLength(4);
+    expect(kt.every((z) => z.izveden)).toBe(true);
+    // Na istom stubu sa „ustupi" (ulaz popušta prstenu), iznad njega.
+    for (const z of kt) {
+      const ustupi = c.znakovi.find((u) => u.vrsta === "ustupi" && u.x === z.x && u.y === z.y);
+      expect(ustupi).toBeDefined();
+      expect(z.nivo).not.toBe(ustupi!.nivo);
+    }
   });
 
   it("dva znaka na istom mjestu dijele stub: jedan iznad drugog", () => {

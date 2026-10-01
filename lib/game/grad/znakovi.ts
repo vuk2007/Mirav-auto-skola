@@ -22,6 +22,7 @@ export type VrstaZnaka =
   | "stop"
   | "ustupi"
   | "zabranaUlaska"
+  | "kruzniTok"
   | "no_left_turn"
   | "no_right_turn"
   | "no_straight_on"
@@ -149,10 +150,18 @@ export function crtezPravila(
           izlaz.semafori.push({ raskrsnica: rs.id, krak: j, ...stub });
         }
       }
+      // Kružni tok: na ulazu u njega znak obaveznog smjera kružnog toka —
+      // izveden iz OSM `junction=roundabout` (u OSM-u kao čvor nema znaka).
+      // Stoji uz „ustupi", na istom stubu.
+      if (rs.kruzni && k.ulaz && !iv.kruzni) {
+        const s = odKraja(iv, k.kraj, k.stopD ?? Math.min(odsjeci[2 * k.ivica + k.kraj]! + 1, iv.duzina / 2));
+        izlaz.znakovi.push({ vrsta: "kruzniTok", ...desnoOdUlaza(iv, k.kraj, s), izveden: true, nivo: 0 });
+      }
       // Zabrana ulaska: krak jednosmjerne ulice koja vodi KA raskrsnici — iz
       // raskrsnice se u nju ne smije. Znak stoji na njenom ušću, okrenut ka
-      // raskrsnici (desno od onoga ko bi pogrešno ulazio).
-      if (k.ulaz && !k.izlaz) {
+      // raskrsnici (desno od onoga ko bi pogrešno ulazio). Ne na prstenu
+      // kružnog toka: smjer kroz njega kaže znak kružnog toka na ulazu.
+      if (k.ulaz && !k.izlaz && !iv.kruzni) {
         const d = Math.min(odsjeci[2 * k.ivica + k.kraj]! + 1, iv.duzina / 2);
         const s = odKraja(iv, k.kraj, d);
         const drugiKraj = k.kraj === 1 ? 0 : 1;

@@ -157,8 +157,12 @@ export function linijeTraka(iv: Ivica): number[] {
   return pomaci;
 }
 
-/** Isprekidane linije traka ivice, bez dijela u raskrsnicama. */
+/**
+ * Isprekidane linije traka ivice, bez dijela u raskrsnicama — osim na prstenu
+ * kružnog toka: tamo linija između traka ide cijelim krugom, i preko ulaza.
+ */
 export function linijeIvice(iv: Ivica, odA: number, odB: number): Poligon[] {
+  if (iv.kruzni) odA = odB = 0;
   const izlaz: Poligon[] = [];
   const s1 = iv.duzina - odB;
   if (s1 - odA < GRAD_CRTICA) return izlaz;

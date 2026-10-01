@@ -128,6 +128,36 @@ function znak(vrsta: VrstaZnaka): HTMLCanvasElement {
       g.fillRect(18, 40, 60, 16);
       break;
     }
+    case "kruzniTok": {
+      // Plavi krug, tri bijele strelice u krug — suprotno od kazaljke, kako
+      // se vozi kroz kružni tok (na slici je `y` nadolje: ugao opada).
+      krug(g, "#1f5fbf", "#ffffff", 3);
+      g.strokeStyle = "#ffffff";
+      g.fillStyle = "#ffffff";
+      g.lineWidth = 7;
+      g.lineCap = "round";
+      for (let k = 0; k < 3; k++) {
+        const pocetak = (k * 2 * Math.PI) / 3 + 0.25;
+        const kraj = pocetak - (2 * Math.PI) / 3 + 0.75;
+        g.beginPath();
+        g.arc(48, 48, 22, pocetak, kraj, true);
+        g.stroke();
+        // Glava na kraju luka, u pravcu vožnje (tangenta, ugao opada).
+        const x = 48 + 22 * Math.cos(kraj);
+        const y = 48 + 22 * Math.sin(kraj);
+        const tx = Math.sin(kraj);
+        const ty = -Math.cos(kraj);
+        const nx = Math.cos(kraj);
+        const ny = Math.sin(kraj);
+        g.beginPath();
+        g.moveTo(x + 11 * tx, y + 11 * ty);
+        g.lineTo(x + 9 * nx, y + 9 * ny);
+        g.lineTo(x - 9 * nx, y - 9 * ny);
+        g.closePath();
+        g.fill();
+      }
+      break;
+    }
     default: {
       const obaveza = vrsta.startsWith("only_");
       const smjer = vrsta.endsWith("left_turn")
@@ -188,6 +218,7 @@ export function tekstureZnakova(): TekstureZnakova {
     "stop",
     "ustupi",
     "zabranaUlaska",
+    "kruzniTok",
     "no_left_turn",
     "no_right_turn",
     "no_straight_on",

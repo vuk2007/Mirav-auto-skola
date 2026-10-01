@@ -92,6 +92,13 @@ describe("oznake: linije traka", () => {
       }
     }
   });
+
+  it("na prstenu kružnog toka crtice idu cijelom ivicom, i preko raskrsnica", () => {
+    const prsten = sa({ kruzni: true, smjer: 1, trakeNaprijed: 2, trakeNazad: 0 });
+    const sve = linijeIvice(prsten, 0, 0);
+    expect(sve.length).toBeGreaterThan(0);
+    expect(linijeIvice(prsten, ODSJECI[0]!, ODSJECI[1]!)).toEqual(sve);
+  });
 });
 
 describe("oznake: strelice", () => {
