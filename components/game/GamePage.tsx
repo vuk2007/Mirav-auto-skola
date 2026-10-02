@@ -19,6 +19,14 @@ import TripScreen from "./TripScreen";
 const GradScreen = dynamic(() => import("./GradScreen"), { ssr: false });
 
 /**
+ * Editor grada (faza 6, stavka 6) postoji samo uz `npm run dev` (`/igra?editor=1`):
+ * u produkcijskom buildu je uslov konstantno lažan, pa uvoz i cijeli editor
+ * ispadaju iz paketa.
+ */
+const GradEditor =
+  process.env.NODE_ENV !== "production" ? dynamic(() => import("./editor/GradEditor"), { ssr: false }) : null;
+
+/**
  * Igra „Prođi raskrsnicu" — spisak situacija i jedna situacija u toku.
  *
  * Napredak se čita tek na klijentu (`localStorage` na serveru ne postoji), pa
@@ -34,9 +42,11 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
   const [trip, setTrip] = useState(false);
   const [ruta, setRuta] = useState(false);
   const [grad, setGrad] = useState(false);
+  const [editor, setEditor] = useState(false);
 
   useEffect(() => {
     setProgress(loadGameProgress());
+    if (GradEditor && new URLSearchParams(window.location.search).get("editor") === "1") setEditor(true);
   }, []);
 
   const record = useCallback((id: string, passed: boolean, time: number) => {
@@ -82,7 +92,9 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
         </div>
       )}
 
-      {grad ? (
+      {editor && GradEditor ? (
+        <GradEditor />
+      ) : grad ? (
         <GradScreen onExit={() => setGrad(false)} />
       ) : ruta ? (
         <RouteScreen onExit={() => setRuta(false)} />

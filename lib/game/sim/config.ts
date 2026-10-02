@@ -2037,3 +2037,7 @@ export const GRAD_BOT_U_BUS = 12;
 export const GRAD_PUNA_POSLIJE_PROMJENE = 15;
 /** Lom osovine ulice veći od ovoga [°] je greška u OSM geometriji za punu liniju (editor upozorava). */
 export const GRAD_OSTAR_LOM = 40;
+/** Editor grada: klik pogađa čvor/raskrsnicu bliže od ovoga [m]… */
+export const GRAD_EDITOR_POGODAK = 6;
+/** …a krak raskrsnice kad je na njegovoj ivici, do ovoliko od raskrsnice [m]. */
+export const GRAD_EDITOR_KRAK_DO = 30;

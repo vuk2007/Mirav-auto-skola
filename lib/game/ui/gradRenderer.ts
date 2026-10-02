@@ -301,6 +301,7 @@ export interface GradScena {
   /** Vrijeme simulacije [s] — po njemu rade semafori. */
   simT: number;
   osvjetljenje: Osvjetljenje;
+  /** Auto igrača; `null` u editoru — grad bez auta. */
   igrac: {
     pos: Point;
     heading: Point;
@@ -311,7 +312,7 @@ export interface GradScena {
     tocak: number;
     /** Upaljen žmigavac — trepće na uglovima auta. */
     zmigavac: "left" | "right" | null;
-  };
+  } | null;
 }
 
 export interface GradRenderer {
@@ -319,6 +320,11 @@ export interface GradRenderer {
   draw(scena: GradScena): void;
   /** Koliko je tile-ova sagrađeno i koliko ih se vidi — za dev preklop. */
   stanje(): { sagradjeno: number; vidljivo: number };
+  /**
+   * Novi svijet (editor: poslije svake izmjene) bez novog WebGL konteksta:
+   * sagrađeni tile-ovi se ruše i grade ponovo kad zatrebaju.
+   */
+  zamijeni(paket: Paket, povrsina: Povrsina, izgled: IzgledGrada, pravila: PravilaZaCrtanje): void;
   destroy(): void;
 }
 
@@ -346,12 +352,17 @@ interface Sagradjen {
 
 export async function createGradRenderer(
   canvas: HTMLCanvasElement,
-  paket: Paket,
-  povrsina: Povrsina,
-  izgled: IzgledGrada,
-  pravila: PravilaZaCrtanje,
+  paket0: Paket,
+  povrsina0: Povrsina,
+  izgled0: IzgledGrada,
+  pravila0: PravilaZaCrtanje,
 ): Promise<GradRenderer | null> {
-  const mreza = povrsina.mreza;
+  // Svijet koji se crta — editor ga mijenja (`zamijeni`), igra nikad.
+  let paket = paket0;
+  let povrsina = povrsina0;
+  let mreza = povrsina.mreza;
+  let izgled = izgled0;
+  let pravila = pravila0;
   const app = new Application();
   try {
     await app.init({
@@ -367,69 +378,83 @@ export async function createGradRenderer(
     return null;
   }
 
-  const z = paket.zaglavlje;
-  const n = paket.n;
+  let z = paket.zaglavlje;
+  let n = paket.n;
 
   // ── tile-ovi: šta je u kojem i koliki im je okvir ─────────────────────────
-  const brojTileova = z.tileovaX * z.tileovaY;
-  const tileovi: Tile[] = [];
-  const opseg = (od: Uint32Array, t: number): [number, number] => [od[t]!, od[t + 1]!];
-  for (let t = 0; t < brojTileova; t++) {
-    tileovi.push({
-      okvir: prazanOkvir(),
-      zgrade: opseg(n.zgTileOd, t),
-      objekti: opseg(n.obTileOd, t),
-      povrsine: opseg(n.pvTileOd, t),
-      linije: opseg(n.lnTileOd, t),
-      ivice: [],
-      uglovi: [],
-      pune: [],
-      isprekidane: [],
-      znakovi: [],
-      semafori: [],
-    });
-  }
+  let tileovi: Tile[] = [];
+  let crtez = pravila.crtez;
   const tileZa = (x: number, y: number) => {
     const tx = Math.min(z.tileovaX - 1, Math.max(0, Math.floor((x - z.okvir.minX) / z.tile)));
     const ty = Math.min(z.tileovaY - 1, Math.max(0, Math.floor((y - z.okvir.minY) / z.tile)));
     return ty * z.tileovaX + tx;
   };
-  const prstenOkvir = (od: Uint32Array, xy: Float32Array, i: number, o: Okvir, r = 0) => {
-    for (let k = od[i]!; k < od[i + 1]!; k++) prosiri(o, xy[2 * k]!, xy[2 * k + 1]!, r);
+  const indeksiraj = () => {
+    z = paket.zaglavlje;
+    n = paket.n;
+    crtez = pravila.crtez;
+    tileovi = [];
+    const brojTileova = z.tileovaX * z.tileovaY;
+    const opseg = (od: Uint32Array, t: number): [number, number] => [od[t]!, od[t + 1]!];
+    for (let t = 0; t < brojTileova; t++) {
+      tileovi.push({
+        okvir: prazanOkvir(),
+        zgrade: opseg(n.zgTileOd, t),
+        objekti: opseg(n.obTileOd, t),
+        povrsine: opseg(n.pvTileOd, t),
+        linije: opseg(n.lnTileOd, t),
+        ivice: [],
+        uglovi: [],
+        pune: [],
+        isprekidane: [],
+        znakovi: [],
+        semafori: [],
+      });
+    }
+    const prstenOkvir = (od: Uint32Array, xy: Float32Array, i: number, o: Okvir, r = 0) => {
+      for (let k = od[i]!; k < od[i + 1]!; k++) prosiri(o, xy[2 * k]!, xy[2 * k + 1]!, r);
+    };
+    for (const [t, tile] of tileovi.entries()) {
+      for (let i = tile.zgrade[0]; i < tile.zgrade[1]; i++) prstenOkvir(n.zgOd, n.zgXY, i, tile.okvir);
+      for (let i = tile.povrsine[0]; i < tile.povrsine[1]; i++) prstenOkvir(n.pvOd, n.pvXY, i, tile.okvir);
+      for (let i = tile.linije[0]; i < tile.linije[1]; i++) prstenOkvir(n.lnOd, n.lnXY, i, tile.okvir, n.lnSirina[i]! / 20);
+      void t;
+    }
+    // Ulice nisu u tile-ovima paketa (mreža je jedna, cijela) — svrstavaju se ovdje,
+    // po sredini ivice.
+    for (const iv of mreza.ivice) {
+      const sredina = iv.tacke[Math.floor(iv.tacke.length / 2)]!;
+      const tile = tileovi[tileZa(sredina.x, sredina.y)]!;
+      tile.ivice.push(iv.i);
+      for (const p of iv.tacke) prosiri(tile.okvir, p.x, p.y, iv.sirina / 2 + TROTOAR);
+    }
+    for (const [i, u] of povrsina.uglovi.entries()) {
+      const tile = tileovi[tileZa(u.c.x, u.c.y)]!;
+      tile.uglovi.push(i);
+      for (const p of [u.a, u.b, u.c]) prosiri(tile.okvir, p.x, p.y, TROTOAR);
+    }
+    // Pravila raskrsnica: linije, znakovi i semafori po tile-u, po prvoj tački.
+    crtez.pune.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.pune.push(i));
+    crtez.isprekidane.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.isprekidane.push(i));
+    crtez.znakovi.forEach((zn, i) => {
+      const t = tileovi[tileZa(zn.x, zn.y)]!;
+      t.znakovi.push(i);
+      prosiri(t.okvir, zn.x, zn.y, 2);
+    });
+    crtez.semafori.forEach((sm, i) => {
+      const t = tileovi[tileZa(sm.x, sm.y)]!;
+      t.semafori.push(i);
+      prosiri(t.okvir, sm.x, sm.y, 2);
+    });
+    odsjeci = krajeviLinija(mreza);
+    vrstaPrelaza = z.vrsteObjekata.indexOf("crossing");
+    zebraKodovi = new Set(GRAD_ZEBRA_VRSTE.map((v) => z.stringovi.indexOf(v)).filter((k) => k >= 0));
   };
-  for (const [t, tile] of tileovi.entries()) {
-    for (let i = tile.zgrade[0]; i < tile.zgrade[1]; i++) prstenOkvir(n.zgOd, n.zgXY, i, tile.okvir);
-    for (let i = tile.povrsine[0]; i < tile.povrsine[1]; i++) prstenOkvir(n.pvOd, n.pvXY, i, tile.okvir);
-    for (let i = tile.linije[0]; i < tile.linije[1]; i++) prstenOkvir(n.lnOd, n.lnXY, i, tile.okvir, n.lnSirina[i]! / 20);
-    void t;
-  }
-  // Ulice nisu u tile-ovima paketa (mreža je jedna, cijela) — svrstavaju se ovdje,
-  // po sredini ivice.
-  for (const iv of mreza.ivice) {
-    const sredina = iv.tacke[Math.floor(iv.tacke.length / 2)]!;
-    const tile = tileovi[tileZa(sredina.x, sredina.y)]!;
-    tile.ivice.push(iv.i);
-    for (const p of iv.tacke) prosiri(tile.okvir, p.x, p.y, iv.sirina / 2 + TROTOAR);
-  }
-  for (const [i, u] of povrsina.uglovi.entries()) {
-    const tile = tileovi[tileZa(u.c.x, u.c.y)]!;
-    tile.uglovi.push(i);
-    for (const p of [u.a, u.b, u.c]) prosiri(tile.okvir, p.x, p.y, TROTOAR);
-  }
-  // Pravila raskrsnica: linije, znakovi i semafori po tile-u, po prvoj tački.
-  const crtez = pravila.crtez;
-  crtez.pune.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.pune.push(i));
-  crtez.isprekidane.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.isprekidane.push(i));
-  crtez.znakovi.forEach((zn, i) => {
-    const t = tileovi[tileZa(zn.x, zn.y)]!;
-    t.znakovi.push(i);
-    prosiri(t.okvir, zn.x, zn.y, 2);
-  });
-  crtez.semafori.forEach((sm, i) => {
-    const t = tileovi[tileZa(sm.x, sm.y)]!;
-    t.semafori.push(i);
-    prosiri(t.okvir, sm.x, sm.y, 2);
-  });
+  // Oznake na kolovozu: linije staju pred raskrsnicom; prelazi su objekti paketa.
+  let odsjeci: Float32Array = new Float32Array(0);
+  let vrstaPrelaza = -1;
+  let zebraKodovi = new Set<number>();
+  indeksiraj();
 
   // ── slojevi ───────────────────────────────────────────────────────────────
   const svijet = new Container();
@@ -473,10 +498,6 @@ export async function createGradRenderer(
   const osvijetljeni: Container[] = [sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sDekor, sZgrade, sZnakovi, dinamika];
   const sjenkaFilter = sSjene.filters![0] as AlphaFilter;
 
-  // Oznake na kolovozu: linije staju pred raskrsnicom; prelazi su objekti paketa.
-  const odsjeci = krajeviLinija(mreza);
-  const vrstaPrelaza = z.vrsteObjekata.indexOf("crossing");
-  const zebraKodovi = new Set(GRAD_ZEBRA_VRSTE.map((v) => z.stringovi.indexOf(v)).filter((k) => k >= 0));
 
   const uniforme = new UniformGroup({
     uKamera: { value: new Float32Array(2), type: "vec2<f32>" },
@@ -833,64 +854,68 @@ export async function createGradRenderer(
       u.uUpaljeno = GRAD_PROZORI_UPALJENI[o.doba];
 
       dinamika.clear();
-      const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
-      const cos = Math.cos(ugao);
-      const sin = Math.sin(ugao);
-      dinamika.setTransform(cos, sin, -sin, cos, igrac.pos.x, igrac.pos.y);
-      // Prednji točkovi, ispod karoserije: vire sa strane kad su okrenuti.
-      const osovina = GRAD_MEDJUOSOVINSKO / 2;
-      const tc = Math.cos(igrac.tocak);
-      const ts = Math.sin(igrac.tocak);
-      const tDuz = 0.34;
-      const tPop = 0.11;
-      for (const strana of [-1, 1]) {
-        const cx = osovina;
-        const cy = strana * (CAR_WIDTH / 2 - 0.12);
-        dinamika
-          .poly([
-            cx + tDuz * tc - tPop * ts, cy + tDuz * ts + tPop * tc,
-            cx - tDuz * tc - tPop * ts, cy - tDuz * ts + tPop * tc,
-            cx - tDuz * tc + tPop * ts, cy - tDuz * ts - tPop * tc,
-            cx + tDuz * tc + tPop * ts, cy + tDuz * ts - tPop * tc,
-          ])
-          .fill("#1d1d1f");
-      }
-      dinamika
-        .roundRect(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH, CAR_WIDTH * 0.25)
-        .fill(BOJE.igrac)
-        .stroke({ width: 0.08, color: "rgba(0,0,0,0.4)" });
-      dinamika.rect(CAR_LENGTH * 0.1, -CAR_WIDTH * 0.34, CAR_LENGTH * 0.2, CAR_WIDTH * 0.68).fill("rgba(255,255,255,0.7)");
-      // Zadnja svjetla: crvena kad se koči, bijela u rikvercu. U rikvercu kočnica
-      // vozi unazad, pa crveno tada ne bi značilo ništa.
-      const stop = igrac.rikverc ? "#ffffff" : igrac.koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
-      dinamika.rect(-CAR_LENGTH / 2, -CAR_WIDTH * 0.42, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
-      dinamika.rect(-CAR_LENGTH / 2, CAR_WIDTH * 0.2, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
-      // Žmigavac: narandžasti ugao sprijeda i pozadi, na strani koja je upaljena.
-      if (igrac.zmigavac && zmigavacSvijetli(simT)) {
-        const w = igrac.zmigavac === "left" ? -CAR_WIDTH / 2 : CAR_WIDTH / 2 - 0.3;
-        dinamika.rect(CAR_LENGTH / 2 - 0.35, w, 0.35, 0.3).fill("#ffa21a");
-        dinamika.rect(-CAR_LENGTH / 2, w, 0.35, 0.3).fill("#ffa21a");
-      }
-      dinamika.resetTransform();
-
-      // Farovi: meki izduženi snop ispred auta (sjaj razvučen u elipsu), jači
-      // u mraku nego po danu kad pada kiša. Upaljeni u mraku i po kiši, kao
-      // što propis traži.
       farovi.clear();
-      snop.visible = sSvjetla.visible;
-      if (sSvjetla.visible) {
-        const d = GRAD_FAROVI_DUZINA;
-        const naprijed = CAR_LENGTH / 2 - 0.3;
-        snop.position.set(igrac.pos.x + cos * naprijed, igrac.pos.y + sin * naprijed);
-        snop.rotation = ugao;
-        snop.width = d;
-        snop.height = 2 * Math.tan((GRAD_FAROVI_UGAO * Math.PI) / 180) * d;
-        snop.alpha = mrak ? 0.7 : 0.25;
-        if (igrac.koci && !igrac.rikverc) {
-          const zx = igrac.pos.x - cos * (CAR_LENGTH / 2 + 1);
-          const zy = igrac.pos.y - sin * (CAR_LENGTH / 2 + 1);
-          farovi.circle(zx, zy, 2.2).fill({ color: boje.stop, alpha: 0.35 });
+      snop.visible = false;
+      if (igrac) {
+        const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
+        const cos = Math.cos(ugao);
+        const sin = Math.sin(ugao);
+        dinamika.setTransform(cos, sin, -sin, cos, igrac.pos.x, igrac.pos.y);
+        // Prednji točkovi, ispod karoserije: vire sa strane kad su okrenuti.
+        const osovina = GRAD_MEDJUOSOVINSKO / 2;
+        const tc = Math.cos(igrac.tocak);
+        const ts = Math.sin(igrac.tocak);
+        const tDuz = 0.34;
+        const tPop = 0.11;
+        for (const strana of [-1, 1]) {
+          const cx = osovina;
+          const cy = strana * (CAR_WIDTH / 2 - 0.12);
+          dinamika
+            .poly([
+              cx + tDuz * tc - tPop * ts, cy + tDuz * ts + tPop * tc,
+              cx - tDuz * tc - tPop * ts, cy - tDuz * ts + tPop * tc,
+              cx - tDuz * tc + tPop * ts, cy - tDuz * ts - tPop * tc,
+              cx + tDuz * tc + tPop * ts, cy + tDuz * ts - tPop * tc,
+            ])
+            .fill("#1d1d1f");
         }
+        dinamika
+          .roundRect(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH, CAR_WIDTH * 0.25)
+          .fill(BOJE.igrac)
+          .stroke({ width: 0.08, color: "rgba(0,0,0,0.4)" });
+        dinamika.rect(CAR_LENGTH * 0.1, -CAR_WIDTH * 0.34, CAR_LENGTH * 0.2, CAR_WIDTH * 0.68).fill("rgba(255,255,255,0.7)");
+        // Zadnja svjetla: crvena kad se koči, bijela u rikvercu. U rikvercu kočnica
+        // vozi unazad, pa crveno tada ne bi značilo ništa.
+        const stop = igrac.rikverc ? "#ffffff" : igrac.koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
+        dinamika.rect(-CAR_LENGTH / 2, -CAR_WIDTH * 0.42, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
+        dinamika.rect(-CAR_LENGTH / 2, CAR_WIDTH * 0.2, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
+        // Žmigavac: narandžasti ugao sprijeda i pozadi, na strani koja je upaljena.
+        if (igrac.zmigavac && zmigavacSvijetli(simT)) {
+          const w = igrac.zmigavac === "left" ? -CAR_WIDTH / 2 : CAR_WIDTH / 2 - 0.3;
+          dinamika.rect(CAR_LENGTH / 2 - 0.35, w, 0.35, 0.3).fill("#ffa21a");
+          dinamika.rect(-CAR_LENGTH / 2, w, 0.35, 0.3).fill("#ffa21a");
+        }
+        dinamika.resetTransform();
+
+        // Farovi: meki izduženi snop ispred auta (sjaj razvučen u elipsu), jači
+        // u mraku nego po danu kad pada kiša. Upaljeni u mraku i po kiši, kao
+        // što propis traži.
+        snop.visible = sSvjetla.visible;
+        if (sSvjetla.visible) {
+          const d = GRAD_FAROVI_DUZINA;
+          const naprijed = CAR_LENGTH / 2 - 0.3;
+          snop.position.set(igrac.pos.x + cos * naprijed, igrac.pos.y + sin * naprijed);
+          snop.rotation = ugao;
+          snop.width = d;
+          snop.height = 2 * Math.tan((GRAD_FAROVI_UGAO * Math.PI) / 180) * d;
+          snop.alpha = mrak ? 0.7 : 0.25;
+          if (igrac.koci && !igrac.rikverc) {
+            const zx = igrac.pos.x - cos * (CAR_LENGTH / 2 + 1);
+            const zy = igrac.pos.y - sin * (CAR_LENGTH / 2 + 1);
+            farovi.circle(zx, zy, 2.2).fill({ color: boje.stop, alpha: 0.35 });
+          }
+        }
+
       }
 
       // Kiša: kose kapi preko ekrana, pomjeraju se sa vremenom.
@@ -915,6 +940,16 @@ export async function createGradRenderer(
     },
 
     stanje: () => ({ sagradjeno: sagradjeni.size, vidljivo: vidljivih }),
+
+    zamijeni(p, pov, izg, pr) {
+      for (const t of [...sagradjeni.keys()]) srusi(t);
+      paket = p;
+      povrsina = pov;
+      mreza = pov.mreza;
+      izgled = izg;
+      pravila = pr;
+      indeksiraj();
+    },
 
     destroy() {
       for (const t of [...sagradjeni.keys()]) srusi(t);
