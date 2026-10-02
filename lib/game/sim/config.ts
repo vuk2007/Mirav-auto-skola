@@ -2020,3 +2020,20 @@ export const GRAD_SIDRO_PRELAZ = 4;
 export const GRAD_OVERLAY_ZEBRA = "zebra";
 /** Najviše metara pune linije pred raskrsnicom koje overlay može zadati (stane u bajt paketa). */
 export const GRAD_PUNA_PRIJE_NAJVISE = 250;
+/**
+ * Autobuskom trakom najviše ovoliko [s] (odluka korisnika 2026-10-01, kao
+ * vožnja lijevom stranom): prelazak i ulazak radi skretanja desno nisu prekršaj.
+ */
+export const GRAD_BUS_TRAJE = 3;
+/** Bot izlazi iz autobuske trake (na početku dionice sa njom) na ovoliko metara [m]. */
+export const GRAD_BOT_IZ_BUSA = 12;
+/** Kad je autobuska traka jedina za skretanje, bot u nju prelazi tek ovoliko pred raskrsnicom [m]. */
+export const GRAD_BOT_U_BUS = 12;
+/**
+ * Puna linija pred raskrsnicom počinje najranije ovoliko iza čvora gdje se
+ * mijenja raspored traka (proširenje za traku skretanja ili autobusku) [m]:
+ * tamo se trake tek uspostavljaju.
+ */
+export const GRAD_PUNA_POSLIJE_PROMJENE = 15;
+/** Lom osovine ulice veći od ovoga [°] je greška u OSM geometriji za punu liniju (editor upozorava). */
+export const GRAD_OSTAR_LOM = 40;

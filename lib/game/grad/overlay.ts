@@ -197,7 +197,7 @@ export type Izmjena = Osnova &
   (
     | { vrsta: "kontrola"; krak: SidroKraka; kontrola: KontrolaOverlaya }
     | { vrsta: "skretanje"; krak: SidroKraka; znak: ZnakSkretanja | null }
-    | { vrsta: "zabranaUlaska"; krak: SidroKraka; ukloni: boolean }
+    | { vrsta: "zabranaUlaska"; krak: SidroKraka }
     | { vrsta: "semafor"; raskrsnica: SidroCvora; plan: PlanOverlaya | null }
     | { vrsta: "znak"; znak: ZnakNaUlici; mjesto: SidroUlice; brzina: number | null }
     | ({ vrsta: "dionica"; ulica: SidroUlice } & PoljaDionice)
@@ -280,7 +280,6 @@ function provjeriIzmjenu(x: unknown, i: number): void {
       return;
     case "zabranaUlaska":
       provjeriSidroKraka(x.krak, `${g}.krak`);
-      provjeri(typeof x.ukloni === "boolean", g, "ukloni mora biti da/ne");
       return;
     case "semafor": {
       provjeriTacku(x.raskrsnica, `${g}.raskrsnica`);
@@ -1040,8 +1039,8 @@ export interface PravilaOverlaya {
   semafori: Map<number, { plan: PlanOverlayaVezan | null; id: string }>;
   /** Znak skretanja na kraku ulaska; `null` uklanja i OSM zabrane sa tog kraka. */
   skretanja: Map<string, { znak: ZnakSkretanja | null; id: string }>;
-  /** Zabrana ulaska u krak iz raskrsnice; `ukloni` briše izvedenu (jednosmjerna) — ne crta se. */
-  zabraneUlaska: Map<string, { ukloni: boolean; id: string }>;
+  /** Zabrana ulaska u krak iz raskrsnice (znak na ušću, okrenut ka raskrsnici). */
+  zabraneUlaska: Map<string, { id: string }>;
   nevezane: Nevezana[];
 }
 
@@ -1072,7 +1071,7 @@ export function pravilaOverlaya(o: Overlay, m: Mreza): PravilaOverlaya {
       }
       case "zabranaUlaska": {
         const k = krak(iz.krak);
-        if (k) izlaz.zabraneUlaska.set(k, { ukloni: iz.ukloni, id: iz.id });
+        if (k) izlaz.zabraneUlaska.set(k, { id: iz.id });
         else nevezana(iz, "nema kraka na tom mjestu");
         break;
       }

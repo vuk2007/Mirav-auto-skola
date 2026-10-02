@@ -1,0 +1,34 @@
+# Fuzz grada sa sintetičkim overlay-em (faza 6, stavka 6b), 2026-10-02
+# npm run test:fuzz:grad -- 50 5 <s> --sinteticki <s>; i bez overlay-a: -- 50 5 <s>
+Overlay (sintetički, sjeme 1): 2701 izmjena, nevezanih 0.
+  po vrsti: {"skretanje":349,"kontrola":1476,"zabranaUlaska":103,"semafor":15,"znak":321,"dionica":433,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 1); 173.1 km, 5.87 h vožnje; osovinom 233, izvlačenja 7; 8 s računanja.
+Overlay (sintetički, sjeme 2): 2715 izmjena, nevezanih 0.
+  po vrsti: {"kontrola":1537,"skretanje":339,"zabranaUlaska":101,"semafor":13,"dionica":426,"znak":295,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 2); 165.1 km, 5.79 h vožnje; osovinom 227, izvlačenja 9; 8 s računanja.
+Overlay (sintetički, sjeme 3): 2680 izmjena, nevezanih 0.
+  po vrsti: {"skretanje":334,"kontrola":1463,"zabranaUlaska":116,"semafor":16,"znak":312,"dionica":435,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 3); 156.9 km, 5.57 h vožnje; osovinom 234, izvlačenja 10; 7 s računanja.
+Overlay (sintetički, sjeme 4): 2622 izmjena, nevezanih 0.
+  po vrsti: {"skretanje":345,"zabranaUlaska":115,"kontrola":1398,"semafor":15,"dionica":426,"znak":319,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 4); 174.6 km, 6.03 h vožnje; osovinom 252, izvlačenja 7; 9 s računanja.
+Overlay (sintetički, sjeme 5): 2566 izmjena, nevezanih 0.
+  po vrsti: {"zabranaUlaska":113,"kontrola":1386,"skretanje":345,"semafor":11,"znak":283,"dionica":424,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 5); 187.4 km, 6.38 h vožnje; osovinom 239, izvlačenja 8; 10 s računanja.
+Overlay (sintetički, sjeme 6): 2544 izmjena, nevezanih 0.
+  po vrsti: {"skretanje":320,"zabranaUlaska":99,"kontrola":1378,"semafor":15,"znak":302,"dionica":426,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 6); 161.4 km, 5.77 h vožnje; osovinom 168, izvlačenja 5; 9 s računanja.
+Overlay (sintetički, sjeme 7): 2692 izmjena, nevezanih 0.
+  po vrsti: {"kontrola":1525,"skretanje":330,"zabranaUlaska":124,"semafor":13,"znak":309,"dionica":387,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 7); 185.2 km, 6.38 h vožnje; osovinom 288, izvlačenja 11; 10 s računanja.
+Overlay (sintetički, sjeme 8): 2585 izmjena, nevezanih 0.
+  po vrsti: {"kontrola":1382,"skretanje":337,"zabranaUlaska":106,"semafor":18,"dionica":440,"znak":298,"zona":4}
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 8); 166.0 km, 5.77 h vožnje; osovinom 237, izvlačenja 10; 8 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 1); 178.3 km, 5.77 h vožnje; osovinom 215, izvlačenja 5; 8 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 2); 173.8 km, 5.72 h vožnje; osovinom 216, izvlačenja 5; 8 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 3); 182.4 km, 5.99 h vožnje; osovinom 215, izvlačenja 2; 9 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 4); 175.8 km, 5.75 h vožnje; osovinom 209, izvlačenja 7; 8 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 5); 169.9 km, 5.56 h vožnje; osovinom 191, izvlačenja 5; 8 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 6); 175.4 km, 5.64 h vožnje; osovinom 185, izvlačenja 6; 8 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 7); 171.5 km, 5.49 h vožnje; osovinom 192, izvlačenja 5; 8 s računanja.
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 8); 156.2 km, 5.04 h vožnje; osovinom 173, izvlačenja 3; 7 s računanja.

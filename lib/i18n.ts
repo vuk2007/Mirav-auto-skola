@@ -263,6 +263,16 @@ export interface Dict {
   gradRuleWrongLane: string;
   gradRuleRoundaboutOuter: string;
   gradRuleRoundaboutInner: string;
+  vioBusLane: string;
+  gradRuleSolidLine: string;
+  gradRuleBusLane: string;
+  gradRuleNoEntry: string;
+  gradRuleMandatory: string;
+  gradRuleRedManeuver: string;
+  gradManeuverLeft: string;
+  gradManeuverStraight: string;
+  gradManeuverRight: string;
+  gradManeuverUTurn: string;
   rutaFrom: string;
   rutaTo: string;
   rutaPrepare: string;
@@ -702,6 +712,16 @@ const me: Dict = {
   gradRuleWrongLane: "Strelice na kolovozu određuju kuda se iz trake smije — iz ove trake nije ovim pravcem.",
   gradRuleRoundaboutOuter: "U kružnom toku sa dvije trake: za desno i pravo vozi se spoljnom trakom — unutrašnja je za lijevo i puni krug.",
   gradRuleRoundaboutInner: "U kružnom toku sa dvije trake: za lijevo i puni krug vozi se unutrašnjom trakom — spoljna je za desno i pravo.",
+  vioBusLane: "Vožnja autobuskom trakom",
+  gradRuleSolidLine: "Puna linija se ne prelazi i po njoj se ne vozi.",
+  gradRuleBusLane: "Autobuskom trakom voze samo vozila javnog prevoza i vozila pod pratnjom — ostali je smiju samo preći, ili u nju ući radi skretanja.",
+  gradRuleNoEntry: "Znak zabrane ulaska: u tu ulicu se iz raskrsnice ne smije.",
+  gradRuleMandatory: "Znak obaveznog smjera na ovom kraku dozvoljava samo: {smjer}.",
+  gradRuleRedManeuver: "Za pravac {manevar} svjetlo je bilo crveno — svjetlo sa strelicom važi za svoj pravac.",
+  gradManeuverLeft: "lijevo",
+  gradManeuverStraight: "pravo",
+  gradManeuverRight: "desno",
+  gradManeuverUTurn: "polukružno",
   rutaFrom: "Odakle",
   rutaTo: "Dokle",
   rutaPrepare: "Pripremam put…",
@@ -1131,6 +1151,16 @@ const en: Dict = {
   gradRuleWrongLane: "The arrows on the road say where each lane may go — this lane does not go this way.",
   gradRuleRoundaboutOuter: "In a two-lane roundabout, use the outer lane to turn right or go straight — the inner lane is for left turns and full circles.",
   gradRuleRoundaboutInner: "In a two-lane roundabout, use the inner lane to turn left or go full circle — the outer lane is for right turns and straight on.",
+  vioBusLane: "Driving in the bus lane",
+  gradRuleSolidLine: "A solid line must not be crossed or driven on.",
+  gradRuleBusLane: "Only public transport and escorted vehicles may drive in the bus lane — others may only cross it, or enter it to turn.",
+  gradRuleNoEntry: "No-entry sign: you may not drive into that street from the junction.",
+  gradRuleMandatory: "The mandatory-direction sign on this approach allows only: {smjer}.",
+  gradRuleRedManeuver: "The light for {manevar} was red — an arrow light applies to its own direction.",
+  gradManeuverLeft: "left",
+  gradManeuverStraight: "straight on",
+  gradManeuverRight: "right",
+  gradManeuverUTurn: "U-turn",
   rutaFrom: "From",
   rutaTo: "To",
   rutaPrepare: "Preparing the road…",
@@ -1565,6 +1595,16 @@ const sq: Dict = {
   gradRuleWrongLane: "Shigjetat në rrugë tregojnë ku lejohet të shkohet nga çdo korsi — nga kjo korsi jo në këtë drejtim.",
   gradRuleRoundaboutOuter: "Në rrethrrotullim me dy korsi: për djathtas dhe drejt përdoret korsia e jashtme — e brendshmja është për majtas dhe rrotullim të plotë.",
   gradRuleRoundaboutInner: "Në rrethrrotullim me dy korsi: për majtas dhe rrotullim të plotë përdoret korsia e brendshme — e jashtmja është për djathtas dhe drejt.",
+  vioBusLane: "Ngasja në korsinë e autobusit",
+  gradRuleSolidLine: "Vija e plotë nuk kalohet dhe nuk ngasesh mbi të.",
+  gradRuleBusLane: "Në korsinë e autobusit ngasin vetëm automjetet e transportit publik dhe ato me shoqërim — të tjerët mund vetëm ta kalojnë, ose të hyjnë për të kthyer.",
+  gradRuleNoEntry: "Shenja ndalim hyrjeje: në atë rrugë nuk hyhet nga kryqëzimi.",
+  gradRuleMandatory: "Shenja e drejtimit të detyrueshëm në këtë krah lejon vetëm: {smjer}.",
+  gradRuleRedManeuver: "Për drejtimin {manevar} drita ishte e kuqe — drita me shigjetë vlen për drejtimin e vet.",
+  gradManeuverLeft: "majtas",
+  gradManeuverStraight: "drejt",
+  gradManeuverRight: "djathtas",
+  gradManeuverUTurn: "kthim në U",
   rutaFrom: "Nga",
   rutaTo: "Deri",
   rutaPrepare: "Po përgatis rrugën…",
@@ -2001,6 +2041,16 @@ const ru: Dict = {
   gradRuleWrongLane: "Стрелки на дороге показывают, куда можно ехать из каждой полосы — из этой полосы в эту сторону нельзя.",
   gradRuleRoundaboutOuter: "На двухполосном круговом движении направо и прямо едут по внешней полосе — внутренняя для поворота налево и полного круга.",
   gradRuleRoundaboutInner: "На двухполосном круговом движении налево и полный круг едут по внутренней полосе — внешняя для поворота направо и прямо.",
+  vioBusLane: "Движение по полосе для автобусов",
+  gradRuleSolidLine: "Сплошную линию нельзя пересекать и ехать по ней.",
+  gradRuleBusLane: "По полосе для автобусов едут только общественный транспорт и машины сопровождения — остальным можно только пересечь её или въехать для поворота.",
+  gradRuleNoEntry: "Знак «въезд запрещён»: в эту улицу с перекрёстка въезжать нельзя.",
+  gradRuleMandatory: "Знак обязательного направления на этом подъезде разрешает только: {smjer}.",
+  gradRuleRedManeuver: "Для направления «{manevar}» горел красный — сигнал со стрелкой действует для своего направления.",
+  gradManeuverLeft: "налево",
+  gradManeuverStraight: "прямо",
+  gradManeuverRight: "направо",
+  gradManeuverUTurn: "разворот",
   rutaFrom: "Откуда",
   rutaTo: "Куда",
   rutaPrepare: "Готовлю дорогу…",

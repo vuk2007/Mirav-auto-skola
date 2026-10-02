@@ -78,7 +78,7 @@ describe("overlay: čitanje i pisanje", () => {
   const sve: Izmjena[] = [
     { ...osnova(), vrsta: "kontrola", krak: krak(1), kontrola: "stop" },
     { ...osnova(), vrsta: "skretanje", krak: krak(2), znak: { vrsta: "zabrana", manevri: ["lijevo"] } },
-    { ...osnova(), vrsta: "zabranaUlaska", krak: krak(3), ukloni: false },
+    { ...osnova(), vrsta: "zabranaUlaska", krak: krak(3) },
     {
       ...osnova(),
       vrsta: "semafor",
@@ -341,12 +341,12 @@ describe("overlay ima prednost nad OSM-om u svakom polju", () => {
       krst(),
       overlay([
         { ...osnova(), vrsta: "skretanje", krak: krak(1), znak: { vrsta: "obavezno", manevri: ["pravo", "desno"] } },
-        { ...osnova(), vrsta: "zabranaUlaska", krak: krak(2), ukloni: false },
+        { ...osnova(), vrsta: "zabranaUlaska", krak: krak(2) },
       ]),
     );
     // Ivica 1 dodiruje centar svojim krajem `b`.
     expect(s.pravila!.skretanja.get("1:1")?.znak).toEqual({ vrsta: "obavezno", manevri: ["pravo", "desno"] });
-    expect(s.pravila!.zabraneUlaska.get("2:1")?.ukloni).toBe(false);
+    expect(s.pravila!.zabraneUlaska.has("2:1")).toBe(true);
   });
 
   it("zone: overlay mijenja zonu šablona po id-u i dodaje nove", () => {

@@ -16,7 +16,7 @@ import {
 import type { Point } from "@/lib/game/sim/types";
 import { najblizaIvica } from "@/lib/game/grad/mreza";
 import { ucitajOverlay } from "@/lib/game/grad/ucitajOverlay";
-import { zoneGrada, type Zona } from "@/lib/game/grad/overlay";
+import type { Zona } from "@/lib/game/grad/overlay";
 import { procitaj } from "@/lib/game/grad/paket";
 import { ulicaNa } from "@/lib/game/grad/povrsina";
 import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
@@ -126,9 +126,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       if (!odgovor.ok) throw new Error(`paket grada: HTTP ${odgovor.status}`);
       // OSM paket, pa ručne izmjene iz editora (stavka 6) — jedan model po
       // kojem se crta i sudi (stavka 5).
-      const svijet = svijetGrada(procitaj(await odgovor.arrayBuffer()), overlay);
+      const svijet = svijetGrada(procitaj(await odgovor.arrayBuffer()), overlay, zone.zone);
       const { paket, mreza, povrsina, raskrsnice, crtez, zaSudiju } = svijet;
-      const zoneSvijeta = overlay ? zoneGrada(zone.zone, overlay) : zone.zone;
       const sudija = noviSudija(nivoRef.current);
       let prijavljeno = 0;
       if (otkazano) return;
@@ -136,7 +135,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       if (!canvas) return;
       // Pixi se učitava tek ovdje — ostatak igre ga ne plaća u početnom paketu.
       const { createGradRenderer } = await import("@/lib/game/ui/gradRenderer");
-      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: zoneSvijeta }, { raskrsnice, crtez });
+      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: svijet.zone }, { raskrsnice, crtez, produzeci: zaSudiju.produzeci });
       if (otkazano) {
         renderer?.destroy();
         return;
@@ -251,8 +250,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           ulica = ulicaNa(povrsina, st.x, st.y) ?? ulica;
           const iv = mreza.ivice[ulica]!;
           setHud({ kmh: Math.abs(st.v) * 3.6, ulica: iv.ime, rikverc: st.rikverc, fps: debug ? fps : null });
-          // Ograničenje po kojem sudija sudi: iz OSM-a, a bez njega ono u naselju.
-          setOgranicenje(iv.brzina ?? GRAD_BRZINA_PODRAZUMIJEVANA);
+          // Ograničenje po kojem sudija sudi: znak, zona, OSM, ili ono u naselju.
+          setOgranicenje(sudija.ogranicenje || GRAD_BRZINA_PODRAZUMIJEVANA);
           if (sudija.prekrsaji.length > prijavljeno) {
             const novi = sudija.prekrsaji.slice(prijavljeno);
             prijavljeno = sudija.prekrsaji.length;

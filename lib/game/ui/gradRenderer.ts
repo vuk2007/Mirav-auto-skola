@@ -39,12 +39,13 @@ import {
 import type { Point } from "../sim/types";
 import type { Paket } from "../grad/paket";
 import { geometrijaDekora, type BojeDekora } from "../grad/dekor";
-import { svjetlo, type Raskrsnice } from "../grad/raskrsnica";
+import { svjetlo, zelenaStrelica, type Raskrsnice } from "../grad/raskrsnica";
+import type { Produzeci } from "../grad/linije";
 import type { Temena } from "../grad/temena";
 import type { CrtezPravila, Semafor, Znak } from "../grad/znakovi";
 import { tekstureZnakova } from "./tekstureZnakova";
 import { zmigavacSvijetli } from "./zmigavac";
-import { krajeviLinija, linijeIvice, streliceIvice, zebra, type Poligon } from "../grad/oznake";
+import { krajeviLinija, linijeIvice, natpisiBusa, ogradaZatvorene, streliceIvice, zebra, type Poligon } from "../grad/oznake";
 import type { Povrsina } from "../grad/povrsina";
 import {
   geometrijaSjenki,
@@ -78,6 +79,8 @@ const BOJE = {
   asfalt: "#8a8984",
   pjesacka: "#cfc6b6",
   oznaka: "#f2f0ea",
+  /** Ograda gradilišta (zatvorena ulica iz editora). */
+  ogradaCrvena: "#c8102e",
   voda: "#9cc7e6",
   igrac: "#2f6fd0",
 } as const;
@@ -289,6 +292,8 @@ export interface GradKadar {
 export interface PravilaZaCrtanje {
   raskrsnice: Raskrsnice;
   crtez: CrtezPravila;
+  /** Produžeci ivica do raskrsnica i promjena traka — za pune linije pred raskrsnicom (editor). */
+  produzeci?: Produzeci;
 }
 
 export interface GradScena {
@@ -549,7 +554,8 @@ export async function createGradRenderer(
       linija(trotoari, iv.tacke);
       trotoari.stroke({ width: iv.sirina + 2 * TROTOAR, color: BOJE.trotoar, cap: "round", join: "round" });
       linija(ulice, iv.tacke);
-      ulice.stroke({ width: iv.sirina, color: iv.vozna ? BOJE.asfalt : BOJE.pjesacka, cap: "round", join: "round" });
+      // Zatvorena ulica (gradilište) je asfalt, samo se u nju ne može.
+      ulice.stroke({ width: iv.sirina, color: iv.vozna || iv.zatvorena ? BOJE.asfalt : BOJE.pjesacka, cap: "round", join: "round" });
     }
     // Zasječen ugao: trotoar prati kosi ivičnjak (linija širine dva trotoara,
     // čiju unutrašnju polovinu prekrije asfalt), a asfalt popuni trougao.
@@ -564,12 +570,22 @@ export async function createGradRenderer(
       for (const p of poligoni) oznake.poly(p.flatMap((t) => [t.x, t.y]));
       if (poligoni.length > 0) oznake.fill(BOJE.oznaka);
     };
+    const ograda = new Graphics();
     for (const i of tile.ivice) {
       const iv = mreza.ivice[i]!;
+      if (iv.zatvorena) {
+        const { crvene, bijele } = ogradaZatvorene(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!);
+        for (const p of crvene) ograda.poly(p.flatMap((t) => [t.x, t.y]));
+        if (crvene.length) ograda.fill(BOJE.ogradaCrvena);
+        for (const p of bijele) ograda.poly(p.flatMap((t) => [t.x, t.y]));
+        if (bijele.length) ograda.fill("#ffffff");
+      }
       if (!iv.vozna) continue;
-      oboji(linijeIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
+      oboji(linijeIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!, pravila.produzeci));
       oboji(streliceIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
+      oboji(natpisiBusa(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
     }
+
     for (let o = tile.objekti[0]; o < tile.objekti[1]; o++) {
       if (n.obVrsta[o] !== vrstaPrelaza || !zebraKodovi.has(n.obPodatak[o]!)) continue;
       oboji(zebra(povrsina, n.obXY[2 * o]!, n.obXY[2 * o + 1]!));
@@ -583,14 +599,14 @@ export async function createGradRenderer(
     const sjajeviC = new Container();
     const znakoviT = tile.znakovi.map((i) => {
       const z = crtez.znakovi[i]!;
-      const sprite = new Sprite(teksture.znak[z.vrsta]);
+      const sprite = new Sprite(teksture.znak(z.vrsta));
       sprite.anchor.set(0.5);
       znakoviC.addChild(sprite);
       return { sprite, z };
     });
     const semaforiT = tile.semafori.map((i) => {
       const sem = crtez.semafori[i]!;
-      const sprite = new Sprite(teksture.semafor.crveno);
+      const sprite = new Sprite(sem.dopunska ? teksture.dopunska(false, sem.manevri ?? []) : teksture.semafor("crveno", sem.manevri));
       sprite.anchor.set(0.5);
       const sj = new Sprite(sjaj);
       sj.anchor.set(0.5);
@@ -638,7 +654,7 @@ export async function createGradRenderer(
     sVoda.addChild(voda);
     sTrotoari.addChild(trotoari);
     sUlice.addChild(ulice);
-    sOznake.addChild(oznake);
+    sOznake.addChild(oznake, ograda);
     sIznad.addChild(iznad);
     sSjene.addChild(sjene, sjeneDekora);
     sDekor.addChild(dekor);
@@ -647,7 +663,8 @@ export async function createGradRenderer(
     sZnakovi.addChild(znakoviC);
     sSvjetla.addChild(sjajeviC);
     return {
-      slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, sjeneDekora, dekor, zgrade, lampe, znakoviC, sjajeviC],
+      // Indeksi slojeva se koriste u `draw` (0 vidljivost, 12 sjaj) — nove na kraj.
+      slojevi: [povrsine, voda, trotoari, ulice, oznake, iznad, sjene, sjeneDekora, dekor, zgrade, lampe, znakoviC, sjajeviC, ograda],
       vidjen: kadar,
       znakovi: znakoviT,
       semafori: semaforiT,
@@ -784,15 +801,31 @@ export async function createGradRenderer(
         }
         for (const { sprite, sjaj: sj, sem } of x.semafori) {
           const v = naNagibu(sem.x, sem.y, GRAD_SEMAFOR_VISINA);
-          stubovi.moveTo(sem.x, sem.y).lineTo(v.x, v.y);
-          const stanje = svjetlo(pravila.raskrsnice.lista[sem.raskrsnica]!, sem.krak, simT) ?? "crveno";
-          sprite.texture = teksture.semafor[stanje];
-          sprite.position.set(v.x, v.y);
-          sprite.rotation = uspravno;
+          if (sem.pomak === 0) stubovi.moveTo(sem.x, sem.y).lineTo(v.x, v.y);
+          const rs = pravila.raskrsnice.lista[sem.raskrsnica]!;
           const vis = velicina(GRAD_SEMAFOR_VELICINA);
+          const sir = (vis * 40) / 96;
+          // Glave na istom stubu jedna pored druge, udesno na ekranu.
+          const px = v.x + Math.cos(uspravno) * sir * 1.1 * sem.pomak;
+          const py = v.y + Math.sin(uspravno) * sir * 1.1 * sem.pomak;
+          sprite.position.set(px, py);
+          sprite.rotation = uspravno;
+          sj.position.set(px, py);
+          if (sem.dopunska) {
+            // Zelena dopunska strelica: jedno sočivo, gori ili ne.
+            const gori = (sem.manevri ?? []).some((m) => zelenaStrelica(rs, sem.krak, simT, m));
+            sprite.texture = teksture.dopunska(gori, sem.manevri ?? []);
+            sprite.width = sir;
+            sprite.height = (sir * 36) / 40;
+            sj.tint = "#34c759";
+            sj.visible = gori;
+            continue;
+          }
+          const stanje = svjetlo(rs, sem.krak, simT, sem.manevri?.[0] ?? null) ?? "crveno";
+          sprite.texture = teksture.semafor(stanje, sem.manevri);
           sprite.height = vis;
-          sprite.width = (vis * 40) / 96;
-          sj.position.set(v.x, v.y);
+          sprite.width = sir;
+          sj.visible = true;
           sj.tint = stanje === "zeleno" ? "#34c759" : stanje === "zuto" ? "#ffcc00" : "#ff3b30";
         }
       }

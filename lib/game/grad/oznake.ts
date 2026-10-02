@@ -11,6 +11,7 @@ import {
   GRAD_ZEBRA_PRUGA,
 } from "../sim/config";
 import type { Point } from "../sim/types";
+import { linijeSaVrstom, pojasBusa, puniDijelovi, uzBus, type Produzeci } from "./linije";
 import type { Ivica, Mreza } from "./mreza";
 import { najblizaOsa, type Povrsina } from "./povrsina";
 
@@ -20,9 +21,10 @@ import { najblizaOsa, type Povrsina } from "./povrsina";
  * svijeta; crtač ih samo oboji bijelo, jednom po tile-u.
  *
  * Linije su isprekidane: puna linija je pravilo (zabrana prelaska), a OSM je
- * ne zna — nju dodaje editor (stavka 6). Stop-linije nisu ovdje nego u stavci
- * 5, iz istog modela raskrsnice po kojem se i sudi: nacrtano i suđeno moraju
- * biti jedno.
+ * ne zna — nju dodaje editor (stavka 6), i crta se po istim funkcijama po
+ * kojima se sudi (`linije.ts`). Stop-linije nisu ovdje nego u stavci 5, iz
+ * istog modela raskrsnice po kojem se i sudi: nacrtano i suđeno moraju biti
+ * jedno.
  */
 
 export type Poligon = Point[];
@@ -158,22 +160,112 @@ export function linijeTraka(iv: Ivica): number[] {
 }
 
 /**
- * Isprekidane linije traka ivice, bez dijela u raskrsnicama — osim na prstenu
- * kružnog toka: tamo linija između traka ide cijelim krugom, i preko ulaza.
+ * Linije traka ivice, bez dijela u raskrsnicama — osim na prstenu kružnog
+ * toka: tamo linija između traka ide cijelim krugom, i preko ulaza.
+ *
+ * Isprekidane, osim gdje editor kaže drugačije (stavka 6): razdjelna linija
+ * puna, dvostruka ili je nema; pune pred raskrsnicom (razdjelna, i između
+ * traka istog smjera), po istoj funkciji po kojoj se sudi (`puniDijelovi`).
+ * Bez produžetaka (`linije.ts`) nema punih „pred raskrsnicom". Linija uz
+ * autobusku traku je šira.
  */
-export function linijeIvice(iv: Ivica, odA: number, odB: number): Poligon[] {
+export function linijeIvice(iv: Ivica, odA: number, odB: number, p?: Produzeci): Poligon[] {
   if (iv.kruzni) odA = odB = 0;
   const izlaz: Poligon[] = [];
   const s1 = iv.duzina - odB;
   if (s1 - odA < GRAD_CRTICA) return izlaz;
-  for (const o of linijeTraka(iv)) {
+  for (const l of linijeSaVrstom(iv)) {
+    if (l.vrsta === "srednja" && iv.linija === "bez") continue;
+    // Dijelovi gdje je linija puna: [od, do] duž ivice.
+    const sve: [number, number][] = p
+      ? puniDijelovi(iv, l, p)
+      : l.vrsta === "srednja" && (iv.linija === "puna" || iv.linija === "dvostruka")
+        ? [[odA, s1]]
+        : [];
+    const pune = sve.map(([a, b]): [number, number] => [Math.max(odA, a), Math.min(s1, b)]).filter(([a, b]) => b > a);
+    const dvostruka = l.vrsta === "srednja" && iv.linija === "dvostruka";
+    const sirina = uzBus(iv, l) ? 2 * GRAD_LINIJA_SIRINA : GRAD_LINIJA_SIRINA;
+    const pomaci = dvostruka ? [l.o - 1.5 * GRAD_LINIJA_SIRINA, l.o + 1.5 * GRAD_LINIJA_SIRINA] : [l.o];
+    for (const [p0, p1] of pune) for (const o of pomaci) trakaDuz(iv, p0, p1, o, sirina, izlaz);
     // Crtice počinju od raskrsnice na početku, pa je raspored isti u oba
-    // smjera vožnje i ne zavisi od toga gdje je tile.
+    // smjera vožnje i ne zavisi od toga gdje je tile. Crtica u punom dijelu
+    // se ne crta (puna je već tu).
     for (let s = odA; s < s1; s += GRAD_CRTICA + GRAD_CRTICA_RAZMAK) {
-      trakaDuz(iv, s, Math.min(s + GRAD_CRTICA, s1), o, GRAD_LINIJA_SIRINA, izlaz);
+      let a = s;
+      let b = Math.min(s + GRAD_CRTICA, s1);
+      for (const [p0, p1] of pune) {
+        if (p1 <= p0) continue;
+        if (a >= p0 && b <= p1) a = b;
+        else if (a < p0 && b > p0 && b <= p1) b = p0;
+        else if (a >= p0 && a < p1 && b > p1) a = p1;
+      }
+      if (b - a > 0.05) trakaDuz(iv, a, b, l.o, sirina, izlaz);
     }
   }
   return izlaz;
+}
+
+/** Slova natpisa BUS na kolovozu, 3 × 5 polja; red 0 je vrh slova. */
+const SLOVA: Record<string, string[]> = {
+  B: ["110", "101", "110", "101", "110"],
+  U: ["101", "101", "101", "101", "111"],
+  S: ["111", "100", "111", "001", "111"],
+};
+
+/**
+ * Natpis BUS u autobuskoj traci, na svakih ~80 m, okrenut vozaču: slova idu
+ * jedno za drugim u smjeru vožnje, svako uspravno (vrh slova naprijed).
+ */
+export function natpisiBusa(iv: Ivica, odA: number, odB: number): Poligon[] {
+  const izlaz: Poligon[] = [];
+  const POLJE_W = 0.45;
+  const POLJE_L = 0.6;
+  const SLOVO = 5 * POLJE_L + 0.6;
+  const NATPIS = 3 * SLOVO;
+  for (const smjer of [1, -1] as const) {
+    const pojas = pojasBusa(iv, smjer);
+    if (!pojas) continue;
+    const sredina = (pojas[0] + pojas[1]) / 2;
+    const s0 = odA + 4;
+    const s1 = iv.duzina - odB - 4;
+    if (s1 - s0 < NATPIS) continue;
+    // Prvi natpis pred krajem trake (pred raskrsnicom), pa unazad na 80 m.
+    for (let kraj = 0; kraj + NATPIS <= s1 - s0; kraj += 80) {
+      "BUS".split("").forEach((slovo, i) => {
+        // `u` duž vožnje od početka natpisa; prvo slovo je najbliže vozaču.
+        const uSlova = i * SLOVO;
+        SLOVA[slovo]!.forEach((red, r) => {
+          [...red].forEach((polje, c) => {
+            if (polje !== "1") return;
+            const u0 = uSlova + (4 - r) * POLJE_L;
+            // Bočno: kolona 0 je lijevo vozaču; desno vozaču je + u smjeru `a → b`, − unazad.
+            const w = sredina + smjer * (c - 1) * POLJE_W;
+            const sa = smjer === 1 ? s1 - NATPIS - kraj + u0 : s0 + NATPIS + kraj - u0 - POLJE_L;
+            trakaDuz(iv, sa, sa + POLJE_L, w, POLJE_W, izlaz);
+          });
+        });
+      });
+    }
+  }
+  return izlaz;
+}
+
+/**
+ * Ograda zatvorene ulice (gradilište, editor): crveno-bijele pruge preko
+ * kolovoza na oba kraja, malo unutra od raskrsnice.
+ */
+export function ogradaZatvorene(iv: Ivica, odA: number, odB: number): { crvene: Poligon[]; bijele: Poligon[] } {
+  const crvene: Poligon[] = [];
+  const bijele: Poligon[] = [];
+  if (!iv.zatvorena || iv.duzina < 4) return { crvene, bijele };
+  const pruga = iv.sirina / 6;
+  for (const s of [Math.min(iv.duzina / 2, odA + 1.5), Math.max(iv.duzina / 2, iv.duzina - odB - 1.5)]) {
+    for (let k = 0; k < 6; k++) {
+      const o = -iv.sirina / 2 + (k + 0.5) * pruga;
+      trakaDuz(iv, s - 0.35, s + 0.35, o, pruga, k % 2 ? bijele : crvene);
+    }
+  }
+  return { crvene, bijele };
 }
 
 // ── strelice ────────────────────────────────────────────────────────────────

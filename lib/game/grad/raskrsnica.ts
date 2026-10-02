@@ -20,7 +20,7 @@ import {
 } from "../sim/config";
 import type { Point } from "../sim/types";
 import type { Ivica, Manevar, Mreza } from "./mreza";
-import type { PlanOverlayaVezan, PravilaOverlaya } from "./overlay";
+import type { PlanOverlayaVezan, PravilaOverlaya, ZnakSkretanja } from "./overlay";
 import { BEZ, type Paket } from "./paket";
 
 /**
@@ -109,6 +109,14 @@ export interface Raskrsnice {
   uCvoru: Int32Array;
   /** „ivica:kraj" → [raskrsnica, krak] — krak sa te strane ivice. */
   krakIvice: Map<string, [number, number]>;
+  /**
+   * Znakovi skretanja iz editora, po kraku ulaska („ivica:kraj"): zabrana
+   * manevara ili obavezan smjer. Važe za cijelu raskrsnicu, od ulaznog do
+   * izlaznog kraka — i kad je raskrsnica bulevara od više čvorova.
+   */
+  skretanja: Map<string, ZnakSkretanja>;
+  /** Krakovi u koje se iz raskrsnice ne smije (znak zabrane ulaska iz editora). */
+  bezUlaska: Set<string>;
 }
 
 export type Svjetlo = "zeleno" | "zuto" | "crveno";
@@ -352,7 +360,9 @@ export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array, ove
     r.kraci.forEach((k, j) => krakIvice.set(`${k.ivica}:${k.kraj}`, [id, j]));
     lista.push(r);
   }
-  return { lista, uCvoru, krakIvice };
+  const skretanja = new Map<string, ZnakSkretanja>();
+  for (const [k, v] of overlay?.skretanja ?? []) if (v.znak) skretanja.set(k, v.znak);
+  return { lista, uCvoru, krakIvice, skretanja, bezUlaska: new Set(overlay?.zabraneUlaska.keys() ?? []) };
 }
 
 function odrediKontrolu(
@@ -592,6 +602,26 @@ export function zelenaStrelica(r: Raskrsnica, krak: number, t: number, manevar: 
 }
 
 // ── zabrane skretanja ──────────────────────────────────────────────────────
+
+/**
+ * Znak iz editora koji zabranjuje prolaz sa kraka `ulaz` na krak `izlaz`
+ * (ključevi „ivica:kraj") manevrom `manevar`, ili `null`. Vraća opis znaka za
+ * karticu prekršaja: `zabranaUlaska`, `zabrana:lijevo`, `obavezno:pravo,desno`.
+ * Isto pravilo zovu sudija (poslije prolaza) i bot (u ruti).
+ */
+export function zabranaKraka(r: Raskrsnice, ulaz: string, izlaz: string, manevar: Manevar): string | null {
+  if (r.bezUlaska.has(izlaz)) return "zabranaUlaska";
+  const z = r.skretanja.get(ulaz);
+  if (!z) return null;
+  if (z.vrsta === "zabrana" && z.manevri.includes(manevar)) return `zabrana:${manevar}`;
+  if (z.vrsta === "obavezno" && !z.manevri.includes(manevar)) return `obavezno:${z.manevri.join(",")}`;
+  return null;
+}
+
+/** Da li krak ima svjetlo koje zavisi od manevra (svjetlo sa strelicom, ili zelena dopunska strelica). */
+export function svjetloPoManevru(r: Raskrsnica, krak: number): boolean {
+  return !!r.plan?.faze.some((f) => f.djelimicno.some((d) => d.krak === krak) || f.strelice.some((d) => d.krak === krak));
+}
 
 export interface Zabrana {
   vrsta: string;

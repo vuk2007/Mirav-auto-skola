@@ -11,6 +11,10 @@
  *
  *     npm run test:fuzz:grad            # 50 ruta, nivo 5, sjeme 1
  *     npm run test:fuzz:grad -- 10 3 7  # 10 ruta, nivo 3, sjeme 7
+ *     npm run test:fuzz:grad -- 50 5 1 --sinteticki 3
+ *                                       # umjesto overlay fajla: sintetički
+ *                                       # overlay sa sjemenom 3 (sve vrste
+ *                                       # izmjena iz editora, u memoriji)
  *
  * Izlaz je 0 kad je sve prošlo, 1 kad nije — sa rutom, sjemenom i
  * prekršajem, da se pad ponovi jednom vožnjom.
@@ -29,6 +33,8 @@ const JAVNO = fileURLToPath(new URL("../public/data/grad/", import.meta.url));
 const ruta = Number(process.argv[2] ?? 50);
 const nivo = Number(process.argv[3] ?? 5);
 const sjeme = Number(process.argv[4] ?? 1);
+const iSint = process.argv.indexOf("--sinteticki");
+const sjemeSintetike = iSint >= 0 ? Number(process.argv[iSint + 1] ?? 1) : null;
 
 const { procitaj } = await import(`${KOD}grad/paket.ts`);
 const { procitajOverlay } = await import(`${KOD}grad/overlay.ts`);
@@ -38,15 +44,29 @@ const { rng } = await import(`${KOD}sim/geometry.ts`);
 
 const spisak = JSON.parse(readFileSync(join(JAVNO, "gradovi.json"), "utf8"));
 const b = readFileSync(join(JAVNO, spisak.podgorica.fajl));
+const osm = procitaj(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
 const fajlOverlaya = join(JAVNO, "overrides", "podgorica.json");
-const overlay = existsSync(fajlOverlaya) ? procitajOverlay(JSON.parse(readFileSync(fajlOverlaya, "utf8"))) : null;
-const svijet = svijetGrada(procitaj(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)), overlay);
+let overlay = existsSync(fajlOverlaya) ? procitajOverlay(JSON.parse(readFileSync(fajlOverlaya, "utf8"))) : null;
+if (sjemeSintetike !== null) {
+  const { sintetickiOverlay } = await import(`${KOD}grad/sintetickiOverlay.ts`);
+  const osnova = svijetGrada(osm, null);
+  const { lat, lon } = osm.zaglavlje.ishodiste;
+  overlay = sintetickiOverlay(osnova.mreza, osnova.raskrsnice, sjemeSintetike, { lat, lon });
+}
+const sablonZona = JSON.parse(readFileSync(join(JAVNO, "cityZones", "podgorica.json"), "utf8")).zone;
+const svijet = svijetGrada(osm, overlay, sablonZona);
 const { mreza, povrsina, raskrsnice, zabrane, zaSudiju: grad } = svijet;
 console.log(
   overlay
-    ? `Overlay: ${overlay.izmjene.length} izmjena, nevezanih ${svijet.nevezane.length}.`
+    ? `Overlay${sjemeSintetike !== null ? ` (sintetički, sjeme ${sjemeSintetike})` : ""}: ${overlay.izmjene.length} izmjena, nevezanih ${svijet.nevezane.length}.`
     : "Overlay: nema ga — čist OSM.",
 );
+if (sjemeSintetike !== null) {
+  const po = {};
+  for (const iz of overlay.izmjene) po[iz.vrsta] = (po[iz.vrsta] ?? 0) + 1;
+  console.log(`  po vrsti: ${JSON.stringify(po)}`);
+  for (const n of svijet.nevezane.slice(0, 5)) console.log(`  nevezana ${n.id} ${n.vrsta}: ${n.razlog}`);
+}
 
 const slucajno = rng(sjeme);
 const padovi = [];
