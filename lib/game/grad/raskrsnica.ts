@@ -62,6 +62,12 @@ export interface Krak {
   izvor: IzvorKontrole;
   /** Stop-linija, metara od kraja ivice u raskrsnici; `null` za „glavni" i „desna". */
   stopD: number | null;
+  /**
+   * Gdje se čeka na ulaz sa kraka kad treba ustupiti, metara od kraja ivice:
+   * stop-linija, a bez nje ivica raskrsnice — ili ispred zebre koja je tu
+   * (na zebri se ne staje). Ne crta se; po tome čekaju drugi vozači i bot.
+   */
+  cekaD: number;
   /** Faza semafora kraka (indeks u `plan.faze`); `null` bez semafora. */
   faza: number | null;
 }
@@ -333,6 +339,7 @@ export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array, ove
             kontrola: "desna",
             izvor: "pravilo",
             stopD: null,
+            cekaD: 0,
             faza: null,
           });
         }
@@ -487,11 +494,13 @@ function odrediKontrolu(
 
   // Stop-linije: gdje je znak ili semafor (OSM ga stavlja na liniju), ali ne
   // u raskrsnici; bez njega na ivici raskrsnice. Pa ispred zebre na kraku.
+  // Mjesto čekanja na kraku bez linije: ivica raskrsnice, ispred zebre.
   r.kraci.forEach((k, j) => {
-    if (!k.ulaz || (k.kontrola !== "stop" && k.kontrola !== "ustupi" && k.kontrola !== "semafor")) return;
+    if (!k.ulaz) return;
     const iv = m.ivice[k.ivica]!;
+    const kontrolisan = k.kontrola === "stop" || k.kontrola === "ustupi" || k.kontrola === "semafor";
     const ivicaRaskrsnice = odsjeci[2 * k.ivica + k.kraj]! + 0.5;
-    const nosilac = k.kontrola === "semafor" ? semaforNaKraku[j] : znakNaKraku[j];
+    const nosilac = !kontrolisan ? null : k.kontrola === "semafor" ? semaforNaKraku[j] : znakNaKraku[j];
     let d = Math.max(ivicaRaskrsnice, k.izvor === "osm" && nosilac ? nosilac.d : 0);
     for (const o of naKraku[j]!) {
       if (o.vrsta !== "crossing" || !GRAD_ZEBRA_VRSTE.includes(o.podatak)) continue;
@@ -500,7 +509,19 @@ function odrediKontrolu(
         d = Math.max(d, o.d + GRAD_ZEBRA_DUBINA / 2 + GRAD_STOP_ISPRED_ZEBRE);
       }
     }
-    k.stopD = Math.min(d, Math.max(0, iv.duzina - 1));
+    if (kontrolisan) {
+      k.stopD = k.cekaD = Math.min(d, Math.max(0, iv.duzina - 1));
+      return;
+    }
+    // Bez linije auto čeka ispred zebre i kad bi samo zadnjim krajem bio na
+    // njoj: na zebri se ne staje (stop-linija se crta, pa nju ovo ne pomjera).
+    for (const o of naKraku[j]!) {
+      if (o.vrsta !== "crossing" || !GRAD_ZEBRA_VRSTE.includes(o.podatak)) continue;
+      if (o.d - GRAD_ZEBRA_DUBINA / 2 <= d + GRAD_STOP_ISPRED_ZEBRE + CAR_LENGTH) {
+        d = Math.max(d, o.d + GRAD_ZEBRA_DUBINA / 2 + GRAD_STOP_ISPRED_ZEBRE);
+      }
+    }
+    k.cekaD = Math.min(d, Math.max(0, iv.duzina - 1));
   });
 }
 

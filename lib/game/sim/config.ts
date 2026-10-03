@@ -2041,3 +2041,90 @@ export const GRAD_OSTAR_LOM = 40;
 export const GRAD_EDITOR_POGODAK = 6;
 /** …a krak raskrsnice kad je na njegovoj ivici, do ovoliko od raskrsnice [m]. */
 export const GRAD_EDITOR_KRAK_DO = 30;
+
+// ── Drugi učesnici u gradu (faza 6, stavka 7) ───────────────────────────────
+/** Najviše vozila oko igrača pri punoj gustini (zadatak, odjeljak 1: 40 vozila u vidnom polju). */
+export const GRAD_NPC_NAJVISE = 40;
+/** Vozila se pojavljuju u prstenu oko igrača, van onoga što se vidi [m]… */
+export const GRAD_NPC_POJAVA_OD = 150;
+export const GRAD_NPC_POJAVA_DO = 350;
+/** …nestaju kad se udalje dalje od ovoga… */
+export const GRAD_NPC_NESTAJE = 450;
+/** …a cilj im je van prozora, ovoliko od mjesta pojave [m]. */
+export const GRAD_NPC_CILJ_OD = 300;
+export const GRAD_NPC_CILJ_DO = 900;
+/** Na početku vožnje vozila se pojavljuju i bliže, ali ne bliže igraču od ovoga [m]. */
+export const GRAD_NPC_POCETAK_OD = 30;
+/** Pojava novog vozila najčešće jednom u ovoliko [s] — plan rute košta par milisekundi. */
+export const GRAD_NPC_POJAVA_RITAM = 0.2;
+/** Mjesto pojave je slobodno kad nijedno vozilo nije bliže od ovoga [m]. */
+export const GRAD_NPC_POJAVA_SLOBODNO = 25;
+/** Ubrzanje drugih vozača [m/s²] — mirnije od `A_MAX`. */
+export const GRAD_NPC_UBRZANJE = 2;
+/** Razmak do vozila ispred kad stoje [m], i vrijeme reakcije za razmak u vožnji [s] (Krauss). */
+export const GRAD_NPC_RAZMAK = 2.5;
+export const GRAD_NPC_REAKCIJA = 1;
+/** Bočna rezerva oko auta kad se gleda šta mu je na putu [m]. */
+export const GRAD_NPC_BOCNO = 0.3;
+/** Koliko najmanje vozač gleda naprijed svojom putanjom [m] (više pri većoj brzini). */
+export const GRAD_NPC_POGLED = 25;
+/** Raskrsnicu ispred vozač razmatra (kome ustupa) od ovoliko metara prije nje. */
+export const GRAD_NPC_HORIZONT = 60;
+/**
+ * Putanje kroz raskrsnicu su u sukobu kad su im osovine bliže od ovoga [m]:
+ * širina auta i rezerva za tijela pod uglom (lijevo skretanje pored susretne
+ * trake). Susjedne trake su na `GRAD_SIRINA_TRAKE` — nisu u sukobu.
+ */
+export const GRAD_NPC_SUKOB_RAZMAK = CAR_WIDTH + 1.4;
+/** Rezerva vremena kad se ulazi ispred vozila koje ima prednost [s]. */
+export const GRAD_NPC_REZERVA_PROLAZA = 1.5;
+/** Vozač „čeka na liniji" kad stoji (ispod ove brzine [m/s]) bliže od ovoga mjestu čekanja [m]. */
+export const GRAD_NPC_CEKA_BRZINA = 0.5;
+export const GRAD_NPC_CEKA_DO = 3;
+/**
+ * Zastoj (zadatak, odjeljak 5): vozilo stoji duže od ovoga [s], a ne čeka ni
+ * crveno ni nekoga ko vozi — zapisuje se, i najstarije u zastoju kreće.
+ */
+export const GRAD_NPC_ZASTOJ = 10;
+/** Koliko dugo vozilo koje razrješava zastoj ne ustupa [s]; ako ni tada ne krene, najmlađe nestaje. */
+export const GRAD_NPC_ZASTOJ_KRECE = 5;
+/**
+ * Bot provlači sudiju duž svoje putanje (gdje sudija vidi ulaz i izlaz iz
+ * raskrsnice) svakih 0,5 m do ovoliko od raskrsnice [m], a dalje svakih
+ * `GRAD_BOT_SUDIJA_RIJETKO` — plan je tako dvaput jeftiniji (drugi vozači ga
+ * prave u hodu).
+ */
+export const GRAD_BOT_SUDIJA_GUSTO = 60;
+export const GRAD_BOT_SUDIJA_RIJETKO = 3;
+/**
+ * Auto čiji je nos do ovoliko pred mjestom čekanja kraka (stop-linija, ili
+ * ivica raskrsnice ispred zebre) čeka na ulaz u raskrsnicu [m] — to nije
+ * zaustavljanje na stajalištu.
+ */
+export const GRAD_CEKA_NA_ULAZ = 4;
+/** Dvosmjerna ulica uža od ovoga [m] je za jedno auto: drugi vozači njom ne idu (dva auta + rezerva). */
+export const GRAD_NPC_USKA = 2 * (CAR_WIDTH + 0.6);
+/** Drugi vozač traži rutu najviše kroz ovoliko smjerova ivica (A*) — nedostižan cilj ne pretražuje cijeli grad. */
+export const GRAD_NPC_A_ZVIJEZDA = 4000;
+/** Lom osovine ulice veći od ovoga [°] se u putanji vozila zaobljava lukom (OSM krivina je lom). */
+export const GRAD_LOM_OSOVINE = 3;
+/** Putanja bota i drugih vozača: petlja se traži do ovoliko tačaka dalje (≈ 40–80 m). */
+export const GRAD_BOT_PETLJA_PROZOR = 40;
+/** Lom putanje veći od ovoga [°] se zaobljava (sijecanje ugla, tri puta). */
+export const GRAD_BOT_OSTAR_LOM = 25;
+/** Vozilo je u mojoj traci (iza mene) kad mu je sredina bliže od ovoga mojoj putanji [m]. */
+export const GRAD_NPC_ISTA_TRAKA = 1.5;
+/** Promjena trake: koliko naprijed vozač gleda gdje ulazi u susjednu traku [m]… */
+export const GRAD_NPC_PRESTROJ_POGLED = 30;
+/** …i propušta vozilo te trake koje tamo stiže prije njega ili manje od ovoliko poslije [s]. */
+export const GRAD_NPC_PRESTROJ_RAZMAK = 1.5;
+/** Drugi vozači idu tačno putanjom: luk kroz raskrsnicu im treba samo ovoliko od ivičnjaka [m]. */
+export const GRAD_NPC_REZERVA_LUKA = 0.2;
+/** Sukob u raskrsnici se traži i ovoliko prije mjesta čekanja [m] (lijevi skretač na uzak krak). */
+export const GRAD_NPC_PRILAZ_SUKOBA = 15;
+/**
+ * Ustupanje koje počinje prekasno: kad drugi vozač ni kočenjem ovim udjelom
+ * od `B_MAX` ne bi stao pred mjestom čekanja, prolazi (ustupa samo onima koji
+ * su već u raskrsnici) — inače bi stao preko linije, u raskrsnici.
+ */
+export const GRAD_NPC_KOCENJE_UDIO = 0.8;

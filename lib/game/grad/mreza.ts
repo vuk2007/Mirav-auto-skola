@@ -61,6 +61,12 @@ export interface Ivica {
   /** Most ili tunel — tu je polukružno okretanje zabranjeno. */
   most: boolean;
   tunel: boolean;
+  /**
+   * Nivo ulice: OSM `layer`, a bez njega most +1, tunel −1, ostalo 0. Ulice
+   * na različitim nivoima se ukrštaju bez raskrsnice — vozila na njima se ne
+   * vide i ne sudaraju.
+   */
+  nivo: number;
   ime: string;
   /** Ograničenje iz OSM-a [km/h]; `null` kad ga nema. */
   brzina: number | null;
@@ -141,6 +147,7 @@ export function napraviMrezu(p: Paket): Mreza {
       kruzni: (zastavice & IVICA_KRUZNI) !== 0,
       most: (zastavice & IVICA_MOST) !== 0,
       tunel: (zastavice & IVICA_TUNEL) !== 0,
+      nivo: (n.ivSloj[i] ?? 0) !== 0 ? n.ivSloj[i]! : (zastavice & IVICA_MOST) !== 0 ? 1 : (zastavice & IVICA_TUNEL) !== 0 ? -1 : 0,
       ime: p.zaglavlje.stringovi[n.ivIme[i]!] ?? "",
       brzina: n.ivBrzina[i]! > 0 ? n.ivBrzina[i]! : null,
       osm: n.ivOsm[i] ?? 0,

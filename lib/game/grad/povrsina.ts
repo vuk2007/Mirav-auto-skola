@@ -366,12 +366,12 @@ export interface OsaBlizu {
  * pa po broju ivice.
  */
 export function oseBlizu(p: Povrsina, x: number, y: number, do_: number): OsaBlizu[] {
-  const cx = celija(x);
-  const cy = celija(y);
   const najbolje = new Map<number, OsaBlizu>();
-  for (let ox = -1; ox <= 1; ox++) {
-    for (let oy = -1; oy <= 1; oy++) {
-      for (const j of p.celije.get(kljuc(cx + ox, cy + oy)) ?? []) {
+  // Samo ćelije koje dodiruje kvadrat ±`do_` oko tačke: najbliža tačka osovine
+  // bliže od `do_` je u njemu, a segment je upisan u ćeliju svake svoje tačke.
+  for (let cx = celija(x - do_); cx <= celija(x + do_); cx++) {
+    for (let cy = celija(y - do_); cy <= celija(y + do_); cy++) {
+      for (const j of p.celije.get(kljuc(cx, cy)) ?? []) {
         if (j < 0) continue;
         const s = p.seg;
         const ax = s[5 * j]!;

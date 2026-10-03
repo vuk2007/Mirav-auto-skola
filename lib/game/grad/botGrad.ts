@@ -9,9 +9,13 @@ import {
   GRAD_BOT_U_BUS,
   GRAD_BOT_NAJKRACA_PROMJENA,
   GRAD_BOT_ODSJEK_NAJVISE,
+  GRAD_BOT_OSTAR_LOM,
+  GRAD_BOT_PETLJA_PROZOR,
   GRAD_BOT_PETLJA,
   GRAD_BOT_POLUPRECNICI,
   GRAD_BOT_REZERVA_LUKA,
+  GRAD_BOT_SUDIJA_GUSTO,
+  GRAD_BOT_SUDIJA_RIJETKO,
   GRAD_BOT_TRAKA_UNAPRIJED,
   GRAD_BOT_REZERVA_BRZINE,
   GRAD_BOT_ZMIGAVAC_PRIJE,
@@ -20,6 +24,7 @@ import {
   GRAD_IZLAZ_POTVRDA,
   GRAD_MEDJUOSOVINSKO,
   GRAD_POLUKRUZNO_UGAO,
+  GRAD_PRILAZ_DO,
   GRAD_SIRINA_TRAKE,
   GRAD_SKRETANJE_UGAO,
   GRAD_VOLAN_UGAO,
@@ -30,7 +35,7 @@ import {
   YELLOW_COMMIT_TTC,
   type Level,
 } from "../sim/config";
-import { cumulative, headingAt, pointAt } from "../sim/geometry";
+import { cumulative, headingAt, pointAt, segmentIntersection } from "../sim/geometry";
 import type { Input, Point } from "../sim/types";
 import { ogranicenjeNa } from "./brzine";
 import { naLinijiTraka, pojasBusa, punaIzmedju, punaTrakeOd } from "./linije";
@@ -39,6 +44,7 @@ import { prekrsenaZabrana, svjetlo, zabranaKraka, zelenaStrelica, type Krak, typ
 import { naPovrsini, type Povrsina } from "./povrsina";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
 import { noviSudija, stopLinija, sudi, type GradskiPrekrsaj, type GradZaSudiju, type Sudija } from "./sudija";
+import { naOsovini } from "./osovina";
 import { naPutanji, putanja, vozi, type Putanja } from "./vozacGrad";
 
 /**
@@ -52,6 +58,50 @@ import { naPutanji, putanja, vozi, type Putanja } from "./vozacGrad";
  * ijednog prekršaja. Bot koji ne prođe znači grešku ili u njemu, ili u
  * sudiji — i jedno i drugo se mora popraviti.
  */
+
+/** Binarni heap (najmanji prvi) — otvoreni čvorovi A*. */
+class Heap<T> {
+  private niz: T[] = [];
+  private manji: (a: T, b: T) => number;
+  constructor(manji: (a: T, b: T) => number) {
+    this.manji = manji;
+  }
+  get velicina(): number {
+    return this.niz.length;
+  }
+  dodaj(x: T): void {
+    const n = this.niz;
+    n.push(x);
+    let i = n.length - 1;
+    while (i > 0) {
+      const r = (i - 1) >> 1;
+      if (this.manji(n[i]!, n[r]!) >= 0) break;
+      [n[i], n[r]] = [n[r]!, n[i]!];
+      i = r;
+    }
+  }
+  uzmi(): T | undefined {
+    const n = this.niz;
+    if (n.length === 0) return undefined;
+    const vrh = n[0]!;
+    const zadnji = n.pop()!;
+    if (n.length > 0) {
+      n[0] = zadnji;
+      let i = 0;
+      for (;;) {
+        const l = 2 * i + 1;
+        const d = l + 1;
+        let m = i;
+        if (l < n.length && this.manji(n[l]!, n[m]!) < 0) m = l;
+        if (d < n.length && this.manji(n[d]!, n[m]!) < 0) m = d;
+        if (m === i) break;
+        [n[i], n[m]] = [n[m]!, n[i]!];
+        i = m;
+      }
+    }
+    return vrh;
+  }
+}
 
 /** Smjer vožnje po ivici: 1 je `a → b`. */
 export interface Korak {
@@ -88,7 +138,15 @@ function pravacDalje(iv: Ivica, smjer: 1 | -1, naKraju: boolean): Point {
  * Kroz raskrsnicu od više čvorova ugao se mjeri od ulaznog kraka — dva
  * skretanja od 90° preko razdjelnog pojasa bulevara su polukružno.
  */
-export function ruta(m: Mreza, r: Raskrsnice, zabrane: Map<string, Zabrana[]>, od: Korak, do_: Korak): Korak[] | null {
+export function ruta(
+  m: Mreza,
+  r: Raskrsnice,
+  zabrane: Map<string, Zabrana[]>,
+  od: Korak,
+  do_: Korak,
+  najviseKoraka = Infinity,
+  vozi: (iv: Ivica) => boolean = ZA_BOTA,
+): Korak[] | null {
   const kljuc = (k: Korak) => 2 * k.ivica + (k.smjer === 1 ? 0 : 1);
   const cilj = m.cvorovi[kraj(m.ivice[do_.ivica]!, do_.smjer)]!;
   const h = (k: Korak) => {
@@ -97,15 +155,20 @@ export function ruta(m: Mreza, r: Raskrsnice, zabrane: Map<string, Zabrana[]>, o
   };
   const g = new Map<number, number>([[kljuc(od), 0]]);
   const prethodni = new Map<number, Korak>();
-  const otvoreni: { k: Korak; f: number }[] = [{ k: od, f: h(od) }];
+  // Otvoreni čvorovi u binarnom heap-u, po `f`, pa po redu dodavanja (kao
+  // linearna pretraga: od jednakih prvi dodat).
+  const otvoreni = new Heap<{ k: Korak; f: number; red: number }>((a, b) => a.f - b.f || a.red - b.red);
+  let red = 0;
+  otvoreni.dodaj({ k: od, f: h(od), red: red++ });
   const zatvoreni = new Set<number>();
-  while (otvoreni.length > 0) {
-    let najI = 0;
-    for (let i = 1; i < otvoreni.length; i++) if (otvoreni[i]!.f < otvoreni[najI]!.f) najI = i;
-    const { k } = otvoreni.splice(najI, 1)[0]!;
+  while (otvoreni.velicina > 0) {
+    const { k } = otvoreni.uzmi()!;
     const kk = kljuc(k);
     if (zatvoreni.has(kk)) continue;
     zatvoreni.add(kk);
+    // Cilj nedostižan (jednosmjerne, zabrane): bez ograničenja bi pretraga
+    // obišla cijeli grad. Drugi vozači traže rutu u hodu — ograniče je.
+    if (zatvoreni.size > najviseKoraka) return null;
     if (k.ivica === do_.ivica && k.smjer === do_.smjer) {
       const put = [k];
       let x = kljuc(k);
@@ -153,7 +216,7 @@ export function ruta(m: Mreza, r: Raskrsnice, zabrane: Map<string, Zabrana[]>, o
     }
     for (const j of m.izCvora[c] ?? []) {
       const f = m.ivice[j]!;
-      if (!ZA_BOTA(f)) continue;
+      if (!vozi(f)) continue;
       for (const smjer of [1, -1] as const) {
         if ((smjer === 1 ? f.a : f.b) !== c || (j === k.ivica && smjer !== k.smjer)) continue;
         if (!smije(f, smjer) || prekrsenaZabrana(zabrane, k.ivica, c, j)) continue;
@@ -195,7 +258,22 @@ export function ruta(m: Mreza, r: Raskrsnice, zabrane: Map<string, Zabrana[]>, o
           const uR = prilaz !== ulazniKorak || !ulazUR ? ugao(pravacKraja(m.ivice[prilaz.ivica]!, prilaz.smjer, true), pravacKraja(f, smjer, false)) : ugao(ulazUR, pravacKraja(f, smjer, false));
           const manevar =
             Math.abs(uR) > GRAD_POLUKRUZNO_UGAO ? "lijevo" : uR > GRAD_SKRETANJE_UGAO ? "desno" : uR < -GRAD_SKRETANJE_UGAO ? "lijevo" : "pravo";
-          const dozvole = streliceZa(m.ivice[prilaz.ivica]!, prilaz.smjer, manevar);
+          // Strelice trake u kojoj sudija vidi auto prije ulaska u raskrsnicu:
+          // kad je prilazni krak kraći od mjesta čekanja i pola auta (cijeli
+          // je u raskrsnici), to su strelice ivice prije njega.
+          let saStrelicama = prilaz;
+          const kr0 = r.krakIvice.get(`${prilaz.ivica}:${prilaz.smjer === 1 ? 1 : 0}`);
+          if (kr0) {
+            const zona = r.lista[kr0[0]]!.kraci[kr0[1]]!.cekaD + CAR_LENGTH / 2;
+            let duz = m.ivice[prilaz.ivica]!.duzina;
+            while (duz < zona) {
+              const prije = prethodni.get(kljuc(saStrelicama));
+              if (!prije || r.uCvoru[kraj(m.ivice[prije.ivica]!, prije.smjer)]! >= 0) break;
+              saStrelicama = prije;
+              duz += m.ivice[prije.ivica]!.duzina;
+            }
+          }
+          const dozvole = streliceZa(m.ivice[saStrelicama.ivica]!, saStrelicama.smjer, manevar);
           if (dozvole && !dozvole.includes(true)) continue;
         }
         if (ulazUR && !r.lista[rc]!.unutrasnje.includes(j) && Math.abs(ugao(ulazUR, pravacKraja(f, smjer, false))) > 135) continue;
@@ -213,7 +291,7 @@ export function ruta(m: Mreza, r: Raskrsnice, zabrane: Map<string, Zabrana[]>, o
         if (ng < (g.get(sk) ?? Infinity)) {
           g.set(sk, ng);
           prethodni.set(sk, k);
-          otvoreni.push({ k: sl, f: ng + h(sl) });
+          otvoreni.dodaj({ k: sl, f: ng + h(sl), red: red++ });
         }
       }
     }
@@ -233,6 +311,31 @@ interface StopLinija {
   krak: Krak;
   /** Manevar kroz tu raskrsnicu — svjetlo sa strelicom i dopunska strelica važe po pravcu. */
   manevar: Manevar;
+  /** Korak rute na čijem je kraju linija (ulazni korak prolaza). */
+  korak: number;
+}
+
+/**
+ * Prolaz kroz raskrsnicu na putanji: krak ulaska i izlaska (indeksi u
+ * `kraci`), i gdje ga sudija vidi — po tome drugi učesnici (stavka 7) znaju
+ * kome ustupaju i gdje se putanje sijeku.
+ */
+export interface ProlazPlana {
+  r: number;
+  ulaz: number;
+  izlaz: number;
+  /** Ulazni i izlazni korak rute. */
+  ulazKorak: number;
+  izlazKorak: number;
+  /** `s` sredine auta kad ulazi u raskrsnicu (nos na njenoj ivici) i kad je izlazak potvrđen. */
+  od: number;
+  do_: number;
+  /** `s` sredine auta kad čeka na ulaz (stop-linija, ili ispred zebre na ivici raskrsnice). */
+  cekanje: number;
+  /** Ulazi sa ivice prstena kružnog toka. */
+  uPrstenu: boolean;
+  /** Stop-linija ovog prolaza (indeks u `linije`), ili −1. */
+  linija: number;
 }
 
 interface Najava {
@@ -248,6 +351,14 @@ export interface PlanBota {
   brzine: number[];
   linije: StopLinija[];
   najave: Najava[];
+  prolazi: ProlazPlana[];
+  /**
+   * Gdje sudija putanju vidi drugačije od plana (opisi). Drugi vozači takvu
+   * rutu ne voze; za bota je to greška koju fuzz traži.
+   */
+  neslaganja: string[];
+  /** Nivo ulice u svakoj tački putanje (most, tunel). */
+  nivoi: number[];
   /** Koliko raskrsnica je bot prošao osovinom (luk bi sjekao trotoar) — za izvještaj. */
   osovinom: number;
 }
@@ -274,11 +385,11 @@ function pomakTrake(iv: Ivica, smjer: 1 | -1, lijeva: boolean): number {
  * asfaltu — u svakoj od njih i na svaki metar između: duga prava između dvije
  * tačke može presjeći trotoar koji nijedna od njih ne dodiruje.
  */
-function naAsfaltuCijelom(povrsina: Povrsina, t: readonly Point[]): boolean {
+function naAsfaltuCijelom(povrsina: Povrsina, t: readonly Point[], rezerva = GRAD_BOT_REZERVA_LUKA): boolean {
   // Auto uvećan za `GRAD_BOT_REZERVA_LUKA` sa svake strane: vozač u krivini
   // odstupi od putanje, i luk koji auto tek pokriva bi ga odveo na ivičnjak.
-  const L = CAR_LENGTH / 2 + GRAD_BOT_REZERVA_LUKA;
-  const W = CAR_WIDTH / 2 + GRAD_BOT_REZERVA_LUKA;
+  const L = CAR_LENGTH / 2 + rezerva;
+  const W = CAR_WIDTH / 2 + rezerva;
   for (let i = 1; i < t.length; i++) {
     const a = t[i - 1]!;
     const b = t[i]!;
@@ -331,22 +442,29 @@ function tackeOdsjecka(iv: Ivica, smjer: 1 | -1, od: number, do_: number, w: num
  * vožnji (zone raskrsnica, prepoznavanje ulice) — bez žmigavca; prekršaji se
  * ovdje ne gledaju.
  */
-function prolaziSudije(g: GradZaSudiju, tacke: Point[]): { r: number; od: number; do_: number }[] {
+function prolaziSudije(
+  g: GradZaSudiju,
+  tacke: Point[],
+  gusto: readonly [number, number][],
+): { r: number; od: number; do_: number; manevar: string }[] {
   const cum = cumulative(tacke);
   const duzina = cum[cum.length - 1] ?? 0;
   const sudija = noviSudija(5);
-  const out: { r: number; od: number; do_: number }[] = [];
+  const out: { r: number; od: number; do_: number; manevar: string }[] = [];
   let sad = 0;
   let otvoren: { r: number; od: number } | null = null;
   sudija.dnevnik = (q) => {
-    if (otvoren && otvoren.r === q.r) out.push({ r: q.r, od: otvoren.od, do_: sad });
+    if (otvoren && otvoren.r === q.r) out.push({ r: q.r, od: otvoren.od, do_: sad, manevar: q.manevar });
     otvoren = null;
   };
   sudija.naUlazu = (r) => {
     otvoren = { r, od: sad };
   };
   let t = 0;
-  for (sad = 0; sad <= duzina; sad += 0.5) {
+  // Gusto (0,5 m) samo oko raskrsnica: ulazak i izlazak sudija vidi tamo, a
+  // između njih je ulica — tu je dovoljno svaka 3 m (pola cijene plana).
+  const blizu = (x: number) => gusto.some(([a, b]) => x >= a && x <= b);
+  for (sad = 0; sad <= duzina; sad += blizu(sad) ? 0.5 : GRAD_BOT_SUDIJA_RIJETKO) {
     const q = pointAt(tacke, cum, sad);
     const h = headingAt(tacke, cum, sad);
     const st: SlobodnoVozilo = {
@@ -386,6 +504,57 @@ function bezier(p0: Point, h1: Point, p3: Point, h2: Point, d: number): Point[] 
     });
   }
   return izlaz;
+}
+
+/**
+ * Putanja bez petlji i bez oštrih lomova (stavka 7). Traka pomaknuta od
+ * oštrog ugla ulice (u čvoru između dvije ivice, ili kad se lukovi
+ * susjednih raskrsnica preklope) presijeca samu sebe — auto bi išlo naprijed,
+ * nazad, pa preko osovine. Bot to izravna volanom, a drugi vozači idu tačno
+ * putanjom. Petlja (segment siječe segment do `GRAD_BOT_PETLJA_PROZOR` tačaka
+ * dalje) se zamjenjuje presjekom; lom veći od `GRAD_BOT_OSTAR_LOM` se
+ * zaobljava sijecanjem ugla. Ograničenje brzine ide uz tačke (najmanje).
+ */
+export function ocistiPutanju(t: Point[], o: number[], nv: number[]): void {
+  for (let i = t.length - 1; i > 0; i--) {
+    if (Math.hypot(t[i]!.x - t[i - 1]!.x, t[i]!.y - t[i - 1]!.y) >= 0.05) continue;
+    o[i - 1] = Math.min(o[i - 1]!, o[i]!);
+    t.splice(i, 1);
+    o.splice(i, 1);
+    nv.splice(i, 1);
+  }
+  for (let i = 0; i + 3 < t.length; i++) {
+    // Najveća petlja od tačke `i` (ugniježđene nestaju sa njom).
+    for (let j = Math.min(t.length - 2, i + GRAD_BOT_PETLJA_PROZOR); j >= i + 2; j--) {
+      const x = segmentIntersection(t[i]!, t[i + 1]!, t[j]!, t[j + 1]!);
+      if (!x) continue;
+      const ogr = Math.min(...o.slice(i + 1, j + 1));
+      t.splice(i + 1, j - i, x.point);
+      o.splice(i + 1, j - i, ogr);
+      nv.splice(i + 1, j - i, nv[i]!);
+      break;
+    }
+  }
+  const prag = Math.cos((GRAD_BOT_OSTAR_LOM * Math.PI) / 180);
+  for (let prolaz = 0; prolaz < 3; prolaz++) {
+    for (let i = t.length - 2; i >= 1; i--) {
+      const a = t[i - 1]!;
+      const b = t[i]!;
+      const c = t[i + 1]!;
+      const l1 = Math.hypot(b.x - a.x, b.y - a.y);
+      const l2 = Math.hypot(c.x - b.x, c.y - b.y);
+      if (l1 < 1e-6 || l2 < 1e-6) continue;
+      const cos = ((b.x - a.x) * (c.x - b.x) + (b.y - a.y) * (c.y - b.y)) / (l1 * l2);
+      if (cos > prag) continue;
+      const k1 = Math.min(1, l1 / 2) / l1;
+      const k2 = Math.min(1, l2 / 2) / l2;
+      const P = { x: b.x + (a.x - b.x) * k1, y: b.y + (a.y - b.y) * k1 };
+      const Q = { x: b.x + (c.x - b.x) * k2, y: b.y + (c.y - b.y) * k2 };
+      t.splice(i, 1, P, Q);
+      o.splice(i, 1, o[i]!, o[i]!);
+      nv.splice(i, 1, nv[i]!, nv[i]!);
+    }
+  }
 }
 
 /** Chaikin: svaki lom se zamijeni sa dvije tačke na četvrtinama; krajevi ostaju. */
@@ -485,7 +654,18 @@ function trakaZaManevar(iv: Ivica, smjer: 1 | -1, manevar: "lijevo" | "pravo" | 
  * Plan vožnje po ruti: putanja po sredini trake, lukovi kroz raskrsnice,
  * brzine, stop-linije i najave žmigavca. `odsjeci` su iz `krajeviLinija`.
  */
-export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: string) => void): PlanBota {
+/**
+ * `rezervaLuka`: koliko auto u luku kroz raskrsnicu mora biti dalje od
+ * ivičnjaka [m]. Bot (model volana) odstupa od putanje, pa mu treba
+ * `GRAD_BOT_REZERVA_LUKA`; drugi vozači idu tačno putanjom (`GRAD_NPC_REZERVA_LUKA`)
+ * — luk im češće uspije, i rjeđe idu osovinom kroz čvor.
+ */
+export function planBota(
+  g: GradZaSudiju,
+  koraci: Korak[],
+  dnevnik?: (poruka: string) => void,
+  rezervaLuka = GRAD_BOT_REZERVA_LUKA,
+): PlanBota {
   const { povrsina, raskrsnice: r, odsjeci } = g;
   const m = povrsina.mreza;
   let osloncaOsovinom = 0;
@@ -622,12 +802,31 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
   // ── 2. putanja: sredina trake po ivicama, luk kroz raskrsnice ──
   const tacke: Point[] = [];
   const ogranicenja: number[] = [];
+  /** Nivo ulice u svakoj tački (most, tunel) — vidi `Ivica.nivo`. */
+  const nivoi: number[] = [];
+  let nivo = 0;
   const linije: StopLinija[] = [];
   const najave: Najava[] = [];
   /** `s` na putanji na kraju i na početku dijela svakog koraka van raskrsnica. */
   const krajKoraka: number[] = [];
   const pocetakKoraka: number[] = [];
-  const duzinaDo = () => (tacke.length < 2 ? 0 : cumulative(tacke)[tacke.length - 1]!);
+  // Dužina putanje do svake tačke, usput: `cumulative` cijele putanje poslije
+  // svake ivice bilo bi kvadratno.
+  const duzine: number[] = [];
+  const dodaj = (q: Point, o: number) => {
+    const z = tacke[tacke.length - 1];
+    duzine.push(z ? duzine[duzine.length - 1]! + Math.hypot(q.x - z.x, q.y - z.y) : 0);
+    tacke.push(q);
+    ogranicenja.push(o);
+    nivoi.push(nivo);
+  };
+  const skini = () => {
+    tacke.pop();
+    ogranicenja.pop();
+    nivoi.pop();
+    duzine.pop();
+  };
+  const duzinaDo = () => duzine[duzine.length - 1] ?? 0;
   // Putanja prati traku do `GRAD_BOT_ODSJEK_NAJVISE` od čvora: odsječak
   // raskrsnice zna biti desetine metara (kolovozne trake bulevara se
   // preklapaju), a ulica se u njemu savija — prava tetiva bi prešla na
@@ -643,6 +842,7 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
       return;
     }
     const iv = m.ivice[k.ivica]!;
+    nivo = iv.nivo;
     // Ograničenje kao kod sudije (znak do prve raskrsnice, zona, OSM,
     // naselje) — po tački: znak može stajati usred ivice.
     const ogrNa = (sEdge: number) => ogranicenjeNa(g.ogranicenja, m, r, k.ivica, k.smjer, sEdge).brzina / 3.6;
@@ -694,9 +894,10 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
     if (s1 - s0 >= 1) {
       for (let d = s0; ; d = Math.min(s1, d + 2)) {
         const sEdge = k.smjer === 1 ? d : iv.duzina - d;
-        const c = pointAt(iv.tacke, iv.cum, sEdge);
-        let h = headingAt(iv.tacke, iv.cum, sEdge);
-        if (k.smjer === -1) h = { x: -h.x, y: -h.y };
+        // Traka od zaobljene osovine: lom ulice (OSM krivina) bi na
+        // unutrašnjoj strani dao petlju preko osovine.
+        const { tacka: c, pravac } = naOsovini(iv, sEdge);
+        const h = k.smjer === -1 ? { x: -pravac.x, y: -pravac.y } : pravac;
         const u = Math.min(1, (d - s0) / Math.max(1, promjenaDo - s0));
         let w0 = pocetak + (cilj - pocetak) * u;
         if (uBus !== null && d > uBus) w0 += (busCilj - w0) * Math.min(1, (d - uBus) / Math.max(1, s1 - uBus));
@@ -706,8 +907,7 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
         // Tačke prije kraja luka iz prošle raskrsnice se preskaču.
         if (!preskoci || (q.x - preskoci.B.x) * preskoci.h.x + (q.y - preskoci.B.y) * preskoci.h.y > 0.3) {
           preskoci = null;
-          tacke.push(q);
-          ogranicenja.push(ogrNa(sEdge));
+          dodaj(q, ogrNa(sEdge));
         }
         if (d >= s1) break;
       }
@@ -732,6 +932,7 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
         k: kr[1],
         krak,
         manevar: prolazi.find((p) => p.ulaz === i)?.manevar ?? "pravo",
+        korak: i,
       });
     }
 
@@ -754,9 +955,8 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
         trakaF = najblizaTraka(f, sl.smjer, prosliPomak, trakaF);
       }
       const w2 = uUlici(f, trakaF);
-      const c2 = pointAt(f.tacke, f.cum, sF);
-      let h2 = headingAt(f.tacke, f.cum, sF);
-      if (sl.smjer === -1) h2 = { x: -h2.x, y: -h2.y };
+      const { tacka: c2, pravac: h2o } = naOsovini(f, sF);
+      const h2 = sl.smjer === -1 ? { x: -h2o.x, y: -h2o.y } : h2o;
       const p3 = { x: c2.x - h2.y * w2, y: c2.y + h2.x * w2 };
       const p0 = tacke[tacke.length - 1]!;
       // Pravac ulaska iz geometrije ulice, ne iz zadnje dvije tačke putanje:
@@ -815,7 +1015,7 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
           // ostaje duga prava.
           const doP3 = (p3.x - B.x) * h2.x + (p3.y - B.y) * h2.y;
           const dalje = doP3 > 0 ? p3 : B;
-          if (naAsfaltuCijelom(povrsina, [prije, ...kandidat, dalje, { x: dalje.x + h2.x * 3, y: dalje.y + h2.y * 3 }])) {
+          if (naAsfaltuCijelom(povrsina, [prije, ...kandidat, dalje, { x: dalje.x + h2.x * 3, y: dalje.y + h2.y * 3 }], rezervaLuka)) {
             skinuti = sk;
             luk = kandidat;
             krajLuka = { B, h: h2 };
@@ -833,7 +1033,7 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
           const sB = sl.smjer === 1 ? sF + izaP3 : sF - izaP3;
           if (izaP3 > 1 && punaIzmedju(f, g.produzeci, sF, sB)) {
             const kriva = bezier(p0, h1, p3, h2, d);
-            if (naAsfaltuCijelom(povrsina, [tacke[tacke.length - 1]!, ...kriva, p3, { x: p3.x + h2.x * 3, y: p3.y + h2.y * 3 }])) {
+            if (naAsfaltuCijelom(povrsina, [tacke[tacke.length - 1]!, ...kriva, p3, { x: p3.x + h2.x * 3, y: p3.y + h2.y * 3 }], rezervaLuka)) {
               luk = kriva;
               skinuti = 0;
               krajLuka = null;
@@ -847,7 +1047,7 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
       dnevnik?.(
         `spoj ${i}->${slIndeks} iv ${k.ivica}->${sl.ivica} p0 ${p0.x.toFixed(1)},${p0.y.toFixed(1)} p3 ${p3.x.toFixed(1)},${p3.y.toFixed(1)} teta ${((teta * 180) / Math.PI).toFixed(0)} a0 ${a0.toFixed(1)} luk ${luk.length} skinuti ${skinuti} uOsovinu ${uOsovinu}`,
       );
-      if (uOsovinu || (luk.length > 0 && !naAsfaltuCijelom(povrsina, [osnova[osnova.length - 1]!, ...luk, krajLuka?.B ?? p3]))) {
+      if (uOsovinu || (luk.length > 0 && !naAsfaltuCijelom(povrsina, [osnova[osnova.length - 1]!, ...luk, krajLuka?.B ?? p3], rezervaLuka))) {
         // Osovinom: od kraja ulazne trake preko čvorova raskrsnice (i njenih
         // unutrašnjih ivica) do početka izlazne trake.
         skinuti = 0;
@@ -894,17 +1094,17 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
         osloncaOsovinom += 1;
       }
       for (let x = 0; x < skinuti; x++) {
-        tacke.pop();
-        ogranicenja.pop();
+        skini();
       }
       for (const q of luk) {
-        tacke.push(q);
-        ogranicenja.push(ogrLuk);
+        dodaj(q, ogrLuk);
       }
       if (krajLuka) preskoci = krajLuka;
       prosliPomak = w2;
     }
   });
+
+  ocistiPutanju(tacke, ogranicenja, nivoi);
 
   // ── 3. najave žmigavca: od `GRAD_BOT_ZMIGAVAC_PRIJE` pred ulazom do
   // potvrđenog izlaska na izlazni krak (kao što ga sudija potvrđuje) ──
@@ -916,9 +1116,19 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
   // sudiju duž svoje putanje. Kod raskrsnica tik jedna uz drugu to nije kraj
   // ivice — zone im se preklapaju, i drugu sudija vidi tek kad auto izađe iz
   // prve. Žmigavac se pali i gasi po tim mjestima, sa `GRAD_BOT_ZMIGAVAC_REZERVA`.
-  const viSudija = prolaziSudije(g, tacke);
+  const gusto: [number, number][] = [];
+  for (let i = 0; i < koraci.length; i++) {
+    if (raskrsnicaNaKraju(i) < 0) continue;
+    gusto.push([krajKoraka[i]! - GRAD_BOT_SUDIJA_GUSTO, (pocetakKoraka[i + 1] ?? krajKoraka[i]!) + GRAD_BOT_SUDIJA_GUSTO]);
+  }
+  const viSudija = prolaziSudije(g, tacke, gusto);
   let jSudije = 0;
   const sudijin = new Map<ProlazBota, { od: number; do_: number }>();
+  const upareni = new Set<number>();
+  // Neslaganje plana i sudije: sudija vidi raskrsnicu koje u planu nema (luk
+  // oštrog skretanja zađe u susjednu), ili za prolaz traži drugi žmigavac.
+  const neslaganja: string[] = [];
+  const stranaZa = (mv: string) => (mv === "desno" ? "right" : mv === "pravo" ? null : "left");
   for (const p of prolazi) {
     const rs = raskrsnicaNaKraju(p.ulaz);
     for (let j = jSudije; j < viSudija.length; j++) {
@@ -926,11 +1136,18 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
       if (v.od > krajKoraka[p.ulaz]! + 40) break;
       if (v.r === rs && Math.abs(v.od - krajKoraka[p.ulaz]!) < 40) {
         sudijin.set(p, v);
+        upareni.add(j);
         jSudije = j + 1;
+        if (!r.lista[rs]!.kruzni && stranaZa(v.manevar) !== p.strana) {
+          neslaganja.push(`r${rs}: plan ${p.manevar}, sudija ${v.manevar}`);
+        }
         break;
       }
     }
   }
+  viSudija.forEach((v, j) => {
+    if (!upareni.has(j)) neslaganja.push(`r${v.r}: sudija vidi prolaz (${v.manevar}) koga u planu nema`);
+  });
   const rez = GRAD_BOT_ZMIGAVAC_REZERVA;
   /** Ulazak u raskrsnicu prolaza, kako ga sudija vidi. */
   const ulazU = (p: ProlazBota) => sudijin.get(p)?.od ?? krajKoraka[p.ulaz]! - CAR_LENGTH / 2;
@@ -995,30 +1212,30 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
     for (let j = 1; j < n; j++) umetni.push({ x: a.x + ((b.x - a.x) * j) / n, y: a.y + ((b.y - a.y) * j) / n });
     tacke.splice(i, 0, ...umetni);
     ogranicenja.splice(i, 0, ...umetni.map(() => Math.min(ogranicenja[i - 1]!, ogranicenja[i]!)));
+    nivoi.splice(i, 0, ...umetni.map(() => nivoi[i - 1]!));
   }
   const put = putanja(tacke);
   // Stop-linija na gotovoj putanji: projekcija njene tačke — oduzimanje od
   // kraja ivice promaši kad luk prethodne raskrsnice skrati putanju.
   // Gdje sredina auta staje: tamo gdje bi nos (pola auta naprijed, u pravcu
   // putanje) bio `STOP_MARGIN` pred ravni linije — isto kao što sudija mjeri.
-  for (const l of linije) {
+  const naLiniji = (tacka: Point, pravac: Point, odS: number): number | null => {
     const nosPred = (i: number) => {
       const q = tacke[i]!;
       const h = headingAt(tacke, put.cum, put.cum[i]!);
       const nx = q.x + h.x * (CAR_LENGTH / 2);
       const ny = q.y + h.y * (CAR_LENGTH / 2);
-      return -((nx - l.tacka.x) * l.pravac.x + (ny - l.tacka.y) * l.pravac.y) - STOP_MARGIN;
+      return -((nx - tacka.x) * pravac.x + (ny - tacka.y) * pravac.y) - STOP_MARGIN;
     };
     for (let i = 1; i < tacke.length; i++) {
-      if (put.cum[i]! < l.s - 40) continue;
+      if (put.cum[i]! < odS) continue;
       const a = nosPred(i - 1);
       const b = nosPred(i);
-      if (a > 0 && b <= 0) {
-        l.s = put.cum[i - 1]! + ((put.cum[i]! - put.cum[i - 1]!) * a) / (a - b);
-        break;
-      }
+      if (a > 0 && b <= 0) return put.cum[i - 1]! + ((put.cum[i]! - put.cum[i - 1]!) * a) / (a - b);
     }
-  }
+    return null;
+  };
+  for (const l of linije) l.s = naLiniji(l.tacka, l.pravac, l.s - 40) ?? l.s;
   // Brzina: ograničenje sa rezervom, i krivina (v² / R ≤ bočno ubrzanje).
   // Krivina se mjeri na susjedima udaljenim bar metar — dvije skoro iste
   // tačke dale bi poluprečnik od par centimetara i auto bi stao — i nije
@@ -1041,7 +1258,47 @@ export function planBota(g: GradZaSudiju, koraci: Korak[], dnevnik?: (poruka: st
     const R = Math.max(najmanjiR, (ab * bc * ca) / (2 * povrsina2));
     brzine[i] = Math.min(brzine[i]!, Math.sqrt(GRAD_BOT_BOCNO * R));
   }
-  return { put, brzine, linije, najave, osovinom: osloncaOsovinom };
+  // U raskrsnici sudija sudi po ograničenju ulice kojom se došlo — do
+  // potvrđenog izlaza, i kad se na izlaznoj ulici smije brže.
+  for (const p of prolazi) {
+    const ul = koraci[p.ulaz]!;
+    const iv = m.ivice[ul.ivica]!;
+    const ogrUlaza = (ogranicenjeNa(g.ogranicenja, m, r, ul.ivica, ul.smjer, ul.smjer === 1 ? iv.duzina : 0).brzina / 3.6) * (1 - GRAD_BOT_REZERVA_BRZINE);
+    const od = ulazU(p);
+    const do_ = izlazIzR(p);
+    for (let i = 0; i < put.cum.length; i++) {
+      if (put.cum[i]! < od) continue;
+      if (put.cum[i]! > do_) break;
+      brzine[i] = Math.min(brzine[i]!, ogrUlaza);
+    }
+  }
+  const prolaziPlana: ProlazPlana[] = prolazi.map((p) => {
+    const ul = koraci[p.ulaz]!;
+    const iz = koraci[p.izlaz]!;
+    const rs = raskrsnicaNaKraju(p.ulaz);
+    const k = r.krakIvice.get(`${ul.ivica}:${ul.smjer === 1 ? 1 : 0}`)?.[1] ?? -1;
+    const linija = linije.findIndex((l) => l.korak === p.ulaz);
+    // Mjesto čekanja: na stop-liniji, inače pred `cekaD` kraka (ispred zebre).
+    let cekanje = linija >= 0 ? linije[linija]!.s : ulazU(p) - 0.3;
+    if (linija < 0 && k >= 0) {
+      const krak = r.lista[rs]!.kraci[k]!;
+      const l0 = stopLinija(povrsina, { ...krak, stopD: krak.cekaD });
+      cekanje = Math.min(cekanje, naLiniji(l0.linija, l0.pravac, ulazU(p) - 60) ?? cekanje);
+    }
+    return {
+      r: rs,
+      ulaz: k,
+      cekanje,
+      izlaz: r.krakIvice.get(`${iz.ivica}:${iz.smjer === 1 ? 0 : 1}`)?.[1] ?? -1,
+      ulazKorak: p.ulaz,
+      izlazKorak: p.izlaz,
+      od: ulazU(p),
+      do_: izlazIzR(p),
+      uPrstenu: m.ivice[ul.ivica]!.kruzni,
+      linija,
+    };
+  });
+  return { put, brzine, linije, najave, prolazi: prolaziPlana, osovinom: osloncaOsovinom, neslaganja, nivoi };
 }
 
 /** Brzina koju bot smije sada: najmanja od onih ispred, uz usporenje do njih. */
@@ -1065,6 +1322,8 @@ export interface Bot {
   stajao: number[];
   prosao: boolean[];
   zutoStaje: (boolean | null)[];
+  /** Vidio zeleno na prilazu liniji (do `GRAD_PRILAZ_DO`, kao sudija) — o žutom odlučuje samo tada. */
+  vidioZeleno: boolean[];
   gotov: boolean;
   /** Izvlačenje sa ivičnjaka: do kad unazad (pređeni put auta), i volan pri udaru. */
   izvlacenje: { doPredjeno: number; volan: number; od: number; traje: number } | null;
@@ -1083,6 +1342,7 @@ export function noviBot(plan: PlanBota): Bot {
     stajao: plan.linije.map(() => 0),
     prosao: plan.linije.map(() => false),
     zutoStaje: plan.linije.map(() => null),
+    vidioZeleno: plan.linije.map(() => false),
     gotov: false,
     izvlacenje: null,
     izvlacenja: 0,
@@ -1130,6 +1390,15 @@ export function korakBota(b: Bot, r: Raskrsnice, st: SlobodnoVozilo, t: number):
     return { throttle: 0, brake: 0.1, indicator: null, steer: 0 };
   }
   let staniNa: number | null = null;
+  // Zeleno viđeno na prilazu svakoj liniji ispred (i onoj iza bliže).
+  for (let i = 0; i < p.linije.length; i++) {
+    const l = p.linije[i]!;
+    if (l.s - b.s > GRAD_PRILAZ_DO) break;
+    if (!b.prosao[i] && l.krak.kontrola === "semafor") {
+      const sv = zelenaStrelica(r.lista[l.r]!, l.k, t, l.manevar) ? "zeleno" : svjetlo(r.lista[l.r]!, l.k, t, l.manevar);
+      if (sv === "zeleno") b.vidioZeleno[i] = true;
+    }
+  }
   for (let i = 0; i < p.linije.length; i++) {
     if (b.prosao[i]) continue;
     const l = p.linije[i]!;
@@ -1151,7 +1420,11 @@ export function korakBota(b: Bot, r: Raskrsnice, st: SlobodnoVozilo, t: number):
     const sv = zelenaStrelica(r.lista[l.r]!, l.k, t, l.manevar) ? "zeleno" : svjetlo(r.lista[l.r]!, l.k, t, l.manevar);
     const doLinije = l.s - b.s;
     if (sv === "zeleno") b.zutoStaje[i] = null;
-    if (sv === "zuto" && b.zutoStaje[i] === null) b.zutoStaje[i] = doLinije / Math.max(st.v, 0.1) >= YELLOW_COMMIT_TTC * 0.8;
+    // Žuto zatečeno na prilazu: staje (bio je daleko kad se upalilo).
+    if (sv === "zuto" && b.zutoStaje[i] === null) {
+      // Vrijeme do linije kao kod sudije: od nosa do same linije.
+      b.zutoStaje[i] = !b.vidioZeleno[i] || (doLinije + STOP_MARGIN) / Math.max(st.v, 0.1) >= YELLOW_COMMIT_TTC * 0.8;
+    }
     if (sv === "crveno" || (sv === "zuto" && b.zutoStaje[i])) staniNa = l.s;
     b.staje = staniNa === null ? null : { s: l.s, zasto: `semafor ${sv} r${l.r}` };
     break;
