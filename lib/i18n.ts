@@ -242,6 +242,8 @@ export interface Dict {
   gradRuleRed: string;
   gradRuleAmber: string;
   gradRuleStop: string;
+  gradRuleCollision: string;
+  gradRuleRightOfWay: string;
   gradRuleWrongWay: string;
   gradRuleTurnBan: string;
   gradRuleUTurnSignal: string;
@@ -691,6 +693,8 @@ const me: Dict = {
   gradRuleRed: "Na crveno se ne prelazi stop-linija.",
   gradRuleAmber: "Na žuto se prolazi samo kad se ne može bezbjedno stati — a ovdje se moglo.",
   gradRuleStop: "Na znak STOP auto mora potpuno stati ispred stop-linije.",
+  gradRuleCollision: "Udario si drugo vozilo. Drži razmak i propusti onoga ko ima prednost.",
+  gradRuleRightOfWay: "Vozilo koje je imalo prednost moralo je naglo da koči zbog tebe.",
   gradRuleWrongWay: "Jednosmjernom ulicom se vozi samo u dozvoljenom smjeru — na njenom ulazu stoji znak zabrane ulaska.",
   gradRuleTurnBan: "Znak na tom kraku raskrsnice zabranjuje ovaj pravac.",
   gradRuleUTurnSignal: "Polukružno okretanje je zabranjeno u raskrsnici sa semaforom.",
@@ -1130,6 +1134,8 @@ const en: Dict = {
   gradRuleRed: "You may not cross the stop line on red.",
   gradRuleAmber: "On amber you go on only when you cannot stop safely — here you could.",
   gradRuleStop: "At a STOP sign the car must stop completely before the stop line.",
+  gradRuleCollision: "You hit another vehicle. Keep your distance and give way to whoever has priority.",
+  gradRuleRightOfWay: "A vehicle that had priority had to brake hard because of you.",
   gradRuleWrongWay: "A one-way street is driven only in the allowed direction — a no-entry sign stands at its entrance.",
   gradRuleTurnBan: "A sign on that arm of the junction forbids this direction.",
   gradRuleUTurnSignal: "U-turns are forbidden at a junction with traffic lights.",
@@ -1574,6 +1580,8 @@ const sq: Dict = {
   gradRuleRed: "Me dritë të kuqe nuk kalohet vija e ndalimit.",
   gradRuleAmber: "Me dritë të verdhë kalohet vetëm kur nuk mund të ndalosh në siguri — këtu mundeshe.",
   gradRuleStop: "Te shenja STOP makina duhet të ndalojë plotësisht para vijës së ndalimit.",
+  gradRuleCollision: "Godite një automjet tjetër. Mbaj distancën dhe jepi përparësi atij që e ka.",
+  gradRuleRightOfWay: "Një automjet që kishte përparësi u detyrua të frenonte fort për shkakun tënd.",
   gradRuleWrongWay: "Rruga njëkahëshe ngiset vetëm në drejtimin e lejuar — në hyrje të saj është shenja e ndalimit të hyrjes.",
   gradRuleTurnBan: "Shenja në atë krah të kryqëzimit e ndalon këtë drejtim.",
   gradRuleUTurnSignal: "Kthimi prapa është i ndaluar në kryqëzim me semafor.",
@@ -2020,6 +2028,8 @@ const ru: Dict = {
   gradRuleRed: "На красный нельзя пересекать стоп-линию.",
   gradRuleAmber: "На жёлтый проезжают, только если нельзя безопасно остановиться — а здесь было можно.",
   gradRuleStop: "У знака STOP машина должна полностью остановиться перед стоп-линией.",
+  gradRuleCollision: "Вы столкнулись с другим автомобилем. Держите дистанцию и уступайте тому, у кого приоритет.",
+  gradRuleRightOfWay: "Автомобиль, имевший преимущество, был вынужден резко затормозить из-за вас.",
   gradRuleWrongWay: "По улице с односторонним движением едут только в разрешённом направлении — на въезде стоит знак «въезд запрещён».",
   gradRuleTurnBan: "Знак на этом въезде в перекрёсток запрещает это направление.",
   gradRuleUTurnSignal: "Разворот запрещён на перекрёстке со светофором.",

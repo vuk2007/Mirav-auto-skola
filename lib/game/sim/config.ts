@@ -2128,3 +2128,22 @@ export const GRAD_NPC_PRILAZ_SUKOBA = 15;
  * su već u raskrsnici) — inače bi stao preko linije, u raskrsnici.
  */
 export const GRAD_NPC_KOCENJE_UDIO = 0.8;
+/**
+ * Zaštita od sudara drugih vozača: tijelo na novom položaju, uvećano ovoliko
+ * sa svake strane [m], ne smije dodirnuti tijelo drugog (uvećano isto) —
+ * dvije rezerve pokrivaju i njegov korak u istom trenutku.
+ */
+export const GRAD_NPC_ZAKLON = 0.3;
+/** Ugao ulice u čvoru koji nije raskrsnica veći od ovoga [°] se zaobljava (luk osovine, trake koncentrično). */
+export const GRAD_BOT_UGAO_CVORA = 20;
+/** Udio od `GRAD_NPC_NAJVISE` po nivou (stavka 7; zona dolazi u 7e). */
+export const GRAD_NPC_GUSTINA_NIVO: Readonly<Record<Level, number>> = { 1: 0.3, 2: 0.45, 3: 0.6, 4: 0.8, 5: 1 };
+/** …i po dobu dana: noću je ulica prazna. */
+export const GRAD_NPC_GUSTINA_DOBA: Readonly<Record<"dan" | "sumrak" | "noc", number>> = { dan: 1, sumrak: 0.8, noc: 0.4 };
+/** Isti sudar sa istim vozilom ne prijavljuje se ponovo ovoliko [s]. */
+export const GRAD_SUDAR_PONOVO = 3;
+/**
+ * Oduzeto prvenstvo (stavka 7c): drugi vozač koji ima prednost morao je zbog
+ * igrača kočiti jače od ovoga [m/s²] — više od udobnog usporenja.
+ */
+export const GRAD_PRVENSTVO_KOCENJE = 3.5;

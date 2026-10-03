@@ -86,7 +86,10 @@ export type VrstaGradskogPrekrsaja =
   | "wrongLaneForTurn"
   | "laneDisciplineRoundabout"
   | "crossingSolidLine"
-  | "busLane";
+  | "busLane"
+  /** Stavka 7: sudar sa drugim vozilom, i oduzeto prvenstvo (sude se uz saobraćaj). */
+  | "collision"
+  | "rightOfWay";
 
 export interface GradskiPrekrsaj {
   vrsta: VrstaGradskogPrekrsaja;

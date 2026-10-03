@@ -3,8 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import {
+  CAR_LENGTH,
+  CAR_WIDTH,
   DT,
   GRAD_BRZINA_PODRAZUMIJEVANA,
+  GRAD_NPC_GUSTINA_DOBA,
+  GRAD_NPC_GUSTINA_NIVO,
+  GRAD_SUDAR_PONOVO,
   GRAD_NIVO,
   GRAD_POLA_KADRA,
   GRAD_ZUM,
@@ -21,6 +26,9 @@ import { procitaj } from "@/lib/game/grad/paket";
 import { ulicaNa } from "@/lib/game/grad/povrsina";
 import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { svijetGrada } from "@/lib/game/grad/svijet";
+import { IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, type Tijelo } from "@/lib/game/grad/saobracaj";
+import type { Manevar } from "@/lib/game/grad/mreza";
+import { polygonsOverlap, rectCorners } from "@/lib/game/sim/geometry";
 import { naslovPrekrsaja, praviloPrekrsaja } from "@/lib/game/ui/gradPrekrsaji";
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
 import type { BojeDekora } from "@/lib/game/grad/dekor";
@@ -130,6 +138,30 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const { paket, mreza, povrsina, raskrsnice, crtez, zaSudiju } = svijet;
       const sudija = noviSudija(nivoRef.current);
       let prijavljeno = 0;
+      // Drugi učesnici (stavka 7): vozila sa ciljem oko igrača.
+      const gustina = () => GRAD_NPC_GUSTINA_NIVO[nivoRef.current] * GRAD_NPC_GUSTINA_DOBA[uslovRef.current.doba];
+      const saobracaj = noviSaobracaj(svijet, 1, gustina());
+      /** Zadnji sudar sa svakim vozilom [s] — isti se ne prijavljuje ponovo odmah. */
+      const sudari = new Map<number, number>();
+      // Oduzeto prvenstvo: na kraju prolaza igrača kroz raskrsnicu — da li je
+      // neko ko je imao prednost (ili je već bio u njoj) morao naglo kočiti
+      // zbog njega. Manevar igrača se tad zna.
+      let ulazak: { r: number; t: number } | null = null;
+      sudija.naUlazu = (r) => {
+        ulazak = { r, t: koraka_ * DT };
+      };
+      sudija.dnevnik = (p) => {
+        const k = oduzetoPrvenstvo(saobracaj, {
+          r: p.r,
+          ulaz: p.ulaz,
+          izlaz: p.izlaz,
+          manevar: p.manevar as Manevar,
+          od: ulazak?.r === p.r ? ulazak.t - 3 : p.t - 10,
+          do_: p.t,
+        });
+        if (k) sudija.prekrsaji.push({ vrsta: "rightOfWay", ozbiljnost: "fail", t: p.t, x: st.x, y: st.y, detalji: { vozilo: k.id } });
+        saobracaj.kocenja = saobracaj.kocenja.filter((k) => k.t > p.t - 30);
+      };
       if (otkazano) return;
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -152,6 +184,18 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const start = najblizaIvica(mreza, tacka);
       if (!start) throw new Error("mreža nema nijednu voznu ulicu");
       const st: SlobodnoVozilo = slobodnoNaIvici(povrsina, start.ivica, 1, start.s);
+      const tijeloIgraca = (): Tijelo => ({
+        id: IGRAC,
+        x: st.x,
+        y: st.y,
+        ugao: st.ugao,
+        v: st.v,
+        duzina: CAR_LENGTH,
+        sirina: CAR_WIDTH,
+        nivo: mreza.ivice[sudija.ivicaAuta ?? start.ivica]!.nivo,
+      });
+      // Prvo popunjavanje saobraćaja dok se još učitava.
+      korakSaobracaja(saobracaj, { x: st.x, y: st.y }, tijeloIgraca());
       let prije = pozaSlobodno(st);
       let sada = prije;
       let ugaoKamere = Math.atan2(sada.heading.y, sada.heading.x);
@@ -189,6 +233,27 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         while (acc >= DT && koraka < 8) {
           prije = sada;
           korakSlobodno(povrsina, st, inputRef.current, { kisa: uslovRef.current.kisa });
+          saobracaj.gustina = gustina();
+          korakSaobracaja(saobracaj, { x: st.x, y: st.y }, tijeloIgraca(), {
+            tijelo: tijeloIgraca(),
+            ivica: sudija.ivica,
+            smjer: sudija.smjer,
+            zmigavac: inputRef.current.indicator,
+          });
+          if (saobracaj.kocenja.length > 200) saobracaj.kocenja.splice(0, 100);
+          // Sudar sa drugim vozilom: prekršaj, i auto staje.
+          const ja = rectCorners({ x: st.x, y: st.y }, { x: Math.cos(st.ugao), y: Math.sin(st.ugao) }, CAR_LENGTH, CAR_WIDTH);
+          const nivoIgraca = tijeloIgraca().nivo;
+          for (const n of saobracaj.npc) {
+            if (n.nivo !== nivoIgraca || Math.hypot(n.x - st.x, n.y - st.y) > CAR_LENGTH + 0.5) continue;
+            if (!polygonsOverlap(ja, rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH))) continue;
+            st.v = 0;
+            const t = koraka_ * DT;
+            if (t - (sudari.get(n.id) ?? -Infinity) > GRAD_SUDAR_PONOVO) {
+              sudija.prekrsaji.push({ vrsta: "collision", ozbiljnost: "fail", t, x: st.x, y: st.y, detalji: {} });
+            }
+            sudari.set(n.id, t);
+          }
           koraka_ += 1;
           sudija.nivo = nivoRef.current;
           sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator);
@@ -227,6 +292,13 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         renderer?.draw({
           kadar: k,
           simT: koraka_ * DT,
+          vozila: saobracaj.npc.map((n) => ({
+            pos: { x: n.x, y: n.y },
+            heading: { x: Math.cos(n.ugao), y: Math.sin(n.ugao) },
+            boja: n.boja,
+            koci: n.a < -0.5 || n.v < 0.1,
+            zmigavac: n.zmigavac,
+          })),
           osvjetljenje: { ...uslovRef.current, sekunde: now / 1000 },
           igrac: {
             pos,

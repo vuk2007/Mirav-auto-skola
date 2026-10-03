@@ -24,6 +24,8 @@ const NASLOV: Readonly<Record<VrstaGradskogPrekrsaja, keyof Dict>> = {
   laneDisciplineRoundabout: "vioRoundaboutLane",
   crossingSolidLine: "vioCrossingSolidLine",
   busLane: "vioBusLane",
+  collision: "vioCollision",
+  rightOfWay: "vioRightOfWay",
 };
 
 const MANEVAR: Readonly<Record<string, keyof Dict>> = {
@@ -82,5 +84,9 @@ export function praviloPrekrsaja(p: GradskiPrekrsaj, t: Dict): string {
       return t.gradRuleSolidLine;
     case "busLane":
       return t.gradRuleBusLane;
+    case "collision":
+      return t.gradRuleCollision;
+    case "rightOfWay":
+      return t.gradRuleRightOfWay;
   }
 }

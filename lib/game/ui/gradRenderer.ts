@@ -85,6 +85,9 @@ const BOJE = {
   igrac: "#2f6fd0",
 } as const;
 
+/** Boje drugih vozila — prigušene, da se plavi auto igrača izdvaja. */
+const BOJE_VOZILA: readonly string[] = ["#e9e6df", "#3b3d42", "#9aa0a6", "#a33a32", "#c9b48a", "#4f6b4a", "#6b5a7a", "#d7d3c8"];
+
 /** Površine po vrsti iz paketa. Vrsta koje nema ne crta se. */
 const POVRSINE: Record<string, string> = {
   voda: BOJE.voda,
@@ -301,6 +304,14 @@ export interface GradScena {
   /** Vrijeme simulacije [s] — po njemu rade semafori. */
   simT: number;
   osvjetljenje: Osvjetljenje;
+  /** Drugi vozači (stavka 7): gdje su, kuda gledaju, boja (indeks), kočnica, žmigavac. */
+  vozila?: readonly {
+    pos: Point;
+    heading: Point;
+    boja: number;
+    koci: boolean;
+    zmigavac: "left" | "right" | null;
+  }[];
   /** Auto igrača; `null` u editoru — grad bez auta. */
   igrac: {
     pos: Point;
@@ -739,7 +750,7 @@ export async function createGradRenderer(
       app.renderer.resize(cssW, cssH, dpr);
     },
 
-    draw({ kadar: k, igrac, osvjetljenje: o, simT }) {
+    draw({ kadar: k, igrac, osvjetljenje: o, simT, vozila = [] }) {
       kadar += 1;
       const pogled = vidljivo(k);
       vidljivih = 0;
@@ -853,49 +864,77 @@ export async function createGradRenderer(
       stubovi.stroke({ width: 0.12, color: "#4a4d52" });
       u.uUpaljeno = GRAD_PROZORI_UPALJENI[o.doba];
 
-      dinamika.clear();
-      farovi.clear();
-      snop.visible = false;
-      if (igrac) {
-        const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
+      /** Auto na `pos`: točkovi (kad je `tocak` zadat), karoserija, svjetla, žmigavac. */
+      const nacrtajAuto = (
+        pos: Point,
+        heading: Point,
+        boja: string,
+        koci: boolean,
+        rikverc: boolean,
+        tocak: number | null,
+        zmigavac: "left" | "right" | null,
+      ) => {
+        const ugao = Math.atan2(heading.y, heading.x);
         const cos = Math.cos(ugao);
         const sin = Math.sin(ugao);
-        dinamika.setTransform(cos, sin, -sin, cos, igrac.pos.x, igrac.pos.y);
-        // Prednji točkovi, ispod karoserije: vire sa strane kad su okrenuti.
-        const osovina = GRAD_MEDJUOSOVINSKO / 2;
-        const tc = Math.cos(igrac.tocak);
-        const ts = Math.sin(igrac.tocak);
-        const tDuz = 0.34;
-        const tPop = 0.11;
-        for (const strana of [-1, 1]) {
-          const cx = osovina;
-          const cy = strana * (CAR_WIDTH / 2 - 0.12);
-          dinamika
-            .poly([
-              cx + tDuz * tc - tPop * ts, cy + tDuz * ts + tPop * tc,
-              cx - tDuz * tc - tPop * ts, cy - tDuz * ts + tPop * tc,
-              cx - tDuz * tc + tPop * ts, cy - tDuz * ts - tPop * tc,
-              cx + tDuz * tc + tPop * ts, cy + tDuz * ts - tPop * tc,
-            ])
-            .fill("#1d1d1f");
+        dinamika.setTransform(cos, sin, -sin, cos, pos.x, pos.y);
+        if (tocak !== null) {
+          // Prednji točkovi, ispod karoserije: vire sa strane kad su okrenuti.
+          const osovina = GRAD_MEDJUOSOVINSKO / 2;
+          const tc = Math.cos(tocak);
+          const ts = Math.sin(tocak);
+          const tDuz = 0.34;
+          const tPop = 0.11;
+          for (const strana of [-1, 1]) {
+            const cx = osovina;
+            const cy = strana * (CAR_WIDTH / 2 - 0.12);
+            dinamika
+              .poly([
+                cx + tDuz * tc - tPop * ts, cy + tDuz * ts + tPop * tc,
+                cx - tDuz * tc - tPop * ts, cy - tDuz * ts + tPop * tc,
+                cx - tDuz * tc + tPop * ts, cy - tDuz * ts - tPop * tc,
+                cx + tDuz * tc + tPop * ts, cy + tDuz * ts - tPop * tc,
+              ])
+              .fill("#1d1d1f");
+          }
         }
         dinamika
           .roundRect(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH, CAR_WIDTH * 0.25)
-          .fill(BOJE.igrac)
+          .fill(boja)
           .stroke({ width: 0.08, color: "rgba(0,0,0,0.4)" });
         dinamika.rect(CAR_LENGTH * 0.1, -CAR_WIDTH * 0.34, CAR_LENGTH * 0.2, CAR_WIDTH * 0.68).fill("rgba(255,255,255,0.7)");
         // Zadnja svjetla: crvena kad se koči, bijela u rikvercu. U rikvercu kočnica
         // vozi unazad, pa crveno tada ne bi značilo ništa.
-        const stop = igrac.rikverc ? "#ffffff" : igrac.koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
+        const stop = rikverc ? "#ffffff" : koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
         dinamika.rect(-CAR_LENGTH / 2, -CAR_WIDTH * 0.42, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
         dinamika.rect(-CAR_LENGTH / 2, CAR_WIDTH * 0.2, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
         // Žmigavac: narandžasti ugao sprijeda i pozadi, na strani koja je upaljena.
-        if (igrac.zmigavac && zmigavacSvijetli(simT)) {
-          const w = igrac.zmigavac === "left" ? -CAR_WIDTH / 2 : CAR_WIDTH / 2 - 0.3;
+        if (zmigavac && zmigavacSvijetli(simT)) {
+          const w = zmigavac === "left" ? -CAR_WIDTH / 2 : CAR_WIDTH / 2 - 0.3;
           dinamika.rect(CAR_LENGTH / 2 - 0.35, w, 0.35, 0.3).fill("#ffa21a");
           dinamika.rect(-CAR_LENGTH / 2, w, 0.35, 0.3).fill("#ffa21a");
         }
         dinamika.resetTransform();
+      };
+
+      dinamika.clear();
+      farovi.clear();
+      snop.visible = false;
+      // Drugi vozači (stavka 7): ista karoserija, njihova boja; kočnica i
+      // žmigavac kao kod igrača, u mraku i kratak snop farova.
+      for (const v of vozila) {
+        nacrtajAuto(v.pos, v.heading, BOJE_VOZILA[v.boja % BOJE_VOZILA.length]!, v.koci, false, null, v.zmigavac);
+        if (sSvjetla.visible) {
+          const c = v.heading.x;
+          const sn = v.heading.y;
+          farovi.circle(v.pos.x + c * (CAR_LENGTH / 2 + 3), v.pos.y + sn * (CAR_LENGTH / 2 + 3), 3).fill({ color: boje.farovi, alpha: mrak ? 0.25 : 0.1 });
+        }
+      }
+      if (igrac) {
+        const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
+        const cos = Math.cos(ugao);
+        const sin = Math.sin(ugao);
+        nacrtajAuto(igrac.pos, igrac.heading, BOJE.igrac, igrac.koci, igrac.rikverc, igrac.tocak, igrac.zmigavac);
 
         // Farovi: meki izduženi snop ispred auta (sjaj razvučen u elipsu), jači
         // u mraku nego po danu kad pada kiša. Upaljeni u mraku i po kiši, kao
