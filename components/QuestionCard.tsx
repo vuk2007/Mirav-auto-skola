@@ -7,13 +7,9 @@ import { badgeKey } from "@/lib/categories";
 import { PENALTIES_ENABLED } from "@/lib/config";
 import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
-import {
-  hasTranslation,
-  localizedOption,
-  localizedText,
-  questionPoints,
-} from "@/lib/questions";
+import { bilingualOption, bilingualText, questionPoints } from "@/lib/questions";
 import { OPTION_KEYS, type OptionKey, type Question } from "@/lib/types";
+import BilingualText from "./BilingualText";
 import OptionButton from "./OptionButton";
 import OrderingInput from "./OrderingInput";
 
@@ -51,7 +47,7 @@ export default function QuestionCard({
 }: QuestionCardProps) {
   const points = questionPoints(question);
   const [width, height] = question.image ? imageSize(question.image) : [0, 0];
-  const untranslated = !hasTranslation(question, lang);
+  const text = bilingualText(question, lang);
 
   return (
     <article className="panel p-4 sm:p-6">
@@ -64,11 +60,11 @@ export default function QuestionCard({
       </header>
 
       <h2 className="mb-1 text-lg leading-snug font-bold sm:text-xl">
-        {localizedText(question, lang)}
+        <BilingualText text={text} />
       </h2>
 
       {/* Fallback na crnogorski ne smije biti tih. */}
-      {untranslated && <p className="mb-3 text-xs text-muted">{t.translationMissing}</p>}
+      {text.fallback && <p className="mb-3 text-xs text-muted">{t.translationMissing}</p>}
 
       {question.image && (
         <div className="mt-4 mb-5 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
@@ -105,7 +101,7 @@ export default function QuestionCard({
             <OptionButton
               key={key}
               optionKey={key}
-              text={localizedOption(question, key, lang)}
+              text={bilingualOption(question, key, lang)}
               selected={selected === key}
               revealed={revealed}
               isCorrect={question.correct === key}

@@ -47,6 +47,71 @@ export function localizedOption(q: ChoiceQuestion, key: OptionKey, lang: Lang): 
   return q[`options_${lang}`]?.[key] ?? q.options[key];
 }
 
+/**
+ * Tekst pitanja ili odgovora spreman za prikaz: glavni tekst i, ispod njega,
+ * prevod kao pomoć.
+ *
+ * Na pravom ispitu teorija se polaže samo na crnogorskom ili albanskom. Zato:
+ *  - `me` — samo crnogorski,
+ *  - `sq` — samo albanski (zvanični ispitni jezik); bez prevoda pada na
+ *    crnogorski i to javlja kroz `fallback`,
+ *  - `en` / `ru` — crnogorski kao glavni tekst, prevod ispod. Kandidat uči
+ *    pitanje onako kako će ga vidjeti na ispitu.
+ */
+export interface Bilingual {
+  primary: string;
+  /** Jezik glavnog teksta — za `lang` atribut (čitači ekrana, rastavljanje riječi). */
+  primaryLang: Lang;
+  /** Prevod ispod glavnog teksta; `null` kad ga nema ili ne treba. */
+  secondary: string | null;
+  secondaryLang: Lang | null;
+  /** Albanski je izabran, a prevoda nema — prikazan je crnogorski. */
+  fallback: boolean;
+}
+
+/** Jezici kojih nema na pravom ispitu — tu je prevod samo pomoć uz crnogorski. */
+export function isHelperLang(lang: Lang): boolean {
+  return lang === "en" || lang === "ru";
+}
+
+/** Prijavljeni nedostajući prevodi — svaki se javlja jednom, ne na svakom crtanju. */
+const reportedMissing = new Set<string>();
+
+function reportMissing(q: Question, lang: Lang, part: string): void {
+  const key = `${q.id}:${lang}:${part}`;
+  if (reportedMissing.has(key)) return;
+  reportedMissing.add(key);
+  console.warn(`[MIRAV] Pitanje ${q.id} nema prevod (${lang}) za ${part} — prikazan samo crnogorski.`);
+}
+
+function bilingual(q: Question, lang: Lang, original: string, translated: string | undefined, part: string): Bilingual {
+  if (isHelperLang(lang)) {
+    if (!translated) reportMissing(q, lang, part);
+    return {
+      primary: original,
+      primaryLang: "me",
+      secondary: translated ?? null,
+      secondaryLang: translated ? lang : null,
+      fallback: false,
+    };
+  }
+  if (lang === "sq" && translated) {
+    return { primary: translated, primaryLang: "sq", secondary: null, secondaryLang: null, fallback: false };
+  }
+  return { primary: original, primaryLang: "me", secondary: null, secondaryLang: null, fallback: lang === "sq" };
+}
+
+/** Tekst pitanja po pravilu iz `Bilingual`. */
+export function bilingualText(q: Question, lang: Lang): Bilingual {
+  return bilingual(q, lang, q.text, lang === "me" ? undefined : q[`text_${lang}`], "tekst");
+}
+
+/** Ponuđeni odgovor po pravilu iz `Bilingual`. */
+export function bilingualOption(q: ChoiceQuestion, key: OptionKey, lang: Lang): Bilingual {
+  const translated = lang === "me" ? undefined : q[`options_${lang}`]?.[key];
+  return bilingual(q, lang, q.options[key], translated, `odgovor ${key}`);
+}
+
 /** Da li pitanje uopšte ima prevod na dati jezik (koristi se za napomenu u UI-u). */
 export function hasTranslation(q: Question, lang: Lang): boolean {
   if (lang === "me") return true;

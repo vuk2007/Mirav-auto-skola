@@ -1,11 +1,13 @@
 "use client";
 
 import type { Dict } from "@/lib/i18n";
+import type { Bilingual } from "@/lib/questions";
+import BilingualText from "./BilingualText";
 import type { OptionKey } from "@/lib/types";
 
 interface OptionButtonProps {
   optionKey: OptionKey;
-  text: string;
+  text: Bilingual;
   /** Da li je kandidat izabrao baš ovu opciju. */
   selected: boolean;
   /** Prikaži tačno/netačno bojenje (poslije provjere ili u vježbi). */
@@ -34,7 +36,9 @@ export default function OptionButton({
   } else if (revealed && selected && !isCorrect) {
     tone = "border-red bg-red-soft";
   } else if (revealed) {
-    tone = "border-line bg-panel opacity-60";
+    // Siva boja teksta, ne providnost: providnost bi spustila prevod ispod
+    // kontrasta 4.5:1 (vidi BilingualText).
+    tone = "border-line bg-panel text-muted";
   } else if (selected) {
     tone = "border-blue bg-blue-soft";
   }
@@ -69,7 +73,9 @@ export default function OptionButton({
             da ga je kandidat izabrao. */}
         {selected ? "✕" : ""}
       </span>
-      <span className="pt-0.5 text-[0.9375rem] leading-snug sm:text-base">{text}</span>
+      <span className="pt-0.5 text-[0.9375rem] leading-snug sm:text-base">
+        <BilingualText text={text} />
+      </span>
       {revealed && isCorrect && (
         <span className="tag ml-auto flex-none self-center text-green">{t.correctAnswerLabel}</span>
       )}

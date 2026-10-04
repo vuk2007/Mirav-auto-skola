@@ -5,13 +5,9 @@ import Image from "next/image";
 import { badgeKey } from "@/lib/categories";
 import { imageSize } from "@/lib/imageSizes";
 import type { Dict, Lang } from "@/lib/i18n";
-import {
-  hasTranslation,
-  localizedOption,
-  localizedText,
-  type ExamSlot,
-} from "@/lib/questions";
+import { bilingualOption, bilingualText, type ExamSlot } from "@/lib/questions";
 import { OPTION_KEYS, type Answer, type Question } from "@/lib/types";
+import BilingualText from "./BilingualText";
 import OrderingInput from "./OrderingInput";
 
 interface ExamPageProps {
@@ -128,15 +124,16 @@ function ExamQuestion({ slot, answers, drafts, onAnswer, onOrderingChange, t, la
   const { question, number } = slot;
   const answer = answers.get(question.id);
   const headingId = `${examQuestionAnchor(number)}-naslov`;
+  const text = bilingualText(question, lang);
 
   return (
     <section id={examQuestionAnchor(number)} className="min-w-0 scroll-mt-4">
       <h3 id={headingId} className="mb-3 text-base leading-snug font-bold sm:text-lg">
         <span className="font-display mr-1.5 text-blue">{number}.</span>
-        {localizedText(question, lang)}
+        <BilingualText text={text} />
       </h3>
 
-      {!hasTranslation(question, lang) && (
+      {text.fallback && (
         <p className="-mt-2 mb-3 text-xs text-muted">{t.translationMissing}</p>
       )}
 
@@ -182,7 +179,7 @@ function ExamQuestion({ slot, answers, drafts, onAnswer, onOrderingChange, t, la
                   {checked && <span className="h-2.5 w-2.5 rounded-full bg-blue" />}
                 </span>
                 <span className="text-[0.9375rem] leading-snug">
-                  {localizedOption(question, key, lang)}
+                  <BilingualText text={bilingualOption(question, key, lang)} />
                 </span>
               </label>
             );
