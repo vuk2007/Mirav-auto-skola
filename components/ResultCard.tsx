@@ -8,12 +8,13 @@ import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import {
   formatSequence,
-  localizedOption,
-  localizedText,
+  bilingualOption,
+  bilingualText,
   questionPoints,
   type ExamSlot,
 } from "@/lib/questions";
 import { OPTION_KEYS, type AnswerRecord, type Question } from "@/lib/types";
+import BilingualText from "./BilingualText";
 
 interface ResultCardProps {
   questions: Question[];
@@ -217,7 +218,7 @@ export default function ResultCard({
                       {numberOf.has(q.id) && (
                         <span className="font-display mr-1.5 text-blue">{numberOf.get(q.id)}.</span>
                       )}
-                      {localizedText(q, lang)}
+                      <BilingualText text={bilingualText(q, lang)} />
                     </p>
 
                     {q.image && (
@@ -272,7 +273,7 @@ export default function ResultCard({
                               </span>
                               <span>
                                 <strong className="mr-1 uppercase">{key})</strong>
-                                {localizedOption(q, key, lang)}
+                                <BilingualText text={bilingualOption(q, key, lang)} />
                               </span>
                             </li>
                           );

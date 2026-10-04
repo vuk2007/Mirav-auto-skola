@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { EXAM_PAGE_COUNT, EXAM_QUESTION_COUNT } from "./config";
-import { buildExam, examCards, groupId } from "./questions";
-import type { Question } from "./types";
+import { bilingualOption, bilingualText, buildExam, examCards, groupId } from "./questions";
+import { isChoice, type Question } from "./types";
 
 /** Prava baza — sastav ispita zavisi od nje, pa se testira nad njom. */
 const QUESTIONS: Question[] = JSON.parse(
@@ -90,5 +90,51 @@ describe("buildExam — sastav po uzoru na pravi test", () => {
       slots.some((s) => s.question.type === "ordering"),
     );
     expect(sRedoslijedom).toBe(true);
+  });
+});
+
+describe("dvojezični prikaz — ispit se polaže samo na ME ili AL", () => {
+  const q = QUESTIONS.find((x) => x.id === 1)!;
+
+  it("ME: samo crnogorski", () => {
+    expect(bilingualText(q, "me")).toMatchObject({ primary: q.text, secondary: null });
+  });
+
+  it("AL: samo albanski", () => {
+    expect(bilingualText(q, "sq")).toMatchObject({ primary: q.text_sq, primaryLang: "sq", secondary: null });
+  });
+
+  it("EN/RU: crnogorski gore, prevod ispod — i za pitanje i za odgovore", () => {
+    for (const lang of ["en", "ru"] as const) {
+      expect(bilingualText(q, lang)).toMatchObject({
+        primary: q.text,
+        primaryLang: "me",
+        secondary: q[`text_${lang}`],
+        secondaryLang: lang,
+      });
+      if (!isChoice(q)) continue;
+      expect(bilingualOption(q, "b", lang)).toMatchObject({
+        primary: q.options.b,
+        secondary: q[`options_${lang}`]!.b,
+      });
+    }
+  });
+
+  it("bez prevoda: samo crnogorski, bez praznog reda", () => {
+    const bezPrevoda = { ...q, text_en: undefined };
+    const out = bilingualText(bezPrevoda, "en");
+    expect(out).toMatchObject({ primary: q.text, secondary: null, fallback: false });
+  });
+
+  it("nijednom pitanju ne fali EN/RU prevod (lista po jeziku ako fali)", () => {
+    const fali: Record<string, number[]> = { en: [], ru: [] };
+    for (const x of QUESTIONS) {
+      for (const lang of ["en", "ru"] as const) {
+        const nemaOdgovor =
+          isChoice(x) && (["a", "b", "c"] as const).some((k) => !x[`options_${lang}`]?.[k]);
+        if (!x[`text_${lang}`] || nemaOdgovor) fali[lang]!.push(x.id);
+      }
+    }
+    expect(fali).toEqual({ en: [], ru: [] });
   });
 });

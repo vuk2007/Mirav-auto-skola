@@ -15,6 +15,7 @@ import {
   buildExam,
   byIds,
   examCards,
+  isHelperLang,
   ExamBuildError,
   type ExamSlot,
   isAnswerCorrect,
@@ -47,6 +48,7 @@ import Controls from "./Controls";
 import { LinkKazne } from "./PenaltyLoader";
 import ExamBriefing from "./ExamBriefing";
 import ExamPage, { examQuestionAnchor } from "./ExamPage";
+import { ExamLanguageModal, ExamLanguageStrip } from "./ExamLanguageNotice";
 import SimulatorShell from "./sim/SimulatorShell";
 import { GamePage } from "./game/GameLoader";
 import Landing from "./Landing";
@@ -112,6 +114,22 @@ export default function Quiz({ compact = false }: QuizProps) {
   const isPractice = mode === "vjezba";
   const isSimulator = mode === "simulator";
   const isGame = mode === "igra";
+
+  // ── Upozorenje o jeziku ispita (EN/RU) ─────────────────────────────────────
+  /**
+   * Otvoreno upozorenje i šta se radi poslije potvrde. Na EN/RU vježba i ispit
+   * kreću tek kad kandidat potvrdi; usred sesije potvrda samo zatvara modal.
+   * Ništa se ne pamti — upozorenje ide pri svakom pokretanju.
+   */
+  const [languageNotice, setLanguageNotice] = useState<{ then: () => void } | null>(null);
+
+  const withLanguageNotice = useCallback(
+    (start: () => void) => {
+      if (isHelperLang(lang)) setLanguageNotice({ then: start });
+      else start();
+    },
+    [lang],
+  );
 
   // ── Učitavanje zapamćenog stanja (samo na klijentu) ───────────────────────
   // Jezik čita LangProvider; ovdje se vraćaju rezultat i sačuvana vježba.
@@ -423,6 +441,19 @@ export default function Quiz({ compact = false }: QuizProps) {
     setScrollTarget(null);
   }, [scrollTarget, examPage]);
 
+  /**
+   * Prelazak na EN/RU usred vježbe ili ispita: upozorenje jednom, kao
+   * obavještenje. Tajmer teče dalje i odgovori ostaju — modal samo prekrije
+   * ekran dok se ne potvrdi.
+   */
+  const prevLang = useRef(lang);
+  useEffect(() => {
+    if (prevLang.current === lang) return;
+    prevLang.current = lang;
+    const inSession = screen === "kviz" && (mode === "vjezba" || mode === "simulacija");
+    if (inSession && isHelperLang(lang)) setLanguageNotice({ then: () => {} });
+  }, [lang, screen, mode]);
+
   // Predaja se dešava na dnu duge stranice testa — rezultat mora krenuti od vrha.
   useEffect(() => {
     if (screen === "rezultat") rootRef.current?.scrollIntoView({ block: "start" });
@@ -545,8 +576,8 @@ export default function Quiz({ compact = false }: QuizProps) {
           lang={lang}
           category={category}
           onCategoryChange={setCategory}
-          onStartPractice={() => void startPractice(null)}
-          onResumePractice={() => void startPractice(saved)}
+          onStartPractice={() => withLanguageNotice(() => void startPractice(null))}
+          onResumePractice={() => withLanguageNotice(() => void startPractice(saved))}
           onStartExam={() => void prepareExam()}
           onStartSimulator={() => void startSimulator()}
           onStartGame={startGame}
@@ -561,7 +592,7 @@ export default function Quiz({ compact = false }: QuizProps) {
         <ExamBriefing
           t={t}
           lang={lang}
-          onStart={startExam}
+          onStart={() => withLanguageNotice(startExam)}
           starting={starting}
           totalPoints={totalPoints(pool)}
         />
@@ -599,6 +630,8 @@ export default function Quiz({ compact = false }: QuizProps) {
                   label={`${t.question} ${index + 1} / ${pool.length}`}
                   ariaLabel={t.progress}
                 />
+
+                <ExamLanguageStrip lang={lang} />
 
                 <QuestionCard
                   key={current.id}
@@ -649,6 +682,8 @@ export default function Quiz({ compact = false }: QuizProps) {
                   ariaLabel={t.progress}
                 />
               </div>
+
+              <ExamLanguageStrip lang={lang} />
 
               <ExamPage
                 key={examPage}
@@ -717,6 +752,17 @@ export default function Quiz({ compact = false }: QuizProps) {
       )}
 
       <LiteratureModal open={literatureOpen} onClose={() => setLiteratureOpen(false)} t={t} />
+
+      {languageNotice && (
+        <ExamLanguageModal
+          lang={lang}
+          onConfirm={() => {
+            const { then } = languageNotice;
+            setLanguageNotice(null);
+            then();
+          }}
+        />
+      )}
     </div>
   );
 }
