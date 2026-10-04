@@ -6,13 +6,14 @@
  *   node scripts/gen-exam-meta.mjs --report   # samo ispiši nalaz, ne diraj bazu
  *   node scripts/gen-exam-meta.mjs            # upiši u questions.json
  *
- * `kind` je vrsta pitanja (znak / teorija / policajac / kosnik / situacija) i
- * NEZAVISAN je od `area` (I/II/III). `area` ostaje kakav jeste i koristi se u
- * vježbi; `kind` određuje segmente ispita (EXAM_STRUCTURE u lib/config.ts).
+ * `kind` je vrsta pitanja (znak / teorija / opste / policajac / kosnik /
+ * semafor / situacija) i NEZAVISAN je od `area` (I/II/III). `area` ostaje kakav
+ * jeste i koristi se u vježbi; `kind` određuje segmente ispita (EXAM_STRUCTURE
+ * u lib/config.ts).
  *
- * `firstAid` označava pitanja o prvoj pomoći. Ono NE dira `kind` — ta pitanja
- * ostaju `teorija` i i dalje ulaze u teorijski segment ispita, kao i na pravom
- * ispitu. Služi samo kao zaseban filter u vježbi.
+ * `firstAid` označava pitanja o prvoj pomoći i služi kao zaseban filter u
+ * vježbi. Na ispitu ta pitanja idu u segment opštih znanja (`opste`, Q39–40),
+ * zajedno sa teorijom o vozilu sa kraja kataloga.
  *
  * `subOf` je id glavnog pitanja kod podpitanja. U zvaničnom katalogu jedna
  * slika nosi dva pitanja („kako ćete postupiti…" + „redoslijed prolaska…"), a
@@ -66,6 +67,25 @@ const OVERRIDES = {
 };
 
 /**
+ * Pitanja uz sliku semafora — segment „semafori" na ispitu (Q37–38).
+ *
+ * Eksplicitna lista, ne pravilo po tekstu: „semafor"/„svjetl" se javlja i u
+ * situacijama na raskrsnici (npr. 141 — žuto svjetlo uz sliku raskrsnice), a te
+ * pripadaju situacijama. Ovdje su samo pitanja čija slika JE semafor ili
+ * svjetlosna strelica (blok str. 40–44 kataloga). Parovi 337/338 i 365/366
+ * dijele sliku — generator ih zato ne stavlja zajedno na isti test.
+ * 349 (crvena svjetla na pružnom prelazu) namjerno ostaje `znak`.
+ */
+const SEMAFOR = [337, 338, 345, 346, 350, 365, 366, 374];
+
+/**
+ * Prva strana kataloga sa blokom „vozilo i prva pomoć". Teorija od te strane
+ * nadalje, plus sva pitanja prve pomoći, čine segment opštih znanja (Q39–40);
+ * teorija prije nje (propisi, str. 1–9) ide u Q1–9.
+ */
+const OPSTE_OD_STRANE = 44;
+
+/**
  * Pravila se primjenjuju redom, prvo poklapanje pobjeđuje.
  *
  * Odstupanja od prvobitnog predloga, i zašto:
@@ -104,15 +124,23 @@ function firstAidFor(q) {
 
 function kindFor(q) {
   if (Object.prototype.hasOwnProperty.call(OVERRIDES, q.id)) return OVERRIDES[q.id];
+  if (SEMAFOR.includes(q.id)) return "semafor";
   for (const [kind, test] of RULES) if (test(q)) return kind;
   return "ostalo";
+}
+
+/** `teorija` se dijeli na propise i opšta znanja — vidi OPSTE_OD_STRANE. */
+function kindWithAid(q) {
+  const kind = kindFor(q);
+  if (kind === "teorija" && (q.page >= OPSTE_OD_STRANE || firstAidFor(q))) return "opste";
+  return kind;
 }
 
 const raw = fs.readFileSync(QUESTIONS, "utf8");
 const crlf = raw.includes("\r\n");
 const questions = JSON.parse(raw);
 for (const q of questions) {
-  q.kind = kindFor(q);
+  q.kind = kindWithAid(q);
   if (firstAidFor(q)) q.firstAid = true;
   else delete q.firstAid;
 }
@@ -155,7 +183,7 @@ for (const [k, n] of [...counts].sort((a, b) => b[1] - a[1])) {
 }
 
 // Kapacitet naspram sastava ispita — ovo je razlog zašto skripta postoji.
-const NEED = { znak: 10, teorija: 20, policajac: 1, kosnik: 1, situacija: 4 };
+const NEED = { teorija: 9, situacija: 8, znak: 8, kosnik: 1, policajac: 1, semafor: 2, opste: 2 };
 console.log("\nKapacitet naspram EXAM_STRUCTURE:");
 let blocked = false;
 for (const [k, need] of Object.entries(NEED)) {
@@ -170,7 +198,7 @@ for (const [k, need] of Object.entries(NEED)) {
 if (blocked) console.log("\n  ⚠️  BLOKADA: bar jedna kategorija nema dovoljno pitanja.");
 
 const prvaPomoc = questions.filter((q) => q.firstAid);
-console.log(`\nPrva pomoc: ${prvaPomoc.length} pitanja (zaseban filter u vjezbi, \`kind\` ostaje netaknut)`);
+console.log(`\nPrva pomoc: ${prvaPomoc.length} pitanja (zaseban filter u vjezbi; na ispitu u segmentu \`opste\`)`);
 for (const q of prvaPomoc) {
   console.log(`  id=${String(q.id).padStart(3)} str.${q.page}/${q.local_no} ${q.kind.padEnd(10)} ${q.text.slice(0, 66)}`);
 }
@@ -180,7 +208,7 @@ const pairMains = new Map();
 for (const [a] of pairs) pairMains.set(a.kind, (pairMains.get(a.kind) ?? 0) + 1);
 console.log("Glavnih pitanja sa podpitanjem, po kategoriji:");
 for (const [k, n] of [...pairMains].sort((a, b) => b[1] - a[1])) console.log(`  ${String(n).padStart(4)}  ${k}`);
-const SUB_NEED = { policajac: 1, situacija: 4 };
+const SUB_NEED = { policajac: 1, situacija: 8 };
 for (const [k, need] of Object.entries(SUB_NEED)) {
   const have = pairMains.get(k) ?? 0;
   if (have < need) {

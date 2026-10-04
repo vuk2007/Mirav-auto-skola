@@ -9,38 +9,66 @@
 import type { QuestionKind } from "./types";
 
 /**
- * SASTAV ISPITA — koliko pitanja iz kojeg segmenta, i da li segment nosi
- * podpitanje.
+ * SASTAV ISPITA — segmenti redom kojim idu u testu, po uzoru na pravi test
+ * (40 pitanja numerisanih 1–40, na 9 stranica):
  *
- * `withSub: true` znači da se uz svako izvučeno pitanje odmah iza njega
- * postavlja i njegovo podpitanje (`subOf` u bazi) — to je par koji u zvaničnom
- * katalogu dijeli jednu sliku („kako ćete postupiti…" + „redoslijed prolaska…").
- * Podpitanje se broji kao zasebno pitanje.
+ *   str. 1     Q1–9    teorija (propisi)
+ *   str. 2–5   Q10–25  8 slika situacija, svaka sa 2 pitanja (2 slike po strani)
+ *   str. 6     Q26–34  8 saobraćajnih znakova + kosnik ili graničnik
+ *   str. 7     Q35–36  policijski službenik, 1 slika sa 2 pitanja
+ *   str. 8     Q37–38  semafori, svako pitanje sa svojom slikom
+ *   str. 9     Q39–40  opšta znanja (vozilo, prva pomoć)
  *
- * Redoslijed unosa je i redoslijed segmenata u testu.
- *
- * TODO(MIRAV): potvrditi sastav uz važeći Pravilnik (MUP CG).
+ * Polja:
+ *  - `count` — broj izvlačenja; kod `withSub` to su parovi, pa segment nosi
+ *    `count × 2` pitanja,
+ *  - `withSub` — uz svako izvučeno pitanje ide i njegovo podpitanje (`subOf`),
+ *    na istoj kartici, jer dijele sliku,
+ *  - `allowSubs` — podpitanja se izvlače i sama za sebe. Tada nikad dva pitanja
+ *    iz istog para, da svako pitanje ima drugu sliku (semafori),
+ *  - `page` — stranica (1-bazirana) na kojoj segment počinje,
+ *  - `groupsPerPage` — koliko izvlačenja staje na stranicu; bez njega cio
+ *    segment je na `page`.
  */
 export const EXAM_STRUCTURE = [
-  { kind: "znak", count: 10, withSub: false },
-  { kind: "teorija", count: 20, withSub: false },
-  { kind: "policajac", count: 1, withSub: true },
-  { kind: "kosnik", count: 1, withSub: false },
-  { kind: "situacija", count: 4, withSub: true },
-] as const satisfies readonly { kind: QuestionKind; count: number; withSub: boolean }[];
+  { kind: "teorija", count: 9, withSub: false, page: 1 },
+  { kind: "situacija", count: 8, withSub: true, page: 2, groupsPerPage: 2 },
+  { kind: "znak", count: 8, withSub: false, page: 6 },
+  { kind: "kosnik", count: 1, withSub: false, page: 6 },
+  { kind: "policajac", count: 1, withSub: true, page: 7 },
+  { kind: "semafor", count: 2, withSub: false, allowSubs: true, page: 8 },
+  { kind: "opste", count: 2, withSub: false, page: 9 },
+] as const satisfies readonly ExamSegment[];
+
+export interface ExamSegment {
+  kind: QuestionKind;
+  count: number;
+  withSub: boolean;
+  allowSubs?: boolean;
+  page: number;
+  groupsPerPage?: number;
+}
 
 /**
- * Ukupan broj pitanja na ispitu, uključujući podpitanja: 10 + 20 + (1+1) + 1 +
- * (4+4) = 41. Poklapa se sa zvaničnim brojem pitanja.
+ * Ukupan broj pitanja na ispitu: 9 + 16 + 8 + 1 + 2 + 2 + 2 = 40.
  *
  * Napisan je kao konstanta a ne izveden zbroj da bi bio provjerljiv naspram
  * zvaničnog broja — `assertExamStructure()` ispod puca ako se razminu.
  */
-export const EXAM_QUESTION_COUNT = 41;
+export const EXAM_QUESTION_COUNT = 40;
+
+/** Broj stranica simulacije ispita. */
+export const EXAM_PAGE_COUNT = 9;
+
+/** Posljednja stranica koju segment zauzima (1-bazirana). */
+export function segmentLastPage(seg: ExamSegment): number {
+  return seg.groupsPerPage ? seg.page + Math.ceil(seg.count / seg.groupsPerPage) - 1 : seg.page;
+}
 
 /**
- * Puca ako `EXAM_STRUCTURE` i `EXAM_QUESTION_COUNT` ne daju isti broj. Zove se
- * odmah pri učitavanju modula, pa greška u sastavu pada na buildu (stranice se
+ * Puca ako `EXAM_STRUCTURE` ne daje `EXAM_QUESTION_COUNT` pitanja ili ako
+ * stranice nijesu redom 1..EXAM_PAGE_COUNT bez rupa. Zove se odmah pri
+ * učitavanju modula, pa greška u sastavu pada na buildu (stranice se
  * prerenderuju), a ne tiho u browseru kandidata.
  */
 export function assertExamStructure(): void {
@@ -50,6 +78,17 @@ export function assertExamStructure(): void {
       `EXAM_STRUCTURE daje ${sum} pitanja, a EXAM_QUESTION_COUNT je ${EXAM_QUESTION_COUNT}. ` +
         `Uskladi lib/config.ts.`,
     );
+  }
+  let last = 0;
+  for (const seg of EXAM_STRUCTURE) {
+    // Segment počinje na istoj stranici kao prethodni ili na sljedećoj.
+    if (seg.page !== last && seg.page !== last + 1) {
+      throw new Error(`Segment „${seg.kind}" počinje na str. ${seg.page}, poslije str. ${last}.`);
+    }
+    last = segmentLastPage(seg);
+  }
+  if (last !== EXAM_PAGE_COUNT) {
+    throw new Error(`EXAM_STRUCTURE ide do str. ${last}, a EXAM_PAGE_COUNT je ${EXAM_PAGE_COUNT}.`);
   }
 }
 assertExamStructure();
@@ -132,10 +171,3 @@ export const LITERATURE: readonly { title: string; url: string }[] = [
  * Ako nije postavljena, vrijednost je `false` — bezbjedno podrazumijevano.
  */
 export const PENALTIES_ENABLED = process.env.NEXT_PUBLIC_KAZNE_ENABLED === "true";
-
-/**
- * Koliko se zadrži na izabranom odgovoru prije automatskog prelaska na sljedeće
- * pitanje (samo na simulaciji ispita). Bez pauze kandidat ne vidi ✕ koji je
- * upisao; predugo i test djeluje sporo.
- */
-export const AUTO_ADVANCE_MS = 350;

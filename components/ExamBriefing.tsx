@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { EXAM_MINUTES, EXAM_QUESTION_COUNT, examPassPoints } from "@/lib/config";
+import { EXAM_MINUTES, EXAM_PAGE_COUNT, EXAM_QUESTION_COUNT, examPassPoints } from "@/lib/config";
 import { EXAM_BRIEFING, fillBriefing } from "@/lib/examBriefing";
 import type { Dict, Lang } from "@/lib/i18n";
 
@@ -37,6 +37,7 @@ export default function ExamBriefing({
   const [confirmed, setConfirmed] = useState(false);
   const values = {
     count: EXAM_QUESTION_COUNT,
+    pages: EXAM_PAGE_COUNT,
     minutes: EXAM_MINUTES,
     points: totalPoints,
     pass: examPassPoints(totalPoints),

@@ -22,14 +22,27 @@ export const AREAS: readonly Area[] = ["I", "II", "III"] as const;
  * NEZAVISNO je od `area`: `area` (I/II/III) određuje kategorije u vježbi, a
  * `kind` segmente simulacije ispita (vidi EXAM_STRUCTURE u lib/config.ts).
  * Isto pitanje može biti `area: "III"` i `kind: "policajac"`.
+ *
+ * `teorija` su propisi (str. 1–9 kataloga), `opste` teorija o vozilu i prvoj
+ * pomoći sa kraja kataloga; `semafor` su pitanja čija je slika semafor.
  */
-export type QuestionKind = "znak" | "teorija" | "policajac" | "kosnik" | "situacija" | "ostalo";
+export type QuestionKind =
+  | "znak"
+  | "teorija"
+  | "opste"
+  | "policajac"
+  | "kosnik"
+  | "semafor"
+  | "situacija"
+  | "ostalo";
 
 export const QUESTION_KINDS: readonly QuestionKind[] = [
   "znak",
   "teorija",
+  "opste",
   "policajac",
   "kosnik",
+  "semafor",
   "situacija",
   "ostalo",
 ] as const;
@@ -48,16 +61,17 @@ interface QuestionBase {
   /** Vrsta pitanja — određuje segment ispita (vidi EXAM_STRUCTURE). */
   kind: QuestionKind;
   /**
-   * Pitanje o prvoj pomoći. NEZAVISNO od `kind`: ta pitanja ostaju `teorija` i
-   * i dalje ulaze u teorijski segment ispita, kao i na pravom ispitu. Polje
-   * postoji samo da bi vježba imala zaseban filter „Prva pomoć".
+   * Pitanje o prvoj pomoći. Na ispitu ta pitanja idu u segment opštih znanja
+   * (`kind: "opste"`); polje postoji da bi vježba imala zaseban filter
+   * „Prva pomoć".
    * Upisuje ga `scripts/gen-exam-meta.mjs`.
    */
   firstAid?: boolean;
   /**
-   * Kod podpitanja: id glavnog pitanja sa kojim dijeli sliku. Podpitanje na
-   * ispitu uvijek stoji odmah iza svog glavnog pitanja i nikad se ne izvlači
-   * samo za sebe.
+   * Kod podpitanja: id glavnog pitanja sa kojim dijeli sliku — to je ujedno id
+   * grupe (vidi `groupId` u lib/questions.ts). Na ispitu podpitanje stoji uz
+   * svoje glavno pitanje na istoj kartici; samo za sebe se izvlači jedino u
+   * segmentu semafora, gdje svako pitanje ima svoju sliku.
    */
   subOf?: number;
   needs_review: boolean;

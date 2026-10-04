@@ -269,12 +269,14 @@ export interface Dict {
   loadErrorTitle: string;
   noQuestions: string;
   question: string;
-  examQuestion: string;
   progress: string;
   next: string;
-  prev: string;
   newRound: string;
   finishExam: string;
+  /** Simulacija ispita ide po stranicama, kao pravi test. */
+  pageLabel: string;
+  prevPage: string;
+  nextPage: string;
   check: string;
   correctAnswerLabel: string;
   yourAnswerLabel: string;
@@ -324,6 +326,7 @@ export interface Dict {
   badgeSign: string;
   badgePolice: string;
   badgeMarking: string;
+  badgeTrafficLight: string;
   badgeIntersection: string;
   badgeOrdering: string;
   badgeFirstAid: string;
@@ -339,6 +342,7 @@ export interface Dict {
   statCorrect: string;
   statWrong: string;
   statUnanswered: string;
+  resultSummaryTitle: string;
   statAnswered: string;
   newExam: string;
   backToStart: string;
@@ -641,12 +645,13 @@ const me: Dict = {
   loadErrorTitle: "Greška pri učitavanju pitanja",
   noQuestions: "Nema pitanja u izabranoj kategoriji. Izaberite drugu kategoriju.",
   question: "Pitanje",
-  examQuestion: "Ispitno pitanje",
   progress: "Napredak kroz pitanja",
   next: "Sljedeće pitanje",
-  prev: "Prethodno",
   newRound: "Novi krug",
   finishExam: "Završi ispit",
+  pageLabel: "Stranica",
+  prevPage: "Prethodna",
+  nextPage: "Sljedeća",
   check: "Provjeri",
   correctAnswerLabel: "Tačno",
   yourAnswerLabel: "Vaš odgovor",
@@ -690,6 +695,7 @@ const me: Dict = {
   badgeSign: "Saobraćajni znak",
   badgePolice: "Znak policajca",
   badgeMarking: "Oznake na kolovozu",
+  badgeTrafficLight: "Semafor",
   badgeIntersection: "Raskrsnica",
   badgeOrdering: "Redoslijed prolaska",
   badgeFirstAid: "Prva pomoć",
@@ -703,6 +709,7 @@ const me: Dict = {
   statCorrect: "Tačno",
   statWrong: "Netačno",
   statUnanswered: "Bez odgovora",
+  resultSummaryTitle: "Pregled po pitanjima",
   statAnswered: "Odgovoreno",
   newExam: "Novi ispit",
   backToStart: "Nazad na početak",
@@ -1000,12 +1007,13 @@ const en: Dict = {
   loadErrorTitle: "Could not load the questions",
   noQuestions: "No questions in the selected category. Please choose another one.",
   question: "Question",
-  examQuestion: "Exam question",
   progress: "Progress through questions",
   next: "Next question",
-  prev: "Previous",
   newRound: "New round",
   finishExam: "Finish exam",
+  pageLabel: "Page",
+  prevPage: "Previous",
+  nextPage: "Next",
   check: "Check",
   correctAnswerLabel: "Correct",
   yourAnswerLabel: "Your answer",
@@ -1049,6 +1057,7 @@ const en: Dict = {
   badgeSign: "Road sign",
   badgePolice: "Police signal",
   badgeMarking: "Road markings",
+  badgeTrafficLight: "Traffic light",
   badgeIntersection: "Intersection",
   badgeOrdering: "Order of passage",
   badgeFirstAid: "First aid",
@@ -1062,6 +1071,7 @@ const en: Dict = {
   statCorrect: "Correct",
   statWrong: "Wrong",
   statUnanswered: "Unanswered",
+  resultSummaryTitle: "Question by question",
   statAnswered: "Answered",
   newExam: "New exam",
   backToStart: "Back to start",
@@ -1364,12 +1374,13 @@ const sq: Dict = {
   loadErrorTitle: "Gabim gjatë ngarkimit të pyetjeve",
   noQuestions: "Nuk ka pyetje në kategorinë e zgjedhur. Zgjidhni një tjetër.",
   question: "Pyetja",
-  examQuestion: "Pyetja e provimit",
   progress: "Ecuria nëpër pyetje",
   next: "Pyetja tjetër",
-  prev: "E mëparshme",
   newRound: "Raund i ri",
   finishExam: "Përfundo provimin",
+  pageLabel: "Faqja",
+  prevPage: "E mëparshmja",
+  nextPage: "Tjetra",
   check: "Kontrollo",
   correctAnswerLabel: "Saktë",
   yourAnswerLabel: "Përgjigjja juaj",
@@ -1415,6 +1426,7 @@ const sq: Dict = {
   badgeSign: "Shenjë rrugore",
   badgePolice: "Sinjali i policisë",
   badgeMarking: "Shenjat në karrexhatë",
+  badgeTrafficLight: "Semafori",
   badgeIntersection: "Kryqëzim",
   badgeOrdering: "Radha e kalimit",
   badgeFirstAid: "Ndihma e parë",
@@ -1428,6 +1440,7 @@ const sq: Dict = {
   statCorrect: "Saktë",
   statWrong: "Gabim",
   statUnanswered: "Pa përgjigje",
+  resultSummaryTitle: "Pasqyra sipas pyetjeve",
   statAnswered: "Të përgjigjura",
   newExam: "Provim i ri",
   backToStart: "Kthehu në fillim",
@@ -1730,12 +1743,13 @@ const ru: Dict = {
   loadErrorTitle: "Ошибка при загрузке вопросов",
   noQuestions: "В выбранной категории нет вопросов. Выберите другую категорию.",
   question: "Вопрос",
-  examQuestion: "Экзаменационный вопрос",
   progress: "Прогресс по вопросам",
   next: "Следующий вопрос",
-  prev: "Предыдущий",
   newRound: "Новый круг",
   finishExam: "Завершить экзамен",
+  pageLabel: "Страница",
+  prevPage: "Предыдущая",
+  nextPage: "Следующая",
   check: "Проверить",
   correctAnswerLabel: "Верно",
   yourAnswerLabel: "Ваш ответ",
@@ -1781,6 +1795,7 @@ const ru: Dict = {
   badgeSign: "Дорожный знак",
   badgePolice: "Сигнал полицейского",
   badgeMarking: "Разметка на дороге",
+  badgeTrafficLight: "Светофор",
   badgeIntersection: "Перекрёсток",
   badgeOrdering: "Порядок проезда",
   badgeFirstAid: "Первая помощь",
@@ -1794,6 +1809,7 @@ const ru: Dict = {
   statCorrect: "Верно",
   statWrong: "Неверно",
   statUnanswered: "Без ответа",
+  resultSummaryTitle: "Обзор по вопросам",
   statAnswered: "Отвечено",
   newExam: "Новый экзамен",
   backToStart: "Вернуться в начало",
