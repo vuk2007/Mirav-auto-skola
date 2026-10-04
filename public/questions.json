@@ -3381,7 +3381,7 @@
       "b": "fashë kompresive",
       "c": "alkool dhe garzë sterile"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -3418,7 +3418,7 @@
       "b": "123",
       "c": "124"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -12292,7 +12292,7 @@
       "b": "pushim i afërt i ndalimit të lëvizjes për shoferin dhe përgatitje për lëvizje të lirë me automjet në drejtim të shigjetave",
       "c": "lëvizje e lejuar për shoferin në drejtim të shigjetave"
     },
-    "kind": "situacija"
+    "kind": "semafor"
   },
   {
     "type": "image",
@@ -12329,7 +12329,7 @@
       "b": "me ngjyrë të gjelbër në sfond të zi",
       "c": "me ngjyrë të kuqe në sfond të gjelbër"
     },
-    "kind": "situacija",
+    "kind": "semafor",
     "subOf": 337
   },
   {
@@ -12591,7 +12591,7 @@
       "b": "se shoferi duhet ta ndalë automjetin",
       "c": "se shoferit i lejohet lëvizja"
     },
-    "kind": "situacija"
+    "kind": "semafor"
   },
   {
     "type": "image",
@@ -12628,7 +12628,7 @@
       "b": "komunikacionit në korsitë me kah të ndryshueshëm lëvizjeje",
       "c": "kalimit nëpër tunel"
     },
-    "kind": "situacija"
+    "kind": "semafor"
   },
   {
     "type": "image",
@@ -12777,7 +12777,7 @@
       "b": "biçikletave dhe mopedëve vetëm nëpër shtigjet për biçikleta",
       "c": "biçikletave dhe mopedëve nëpër korsitë për biçikleta"
     },
-    "kind": "situacija"
+    "kind": "semafor"
   },
   {
     "type": "image",
@@ -13337,7 +13337,7 @@
       "b": "1-4-3-2",
       "c": "1-3-2-4"
     },
-    "kind": "situacija"
+    "kind": "semafor"
   },
   {
     "type": "image",
@@ -13374,7 +13374,7 @@
       "b": "drita e gjelbër nuk mund të jetë vezulluese",
       "c": "drita e gjelbër mund të jetë e ndezur bashkë me dritën e kuqe"
     },
-    "kind": "situacija",
+    "kind": "semafor",
     "subOf": 365
   },
   {
@@ -13673,7 +13673,7 @@
       "b": "se shoferi mund të lëvizë në drejtim të shigjetës pa u kushtuar vëmendje pjesëmarrësve të tjerë në komunikacion",
       "c": "lëvizja e ndaluar në kahun e shënuar me shigjetën plotësuese të gjelbër"
     },
-    "kind": "situacija"
+    "kind": "semafor"
   },
   {
     "type": "image",
@@ -13784,7 +13784,7 @@
       "b": "automjeti udhëtar deri në 750 kg masë vetjake",
       "c": "rimorkioja e lehtë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -13820,7 +13820,7 @@
       "b": "me ngjyrë të verdhë",
       "c": "me ngjyrë të bardhë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -13856,7 +13856,7 @@
       "b": "vetëm rrotave të përparme",
       "c": "të gjitha rrotave"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -13892,7 +13892,7 @@
       "b": "në anën anësore",
       "c": "në pozicion gjysmë të ulur"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -13929,7 +13929,7 @@
       "b": "veprimi i nxehtësisë",
       "c": "shpimi nga një objekt i fortë"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -13966,7 +13966,7 @@
       "b": "drita e pozicionit",
       "c": "xhami i përparmë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14002,7 +14002,7 @@
       "b": "me ngjyrë të bardhë",
       "c": "me ngjyrë të kuqe"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14038,7 +14038,7 @@
       "b": "transmetimin e fuqisë",
       "c": "frenimin"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14074,7 +14074,7 @@
       "b": "vendosjen e pjesës së lënduar të trupit në gjendje qetësie",
       "c": "kthimin e të lënduarit në gjendje të vetëdijes"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14111,7 +14111,7 @@
       "b": "60 deri në 80 rrahje në një minutë",
       "c": "mbi 100 rrahje në një minutë"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14148,7 +14148,7 @@
       "b": "30 gradë",
       "c": "40 gradë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14184,7 +14184,7 @@
       "b": "freni i punës dhe ai ndihmës dhe ngadalësuesi i qëndrueshëm",
       "c": "freni i punës dhe ai i parkimit dhe ngadalësuesi i qëndrueshëm"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14220,7 +14220,7 @@
       "b": "10 metra",
       "c": "12 metra"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14256,7 +14256,7 @@
       "b": "të konsumohen pije energjike dhe të vazhdohet vozitja",
       "c": "të bëhet pauzë për pushim"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14292,7 +14292,7 @@
       "b": "thyerje e mbyllur e kërcirit",
       "c": "mpiksja e gjakut në enën e gjakut"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14329,7 +14329,7 @@
       "b": "dy kuti të ndihmës së parë",
       "c": "një kuti e ndihmës së parë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14365,7 +14365,7 @@
       "b": "treguesit e drejtimit",
       "c": "katadiopterët"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14401,7 +14401,7 @@
       "b": "për ta penguar lëvizjen e automjetit të ndalur",
       "c": "për ta penguar lëvizjen e automjetit vetëm derisa është i parkuar në garazh"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14437,7 +14437,7 @@
       "b": "gjaku në rrjedha të fuqishme",
       "c": "ënjtja dhe mavijosjet e pjesës së lënduar të trupit"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14474,7 +14474,7 @@
       "b": "të vendoset në pozicion të ulur",
       "c": "të vendoset anash në pozicion të shtrirë"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14511,7 +14511,7 @@
       "b": "boshti kardanik",
       "c": "gjysmëboshti"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14547,7 +14547,7 @@
       "b": "e zvogëlon forcën e përgjithshme të veprimit të shoferit gjatë rrotullimit të timonit dhe siguron lehtësi në drejtim",
       "c": "e zvogëlon diametrin e trajektores gjatë kthimit të automjetit"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14583,7 +14583,7 @@
       "b": "me ngjyrë të verdhë",
       "c": "me ngjyrë të kuqe"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14619,7 +14619,7 @@
       "b": "guxon të konsumojë qetësues",
       "c": "nuk guxon të konsumojë pije alkoolike"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14655,7 +14655,7 @@
       "b": "të vendoset në pozicion të shtrirë në bark",
       "c": "të vendoset në pozicion anësor"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14692,7 +14692,7 @@
       "b": "rrota rezervë",
       "c": "llambat rezervë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14728,7 +14728,7 @@
       "b": "me ngjyrë të kaltër",
       "c": "me ngjyrë të bardhë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14764,7 +14764,7 @@
       "b": "4 mm",
       "c": "1,6 mm"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14800,7 +14800,7 @@
       "b": "112",
       "c": "122"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14837,7 +14837,7 @@
       "b": "ujë",
       "c": "garzë sterile"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -14874,7 +14874,7 @@
       "b": "larëse xhami",
       "c": "pajisje për ngrohjen e xhamit të përparmë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14910,7 +14910,7 @@
       "b": "simetrike",
       "c": "e realizuar si asimetrike e djathtë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14946,7 +14946,7 @@
       "b": "për nga lartësia",
       "c": "më shumë se 0,1 metër për nga gjatësia"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -14982,7 +14982,7 @@
       "b": "shenjë e sigurt e vdekjes",
       "c": "shenjë e sigurt e lodhjes"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -15019,7 +15019,7 @@
       "b": "122",
       "c": "124"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -15056,7 +15056,7 @@
       "b": "me ngjyrë të kuqe",
       "c": "me ngjyrë të verdhë"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -15092,7 +15092,7 @@
       "b": "vetëm në rrotat e përparme",
       "c": "vetëm në rrotat e pasme"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -15128,7 +15128,7 @@
       "b": "automjet transportues",
       "c": "automjet udhëtar"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -15164,7 +15164,7 @@
       "b": "duhet të lahet me alkool",
       "c": "nuk duhet të lahet me lëng"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -15201,7 +15201,7 @@
       "b": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,3 g/kg",
       "c": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,2 g/kg"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -15237,7 +15237,7 @@
       "b": "timoni",
       "c": "amortizatori"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -15273,7 +15273,7 @@
       "b": "drita gabarite",
       "c": "drita për vozitje prapa"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -15309,7 +15309,7 @@
       "b": "timoni",
       "c": "leva e frenit të parkimit"
     },
-    "kind": "teorija"
+    "kind": "opste"
   },
   {
     "type": "text",
@@ -15345,7 +15345,7 @@
       "b": "të imobilizohen dy nyjet fqinje",
       "c": "të imobilizohet vetëm nyja që është më afër vendit të lënduar"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   },
   {
@@ -15382,7 +15382,7 @@
       "b": "puls dukshëm të ngadalësuar",
       "c": "frymëmarrje të shpejtuar dhe të parregullt"
     },
-    "kind": "teorija",
+    "kind": "opste",
     "firstAid": true
   }
 ]

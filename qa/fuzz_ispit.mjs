@@ -64,6 +64,10 @@ for (let n = 0; n < N; n++) {
     if (slika(slots[i].question.image) !== slika(prethodni.question.image)) fail("par ne dijeli sliku");
   }
 
+  // — numeracija 1..40 bez rupa, stranice ne idu unazad
+  if (slots.some((s, i) => s.number !== i + 1)) fail("numeracija nije 1..N");
+  if (slots.some((s, i) => i > 0 && s.page < slots[i - 1].page)) fail("stranica ide unazad");
+
   // — nijedno pitanje se ne ponavlja unutar istog testa
   if (new Set(slots.map((s) => s.question.id)).size !== slots.length) fail("ponovljeno pitanje u istom testu");
 
@@ -119,7 +123,7 @@ const podpitanja = new Set(qs.filter((q) => q.subOf !== undefined).map((q) => q.
 for (const seg of EXAM_STRUCTURE) {
   const svi = qs.filter((q) => q.kind === seg.kind);
   const dostupni = svi.filter(
-    (q) => !podpitanja.has(q.id) && (!seg.withSub || qs.some((x) => x.subOf === q.id)),
+    (q) => (seg.allowSubs || !podpitanja.has(q.id)) && (!seg.withSub || qs.some((x) => x.subOf === q.id)),
   );
   const izvlaci = seg.count;
   const sansa = dostupni.length ? (izvlaci / dostupni.length) * 100 : 0;
@@ -133,7 +137,7 @@ for (const seg of EXAM_STRUCTURE) {
 console.log("\nponavljanje — koliko kandidat mora odraditi ispita da vidi isto pitanje:");
 for (const seg of EXAM_STRUCTURE) {
   const dostupni = qs.filter(
-    (q) => q.kind === seg.kind && q.subOf === undefined && (!seg.withSub || qs.some((x) => x.subOf === q.id)),
+    (q) => q.kind === seg.kind && (seg.allowSubs || q.subOf === undefined) && (!seg.withSub || qs.some((x) => x.subOf === q.id)),
   ).length;
   const ocekivano = dostupni ? dostupni / seg.count : Infinity;
   const upozorenje = dostupni < 6 ? "  ⚠️ ISPOD 6 — kandidat ih nauči napamet" : "";

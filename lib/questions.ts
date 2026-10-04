@@ -84,15 +84,32 @@ export class ExamBuildError extends Error {
   }
 }
 
-/** Jedno pitanje na ispitu, sa podatkom kojem segmentu pripada. */
+/** Jedno pitanje na ispitu, sa mjestom na testu. */
 export interface ExamSlot {
   question: Question;
-  /** Segment iz EXAM_STRUCTURE — po njemu se grupiše navigacija. */
+  /** Segment iz EXAM_STRUCTURE. */
   kind: QuestionKind;
   /** Redni broj segmenta, 0-baziran. */
   segment: number;
-  /** Podpitanje stoji odmah iza svog glavnog pitanja i dijeli s njim sliku. */
+  /** Podpitanje stoji uz svoje glavno pitanje i dijeli s njim sliku. */
   isSub: boolean;
+  /** Redni broj na testu, 1..EXAM_QUESTION_COUNT — bez slova za podpitanja. */
+  number: number;
+  /** Stranica testa, 1-bazirana. */
+  page: number;
+  /**
+   * Kartica kojoj pitanje pripada: id glavnog pitanja kod para, inače id samog
+   * pitanja. Pitanja iste kartice dijele jednu sliku.
+   */
+  card: number;
+}
+
+/**
+ * Id para kojem pitanje pripada — id glavnog pitanja, i za glavno pitanje i za
+ * podpitanje. Pitanja istog para imaju istu sliku.
+ */
+export function groupId(q: Question): number {
+  return q.subOf ?? q.id;
 }
 
 /**
@@ -101,17 +118,18 @@ export interface ExamSlot {
  * Za svaki segment redom:
  *  - izvlači `count` nasumičnih pitanja tog `kind`-a, bez ponavljanja,
  *  - ako je `withSub`, bira samo pitanja koja **imaju** podpitanje i odmah iza
- *    svakog ubacuje to podpitanje,
+ *    svakog ubacuje to podpitanje (ista kartica, ista slika),
+ *  - ako je `allowSubs`, i podpitanja ulaze u izvlačenje sama za sebe, ali
+ *    nikad dva iz istog para — svako pitanje mora imati drugu sliku,
  *  - ako nema dovoljno pitanja, **baca `ExamBuildError`** — ne dopunjava iz
  *    druge kategorije, jer bi tako ispit tiho izgubio traženi sastav.
  *
- * Redoslijed segmenata u testu je redoslijed unosa u `EXAM_STRUCTURE`; unutar
- * segmenta je nasumičan. Bodovi se ne podešavaju — dolaze iz baze kakvi jesu,
- * pa ukupan broj bodova nije isti na svakom testu (prag je procenat, vidi
- * `examPassPoints`).
+ * Unutar segmenta je redoslijed nasumičan. Pitanja se numerišu 1..40 redom, a
+ * stranica se računa iz `page` i `groupsPerPage` segmenta. Bodovi dolaze iz
+ * baze kakvi jesu, pa ukupan broj bodova nije isti na svakom testu (prag je
+ * procenat, vidi `examPassPoints`).
  */
 export function buildExam(questions: readonly Question[]): ExamSlot[] {
-  // Podpitanja nikad ne ulaze u izvlačenje sama za sebe.
   const subsByMain = new Map<number, Question>();
   for (const q of questions) {
     if (q.subOf !== undefined) subsByMain.set(q.subOf, q);
@@ -120,31 +138,57 @@ export function buildExam(questions: readonly Question[]): ExamSlot[] {
   const slots: ExamSlot[] = [];
 
   EXAM_STRUCTURE.forEach((segment, index) => {
+    const allowSubs = "allowSubs" in segment && segment.allowSubs;
+    const groupsPerPage = "groupsPerPage" in segment ? segment.groupsPerPage : undefined;
+
     const pool = questions.filter(
       (q) =>
         q.kind === segment.kind &&
-        q.subOf === undefined &&
+        (allowSubs || q.subOf === undefined) &&
         (!segment.withSub || subsByMain.has(q.id)),
     );
 
-    if (pool.length < segment.count) {
+    // Najviše jedno pitanje po paru — kod `allowSubs` par dijeli sliku.
+    const picked: Question[] = [];
+    const usedGroups = new Set<number>();
+    for (const q of shuffle(pool)) {
+      if (picked.length === segment.count) break;
+      if (usedGroups.has(groupId(q))) continue;
+      usedGroups.add(groupId(q));
+      picked.push(q);
+    }
+
+    if (picked.length < segment.count) {
       throw new ExamBuildError(
         `Segment „${segment.kind}"${segment.withSub ? " (sa podpitanjem)" : ""}: ` +
-          `traži ${segment.count} pitanja, a u bazi ih ima ${pool.length}. ` +
+          `traži ${segment.count} pitanja, a u bazi ih ima ${picked.length}` +
+          `${allowSubs ? " sa različitom slikom" : ""}. ` +
           `Pokreni \`node scripts/gen-exam-meta.mjs --report\`.`,
       );
     }
 
-    for (const q of sample(pool, segment.count)) {
-      slots.push({ question: q, kind: segment.kind, segment: index, isSub: false });
-      if (!segment.withSub) continue;
+    picked.forEach((q, i) => {
+      const page = segment.page + (groupsPerPage ? Math.floor(i / groupsPerPage) : 0);
+      const push = (question: Question, isSub: boolean) =>
+        slots.push({
+          question,
+          kind: segment.kind,
+          segment: index,
+          isSub,
+          number: slots.length + 1,
+          page,
+          card: q.id,
+        });
+
+      push(q, false);
+      if (!segment.withSub) return;
       const sub = subsByMain.get(q.id);
       if (!sub) {
         // Ne bi smjelo — bazen je već filtriran na pitanja sa podpitanjem.
         throw new ExamBuildError(`Pitanje ${q.id} nema podpitanje iako je izvučeno kao par.`);
       }
-      slots.push({ question: sub, kind: segment.kind, segment: index, isSub: true });
-    }
+      push(sub, true);
+    });
   });
 
   if (slots.length !== EXAM_QUESTION_COUNT) {
@@ -164,15 +208,18 @@ export function kindBreakdown(questions: readonly Question[]): Record<string, nu
 }
 
 /**
- * Oznaka pitanja u navigaciji: podpitanje nosi slovo uz broj glavnog pitanja
- * („15" i „15a"), da kandidat vidi da idu u paru.
+ * Kartice jedne stranice testa, redom. Kartica je jedno pitanje ili par
+ * pitanja uz istu sliku.
  */
-export function slotLabel(slots: readonly ExamSlot[], index: number): string {
-  let main = 0;
-  for (let i = 0; i <= index; i++) {
-    if (!slots[i]?.isSub) main += 1;
+export function examCards(slots: readonly ExamSlot[], page: number): ExamSlot[][] {
+  const cards: ExamSlot[][] = [];
+  for (const slot of slots) {
+    if (slot.page !== page) continue;
+    const last = cards.at(-1);
+    if (last && last[0]!.card === slot.card) last.push(slot);
+    else cards.push([slot]);
   }
-  return slots[index]?.isSub ? `${main}a` : String(main);
+  return cards;
 }
 
 /**

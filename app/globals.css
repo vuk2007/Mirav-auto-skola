@@ -107,6 +107,18 @@
     border: 1px solid var(--color-line);
     border-radius: 4px;
   }
+
+  /*
+   * Simulacija ispita na širokom ekranu izlazi iz uske kolone sajta (max-w-3xl)
+   * do najviše 72rem, centrirano: kartica sa slikom i dva pitanja u tri kolone
+   * inače ostavlja odgovorima ~190px. Negativna margina, a ne 100vw širina —
+   * 100vw uključuje scrollbar i dao bi horizontalni skrol.
+   */
+  @media (min-width: 64rem) {
+    .exam-wide {
+      margin-inline: calc(50% - min(36rem, 50vw - 1.5rem));
+    }
+  }
 }
 
 /* Poštuj sistemsku postavku za smanjeno kretanje. */

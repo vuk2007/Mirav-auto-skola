@@ -33,8 +33,8 @@ export function baseCategory(q: Question): Exclude<Category, "sve" | "slika" | "
   if (q.type === "ordering") return "redoslijed";
   if (!q.kind) return !q.image ? "tekst" : ZNAK_RE.test(q.text) ? "znak" : "situacija";
   if (q.kind === "znak") return "znak";
-  if (q.kind === "teorija") return "tekst";
-  return "situacija"; // policajac, kosnik, situacija, ostalo
+  if (q.kind === "teorija" || q.kind === "opste") return "tekst";
+  return "situacija"; // policajac, kosnik, semafor, situacija, ostalo
 }
 
 /**
@@ -86,6 +86,7 @@ export function badgeKey(q: Question): keyof Dict {
   if (q.type !== "ordering") {
     if (q.kind === "policajac") return "badgePolice";
     if (q.kind === "kosnik") return "badgeMarking";
+    if (q.kind === "semafor") return "badgeTrafficLight";
   }
   switch (baseCategory(q)) {
     case "znak":

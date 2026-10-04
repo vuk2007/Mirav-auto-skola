@@ -11,11 +11,14 @@ import {
   localizedOption,
   localizedText,
   questionPoints,
+  type ExamSlot,
 } from "@/lib/questions";
 import { OPTION_KEYS, type AnswerRecord, type Question } from "@/lib/types";
 
 interface ResultCardProps {
   questions: Question[];
+  /** Sastav ispita — redni brojevi 1–40 i stranice za pregled po pitanjima. */
+  slots: readonly ExamSlot[];
   records: Map<number, AnswerRecord>;
   /** Ispit je prekinut istekom vremena. */
   timedOut: boolean;
@@ -28,6 +31,7 @@ interface ResultCardProps {
 
 export default function ResultCard({
   questions,
+  slots,
   records,
   timedOut,
   onRestart,
@@ -49,7 +53,12 @@ export default function ResultCard({
   const answeredCount = questions.filter((q) => records.has(q.id)).length;
   const wrong = questions.filter((q) => records.has(q.id) && !records.get(q.id)?.correct);
   const unanswered = questions.filter((q) => !records.has(q.id));
-  const toReview = [...wrong, ...unanswered];
+  // Redom kao na testu, da se broj pitanja poklapa sa pregledom iznad.
+  const toReview = questions.filter((q) => !records.get(q.id)?.correct);
+  const numberOf = new Map(slots.map((s) => [s.question.id, s.number]));
+  const pages = [...new Set(slots.map((s) => s.page))].map((page) =>
+    slots.filter((s) => s.page === page),
+  );
 
 
   return (
@@ -137,6 +146,45 @@ export default function ResultCard({
         </div>
       </section>
 
+      {/* ── Pregled po pitanjima: tačno/netačno i bodovi ─────────────── */}
+      {slots.length > 0 && (
+        <section className="panel p-5 sm:p-6" aria-label={t.resultSummaryTitle}>
+          <h3 className="mb-3 text-xl font-bold">{t.resultSummaryTitle}</h3>
+          <div className="flex flex-wrap items-start gap-x-4 gap-y-3">
+            {pages.map((pageSlots, i) => (
+              <div key={i} className="flex items-center gap-4">
+                {i > 0 && <span className="hidden h-10 w-px bg-line sm:block" aria-hidden="true" />}
+                <ol className="flex flex-wrap gap-1.5">
+                  {pageSlots.map((slot) => {
+                    const rec = records.get(slot.question.id);
+                    const max = questionPoints(slot.question);
+                    const tone = !rec
+                      ? "border-line bg-panel text-muted"
+                      : rec.correct
+                        ? "border-green bg-green-soft text-green"
+                        : "border-red bg-red-soft text-red";
+                    const status = !rec ? t.reviewNoAnswer : rec.correct ? t.correctAnswerLabel : t.reviewWrong;
+                    return (
+                      <li
+                        key={slot.question.id}
+                        className={`flex min-w-10 flex-col items-center rounded border-2 px-1 py-0.5 ${tone}`}
+                        title={`${slot.number}. ${status} — ${rec?.points ?? 0}/${max}`}
+                      >
+                        <span className="font-display text-sm leading-tight font-bold">{slot.number}</span>
+                        <span className="text-[0.6875rem] leading-tight tabular-nums">
+                          {rec?.points ?? 0}/{max}
+                        </span>
+                        <span className="sr-only">{status}</span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ── Pregled grešaka ─────────────────────────────────────────── */}
       <section className="panel p-5 sm:p-6">
         <h3 className="mb-1 text-xl font-bold">{t.reviewTitle}</h3>
@@ -165,7 +213,12 @@ export default function ResultCard({
                       </span>
                     </div>
 
-                    <p className="mb-3 font-semibold">{localizedText(q, lang)}</p>
+                    <p className="mb-3 font-semibold">
+                      {numberOf.has(q.id) && (
+                        <span className="font-display mr-1.5 text-blue">{numberOf.get(q.id)}.</span>
+                      )}
+                      {localizedText(q, lang)}
+                    </p>
 
                     {q.image && (
                       <div className="mb-3 flex justify-center rounded border border-line bg-white p-2">

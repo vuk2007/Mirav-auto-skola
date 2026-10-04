@@ -5,15 +5,16 @@ import { filterByCategory, type Category } from "@/lib/categories";
 import {
   EXAM_MINUTES,
   EXAM_TIMER_ENABLED,
+  EXAM_PAGE_COUNT,
   examPassPoints,
   PENALTIES_ENABLED,
-  AUTO_ADVANCE_MS,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
 import { LANG_LABELS, LANGS } from "@/lib/i18n";
 import {
   buildExam,
   byIds,
+  examCards,
   ExamBuildError,
   type ExamSlot,
   isAnswerCorrect,
@@ -45,6 +46,7 @@ import { useApp } from "./AppProvider";
 import Controls from "./Controls";
 import { LinkKazne } from "./PenaltyLoader";
 import ExamBriefing from "./ExamBriefing";
+import ExamPage, { examQuestionAnchor } from "./ExamPage";
 import SimulatorShell from "./sim/SimulatorShell";
 import { GamePage } from "./game/GameLoader";
 import Landing from "./Landing";
@@ -84,6 +86,15 @@ export default function Quiz({ compact = false }: QuizProps) {
   const [examSlots, setExamSlots] = useState<ExamSlot[]>([]);
   const [scenarios, setScenarios] = useState<SimScenario[]>([]);
   const [index, setIndex] = useState(0);
+  /** Otvorena stranica simulacije ispita (1-bazirana); vježba koristi `index`. */
+  const [examPage, setExamPage] = useState(1);
+  /**
+   * Broj pitanja do kojeg treba skrolovati kad se stranica iscrta (skok iz
+   * „Pregleda pitanja"); 0 = na vrh stranice testa.
+   */
+  const [scrollTarget, setScrollTarget] = useState<{ number: number } | null>(null);
+  const examTopRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [answers, setAnswers] = useState<Map<number, Answer>>(new Map());
   const [drafts, setDrafts] = useState<Map<number, string>>(new Map());
   const [timedOut, setTimedOut] = useState(false);
@@ -120,6 +131,8 @@ export default function Quiz({ compact = false }: QuizProps) {
 
   const resetSession = useCallback(() => {
     setIndex(0);
+    setExamPage(1);
+    setScrollTarget(null);
     setExamSlots([]);
     setAnswers(new Map());
     setDrafts(new Map());
@@ -358,47 +371,70 @@ export default function Quiz({ compact = false }: QuizProps) {
     [answers, isPractice],
   );
 
-  /**
-   * Na ispitu se poslije izbora automatski prelazi na sljedeće pitanje, kao na
-   * zvaničnom testu. U vježbi se **ne** prelazi — tamo je poenta vidjeti tačan
-   * odgovor, pa bi automatski prelazak sakrio upravo ono zbog čega se vježba.
-   */
-  const advanceTimer = useRef<number | null>(null);
-
+  /** Izbor odgovora u vježbi — odmah se otkriva tačan odgovor. */
   const handleSelectOption = useCallback(
     (key: OptionKey) => {
       if (!current || revealed) return;
       recordAnswer(current, { kind: "choice", value: key });
-      if (isPractice) return;
-      if (advanceTimer.current !== null) window.clearTimeout(advanceTimer.current);
-      advanceTimer.current = window.setTimeout(() => {
-        advanceTimer.current = null;
-        // Na posljednjem pitanju se ne mrda — tu se ispit završava dugmetom.
-        setIndex((i) => (i + 1 < pool.length ? i + 1 : i));
-      }, AUTO_ADVANCE_MS);
     },
-    [current, revealed, recordAnswer, isPractice, pool.length],
+    [current, revealed, recordAnswer],
   );
 
-  // Zakazani prelazak se poništava na svakoj promjeni ekrana (kraj ispita,
-  // povratak na landing), da ne pomjeri pitanje poslije napuštanja testa.
-  useEffect(() => {
-    return () => {
-      if (advanceTimer.current !== null) {
-        window.clearTimeout(advanceTimer.current);
-        advanceTimer.current = null;
+  /** Odgovor na ispitu — može se mijenjati sve do predaje. */
+  const handleExamAnswer = useCallback(
+    (question: Question, answer: Answer) => recordAnswer(question, answer),
+    [recordAnswer],
+  );
+
+  /**
+   * Unos redoslijeda na ispitu se pamti u hodu, bez potvrde. Obrisan unos
+   * vraća pitanje u „bez odgovora", da pregled pitanja ne laže.
+   */
+  const handleExamOrdering = useCallback(
+    (question: Question, value: string) => {
+      setDrafts((prev) => new Map(prev).set(question.id, value));
+      if (value.trim() === "") {
+        setAnswers((prev) => {
+          const next = new Map(prev);
+          next.delete(question.id);
+          return next;
+        });
+      } else {
+        recordAnswer(question, { kind: "ordering", value });
       }
-    };
+    },
+    [recordAnswer],
+  );
+
+  /** Otvara stranicu testa i skroluje na njen vrh ili do traženog pitanja. */
+  const openExamPage = useCallback((page: number, number = 0) => {
+    setExamPage(Math.min(Math.max(page, 1), EXAM_PAGE_COUNT));
+    setScrollTarget({ number });
+  }, []);
+
+  // Skrol tek kad je nova stranica iscrtana — prije toga cilj ne postoji u DOM-u.
+  useEffect(() => {
+    if (!scrollTarget) return;
+    const el =
+      scrollTarget.number > 0
+        ? document.getElementById(examQuestionAnchor(scrollTarget.number))
+        : examTopRef.current;
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setScrollTarget(null);
+  }, [scrollTarget, examPage]);
+
+  // Predaja se dešava na dnu duge stranice testa — rezultat mora krenuti od vrha.
+  useEffect(() => {
+    if (screen === "rezultat") rootRef.current?.scrollIntoView({ block: "start" });
   }, [screen]);
 
+  /** Unos redoslijeda u vježbi — odgovor je tek potvrda (`handleOrderingSubmit`). */
   const handleOrderingChange = useCallback(
     (value: string) => {
       if (!current || revealed) return;
       setDrafts((prev) => new Map(prev).set(current.id, value));
-      // Na ispitu nema potvrde — unos se pamti odmah kao odgovor.
-      if (!isPractice) recordAnswer(current, { kind: "ordering", value });
     },
-    [current, revealed, isPractice, recordAnswer],
+    [current, revealed],
   );
 
   const handleOrderingSubmit = useCallback(() => {
@@ -408,24 +444,17 @@ export default function Quiz({ compact = false }: QuizProps) {
     recordAnswer(current, { kind: "ordering", value });
   }, [current, revealed, drafts, recordAnswer]);
 
-  const goTo = useCallback(
-    (next: number) => setIndex(Math.min(Math.max(next, 0), Math.max(pool.length - 1, 0))),
-    [pool.length],
-  );
-
   /** Vježba je neograničena: kad se krug završi, pitanja se premiješaju iz početka. */
   const handleNext = useCallback(() => {
     if (index + 1 < pool.length) {
       setIndex(index + 1);
       return;
     }
-    if (isPractice) {
-      setPool((prev) => shuffle(prev));
-      setIndex(0);
-      setAnswers(new Map());
-      setDrafts(new Map());
-    }
-  }, [index, pool.length, isPractice]);
+    setPool((prev) => shuffle(prev));
+    setIndex(0);
+    setAnswers(new Map());
+    setDrafts(new Map());
+  }, [index, pool.length]);
 
   // ── Povratak na landing ───────────────────────────────────────────────────
   const backToLanding = useCallback(() => {
@@ -456,7 +485,7 @@ export default function Quiz({ compact = false }: QuizProps) {
   const answeredInPool = pool.filter((q) => answers.has(q.id)).length;
 
   return (
-    <div className={compact ? "space-y-4" : "space-y-5"}>
+    <div ref={rootRef} className={compact ? "space-y-4" : "space-y-5"}>
       {/* Gornja traka — radi i u /embed verziji, gdje nema zaglavlja stranice. */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {screen !== "landing" && (
@@ -545,7 +574,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       {screen === "kviz" && isGame && <GamePage showLanguage={false} />}
 
       {screen === "kviz" && !isSimulator && !isGame && (
-        <>
+        <div className={`${compact ? "space-y-4" : "space-y-5"} ${isPractice ? "" : "exam-wide"}`}>
           <Controls
             mode={mode}
             category={category}
@@ -557,47 +586,36 @@ export default function Quiz({ compact = false }: QuizProps) {
             t={t}
           />
 
-          {pool.length === 0 ? (
-            <div className="panel p-5">
-              <p className="text-sm text-muted">{t.noQuestions}</p>
-            </div>
-          ) : current ? (
-            <>
-              <ProgressBar
-                current={index + 1}
-                total={pool.length}
-                label={`${isPractice ? t.question : t.examQuestion} ${index + 1} / ${pool.length}`}
-                ariaLabel={t.progress}
-              />
+          {isPractice ? (
+            pool.length === 0 ? (
+              <div className="panel p-5">
+                <p className="text-sm text-muted">{t.noQuestions}</p>
+              </div>
+            ) : current ? (
+              <>
+                <ProgressBar
+                  current={index + 1}
+                  total={pool.length}
+                  label={`${t.question} ${index + 1} / ${pool.length}`}
+                  ariaLabel={t.progress}
+                />
 
-              <QuestionCard
-                key={current.id}
-                question={current}
-                selected={currentAnswer?.kind === "choice" ? currentAnswer.value : null}
-                orderingValue={drafts.get(current.id) ?? ""}
-                revealed={revealed}
-                correct={currentCorrect}
-                showOrderingSubmit={isPractice}
-                onSelectOption={handleSelectOption}
-                onOrderingChange={handleOrderingChange}
-                onOrderingSubmit={handleOrderingSubmit}
-                t={t}
-                lang={lang}
-              />
+                <QuestionCard
+                  key={current.id}
+                  question={current}
+                  selected={currentAnswer?.kind === "choice" ? currentAnswer.value : null}
+                  orderingValue={drafts.get(current.id) ?? ""}
+                  revealed={revealed}
+                  correct={currentCorrect}
+                  showOrderingSubmit
+                  onSelectOption={handleSelectOption}
+                  onOrderingChange={handleOrderingChange}
+                  onOrderingSubmit={handleOrderingSubmit}
+                  t={t}
+                  lang={lang}
+                />
 
-              <div className="flex flex-wrap items-center gap-3">
-                {!isPractice && (
-                  <button
-                    type="button"
-                    onClick={() => goTo(index - 1)}
-                    disabled={index === 0}
-                    className="font-display rounded border-2 border-line px-5 py-2.5 text-base font-semibold tracking-wide uppercase transition-colors hover:border-blue hover:text-blue disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
-                  >
-                    {t.prev}
-                  </button>
-                )}
-
-                {isPractice ? (
+                <div className="flex flex-wrap items-center gap-3">
                   <button
                     type="button"
                     onClick={handleNext}
@@ -606,57 +624,88 @@ export default function Quiz({ compact = false }: QuizProps) {
                   >
                     {index + 1 < pool.length ? t.next : t.newRound}
                   </button>
-                ) : index + 1 < pool.length ? (
-                  <button
-                    type="button"
-                    onClick={() => goTo(index + 1)}
-                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
-                  >
-                    {t.next}
-                  </button>
-                ) : null}
 
-                {!isPractice && (
-                  <button
-                    type="button"
-                    onClick={() => finishExam(false)}
-                    className="font-display ml-auto rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
-                  >
-                    {t.finishExam}
-                  </button>
-                )}
-
-                {isPractice && revealed && (
-                  <p
-                    className={`font-display ml-auto text-lg font-bold ${
-                      currentCorrect ? "text-green" : "text-red"
-                    }`}
-                    role="status"
-                  >
-                    {currentCorrect ? t.correctFeedback : t.wrongFeedback}
-                  </p>
-                )}
+                  {revealed && (
+                    <p
+                      className={`font-display ml-auto text-lg font-bold ${
+                        currentCorrect ? "text-green" : "text-red"
+                      }`}
+                      role="status"
+                    >
+                      {currentCorrect ? t.correctFeedback : t.wrongFeedback}
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : null
+          ) : (
+            <>
+              {/* Simulacija ispita: stranica po stranica, kao pravi test. */}
+              <div ref={examTopRef} className="scroll-mt-4">
+                <ProgressBar
+                  current={examPage}
+                  total={EXAM_PAGE_COUNT}
+                  label={`${t.pageLabel} ${examPage} / ${EXAM_PAGE_COUNT}`}
+                  ariaLabel={t.progress}
+                />
               </div>
 
-              {/* Mreža brojeva — samo na ispitu, gdje se smije skakati po pitanjima. */}
-              {!isPractice && (
-                <QuestionNav
-                  questions={pool}
-                  slots={examSlots}
-                  answeredIds={answeredIds}
-                  currentIndex={index}
-                  onJump={goTo}
-                  t={t}
-                />
-              )}
+              <ExamPage
+                key={examPage}
+                cards={examCards(examSlots, examPage)}
+                answers={answers}
+                drafts={drafts}
+                onAnswer={handleExamAnswer}
+                onOrderingChange={handleExamOrdering}
+                t={t}
+                lang={lang}
+              />
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => openExamPage(examPage - 1)}
+                  disabled={examPage === 1}
+                  className="font-display rounded border-2 border-line px-5 py-2.5 text-base font-semibold tracking-wide uppercase transition-colors hover:border-blue hover:text-blue disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
+                >
+                  {t.prevPage}
+                </button>
+
+                {examPage < EXAM_PAGE_COUNT && (
+                  <button
+                    type="button"
+                    onClick={() => openExamPage(examPage + 1)}
+                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
+                  >
+                    {t.nextPage}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => finishExam(false)}
+                  className="font-display ml-auto rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
+                >
+                  {t.finishExam}
+                </button>
+              </div>
+
+              <QuestionNav
+                slots={examSlots}
+                answeredIds={answeredIds}
+                currentPage={examPage}
+                onJump={(slot) => openExamPage(slot.page, slot.number)}
+                t={t}
+              />
             </>
-          ) : null}
-        </>
+          )}
+        </div>
       )}
 
       {screen === "rezultat" && (
         <ResultCard
           questions={pool}
+          slots={examSlots}
           records={records}
           timedOut={timedOut}
           onRestart={() => void prepareExam()}
