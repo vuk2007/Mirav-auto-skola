@@ -1,4 +1,4 @@
-import { CAR_WIDTH, GRAD_OSTAR_LOM, GRAD_PUNA_POSLIJE_PROMJENE, GRAD_SIRINA_TRAKE, LINE_CROSS_TOL } from "../sim/config";
+import { CAR_WIDTH, GRAD_OSTAR_LOM, GRAD_PUNA_POSLIJE_PROMJENE, LINE_CROSS_TOL } from "../sim/config";
 import type { Ivica, Mreza } from "./mreza";
 
 /**
@@ -24,7 +24,7 @@ export interface LinijaTraka {
 /** Linije traka ivice, kao u `linijeTraka` (oznake), sa vrstom. Uska ulica nema linija. */
 export function linijeSaVrstom(iv: Ivica): LinijaTraka[] {
   const n = iv.trakeNaprijed + iv.trakeNazad;
-  if (n < 2 || iv.sirina < n * GRAD_SIRINA_TRAKE - 1e-6) return [];
+  if (n < 2 || iv.sirina < n * iv.sirinaTrake - 1e-6) return [];
   const traka = iv.sirina / n;
   const izlaz: LinijaTraka[] = [];
   for (let k = 1; k < n; k++) {
@@ -211,7 +211,7 @@ export function pojasBusa(iv: Ivica, smjer: 1 | -1): [number, number] | null {
   const n = iv.trakeNaprijed + iv.trakeNazad;
   const svoje = smjer === 1 ? iv.trakeNaprijed : iv.trakeNazad;
   const bus = smjer === 1 ? iv.busNaprijed : iv.busNazad;
-  if (!bus || svoje < 2 || iv.sirina < n * GRAD_SIRINA_TRAKE - 1e-6) return null;
+  if (!bus || svoje < 2 || iv.sirina < n * iv.sirinaTrake - 1e-6) return null;
   const traka = iv.sirina / n;
   // Krajnja desna traka u smjeru vožnje: uz desni ivičnjak.
   return smjer === 1 ? [iv.sirina / 2 - traka, iv.sirina / 2] : [-iv.sirina / 2, -iv.sirina / 2 + traka];

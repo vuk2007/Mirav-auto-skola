@@ -15,6 +15,10 @@
  *                                       # umjesto overlay fajla: sintetički
  *                                       # overlay sa sjemenom 3 (sve vrste
  *                                       # izmjena iz editora, u memoriji)
+ *     npm run test:fuzz:grad -- 50 5 1 --saobracaj
+ *                                       # među drugim vozačima (stavka 7d):
+ *                                       # i bez sudara, oduzetog prvenstva i
+ *                                       # zastoja u kojem učestvuje bot
  *
  * Izlaz je 0 kad je sve prošlo, 1 kad nije — sa rutom, sjemenom i
  * prekršajem, da se pad ponovi jednom vožnjom.
@@ -35,12 +39,14 @@ const nivo = Number(process.argv[3] ?? 5);
 const sjeme = Number(process.argv[4] ?? 1);
 const iSint = process.argv.indexOf("--sinteticki");
 const sjemeSintetike = iSint >= 0 ? Number(process.argv[iSint + 1] ?? 1) : null;
+const uSaobracaju = process.argv.includes("--saobracaj");
 
 const { procitaj } = await import(`${KOD}grad/paket.ts`);
 const { procitajOverlay } = await import(`${KOD}grad/overlay.ts`);
 const { svijetGrada } = await import(`${KOD}grad/svijet.ts`);
 const { nasumicnaRuta, odveziRutu, planBota } = await import(`${KOD}grad/botGrad.ts`);
 const { rng } = await import(`${KOD}sim/geometry.ts`);
+const { odveziRutuUSaobracaju } = await import(`${KOD}grad/botUSaobracaju.ts`);
 
 const spisak = JSON.parse(readFileSync(join(JAVNO, "gradovi.json"), "utf8"));
 const b = readFileSync(join(JAVNO, spisak.podgorica.fajl));
@@ -80,7 +86,10 @@ for (let n = 0; n < ruta; n++) {
   const plan = planBota(grad, koraci);
   // Semafori u različitim fazama: početak vožnje u nasumičnom trenutku ciklusa.
   const t0 = slucajno() * 300;
-  const x = odveziRutu(grad, povrsina, plan, t0, nivo, 1800);
+  const x = uSaobracaju
+    ? odveziRutuUSaobracaju(svijet, plan, koraci, t0, nivo, sjeme * 1000 + n, 1, 1800)
+    : odveziRutu(grad, povrsina, plan, t0, nivo, 1800);
+  if (x.zastojaBota) x.prekrsaji.push({ vrsta: "zastoj", detalji: { zastoja: x.zastojaBota }, x: 0, y: 0 });
   km += x.predjeno / 1000;
   sati += x.trajanje / 3600;
   osovinom += plan.osovinom;
@@ -89,13 +98,14 @@ for (let n = 0; n < ruta; n++) {
   console.log(
     `${ok ? "OK  " : "PAD "} ruta ${String(n).padStart(2)}: ${(plan.put.duzina / 1000).toFixed(1)} km, ` +
       `${x.trajanje.toFixed(0)} s, raskrsnica osovinom ${plan.osovinom}, izvlačenja ${x.izvlacenja}` +
+      (uSaobracaju ? `, zastoja oko njega ${x.zastoja}` : "") +
       (x.stigao ? "" : " — NIJE STIGAO") +
       (x.prekrsaji.length ? ` — ${x.prekrsaji.map((p) => `${p.vrsta} ${JSON.stringify(p.detalji)} @${Math.round(p.x)},${Math.round(p.y)}`).join("; ")}` : ""),
   );
   if (!ok) padovi.push(n);
 }
 console.log(
-  `\n${ruta - padovi.length}/${ruta} ruta bez prekršaja i do kraja (nivo ${nivo}, sjeme ${sjeme}); ` +
+  `\n${ruta - padovi.length}/${ruta} ruta bez prekršaja i do kraja (nivo ${nivo}, sjeme ${sjeme}${uSaobracaju ? ", u saobraćaju" : ""}); ` +
     `${km.toFixed(1)} km, ${sati.toFixed(2)} h vožnje; osovinom ${osovinom}, izvlačenja ${izvlacenja}; ` +
     `${((Date.now() - pocetak) / 1000).toFixed(0)} s računanja.`,
 );

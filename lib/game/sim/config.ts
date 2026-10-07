@@ -1475,6 +1475,29 @@ export const GRAD_DRAG = HIGHWAY_DRAG;
 export const GRAD_SIRINA_TRAKE = 4.25;
 
 /**
+ * Bulevar su u OSM-u dvije jednosmjerne polovine na stvarnom razmaku. Sa
+ * igračkom trakom (`GRAD_SIRINA_TRAKE`) mogu se preklopiti: tada krajnja traka
+ * jednog smjera leži preko trake suprotnog, i vozila koja se mimoilaze stanu
+ * nos uz nos. Takvim polovinama se traka suzi tačno toliko da kolovozi stanu
+ * jedan uz drugi (`GRAD_PREKLOP_RAZMAK` između), ali nikad ispod stvarne
+ * gradske trake. Izmjereno u Podgorici: 62 para, od toga 9 se preklapa i sa
+ * stvarnom trakom (greška podataka — ostaju za provjeru mape).
+ */
+export const GRAD_SIRINA_TRAKE_NAJMANJE = 3.25;
+
+/** Razmak između dvije polovine bulevara poslije suženja [m]. */
+export const GRAD_PREKLOP_RAZMAK = 0.2;
+
+/**
+ * Krajevi ivice [m] koji se ne gledaju pri traženju preklopa: tu se polovine
+ * bulevara prirodno primiču da bi ušle u istu raskrsnicu.
+ */
+export const GRAD_PREKLOP_KRAJ = 25;
+
+/** Korak uzorkovanja duž ivice pri traženju preklopa [m]. */
+export const GRAD_PREKLOP_KORAK = 5;
+
+/**
  * Broj traka kad ga OSM nema — po klasi ulice, za cijeli kolovoz dvosmjerne
  * ulice. Jednosmjerna polovina bulevara (`oneway`) dobija isti broj, jer je u
  * Podgorici glavna ulica po pravilu dvije trake u jednom smjeru.
@@ -1942,6 +1965,12 @@ export const GRAD_PRSTEN_RUB = 0.3;
  * izlaza: auto iz unutrašnje trake tu već prelazi ka izlazu.
  */
 export const GRAD_PRSTEN_IZLAZ = 2;
+/**
+ * Ivica prstena kraća od ovoga [m] se ne uzorkuje: sredina joj je tik uz oba
+ * priključka (u raskrsnici), gdje auto već mijenja traku ka izlazu ili od
+ * ulaza — nema mjesta „najdalje od priključaka".
+ */
+export const GRAD_PRSTEN_NAJKRACA = 8;
 
 // ── savršeni bot u gradu (faza 6, stavka 5f) ───────────────────────────────
 
@@ -1997,6 +2026,21 @@ export const GRAD_PRILAZ_DO = 150;
 export const GRAD_FUZZ_NAJKRACA = 400;
 /** Na komadu ulice kraćem od ovoga [m] bot ne mijenja traku. */
 export const GRAD_BOT_NAJKRACA_PROMJENA = 20;
+/**
+ * Razdjelna linija dvosmjerne ulice se u čvoru koji nije raskrsnica pomjerila
+ * (podjela traka po smjerovima se promijenila, npr. 1+2 pa 2+1): srednja traka
+ * je do čvora bila suprotnog smjera. Kroz čvor se zato ostaje u svojoj traci,
+ * a u novu se prelazi tek ovoliko [m] iza njega. Tako se dva vozila mimoilaze
+ * u čvoru svako u svojoj spoljnoj traci, i tek onda svako na svojoj strani
+ * prelazi ka sredini — udaljavajući se od drugog. Prije toga su oba klizila ka
+ * sredini u samom čvoru i stajala nos uz nos.
+ */
+export const GRAD_BOT_RAZDJELNICA_ODMAK = 5;
+/**
+ * Odgođen prelazak (vidi gore) traži bar ovoliko [m] između odmaka i početka
+ * pune linije (ili kraja ivice); kad toga nema, prelazi se lukom kroz čvor.
+ */
+export const GRAD_BOT_RAZDJELNICA_NAJKRACA = 6;
 /** Koliko prije raskrsnice [m] bot već vozi u traci za manevar, i kroz čvorove bez raskrsnice. */
 export const GRAD_BOT_TRAKA_UNAPRIJED = 150;
 /**
@@ -2051,8 +2095,8 @@ export const GRAD_NPC_POJAVA_DO = 350;
 /** …nestaju kad se udalje dalje od ovoga… */
 export const GRAD_NPC_NESTAJE = 450;
 /** …a cilj im je van prozora, ovoliko od mjesta pojave [m]. */
-export const GRAD_NPC_CILJ_OD = 300;
-export const GRAD_NPC_CILJ_DO = 900;
+export const GRAD_NPC_CILJ_OD = 250;
+export const GRAD_NPC_CILJ_DO = 500;
 /** Na početku vožnje vozila se pojavljuju i bliže, ali ne bliže igraču od ovoga [m]. */
 export const GRAD_NPC_POCETAK_OD = 30;
 /** Pojava novog vozila najčešće jednom u ovoliko [s] — plan rute košta par milisekundi. */
@@ -2078,6 +2122,18 @@ export const GRAD_NPC_HORIZONT = 60;
 export const GRAD_NPC_SUKOB_RAZMAK = CAR_WIDTH + 1.4;
 /** Rezerva vremena kad se ulazi ispred vozila koje ima prednost [s]. */
 export const GRAD_NPC_REZERVA_PROLAZA = 1.5;
+/**
+ * Ne ustupa se vozilu koje (preko lanca vozilo ispred / ustupanje / zatvoren
+ * izlaz) čeka mene — najviše ovoliko karika se prati.
+ */
+export const GRAD_NPC_LANAC_CEKANJA = 8;
+/**
+ * Isto za savršenog bota među vozilima (stavka 7d) [s]. Bot ne smije nikoga
+ * natjerati na naglo kočenje (`GRAD_PRVENSTVO_KOCENJE` — sudija to sudi kao
+ * oduzeto prvenstvo), pa je oprezniji od drugih vozača: kod uključivanja ispred
+ * bržeg vozila ono mora i usporiti na njegovu brzinu, ne samo ne udariti.
+ */
+export const GRAD_BOT_REZERVA_PROLAZA = 3;
 /** Vozač „čeka na liniji" kad stoji (ispod ove brzine [m/s]) bliže od ovoga mjestu čekanja [m]. */
 export const GRAD_NPC_CEKA_BRZINA = 0.5;
 export const GRAD_NPC_CEKA_DO = 3;
@@ -2147,3 +2203,25 @@ export const GRAD_SUDAR_PONOVO = 3;
  * igrača kočiti jače od ovoga [m/s²] — više od udobnog usporenja.
  */
 export const GRAD_PRVENSTVO_KOCENJE = 3.5;
+/**
+ * Naglo kočenje iza igrača je oduzeto prvenstvo samo ako je igrač tek upao
+ * ispred (presjekao put, uključio se) — do ovoliko [s] otkad ga vozilo vidi
+ * kao vozilo ispred. Kasnije je to vožnja u koloni: razmak drži onaj iza.
+ */
+export const GRAD_PRESJECANJE = 1.5;
+/**
+ * Naglo kočenje zbog igrača se bilježi tek kad traje bar ovoliko [s]: jedan
+ * korak jakog kočenja (vozilo u susretu se na trenutak primakne liniji) nije
+ * „morao je naglo kočiti".
+ */
+export const GRAD_PRVENSTVO_TRAJE = 0.3;
+/**
+ * Igrač je zaustavljen saobraćajem (nije parkiranje, vidi sudiju): drugo
+ * vozilo mu je ispred bliže od ovoga [m], u njegovoj traci…
+ */
+export const GRAD_IGRAC_KOLONA = 10;
+/**
+ * …ili je u raskrsnici, a kroz nju (ili do nje, bliže od ovoga [m]) prolazi
+ * drugo vozilo — čeka da prođe (npr. lijevo skretanje i susretni).
+ */
+export const GRAD_IGRAC_CEKA_PROLAZ = 30;

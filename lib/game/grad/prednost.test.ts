@@ -149,6 +149,24 @@ describe("prvenstvo: proizvoljna raskrsnica", () => {
     expect(koUstupa(mreza, r, jug, servis)).toBe("b");
   });
 
+  it("dvotračni kružni tok: izlaz iz unutrašnje trake propušta onoga u spoljnoj", () => {
+    // Čvor prstena: prsten ulazi sa zapada (krak 0) i nastavlja na istok
+    // (krak 2), izlaz je na jug (krak 1). Oba vozila dolaze prstenom.
+    const { mreza, r, krak } = zvijezda([180, 90, 0]);
+    const unutra = { ...uc(krak(0), krak(1), mreza, r, "glavni"), uPrstenu: true, izUnutrasnje: true };
+    const spoljaKrug = { ...uc(krak(0), krak(2), mreza, r, "glavni"), uPrstenu: true };
+    const spoljaIzlaz = { ...uc(krak(0), krak(1), mreza, r, "glavni"), uPrstenu: true };
+    expect(koUstupa(mreza, r, unutra, spoljaKrug)).toBe("a");
+    expect(koUstupa(mreza, r, spoljaKrug, unutra)).toBe("b");
+    // I kad oba izlaze na isti krak: spoljni prvi, unutrašnji se uključuje iza.
+    expect(koUstupa(mreza, r, unutra, spoljaIzlaz)).toBe("a");
+    // Ulaz u prsten i dalje ustupa svima u prstenu, i unutrašnjem.
+    const ulaz = uc(krak(1), krak(2), mreza, r, "ustupi");
+    expect(koUstupa(mreza, r, ulaz, unutra)).toBe("a");
+    // Bez trake (jednotračni prsten): ravnopravni, odlučuje dolazak.
+    expect(koUstupa(mreza, r, spoljaIzlaz, spoljaKrug)).toBe(null);
+  });
+
   it("dopunska zelena strelica pušta uz ustupanje: ustupa zelenom", () => {
     const { mreza, r, krak } = zvijezda([270, 0, 90, 180]);
     const strelica = uc(krak(2), krak(1), mreza, r, "strelica");
@@ -189,6 +207,29 @@ describe("sukob putanja", () => {
       expect(x).toBeGreaterThanOrEqual(17);
       expect(x).toBeLessThanOrEqual(19);
     }
+  });
+
+  it("ukrštanje: zona sukoba je kratka (kraj blizu početka)", () => {
+    const s = sukobPutanja(linija({ x: -20, y: 0 }, { x: 20, y: 0 }, 40), linija({ x: 0, y: 20 }, { x: 0, y: -20 }, 40), 2.4)!;
+    expect(s.ka - s.sa).toBeLessThan(6);
+    expect(s.kb - s.sb).toBeLessThan(6);
+  });
+
+  it("putanje jedna preko druge u suprotnim smjerovima: zona sukoba je cijeli zajednički komad", () => {
+    // Dva lijeva skretanja na pomjerenoj raskrsnici: 15 m istim prostorom,
+    // jedno ka istoku, drugo ka zapadu. Prošao je tek kad prođe cijeli komad.
+    const ka = [...linija({ x: -10, y: 10 }, { x: 0, y: 0 }, 14), ...linija({ x: 1, y: 0 }, { x: 15, y: 0 }, 14)];
+    const kz = [...linija({ x: 25, y: -10 }, { x: 15, y: 0 }, 14), ...linija({ x: 14, y: 0 }, { x: 0, y: 0 }, 14)];
+    const s = sukobPutanja(ka, kz, 2.4)!;
+    expect(s.spajanje).toBe(false);
+    // Zajednički komad je od x = 0 do x = 15; na obje putanje počinje na
+    // oko 14 m, pa je kraj zone oko 29 m — i jedno i drugo vozilo je
+    // „prošlo" tek kad izađe sa cijelog komada, ne kad prođe prvi dodir.
+    for (const kraj of [s.ka, s.kb]) {
+      expect(kraj).toBeGreaterThan(27);
+      expect(kraj).toBeLessThanOrEqual(29.2);
+    }
+    expect(s.sa).toBeLessThan(15);
   });
 
   it("spajanje na isti izlaz", () => {

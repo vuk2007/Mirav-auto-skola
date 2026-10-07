@@ -111,9 +111,10 @@ async function sjeme(s, trajanje, trag) {
       sud.predjeno += n.v * DT;
       const st = { x: n.x, y: n.y, ugao: n.ugao, v: n.v, tocak: 0, rikverc: false, kocnicaStoji: 0, udar: false, predjeno: sud.predjeno + 10 };
       const prije = sud.s.prekrsaji.length;
-      // Zaustavio ga je saobraćaj: vozilo ispred, ili u raskrsnici ustupa
-      // onome ko je u sljedećoj (tik uz nju) — odluka korisnika 2026-09-30.
-      const zbogSaobracaja = n.razlog.vrsta === "vozilo" || (n.razlog.vrsta === "ustupa" && sud.s.prolaz !== null);
+      // Zaustavio ga je saobraćaj (odluka korisnika 2026-09-30): vozilo
+      // ispred, ustupanje, ili zatvoren izlaz iz raskrsnice. I kad sudija još
+      // ne vodi prolaz: na rubu raskrsnice auto je za parkiranje već u njoj.
+      const zbogSaobracaja = n.razlog.vrsta === "vozilo" || n.razlog.vrsta === "ustupa" || n.razlog.vrsta === "izlaz";
       sudi(sv.zaSudiju, sud.s, st, sb.t, n.zmigavac, zbogSaobracaja);
       for (const p of sud.s.prekrsaji.slice(prije)) prekrsaji.push({ id: n.id, t: sb.t.toFixed(1), vrsta: p.vrsta, x: p.x.toFixed(1), y: p.y.toFixed(1), detalji: JSON.stringify(p.detalji), razlog: JSON.stringify(n.razlog) });
     }

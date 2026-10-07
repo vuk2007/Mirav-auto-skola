@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_NPC_RAZMAK } from "../sim/config";
 import type { Point } from "../sim/types";
 import { svijetGrada } from "./svijet";
-import { dodajVozilo, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, type Npc, type Saobracaj, type Tijelo } from "./saobracaj";
+import { dodajVozilo, IGRAC, igracCekaSaobracaj, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, type Npc, type Saobracaj, type Tijelo } from "./saobracaj";
 import { testPaket, type TestIvica } from "./testMreza";
 
 /**
@@ -155,5 +155,34 @@ describe("saobraćaj i igrač", () => {
     expect(k?.id).toBe(npc.id);
     // Da je igrač bio na glavnoj (sa zapada), ustupalo bi vozilo — nije prekršaj.
     expect(oduzetoPrvenstvo(sb, { r, ulaz: 2, izlaz: 0, manevar: "pravo", od: 0, do_: sb.t })?.usao ?? false).toBe(sb.kocenja[0]!.usao);
+  });
+});
+
+describe("igrač stoji zbog saobraćaja (nije parkiranje)", () => {
+  const igrac = (x: number, y: number, ugao: number): Tijelo => ({ id: IGRAC, x, y, ugao, v: 0, duzina: CAR_LENGTH, sirina: CAR_WIDTH, nivo: 0 });
+
+  it("vozilo tik ispred u traci: čeka; iza, ili daleko ispred: ne", () => {
+    const sb = noviSaobracaj(krst(), 1, 0);
+    // Vozilo sa juga ka sjeveru, stoji na 100 m od centra (y = 100).
+    const n = dodajVozilo(sb, ruta(1, 3), 0)!;
+    vozi(sb, 0.1);
+    // Igrač iza njega, ka sjeveru (ugao −90°), 8 m iza: čeka.
+    expect(igracCekaSaobracaj(sb, igrac(n.x, n.y + 8, -Math.PI / 2), null)).toBe(true);
+    // Ispred njega: ne čeka zbog njega.
+    expect(igracCekaSaobracaj(sb, igrac(n.x, n.y - 8, -Math.PI / 2), null)).toBe(false);
+    // 40 m iza: ne.
+    expect(igracCekaSaobracaj(sb, igrac(n.x, n.y + 40, -Math.PI / 2), null)).toBe(false);
+  });
+
+  it("u raskrsnici, a kroz nju prolazi drugo vozilo: čeka", () => {
+    const sb = noviSaobracaj(krst(), 1, 0);
+    const r = sb.svijet.raskrsnice.uCvoru[0]!;
+    // Vozilo sa istoka ka zapadu, 20 m pred centrom, u pokretu.
+    dodajVozilo(sb, ruta(0, 2), 10)!.s = 125;
+    vozi(sb, 0.1);
+    // Igrač stoji u centru (raskrsnica `r`), okrenut ka sjeveru, bez ikog ispred.
+    expect(igracCekaSaobracaj(sb, igrac(-2, 3, -Math.PI / 2), r)).toBe(true);
+    // Van raskrsnice (`null`) samo zbog kolone — ovdje nema.
+    expect(igracCekaSaobracaj(sb, igrac(-2, 3, -Math.PI / 2), null)).toBe(false);
   });
 });

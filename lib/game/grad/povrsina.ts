@@ -43,6 +43,12 @@ export interface Povrsina {
   segK: Uint32Array;
   /** Po ćeliji: indeksi segmenata i (negativni, −1 − i) uglova koji je dodiruju. */
   celije: Map<number, number[]>;
+  /**
+   * Žig upita (`oseBlizu`): segment upisan u više ćelija se u jednom upitu
+   * računa jednom. Samo radna memorija — ne utiče na rezultat.
+   */
+  zig: number;
+  zigSeg: Uint32Array;
 }
 
 const kljuc = (cx: number, cy: number) => cx * 100003 + cy;
@@ -96,7 +102,7 @@ export function napraviPovrsinu(m: Mreza): Povrsina {
       uglovi.push(u);
     }
   }
-  return { mreza: m, uglovi, seg, segIvica, segK, celije };
+  return { mreza: m, uglovi, seg, segIvica, segK, celije, zig: 0, zigSeg: new Uint32Array(segIvica.length) };
 }
 
 /** Krak raskrsnice: pravac ulice iz čvora (jedinični) i pola njene širine. */
@@ -366,14 +372,21 @@ export interface OsaBlizu {
  * pa po broju ivice.
  */
 export function oseBlizu(p: Povrsina, x: number, y: number, do_: number): OsaBlizu[] {
-  const najbolje = new Map<number, OsaBlizu>();
-  // Samo ćelije koje dodiruje kvadrat ±`do_` oko tačke: najbliža tačka osovine
-  // bliže od `do_` je u njemu, a segment je upisan u ćeliju svake svoje tačke.
+  // Zove se u svakom koraku sudije (i pri svakom planu vozila), pa bez
+  // usputnih objekata: segment upisan u više ćelija se računa jednom (žig),
+  // poredi se kvadrat udaljenosti, a rezultat se pravi tek za najbolje.
+  const zig = ++p.zig;
+  const najbolji = new Map<number, number>(); // ivica → segment
+  const najD2 = new Map<number, number>();
+  const do2 = do_ * do_;
+  const s = p.seg;
   for (let cx = celija(x - do_); cx <= celija(x + do_); cx++) {
     for (let cy = celija(y - do_); cy <= celija(y + do_); cy++) {
-      for (const j of p.celije.get(kljuc(cx, cy)) ?? []) {
-        if (j < 0) continue;
-        const s = p.seg;
+      const stavke = p.celije.get(kljuc(cx, cy));
+      if (!stavke) continue;
+      for (const j of stavke) {
+        if (j < 0 || p.zigSeg[j] === zig) continue;
+        p.zigSeg[j] = zig;
         const ax = s[5 * j]!;
         const ay = s[5 * j + 1]!;
         const dx = s[5 * j + 2]! - ax;
@@ -381,25 +394,40 @@ export function oseBlizu(p: Povrsina, x: number, y: number, do_: number): OsaBli
         const l2 = dx * dx + dy * dy;
         if (l2 === 0) continue;
         const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2));
-        const qx = ax + dx * t;
-        const qy = ay + dy * t;
-        const d = Math.hypot(qx - x, qy - y);
-        if (d > do_) continue;
+        const ex = ax + dx * t - x;
+        const ey = ay + dy * t - y;
+        const d2 = ex * ex + ey * ey;
+        if (d2 > do2) continue;
         const iv = p.segIvica[j]!;
-        const bilo = najbolje.get(iv);
-        if (bilo && bilo.d <= d) continue;
-        const l = Math.sqrt(l2);
-        najbolje.set(iv, {
-          ivica: iv,
-          tacka: { x: qx, y: qy },
-          pravac: { x: dx / l, y: dy / l },
-          pola: s[5 * j + 4]!,
-          s: p.mreza.ivice[iv]!.cum[p.segK[j]!]! + t * l,
-          bok: ((x - ax) * -dy + (y - ay) * dx) / l,
-          d,
-        });
+        const bilo = najD2.get(iv);
+        // Isti segment je ranije bio i u starom redoslijedu prvi: kod jednake
+        // udaljenosti ostaje onaj koji je prvi nađen.
+        if (bilo !== undefined && bilo <= d2) continue;
+        najD2.set(iv, d2);
+        najbolji.set(iv, j);
       }
     }
   }
-  return [...najbolje.values()].sort((a, b) => a.d - b.d || a.ivica - b.ivica);
+  const izlaz: OsaBlizu[] = [];
+  for (const [iv, j] of najbolji) {
+    const ax = s[5 * j]!;
+    const ay = s[5 * j + 1]!;
+    const dx = s[5 * j + 2]! - ax;
+    const dy = s[5 * j + 3]! - ay;
+    const l2 = dx * dx + dy * dy;
+    const l = Math.sqrt(l2);
+    const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2));
+    const qx = ax + dx * t;
+    const qy = ay + dy * t;
+    izlaz.push({
+      ivica: iv,
+      tacka: { x: qx, y: qy },
+      pravac: { x: dx / l, y: dy / l },
+      pola: s[5 * j + 4]!,
+      s: p.mreza.ivice[iv]!.cum[p.segK[j]!]! + t * l,
+      bok: ((x - ax) * -dy + (y - ay) * dx) / l,
+      d: Math.hypot(qx - x, qy - y),
+    });
+  }
+  return izlaz.sort((a, b) => a.d - b.d || a.ivica - b.ivica);
 }

@@ -1,7 +1,6 @@
 import {
   GRAD_LINIJA_STOP,
   GRAD_LINIJA_USTUPI_CRTICA,
-  GRAD_SIRINA_TRAKE,
   GRAD_TROTOAR,
   GRAD_ZNAK_ISTI_STUB,
 } from "../sim/config";
@@ -145,7 +144,7 @@ export function trakeUlaza(iv: Ivica, kraj: 0 | 1): [number, number] {
   const W = iv.sirina / 2;
   if (iv.smjer !== 0) return [-W, W];
   const n = iv.trakeNaprijed + iv.trakeNazad;
-  const razdjelnica = n > 0 && iv.sirina >= n * GRAD_SIRINA_TRAKE - 1e-6 ? -W + iv.trakeNazad * (iv.sirina / n) : 0;
+  const razdjelnica = n > 0 && iv.sirina >= n * iv.sirinaTrake - 1e-6 ? -W + iv.trakeNazad * (iv.sirina / n) : 0;
   return kraj === 1 ? [razdjelnica, W] : [-W, razdjelnica];
 }
 

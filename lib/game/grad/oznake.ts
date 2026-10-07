@@ -3,7 +3,6 @@ import {
   GRAD_CRTICA_RAZMAK,
   GRAD_LINIJA_SIRINA,
   GRAD_LINIJE_OD_RASKRSNICE,
-  GRAD_SIRINA_TRAKE,
   GRAD_STRELICA_DUZINA,
   GRAD_STRELICA_OD_KRAJA,
   GRAD_ZEBRA_DO_ULICE,
@@ -152,7 +151,7 @@ function trakaDuz(iv: Ivica, s0: number, s1: number, o: number, sirina: number, 
  */
 export function linijeTraka(iv: Ivica): number[] {
   const n = iv.trakeNaprijed + iv.trakeNazad;
-  if (n < 2 || iv.sirina < n * GRAD_SIRINA_TRAKE - 1e-6) return [];
+  if (n < 2 || iv.sirina < n * iv.sirinaTrake - 1e-6) return [];
   const traka = iv.sirina / n;
   const pomaci: number[] = [];
   for (let k = 1; k < n; k++) pomaci.push(-iv.sirina / 2 + k * traka);
@@ -328,7 +327,7 @@ const STRELICE: Record<string, readonly (readonly [number, number])[][]> = (() =
 export function streliceIvice(iv: Ivica, odA: number, odB: number): Poligon[] {
   const izlaz: Poligon[] = [];
   const n = iv.trakeNaprijed + iv.trakeNazad;
-  if (n === 0 || iv.sirina < n * GRAD_SIRINA_TRAKE - 1e-6) return izlaz;
+  if (n === 0 || iv.sirina < n * iv.sirinaTrake - 1e-6) return izlaz;
   const traka = iv.sirina / n;
   for (const naprijed of [true, false]) {
     const opis = naprijed ? iv.skretanjaNaprijed : iv.skretanjaNazad;

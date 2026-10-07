@@ -1,0 +1,20 @@
+Mjerilo grada sa drugim vozačima — faza 6, stavka 7d (2026-10-07)
+Skripta: qa/faza7_bench_grad.mjs, `npm run build && npx next start -p 3100`.
+Telefon 390 px, gustina piksela 2; procesor 1× i 4× (CDP), nivo 5, dan = 40 vozila; 30 s po mjerenju.
+Cilj: ≥ 55 fps na referentnom telefonu (4×), korak simulacije ≤ 4 ms.
+
+Prije optimizacije (rute drugih vozača 300–900 m, -17,271, 20 s):
+procesor x1: 59.9 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 50.1 ms, sporijih od 55 fps 1/1199; korak simulacije medijana 0.60 ms, max 6.98 ms; vozila 40–40
+procesor x4: 53.7 fps, kadar medijana 16.7 ms, p95 33.3 ms, max 366.6 ms, sporijih od 55 fps 85/1076; korak simulacije medijana 4.41 ms, max 48.27 ms; vozila 40–40
+
+Poslije (rute 250–500 m: vozilo ionako nestaje 450 m od igrača; `oseBlizu` bez ponovljenih segmenata i usputnih objekata):
+Grad, -17,271, 30 s po mjerenju
+procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 16.8 ms, sporijih od 55 fps 0/1801; korak simulacije medijana 0.44 ms, max 2.96 ms; vozila 40–40
+procesor x4: 59.3 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 116.7 ms, sporijih od 55 fps 8/1779; korak simulacije medijana 2.74 ms, max 14.37 ms; vozila 40–40
+Grad, 140,-216 (raskrsnica u centru), 30 s po mjerenju
+procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 16.8 ms, sporijih od 55 fps 0/1801; korak simulacije medijana 0.57 ms, max 6.04 ms; vozila 40–40
+procesor x4: 58.1 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 166.6 ms, sporijih od 55 fps 28/1743; korak simulacije medijana 3.83 ms, max 33.96 ms; vozila 40–40
+
+Preostalo: pojedinačni dugi kadrovi su pojava novog vozila (A* + plan sa suhom vožnjom sudije,
+prosječno ~4 ms, najviše ~20 ms na 1×). Rješenje kad zatreba: plan raspoređen na više koraka.
+Grafički čip se ne usporava — konačna riječ je pravi telefon (`/igra?debug=1` pokazuje fps, vozila i korak).

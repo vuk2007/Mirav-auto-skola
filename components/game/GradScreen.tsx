@@ -26,7 +26,7 @@ import { procitaj } from "@/lib/game/grad/paket";
 import { ulicaNa } from "@/lib/game/grad/povrsina";
 import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { svijetGrada } from "@/lib/game/grad/svijet";
-import { IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, type Tijelo } from "@/lib/game/grad/saobracaj";
+import { igracCekaSaobracaj, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, type Tijelo } from "@/lib/game/grad/saobracaj";
 import type { Manevar } from "@/lib/game/grad/mreza";
 import { polygonsOverlap, rectCorners } from "@/lib/game/sim/geometry";
 import { naslovPrekrsaja, praviloPrekrsaja } from "@/lib/game/ui/gradPrekrsaji";
@@ -57,6 +57,9 @@ interface Hud {
   ulica: string;
   rikverc: boolean;
   fps: number | null;
+  /** Samo `?debug=1`: broj drugih vozila i prosječan korak simulacije [ms] (mjerilo, stavka 7d). */
+  vozila: number | null;
+  korakMs: number | null;
 }
 
 /** Trzaj telefona pri udaru u ivičnjak [ms] — samo kad udar počne, ne dok struže. */
@@ -80,7 +83,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const volan = useVolan(true, { pokazivacRukom: true });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [faza, setFaza] = useState<Faza>("ucitavam");
-  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null });
+  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null, vozila: null, korakMs: null });
   const [ogranicenje, setOgranicenje] = useState<number | null>(null);
   // Sudija (stavka 5d): prekršaji ove vožnje, zadnji se kratko prikaže.
   const [prekrsaji, setPrekrsaji] = useState<GradskiPrekrsaj[]>([]);
@@ -147,6 +150,10 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       // neko ko je imao prednost (ili je već bio u njoj) morao naglo kočiti
       // zbog njega. Manevar igrača se tad zna.
       let ulazak: { r: number; t: number } | null = null;
+      // Traka u prstenu dvotračnog kružnog toka, zadnja koju je sudija
+      // zabilježio: ostaje i poslije izlaza (sudija tada briše `prsten`), do
+      // ulaska u sljedeći prsten.
+      let trakaPrstena: "unutra" | "spolja" | null = null;
       sudija.naUlazu = (r) => {
         ulazak = { r, t: koraka_ * DT };
       };
@@ -158,6 +165,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           manevar: p.manevar as Manevar,
           od: ulazak?.r === p.r ? ulazak.t - 3 : p.t - 10,
           do_: p.t,
+          izUnutrasnje: trakaPrstena === "unutra",
+          ulazak: ulazak?.r === p.r ? ulazak.t : undefined,
         });
         if (k) sudija.prekrsaji.push({ vrsta: "rightOfWay", ozbiljnost: "fail", t: p.t, x: st.x, y: st.y, detalji: { vozilo: k.id } });
         saobracaj.kocenja = saobracaj.kocenja.filter((k) => k.t > p.t - 30);
@@ -220,6 +229,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       let kadrova = 0;
       let odFps = performance.now();
       let fps: number | null = null;
+      // Vrijeme simulacije (igrač, saobraćaj, sudija) po koraku, za `?debug=1`.
+      let simMs = 0;
+      let simKoraka = 0;
       let bioUdar = false;
       /** Koraci simulacije od početka — njima teče vrijeme semafora, ne satom. */
       let koraka_ = 0;
@@ -231,14 +243,17 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         acc += dt;
         let koraka = 0;
         while (acc >= DT && koraka < 8) {
+          const t0Koraka = debug ? performance.now() : 0;
           prije = sada;
           korakSlobodno(povrsina, st, inputRef.current, { kisa: uslovRef.current.kisa });
           saobracaj.gustina = gustina();
+          if (sudija.prsten) trakaPrstena = sudija.prsten.uzorci.at(-1)?.traka ?? null;
           korakSaobracaja(saobracaj, { x: st.x, y: st.y }, tijeloIgraca(), {
             tijelo: tijeloIgraca(),
             ivica: sudija.ivica,
             smjer: sudija.smjer,
             zmigavac: inputRef.current.indicator,
+            trakaUPrstenu: trakaPrstena,
           });
           if (saobracaj.kocenja.length > 200) saobracaj.kocenja.splice(0, 100);
           // Sudar sa drugim vozilom: prekršaj, i auto staje.
@@ -256,13 +271,19 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           }
           koraka_ += 1;
           sudija.nivo = nivoRef.current;
-          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator);
+          // Stoji zbog saobraćaja (kolona, čeka da prođe drugi) — nije parkiranje.
+          const zbogSaobracaja = igracCekaSaobracaj(saobracaj, tijeloIgraca(), sudija.prolaz?.r ?? sudija.prilaz?.r ?? null);
+          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator, zbogSaobracaja);
           simTRef.current = koraka_ * DT;
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
           bioUdar = st.udar;
           acc -= DT;
           koraka += 1;
+          if (debug) {
+            simMs += performance.now() - t0Koraka;
+            simKoraka += 1;
+          }
         }
         if (koraka === 8) acc = 0;
         const alfa = acc / DT;
@@ -321,7 +342,16 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           // Van ulice (ne bi trebalo da se desi) ostaje zadnja poznata.
           ulica = ulicaNa(povrsina, st.x, st.y) ?? ulica;
           const iv = mreza.ivice[ulica]!;
-          setHud({ kmh: Math.abs(st.v) * 3.6, ulica: iv.ime, rikverc: st.rikverc, fps: debug ? fps : null });
+          setHud({
+            kmh: Math.abs(st.v) * 3.6,
+            ulica: iv.ime,
+            rikverc: st.rikverc,
+            fps: debug ? fps : null,
+            vozila: debug ? saobracaj.npc.length : null,
+            korakMs: debug && simKoraka > 0 ? simMs / simKoraka : null,
+          });
+          simMs = 0;
+          simKoraka = 0;
           // Ograničenje po kojem sudija sudi: znak, zona, OSM, ili ono u naselju.
           setOgranicenje(sudija.ogranicenje || GRAD_BRZINA_PODRAZUMIJEVANA);
           if (sudija.prekrsaji.length > prijavljeno) {
@@ -428,6 +458,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
               {t.gradStreet}: {hud.ulica || t.gradUnnamed}
               {hud.fps !== null ? ` · ${hud.fps.toFixed(0)} fps` : ""}
+              {hud.vozila !== null ? ` · ${hud.vozila} vozila` : ""}
+              {hud.korakMs !== null ? ` · korak ${hud.korakMs.toFixed(2)} ms` : ""}
             </p>
             {kisa && (
               <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">

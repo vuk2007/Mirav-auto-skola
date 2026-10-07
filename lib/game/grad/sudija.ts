@@ -9,8 +9,8 @@ import {
   GRAD_LIJEVO_TRAJE,
   GRAD_PRILAZ_DO,
   GRAD_PUNA_POSLIJE_PROMJENE,
-  GRAD_SIRINA_TRAKE,
   GRAD_PRSTEN_IZLAZ,
+  GRAD_PRSTEN_NAJKRACA,
   GRAD_PRSTEN_RUB,
   GRAD_PRSTEN_SREDINA,
   GRAD_SKRETANJE_UGAO,
@@ -586,7 +586,7 @@ function streliceTrake(iv: Ivica, gleda: 1 | -1, bok: number): string[] | null {
   const opis = gleda === 1 ? iv.skretanjaNaprijed : iv.skretanjaNazad;
   const svoje = gleda === 1 ? iv.trakeNaprijed : iv.trakeNazad;
   const n = iv.trakeNaprijed + iv.trakeNazad;
-  if (!opis || n === 0 || iv.sirina < n * GRAD_SIRINA_TRAKE - 1e-6) return null;
+  if (!opis || n === 0 || iv.sirina < n * iv.sirinaTrake - 1e-6) return null;
   const po = opis.split("|");
   if (po.length !== svoje) return null;
   const traka = iv.sirina / n;
@@ -694,6 +694,12 @@ export function sudi(
     const { linija, pravac } = stopLinija(g, k);
     const doLinije = nosDoLinije(st, linija, pravac);
     if (doLinije > 0) {
+      // Prilaz počinje sa već upaljenim žutim (linija je tik iza prethodne
+      // raskrsnice, pa ju je sudija tek sad našao): kad se upalilo, ne zna se.
+      // Sudi se po onome što se vidi sad — ko odavde ne može stati, ne krši.
+      const kasno = doLinije / Math.max(st.v, 0.1) < YELLOW_COMMIT_TTC;
+      const rs = g.raskrsnice.lista[ispred.r]!;
+      const sv = svjetlo(rs, ispred.k, t);
       s.prilaz = {
         kljuc: `${k.ivica}:${k.kraj}`,
         r: ispred.r,
@@ -702,11 +708,14 @@ export function sudi(
         pravac,
         doLinije,
         stajao: 0,
-        svjetlo: svjetlo(g.raskrsnice.lista[ispred.r]!, ispred.k, t),
-        zutoPrekasno: false,
-        poManevru: svjetloPoManevru(g.raskrsnice.lista[ispred.r]!, ispred.k)
+        svjetlo: sv,
+        zutoPrekasno: sv === "zuto" && kasno,
+        poManevru: svjetloPoManevru(rs, ispred.k)
           ? (Object.fromEntries(
-              MANEVRI.map((mv) => [mv, { svjetlo: svjetlo(g.raskrsnice.lista[ispred.r]!, ispred.k, t, mv), zutoPrekasno: false }]),
+              MANEVRI.map((mv) => {
+                const svM = svjetlo(rs, ispred.k, t, mv);
+                return [mv, { svjetlo: svM, zutoPrekasno: svM === "zuto" && kasno }];
+              }),
             ) as Prilaz["poManevru"])
           : null,
       };
@@ -844,7 +853,7 @@ export function sudi(
     // trake je četvrt širine lijevo od nje.
     const nTraka = iv.trakeNaprijed + iv.trakeNazad;
     const imaStrane =
-      iv.smjer === 0 && iv.trakeNaprijed > 0 && iv.trakeNazad > 0 && iv.sirina >= nTraka * GRAD_SIRINA_TRAKE - 1e-6;
+      iv.smjer === 0 && iv.trakeNaprijed > 0 && iv.trakeNazad > 0 && iv.sirina >= nTraka * iv.sirinaTrake - 1e-6;
     const bokUSmjeru = osa.bok * gleda;
     const razdjelnik = iv.sirina / 2 - ((gleda === 1 ? iv.trakeNaprijed : iv.trakeNazad) * iv.sirina) / Math.max(1, nTraka);
     // Uz čvor gdje se raspored traka mijenja (traka skretanja koja počinje
@@ -907,6 +916,7 @@ export function sudi(
     iv.trakeNazad === 0 &&
     (iv.smjer === 0 || iv.smjer === gleda) &&
     !s.prsten.sredine.has(osa.ivica) &&
+    iv.duzina >= GRAD_PRSTEN_NAJKRACA &&
     Math.abs(osa.s - iv.duzina / 2) < GRAD_PRSTEN_SREDINA
   ) {
     const bokT = osa.bok * gleda;
@@ -963,7 +973,11 @@ export function sudi(
   // ── zaustavljanje: zebra, raskrsnica, stajalište ────────────────────────
   // Auto koje još nije krenulo (start vožnje) ne „zaustavlja se" nigdje.
   if (Math.abs(st.v) < STOPPED_SPEED && st.predjeno > CAR_LENGTH) {
-    s.stojiT += DT;
+    // Zaustavio ga je saobraćaj (kolona ispred) — nije prekršaj (odluka
+    // korisnika 2026-09-30). Dok tako stoji, vrijeme se ne broji: i kad krene,
+    // broji se tek od tada, ne od početka čekanja.
+    if (uKoloni) s.stojiT = 0;
+    else s.stojiT += DT;
     if (s.stojiT >= GRAD_STAJANJE_TRAJE && !s.stojiPrijavljeno) {
       // Ispred stop-linije se čeka — to nije zaustavljanje na zabranjenom mjestu.
       // Isto na mjestu čekanja kraka bez linije (ustupanje).
@@ -976,10 +990,7 @@ export function sudi(
         (z) => Math.abs(z.s - osa.s) < GRAD_STAJALISTE_DUZINA / 2 && Math.sign(osa.bok) === z.strana,
       );
       const gdje = r !== null ? "raskrsnica" : naZebri ? "zebra" : naStajalistu ? "stajaliste" : null;
-      // Zaustavio ga je saobraćaj (kolona ispred) — nije prekršaj (odluka
-      // korisnika 2026-09-30). Dok stoji u koloni, vrijeme se ne broji.
-      if (uKoloni) s.stojiT = 0;
-      else if (gdje && !cekaNaLiniji) {
+      if (gdje && !cekaNaLiniji) {
         prijavi(s, st, t, "parkingViolation", { gdje });
         s.stojiPrijavljeno = true;
       }

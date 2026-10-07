@@ -40,6 +40,11 @@ export interface UcesnikPrednosti {
   kontrola: KontrolaUcesnika;
   /** Već je u prstenu kružnog toka (ulazi sa kružne ivice). */
   uPrstenu: boolean;
+  /**
+   * Izlazi iz prstena iz unutrašnje trake dvotračnog kružnog toka — presijeca
+   * spoljnu traku, pa propušta vozila u prstenu (vidi `koUstupa`).
+   */
+  izUnutrasnje?: boolean;
   /** Uključuje se sa servisnog puta, parkinga ili iz dvorišta. */
   ukljucivanje: boolean;
   /** Vozilo pod pratnjom (stavka 8). */
@@ -101,6 +106,9 @@ export function koUstupa(m: Mreza, r: Raskrsnica, a: UcesnikPrednosti, b: Ucesni
   if (Boolean(a.hitno) !== Boolean(b.hitno)) return a.hitno ? "b" : "a";
   // Ko je već u prstenu ima prvenstvo nad onim koji ulazi.
   if (a.uPrstenu !== b.uPrstenu) return a.uPrstenu ? "b" : "a";
+  // U prstenu: izlaz iz unutrašnje trake presijeca spoljnu — propušta onoga
+  // koji vozi spoljnom (izlazi ili nastavlja krug).
+  if (a.uPrstenu && Boolean(a.izUnutrasnje) !== Boolean(b.izUnutrasnje)) return a.izUnutrasnje ? "a" : "b";
 
   const ta = nivoPrvenstva(a.kontrola);
   const tb = nivoPrvenstva(b.kontrola);
@@ -132,6 +140,20 @@ export function koUstupa(m: Mreza, r: Raskrsnica, a: UcesnikPrednosti, b: Ucesni
 export interface Sukob {
   sa: number;
   sb: number;
+  /**
+   * Kraj zone sukoba na svakoj putanji: zadnje mjesto gdje se tijela još mogu
+   * dodirnuti. Kod putanja koje se sijeku je to blizu `sa`/`sb`; kod onih koje
+   * idu jedna preko druge (dva lijeva skretanja na pomjerenoj raskrsnici)
+   * zona je dugačka, i „prošao je" znači tek iza njenog kraja.
+   */
+  ka: number;
+  kb: number;
+  /**
+   * Početak zone sukoba na putanji `b` (najmanji `s` dodira). `sb` je mjesto
+   * na `b` u prvom dodiru gledano duž `a`; kod putanja jedna preko druge u
+   * suprotnim smjerovima to je kraj zone na `b`, ne početak.
+   */
+  pb: number;
   spajanje: boolean;
 }
 
@@ -172,6 +194,7 @@ export function sukobPutanja(a: readonly Point[], b: readonly Point[], razmak: n
         );
       }
     : (i: number, j: number) => blizu(a[i]!, b[j]!);
+  let prvi: Sukob | null = null;
   let sa = 0;
   for (let i = 0; i < a.length; i++) {
     if (i > 0) sa += Math.hypot(a[i]!.x - a[i - 1]!.x, a[i]!.y - a[i - 1]!.y);
@@ -180,8 +203,11 @@ export function sukobPutanja(a: readonly Point[], b: readonly Point[], razmak: n
       if (j > 0) sb += Math.hypot(b[j]!.x - b[j - 1]!.x, b[j]!.y - b[j - 1]!.y);
       if (!dodir(i, j)) continue;
       // Spajanje: i krajevi su blizu — dalje idu istom trakom.
-      return { sa, sb, spajanje: blizu(a[a.length - 1]!, b[b.length - 1]!) };
+      if (!prvi) prvi = { sa, sb, ka: sa, kb: sb, pb: sb, spajanje: blizu(a[a.length - 1]!, b[b.length - 1]!) };
+      prvi.ka = Math.max(prvi.ka, sa);
+      prvi.kb = Math.max(prvi.kb, sb);
+      prvi.pb = Math.min(prvi.pb, sb);
     }
   }
-  return null;
+  return prvi;
 }

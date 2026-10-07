@@ -2,8 +2,12 @@ import {
   CAR_WIDTH,
   GRAD_NAJUZA_ULICA,
   GRAD_POLUKRUZNO_UGAO,
+  GRAD_PREKLOP_KORAK,
+  GRAD_PREKLOP_KRAJ,
+  GRAD_PREKLOP_RAZMAK,
   GRAD_SKRETANJE_UGAO,
   GRAD_SIRINA_TRAKE,
+  GRAD_SIRINA_TRAKE_NAJMANJE,
   GRAD_TRAKE_PO_KLASI,
 } from "../sim/config";
 import { cumulative, pointAt } from "../sim/geometry";
@@ -44,6 +48,12 @@ export interface Ivica {
   smjer: -1 | 0 | 1;
   /** Širina kolovoza [m] — iz broja traka, ili po klasi kad ga OSM nema. */
   sirina: number;
+  /**
+   * Širina jedne trake ove ivice [m]: `GRAD_SIRINA_TRAKE`, osim na polovini
+   * bulevara koja bi se preklopila sa suprotnom (vidi `suziPreklopljene`).
+   * Trake „staju punom širinom" kad je `sirina >= n * sirinaTrake`.
+   */
+  sirinaTrake: number;
   /** Da li je broj traka iz OSM-a ili pretpostavljen po klasi. */
   trakePoznate: boolean;
   /**
@@ -138,6 +148,7 @@ export function napraviMrezu(p: Paket): Mreza {
       klasa,
       smjer: smjer > 0 ? 1 : smjer < 0 ? -1 : 0,
       sirina,
+      sirinaTrake: GRAD_SIRINA_TRAKE,
       trakePoznate: poznate,
       trakeNaprijed: naprijed,
       trakeNazad: nazad,
@@ -162,7 +173,110 @@ export function napraviMrezu(p: Paket): Mreza {
     izCvora[n.ivA[i]!]!.push(i);
     if (n.ivB[i]! !== n.ivA[i]!) izCvora[n.ivB[i]!]!.push(i);
   }
+  suziPreklopljene(ivice, izCvora);
   return { cvorovi, ivice, izCvora };
+}
+
+/**
+ * Polovine bulevara koje bi se preklopile (vidi `GRAD_SIRINA_TRAKE_NAJMANJE`):
+ * dvije jednosmjerne vozne ivice suprotnog smjera, istog nivoa, čije su ose
+ * bliže od zbira polovina širina. Traka se sužava objema, i to cijelom potezu
+ * iste ulice sa istim brojem traka — da asfalt i linije nemaju stepenik na
+ * spoju dvije ivice. Krajevi ivica (`GRAD_PREKLOP_KRAJ`) se ne gledaju: tu se
+ * polovine primiču raskrsnici i preklop je stvaran.
+ *
+ * Mijenja `sirina` i `sirinaTrake` na mjestu. Deterministično.
+ */
+function suziPreklopljene(ivice: Ivica[], izCvora: number[][]): void {
+  interface Uzorak {
+    i: number;
+    x: number;
+    y: number;
+    ux: number;
+    uy: number;
+  }
+  const kandidat = (iv: Ivica) => iv.vozna && iv.smjer !== 0;
+  const uzorci: Uzorak[] = [];
+  for (const iv of ivice) {
+    if (!kandidat(iv)) continue;
+    for (let d = GRAD_PREKLOP_KRAJ; d <= iv.duzina - GRAD_PREKLOP_KRAJ; d += GRAD_PREKLOP_KORAK) {
+      const p = pointAt(iv.tacke, iv.cum, d);
+      const q = pointAt(iv.tacke, iv.cum, Math.min(iv.duzina, d + 1));
+      const l = Math.hypot(q.x - p.x, q.y - p.y) || 1;
+      uzorci.push({ i: iv.i, x: p.x, y: p.y, ux: ((q.x - p.x) / l) * iv.smjer, uy: ((q.y - p.y) / l) * iv.smjer });
+    }
+  }
+  const CELIJA = 30;
+  const celije = new Map<string, Uzorak[]>();
+  const kljuc = (cx: number, cy: number) => `${cx},${cy}`;
+  for (const u of uzorci) {
+    const k = kljuc(Math.floor(u.x / CELIJA), Math.floor(u.y / CELIJA));
+    const l = celije.get(k);
+    if (l) l.push(u);
+    else celije.set(k, [u]);
+  }
+  const najmanji = GRAD_SIRINA_TRAKE_NAJMANJE / GRAD_SIRINA_TRAKE;
+  // Faktor suženja po ivici (1 = bez suženja).
+  const faktor = new Map<number, number>();
+  for (const u of uzorci) {
+    const a = ivice[u.i]!;
+    const cx = Math.floor(u.x / CELIJA);
+    const cy = Math.floor(u.y / CELIJA);
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        for (const v of celije.get(kljuc(cx + dx, cy + dy)) ?? []) {
+          const b = ivice[v.i]!;
+          if (v.i <= u.i || a.nivo !== b.nivo) continue;
+          if (u.ux * v.ux + u.uy * v.uy > -0.94) continue; // nije suprotan smjer (±20°)
+          const rx = v.x - u.x;
+          const ry = v.y - u.y;
+          if (Math.abs(rx * u.ux + ry * u.uy) > GRAD_PREKLOP_KORAK / 2) continue; // nije naspram
+          const razmak = Math.abs(-rx * u.uy + ry * u.ux);
+          const treba = (a.sirina + b.sirina) / 2;
+          if (razmak >= treba + GRAD_PREKLOP_RAZMAK) continue;
+          const f = Math.max(0, razmak - GRAD_PREKLOP_RAZMAK) / treba;
+          // Ne staju ni sa stvarnom trakom: greška podataka (osovina ili broj
+          // traka), ne igračka širina. Sužavanje ne pomaže, a povuklo bi cijeli
+          // potez na najužu traku — ostaje za provjeru mape.
+          if (f < najmanji) continue;
+          faktor.set(u.i, Math.min(faktor.get(u.i) ?? 1, f));
+          faktor.set(v.i, Math.min(faktor.get(v.i) ?? 1, f));
+        }
+      }
+    }
+  }
+  if (faktor.size === 0) return;
+
+  // Potez: jednosmjerne ivice iste ulice (ime, a bez imena isti OSM put) sa
+  // istim brojem traka, spojene u čvoru. Cijeli potez dobija najmanji faktor.
+  const potez = (iv: Ivica) => `${iv.ime || `osm${iv.osm}`}|${iv.trakeNaprijed + iv.trakeNazad}`;
+  const obradjena = new Set<number>();
+  for (const pocetna of [...faktor.keys()].sort((x, y) => x - y)) {
+    if (obradjena.has(pocetna)) continue;
+    const k = potez(ivice[pocetna]!);
+    const grupa: number[] = [];
+    const red = [pocetna];
+    obradjena.add(pocetna);
+    while (red.length > 0) {
+      const i = red.pop()!;
+      grupa.push(i);
+      const iv = ivice[i]!;
+      for (const c of [iv.a, iv.b]) {
+        for (const j of izCvora[c]!) {
+          if (obradjena.has(j) || !kandidat(ivice[j]!) || potez(ivice[j]!) !== k) continue;
+          obradjena.add(j);
+          red.push(j);
+        }
+      }
+    }
+    const f = Math.min(...grupa.map((i) => faktor.get(i) ?? 1));
+    for (const i of grupa) {
+      const iv = ivice[i]!;
+      const n = iv.trakeNaprijed + iv.trakeNazad;
+      iv.sirinaTrake = GRAD_SIRINA_TRAKE * f;
+      iv.sirina = Math.max(GRAD_NAJUZA_ULICA, n * iv.sirinaTrake);
+    }
+  }
 }
 
 /**
@@ -173,6 +287,41 @@ export function napraviMrezu(p: Paket): Mreza {
 export function pocetniBok(iv: Ivica): number {
   if (iv.smjer !== 0) return 0;
   return Math.min(iv.sirina / 4, iv.sirina / 2 - CAR_WIDTH / 2);
+}
+
+/**
+ * Dvotračni prsten kružnog toka u smjeru vožnje: dvije poznate trake, sve u
+ * tom smjeru — kao kod sudije (`laneDisciplineRoundabout`). Samo tu postoje
+ * unutrašnja i spoljna traka.
+ */
+export function dvotracniPrsten(iv: Ivica, smjer: 1 | -1): boolean {
+  const svoje = smjer === 1 ? iv.trakeNaprijed : iv.trakeNazad;
+  const suprotne = smjer === 1 ? iv.trakeNazad : iv.trakeNaprijed;
+  return iv.kruzni && iv.trakePoznate && svoje === 2 && suprotne === 0 && (iv.smjer === 0 || iv.smjer === smjer);
+}
+
+/**
+ * Koliko je tačka desno od osovine ivice, gledano u smjeru vožnje `smjer` [m];
+ * lijevo je negativno. Isti znak kao `bok` kod sudije (`najblizaOsa`).
+ */
+export function bokNaIvici(iv: Ivica, smjer: 1 | -1, p: Point): number {
+  let naj = Infinity;
+  let bok = 0;
+  for (let k = 1; k < iv.tacke.length; k++) {
+    const a = iv.tacke[k - 1]!;
+    const b = iv.tacke[k]!;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const l2 = dx * dx + dy * dy;
+    if (l2 === 0) continue;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / l2));
+    const d = Math.hypot(a.x + dx * t - p.x, a.y + dy * t - p.y);
+    if (d < naj) {
+      naj = d;
+      bok = (((p.x - a.x) * -dy + (p.y - a.y) * dx) / Math.sqrt(l2)) * smjer;
+    }
+  }
+  return bok;
 }
 
 /** Najveći poprečni pomak auta na ulici — da ostane na kolovozu [m]. */
