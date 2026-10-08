@@ -1,0 +1,57 @@
+
+> mirav-test@1.0.0 test:fuzz:grad
+> node --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fuzz-grad.mjs 50 5 1 --saobracaj
+
+Overlay: nema ga — čist OSM.
+OK   ruta  0: 2.3 km, 261 s, raskrsnica osovinom 1, izvlačenja 0, zastoja oko njega 0
+OK   ruta  1: 2.8 km, 419 s, raskrsnica osovinom 3, izvlačenja 0, zastoja oko njega 0
+OK   ruta  2: 5.2 km, 624 s, raskrsnica osovinom 11, izvlačenja 1, zastoja oko njega 0
+OK   ruta  3: 3.2 km, 425 s, raskrsnica osovinom 3, izvlačenja 0, zastoja oko njega 0
+OK   ruta  4: 5.4 km, 734 s, raskrsnica osovinom 7, izvlačenja 1, zastoja oko njega 0
+OK   ruta  5: 2.5 km, 284 s, raskrsnica osovinom 1, izvlačenja 0, zastoja oko njega 0
+OK   ruta  6: 2.9 km, 383 s, raskrsnica osovinom 5, izvlačenja 1, zastoja oko njega 0
+OK   ruta  7: 2.1 km, 332 s, raskrsnica osovinom 2, izvlačenja 0, zastoja oko njega 0
+OK   ruta  8: 5.5 km, 790 s, raskrsnica osovinom 8, izvlačenja 0, zastoja oko njega 0
+OK   ruta  9: 2.9 km, 361 s, raskrsnica osovinom 0, izvlačenja 0, zastoja oko njega 0
+OK   ruta 10: 4.6 km, 559 s, raskrsnica osovinom 10, izvlačenja 1, zastoja oko njega 0
+OK   ruta 11: 2.4 km, 263 s, raskrsnica osovinom 3, izvlačenja 1, zastoja oko njega 0
+OK   ruta 12: 2.8 km, 466 s, raskrsnica osovinom 9, izvlačenja 0, zastoja oko njega 0
+OK   ruta 13: 5.5 km, 798 s, raskrsnica osovinom 3, izvlačenja 0, zastoja oko njega 0
+OK   ruta 14: 3.7 km, 501 s, raskrsnica osovinom 11, izvlačenja 0, zastoja oko njega 0
+OK   ruta 15: 5.9 km, 840 s, raskrsnica osovinom 7, izvlačenja 0, zastoja oko njega 0
+OK   ruta 16: 3.8 km, 471 s, raskrsnica osovinom 0, izvlačenja 0, zastoja oko njega 0
+OK   ruta 17: 1.4 km, 173 s, raskrsnica osovinom 3, izvlačenja 0, zastoja oko njega 0
+OK   ruta 18: 4.6 km, 636 s, raskrsnica osovinom 8, izvlačenja 1, zastoja oko njega 0
+OK   ruta 19: 2.8 km, 403 s, raskrsnica osovinom 12, izvlačenja 0, zastoja oko njega 0
+OK   ruta 20: 3.0 km, 359 s, raskrsnica osovinom 5, izvlačenja 0, zastoja oko njega 0
+OK   ruta 21: 1.2 km, 161 s, raskrsnica osovinom 1, izvlačenja 0, zastoja oko njega 0
+OK   ruta 22: 5.1 km, 643 s, raskrsnica osovinom 6, izvlačenja 0, zastoja oko njega 0
+OK   ruta 23: 3.6 km, 478 s, raskrsnica osovinom 7, izvlačenja 0, zastoja oko njega 0
+OK   ruta 24: 3.3 km, 451 s, raskrsnica osovinom 5, izvlačenja 0, zastoja oko njega 0
+OK   ruta 25: 3.2 km, 445 s, raskrsnica osovinom 5, izvlačenja 0, zastoja oko njega 0
+OK   ruta 26: 2.7 km, 330 s, raskrsnica osovinom 3, izvlačenja 0, zastoja oko njega 0
+OK   ruta 27: 3.4 km, 433 s, raskrsnica osovinom 5, izvlačenja 0, zastoja oko njega 0
+OK   ruta 28: 2.3 km, 355 s, raskrsnica osovinom 1, izvlačenja 0, zastoja oko njega 0
+OK   ruta 29: 3.4 km, 421 s, raskrsnica osovinom 7, izvlačenja 1, zastoja oko njega 0
+OK   ruta 30: 0.9 km, 145 s, raskrsnica osovinom 2, izvlačenja 0, zastoja oko njega 0
+OK   ruta 31: 3.3 km, 394 s, raskrsnica osovinom 6, izvlačenja 0, zastoja oko njega 0
+OK   ruta 32: 4.1 km, 467 s, raskrsnica osovinom 3, izvlačenja 0, zastoja oko njega 0
+OK   ruta 33: 3.9 km, 512 s, raskrsnica osovinom 2, izvlačenja 0, zastoja oko njega 0
+OK   ruta 34: 6.2 km, 740 s, raskrsnica osovinom 6, izvlačenja 0, zastoja oko njega 0
+OK   ruta 35: 4.2 km, 588 s, raskrsnica osovinom 4, izvlačenja 0, zastoja oko njega 0
+OK   ruta 36: 5.8 km, 832 s, raskrsnica osovinom 10, izvlačenja 0, zastoja oko njega 0
+OK   ruta 37: 4.3 km, 608 s, raskrsnica osovinom 6, izvlačenja 1, zastoja oko njega 0
+OK   ruta 38: 5.0 km, 741 s, raskrsnica osovinom 8, izvlačenja 0, zastoja oko njega 0
+OK   ruta 39: 4.0 km, 565 s, raskrsnica osovinom 7, izvlačenja 0, zastoja oko njega 0
+OK   ruta 40: 1.7 km, 208 s, raskrsnica osovinom 0, izvlačenja 0, zastoja oko njega 0
+OK   ruta 41: 3.5 km, 425 s, raskrsnica osovinom 6, izvlačenja 0, zastoja oko njega 0
+OK   ruta 42: 2.2 km, 277 s, raskrsnica osovinom 3, izvlačenja 0, zastoja oko njega 0
+OK   ruta 43: 2.9 km, 320 s, raskrsnica osovinom 6, izvlačenja 1, zastoja oko njega 0
+OK   ruta 44: 3.7 km, 505 s, raskrsnica osovinom 9, izvlačenja 0, zastoja oko njega 0
+OK   ruta 45: 2.7 km, 337 s, raskrsnica osovinom 1, izvlačenja 0, zastoja oko njega 0
+OK   ruta 46: 2.4 km, 357 s, raskrsnica osovinom 4, izvlačenja 0, zastoja oko njega 0
+OK   ruta 47: 2.5 km, 315 s, raskrsnica osovinom 4, izvlačenja 0, zastoja oko njega 0
+OK   ruta 48: 5.7 km, 781 s, raskrsnica osovinom 6, izvlačenja 0, zastoja oko njega 0
+OK   ruta 49: 6.2 km, 761 s, raskrsnica osovinom 7, izvlačenja 0, zastoja oko njega 0
+
+50/50 ruta bez prekršaja i do kraja (nivo 5, sjeme 1, u saobraćaju); 178.3 km, 6.58 h vožnje; osovinom 252, izvlačenja 9; 1084 s računanja.

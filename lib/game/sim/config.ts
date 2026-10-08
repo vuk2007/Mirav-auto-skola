@@ -2041,6 +2041,22 @@ export const GRAD_BOT_RAZDJELNICA_ODMAK = 5;
  * pune linije (ili kraja ivice); kad toga nema, prelazi se lukom kroz čvor.
  */
 export const GRAD_BOT_RAZDJELNICA_NAJKRACA = 6;
+/**
+ * Uz čvor u kojem se razdjelnica pomjerila vozilo se drži svoje strane OBJE
+ * razdjelnice (i one prije i one poslije čvora), uz ovoliki razmak [m] od
+ * boka — inače se traka užeg dijela ulice preklapa sa suprotnom trakom šireg
+ * (1+1 pa 1+2: razdjelnica skoči za pola trake) i susretna vozila stanu nos
+ * uz nos.
+ */
+export const GRAD_BOT_RAZDJELNICA_RAZMAK = 0.3;
+/** Do ovoliko [m] od takvog čvora granica važi cijela (vidi gore). */
+export const GRAD_BOT_RAZDJELNICA_BLIZU = 6;
+/**
+ * Dalje od toga granica popušta postepeno, do sredine lijeve svoje trake: 1 m
+ * bočno na ovoliko [m] puta — blago suženje, ne trzaj. Najkasnije 2 m prije
+ * pune linije između traka (editor), da se ne pređe.
+ */
+export const GRAD_BOT_RAZDJELNICA_NAGIB = 6;
 /** Koliko prije raskrsnice [m] bot već vozi u traci za manevar, i kroz čvorove bez raskrsnice. */
 export const GRAD_BOT_TRAKA_UNAPRIJED = 150;
 /**
@@ -2190,12 +2206,77 @@ export const GRAD_NPC_KOCENJE_UDIO = 0.8;
  * dvije rezerve pokrivaju i njegov korak u istom trenutku.
  */
 export const GRAD_NPC_ZAKLON = 0.3;
+/**
+ * Bočno, kad se vozila mimoilaze iz suprotnih smjerova, zaštita je ovolika
+ * [m] sa svake strane: njihov bočni razmak se u koraku ne mijenja, a puna
+ * rezerva bi, sa malo zakošenim autom (obilazi parkirano), „dodirnula"
+ * susretno vozilo metar dalje.
+ */
+export const GRAD_NPC_ZAKLON_SUSRET = 0.15;
 /** Ugao ulice u čvoru koji nije raskrsnica veći od ovoga [°] se zaobljava (luk osovine, trake koncentrično). */
 export const GRAD_BOT_UGAO_CVORA = 20;
-/** Udio od `GRAD_NPC_NAJVISE` po nivou (stavka 7; zona dolazi u 7e). */
+/**
+ * Broj vozila oko igrača po gustini saobraćaja zone u kojoj je (editor, 0–3;
+ * odluka korisnika 2026-10-08): gustina 1 = 25, gušće do `GRAD_NPC_NAJVISE`.
+ * Van nacrtanih zona (i zona bez gustine) važi gustina 1. U zoni gustine 0 se
+ * vozila ne pojavljuju. Ovo se množi nivoom i dobom dana.
+ */
+export const GRAD_NPC_PO_GUSTINI_ZONE: readonly number[] = [0, 25, 33, 40];
+/** Gustina saobraćaja van nacrtanih zona (indeks u `GRAD_NPC_PO_GUSTINI_ZONE`). */
+export const GRAD_NPC_GUSTINA_ZONE_PODRAZUMIJEVANO = 1;
+/** Udio broja vozila zone po nivou (stavka 7). */
 export const GRAD_NPC_GUSTINA_NIVO: Readonly<Record<Level, number>> = { 1: 0.3, 2: 0.45, 3: 0.6, 4: 0.8, 5: 1 };
 /** …i po dobu dana: noću je ulica prazna. */
 export const GRAD_NPC_GUSTINA_DOBA: Readonly<Record<"dan" | "sumrak" | "noc", number>> = { dan: 1, sumrak: 0.8, noc: 0.4 };
+
+// ── Parkiranje drugih vozača uz desni ivičnjak (stavka 7e) ─────────────────
+// Odluke korisnika (2026-10-03 i 2026-10-08): na cilju, samo u stambenim i
+// sporednim ulicama, bar 15 m od raskrsnice i zebre, nikad na bulevaru ni na
+// stajalištu; samo gdje ulica ostaje dovoljno široka kad je auto parkiran;
+// ko prolazi, obilazi ga u svojoj polovini ulice.
+/** Klase ulica u kojima se parkira (OSM `highway`). */
+export const GRAD_PARK_KLASE: readonly string[] = ["residential", "living_street", "unclassified"];
+/** Razmak parkiranog auta od ivičnjaka [m]. */
+export const GRAD_PARK_OD_IVICNJAKA = 0.15;
+/** Bočni razmak vozila koje prolazi pored parkiranog [m]. */
+export const GRAD_PARK_OBILAZAK = 0.4;
+/**
+ * Vozilo koje obilazi parkirano ostaje u svojoj polovini dvosmjerne ulice, bar
+ * ovoliko [m] od razdjelne linije. Parkira se samo gdje to staje — i gdje
+ * jednosmjerna ostaje šira od vozila uz obje rezerve.
+ */
+export const GRAD_PARK_DO_SREDINE = 0.1;
+/** Najmanja udaljenost parkiranog auta (bliži kraj) od raskrsnice i od zebre [m] — zakon kaže 5, uz rezervu. */
+export const GRAD_PARK_OD_RASKRSNICE = 15;
+export const GRAD_PARK_OD_ZEBRE = 15;
+/** Najmanja udaljenost sredine parkiranog auta od sredine stajališta na istoj strani [m]. */
+export const GRAD_PARK_OD_STAJALISTA = 20;
+/** Na ovoliko [m] puta vozilo prilazi ivičnjaku (i žmigavac desno). */
+export const GRAD_PARK_PRILAZ = 12;
+/**
+ * Žmigavac za parkiranje se pali tek ovoliko [m] poslije gašenja žmigavca za
+ * skretanje u tu ulicu — inače bi sudija vidio žmigavac ostavljen poslije
+ * skretanja.
+ */
+export const GRAD_PARK_ZMIGAVAC_PAUZA = 2;
+/**
+ * Zaštita od sudara (`GRAD_NPC_ZAKLON`) oko parkiranog auta je ovolika [m]
+ * sa svake strane: parkirani se ne pomjera, pa ne treba rezerva za njegov
+ * korak — a puna bi tražila više od `GRAD_PARK_OBILAZAK` bočno.
+ */
+export const GRAD_PARK_ZAKLON = 0.1;
+/** Vozilo koje prolazi skreće ka sredini i nazad postepeno, na ovoliko [m] puta. */
+export const GRAD_PARK_NAGIB = 12;
+/** Pored parkiranog, i ovoliko [m] prije i poslije njega, pomak je pun. */
+export const GRAD_PARK_PUNO = 1.5;
+/** Razmak između dva parkirana auta na istoj strani [m]. */
+export const GRAD_PARK_RAZMAK = 1.5;
+/** Osovina ulice se oko mjesta (prilaz i obilazak) ne lomi više od ovoga [°]. */
+export const GRAD_PARK_PRAVO = 8;
+/** Udio novih vozila koja voze do parkiranja (ostala prolaze kroz grad). */
+export const GRAD_PARK_UDIO = 0.35;
+/** Najviše parkiranih auta oko igrača — nestaju kad se igrač udalji `GRAD_NPC_NESTAJE`. */
+export const GRAD_PARK_NAJVISE = 24;
 /** Isti sudar sa istim vozilom ne prijavljuje se ponovo ovoliko [s]. */
 export const GRAD_SUDAR_PONOVO = 3;
 /**

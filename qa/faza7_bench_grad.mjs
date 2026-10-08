@@ -18,7 +18,8 @@ import { chromium } from "playwright";
 
 const GDJE = process.argv[2] ?? "-17,271";
 const SEKUNDI = Number(process.argv[3] ?? 20);
-const URL = `http://localhost:3100/igra?debug=1&gdje=${GDJE}`;
+// Gustina 3 van zona: 40 vozila (van zona je inače 25, stavka 7e).
+const URL = `http://localhost:3100/igra?debug=1&gustina=3&gdje=${GDJE}`;
 const USPORENJA = [1, 4];
 
 const browser = await chromium.launch({ args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });

@@ -100,6 +100,9 @@ u stvarnosti ne postoji uklanja se dugmetom „Ukloni ovaj komad ulice".
   upiši ograničenje i gustine, pa „Sačuvaj zonu". Kad zona ima ograničenje,
   na svakoj ulici koja u nju ulazi crta se znak *zona ograničene brzine*, a
   na izlazu *kraj zone*.
+  **Gustina saobraćaja** određuje koliko drugih vozila ima oko igrača dok je
+  u zoni: 0 = nema ih, 1 = 25, 2 = 33, 3 = 40. Van nacrtanih zona važi 1.
+  Broj se još množi nivoom i dobom dana (noću ih je manje).
 - **Zadaci**: klikni start, obavezne tačke i cilj. Zelena linija je ruta kojom bi
   bot vozio, po svim pravilima. Tačku u sredini možeš označiti kao
   manevar (parkiranje, polukružno, uspon). Zadatke vozi stavka 9.

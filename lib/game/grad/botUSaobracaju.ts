@@ -2,7 +2,7 @@ import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_SUDAR_PONOVO, type Level } from "../sim
 import { polygonsOverlap, rectCorners } from "../sim/geometry";
 import { korakBota, noviBot, type IshodVoznje, type Korak, type PlanBota } from "./botGrad";
 import type { Manevar } from "./mreza";
-import { dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, postaviVanjsko, IGRAC } from "./saobracaj";
+import { dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, IGRAC } from "./saobracaj";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
 import { noviSudija, sudi } from "./sudija";
 import type { SvijetGrada } from "./svijet";
@@ -53,6 +53,8 @@ export function odveziRutuUSaobracaju(
   const bot = noviBot(plan);
   const sudija = noviSudija(nivo);
   const sb = noviSaobracaj(svijet, sjeme, gustina);
+  // Najveća gustina (40 vozila) — bot se provjerava u punom gradu.
+  sb.gustinaVanZona = 3;
   sb.t = t0;
   const senka = dodajVanjsko(sb, plan, koraci);
 
@@ -97,7 +99,7 @@ export function odveziRutuUSaobracaju(
     }
     // Sudar sa drugim vozilom — kao u igri.
     const ja = rectCorners({ x: st.x, y: st.y }, { x: Math.cos(st.ugao), y: Math.sin(st.ugao) }, CAR_LENGTH, CAR_WIDTH);
-    for (const n of sb.npc) {
+    for (const n of [...sb.npc, ...parkirani(sb)]) {
       if (n.id === IGRAC || n.nivo !== senka.nivo || Math.hypot(n.x - st.x, n.y - st.y) > CAR_LENGTH + 0.5) continue;
       if (!polygonsOverlap(ja, rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH))) continue;
       if (t - (sudari.get(n.id) ?? -Infinity) > GRAD_SUDAR_PONOVO) {

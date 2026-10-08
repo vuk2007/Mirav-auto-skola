@@ -1,212 +1,207 @@
 
 > mirav-test@1.0.0 test:fuzz:saobracaj
-> node --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fuzz-saobracaj.mjs
+> node --import ./scripts/osm/lib/ts-hook.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fuzz-saobracaj.mjs 200 300 1
 
 Saobraćaj: 200 sjemena × 300 s, 31 radnika.
-sjeme 5: ok · vozila do 40, pojavilo 260, stiglo 20, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.716 ms (najduži 246.3) · 36.1 s
-sjeme 9: ok · vozila do 40, pojavilo 282, stiglo 26, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.743 ms (najduži 180.4) · 36.7 s
-sjeme 26: ok · vozila do 40, pojavilo 292, stiglo 11, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.895 ms (najduži 156.5) · 39.5 s
-sjeme 19: ok · vozila do 40, pojavilo 285, stiglo 19, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.926 ms (najduži 171.8) · 40.7 s
-sjeme 14: ok · vozila do 40, pojavilo 263, stiglo 22, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.928 ms (najduži 152.5) · 41.0 s
-sjeme 10: ok · vozila do 40, pojavilo 275, stiglo 11, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.984 ms (najduži 331.1) · 41.5 s
-sjeme 8: ok · vozila do 40, pojavilo 253, stiglo 21, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.885 ms (najduži 152.2) · 39.9 s
-sjeme 23: ok · vozila do 40, pojavilo 279, stiglo 22, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.958 ms (najduži 271.0) · 41.9 s
-sjeme 18: ok · vozila do 40, pojavilo 277, stiglo 19, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.016 ms (najduži 158.1) · 42.0 s
-sjeme 16: ok · vozila do 40, pojavilo 255, stiglo 35, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.001 ms (najduži 154.1) · 41.7 s
-sjeme 27: ok · vozila do 40, pojavilo 300, stiglo 12, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.012 ms (najduži 157.7) · 41.7 s
-sjeme 7: ok · vozila do 40, pojavilo 250, stiglo 15, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.982 ms (najduži 273.5) · 41.0 s
-sjeme 13: ok · vozila do 40, pojavilo 318, stiglo 13, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.010 ms (najduži 158.7) · 42.9 s
-sjeme 4: ok · vozila do 40, pojavilo 312, stiglo 10, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.061 ms (najduži 122.8) · 42.6 s
-sjeme 24: ok · vozila do 40, pojavilo 291, stiglo 18, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.007 ms (najduži 157.3) · 42.6 s
-sjeme 31: ok · vozila do 40, pojavilo 314, stiglo 17, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.156 ms (najduži 178.5) · 44.7 s
-sjeme 6: ok · vozila do 40, pojavilo 272, stiglo 21, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.212 ms (najduži 160.2) · 46.2 s
-sjeme 2: ok · vozila do 40, pojavilo 318, stiglo 23, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.222 ms (najduži 254.0) · 46.7 s
-sjeme 30: ok · vozila do 40, pojavilo 262, stiglo 23, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.151 ms (najduži 149.6) · 45.9 s
-sjeme 3: ok · vozila do 40, pojavilo 274, stiglo 21, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.221 ms (najduži 242.4) · 46.1 s
-sjeme 11: ok · vozila do 40, pojavilo 255, stiglo 17, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.280 ms (najduži 173.7) · 47.4 s
-sjeme 21: ok · vozila do 40, pojavilo 302, stiglo 15, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.183 ms (najduži 157.0) · 47.2 s
-sjeme 1: ok · vozila do 40, pojavilo 285, stiglo 19, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 2.225 ms (najduži 294.6) · 46.8 s
-sjeme 15: ok · vozila do 40, pojavilo 304, stiglo 13, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.330 ms (najduži 155.0) · 49.2 s
-sjeme 20: ok · vozila do 40, pojavilo 312, stiglo 13, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.293 ms (najduži 163.0) · 48.6 s
-sjeme 22: ok · vozila do 40, pojavilo 280, stiglo 26, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.412 ms (najduži 208.7) · 49.7 s
-sjeme 17: ok · vozila do 40, pojavilo 302, stiglo 17, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.429 ms (najduži 183.4) · 50.2 s
-sjeme 28: ok · vozila do 40, pojavilo 314, stiglo 15, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.392 ms (najduži 205.9) · 50.5 s
-sjeme 25: ok · vozila do 40, pojavilo 304, stiglo 14, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.557 ms (najduži 409.3) · 52.6 s
-sjeme 12: ok · vozila do 40, pojavilo 258, stiglo 19, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.894 ms (najduži 205.4) · 59.7 s
-sjeme 29: ok · vozila do 40, pojavilo 232, stiglo 20, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 3.179 ms (najduži 196.1) · 63.6 s
-sjeme 50: ok · vozila do 40, pojavilo 282, stiglo 26, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.257 ms (najduži 165.0) · 27.0 s
-sjeme 57: ok · vozila do 40, pojavilo 304, stiglo 14, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.411 ms (najduži 121.8) · 30.5 s
-sjeme 36: ok · vozila do 40, pojavilo 261, stiglo 22, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.601 ms (najduži 178.9) · 33.4 s
-sjeme 45: ok · vozila do 40, pojavilo 267, stiglo 14, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.360 ms (najduži 122.5) · 30.4 s
-sjeme 40: ok · vozila do 40, pojavilo 274, stiglo 10, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.650 ms (najduži 197.7) · 34.3 s
-sjeme 41: ok · vozila do 40, pojavilo 303, stiglo 17, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.525 ms (najduži 219.1) · 31.4 s
-sjeme 44: ok · vozila do 40, pojavilo 279, stiglo 29, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.430 ms (najduži 125.0) · 31.1 s
-sjeme 38: ok · vozila do 40, pojavilo 330, stiglo 15, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.499 ms (najduži 151.8) · 31.6 s
-sjeme 47: ok · vozila do 40, pojavilo 316, stiglo 17, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.566 ms (najduži 132.4) · 33.2 s
-sjeme 39: ok · vozila do 40, pojavilo 258, stiglo 13, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.671 ms (najduži 134.7) · 35.1 s
-sjeme 37: ok · vozila do 40, pojavilo 274, stiglo 16, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.422 ms (najduži 150.9) · 30.4 s
-sjeme 42: ok · vozila do 40, pojavilo 264, stiglo 14, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.355 ms (najduži 142.2) · 29.2 s
-sjeme 61: ok · vozila do 40, pojavilo 256, stiglo 19, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.488 ms (najduži 161.6) · 31.5 s
-sjeme 35: ok · vozila do 40, pojavilo 282, stiglo 14, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.814 ms (najduži 135.8) · 37.6 s
-sjeme 58: ok · vozila do 40, pojavilo 263, stiglo 19, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.809 ms (najduži 134.1) · 38.4 s
-sjeme 32: ok · vozila do 40, pojavilo 258, stiglo 16, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.532 ms (najduži 196.5) · 32.5 s
-sjeme 55: ok · vozila do 40, pojavilo 338, stiglo 19, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.918 ms (najduži 160.4) · 38.9 s
-sjeme 34: ok · vozila do 40, pojavilo 313, stiglo 6, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.729 ms (najduži 210.6) · 35.5 s
-sjeme 54: ok · vozila do 40, pojavilo 284, stiglo 14, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.994 ms (najduži 191.7) · 41.5 s
-sjeme 59: ok · vozila do 40, pojavilo 252, stiglo 17, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.511 ms (najduži 205.7) · 32.3 s
-sjeme 48: ok · vozila do 40, pojavilo 249, stiglo 27, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.536 ms (najduži 135.1) · 33.5 s
-sjeme 56: ok · vozila do 40, pojavilo 258, stiglo 18, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.574 ms (najduži 204.1) · 33.2 s
-sjeme 53: ok · vozila do 40, pojavilo 280, stiglo 16, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.662 ms (najduži 210.5) · 35.3 s
-sjeme 52: ok · vozila do 40, pojavilo 264, stiglo 28, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.836 ms (najduži 158.8) · 39.5 s
-sjeme 51: ok · vozila do 40, pojavilo 352, stiglo 8, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.963 ms (najduži 203.9) · 39.9 s
-sjeme 62: ok · vozila do 40, pojavilo 274, stiglo 17, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.133 ms (najduži 160.0) · 44.2 s
-sjeme 46: ok · vozila do 40, pojavilo 308, stiglo 12, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.981 ms (najduži 207.5) · 41.3 s
-sjeme 60: ok · vozila do 40, pojavilo 244, stiglo 20, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.344 ms (najduži 168.2) · 29.0 s
-sjeme 43: ok · vozila do 40, pojavilo 295, stiglo 14, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.559 ms (najduži 137.1) · 33.5 s
-sjeme 78: ok · vozila do 40, pojavilo 279, stiglo 19, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.246 ms (najduži 184.4) · 26.6 s
-sjeme 88: ok · vozila do 40, pojavilo 245, stiglo 25, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.544 ms (najduži 182.8) · 32.4 s
-sjeme 75: ok · vozila do 40, pojavilo 310, stiglo 16, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.564 ms (najduži 130.5) · 33.2 s
-sjeme 81: ok · vozila do 40, pojavilo 255, stiglo 14, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.874 ms (najduži 166.0) · 39.1 s
-sjeme 33: ok · vozila do 40, pojavilo 262, stiglo 23, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 3.183 ms (najduži 314.4) · 62.1 s
-sjeme 67: ok · vozila do 40, pojavilo 335, stiglo 12, krugova 9 · sudara 0, zastoja 0, prekršaja 0 · korak 1.804 ms (najduži 166.6) · 37.2 s
-sjeme 68: ok · vozila do 40, pojavilo 254, stiglo 21, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.494 ms (najduži 198.4) · 31.7 s
-sjeme 71: ok · vozila do 40, pojavilo 263, stiglo 17, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.754 ms (najduži 174.4) · 36.4 s
-sjeme 92: ok · vozila do 40, pojavilo 274, stiglo 22, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.484 ms (najduži 161.3) · 31.4 s
-sjeme 76: ok · vozila do 40, pojavilo 315, stiglo 15, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.963 ms (najduži 185.9) · 40.4 s
-sjeme 79: ok · vozila do 40, pojavilo 275, stiglo 29, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.269 ms (najduži 103.0) · 27.9 s
-sjeme 86: ok · vozila do 40, pojavilo 269, stiglo 15, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.422 ms (najduži 129.2) · 30.4 s
-sjeme 49: ok · vozila do 40, pojavilo 226, stiglo 24, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 3.662 ms (najduži 204.3) · 71.5 s
-sjeme 89: ok · vozila do 40, pojavilo 263, stiglo 21, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.509 ms (najduži 148.6) · 32.5 s
-sjeme 69: ok · vozila do 40, pojavilo 324, stiglo 12, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.896 ms (najduži 153.8) · 39.5 s
-sjeme 70: ok · vozila do 40, pojavilo 289, stiglo 18, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.813 ms (najduži 166.4) · 37.3 s
-sjeme 72: ok · vozila do 40, pojavilo 275, stiglo 12, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 1.988 ms (najduži 166.1) · 41.3 s
-sjeme 63: ok · vozila do 40, pojavilo 272, stiglo 17, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.703 ms (najduži 204.0) · 36.3 s
-sjeme 87: ok · vozila do 40, pojavilo 242, stiglo 24, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.520 ms (najduži 158.6) · 32.3 s
-sjeme 66: ok · vozila do 40, pojavilo 260, stiglo 6, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.831 ms (najduži 149.1) · 38.1 s
-sjeme 84: ok · vozila do 40, pojavilo 249, stiglo 21, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.502 ms (najduži 209.0) · 32.7 s
-sjeme 90: ok · vozila do 40, pojavilo 302, stiglo 22, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.772 ms (najduži 170.6) · 37.6 s
-sjeme 65: ok · vozila do 40, pojavilo 283, stiglo 18, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.877 ms (najduži 163.4) · 39.2 s
-sjeme 83: ok · vozila do 40, pojavilo 263, stiglo 24, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.605 ms (najduži 119.3) · 35.4 s
-sjeme 93: ok · vozila do 40, pojavilo 240, stiglo 21, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.585 ms (najduži 178.2) · 33.7 s
-sjeme 77: ok · vozila do 40, pojavilo 233, stiglo 27, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.562 ms (najduži 175.4) · 33.9 s
-sjeme 82: ok · vozila do 40, pojavilo 280, stiglo 23, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.624 ms (najduži 208.7) · 35.2 s
-sjeme 91: ok · vozila do 40, pojavilo 246, stiglo 27, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.616 ms (najduži 213.2) · 34.7 s
-sjeme 85: ok · vozila do 40, pojavilo 222, stiglo 22, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.230 ms (najduži 161.2) · 46.8 s
-sjeme 74: ok · vozila do 40, pojavilo 280, stiglo 14, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.902 ms (najduži 191.9) · 40.4 s
-sjeme 119: ok · vozila do 40, pojavilo 274, stiglo 20, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.468 ms (najduži 180.3) · 32.0 s
-sjeme 109: ok · vozila do 40, pojavilo 256, stiglo 15, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.669 ms (najduži 213.5) · 35.1 s
-sjeme 112: ok · vozila do 40, pojavilo 286, stiglo 20, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.715 ms (najduži 283.1) · 35.7 s
-sjeme 106: ok · vozila do 40, pojavilo 251, stiglo 18, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.801 ms (najduži 148.8) · 38.2 s
-sjeme 117: ok · vozila do 40, pojavilo 290, stiglo 18, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.567 ms (najduži 232.6) · 32.8 s
-sjeme 101: ok · vozila do 40, pojavilo 261, stiglo 29, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.549 ms (najduži 176.0) · 32.9 s
-sjeme 64: ok · vozila do 40, pojavilo 270, stiglo 21, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.914 ms (najduži 230.9) · 40.0 s
-sjeme 99: ok · vozila do 40, pojavilo 295, stiglo 18, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.883 ms (najduži 170.1) · 40.2 s
-sjeme 120: ok · vozila do 40, pojavilo 304, stiglo 18, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.704 ms (najduži 203.6) · 35.9 s
-sjeme 107: ok · vozila do 40, pojavilo 276, stiglo 24, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.789 ms (najduži 201.0) · 37.8 s
-sjeme 80: ok · vozila do 40, pojavilo 246, stiglo 26, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.731 ms (najduži 210.4) · 36.4 s
-sjeme 103: ok · vozila do 40, pojavilo 295, stiglo 10, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.704 ms (najduži 200.7) · 35.6 s
-sjeme 102: ok · vozila do 40, pojavilo 278, stiglo 17, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.053 ms (najduži 192.9) · 42.8 s
-sjeme 110: ok · vozila do 40, pojavilo 299, stiglo 18, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.004 ms (najduži 171.1) · 41.2 s
-sjeme 100: ok · vozila do 40, pojavilo 306, stiglo 14, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.929 ms (najduži 205.7) · 39.9 s
-sjeme 98: ok · vozila do 40, pojavilo 310, stiglo 18, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.293 ms (najduži 285.6) · 47.3 s
-sjeme 115: ok · vozila do 40, pojavilo 264, stiglo 21, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.765 ms (najduži 269.2) · 38.0 s
-sjeme 118: ok · vozila do 40, pojavilo 300, stiglo 17, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.907 ms (najduži 162.7) · 39.1 s
-sjeme 94: ok · vozila do 40, pojavilo 283, stiglo 26, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.972 ms (najduži 226.0) · 40.9 s
-sjeme 121: ok · vozila do 40, pojavilo 253, stiglo 28, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.848 ms (najduži 193.1) · 38.5 s
-sjeme 113: ok · vozila do 40, pojavilo 321, stiglo 10, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.697 ms (najduži 150.5) · 36.0 s
-sjeme 123: PAD · vozila do 40, pojavilo 243, stiglo 16, krugova 6 · sudara 0, zastoja 1, prekršaja 0 · korak 2.455 ms (najduži 205.9) · 50.7 s
-   zastoj {"t":133.61666666666514,"ucesnici":[10,78,86,90],"x":-756.9336572138361,"y":1877.514813399743,"razrijesen":"krenuo"}
-sjeme 122: ok · vozila do 40, pojavilo 296, stiglo 12, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.658 ms (najduži 210.9) · 35.0 s
-sjeme 124: ok · vozila do 40, pojavilo 296, stiglo 21, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.969 ms (najduži 195.8) · 41.0 s
-sjeme 97: ok · vozila do 40, pojavilo 316, stiglo 11, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.358 ms (najduži 233.3) · 47.9 s
-sjeme 96: ok · vozila do 40, pojavilo 267, stiglo 15, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.218 ms (najduži 169.3) · 46.2 s
-sjeme 108: ok · vozila do 40, pojavilo 260, stiglo 30, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.117 ms (najduži 199.5) · 44.1 s
-sjeme 114: ok · vozila do 40, pojavilo 308, stiglo 14, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.198 ms (najduži 288.2) · 45.5 s
-sjeme 150: ok · vozila do 40, pojavilo 242, stiglo 18, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.675 ms (najduži 205.7) · 35.7 s
-sjeme 140: ok · vozila do 40, pojavilo 325, stiglo 11, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.853 ms (najduži 178.7) · 39.2 s
-sjeme 105: ok · vozila do 40, pojavilo 281, stiglo 13, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.080 ms (najduži 177.1) · 43.3 s
-sjeme 143: ok · vozila do 40, pojavilo 236, stiglo 30, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.758 ms (najduži 300.2) · 37.5 s
-sjeme 132: ok · vozila do 40, pojavilo 267, stiglo 11, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.765 ms (najduži 232.4) · 37.4 s
-sjeme 137: ok · vozila do 40, pojavilo 282, stiglo 10, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.894 ms (najduži 186.0) · 40.0 s
-sjeme 111: ok · vozila do 40, pojavilo 288, stiglo 15, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.797 ms (najduži 187.8) · 37.2 s
-sjeme 130: ok · vozila do 40, pojavilo 289, stiglo 26, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.834 ms (najduži 180.4) · 38.1 s
-sjeme 138: ok · vozila do 40, pojavilo 318, stiglo 14, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.901 ms (najduži 285.4) · 39.0 s
-sjeme 95: ok · vozila do 40, pojavilo 240, stiglo 22, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.901 ms (najduži 264.0) · 40.1 s
-sjeme 134: ok · vozila do 40, pojavilo 302, stiglo 13, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.906 ms (najduži 215.6) · 39.6 s
-sjeme 131: ok · vozila do 40, pojavilo 264, stiglo 23, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.781 ms (najduži 248.5) · 37.5 s
-sjeme 151: ok · vozila do 40, pojavilo 323, stiglo 13, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.077 ms (najduži 218.4) · 42.8 s
-sjeme 141: ok · vozila do 40, pojavilo 285, stiglo 13, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.806 ms (najduži 159.8) · 39.4 s
-sjeme 148: ok · vozila do 40, pojavilo 331, stiglo 12, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.420 ms (najduži 252.9) · 48.8 s
-sjeme 129: ok · vozila do 40, pojavilo 305, stiglo 11, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.912 ms (najduži 270.9) · 39.0 s
-sjeme 146: ok · vozila do 40, pojavilo 283, stiglo 16, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.853 ms (najduži 218.0) · 38.7 s
-sjeme 149: ok · vozila do 40, pojavilo 292, stiglo 15, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.977 ms (najduži 201.0) · 40.8 s
-sjeme 144: ok · vozila do 40, pojavilo 266, stiglo 28, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.764 ms (najduži 187.4) · 38.6 s
-sjeme 133: ok · vozila do 40, pojavilo 232, stiglo 20, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.580 ms (najduži 242.5) · 52.6 s
-sjeme 125: ok · vozila do 40, pojavilo 297, stiglo 15, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.192 ms (najduži 232.7) · 45.9 s
-sjeme 145: ok · vozila do 40, pojavilo 276, stiglo 21, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.735 ms (najduži 183.5) · 36.9 s
-sjeme 153: ok · vozila do 40, pojavilo 253, stiglo 22, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.046 ms (najduži 255.2) · 42.8 s
-sjeme 139: ok · vozila do 40, pojavilo 245, stiglo 20, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.749 ms (najduži 149.3) · 38.2 s
-sjeme 181: ok · vozila do 40, pojavilo 282, stiglo 23, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.689 ms (najduži 160.9) · 36.2 s
-sjeme 152: ok · vozila do 40, pojavilo 272, stiglo 9, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.291 ms (najduži 314.2) · 46.9 s
-sjeme 136: ok · vozila do 40, pojavilo 268, stiglo 18, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.606 ms (najduži 197.3) · 34.7 s
-sjeme 155: ok · vozila do 40, pojavilo 279, stiglo 14, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.293 ms (najduži 238.9) · 47.7 s
-sjeme 171: ok · vozila do 40, pojavilo 288, stiglo 22, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.795 ms (najduži 196.7) · 38.0 s
-sjeme 127: ok · vozila do 40, pojavilo 214, stiglo 30, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.429 ms (najduži 222.3) · 49.6 s
-sjeme 116: ok · vozila do 40, pojavilo 251, stiglo 17, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 4.651 ms (najduži 303.6) · 91.1 s
-sjeme 163: ok · vozila do 40, pojavilo 267, stiglo 20, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.704 ms (najduži 201.4) · 36.5 s
-sjeme 174: ok · vozila do 40, pojavilo 282, stiglo 22, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.124 ms (najduži 194.8) · 43.8 s
-sjeme 142: ok · vozila do 40, pojavilo 275, stiglo 14, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.810 ms (najduži 231.3) · 37.4 s
-sjeme 162: ok · vozila do 40, pojavilo 270, stiglo 22, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.595 ms (najduži 170.1) · 34.2 s
-sjeme 126: ok · vozila do 40, pojavilo 293, stiglo 19, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.702 ms (najduži 130.7) · 36.8 s
-sjeme 172: ok · vozila do 40, pojavilo 273, stiglo 15, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.595 ms (najduži 130.3) · 34.4 s
-sjeme 165: ok · vozila do 40, pojavilo 273, stiglo 15, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.825 ms (najduži 218.2) · 37.5 s
-sjeme 180: ok · vozila do 40, pojavilo 282, stiglo 22, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.374 ms (najduži 155.9) · 29.5 s
-sjeme 161: ok · vozila do 40, pojavilo 302, stiglo 21, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.987 ms (najduži 204.4) · 40.8 s
-sjeme 168: ok · vozila do 40, pojavilo 248, stiglo 21, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.155 ms (najduži 199.8) · 44.2 s
-sjeme 179: ok · vozila do 40, pojavilo 278, stiglo 21, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.735 ms (najduži 189.0) · 37.0 s
-sjeme 175: ok · vozila do 40, pojavilo 329, stiglo 23, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.508 ms (najduži 186.5) · 31.4 s
-sjeme 169: ok · vozila do 40, pojavilo 269, stiglo 19, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 2.072 ms (najduži 214.3) · 43.4 s
-sjeme 177: ok · vozila do 40, pojavilo 314, stiglo 13, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.770 ms (najduži 142.7) · 37.1 s
-sjeme 182: ok · vozila do 40, pojavilo 301, stiglo 12, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.061 ms (najduži 179.9) · 42.5 s
-sjeme 170: ok · vozila do 40, pojavilo 270, stiglo 17, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 1.403 ms (najduži 145.5) · 29.5 s
-sjeme 176: ok · vozila do 40, pojavilo 301, stiglo 11, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.494 ms (najduži 178.7) · 31.4 s
-sjeme 183: ok · vozila do 40, pojavilo 254, stiglo 15, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.499 ms (najduži 229.9) · 31.3 s
-sjeme 164: ok · vozila do 40, pojavilo 290, stiglo 22, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.719 ms (najduži 167.0) · 35.3 s
-sjeme 156: ok · vozila do 40, pojavilo 279, stiglo 27, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.713 ms (najduži 205.3) · 35.1 s
-sjeme 160: ok · vozila do 40, pojavilo 276, stiglo 17, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.235 ms (najduži 166.3) · 45.9 s
-sjeme 184: ok · vozila do 40, pojavilo 282, stiglo 19, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.700 ms (najduži 194.4) · 35.3 s
-sjeme 186: ok · vozila do 40, pojavilo 249, stiglo 13, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.420 ms (najduži 159.0) · 30.0 s
-sjeme 167: ok · vozila do 40, pojavilo 273, stiglo 12, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.529 ms (najduži 230.7) · 31.3 s
-sjeme 194: ok · vozila do 40, pojavilo 266, stiglo 25, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.190 ms (najduži 142.2) · 24.6 s
-sjeme 147: ok · vozila do 40, pojavilo 248, stiglo 22, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.261 ms (najduži 144.1) · 26.5 s
-sjeme 158: PAD · vozila do 40, pojavilo 292, stiglo 12, krugova 4 · sudara 0, zastoja 3, prekršaja 0 · korak 1.386 ms (najduži 130.9) · 28.7 s
-   zastoj {"t":104.94999999999533,"ucesnici":[60,70],"x":-1546.6498364073886,"y":1393.6500113927816,"razrijesen":"uklonjen"}
-   zastoj {"t":109.96666666666171,"ucesnici":[60,70],"x":-1549.565770839495,"y":1389.0678992816422,"razrijesen":"krenuo"}
-   zastoj {"t":109.99999999999504,"ucesnici":[60],"x":-1546.6500197724897,"y":1393.6489155163556,"razrijesen":"krenuo"}
-sjeme 192: ok · vozila do 40, pojavilo 280, stiglo 33, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.086 ms (najduži 187.3) · 22.4 s
-sjeme 173: ok · vozila do 40, pojavilo 244, stiglo 15, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.299 ms (najduži 137.8) · 26.7 s
-sjeme 199: ok · vozila do 40, pojavilo 233, stiglo 16, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.096 ms (najduži 122.1) · 22.8 s
-sjeme 193: ok · vozila do 40, pojavilo 243, stiglo 13, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.411 ms (najduži 161.9) · 28.4 s
-sjeme 200: ok · vozila do 40, pojavilo 302, stiglo 17, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.190 ms (najduži 135.5) · 23.9 s
-sjeme 196: ok · vozila do 40, pojavilo 300, stiglo 20, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.454 ms (najduži 99.5) · 29.3 s
-sjeme 157: ok · vozila do 40, pojavilo 236, stiglo 23, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.615 ms (najduži 163.9) · 31.8 s
-sjeme 195: ok · vozila do 40, pojavilo 242, stiglo 17, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 0.887 ms (najduži 94.9) · 18.6 s
-sjeme 187: ok · vozila do 40, pojavilo 278, stiglo 18, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.095 ms (najduži 92.5) · 21.9 s
-sjeme 189: ok · vozila do 40, pojavilo 285, stiglo 17, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 0.865 ms (najduži 105.9) · 17.8 s
-sjeme 178: ok · vozila do 40, pojavilo 291, stiglo 20, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 0.906 ms (najduži 61.6) · 18.4 s
-sjeme 198: ok · vozila do 40, pojavilo 253, stiglo 23, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.193 ms (najduži 148.6) · 23.5 s
-sjeme 191: ok · vozila do 40, pojavilo 308, stiglo 13, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.528 ms (najduži 123.2) · 29.6 s
-sjeme 73: ok · vozila do 40, pojavilo 228, stiglo 9, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 10.858 ms (najduži 403.0) · 197.6 s
-sjeme 188: ok · vozila do 40, pojavilo 291, stiglo 14, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 0.657 ms (najduži 53.4) · 13.5 s
-sjeme 104: ok · vozila do 40, pojavilo 240, stiglo 22, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 0.557 ms (najduži 55.5) · 11.5 s
-sjeme 128: ok · vozila do 40, pojavilo 333, stiglo 22, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 6.343 ms (najduži 352.0) · 118.7 s
-sjeme 135: ok · vozila do 40, pojavilo 277, stiglo 25, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 0.553 ms (najduži 57.8) · 11.4 s
-sjeme 159: ok · vozila do 40, pojavilo 240, stiglo 13, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 0.514 ms (najduži 61.4) · 10.6 s
-sjeme 190: ok · vozila do 40, pojavilo 307, stiglo 19, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 0.570 ms (najduži 46.0) · 11.5 s
-sjeme 166: ok · vozila do 40, pojavilo 302, stiglo 15, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 0.734 ms (najduži 48.0) · 14.5 s
-sjeme 154: ok · vozila do 40, pojavilo 286, stiglo 13, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 8.198 ms (najduži 328.0) · 151.6 s
-sjeme 185: ok · vozila do 40, pojavilo 248, stiglo 17, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 0.645 ms (najduži 41.5) · 12.8 s
-sjeme 197: ok · vozila do 40, pojavilo 333, stiglo 15, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.952 ms (najduži 86.7) · 54.3 s
+sjeme 24: ok · vozila do 40, pojavilo 285, stiglo 22, parkiralo 8, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.902 ms (najduži 136.1) · 41.5 s
+sjeme 15: ok · vozila do 40, pojavilo 294, stiglo 15, parkiralo 2, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.122 ms (najduži 105.7) · 45.2 s
+sjeme 10: ok · vozila do 40, pojavilo 270, stiglo 11, parkiralo 3, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.254 ms (najduži 124.3) · 47.5 s
+sjeme 20: ok · vozila do 40, pojavilo 321, stiglo 17, parkiralo 5, krugova 11 · sudara 0, zastoja 0, prekršaja 0 · korak 2.379 ms (najduži 194.6) · 50.3 s
+sjeme 9: ok · vozila do 40, pojavilo 274, stiglo 17, parkiralo 7, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.333 ms (najduži 195.8) · 50.2 s
+sjeme 1: ok · vozila do 40, pojavilo 280, stiglo 16, parkiralo 7, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 2.398 ms (najduži 144.6) · 51.3 s
+sjeme 23: ok · vozila do 40, pojavilo 251, stiglo 16, parkiralo 3, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.394 ms (najduži 135.4) · 51.5 s
+sjeme 13: ok · vozila do 40, pojavilo 307, stiglo 20, parkiralo 9, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.372 ms (najduži 117.3) · 51.4 s
+sjeme 4: ok · vozila do 40, pojavilo 308, stiglo 5, parkiralo 1, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.515 ms (najduži 131.8) · 52.0 s
+sjeme 5: ok · vozila do 40, pojavilo 249, stiglo 14, parkiralo 4, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.465 ms (najduži 156.3) · 51.7 s
+sjeme 28: ok · vozila do 40, pojavilo 298, stiglo 17, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.488 ms (najduži 196.1) · 52.9 s
+sjeme 19: ok · vozila do 40, pojavilo 285, stiglo 17, parkiralo 3, krugova 13 · sudara 0, zastoja 0, prekršaja 0 · korak 2.485 ms (najduži 148.0) · 53.0 s
+sjeme 16: ok · vozila do 40, pojavilo 264, stiglo 32, parkiralo 9, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.511 ms (najduži 171.4) · 52.9 s
+sjeme 26: ok · vozila do 40, pojavilo 275, stiglo 17, parkiralo 5, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.596 ms (najduži 178.3) · 54.4 s
+sjeme 14: ok · vozila do 40, pojavilo 270, stiglo 17, parkiralo 2, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.590 ms (najduži 174.3) · 54.8 s
+sjeme 6: ok · vozila do 40, pojavilo 269, stiglo 16, parkiralo 6, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.599 ms (najduži 177.9) · 55.0 s
+sjeme 7: ok · vozila do 40, pojavilo 285, stiglo 22, parkiralo 8, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.669 ms (najduži 251.2) · 55.7 s
+sjeme 18: ok · vozila do 40, pojavilo 250, stiglo 26, parkiralo 8, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.746 ms (najduži 155.7) · 57.3 s
+sjeme 8: ok · vozila do 40, pojavilo 260, stiglo 25, parkiralo 9, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.701 ms (najduži 134.8) · 57.1 s
+sjeme 21: ok · vozila do 40, pojavilo 322, stiglo 15, parkiralo 4, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.709 ms (najduži 140.0) · 57.3 s
+sjeme 27: ok · vozila do 40, pojavilo 291, stiglo 8, parkiralo 2, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.870 ms (najduži 147.8) · 59.5 s
+sjeme 3: ok · vozila do 40, pojavilo 262, stiglo 18, parkiralo 6, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.790 ms (najduži 196.0) · 58.8 s
+sjeme 31: ok · vozila do 40, pojavilo 323, stiglo 19, parkiralo 7, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.952 ms (najduži 175.5) · 60.5 s
+sjeme 11: ok · vozila do 40, pojavilo 277, stiglo 20, parkiralo 7, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.950 ms (najduži 169.1) · 60.5 s
+sjeme 17: ok · vozila do 40, pojavilo 277, stiglo 18, parkiralo 5, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.951 ms (najduži 161.8) · 60.9 s
+sjeme 30: ok · vozila do 40, pojavilo 265, stiglo 26, parkiralo 5, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.871 ms (najduži 132.9) · 60.7 s
+sjeme 22: ok · vozila do 40, pojavilo 291, stiglo 17, parkiralo 4, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.955 ms (najduži 189.2) · 61.0 s
+sjeme 25: ok · vozila do 40, pojavilo 290, stiglo 16, parkiralo 2, krugova 15 · sudara 0, zastoja 0, prekršaja 0 · korak 3.150 ms (najduži 162.8) · 64.6 s
+sjeme 2: ok · vozila do 40, pojavilo 310, stiglo 18, parkiralo 10, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 3.173 ms (najduži 235.4) · 66.3 s
+sjeme 12: ok · vozila do 40, pojavilo 258, stiglo 15, parkiralo 5, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 3.549 ms (najduži 252.4) · 72.2 s
+sjeme 29: ok · vozila do 40, pojavilo 225, stiglo 13, parkiralo 4, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 3.755 ms (najduži 213.2) · 75.3 s
+sjeme 55: ok · vozila do 40, pojavilo 314, stiglo 21, parkiralo 6, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.147 ms (najduži 196.1) · 44.0 s
+sjeme 32: ok · vozila do 40, pojavilo 258, stiglo 13, parkiralo 3, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.694 ms (najduži 174.2) · 36.2 s
+sjeme 59: ok · vozila do 40, pojavilo 268, stiglo 22, parkiralo 3, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.723 ms (najduži 199.1) · 36.6 s
+sjeme 46: ok · vozila do 40, pojavilo 309, stiglo 17, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.108 ms (najduži 188.7) · 44.1 s
+sjeme 51: ok · vozila do 40, pojavilo 336, stiglo 14, parkiralo 4, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.010 ms (najduži 188.9) · 41.1 s
+sjeme 50: ok · vozila do 40, pojavilo 276, stiglo 32, parkiralo 14, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.841 ms (najduži 133.9) · 39.5 s
+sjeme 41: ok · vozila do 40, pojavilo 292, stiglo 12, parkiralo 1, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.210 ms (najduži 219.4) · 45.7 s
+sjeme 44: ok · vozila do 40, pojavilo 247, stiglo 28, parkiralo 13, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.938 ms (najduži 129.6) · 41.8 s
+sjeme 57: ok · vozila do 40, pojavilo 296, stiglo 18, parkiralo 8, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.914 ms (najduži 148.5) · 41.3 s
+sjeme 40: ok · vozila do 40, pojavilo 267, stiglo 15, parkiralo 4, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.119 ms (najduži 147.5) · 44.9 s
+sjeme 48: ok · vozila do 40, pojavilo 253, stiglo 23, parkiralo 4, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.622 ms (najduži 122.6) · 35.3 s
+sjeme 36: ok · vozila do 40, pojavilo 258, stiglo 18, parkiralo 6, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.119 ms (najduži 128.2) · 44.4 s
+sjeme 37: ok · vozila do 40, pojavilo 285, stiglo 15, parkiralo 6, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.962 ms (najduži 147.8) · 42.1 s
+sjeme 45: ok · vozila do 40, pojavilo 257, stiglo 12, parkiralo 5, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.992 ms (najduži 156.3) · 43.7 s
+sjeme 35: ok · vozila do 40, pojavilo 269, stiglo 13, parkiralo 2, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.228 ms (najduži 121.0) · 46.5 s
+sjeme 47: ok · vozila do 40, pojavilo 302, stiglo 17, parkiralo 6, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.161 ms (najduži 140.8) · 45.8 s
+sjeme 54: ok · vozila do 40, pojavilo 291, stiglo 17, parkiralo 4, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.363 ms (najduži 165.7) · 49.0 s
+sjeme 38: ok · vozila do 40, pojavilo 338, stiglo 13, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.212 ms (najduži 125.4) · 46.3 s
+sjeme 42: ok · vozila do 40, pojavilo 286, stiglo 23, parkiralo 7, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.990 ms (najduži 142.6) · 42.8 s
+sjeme 34: ok · vozila do 40, pojavilo 315, stiglo 14, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.169 ms (najduži 162.0) · 45.0 s
+sjeme 52: ok · vozila do 40, pojavilo 272, stiglo 17, parkiralo 6, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.254 ms (najduži 115.7) · 48.3 s
+sjeme 39: ok · vozila do 40, pojavilo 257, stiglo 21, parkiralo 8, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.323 ms (najduži 141.1) · 49.0 s
+sjeme 61: ok · vozila do 40, pojavilo 252, stiglo 16, parkiralo 6, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.112 ms (najduži 138.4) · 44.6 s
+sjeme 58: ok · vozila do 40, pojavilo 275, stiglo 14, parkiralo 4, krugova 9 · sudara 0, zastoja 0, prekršaja 0 · korak 2.289 ms (najduži 121.5) · 48.3 s
+sjeme 56: ok · vozila do 40, pojavilo 241, stiglo 19, parkiralo 6, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.173 ms (najduži 147.7) · 45.9 s
+sjeme 53: ok · vozila do 40, pojavilo 297, stiglo 18, parkiralo 6, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.414 ms (najduži 167.6) · 50.5 s
+sjeme 62: ok · vozila do 40, pojavilo 299, stiglo 16, parkiralo 4, krugova 12 · sudara 0, zastoja 0, prekršaja 0 · korak 2.738 ms (najduži 161.3) · 56.0 s
+sjeme 43: ok · vozila do 40, pojavilo 304, stiglo 14, parkiralo 5, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.118 ms (najduži 134.1) · 45.1 s
+sjeme 60: ok · vozila do 40, pojavilo 244, stiglo 24, parkiralo 9, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.998 ms (najduži 162.2) · 42.9 s
+sjeme 86: ok · vozila do 40, pojavilo 283, stiglo 15, parkiralo 6, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.727 ms (najduži 120.8) · 36.9 s
+sjeme 63: ok · vozila do 40, pojavilo 275, stiglo 18, parkiralo 7, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.697 ms (najduži 194.5) · 36.5 s
+sjeme 77: ok · vozila do 40, pojavilo 267, stiglo 22, parkiralo 9, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.751 ms (najduži 179.1) · 37.2 s
+sjeme 79: ok · vozila do 40, pojavilo 278, stiglo 20, parkiralo 8, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.519 ms (najduži 85.1) · 33.2 s
+sjeme 90: ok · vozila do 40, pojavilo 309, stiglo 24, parkiralo 10, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.946 ms (najduži 159.6) · 41.4 s
+sjeme 82: ok · vozila do 40, pojavilo 285, stiglo 22, parkiralo 6, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.820 ms (najduži 126.8) · 39.3 s
+sjeme 49: ok · vozila do 40, pojavilo 225, stiglo 24, parkiralo 9, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 3.917 ms (najduži 167.3) · 78.1 s
+sjeme 75: ok · vozila do 40, pojavilo 300, stiglo 12, parkiralo 3, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 2.009 ms (najduži 138.5) · 42.8 s
+sjeme 33: ok · vozila do 40, pojavilo 256, stiglo 17, parkiralo 2, krugova 9 · sudara 0, zastoja 0, prekršaja 0 · korak 3.785 ms (najduži 230.2) · 74.7 s
+sjeme 88: ok · vozila do 40, pojavilo 234, stiglo 29, parkiralo 7, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 2.165 ms (najduži 158.5) · 45.8 s
+sjeme 78: ok · vozila do 40, pojavilo 280, stiglo 17, parkiralo 5, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 2.030 ms (najduži 197.3) · 42.7 s
+sjeme 68: ok · vozila do 40, pojavilo 268, stiglo 14, parkiralo 6, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.160 ms (najduži 154.5) · 45.4 s
+sjeme 72: ok · vozila do 40, pojavilo 275, stiglo 19, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.400 ms (najduži 163.8) · 50.1 s
+sjeme 81: ok · vozila do 40, pojavilo 250, stiglo 16, parkiralo 5, krugova 10 · sudara 0, zastoja 0, prekršaja 0 · korak 2.468 ms (najduži 184.5) · 51.5 s
+sjeme 71: ok · vozila do 40, pojavilo 255, stiglo 15, parkiralo 6, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.429 ms (najduži 126.0) · 51.2 s
+sjeme 67: ok · vozila do 40, pojavilo 320, stiglo 11, parkiralo 5, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.457 ms (najduži 164.4) · 51.2 s
+sjeme 76: ok · vozila do 40, pojavilo 323, stiglo 10, parkiralo 5, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.502 ms (najduži 176.4) · 52.3 s
+sjeme 83: ok · vozila do 40, pojavilo 247, stiglo 26, parkiralo 7, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.021 ms (najduži 116.7) · 44.3 s
+sjeme 87: ok · vozila do 40, pojavilo 236, stiglo 21, parkiralo 5, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.916 ms (najduži 174.8) · 40.9 s
+sjeme 66: ok · vozila do 40, pojavilo 264, stiglo 18, parkiralo 10, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.586 ms (najduži 152.0) · 53.7 s
+sjeme 70: ok · vozila do 40, pojavilo 295, stiglo 21, parkiralo 7, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.233 ms (najduži 154.0) · 47.1 s
+sjeme 92: ok · vozila do 40, pojavilo 255, stiglo 15, parkiralo 2, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.236 ms (najduži 161.7) · 47.1 s
+sjeme 85: ok · vozila do 40, pojavilo 233, stiglo 26, parkiralo 4, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.539 ms (najduži 135.9) · 53.6 s
+sjeme 84: ok · vozila do 40, pojavilo 255, stiglo 22, parkiralo 9, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.038 ms (najduži 161.1) · 44.3 s
+sjeme 69: ok · vozila do 40, pojavilo 323, stiglo 13, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.678 ms (najduži 156.7) · 55.8 s
+sjeme 65: ok · vozila do 40, pojavilo 275, stiglo 6, parkiralo 1, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 2.577 ms (najduži 143.3) · 53.8 s
+sjeme 117: ok · vozila do 40, pojavilo 283, stiglo 18, parkiralo 10, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.650 ms (najduži 150.2) · 34.9 s
+sjeme 89: ok · vozila do 40, pojavilo 267, stiglo 15, parkiralo 2, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 2.387 ms (najduži 154.3) · 51.2 s
+sjeme 94: ok · vozila do 40, pojavilo 264, stiglo 22, parkiralo 9, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.818 ms (najduži 157.6) · 38.5 s
+sjeme 93: ok · vozila do 40, pojavilo 252, stiglo 26, parkiralo 10, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.378 ms (najduži 213.7) · 50.2 s
+sjeme 121: ok · vozila do 40, pojavilo 261, stiglo 12, parkiralo 8, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.744 ms (najduži 182.3) · 37.2 s
+sjeme 74: ok · vozila do 40, pojavilo 283, stiglo 27, parkiralo 9, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.444 ms (najduži 171.6) · 51.8 s
+sjeme 91: ok · vozila do 40, pojavilo 241, stiglo 29, parkiralo 7, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.448 ms (najduži 254.0) · 51.9 s
+sjeme 108: ok · vozila do 40, pojavilo 281, stiglo 26, parkiralo 8, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.127 ms (najduži 192.0) · 44.6 s
+sjeme 113: ok · vozila do 40, pojavilo 332, stiglo 12, parkiralo 5, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.005 ms (najduži 151.7) · 42.7 s
+sjeme 110: ok · vozila do 40, pojavilo 287, stiglo 20, parkiralo 7, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.193 ms (najduži 149.4) · 46.0 s
+sjeme 80: ok · vozila do 40, pojavilo 256, stiglo 29, parkiralo 9, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.275 ms (najduži 179.7) · 48.4 s
+sjeme 103: ok · vozila do 40, pojavilo 287, stiglo 15, parkiralo 3, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.096 ms (najduži 141.4) · 44.5 s
+sjeme 106: ok · vozila do 40, pojavilo 250, stiglo 19, parkiralo 6, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.436 ms (najduži 193.7) · 52.3 s
+sjeme 64: ok · vozila do 40, pojavilo 260, stiglo 23, parkiralo 8, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.421 ms (najduži 173.0) · 51.5 s
+sjeme 119: ok · vozila do 40, pojavilo 288, stiglo 15, parkiralo 8, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.437 ms (najduži 183.6) · 52.7 s
+sjeme 112: ok · vozila do 40, pojavilo 281, stiglo 21, parkiralo 8, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.367 ms (najduži 276.9) · 50.5 s
+sjeme 109: ok · vozila do 40, pojavilo 280, stiglo 14, parkiralo 3, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.597 ms (najduži 199.3) · 54.3 s
+sjeme 99: ok · vozila do 40, pojavilo 292, stiglo 17, parkiralo 4, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.612 ms (najduži 190.1) · 56.0 s
+sjeme 118: ok · vozila do 40, pojavilo 277, stiglo 22, parkiralo 3, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.568 ms (najduži 170.7) · 53.7 s
+sjeme 101: ok · vozila do 40, pojavilo 273, stiglo 26, parkiralo 7, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.471 ms (najduži 227.6) · 51.8 s
+sjeme 107: ok · vozila do 40, pojavilo 278, stiglo 27, parkiralo 6, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.634 ms (najduži 232.5) · 56.3 s
+sjeme 97: ok · vozila do 40, pojavilo 337, stiglo 9, parkiralo 3, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.810 ms (najduži 209.8) · 57.8 s
+sjeme 98: ok · vozila do 40, pojavilo 300, stiglo 20, parkiralo 8, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.999 ms (najduži 238.2) · 62.6 s
+sjeme 102: ok · vozila do 40, pojavilo 286, stiglo 10, parkiralo 2, krugova 11 · sudara 0, zastoja 0, prekršaja 0 · korak 3.042 ms (najduži 169.4) · 63.7 s
+sjeme 114: ok · vozila do 40, pojavilo 309, stiglo 18, parkiralo 8, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.924 ms (najduži 203.8) · 60.7 s
+sjeme 115: ok · vozila do 40, pojavilo 281, stiglo 18, parkiralo 3, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.607 ms (najduži 216.1) · 55.9 s
+sjeme 148: ok · vozila do 40, pojavilo 331, stiglo 6, parkiralo 2, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.716 ms (najduži 252.1) · 54.9 s
+sjeme 96: ok · vozila do 40, pojavilo 263, stiglo 19, parkiralo 5, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.632 ms (najduži 187.2) · 55.8 s
+sjeme 120: ok · vozila do 40, pojavilo 311, stiglo 7, parkiralo 1, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.738 ms (najduži 215.1) · 57.0 s
+sjeme 123: ok · vozila do 40, pojavilo 244, stiglo 22, parkiralo 8, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.913 ms (najduži 203.4) · 61.4 s
+sjeme 125: ok · vozila do 40, pojavilo 288, stiglo 15, parkiralo 6, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.480 ms (najduži 197.2) · 52.5 s
+sjeme 100: ok · vozila do 40, pojavilo 310, stiglo 20, parkiralo 7, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.786 ms (najduži 164.3) · 57.9 s
+sjeme 139: ok · vozila do 40, pojavilo 244, stiglo 18, parkiralo 4, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.004 ms (najduži 173.4) · 44.0 s
+sjeme 141: ok · vozila do 40, pojavilo 297, stiglo 18, parkiralo 7, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.930 ms (najduži 147.8) · 42.3 s
+sjeme 152: ok · vozila do 40, pojavilo 265, stiglo 10, parkiralo 6, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.427 ms (najduži 221.5) · 50.1 s
+sjeme 144: ok · vozila do 40, pojavilo 253, stiglo 16, parkiralo 8, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.041 ms (najduži 166.3) · 45.0 s
+sjeme 122: ok · vozila do 40, pojavilo 281, stiglo 24, parkiralo 10, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.421 ms (najduži 174.4) · 52.0 s
+sjeme 105: ok · vozila do 40, pojavilo 255, stiglo 21, parkiralo 4, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.850 ms (najduži 188.2) · 60.6 s
+sjeme 124: ok · vozila do 40, pojavilo 288, stiglo 18, parkiralo 5, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 3.114 ms (najduži 191.2) · 64.9 s
+sjeme 111: ok · vozila do 40, pojavilo 289, stiglo 13, parkiralo 6, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.522 ms (najduži 173.4) · 52.9 s
+sjeme 134: ok · vozila do 40, pojavilo 297, stiglo 13, parkiralo 1, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.340 ms (najduži 192.8) · 49.7 s
+sjeme 143: ok · vozila do 40, pojavilo 244, stiglo 34, parkiralo 9, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.125 ms (najduži 202.1) · 46.3 s
+sjeme 137: ok · vozila do 40, pojavilo 277, stiglo 19, parkiralo 7, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 2.569 ms (najduži 170.8) · 54.5 s
+sjeme 95: ok · vozila do 40, pojavilo 233, stiglo 25, parkiralo 6, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.599 ms (najduži 164.7) · 55.7 s
+sjeme 150: ok · vozila do 40, pojavilo 273, stiglo 20, parkiralo 7, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.536 ms (najduži 238.6) · 54.1 s
+sjeme 130: ok · vozila do 40, pojavilo 283, stiglo 27, parkiralo 5, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.506 ms (najduži 181.7) · 53.0 s
+sjeme 116: ok · vozila do 40, pojavilo 239, stiglo 14, parkiralo 5, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 4.911 ms (najduži 266.7) · 99.0 s
+sjeme 140: ok · vozila do 40, pojavilo 333, stiglo 13, parkiralo 1, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.686 ms (najduži 228.0) · 57.0 s
+sjeme 172: ok · vozila do 40, pojavilo 268, stiglo 15, parkiralo 7, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.776 ms (najduži 133.9) · 39.1 s
+sjeme 132: ok · vozila do 40, pojavilo 254, stiglo 13, parkiralo 0, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.458 ms (najduži 232.2) · 52.8 s
+sjeme 175: ok · vozila do 40, pojavilo 321, stiglo 22, parkiralo 10, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.838 ms (najduži 162.6) · 39.1 s
+sjeme 138: ok · vozila do 40, pojavilo 320, stiglo 16, parkiralo 8, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.534 ms (najduži 216.4) · 52.7 s
+sjeme 179: ok · vozila do 40, pojavilo 267, stiglo 24, parkiralo 9, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.147 ms (najduži 185.3) · 46.5 s
+sjeme 183: ok · vozila do 40, pojavilo 241, stiglo 12, parkiralo 5, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.889 ms (najduži 194.3) · 40.5 s
+sjeme 170: ok · vozila do 40, pojavilo 270, stiglo 19, parkiralo 5, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.108 ms (najduži 190.4) · 44.6 s
+sjeme 129: ok · vozila do 40, pojavilo 299, stiglo 17, parkiralo 10, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.484 ms (najduži 166.9) · 52.2 s
+sjeme 149: ok · vozila do 40, pojavilo 305, stiglo 21, parkiralo 10, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 2.762 ms (najduži 171.9) · 58.0 s
+sjeme 156: ok · vozila do 40, pojavilo 288, stiglo 12, parkiralo 2, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.365 ms (najduži 264.2) · 48.8 s
+sjeme 146: ok · vozila do 40, pojavilo 288, stiglo 24, parkiralo 8, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.522 ms (najduži 177.5) · 53.0 s
+sjeme 145: ok · vozila do 40, pojavilo 252, stiglo 17, parkiralo 7, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 2.779 ms (najduži 174.8) · 58.8 s
+sjeme 131: ok · vozila do 40, pojavilo 268, stiglo 25, parkiralo 8, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.571 ms (najduži 259.0) · 54.4 s
+sjeme 151: ok · vozila do 40, pojavilo 331, stiglo 11, parkiralo 4, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.692 ms (najduži 265.6) · 56.0 s
+sjeme 127: ok · vozila do 40, pojavilo 206, stiglo 21, parkiralo 6, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.739 ms (najduži 188.0) · 57.2 s
+sjeme 153: ok · vozila do 40, pojavilo 259, stiglo 10, parkiralo 2, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 2.360 ms (najduži 184.9) · 49.9 s
+sjeme 133: ok · vozila do 40, pojavilo 252, stiglo 18, parkiralo 6, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 3.084 ms (najduži 206.7) · 63.3 s
+sjeme 136: ok · vozila do 40, pojavilo 298, stiglo 12, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.463 ms (najduži 154.7) · 51.8 s
+sjeme 155: ok · vozila do 40, pojavilo 283, stiglo 18, parkiralo 12, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.613 ms (najduži 232.2) · 54.8 s
+sjeme 165: ok · vozila do 40, pojavilo 248, stiglo 11, parkiralo 3, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 2.279 ms (najduži 212.0) · 47.7 s
+sjeme 142: ok · vozila do 40, pojavilo 271, stiglo 17, parkiralo 9, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.488 ms (najduži 238.5) · 51.1 s
+sjeme 174: ok · vozila do 40, pojavilo 286, stiglo 17, parkiralo 4, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 2.357 ms (najduži 143.6) · 49.0 s
+sjeme 126: ok · vozila do 40, pojavilo 287, stiglo 21, parkiralo 7, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.211 ms (najduži 125.6) · 46.5 s
+sjeme 181: ok · vozila do 40, pojavilo 284, stiglo 21, parkiralo 10, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.204 ms (najduži 195.6) · 46.8 s
+sjeme 168: ok · vozila do 40, pojavilo 252, stiglo 24, parkiralo 7, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.546 ms (najduži 150.6) · 52.1 s
+sjeme 147: ok · vozila do 40, pojavilo 251, stiglo 24, parkiralo 6, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 2.000 ms (najduži 116.2) · 43.1 s
+sjeme 171: ok · vozila do 40, pojavilo 299, stiglo 17, parkiralo 7, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.123 ms (najduži 138.4) · 44.2 s
+sjeme 161: ok · vozila do 40, pojavilo 293, stiglo 14, parkiralo 5, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 2.284 ms (najduži 172.4) · 47.2 s
+sjeme 180: ok · vozila do 40, pojavilo 299, stiglo 21, parkiralo 5, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.735 ms (najduži 125.7) · 36.6 s
+sjeme 163: ok · vozila do 40, pojavilo 267, stiglo 21, parkiralo 3, krugova 2 · sudara 0, zastoja 0, prekršaja 0 · korak 1.972 ms (najduži 131.2) · 41.6 s
+sjeme 187: ok · vozila do 40, pojavilo 285, stiglo 14, parkiralo 3, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.805 ms (najduži 135.0) · 37.2 s
+sjeme 169: ok · vozila do 40, pojavilo 293, stiglo 18, parkiralo 4, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.215 ms (najduži 161.5) · 46.0 s
+sjeme 176: ok · vozila do 40, pojavilo 307, stiglo 13, parkiralo 4, krugova 9 · sudara 0, zastoja 0, prekršaja 0 · korak 1.791 ms (najduži 125.8) · 37.8 s
+sjeme 160: ok · vozila do 40, pojavilo 271, stiglo 25, parkiralo 3, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 2.193 ms (najduži 125.9) · 45.4 s
+sjeme 73: ok · vozila do 40, pojavilo 237, stiglo 13, parkiralo 6, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 11.237 ms (najduži 338.5) · 207.4 s
+sjeme 177: ok · vozila do 40, pojavilo 305, stiglo 15, parkiralo 5, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 2.021 ms (najduži 124.1) · 42.1 s
+sjeme 162: ok · vozila do 40, pojavilo 289, stiglo 21, parkiralo 8, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.893 ms (najduži 113.6) · 40.0 s
+sjeme 158: ok · vozila do 40, pojavilo 280, stiglo 17, parkiralo 8, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.904 ms (najduži 112.7) · 40.0 s
+sjeme 184: ok · vozila do 40, pojavilo 292, stiglo 20, parkiralo 9, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.875 ms (najduži 128.8) · 39.5 s
+sjeme 182: ok · vozila do 40, pojavilo 311, stiglo 14, parkiralo 6, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 2.060 ms (najduži 165.4) · 42.6 s
+sjeme 164: ok · vozila do 40, pojavilo 299, stiglo 25, parkiralo 8, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 1.944 ms (najduži 115.0) · 40.1 s
+sjeme 167: ok · vozila do 40, pojavilo 271, stiglo 21, parkiralo 6, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.842 ms (najduži 140.9) · 38.0 s
+sjeme 186: ok · vozila do 40, pojavilo 269, stiglo 20, parkiralo 7, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.633 ms (najduži 103.5) · 34.0 s
+sjeme 173: ok · vozila do 40, pojavilo 243, stiglo 18, parkiralo 6, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.731 ms (najduži 107.3) · 35.6 s
+sjeme 196: ok · vozila do 40, pojavilo 282, stiglo 18, parkiralo 3, krugova 12 · sudara 0, zastoja 0, prekršaja 0 · korak 1.892 ms (najduži 106.5) · 38.7 s
+sjeme 199: ok · vozila do 40, pojavilo 267, stiglo 24, parkiralo 8, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.441 ms (najduži 130.4) · 29.9 s
+sjeme 192: ok · vozila do 40, pojavilo 269, stiglo 26, parkiralo 12, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 1.342 ms (najduži 117.6) · 27.6 s
+sjeme 194: ok · vozila do 40, pojavilo 287, stiglo 25, parkiralo 9, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.377 ms (najduži 91.4) · 28.1 s
+sjeme 178: ok · vozila do 40, pojavilo 287, stiglo 11, parkiralo 2, krugova 8 · sudara 0, zastoja 0, prekršaja 0 · korak 1.604 ms (najduži 118.1) · 32.6 s
+sjeme 200: ok · vozila do 40, pojavilo 290, stiglo 8, parkiralo 3, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.379 ms (najduži 112.8) · 27.8 s
+sjeme 104: ok · vozila do 40, pojavilo 244, stiglo 24, parkiralo 11, krugova 1 · sudara 0, zastoja 0, prekršaja 0 · korak 1.238 ms (najduži 71.0) · 25.6 s
+sjeme 157: ok · vozila do 40, pojavilo 253, stiglo 27, parkiralo 6, krugova 0 · sudara 0, zastoja 0, prekršaja 0 · korak 2.071 ms (najduži 179.7) · 40.7 s
+sjeme 193: ok · vozila do 40, pojavilo 247, stiglo 10, parkiralo 4, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.258 ms (najduži 94.3) · 25.6 s
+sjeme 189: ok · vozila do 40, pojavilo 296, stiglo 18, parkiralo 5, krugova 7 · sudara 0, zastoja 0, prekršaja 0 · korak 1.294 ms (najduži 111.3) · 26.2 s
+sjeme 195: ok · vozila do 40, pojavilo 245, stiglo 24, parkiralo 8, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 1.148 ms (najduži 72.1) · 23.8 s
+sjeme 128: ok · vozila do 40, pojavilo 323, stiglo 17, parkiralo 3, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 7.094 ms (najduži 271.0) · 134.1 s
+sjeme 191: ok · vozila do 40, pojavilo 299, stiglo 14, parkiralo 7, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 1.845 ms (najduži 116.9) · 35.9 s
+sjeme 198: ok · vozila do 40, pojavilo 260, stiglo 15, parkiralo 5, krugova 6 · sudara 0, zastoja 0, prekršaja 0 · korak 1.277 ms (najduži 107.2) · 25.4 s
+sjeme 188: ok · vozila do 40, pojavilo 320, stiglo 12, parkiralo 4, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 0.782 ms (najduži 40.0) · 15.8 s
+sjeme 135: ok · vozila do 40, pojavilo 295, stiglo 20, parkiralo 8, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 0.869 ms (najduži 46.9) · 17.6 s
+sjeme 154: ok · vozila do 40, pojavilo 264, stiglo 14, parkiralo 4, krugova 4 · sudara 0, zastoja 0, prekršaja 0 · korak 7.449 ms (najduži 258.5) · 140.3 s
+sjeme 159: ok · vozila do 40, pojavilo 253, stiglo 16, parkiralo 6, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 0.738 ms (najduži 50.7) · 14.9 s
+sjeme 166: ok · vozila do 40, pojavilo 305, stiglo 6, parkiralo 2, krugova 5 · sudara 0, zastoja 0, prekršaja 0 · korak 0.824 ms (najduži 41.1) · 16.4 s
+sjeme 185: ok · vozila do 40, pojavilo 253, stiglo 16, parkiralo 5, krugova 10 · sudara 0, zastoja 0, prekršaja 0 · korak 0.873 ms (najduži 46.8) · 17.3 s
+sjeme 190: ok · vozila do 40, pojavilo 310, stiglo 15, parkiralo 8, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 0.697 ms (najduži 65.9) · 14.0 s
+sjeme 197: ok · vozila do 40, pojavilo 332, stiglo 18, parkiralo 5, krugova 3 · sudara 0, zastoja 0, prekršaja 0 · korak 3.878 ms (najduži 93.3) · 71.4 s
 
-Ukupno: 198/200 čisto · sudara 0, zastoja 4, prekršaja 0, krugova prvenstva 434, vozila stiglo 3629.
-Pala sjemena: 123, 158
+Ukupno: 200/200 čisto · sudara 0, zastoja 0, prekršaja 0, krugova prvenstva 719, vozila stiglo 3603, parkiralo 1162.

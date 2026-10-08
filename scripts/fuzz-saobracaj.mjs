@@ -44,7 +44,7 @@ async function svijet() {
 /** Jedno sjeme: `trajanje` sekundi saobraćaja; vraća izvještaj. */
 async function sjeme(s, trajanje, trag) {
   const sv = await svijet();
-  const { noviSaobracaj, korakSaobracaja } = await import(`${KOD}grad/saobracaj.ts`);
+  const { noviSaobracaj, korakSaobracaja, parkirani } = await import(`${KOD}grad/saobracaj.ts`);
   const { nasumicnaRuta, planBota } = await import(`${KOD}grad/botGrad.ts`);
   const { noviSudija, sudi } = await import(`${KOD}grad/sudija.ts`);
   const { rng, pointAt, rectCorners, polygonsOverlap } = await import(`${KOD}sim/geometry.ts`);
@@ -59,6 +59,8 @@ async function sjeme(s, trajanje, trag) {
   const fokus = () => pointAt(putanje[putI].tacke, putanje[putI].cum, putS);
 
   const sb = noviSaobracaj(sv, s, 1);
+  // Najveća gustina (40 vozila): zadatak traži nula zastoja i pri punom gradu.
+  sb.gustinaVanZona = 3;
   const sudije = new Map();
   const sudar = [];
   const prekrsaji = [];
@@ -81,12 +83,14 @@ async function sjeme(s, trajanje, trag) {
     koraka++;
     najvise = Math.max(najvise, sb.npc.length);
 
-    // Sudari: tijela se preklapaju.
-    const tijela = sb.npc.map((n) => ({ n, k: rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH) }));
+    // Sudari: tijela se preklapaju — i sa parkiranima (stavka 7e).
+    const tijela = [...sb.npc, ...parkirani(sb)].map((n) => ({ n, k: rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH) }));
     for (let i = 0; i < tijela.length; i++) {
       for (let j = i + 1; j < tijela.length; j++) {
         const a = tijela[i].n;
         const b = tijela[j].n;
+        // Dva parkirana se ne sudaraju (mjesta su razmaknuta).
+        if (a.razlog === undefined && b.razlog === undefined) continue;
         if (a.nivo !== b.nivo || Math.hypot(a.x - b.x, a.y - b.y) > CAR_LENGTH + 0.5) continue;
         if (!polygonsOverlap(tijela[i].k, tijela[j].k)) continue;
         const kljuc = `${a.id}-${b.id}`;
@@ -155,7 +159,7 @@ if (!isMainThread) {
           izvjestaji.push(iz);
           const los = iz.sudari.length + iz.zastoji.length + iz.prekrsaji.length;
           console.log(
-            `sjeme ${iz.sjeme}: ${los === 0 ? "ok" : "PAD"} · vozila do ${iz.najvise}, pojavilo ${iz.metrika.pojavljeno}, stiglo ${iz.metrika.stiglo}, krugova ${iz.metrika.krugova} · sudara ${iz.sudari.length}, zastoja ${iz.zastoji.length}, prekršaja ${iz.prekrsaji.length} · korak ${iz.korakMs} ms (najduži ${iz.najduziKorakMs}) · ${iz.trajanje} s`,
+            `sjeme ${iz.sjeme}: ${los === 0 ? "ok" : "PAD"} · vozila do ${iz.najvise}, pojavilo ${iz.metrika.pojavljeno}, stiglo ${iz.metrika.stiglo}, parkiralo ${iz.metrika.parkiralo}, krugova ${iz.metrika.krugova} · sudara ${iz.sudari.length}, zastoja ${iz.zastoji.length}, prekršaja ${iz.prekrsaji.length} · korak ${iz.korakMs} ms (najduži ${iz.najduziKorakMs}) · ${iz.trajanje} s`,
           );
           for (const x of iz.sudari.slice(0, 3)) console.log(`   sudar ${JSON.stringify(x)}`);
           for (const x of iz.zastoji.slice(0, 3)) console.log(`   zastoj ${JSON.stringify(x)}`);
@@ -170,7 +174,7 @@ if (!isMainThread) {
   const pali = izvjestaji.filter((x) => x.sudari.length + x.zastoji.length + x.prekrsaji.length > 0);
   const zbir = (f) => izvjestaji.reduce((s, x) => s + f(x), 0);
   console.log(
-    `\nUkupno: ${izvjestaji.length - pali.length}/${izvjestaji.length} čisto · sudara ${zbir((x) => x.sudari.length)}, zastoja ${zbir((x) => x.zastoji.length)}, prekršaja ${zbir((x) => x.prekrsaji.length)}, krugova prvenstva ${zbir((x) => x.metrika.krugova)}, vozila stiglo ${zbir((x) => x.metrika.stiglo)}.`,
+    `\nUkupno: ${izvjestaji.length - pali.length}/${izvjestaji.length} čisto · sudara ${zbir((x) => x.sudari.length)}, zastoja ${zbir((x) => x.zastoji.length)}, prekršaja ${zbir((x) => x.prekrsaji.length)}, krugova prvenstva ${zbir((x) => x.metrika.krugova)}, vozila stiglo ${zbir((x) => x.metrika.stiglo)}, parkiralo ${zbir((x) => x.metrika.parkiralo)}.`,
   );
   if (pali.length > 0) console.log(`Pala sjemena: ${pali.map((x) => x.sjeme).join(", ")}`);
   process.exit(pali.length > 0 ? 1 : 0);

@@ -18,3 +18,12 @@ procesor x4: 58.1 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 166.6 ms, sporij
 Preostalo: pojedinačni dugi kadrovi su pojava novog vozila (A* + plan sa suhom vožnjom sudije,
 prosječno ~4 ms, najviše ~20 ms na 1×). Rješenje kad zatreba: plan raspoređen na više koraka.
 Grafički čip se ne usporava — konačna riječ je pravi telefon (`/igra?debug=1` pokazuje fps, vozila i korak).
+
+Stavka 7e (2026-10-08): gustina po zoni (van zona 25 vozila; mjerilo sa `&gustina=3` = 40), parkiranje uz
+ivičnjak (do 24 parkirana auta), obilazak parkiranih. Isto mjerilo, 30 s po mjerenju:
+Grad, -17,271
+procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 16.8 ms, sporijih od 55 fps 0/1802; korak simulacije medijana 1.20 ms, max 4.84 ms; vozila 40–40
+procesor x4: 59.6 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 116.6 ms, sporijih od 55 fps 4/1789; korak simulacije medijana 3.31 ms, max 17.19 ms; vozila 40–40
+Grad, 140,-216
+procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 16.8 ms, sporijih od 55 fps 0/1801; korak simulacije medijana 1.21 ms, max 7.14 ms; vozila 39–40
+procesor x4: 59.3 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 100.0 ms, sporijih od 55 fps 7/1779; korak simulacije medijana 3.63 ms, max 24.09 ms; vozila 39–40

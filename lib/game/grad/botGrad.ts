@@ -13,7 +13,10 @@ import {
   GRAD_BOT_PETLJA_PROZOR,
   GRAD_BOT_PETLJA,
   GRAD_BOT_POLUPRECNICI,
+  GRAD_BOT_RAZDJELNICA_BLIZU,
+  GRAD_BOT_RAZDJELNICA_NAGIB,
   GRAD_BOT_RAZDJELNICA_NAJKRACA,
+  GRAD_BOT_RAZDJELNICA_RAZMAK,
   GRAD_BOT_RAZDJELNICA_ODMAK,
   GRAD_BOT_REZERVA_LUKA,
   GRAD_BOT_SUDIJA_GUSTO,
@@ -875,6 +878,42 @@ export function planBota(
     const doPune = punaTrakeOd(f, b.smjer, g.produzeci) - 2;
     return Math.min(s1, doPune) - Math.max(s0, GRAD_BOT_RAZDJELNICA_ODMAK) >= GRAD_BOT_RAZDJELNICA_NAJKRACA;
   };
+  /**
+   * Najmanji bočni pomak [m, + desno] na koraku `i`, `d` metara od njegovog
+   * početka: uz čvor (nije raskrsnica) u kojem se razdjelnica pomjerila, auto
+   * je desno od obje razdjelnice (vidi `GRAD_BOT_RAZDJELNICA_RAZMAK`).
+   */
+  const granicaRazdjelnice = (i: number, d: number): number => {
+    const k = koraci[i]!;
+    const iv = m.ivice[k.ivica]!;
+    const n = iv.trakeNaprijed + iv.trakeNazad;
+    const svoje = k.smjer === 1 ? iv.trakeNaprijed : iv.trakeNazad;
+    if (n === 0 || svoje === 0) return -Infinity;
+    // Sredina lijeve svoje trake: do nje granica popušta.
+    const lijeva = iv.sirina / 2 - (svoje - 0.5) * (iv.sirina / n);
+    // Puna linija između traka (editor): granica je otpuštena prije nje — auto
+    // je do tada u traci koju je planer izabrao.
+    const puna = punaTrakeOd(iv, k.smjer, g.produzeci);
+    let w = -Infinity;
+    const uzCvor = (a: Korak, b: Korak, udaljenost: number, odPocetka: boolean) => {
+      const ra = razdjelnica(m.ivice[a.ivica]!, a.smjer);
+      const rb = razdjelnica(m.ivice[b.ivica]!, b.smjer);
+      if (ra === null || rb === null || Math.abs(ra - rb) <= 0.5) return;
+      const puno = Math.max(ra, rb) + CAR_WIDTH / 2 + GRAD_BOT_RAZDJELNICA_RAZMAK;
+      if (puno <= lijeva) return;
+      // Do kraja popuštanja: nagibom, ali najkasnije 2 m prije pune linije
+      // (iza čvora); pred čvorom, puna linija do njega isključuje granicu.
+      let kraj = GRAD_BOT_RAZDJELNICA_BLIZU + (puno - lijeva) * GRAD_BOT_RAZDJELNICA_NAGIB;
+      if (odPocetka) kraj = Math.min(kraj, puna - 2);
+      else if (Number.isFinite(puna) && puna < iv.duzina - GRAD_BOT_RAZDJELNICA_BLIZU) return;
+      if (udaljenost >= kraj) return;
+      const u = Math.max(0, (udaljenost - GRAD_BOT_RAZDJELNICA_BLIZU) / Math.max(1e-6, kraj - GRAD_BOT_RAZDJELNICA_BLIZU));
+      w = Math.max(w, puno + (lijeva - puno) * Math.min(1, u));
+    };
+    if (i > 0 && raskrsnicaNaKraju(i - 1) < 0 && !unutrasnjiKorak.has(i - 1)) uzCvor(koraci[i - 1]!, k, d, true);
+    if (i + 1 < koraci.length && raskrsnicaNaKraju(i) < 0 && !unutrasnjiKorak.has(i + 1)) uzCvor(k, koraci[i + 1]!, iv.duzina - d, false);
+    return w;
+  };
   let preskoci: { B: Point; h: Point } | null = null;
   koraci.forEach((k, i) => {
     // Unutrašnja ivica raskrsnice od više čvorova: kroz nju vodi jedan luk sa
@@ -954,6 +993,7 @@ export function planBota(
         const u = Math.max(0, Math.min(1, (d - promjenaOd) / Math.max(1, promjenaDo - promjenaOd)));
         let w0 = pocetak + (cilj - pocetak) * u;
         if (uBus !== null && d > uBus) w0 += (busCilj - w0) * Math.min(1, (d - uBus) / Math.max(1, s1 - uBus));
+        w0 = Math.max(w0, granicaRazdjelnice(i, d));
         // Pomak iz šire ulice ne smije izvesti auto sa asfalta uže.
         const w = uUlici(iv, w0);
         const q = { x: c.x - h.y * w, y: c.y + h.x * w };
@@ -1014,7 +1054,7 @@ export function planBota(
       else if (raskrsnicaNaKraju(i) < 0 && prosliPomak !== null && manevarF === "pravo" && !streliceZa(f, sl.smjer, "pravo")) {
         trakaF = najblizaTraka(f, sl.smjer, prosliPomak, trakaF);
       }
-      const w2 = uUlici(f, trakaF);
+      const w2 = uUlici(f, slIndeks === i + 1 ? Math.max(trakaF, granicaRazdjelnice(slIndeks, odPocUgla)) : trakaF);
       const { tacka: c2, pravac: h2o } = naOsovini(f, sF);
       const h2 = sl.smjer === -1 ? { x: -h2o.x, y: -h2o.y } : h2o;
       const p3 = { x: c2.x - h2.y * w2, y: c2.y + h2.x * w2 };
@@ -1534,6 +1574,9 @@ export function korakBota(b: Bot, r: Raskrsnice, st: SlobodnoVozilo, t: number, 
       // Vrijeme do linije kao kod sudije: od nosa do same linije.
       b.zutoStaje[i] = !b.vidioZeleno[i] || (doLinije + STOP_MARGIN) / Math.max(st.v, 0.1) >= YELLOW_COMMIT_TTC * 0.8;
     }
+    // Odlučio da prođe na žuto, a ipak je stao pred linijom (ustupao): sada
+    // može stati — na to žuto više ne ide.
+    if (sv === "zuto" && b.zutoStaje[i] === false && Math.abs(st.v) < 0.1 && doLinije >= 0) b.zutoStaje[i] = true;
     if (sv === "crveno" || (sv === "zuto" && b.zutoStaje[i])) staniNa = l.s;
     b.staje = staniNa === null ? null : { s: l.s, zasto: `semafor ${sv} r${l.r}` };
     break;

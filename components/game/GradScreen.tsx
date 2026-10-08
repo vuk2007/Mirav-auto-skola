@@ -26,7 +26,7 @@ import { procitaj } from "@/lib/game/grad/paket";
 import { ulicaNa } from "@/lib/game/grad/povrsina";
 import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { svijetGrada } from "@/lib/game/grad/svijet";
-import { igracCekaSaobracaj, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, type Tijelo } from "@/lib/game/grad/saobracaj";
+import { igracCekaSaobracaj, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, type Tijelo } from "@/lib/game/grad/saobracaj";
 import type { Manevar } from "@/lib/game/grad/mreza";
 import { polygonsOverlap, rectCorners } from "@/lib/game/sim/geometry";
 import { naslovPrekrsaja, praviloPrekrsaja } from "@/lib/game/ui/gradPrekrsaji";
@@ -59,6 +59,8 @@ interface Hud {
   fps: number | null;
   /** Samo `?debug=1`: broj drugih vozila i prosječan korak simulacije [ms] (mjerilo, stavka 7d). */
   vozila: number | null;
+  /** Samo `?debug=1`: parkiranih uz ivičnjak (stavka 7e). */
+  parkirano: number | null;
   korakMs: number | null;
 }
 
@@ -83,7 +85,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const volan = useVolan(true, { pokazivacRukom: true });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [faza, setFaza] = useState<Faza>("ucitavam");
-  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null, vozila: null, korakMs: null });
+  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null, vozila: null, parkirano: null, korakMs: null });
   const [ogranicenje, setOgranicenje] = useState<number | null>(null);
   // Sudija (stavka 5d): prekršaji ove vožnje, zadnji se kratko prikaže.
   const [prekrsaji, setPrekrsaji] = useState<GradskiPrekrsaj[]>([]);
@@ -144,6 +146,19 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       // Drugi učesnici (stavka 7): vozila sa ciljem oko igrača.
       const gustina = () => GRAD_NPC_GUSTINA_NIVO[nivoRef.current] * GRAD_NPC_GUSTINA_DOBA[uslovRef.current.doba];
       const saobracaj = noviSaobracaj(svijet, 1, gustina());
+      // Mjerilo: `?debug=1&gustina=3` — gustina van zona (0–3), npr. 40 vozila.
+      const gustinaParam = debug ? Number(new URLSearchParams(window.location.search).get("gustina") ?? NaN) : NaN;
+      if (Number.isFinite(gustinaParam)) saobracaj.gustinaVanZona = gustinaParam;
+      // Samo `?debug=1`, za QA snimke: parkirani auti i kamera na zadatoj tački.
+      let kameraQa: Point | null = null;
+      if (debug) {
+        (window as unknown as { __grad?: object }).__grad = {
+          parkirani: () => parkirani(saobracaj).map((p) => ({ x: p.x, y: p.y })),
+          kamera: (p: Point | null) => {
+            kameraQa = p;
+          },
+        };
+      }
       /** Zadnji sudar sa svakim vozilom [s] — isti se ne prijavljuje ponovo odmah. */
       const sudari = new Map<number, number>();
       // Oduzeto prvenstvo: na kraju prolaza igrača kroz raskrsnicu — da li je
@@ -259,7 +274,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           // Sudar sa drugim vozilom: prekršaj, i auto staje.
           const ja = rectCorners({ x: st.x, y: st.y }, { x: Math.cos(st.ugao), y: Math.sin(st.ugao) }, CAR_LENGTH, CAR_WIDTH);
           const nivoIgraca = tijeloIgraca().nivo;
-          for (const n of saobracaj.npc) {
+          // Sudar i sa parkiranim autom uz ivičnjak (stavka 7e).
+          for (const n of [...saobracaj.npc, ...parkirani(saobracaj)]) {
             if (n.nivo !== nivoIgraca || Math.hypot(n.x - st.x, n.y - st.y) > CAR_LENGTH + 0.5) continue;
             if (!polygonsOverlap(ja, rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH))) continue;
             st.v = 0;
@@ -303,8 +319,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         const hx = Math.cos(ugaoKamere);
         const hy = Math.sin(ugaoKamere);
         const k: GradKadar = {
-          wx: pos.x,
-          wy: pos.y,
+          wx: kameraQa?.x ?? pos.x,
+          wy: kameraQa?.y ?? pos.y,
           cx: cssW / 2,
           cy: cssH * (0.62 + naprijed),
           rot: -Math.PI / 2 - Math.atan2(-hy, -hx),
@@ -313,13 +329,23 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         renderer?.draw({
           kadar: k,
           simT: koraka_ * DT,
-          vozila: saobracaj.npc.map((n) => ({
-            pos: { x: n.x, y: n.y },
-            heading: { x: Math.cos(n.ugao), y: Math.sin(n.ugao) },
-            boja: n.boja,
-            koci: n.a < -0.5 || n.v < 0.1,
-            zmigavac: n.zmigavac,
-          })),
+          vozila: [
+            ...saobracaj.npc.map((n) => ({
+              pos: { x: n.x, y: n.y },
+              heading: { x: Math.cos(n.ugao), y: Math.sin(n.ugao) },
+              boja: n.boja,
+              koci: n.a < -0.5 || n.v < 0.1,
+              zmigavac: n.zmigavac,
+            })),
+            // Parkirani: ugašena svjetla.
+            ...parkirani(saobracaj).map((p) => ({
+              pos: { x: p.x, y: p.y },
+              heading: { x: Math.cos(p.ugao), y: Math.sin(p.ugao) },
+              boja: p.boja,
+              koci: false,
+              zmigavac: null,
+            })),
+          ],
           osvjetljenje: { ...uslovRef.current, sekunde: now / 1000 },
           igrac: {
             pos,
@@ -348,6 +374,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             rikverc: st.rikverc,
             fps: debug ? fps : null,
             vozila: debug ? saobracaj.npc.length : null,
+            parkirano: debug ? saobracaj.mjesta.filter((z) => z.parkirano).length : null,
             korakMs: debug && simKoraka > 0 ? simMs / simKoraka : null,
           });
           simMs = 0;
@@ -459,6 +486,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               {t.gradStreet}: {hud.ulica || t.gradUnnamed}
               {hud.fps !== null ? ` · ${hud.fps.toFixed(0)} fps` : ""}
               {hud.vozila !== null ? ` · ${hud.vozila} vozila` : ""}
+              {hud.parkirano !== null ? ` · ${hud.parkirano} parkirano` : ""}
               {hud.korakMs !== null ? ` · korak ${hud.korakMs.toFixed(2)} ms` : ""}
             </p>
             {kisa && (
