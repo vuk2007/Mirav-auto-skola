@@ -10,7 +10,7 @@ import {
 } from "../sim/config";
 import type { Point } from "../sim/types";
 import { krajeviLinija } from "./oznake";
-import { napraviRaskrsnice, prekrsenaZabrana, svjetlo, zabraneSkretanja, type Raskrsnica } from "./raskrsnica";
+import { naKraku, napraviRaskrsnice, prekrsenaZabrana, svjetlo, zabraneSkretanja, type Raskrsnica } from "./raskrsnica";
 import { testPaket, type TestIvica, type TestObjekat } from "./testMreza";
 
 /**
@@ -164,6 +164,53 @@ describe("raskrsnica: semafori", () => {
     ]).lista[0]!;
     expect(x.kraci.map((k) => k.kontrola)).toEqual(["semafor", "ustupi", "semafor"]);
     expect(x.inferredPriority).toBe(true);
+  });
+});
+
+describe("raskrsnica: semafor iza kratkog kraka (ispravka, stavka 8)", () => {
+  // Četiri kraka; svaki je u OSM-u prelomljen 10 m od centra (kratka ivica
+  // kraka), a zebra (14 m) i semafor (18 m) su na nastavku ulice — kao na
+  // raskrsnici Moskovske i Bulevara revolucije.
+  const uglovi = [0, 90, 180, 270];
+  const cvorovi: Point[] = [{ x: 0, y: 0 }];
+  const ivice: TestIvica[] = [];
+  const objekti: TestObjekat[] = [];
+  uglovi.forEach((u, i) => {
+    const a = (u * Math.PI) / 180;
+    cvorovi.push({ x: 100 * Math.cos(a), y: 100 * Math.sin(a) }, { x: 10 * Math.cos(a), y: 10 * Math.sin(a) });
+    // Ivica 2i: od kraja kraka do preloma (90 m); 2i + 1: od preloma do centra.
+    ivice.push({ a: 2 * i + 1, b: 2 * i + 2, klasa: "secondary" }, { a: 2 * i + 2, b: 0, klasa: "secondary" });
+    objekti.push(
+      { vrsta: "crossing", podatak: "traffic_signals", ivica: 2 * i, s: 86 },
+      { vrsta: "traffic_signals", podatak: "forward", ivica: 2 * i, s: 82 },
+    );
+  });
+
+  it("svi krakovi su pod semaforom; stop-linija je na nastavku ulice, ispred zebre", () => {
+    const x = raskrsnice(cvorovi, ivice, objekti);
+    expect(x.lista).toHaveLength(1);
+    const r = x.lista[0]!;
+    expect(r.kraci.map((k) => `${k.kontrola}:${k.izvor}`)).toEqual(Array(4).fill("semafor:osm"));
+    expect(r.plan!.faze).toHaveLength(2);
+    for (const k of r.kraci) {
+      // Linija na semaforu, 18 m od centra — dalje od kratke ivice kraka.
+      expect(k.stopD).toBeCloseTo(18, 3);
+      expect(k.lanac.map((l) => l.ivica)).toEqual([k.ivica, k.ivica - 1]);
+      const l = naKraku(x.mreza, k, k.stopD!);
+      expect(Math.hypot(l.tacka.x, l.tacka.y)).toBeCloseTo(18, 3);
+      expect(l.ivica).toBe(k.ivica - 1);
+    }
+    expect(x.semaforiRaskrsnica.size).toBe(4);
+  });
+
+  it("jedan semafor uz zebru dalje od raskrsnice, a drugi krakovi bez semafora: pješački semafor", () => {
+    const x = raskrsnice(cvorovi, ivice, [
+      { vrsta: "crossing", podatak: "traffic_signals", ivica: 0, s: 66 },
+      { vrsta: "traffic_signals", ivica: 0, s: 62 },
+    ]);
+    const r = x.lista[0]!;
+    expect(r.kraci.every((k) => k.kontrola === "desna")).toBe(true);
+    expect(x.semaforiRaskrsnica.size).toBe(0);
   });
 });
 

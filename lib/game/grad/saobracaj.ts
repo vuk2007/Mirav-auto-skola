@@ -136,6 +136,9 @@ export interface Npc {
   zutoStaje: (boolean | null)[];
   /** Vidio zeleno na prilazu liniji (kao sudija, do `GRAD_PRILAZ_DO`) — o žutom odlučuje samo tada. */
   vidioZeleno: boolean[];
+  /** Zelena dopunska strelica gorjela u prošlom koraku; ugasila se dok je bio preblizu da stane (vidi `Bot`). */
+  strelica: boolean[];
+  poslijeStrelice: boolean[];
   /** Indeks tačke putanje od kojeg se gleda naprijed. */
   kursor: number;
   /** Prvi prolaz plana kroz koji još nije prošao. */
@@ -168,6 +171,12 @@ export interface Npc {
   igracIspredOd?: number | null;
   /** Kad je ušao u raskrsnicu prolaza (indeks u `plan.prolazi`) [s]. */
   usaoOd: Map<number, number>;
+  /**
+   * Kad je stvarno prošao mjesto čekanja te raskrsnice [s]. `usaoOd` je i
+   * „ušao" kroz lanac (o raskrsnici tik iza prve odlučuje se pred prvom); po
+   * ovom sudija zna ko je u raskrsnici bio prije igrača.
+   */
+  presaoLinijuOd: Map<number, number>;
   /** Mjesto uz ivičnjak na kojem parkira na kraju plana (stavka 7e). */
   mjesto?: MjestoParkiranja;
   /** Koliko dugo naglo koči zbog igrača, bez prekida [s] (`GRAD_PRVENSTVO_TRAJE`). */
@@ -1009,7 +1018,14 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
       break;
     }
     const rs = r.lista[l.r]!;
-    const sv = zelenaStrelica(rs, l.k, t, l.manevar) ? "zeleno" : svjetlo(rs, l.k, t, l.manevar);
+    const strelica = zelenaStrelica(rs, l.k, t, l.manevar);
+    const sv = strelica ? "zeleno" : svjetlo(rs, l.k, t, l.manevar);
+    // Strelica se ugasila (bez žutog) dok je bio preblizu da stane: prolazi.
+    if (n.strelica[i] && !strelica && sv !== "zeleno") {
+      n.poslijeStrelice[i] = (l.s - n.s + STOP_MARGIN) / Math.max(n.v, 0.1) < YELLOW_COMMIT_TTC * 0.8;
+    }
+    n.strelica[i] = strelica;
+    if (sv === "zeleno") n.poslijeStrelice[i] = false;
     if (sv === "zeleno") n.zutoStaje[i] = null;
     // Žuto zatečeno na prilazu (prelaz sa zelenog nije viđen): bio je dovoljno
     // daleko — staje, kao što i sudija traži. Inače po vremenu do linije.
@@ -1020,7 +1036,7 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
     // Odlučio da prođe na žuto, a ipak je stao pred linijom (ustupao): sada
     // može stati — na to žuto više ne ide (inače prelazi liniju na crveno).
     if (sv === "zuto" && n.zutoStaje[i] === false && n.v < 0.1 && n.s <= l.s) n.zutoStaje[i] = true;
-    if (sv === "crveno" || (sv === "zuto" && n.zutoStaje[i])) stani(l.s, { vrsta: "crveno" });
+    if ((sv === "crveno" && !n.poslijeStrelice[i]) || (sv === "zuto" && n.zutoStaje[i])) stani(l.s, { vrsta: "crveno" });
     break;
   }
 
@@ -1129,6 +1145,7 @@ function azurirajProlaz(sb: Saobracaj, n: Npc, o: Odluka): void {
   let qi = n.prolaz;
   while (qi < n.plan.prolazi.length && uRaskrsnici(n, qi)) {
     if (!n.usaoOd.has(qi)) n.usaoOd.set(qi, sb.t);
+    if (!n.presaoLinijuOd.has(qi) && n.s > mjestoCekanja(n, n.plan.prolazi[qi]!) + 0.5) n.presaoLinijuOd.set(qi, sb.t);
     qi++;
   }
   if (qi !== n.cekaProlaz) {
@@ -1248,7 +1265,9 @@ export function korakSaobracaja(sb: Saobracaj, fokus: Point, igrac: Tijelo | nul
       if (k) {
         const ki = n.plan.prolazi.indexOf(k);
         const d = dolazakNpc(sb, n, ki, sb.t);
-        sb.kocenja.push({ id: n.id, t: sb.t, r: k.r, ucesnik: d.ucesnik, usao: d.usao, usaoOd: n.usaoOd.get(ki) ?? null });
+        // Za sudiju: da li je stvarno bio u raskrsnici (prošao njeno mjesto čekanja).
+        const presao = n.presaoLinijuOd.get(ki) ?? null;
+        sb.kocenja.push({ id: n.id, t: sb.t, r: k.r, ucesnik: d.ucesnik, usao: presao !== null, usaoOd: presao });
       }
     }
     postaviPozu(n);
@@ -1579,6 +1598,8 @@ function napraviNpc(sb: Saobracaj, plan: PlanBota, koraci: Korak[]): Npc {
       prosao: plan.linije.map(() => false),
       zutoStaje: plan.linije.map(() => null),
       vidioZeleno: plan.linije.map(() => false),
+      strelica: plan.linije.map(() => false),
+      poslijeStrelice: plan.linije.map(() => false),
       kursor: 0,
       prolaz: 0,
       cekaProlaz: 0,
@@ -1590,6 +1611,7 @@ function napraviNpc(sb: Saobracaj, plan: PlanBota, koraci: Korak[]): Npc {
       geometrija: [],
       sukobi: new Map(),
       usaoOd: new Map(),
+      presaoLinijuOd: new Map(),
     };
     postaviPozu(n);
     return n;

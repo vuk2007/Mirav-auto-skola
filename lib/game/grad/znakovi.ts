@@ -10,7 +10,7 @@ import { procitajZnak } from "./overlay";
 import type { Poligon } from "./oznake";
 import { BEZ } from "./paket";
 import { naPovrsini, odmakniOdUlice, type Povrsina } from "./povrsina";
-import type { Raskrsnice, Zabrana } from "./raskrsnica";
+import { naKraku, type Raskrsnice, type Zabrana } from "./raskrsnica";
 import type { GradZaSudiju } from "./sudija";
 
 /**
@@ -198,18 +198,21 @@ export function crtezPravila(
     rs.kraci.forEach((k, j) => {
       const iv = m.ivice[k.ivica]!;
       if (k.ulaz && k.stopD !== null) {
-        const s = odKraja(iv, k.kraj, k.stopD);
-        const [w0, w1] = trakeUlaza(iv, k.kraj);
+        // Linija je na putu kraka — i iza kratke ivice kraka (`Krak.lanac`).
+        const l = naKraku(m, k, k.stopD);
+        const ivL = m.ivice[l.ivica]!;
+        const s = l.s;
+        const [w0, w1] = trakeUlaza(ivL, l.kraj);
         if (k.kontrola === "ustupi") {
           // Isprekidana linija: crtice poprijeko, sa razmakom iste dužine.
           const korak = 2 * GRAD_LINIJA_USTUPI_CRTICA;
           for (let w = w0; w + GRAD_LINIJA_USTUPI_CRTICA <= w1 + 1e-6; w += korak) {
-            izlaz.isprekidane.push(poprijeko(iv, s, w, w + GRAD_LINIJA_USTUPI_CRTICA, GRAD_LINIJA_STOP * 0.8));
+            izlaz.isprekidane.push(poprijeko(ivL, s, w, w + GRAD_LINIJA_USTUPI_CRTICA, GRAD_LINIJA_STOP * 0.8));
           }
         } else {
-          izlaz.pune.push(poprijeko(iv, s, w0, w1, GRAD_LINIJA_STOP));
+          izlaz.pune.push(poprijeko(ivL, s, w0, w1, GRAD_LINIJA_STOP));
         }
-        const stub = desnoOdUlaza(iv, k.kraj, s);
+        const stub = desnoOdUlaza(ivL, l.kraj, s);
         if (k.kontrola === "stop" || k.kontrola === "ustupi") {
           izlaz.znakovi.push({ vrsta: k.kontrola, ...stub, izveden: k.izvor === "izvedeno", nivo: 0 });
         } else if (k.kontrola === "semafor" && rs.plan) {
@@ -258,8 +261,13 @@ export function crtezPravila(
       // izveden iz OSM `junction=roundabout` (u OSM-u kao čvor nema znaka).
       // Stoji uz „ustupi", na istom stubu.
       if (rs.kruzni && k.ulaz && !iv.kruzni) {
-        const s = odKraja(iv, k.kraj, k.stopD ?? Math.min(odsjeci[2 * k.ivica + k.kraj]! + 1, iv.duzina / 2));
-        izlaz.znakovi.push({ vrsta: "kruzniTok", ...desnoOdUlaza(iv, k.kraj, s), izveden: true, nivo: 0 });
+        if (k.stopD !== null) {
+          const l = naKraku(m, k, k.stopD);
+          izlaz.znakovi.push({ vrsta: "kruzniTok", ...desnoOdUlaza(m.ivice[l.ivica]!, l.kraj, l.s), izveden: true, nivo: 0 });
+        } else {
+          const s = odKraja(iv, k.kraj, Math.min(odsjeci[2 * k.ivica + k.kraj]! + 1, iv.duzina / 2));
+          izlaz.znakovi.push({ vrsta: "kruzniTok", ...desnoOdUlaza(iv, k.kraj, s), izveden: true, nivo: 0 });
+        }
       }
       // Zabrana ulaska: krak jednosmjerne ulice koja vodi KA raskrsnici — iz
       // raskrsnice se u nju ne smije. Znak stoji na njenom ušću, okrenut ka

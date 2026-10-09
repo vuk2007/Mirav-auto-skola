@@ -1,5 +1,6 @@
 import {
   CAR_LENGTH,
+  STOP_MARGIN,
   GRAD_KLASE_GLAVNE,
   GRAD_KLASE_SPOREDNE,
   GRAD_KLASTER_BLIZU,
@@ -9,6 +10,7 @@ import {
   GRAD_PJESACKI_SEMAFOR_OD,
   GRAD_PJESACKI_SEMAFOR_PRELAZ,
   GRAD_SEMAFOR_ISTA_OSA,
+  GRAD_SEMAFOR_KRAKA_DO,
   GRAD_SEMAFOR_SVE_CRVENO,
   GRAD_SEMAFOR_ZELENO,
   GRAD_SEMAFOR_ZELENO_GLAVNO,
@@ -18,6 +20,7 @@ import {
   GRAD_ZEBRA_VRSTE,
   GRAD_ZNAK_DO,
 } from "../sim/config";
+import { headingAt, pointAt } from "../sim/geometry";
 import type { Point } from "../sim/types";
 import type { Ivica, Manevar, Mreza } from "./mreza";
 import type { PlanOverlayaVezan, PravilaOverlaya, ZnakSkretanja } from "./overlay";
@@ -70,6 +73,20 @@ export interface Krak {
   cekaD: number;
   /** Faza semafora kraka (indeks u `plan.faze`); `null` bez semafora. */
   faza: number | null;
+  /**
+   * Ulica kraka od raskrsnice napolje, do `GRAD_ZNAK_DO` m: ivica kraka, pa
+   * njen nastavak kroz čvorove koji nisu raskrsnice (OSM kratak krak zna
+   * prelomiti na metar-dva od raskrsnice, a semafor i zebra su iza). Znakovi,
+   * semafori i stop-linija kraka su na ovom putu (`naKraku`).
+   */
+  lanac: KomadKraka[];
+}
+
+/** Ivica na putu kraka: `kraj` je njen kraj bliži raskrsnici, `od` [m] od raskrsnice do njega. */
+export interface KomadKraka {
+  ivica: number;
+  kraj: 0 | 1;
+  od: number;
 }
 
 export interface FazaSemafora {
@@ -111,10 +128,21 @@ export interface Raskrsnica {
 
 export interface Raskrsnice {
   lista: Raskrsnica[];
+  /**
+   * OSM semafori koji su semafori raskrsnica (na kraku ili u čvoru). Semafor
+   * uz prelaz kojeg ovdje nema je pješački semafor na sredini ulice (stavka 8).
+   */
+  semaforiRaskrsnica: Set<number>;
   /** Za svaki čvor mreže: indeks raskrsnice kojoj pripada, ili −1. */
   uCvoru: Int32Array;
   /** „ivica:kraj" → [raskrsnica, krak] — krak sa te strane ivice. */
   krakIvice: Map<string, [number, number]>;
+  /**
+   * „ivica:kraj" → [raskrsnica, krak, od] za svaku ivicu na putu ulaznog
+   * kraka (`Krak.lanac`): vožnja tom ivicom ka kraju `kraj` vodi u tu
+   * raskrsnicu tim krakom, a do nje je još `od` metara iza tog kraja.
+   */
+  krakLanca: Map<string, [number, number, number]>;
   /**
    * Znakovi skretanja iz editora, po kraku ulaska („ivica:kraj"): zabrana
    * manevara ili obavezan smjer. Važe za cijelu raskrsnicu, od ulaznog do
@@ -245,27 +273,94 @@ function grupisi(m: Mreza, jeste: boolean[], odsjeci: Float32Array): { grupa: In
 
 interface ObjekatNaKraku {
   vrsta: "stop" | "give_way" | "traffic_signals" | "crossing";
-  /** Razdaljina od kraja ivice u raskrsnici [m]. */
+  /** Razdaljina od raskrsnice duž kraka [m] (vidi `Krak.lanac`). */
   d: number;
   podatak: string;
+  /** Indeks objekta u paketu. */
+  o: number;
 }
 
-/** Objekti pravila na ivici, po razdaljini od kraja `kraj`, koji važe za ulazak sa tog kraka. */
-function objektiKraka(p: Paket, poIvici: Map<number, number[]>, iv: Ivica, kraj: 0 | 1): ObjekatNaKraku[] {
+/**
+ * Put kraka (vidi `Krak.lanac`): ivica kraka, pa nastavak iste ulice kroz
+ * čvorove koji nisu raskrsnice i imaju tačno još jednu voznu ivicu, dok put
+ * ne bude duži od `GRAD_ZNAK_DO`.
+ */
+function lanacKraka(m: Mreza, raskrsnica: (c: number) => boolean, iv: Ivica, kraj: 0 | 1): KomadKraka[] {
+  const lanac: KomadKraka[] = [{ ivica: iv.i, kraj, od: 0 }];
+  let e = iv;
+  let k = kraj;
+  let d = iv.duzina;
+  while (d < GRAD_ZNAK_DO && lanac.length < 20) {
+    const c = k === 1 ? e.a : e.b;
+    if (raskrsnica(c)) break;
+    const dalje = (m.izCvora[c] ?? []).filter((j) => j !== e.i && m.ivice[j]!.vozna);
+    if (dalje.length !== 1) break;
+    const f = m.ivice[dalje[0]!]!;
+    if (f.a === f.b || lanac.some((x) => x.ivica === f.i)) break;
+    const kf: 0 | 1 = f.b === c ? 1 : 0;
+    lanac.push({ ivica: f.i, kraj: kf, od: d });
+    d += f.duzina;
+    e = f;
+    k = kf;
+  }
+  return lanac;
+}
+
+/**
+ * Tačka na kraku `d` metara od raskrsnice (duž `lanac`), sa pravcem vožnje
+ * ka raskrsnici tu: ivica, njen kraj ka raskrsnici, `s` na njoj (od `a`),
+ * tačka i pravac. Dalje od kraja lanca — njegov kraj.
+ */
+export function naKraku(
+  m: Mreza,
+  k: Pick<Krak, "lanac">,
+  d: number,
+): { ivica: number; kraj: 0 | 1; s: number; tacka: Point; pravac: Point } {
+  let komad = k.lanac[k.lanac.length - 1]!;
+  for (const x of k.lanac) {
+    if (d <= x.od + m.ivice[x.ivica]!.duzina) {
+      komad = x;
+      break;
+    }
+  }
+  const iv = m.ivice[komad.ivica]!;
+  const dd = Math.max(0, Math.min(iv.duzina, d - komad.od));
+  const s = komad.kraj === 1 ? iv.duzina - dd : dd;
+  const h = headingAt(iv.tacke, iv.cum, s);
+  return {
+    ivica: iv.i,
+    kraj: komad.kraj,
+    s,
+    tacka: pointAt(iv.tacke, iv.cum, s),
+    pravac: komad.kraj === 1 ? h : { x: -h.x, y: -h.y },
+  };
+}
+
+/** Dužina puta kraka (`lanac`) [m]. */
+export function duzinaKraka(m: Mreza, k: Pick<Krak, "lanac">): number {
+  const z = k.lanac[k.lanac.length - 1]!;
+  return z.od + m.ivice[z.ivica]!.duzina;
+}
+
+/** Objekti pravila na putu kraka (`lanac`), po razdaljini od raskrsnice, koji važe za ulazak sa njega. */
+function objektiKraka(p: Paket, m: Mreza, poIvici: Map<number, number[]>, lanac: readonly KomadKraka[]): ObjekatNaKraku[] {
   const z = p.zaglavlje;
   const n = p.n;
   const izlaz: ObjekatNaKraku[] = [];
-  // Ko ulazi preko kraja `b` vozi `a → b`, a to je OSM `forward`.
-  const smjerUlaza = kraj === 1 ? "forward" : "backward";
-  for (const o of poIvici.get(iv.i) ?? []) {
-    const vrsta = z.vrsteObjekata[n.obVrsta[o]!] as ObjekatNaKraku["vrsta"];
-    const podatak = z.stringovi[n.obPodatak[o]!] ?? "";
-    const d = kraj === 1 ? iv.duzina - n.obS[o]! : n.obS[o]!;
-    if (d > GRAD_ZNAK_DO) continue;
-    if (vrsta !== "crossing" && (podatak === "forward" || podatak === "backward") && podatak !== smjerUlaza) continue;
-    izlaz.push({ vrsta, d, podatak });
+  for (const komad of lanac) {
+    const iv = m.ivice[komad.ivica]!;
+    // Ko ulazi preko kraja `b` vozi `a → b`, a to je OSM `forward`.
+    const smjerUlaza = komad.kraj === 1 ? "forward" : "backward";
+    for (const o of poIvici.get(iv.i) ?? []) {
+      const vrsta = z.vrsteObjekata[n.obVrsta[o]!] as ObjekatNaKraku["vrsta"];
+      const podatak = z.stringovi[n.obPodatak[o]!] ?? "";
+      const d = komad.od + (komad.kraj === 1 ? iv.duzina - n.obS[o]! : n.obS[o]!);
+      if (d > GRAD_ZNAK_DO) continue;
+      if (vrsta !== "crossing" && (podatak === "forward" || podatak === "backward") && podatak !== smjerUlaza) continue;
+      izlaz.push({ vrsta, d, podatak, o });
+    }
   }
-  return izlaz.sort((a, b) => a.d - b.d);
+  return izlaz.sort((a, b) => a.d - b.d || a.o - b.o);
 }
 
 /**
@@ -306,8 +401,10 @@ export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array, ove
   const grupe = [...poGrupi.values()].sort((a, b) => a[0]! - b[0]!);
 
   const lista: Raskrsnica[] = [];
+  const semaforiRaskrsnica = new Set<number>();
   const uCvoru = new Int32Array(m.cvorovi.length).fill(-1);
   const krakIvice = new Map<string, [number, number]>();
+  const krakLanca = new Map<string, [number, number, number]>();
 
   for (const cvorovi of grupe) {
     const id = lista.length;
@@ -341,6 +438,7 @@ export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array, ove
             stopD: null,
             cekaD: 0,
             faza: null,
+            lanac: lanacKraka(m, (x) => grupa[x]! >= 0, iv, kraj),
           });
         }
       }
@@ -363,13 +461,16 @@ export function napraviRaskrsnice(p: Paket, m: Mreza, odsjeci: Float32Array, ove
       inferredPriority: false,
       inferredPhases: false,
     };
-    odrediKontrolu(p, m, r, poIvici, cvorovi.flatMap((c) => uCvoruObj.get(c) ?? []), odsjeci, overlay);
-    r.kraci.forEach((k, j) => krakIvice.set(`${k.ivica}:${k.kraj}`, [id, j]));
+    odrediKontrolu(p, m, r, poIvici, cvorovi.flatMap((c) => uCvoruObj.get(c) ?? []), odsjeci, overlay, semaforiRaskrsnica, (c) => grupa[c]! >= 0);
+    r.kraci.forEach((k, j) => {
+      krakIvice.set(`${k.ivica}:${k.kraj}`, [id, j]);
+      if (k.ulaz) for (const x of k.lanac) if (!krakLanca.has(`${x.ivica}:${x.kraj}`)) krakLanca.set(`${x.ivica}:${x.kraj}`, [id, j, x.od]);
+    });
     lista.push(r);
   }
   const skretanja = new Map<string, ZnakSkretanja>();
   for (const [k, v] of overlay?.skretanja ?? []) if (v.znak) skretanja.set(k, v.znak);
-  return { lista, uCvoru, krakIvice, skretanja, bezUlaska: new Set(overlay?.zabraneUlaska.keys() ?? []) };
+  return { lista, semaforiRaskrsnica, uCvoru, krakIvice, krakLanca, skretanja, bezUlaska: new Set(overlay?.zabraneUlaska.keys() ?? []) };
 }
 
 function odrediKontrolu(
@@ -380,10 +481,12 @@ function odrediKontrolu(
   uCvorovima: number[],
   odsjeci: Float32Array,
   overlay: PravilaOverlaya | undefined,
+  semaforiRaskrsnica: Set<number>,
+  jeRaskrsnica: (c: number) => boolean,
 ): void {
   const z = p.zaglavlje;
   const n = p.n;
-  const naKraku = r.kraci.map((k) => (k.ulaz ? objektiKraka(p, poIvici, m.ivice[k.ivica]!, k.kraj) : []));
+  const naKraku = r.kraci.map((k) => (k.ulaz ? objektiKraka(p, m, poIvici, k.lanac) : []));
   const uCvoru = uCvorovima.map((o) => z.vrsteObjekata[n.obVrsta[o]!]);
   // Semafor iz editora: plan, ili `null` — semafora tu nema (greška u OSM-u).
   const ovSemafor = overlay ? (r.cvorovi.map((c) => overlay.semafori.get(c)).find(Boolean) ?? null) : null;
@@ -391,7 +494,14 @@ function odrediKontrolu(
 
   const semaforUCvoru = !bezSemafora && uCvoru.includes("traffic_signals");
   // Pješački semafor na sredini ulice nije semafor raskrsnice (vidi
-  // `GRAD_PJESACKI_SEMAFOR_OD`).
+  // `GRAD_PJESACKI_SEMAFOR_OD`) — osim kad i drugi krak ima semafor blizu
+  // raskrsnice (ili ga ima čvor): tada je i on semafor raskrsnice, samo stoji
+  // iza zebre na prilazu (OSM ga tako ucrta kad je krak kratak).
+  const blizuRaskrsnice = (o: ObjekatNaKraku, j: number) => {
+    const k = r.kraci[j]!;
+    return o.d <= odsjeci[2 * k.ivica + k.kraj]! + GRAD_SEMAFOR_KRAKA_DO;
+  };
+  const sSemaforom = naKraku.filter((l, j) => l.some((o) => o.vrsta === "traffic_signals" && blizuRaskrsnice(o, j))).length;
   const semaforNaKraku = naKraku.map(
     (l, j) =>
       (!bezSemafora &&
@@ -400,10 +510,15 @@ function odrediKontrolu(
           const k = r.kraci[j]!;
           const daleko = o.d > odsjeci[2 * k.ivica + k.kraj]! + GRAD_PJESACKI_SEMAFOR_OD;
           const uzPrelaz = l.some((c) => c.vrsta === "crossing" && Math.abs(c.d - o.d) <= GRAD_PJESACKI_SEMAFOR_PRELAZ);
+          if (daleko && uzPrelaz && (sSemaforom >= 2 || semaforUCvoru) && blizuRaskrsnice(o, j)) return true;
           return !(daleko && uzPrelaz);
         })) ||
       null,
   );
+  if (!bezSemafora) {
+    for (const o of semaforNaKraku) if (o) semaforiRaskrsnica.add(o.o);
+    for (const o of uCvorovima) if (z.vrsteObjekata[n.obVrsta[o]!] === "traffic_signals") semaforiRaskrsnica.add(o);
+  }
   const znakNaKraku = naKraku.map((l) => l.find((o) => o.vrsta === "stop" || o.vrsta === "give_way") ?? null);
   const ulazi = r.kraci.map((k, j) => (k.ulaz ? j : -1)).filter((j) => j >= 0);
 
@@ -497,7 +612,15 @@ function odrediKontrolu(
   // Mjesto čekanja na kraku bez linije: ivica raskrsnice, ispred zebre.
   r.kraci.forEach((k, j) => {
     if (!k.ulaz) return;
-    const iv = m.ivice[k.ivica]!;
+    // Auto koje čeka na liniji mora cijelo biti van susjedne raskrsnice na
+    // kraju puta kraka (OSM zna staviti semafor na sam izlaz iz nje).
+    const zadnji = k.lanac[k.lanac.length - 1]!;
+    const ivZ = m.ivice[zadnji.ivica]!;
+    const dalekiKraj: 0 | 1 = zadnji.kraj === 1 ? 0 : 1;
+    const duz = duzinaKraka(m, k);
+    const najdalje = jeRaskrsnica(dalekiKraj === 0 ? ivZ.a : ivZ.b)
+      ? duz - odsjeci[2 * zadnji.ivica + dalekiKraj]! - CAR_LENGTH - STOP_MARGIN - 0.5
+      : duz - 1;
     const kontrolisan = k.kontrola === "stop" || k.kontrola === "ustupi" || k.kontrola === "semafor";
     const ivicaRaskrsnice = odsjeci[2 * k.ivica + k.kraj]! + 0.5;
     const nosilac = !kontrolisan ? null : k.kontrola === "semafor" ? semaforNaKraku[j] : znakNaKraku[j];
@@ -510,7 +633,7 @@ function odrediKontrolu(
       }
     }
     if (kontrolisan) {
-      k.stopD = k.cekaD = Math.min(d, Math.max(0, iv.duzina - 1));
+      k.stopD = k.cekaD = Math.max(0, Math.min(d, Math.max(ivicaRaskrsnice, najdalje), duz - 1));
       return;
     }
     // Bez linije auto čeka ispred zebre i kad bi samo zadnjim krajem bio na
@@ -521,7 +644,7 @@ function odrediKontrolu(
         d = Math.max(d, o.d + GRAD_ZEBRA_DUBINA / 2 + GRAD_STOP_ISPRED_ZEBRE);
       }
     }
-    k.cekaD = Math.min(d, Math.max(0, iv.duzina - 1));
+    k.cekaD = Math.max(0, Math.min(d, Math.max(ivicaRaskrsnice, najdalje), duz - 1));
   });
 }
 

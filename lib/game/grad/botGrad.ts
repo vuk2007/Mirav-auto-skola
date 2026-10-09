@@ -934,9 +934,11 @@ export function planBota(
     // tangentu zaobljenja (vidi `ugaoCvora`).
     const s0 = i === 0 ? Math.min(iv.duzina / 2, odPoc + 2) : odPoc + (ugaoCvora.get(i - 1)?.T ?? 0);
     // Cilj na zadnjoj ivici: prije raskrsnice na njenom kraju, i prije
-    // stop-linije, ako je ima — bot tu staje i vožnja je gotova.
-    const krakCilja = i === koraci.length - 1 ? r.krakIvice.get(`${k.ivica}:${k.smjer === 1 ? 1 : 0}`) : undefined;
-    const stopCilja = krakCilja ? (r.lista[krakCilja[0]]!.kraci[krakCilja[1]]!.stopD ?? 0) + CAR_LENGTH / 2 + 2 : 0;
+    // stop-linije, ako je ima — bot tu staje i vožnja je gotova. Linija
+    // kraka zna biti i na ovoj ivici kad je ona nastavak kratkog kraka
+    // (`Krak.lanac`): tada je raskrsnica `od` metara dalje.
+    const krakCilja = i === koraci.length - 1 ? r.krakLanca.get(`${k.ivica}:${k.smjer === 1 ? 1 : 0}`) : undefined;
+    const stopCilja = krakCilja ? (r.lista[krakCilja[0]]!.kraci[krakCilja[1]]!.stopD ?? 0) - krakCilja[2] + CAR_LENGTH / 2 + 2 : 0;
     const s1 = i === koraci.length - 1 ? Math.max(s0, iv.duzina - Math.max(odKraja + 2, stopCilja)) : iv.duzina - odKraja - (ugaoCvora.get(i)?.T ?? 0);
     const manevarKoraka = manevarNaKraju.get(i) ?? "pravo";
     let zeljena = trakaPuta(iv, k.smjer, manevarKoraka);
@@ -1468,6 +1470,12 @@ export interface Bot {
   zutoStaje: (boolean | null)[];
   /** Vidio zeleno na prilazu liniji (do `GRAD_PRILAZ_DO`, kao sudija) — o žutom odlučuje samo tada. */
   vidioZeleno: boolean[];
+  /**
+   * Zelena dopunska strelica za njegov pravac gorjela je u prošlom koraku; i
+   * kad se ugasila (bez žutog): da li je tada bio preblizu da stane — prolazi.
+   */
+  strelica: boolean[];
+  poslijeStrelice: boolean[];
   gotov: boolean;
   /** Izvlačenje sa ivičnjaka: do kad unazad (pređeni put auta), i volan pri udaru. */
   izvlacenje: { doPredjeno: number; volan: number; od: number; traje: number } | null;
@@ -1487,6 +1495,8 @@ export function noviBot(plan: PlanBota): Bot {
     prosao: plan.linije.map(() => false),
     zutoStaje: plan.linije.map(() => null),
     vidioZeleno: plan.linije.map(() => false),
+    strelica: plan.linije.map(() => false),
+    poslijeStrelice: plan.linije.map(() => false),
     gotov: false,
     izvlacenje: null,
     izvlacenja: 0,
@@ -1566,9 +1576,17 @@ export function korakBota(b: Bot, r: Raskrsnice, st: SlobodnoVozilo, t: number, 
     // manje od `YELLOW_COMMIT_TTC`, prolazi; ostali staju.
     // Svjetlo za pravac kojim bot ide (svjetlo sa strelicom); zelena dopunska
     // strelica za taj pravac je zeleno.
-    const sv = zelenaStrelica(r.lista[l.r]!, l.k, t, l.manevar) ? "zeleno" : svjetlo(r.lista[l.r]!, l.k, t, l.manevar);
+    const strelica = zelenaStrelica(r.lista[l.r]!, l.k, t, l.manevar);
+    const sv = strelica ? "zeleno" : svjetlo(r.lista[l.r]!, l.k, t, l.manevar);
     const doLinije = l.s - b.s;
+    // Strelica se upravo ugasila (bez žutog): preblizu da stane — prolazi,
+    // kao na žuto; inače staje (sudija isto, vidi `strelicaPrekasno`).
+    if (b.strelica[i] && !strelica && sv !== "zeleno") {
+      b.poslijeStrelice[i] = (doLinije + STOP_MARGIN) / Math.max(st.v, 0.1) < YELLOW_COMMIT_TTC * 0.8;
+    }
+    b.strelica[i] = strelica;
     if (sv === "zeleno") b.zutoStaje[i] = null;
+    if (sv === "zeleno") b.poslijeStrelice[i] = false;
     // Žuto zatečeno na prilazu: staje (bio je daleko kad se upalilo).
     if (sv === "zuto" && b.zutoStaje[i] === null) {
       // Vrijeme do linije kao kod sudije: od nosa do same linije.
@@ -1577,7 +1595,7 @@ export function korakBota(b: Bot, r: Raskrsnice, st: SlobodnoVozilo, t: number, 
     // Odlučio da prođe na žuto, a ipak je stao pred linijom (ustupao): sada
     // može stati — na to žuto više ne ide.
     if (sv === "zuto" && b.zutoStaje[i] === false && Math.abs(st.v) < 0.1 && doLinije >= 0) b.zutoStaje[i] = true;
-    if (sv === "crveno" || (sv === "zuto" && b.zutoStaje[i])) staniNa = l.s;
+    if ((sv === "crveno" && !b.poslijeStrelice[i]) || (sv === "zuto" && b.zutoStaje[i])) staniNa = l.s;
     b.staje = staniNa === null ? null : { s: l.s, zasto: `semafor ${sv} r${l.r}` };
     break;
   }

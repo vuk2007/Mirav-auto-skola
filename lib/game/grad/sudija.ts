@@ -35,6 +35,7 @@ import { manevarIzUgla, manevarKrakova, pravacKraja, ugaoSkretanja, type Ivica, 
 import { BEZ, type Paket } from "./paket";
 import { najblizaOsa, oseBlizu, type OsaBlizu, type Povrsina } from "./povrsina";
 import {
+  naKraku,
   prekrsenaZabrana,
   svjetlo,
   svjetloPoManevru,
@@ -48,7 +49,6 @@ import {
 import { napraviOgranicenja, ogranicenjeNa, type Ogranicenja } from "./brzine";
 import { linijeSaVrstom, pojasBusa, produzeci, punaNa, type Produzeci } from "./linije";
 import type { Zona } from "./overlay";
-import { headingAt, pointAt } from "../sim/geometry";
 import type { SlobodnoVozilo } from "./slobodno";
 
 /**
@@ -191,7 +191,7 @@ interface Prilaz {
    * Krak sa svjetlom po manevru (strelice): svjetlo i odluka na žuto za
    * svaki manevar posebno — sudi se kad se zna kuda je auto otišao.
    */
-  poManevru: Record<Manevar, { svjetlo: Svjetlo | null; zutoPrekasno: boolean }> | null;
+  poManevru: Record<Manevar, { svjetlo: Svjetlo | null; zutoPrekasno: boolean; strelica: boolean; strelicaPrekasno: boolean }> | null;
 }
 
 type Strana = "left" | "right";
@@ -427,14 +427,12 @@ function prijavi(
 
 /**
  * Stop-linija kraka kao na slici: tačka na osovini kraka `stopD` od
- * raskrsnice, i pravac vožnje ka raskrsnici na tom mjestu. Linija je poprečna
- * na taj pravac.
+ * raskrsnice (duž puta kraka, i iza njegove kratke ivice — `Krak.lanac`), i
+ * pravac vožnje ka raskrsnici tu. Linija je poprečna na taj pravac.
  */
-export function stopLinija(g: { mreza: Mreza }, k: Krak): { linija: Point; pravac: Point } {
-  const iv = g.mreza.ivice[k.ivica]!;
-  const sE = k.kraj === 1 ? iv.duzina - k.stopD! : k.stopD!;
-  const h = headingAt(iv.tacke, iv.cum, sE);
-  return { linija: pointAt(iv.tacke, iv.cum, sE), pravac: k.kraj === 1 ? h : { x: -h.x, y: -h.y } };
+export function stopLinija(g: { mreza: Mreza }, k: Pick<Krak, "lanac" | "stopD">): { linija: Point; pravac: Point } {
+  const l = naKraku(g.mreza, k, k.stopD!);
+  return { linija: l.tacka, pravac: l.pravac };
 }
 
 /**
@@ -641,7 +639,9 @@ export function sudi(
   // I iz raskrsnice: stop-linija sljedeće može biti tik iza nje (krak između
   // njih je kratak), i prilaz mora početi prije nego što se upali žuto.
   const naprijed = krakIspred(g, osa.ivica, gleda, osa.s);
-  const ispred = naprijed && naprijed.r !== r ? naprijed : null;
+  // Raskrsnici kroz koju auto upravo prolazi se ne prilazi: krak koji je sa
+  // obje strane u istoj raskrsnici (OSM) auto zna okrznuti dok skreće.
+  const ispred = naprijed && naprijed.r !== r && naprijed.r !== s.prolaz?.r ? naprijed : null;
   if (s.prilaz) {
     const p = s.prilaz;
     const k = g.raskrsnice.lista[p.r]!.kraci[p.k]!;
@@ -663,6 +663,11 @@ export function sudi(
           const svM = svjetlo(rs, p.k, t, mv);
           if (svM === "zuto" && x.svjetlo === "zeleno") x.zutoPrekasno = kasno;
           x.svjetlo = svM;
+          // Zelena dopunska strelica se gasi bez žutog: ko je tada bio
+          // preblizu da stane, prolazi — kao na žuto (`YELLOW_COMMIT_TTC`).
+          const gori = zelenaStrelica(rs, p.k, t, mv);
+          if (x.strelica && !gori) x.strelicaPrekasno = kasno;
+          x.strelica = gori;
         }
       }
       if (doLinije >= 0 && doLinije <= STOP_ZONE && Math.abs(st.v) < STOPPED_SPEED) p.stajao += DT;
@@ -678,7 +683,7 @@ export function sudi(
           for (const mv of MANEVRI) {
             const x = p.poManevru[mv];
             if (zelenaStrelica(rs, p.k, t, mv)) continue;
-            if (x.svjetlo === "crveno" || (x.svjetlo === "zuto" && !x.zutoPrekasno)) krsi[mv] = x.svjetlo;
+            if ((x.svjetlo === "crveno" && !x.strelicaPrekasno) || (x.svjetlo === "zuto" && !x.zutoPrekasno)) krsi[mv] = x.svjetlo;
           }
           s.crvenoPoManevru = { r: p.r, krsi };
         } else if (k.kontrola === "semafor" && (sv === "crveno" || (sv === "zuto" && !p.zutoPrekasno))) {
@@ -714,7 +719,7 @@ export function sudi(
           ? (Object.fromEntries(
               MANEVRI.map((mv) => {
                 const svM = svjetlo(rs, ispred.k, t, mv);
-                return [mv, { svjetlo: svM, zutoPrekasno: svM === "zuto" && kasno }];
+                return [mv, { svjetlo: svM, zutoPrekasno: svM === "zuto" && kasno, strelica: zelenaStrelica(rs, ispred.k, t, mv), strelicaPrekasno: false }];
               }),
             ) as Prilaz["poManevru"])
           : null,

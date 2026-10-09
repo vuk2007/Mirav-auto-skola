@@ -1891,6 +1891,12 @@ export const GRAD_STOP_ISPRED_ZEBRE = 1;
  */
 export const GRAD_PJESACKI_SEMAFOR_OD = 15;
 export const GRAD_PJESACKI_SEMAFOR_PRELAZ = 6;
+/**
+ * Semafor uz prelaz, dalje od `GRAD_PJESACKI_SEMAFOR_OD`, ipak je semafor
+ * raskrsnice kad je do ovoliko [m] od nje, a semafor ima i drugi njen krak
+ * (ili čvor): OSM ga tako ucrta iza zebre kad je krak kratak (stavka 8).
+ */
+export const GRAD_SEMAFOR_KRAKA_DO = 30;
 
 // ── crtanje pravila (faza 6, stavka 5c) ────────────────────────────────────
 
