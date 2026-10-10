@@ -28,16 +28,32 @@ import type { QuestionKind } from "./types";
  *    iz istog para, da svako pitanje ima drugu sliku (semafori),
  *  - `page` — stranica (1-bazirana) na kojoj segment počinje,
  *  - `groupsPerPage` — koliko izvlačenja staje na stranicu; bez njega cio
- *    segment je na `page`.
+ *    segment je na `page`,
+ *  - `points` — bodovi po mjestu u segmentu, redom (po jedan za svako
+ *    pitanje, i za podpitanje),
+ *  - `pairPoints` — umjesto `points` kod parova čija se podjela bodova
+ *    određuje po pitanjima (situacije, vidi `situationPairPoints` u
+ *    lib/questions.ts): zbir bodova svakog para.
+ *
+ * BODOVI ne dolaze iz baze nego iz mjesta na testu, po bodovnoj listi pravog
+ * ispita (štampani testovi 1.1, 2.1 i 3.1): test uvijek nosi tačno
+ * `EXAM_TOTAL_POINTS` = 80 bodova —
+ *
+ *   teorija               15  (2,2,2,2,1,1,1,2,2)
+ *   situacije, 8 parova   40  (par = 5: 4+1 ili 3+2)
+ *   znakovi + kosnik      15  (1,2,2,2,2,2,2,1 + 1)
+ *   policajac (par)        4  (2+2)
+ *   semafori               4  (2+2)
+ *   opšta znanja           2  (1+1)
  */
 export const EXAM_STRUCTURE = [
-  { kind: "teorija", count: 9, withSub: false, page: 1 },
-  { kind: "situacija", count: 8, withSub: true, page: 2, groupsPerPage: 2 },
-  { kind: "znak", count: 8, withSub: false, page: 6 },
-  { kind: "kosnik", count: 1, withSub: false, page: 6 },
-  { kind: "policajac", count: 1, withSub: true, page: 7 },
-  { kind: "semafor", count: 2, withSub: false, allowSubs: true, page: 8 },
-  { kind: "opste", count: 2, withSub: false, page: 9 },
+  { kind: "teorija", count: 9, withSub: false, page: 1, points: [2, 2, 2, 2, 1, 1, 1, 2, 2] },
+  { kind: "situacija", count: 8, withSub: true, page: 2, groupsPerPage: 2, pairPoints: 5 },
+  { kind: "znak", count: 8, withSub: false, page: 6, points: [1, 2, 2, 2, 2, 2, 2, 1] },
+  { kind: "kosnik", count: 1, withSub: false, page: 6, points: [1] },
+  { kind: "policajac", count: 1, withSub: true, page: 7, points: [2, 2] },
+  { kind: "semafor", count: 2, withSub: false, allowSubs: true, page: 8, points: [2, 2] },
+  { kind: "opste", count: 2, withSub: false, page: 9, points: [1, 1] },
 ] as const satisfies readonly ExamSegment[];
 
 export interface ExamSegment {
@@ -47,6 +63,8 @@ export interface ExamSegment {
   allowSubs?: boolean;
   page: number;
   groupsPerPage?: number;
+  points?: readonly number[];
+  pairPoints?: number;
 }
 
 /**
@@ -57,6 +75,20 @@ export interface ExamSegment {
  */
 export const EXAM_QUESTION_COUNT = 40;
 
+/**
+ * Podjela bodova para situacija (zbir = `pairPoints`), po bodovnoj listi:
+ *  - `major` — redoslijed prolaska ili „vozilo je propisno/nepropisno
+ *    zaustavljeno ili parkirano" nosi 4, pitanje uz njega 1,
+ *  - `normal` — inače 3 + 2 („kako ćete postupiti" nosi 3).
+ */
+export const EXAM_PAIR_SPLIT = { major: [4, 1], normal: [3, 2] } as const;
+
+/** Ukupan broj bodova na ispitu — isti na svakom testu. */
+export const EXAM_TOTAL_POINTS = 80;
+
+/** Najmanje bodova za prolaz (od `EXAM_TOTAL_POINTS`). */
+export const EXAM_PASS_POINTS = 68;
+
 /** Broj stranica simulacije ispita. */
 export const EXAM_PAGE_COUNT = 9;
 
@@ -65,9 +97,16 @@ export function segmentLastPage(seg: ExamSegment): number {
   return seg.groupsPerPage ? seg.page + Math.ceil(seg.count / seg.groupsPerPage) - 1 : seg.page;
 }
 
+/** Zbir bodova segmenta. */
+export function segmentPoints(seg: ExamSegment): number {
+  if (seg.pairPoints !== undefined) return seg.pairPoints * seg.count;
+  return (seg.points ?? []).reduce((n, p) => n + p, 0);
+}
+
 /**
- * Puca ako `EXAM_STRUCTURE` ne daje `EXAM_QUESTION_COUNT` pitanja ili ako
- * stranice nijesu redom 1..EXAM_PAGE_COUNT bez rupa. Zove se odmah pri
+ * Puca ako `EXAM_STRUCTURE` ne daje `EXAM_QUESTION_COUNT` pitanja ni
+ * `EXAM_TOTAL_POINTS` bodova, ako bodovi segmenta nijesu zadati za svako
+ * pitanje, ili ako stranice nijesu redom 1..EXAM_PAGE_COUNT bez rupa. Zove se odmah pri
  * učitavanju modula, pa greška u sastavu pada na buildu (stranice se
  * prerenderuju), a ne tiho u browseru kandidata.
  */
@@ -76,6 +115,26 @@ export function assertExamStructure(): void {
   if (sum !== EXAM_QUESTION_COUNT) {
     throw new Error(
       `EXAM_STRUCTURE daje ${sum} pitanja, a EXAM_QUESTION_COUNT je ${EXAM_QUESTION_COUNT}. ` +
+        `Uskladi lib/config.ts.`,
+    );
+  }
+  for (const seg of EXAM_STRUCTURE as readonly ExamSegment[]) {
+    const n = seg.count * (seg.withSub ? 2 : 1);
+    const ok =
+      seg.pairPoints !== undefined
+        ? seg.withSub && seg.points === undefined
+        : seg.points !== undefined && seg.points.length === n;
+    if (!ok) throw new Error(`Segment „${seg.kind}": bodovi nijesu zadati za svako od ${n} pitanja.`);
+    for (const split of Object.values(EXAM_PAIR_SPLIT)) {
+      if (seg.pairPoints !== undefined && split[0] + split[1] !== seg.pairPoints) {
+        throw new Error(`EXAM_PAIR_SPLIT ${split.join("+")} ne daje ${seg.pairPoints} bodova para.`);
+      }
+    }
+  }
+  const points = EXAM_STRUCTURE.reduce((n, seg) => n + segmentPoints(seg), 0);
+  if (points !== EXAM_TOTAL_POINTS) {
+    throw new Error(
+      `EXAM_STRUCTURE nosi ${points} bodova, a EXAM_TOTAL_POINTS je ${EXAM_TOTAL_POINTS}. ` +
         `Uskladi lib/config.ts.`,
     );
   }
@@ -93,29 +152,13 @@ export function assertExamStructure(): void {
 }
 assertExamStructure();
 
-/**
- * Prag za prolaz, u procentu osvojenih bodova.
- *
- * Bodovi po pitanju dolaze iz baze (1–4), pa ukupan broj bodova zavisi od toga
- * koja su pitanja izvučena i nije isti na svakom testu. Zato je prag procenat,
- * a ne fiksan broj bodova — vidi `examPassPoints`.
- */
-export const EXAM_PASS_PERCENT = 85;
-
-/** Koliko bodova treba za prolaz na testu koji ukupno nosi `total` bodova. */
-export function examPassPoints(total: number): number {
-  return Math.ceil((total * EXAM_PASS_PERCENT) / 100);
-}
-
 /** Trajanje ispita u minutima. */
 export const EXAM_MINUTES = 45; // 45 minuta
 
 /**
- * Bodovi za `ordering` pitanja — u katalogu nemaju bod (`points: null`), pa se
- * tretiraju kao situacijska pitanja.
- *
- * Bodovi po pitanju inače dolaze iz questions.json (`points: 1..4`).
- * Ako je null → DEFAULT_ORDERING_POINTS.
+ * Bodovi za `ordering` pitanja u VJEŽBI — u katalogu nemaju bod
+ * (`points: null`). Vježba prikazuje bodove iz questions.json (`points: 1..4`);
+ * na ispitu bodovi idu po mjestu, vidi `EXAM_STRUCTURE`.
  */
 export const DEFAULT_ORDERING_POINTS = 4;
 

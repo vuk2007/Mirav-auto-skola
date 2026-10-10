@@ -8,8 +8,8 @@
 // Testira se STVARNI `buildExam` iz lib/questions.ts, ne kopija logike.
 import fs from "node:fs";
 import crypto from "node:crypto";
-import { buildExam, totalPoints } from "../.tmpbuild/questions.js";
-import { EXAM_STRUCTURE, EXAM_QUESTION_COUNT, EXAM_PASS_PERCENT, examPassPoints } from "../.tmpbuild/config.js";
+import { buildExam, examPoints } from "../.tmpbuild/questions.js";
+import { EXAM_STRUCTURE, EXAM_QUESTION_COUNT, EXAM_TOTAL_POINTS, EXAM_PASS_POINTS } from "../.tmpbuild/config.js";
 
 const N = 500;
 const qs = JSON.parse(fs.readFileSync("public/questions.json", "utf8"));
@@ -79,7 +79,14 @@ for (let n = 0; n < N; n++) {
     }
   }
 
-  bodovi.push(totalPoints(slots.map((s) => s.question)));
+  // — tačno 80 bodova; par situacija 5
+  if (examPoints(slots) !== EXAM_TOTAL_POINTS) fail(`bodova ${examPoints(slots)} umjesto ${EXAM_TOTAL_POINTS}`);
+  for (const s of slots) {
+    if (s.kind !== "situacija" || s.isSub) continue;
+    const par = slots.filter((x) => x.card === s.card).reduce((n, x) => n + x.points, 0);
+    if (par !== 5) fail(`par situacija nosi ${par} bodova`);
+  }
+  bodovi.push(examPoints(slots));
   for (const s of slots) vidjeno.set(s.question.id, (vidjeno.get(s.question.id) ?? 0) + 1);
 }
 
@@ -95,10 +102,10 @@ for (const [m, n] of greske) console.log(`   ${n}×  ${m}`);
 console.log(`očekivani segmenti: ${OCEKIVANI_SEGMENTI}`);
 console.log(`vrijeme po ispitu: ${ms.toFixed(3)} ms`);
 console.log();
-console.log(`bodovi po testu NIJESU fiksni (dolaze iz baze):`);
+console.log(`bodovi po testu (moraju biti uvijek ${EXAM_TOTAL_POINTS}):`);
 console.log(`   min ${bodovi[0]}  p25 ${bodovi[N >> 2]}  medijana ${bodovi[N >> 1]}  ` +
   `p75 ${bodovi[Math.floor(N * 0.75)]}  max ${bodovi[N - 1]}  prosjek ${(zbir / N).toFixed(1)}`);
-console.log(`   prag ${EXAM_PASS_PERCENT}% tog testa: ${examPassPoints(bodovi[0])}–${examPassPoints(bodovi[N - 1])} bodova`);
+console.log(`   prag za prolaz: ${EXAM_PASS_POINTS} od ${EXAM_TOTAL_POINTS} bodova`);
 
 // ─────────────────────────────────────────────────────────────────────────────
 console.log("\n" + "=".repeat(78));

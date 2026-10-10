@@ -1,4 +1,11 @@
-import { DEFAULT_ORDERING_POINTS, EXAM_QUESTION_COUNT, EXAM_STRUCTURE } from "./config";
+import {
+  DEFAULT_ORDERING_POINTS,
+  EXAM_PAIR_SPLIT,
+  EXAM_QUESTION_COUNT,
+  EXAM_STRUCTURE,
+  EXAM_TOTAL_POINTS,
+  type ExamSegment,
+} from "./config";
 import type { Lang } from "./i18n";
 import type {
   Answer,
@@ -26,7 +33,10 @@ export async function loadQuestions(signal?: AbortSignal): Promise<Question[]> {
   return data as Question[];
 }
 
-/** Bodovi pitanja; `ordering` u katalogu nema bod pa se koristi DEFAULT_ORDERING_POINTS. */
+/**
+ * Bodovi pitanja u VJEŽBI, iz kataloga; `ordering` u katalogu nema bod pa se
+ * koristi DEFAULT_ORDERING_POINTS. Na ispitu važi `ExamSlot.points`.
+ */
 export function questionPoints(q: Question): number {
   return q.points ?? DEFAULT_ORDERING_POINTS;
 }
@@ -162,6 +172,8 @@ export interface ExamSlot {
   number: number;
   /** Stranica testa, 1-bazirana. */
   page: number;
+  /** Bodovi ovog pitanja na testu — po mjestu, ne iz kataloga (zbir je 80). */
+  points: number;
   /**
    * Kartica kojoj pitanje pripada: id glavnog pitanja kod para, inače id samog
    * pitanja. Pitanja iste kartice dijele jednu sliku.
@@ -190,9 +202,9 @@ export function groupId(q: Question): number {
  *    druge kategorije, jer bi tako ispit tiho izgubio traženi sastav.
  *
  * Unutar segmenta je redoslijed nasumičan. Pitanja se numerišu 1..40 redom, a
- * stranica se računa iz `page` i `groupsPerPage` segmenta. Bodovi dolaze iz
- * baze kakvi jesu, pa ukupan broj bodova nije isti na svakom testu (prag je
- * procenat, vidi `examPassPoints`).
+ * stranica se računa iz `page` i `groupsPerPage` segmenta. Bodovi idu po
+ * mjestu iz `EXAM_STRUCTURE` (kod situacija po `situationPairPoints`), pa test
+ * uvijek nosi tačno `EXAM_TOTAL_POINTS` bodova.
  */
 export function buildExam(questions: readonly Question[]): ExamSlot[] {
   const subsByMain = new Map<number, Question>();
@@ -202,7 +214,7 @@ export function buildExam(questions: readonly Question[]): ExamSlot[] {
 
   const slots: ExamSlot[] = [];
 
-  EXAM_STRUCTURE.forEach((segment, index) => {
+  (EXAM_STRUCTURE as readonly ExamSegment[]).forEach((segment, index) => {
     const allowSubs = "allowSubs" in segment && segment.allowSubs;
     const groupsPerPage = "groupsPerPage" in segment ? segment.groupsPerPage : undefined;
 
@@ -232,9 +244,10 @@ export function buildExam(questions: readonly Question[]): ExamSlot[] {
       );
     }
 
+    let place = 0;
     picked.forEach((q, i) => {
       const page = segment.page + (groupsPerPage ? Math.floor(i / groupsPerPage) : 0);
-      const push = (question: Question, isSub: boolean) =>
+      const push = (question: Question, isSub: boolean, points: number) =>
         slots.push({
           question,
           kind: segment.kind,
@@ -242,17 +255,24 @@ export function buildExam(questions: readonly Question[]): ExamSlot[] {
           isSub,
           number: slots.length + 1,
           page,
+          points,
           card: q.id,
         });
+      const placePoints = () => segment.points![place++]!;
 
-      push(q, false);
-      if (!segment.withSub) return;
+      if (!segment.withSub) {
+        push(q, false, placePoints());
+        return;
+      }
       const sub = subsByMain.get(q.id);
       if (!sub) {
         // Ne bi smjelo — bazen je već filtriran na pitanja sa podpitanjem.
         throw new ExamBuildError(`Pitanje ${q.id} nema podpitanje iako je izvučeno kao par.`);
       }
-      push(sub, true);
+      const [mainPoints, subPoints] =
+        segment.pairPoints !== undefined ? situationPairPoints(q, sub) : [placePoints(), placePoints()];
+      push(q, false, mainPoints);
+      push(sub, true, subPoints);
     });
   });
 
@@ -261,8 +281,46 @@ export function buildExam(questions: readonly Question[]): ExamSlot[] {
       `Sastavljen ispit ima ${slots.length} pitanja, a treba ${EXAM_QUESTION_COUNT}.`,
     );
   }
+  const points = examPoints(slots);
+  if (points !== EXAM_TOTAL_POINTS) {
+    throw new ExamBuildError(`Sastavljen ispit nosi ${points} bodova, a treba ${EXAM_TOTAL_POINTS}.`);
+  }
 
   return slots;
+}
+
+/** Ukupan broj bodova sastavljenog testa (uvijek `EXAM_TOTAL_POINTS`). */
+export function examPoints(slots: readonly ExamSlot[]): number {
+  return slots.reduce((sum, s) => sum + s.points, 0);
+}
+
+/** „Kako ćete postupiti" i srodna pitanja o tome šta vozač radi. */
+const HOW_TO_ACT = /kako ćete postupiti|treba da|smije da/i;
+
+/** Ponuđeni odgovori „vozilo je (ne)propisno zaustavljeno ili parkirano". */
+function isStoppingPosition(q: Question): boolean {
+  if (q.type === "ordering") return false;
+  return Object.values(q.options).some((o) => /propisno/i.test(o) && /zaustavljen|parkiran/i.test(o));
+}
+
+/**
+ * Bodovi para situacija [glavno, podpitanje], po bodovnoj listi pravog
+ * ispita (zbir je uvijek 5):
+ *  1. redoslijed prolaska 4, pitanje uz njega 1,
+ *  2. „vozilo je propisno/nepropisno zaustavljeno ili parkirano" 4, uz njega 1,
+ *  3. „kako ćete postupiti" 3, uz njega 2,
+ *  4. inače glavno 3, podpitanje 2.
+ */
+export function situationPairPoints(main: Question, sub: Question): [number, number] {
+  const { major, normal } = EXAM_PAIR_SPLIT;
+  const pick = (first: boolean, split: readonly [number, number]): [number, number] =>
+    first ? [split[0], split[1]] : [split[1], split[0]];
+  for (const test of [(q: Question) => q.type === "ordering", isStoppingPosition]) {
+    if (test(main) !== test(sub)) return pick(test(main), major);
+  }
+  const act = (q: Question) => HOW_TO_ACT.test(q.text);
+  if (act(main) !== act(sub)) return pick(act(main), normal);
+  return pick(true, normal);
 }
 
 /** Broj izvučenih pitanja po segmentu — koristi se u provjerama. */
@@ -327,11 +385,6 @@ export function isAnswerCorrect(q: Question, answer: Answer): boolean {
     return answer.kind === "ordering" && isOrderingCorrect(q, answer.value);
   }
   return answer.kind === "choice" && isChoiceCorrect(q, answer.value);
-}
-
-/** Ukupan broj bodova skupa pitanja (maksimum na ispitu). */
-export function totalPoints(questions: readonly Question[]): number {
-  return questions.reduce((sum, q) => sum + questionPoints(q), 0);
 }
 
 /** Formatira sekunde u mm:ss. */

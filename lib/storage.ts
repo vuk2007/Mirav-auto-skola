@@ -7,6 +7,7 @@
  */
 
 import type { Category } from "./categories";
+import { EXAM_TOTAL_POINTS } from "./config";
 import { isLang, type Lang } from "./i18n";
 import type { PokazivaciRezim } from "./game/sim/types";
 import { SAOBRACAJ_NIVO, type Level } from "./game/sim/config";
@@ -74,7 +75,9 @@ export function loadBestExam(): BestExam | null {
     typeof v.percent !== "number" ||
     typeof v.scored !== "number" ||
     typeof v.max !== "number" ||
-    typeof v.date !== "string"
+    typeof v.date !== "string" ||
+    // Rezultat iz vremena kad test nije nosio tačno 80 bodova — ne poredi se.
+    v.max !== EXAM_TOTAL_POINTS
   ) {
     return null;
   }
