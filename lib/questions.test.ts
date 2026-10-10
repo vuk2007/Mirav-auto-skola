@@ -1,8 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { EXAM_PAGE_COUNT, EXAM_QUESTION_COUNT } from "./config";
-import { bilingualOption, bilingualText, buildExam, examCards, groupId } from "./questions";
+import {
+  EXAM_PAGE_COUNT,
+  EXAM_PASS_POINTS,
+  EXAM_QUESTION_COUNT,
+  EXAM_TOTAL_POINTS,
+} from "./config";
+import {
+  bilingualOption,
+  bilingualText,
+  buildExam,
+  examCards,
+  examPoints,
+  groupId,
+  situationPairPoints,
+} from "./questions";
 import { isChoice, type Question } from "./types";
 
 /** Prava baza — sastav ispita zavisi od nje, pa se testira nad njom. */
@@ -90,6 +103,63 @@ describe("buildExam — sastav po uzoru na pravi test", () => {
       slots.some((s) => s.question.type === "ordering"),
     );
     expect(sRedoslijedom).toBe(true);
+  });
+});
+
+describe("bodovi ispita — kao na pravom testu: 80 bodova, prolaz od 68", () => {
+  const ispiti = Array.from({ length: 300 }, () => buildExam(QUESTIONS));
+  const byId = new Map(QUESTIONS.map((q) => [q.id, q]));
+
+  it("prag je 68 od 80", () => {
+    expect(EXAM_TOTAL_POINTS).toBe(80);
+    expect(EXAM_PASS_POINTS).toBe(68);
+  });
+
+  it("svaki test nosi tačno 80 bodova, svako pitanje 1–4", () => {
+    for (const slots of ispiti) {
+      expect(examPoints(slots)).toBe(EXAM_TOTAL_POINTS);
+      for (const s of slots) expect([1, 2, 3, 4]).toContain(s.points);
+    }
+  });
+
+  it("po dijelovima: teorija 15, situacije 40, znakovi i kosnik 15, policajac 4, semafori 4, opšta 2", () => {
+    const zbir = (slots: ReturnType<typeof buildExam>, kinds: string[]) =>
+      slots.filter((s) => kinds.includes(s.kind)).reduce((n, s) => n + s.points, 0);
+    for (const slots of ispiti) {
+      expect(zbir(slots, ["teorija"])).toBe(15);
+      expect(zbir(slots, ["situacija"])).toBe(40);
+      expect(zbir(slots, ["znak", "kosnik"])).toBe(15);
+      expect(zbir(slots, ["policajac"])).toBe(4);
+      expect(zbir(slots, ["semafor"])).toBe(4);
+      expect(zbir(slots, ["opste"])).toBe(2);
+    }
+  });
+
+  it("par situacija nosi 5 bodova: 4+1 ili 3+2, redoslijed prolaska uvijek 4", () => {
+    for (const slots of ispiti) {
+      for (const s of slots.filter((x) => x.kind === "situacija" && !x.isSub)) {
+        const par = slots.filter((x) => x.card === s.card).map((x) => x.points);
+        expect(par[0]! + par[1]!).toBe(5);
+        expect([[4, 1], [1, 4], [3, 2], [2, 3]]).toContainEqual(par);
+      }
+      for (const s of slots.filter((x) => x.kind === "situacija" && x.question.type === "ordering")) {
+        expect(s.points).toBe(4);
+      }
+    }
+  });
+
+  it("podjela važi za svaki par situacija u bazi", () => {
+    for (const sub of QUESTIONS.filter((q) => q.kind === "situacija" && q.subOf !== undefined)) {
+      const [a, b] = situationPairPoints(byId.get(sub.subOf!)!, sub);
+      expect(a + b).toBe(5);
+    }
+  });
+
+  it("„vozilo je propisno zaustavljeno ili parkirano\" nosi 4, pitanje uz njega 1 (test 1.1, str. 3)", () => {
+    // Par 198/199: vozilo 1 parkirano/zaustavljeno + ulaz-izlaz iz dvorišta.
+    const glavno = byId.get(198)!;
+    const pod = QUESTIONS.find((q) => q.subOf === 198)!;
+    expect(situationPairPoints(glavno, pod)).toEqual([4, 1]);
   });
 });
 

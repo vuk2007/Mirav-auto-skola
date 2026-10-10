@@ -6,7 +6,7 @@ import {
   EXAM_MINUTES,
   EXAM_TIMER_ENABLED,
   EXAM_PAGE_COUNT,
-  examPassPoints,
+  EXAM_PASS_POINTS,
   PENALTIES_ENABLED,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
@@ -15,6 +15,7 @@ import {
   buildExam,
   byIds,
   examCards,
+  examPoints,
   isHelperLang,
   ExamBuildError,
   type ExamSlot,
@@ -23,7 +24,6 @@ import {
   questionPoints,
   sample,
   shuffle,
-  totalPoints,
 } from "@/lib/questions";
 import {
   clearPractice,
@@ -232,9 +232,9 @@ export default function Quiz({ compact = false }: QuizProps) {
   }, [resetSession]);
 
   /**
-   * Sastavlja ispit i vodi na uputstvo. Test se izvlači **prije** uputstva da bi
-   * uputstvo moglo pisati stvaran broj bodova ovog testa — bodovi dolaze iz
-   * baze pa ukupan zbir nije isti na svakom testu.
+   * Sastavlja ispit i vodi na uputstvo. Test se izvlači **prije** uputstva, pa
+   * nedostatak pitanja u bazi (`ExamBuildError`) izlazi odmah, a ne poslije
+   * uputstva.
    */
   const prepareExam = useCallback(async () => {
     setStarting(true);
@@ -288,6 +288,8 @@ export default function Quiz({ compact = false }: QuizProps) {
 
   // ── Bodovani zapisi ───────────────────────────────────────────────────────
   const records = useMemo(() => {
+    // Na ispitu bodovi idu po mjestu na testu, u vježbi iz kataloga.
+    const slotPoints = new Map(examSlots.map((s) => [s.question.id, s.points]));
     const map = new Map<number, AnswerRecord>();
     for (const q of pool) {
       const answer = answers.get(q.id);
@@ -297,11 +299,11 @@ export default function Quiz({ compact = false }: QuizProps) {
         questionId: q.id,
         answer,
         correct,
-        points: correct ? questionPoints(q) : 0,
+        points: correct ? (slotPoints.get(q.id) ?? questionPoints(q)) : 0,
       });
     }
     return map;
-  }, [pool, answers]);
+  }, [pool, answers, examSlots]);
 
   /** Zaključuje ispit, boduje i pamti najbolji rezultat. */
   const finishExam = useCallback(
@@ -309,17 +311,17 @@ export default function Quiz({ compact = false }: QuizProps) {
       if (finishedOnce.current) return;
       finishedOnce.current = true;
 
-      const max = pool.reduce((s, q) => s + questionPoints(q), 0);
+      const max = examPoints(examSlots);
       const scored = pool.reduce((s, q) => s + (records.get(q.id)?.points ?? 0), 0);
       const percent = max > 0 ? Math.round((scored / max) * 100) : 0;
-      saveBestExam({ percent, scored, max, passed: scored >= examPassPoints(max) });
+      saveBestExam({ percent, scored, max, passed: scored >= EXAM_PASS_POINTS });
       setBest(loadBestExam());
       if (viaTimeout) setTimedOut(true);
       setSecondsLeft(null);
       setDeadline(null);
       setScreen("rezultat");
     },
-    [pool, records],
+    [pool, records, examSlots],
   );
 
   // ── Tajmer ispita ─────────────────────────────────────────────────────────
@@ -594,7 +596,6 @@ export default function Quiz({ compact = false }: QuizProps) {
           lang={lang}
           onStart={() => withLanguageNotice(startExam)}
           starting={starting}
-          totalPoints={totalPoints(pool)}
         />
       )}
 

@@ -1,0 +1,28 @@
+# Ispit: 80 bodova, prolaz 68 (2026-10-10)
+==============================================================================
+3.3  BODOVANJE  (68 od 80)
+==============================================================================
+PASS  ukupno 80, prag 68
+PASS  500 testova, zbirovi: 80
+PASS  svi tačni → 100%, položeno
+PASS  svi netačni → 0%, pad
+PASS  68/80 → POLOŽENO (dokaz da je >= a ne >)
+PASS  67/80 → PAD
+PASS  60/80 (ostalo neodgovoreno) = 75%, pad
+PASS  procenat ≥85% ⇔ položeno za svih 81 rezultata
+
+8 PASS, 0 FAIL
+==============================================================================
+3.1  FUZZ — 500 IZVLAČENJA
+==============================================================================
+grešaka: 0
+očekivani segmenti: teorija:9 situacija:16 znak:8 kosnik:1 policajac:2 semafor:2 opste:2
+vrijeme po ispitu: 0.138 ms
+
+bodovi po testu (moraju biti uvijek 80):
+   min 80  p25 80  medijana 80  p75 80  max 80  prosjek 80.0
+   prag za prolaz: 68 od 80 bodova
+
+==============================================================================
+3.2  POKRIVENOST BAZE KROZ 500 IZVLAČENJA
+==============================================================================

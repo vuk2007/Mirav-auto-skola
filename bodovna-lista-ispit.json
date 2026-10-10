@@ -1,0 +1,124 @@
+{
+  "_meta": {
+    "naziv": "Bodovna lista – teorijski ispit (B kategorija), simulacija ispita MIRAV",
+    "izvor": "Fotografije štampanih testova 1.1, 2.1 i 3.1 (strane 1–5), oktobar 2026",
+    "napomena": "Bodovi su očitani sa testova. Polja sa \"inferred\": true su izračunata iz zbira strane / zbira para pitanja ili nisu bila čitljiva na slici. Tačni odgovori NISU mapirani – koristiti postojeću bazu od 421 pitanja.",
+    "verzija": 1
+  },
+
+  "exam": {
+    "total_questions": 43,
+    "total_points": 80,
+    "duration_minutes": 60,
+    "pass_threshold_points": null,
+    "_pass_threshold_todo": "Prolazni prag nije vidljiv na testovima – potvrditi kod MIRAV-a / Ministarstva i upisati ovdje (broj bodova).",
+    "scoring_rule": "Pitanje nosi pune bodove samo ako je odgovor potpuno tačan. Nema djelimičnih bodova ni negativnih bodova. Pitanja 'redoslijed prolaska' se boduju samo ako je cijeli redoslijed tačan.",
+    "language_rule": "Ispit se polaže samo na crnogorskom ili albanskom (vidi pravila za EN/RU u simulaciji)."
+  },
+
+  "pages": [
+    {
+      "page": 1,
+      "section": "text_rules",
+      "opis": "Tekstualna pitanja – pravila saobraćaja (radnje, brzine, pješaci, signalizacija)",
+      "questions": 9,
+      "global_numbers": [1, 9],
+      "page_points": 15,
+      "page_points_inferred": true,
+      "slot_points_default": [2, 2, 2, 2, 1, 1, 1, 2, 2],
+      "rule": "Prva 4 pitanja po 2 boda, zatim kombinacija 1/2 tako da zbir strane bude 15."
+    },
+    {
+      "page": 2,
+      "section": "situation_pictures",
+      "opis": "Saobraćajne situacije sa slikom – 4 slike, po 2 pitanja na slici",
+      "questions": 8,
+      "global_numbers": [10, 17],
+      "page_points": 20,
+      "pairs": 4,
+      "pair_points": 5,
+      "slot_points_default": [3, 2, 4, 1, 3, 2, 4, 1],
+      "rule": "Svaki par pitanja na istoj slici = 5 bodova, podijeljeno 3+2 ili 4+1 (može i obrnuto: 2+3, 1+4)."
+    },
+    {
+      "page": 3,
+      "section": "situation_pictures",
+      "opis": "Saobraćajne situacije sa slikom – 4 slike, po 2 pitanja na slici",
+      "questions": 8,
+      "global_numbers": [18, 25],
+      "page_points": 20,
+      "pairs": 4,
+      "pair_points": 5,
+      "slot_points_default": [3, 2, 4, 1, 3, 2, 4, 1],
+      "rule": "Isto kao strana 2."
+    },
+    {
+      "page": 4,
+      "section": "signs_and_markings",
+      "opis": "Saobraćajni znakovi i oznake na kolovozu",
+      "questions": 9,
+      "global_numbers": [26, 34],
+      "page_points": 15,
+      "slot_points_default": [1, 2, 2, 2, 2, 2, 2, 1, 1],
+      "rule": "Znakovi 1 ili 2 boda; zbir strane 15."
+    },
+    {
+      "page": 5,
+      "section": "lights_police_vehicle_firstaid",
+      "opis": "Svjetlosni znaci/semafor, znaci policijskog službenika, tehnika vozila, alkohol/umor, prva pomoć",
+      "questions": 9,
+      "global_numbers": [35, 43],
+      "page_points": 10,
+      "slot_points_default": [1, 1, 2, 1, 1, 1, 1, 1, 1],
+      "rule": "Sve po 1 bod, osim pitanja o položaju tijela/ruku policijskog službenika (3. pitanje na strani) = 2 boda."
+    }
+  ],
+
+  "point_assignment_heuristics": {
+    "_svrha": "Kad simulacija vuče pitanje iz baze, ovim pravilima se dodjeljuju bodovi tako da zbir uvijek bude 80.",
+    "situation_pairs": {
+      "order_of_passage": { "match": "redoslijed prolaska", "points": 4, "pair_partner_points": 1 },
+      "how_will_you_act": { "match": ["Kako ćete postupiti", "treba da", "smije da"], "points": 3, "pair_partner_points": 2, "exception": "Ako je partner na istoj slici pitanje 'redoslijed', ovo pitanje nosi 1 bod (vidi test 3.1, str. 2, pit. 3–4)." },
+      "regulated_by": { "match": ["regulisan", "postupićete po", "dužni ste da postupate"], "points": [1, 2], "note": "1 bod uz 'redoslijed' (par 4+1), 2 boda uz 'kako ćete postupiti' (par 3+2)" },
+      "parking_stopping_position": { "match": ["propisno parkirano", "zaustavljeno ili parkirano"], "points": 4, "pair_partner_points": 1 }
+    },
+    "police_officer": { "body_position_meaning": 2, "where_or_how_sign_can_be_given": 1 },
+    "traffic_lights": 1,
+    "vehicle_technical": 1,
+    "first_aid": 1,
+    "alcohol_fatigue": 1
+  },
+
+  "observed_tests": {
+    "_legenda": "null = nije čitljivo na slici; vrijednosti sa 'inferred' izračunate iz zbira",
+    "1.1": {
+      "page_2": { "points": [3, 2, 4, 1, 3, 2, 4, 1], "sum": 20,
+        "topics": ["kako ćete postupiti (STOP + semafor)", "po čemu postupate", "redoslijed prolaska", "čime je regulisan redoslijed", "skretanje ulijevo – koga propuštate", "strelice na kolovozu", "kako ćete postupiti (tramvaj)", "čime je regulisan prolazak"] },
+      "page_3": { "points": [3, 2, 4, 1, 3, 2, 4, 1], "sum": 20,
+        "topics": ["naziv radnje (mimoilaženje)", "teret preko prednje tačke 1,5 m", "pješaci na prelazu", "oznaka ŠKOLA na kolovozu", "preticanje na dvosmjernom", "razdjelna linija", "vozilo 1 parkirano/zaustavljeno", "ulaz-izlaz iz dvorišta"] },
+      "page_4": { "points": [2, 1, 1, 2, 2, null, null, null, null], "sum_expected": 15, "note": "Oznaka testa na ovoj strani slabo čitljiva (vjerovatno 1.1)" },
+      "page_5": { "points": [1, 1, 2, 1, 1, 1, 1, 1, 1], "sum": 10, "inferred_slots": [9] }
+    },
+    "2.1": {
+      "page_1": { "points": [2, 2, 2, 2, 1, 1, 1, 2, 2], "sum": 15, "inferred_slots": [8, 9] },
+      "page_2": { "points": [3, 2, 1, 4, null, null, null, null], "sum_expected": 20, "inferred_slots": [2, 3, 4], "note": "Pit. 4 je redoslijed prolaska (tačno: 3-1-2)" },
+      "page_3": { "points": [2, 3, 3, 2, null, null, null, null], "sum_expected": 20 },
+      "page_4": { "points": [1, 2, 2, 2, 2, 2, 2, 1, 1], "sum": 15 },
+      "page_5": { "points": [1, 1, 2, 1, 1, 1, 1, 1, 1], "sum": 10, "inferred_slots": [1], "note": "Slika mutna" }
+    },
+    "3.1": {
+      "page_1": { "points": [2, 2, 2, 2, 1, null, null, null, null], "sum_expected": 15 },
+      "page_2": { "points": [3, 2, 1, 4, 3, 2, 3, 2], "sum": 20, "note": "Kandidat osvojio 15 → pogrešna pit. 3 (1) i 4 (4) – potvrđuje bodovanje" },
+      "page_3": { "points": [1, 4, 3, 2, 2, 3, null, null], "sum_expected": 20, "inferred_slots": [6], "note": "Pit. 7+8 zajedno = 5" },
+      "page_5": { "points": [1, 1, 2, 1, 1, 1, 1, 1, 1], "sum": 10, "note": "Kandidat osvojio 7 → 3 pogrešna po 1 bod – potvrđuje bodovanje" }
+    }
+  },
+
+  "simulation_requirements": [
+    "Generisati test od 5 strana tačno po šemi iz 'pages' (9 + 8 + 8 + 9 + 9 = 43 pitanja).",
+    "Na stranama 2 i 3 dva pitanja uvijek dijele istu sliku; zbir bodova para mora biti 5.",
+    "Zbir svake strane mora odgovarati 'page_points' (15/20/20/15/10), ukupno 80 – validirati pri generisanju testa.",
+    "Bodove prikazati desno od svakog pitanja, kao na papirnom testu, i 'Broj bodova' u zaglavlju svake strane nakon predaje.",
+    "Rezultat: osvojeni bodovi po strani + ukupno / 80, uz prolaz/pad prema 'pass_threshold_points'."
+  ]
+}

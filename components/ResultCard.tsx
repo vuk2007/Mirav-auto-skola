@@ -3,14 +3,14 @@
 import Image from "next/image";
 import { PenaltyForQuestion } from "./PenaltyLoader";
 import { badgeKey } from "@/lib/categories";
-import { examPassPoints, PENALTIES_ENABLED } from "@/lib/config";
+import { EXAM_PASS_POINTS, PENALTIES_ENABLED } from "@/lib/config";
 import { imageSize } from "@/lib/imageSizes";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import {
   formatSequence,
   bilingualOption,
   bilingualText,
-  questionPoints,
+  examPoints,
   type ExamSlot,
 } from "@/lib/questions";
 import { OPTION_KEYS, type AnswerRecord, type Question } from "@/lib/types";
@@ -41,13 +41,14 @@ export default function ResultCard({
   t,
   lang,
 }: ResultCardProps) {
-  const maxPoints = questions.reduce((sum, q) => sum + questionPoints(q), 0);
+  // Bodovi po mjestu na testu (ne iz kataloga): ukupno uvijek 80.
+  const pointsOf = new Map(slots.map((s) => [s.question.id, s.points]));
+  const maxPoints = examPoints(slots);
   const scored = questions.reduce((sum, q) => sum + (records.get(q.id)?.points ?? 0), 0);
   const percent = maxPoints > 0 ? Math.round((scored / maxPoints) * 100) : 0;
-  // Prolaz se odlucuje po BODOVIMA, ne po procentu — procenat je samo prikaz.
-  // Prag je procenat ukupnih bodova OVOG testa: bodovi dolaze iz baze, pa
-  // ukupan zbir nije isti na svakom izvlačenju.
-  const passPoints = examPassPoints(maxPoints);
+  // Prolaz se odlučuje po BODOVIMA (najmanje 68 od 80), ne po procentu —
+  // procenat je samo prikaz.
+  const passPoints = EXAM_PASS_POINTS;
   const passed = scored >= passPoints;
 
   const correctCount = questions.filter((q) => records.get(q.id)?.correct).length;
@@ -158,7 +159,7 @@ export default function ResultCard({
                 <ol className="flex flex-wrap gap-1.5">
                   {pageSlots.map((slot) => {
                     const rec = records.get(slot.question.id);
-                    const max = questionPoints(slot.question);
+                    const max = slot.points;
                     const tone = !rec
                       ? "border-line bg-panel text-muted"
                       : rec.correct
@@ -210,7 +211,7 @@ export default function ResultCard({
                         {rec ? t.reviewWrong : t.reviewNoAnswer}
                       </span>
                       <span className="tag ml-auto text-muted">
-                        {questionPoints(q)} {pointsLabel(questionPoints(q), lang)}
+                        {pointsOf.get(q.id) ?? 0} {pointsLabel(pointsOf.get(q.id) ?? 0, lang)}
                       </span>
                     </div>
 

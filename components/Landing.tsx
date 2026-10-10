@@ -1,7 +1,7 @@
 "use client";
 
 import { CATEGORIES, type Category } from "@/lib/categories";
-import { EXAM_MINUTES, EXAM_PASS_PERCENT, EXAM_QUESTION_COUNT } from "@/lib/config";
+import { EXAM_MINUTES, EXAM_PASS_POINTS, EXAM_QUESTION_COUNT, EXAM_TOTAL_POINTS } from "@/lib/config";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import type { BestExam, PracticeState } from "@/lib/storage";
 
@@ -109,12 +109,11 @@ export default function Landing({
 
           {/*
             Brojevi dolaze iz lib/config.ts da tekst ne bi odlutao od stvarnih
-            parametara. Prag je procenat, ne broj bodova: bodovi po pitanju
-            dolaze iz baze, pa ukupan zbir zavisi od izvučenih pitanja.
+            parametara: test uvijek nosi 80 bodova, prolaz je od 68.
           */}
           <p className="tag mb-3 text-blue">
             {EXAM_QUESTION_COUNT} {t.metaQuestions} · {EXAM_MINUTES} {t.metaMinutes} ·{" "}
-            {t.metaPass} {EXAM_PASS_PERCENT}%
+            {t.metaPass} {EXAM_PASS_POINTS}/{EXAM_TOTAL_POINTS}
           </p>
 
           {best && (
