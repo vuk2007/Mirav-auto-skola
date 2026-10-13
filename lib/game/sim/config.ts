@@ -2429,3 +2429,28 @@ export const GRAD_PJ_TIK_PRED_ZEBROM = 0.3;
 export const GRAD_PJ_PREKO_KRAJA = 8;
 /** „Pješak na putu": gdje će pješak na kolovozu biti za ovoliko [s] (stavka 8). */
 export const GRAD_PJ_PREDVIDJANJE = 1.5;
+
+// ── Autobusi (faza 6, stavka 8c) ────────────────────────────────────────────
+
+/**
+ * Koridor linije: ivica mreže je dio trase autobuske linije kad je bar ovaj
+ * dio njene dužine uz neku ulicu-člana relacije (`route=bus`).
+ */
+export const GRAD_BUS_KORIDOR_UDIO = 0.5;
+/** Uzorak ulice-člana leži uz ivicu: do ovoliko [m] od ivice kolovoza (pola širine + ovo). */
+export const GRAD_BUS_KORIDOR_DO = 3;
+/** Uzorkovanje ulica-članova linije [m]. */
+export const GRAD_BUS_UZORAK = 4;
+/**
+ * Autobus vozi mrežom igre, a ivica van koridora linije košta ovoliko puta
+ * više — linija drži svoje ulice, a rupe u OSM relaciji premošćava najkraćim
+ * putem.
+ */
+export const GRAD_BUS_VAN_KORIDORA = 4;
+/**
+ * Dionica linije koju autobus vozi: cilj je ivica koridora na ovoliko [m]
+ * vazdušne linije od početka (od, do).
+ */
+export const GRAD_BUS_DIONICA = [400, 800] as const;
+/** Pretraga rute dionice linije — najviše ovoliko koraka A*. */
+export const GRAD_BUS_PRETRAGA = 20000;

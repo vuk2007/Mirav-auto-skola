@@ -23,7 +23,7 @@ if (!grad) {
 }
 
 /** Na koliko dijelova se okvir dijeli po upitu — zgrade su najveće. */
-const MREZA = { ulice: [2, 2], pravila: [1, 1], zabrane: [1, 1], zgrade: [3, 3], povrsine: [2, 2], objekti: [1, 1] };
+const MREZA = { ulice: [2, 2], pravila: [1, 1], zabrane: [1, 1], zgrade: [3, 3], povrsine: [2, 2], objekti: [1, 1], linije: [1, 1] };
 
 await mkdir(KES, { recursive: true });
 const izvor = { grad: kljuc, okvir: grad.okvir, datumi: {}, broj: {} };

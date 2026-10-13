@@ -108,6 +108,16 @@ export const povrsine = (okvir) => `[out:json][timeout:900];
 out geom;`;
 
 /**
+ * Autobuske linije (faza 6, stavka 8): relacije `route=bus` sa geometrijom
+ * članova — ulice kojima linija ide redom i stajališta (`stop`, `platform`).
+ * Geometrija, a ne samo id-evi: ulice se od datuma osnovnog povlačenja mogu
+ * podijeliti, pa se linija na mrežu igre veže po obliku (`pripremiGrad.mjs`).
+ */
+export const linije = (okvir) => `[out:json][timeout:600];
+relation[type=route][route=bus](${okvir});
+out geom;`;
+
+/**
  * Objekti: benzinska pumpa, drvored, stadion, bogomolja. Stajališta dolaze
  * kroz `pravila`, a drveće u parkovima se rasipa po sjemenu, ne iz OSM-a.
  */

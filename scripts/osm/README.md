@@ -98,6 +98,7 @@ putevima: 2718 raskrsnica na 1385 km, jedna na pola kilometra.
 ```bash
 npm run osm:grad:povuci -- podgorica     # sirovi OSM za okvir grada u .cache/
 npm run osm:grad:pripremi -- podgorica   # paket grada u public/data/grad/
+npm run osm:grad:linije -- podgorica     # autobuske linije u public/data/grad/linije/
 ```
 
 Za grad se povlači ono što traži zadatak faze 6 (odjeljak 2): sve ulice
@@ -118,6 +119,15 @@ koja zalazi u okvir, pa je Morača stigla sa 45 km toka.
 `izvjestaj/grad-<grad>.md` pokazuje pokrivenost oznaka (`lanes`, `maxspeed`,
 `turn:lanes`…) i povezanost mreže. Šablon zona je u
 `public/data/grad/cityZones/<grad>.json`; poligone crta škola u editoru.
+
+**Autobuske linije** (stavka 8) su zaseban, mali JSON, van paketa: relacije
+`route=bus` sa brojem linije (`ref`; međugradske bez broja se preskaču) —
+ulice-članovi i platforme stajališta, u lokalnim metrima kao paket. Relacije u
+OSM-u nijesu uredne (članovi i stajališta van reda, obje varijante trase u
+jednoj), pa ih igra ne slaže u putanju od kraja do kraja: od članova pravi
+koridor ivica mreže, a autobus vozi dionicu koridora blizu igrača
+(`lib/game/grad/autobusi.ts`). Grad bez linija u OSM-u — autobusi po
+bulevarima.
 
 Zamka: `lib/geom.mjs` radi nad tačkama `[x, y]`. Dat mu `{x, y}`, računa NaN i od
 svake linije ostavi dva kraja — prva obrada je tako izgubila krivine i sve

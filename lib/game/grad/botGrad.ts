@@ -144,6 +144,8 @@ function pravacDalje(iv: Ivica, smjer: 1 | -1, naKraju: boolean): Point {
  * polukružnog i bez skretanja oštrijih od 135° (auto ih u uskoj ulici ne može).
  * Kroz raskrsnicu od više čvorova ugao se mjeri od ulaznog kraka — dva
  * skretanja od 90° preko razdjelnog pojasa bulevara su polukružno.
+ * `cijena` množi dužinu ivice (≥ 1, da heuristika ostane dopustiva) — tako
+ * autobus drži trasu svoje linije.
  */
 export function ruta(
   m: Mreza,
@@ -153,6 +155,7 @@ export function ruta(
   do_: Korak,
   najviseKoraka = Infinity,
   vozi: (iv: Ivica) => boolean = ZA_BOTA,
+  cijena: (iv: Ivica) => number = () => 1,
 ): Korak[] | null {
   const kljuc = (k: Korak) => 2 * k.ivica + (k.smjer === 1 ? 0 : 1);
   const cilj = m.cvorovi[kraj(m.ivice[do_.ivica]!, do_.smjer)]!;
@@ -293,7 +296,7 @@ export function ruta(
           if (zabranaKraka(r, `${ulazniKorak.ivica}:${ulazniKorak.smjer === 1 ? 1 : 0}`, `${j}:${smjer === 1 ? 0 : 1}`, mv)) continue;
         }
         const sl = { ivica: j, smjer };
-        const ng = g.get(kk)! + f.duzina + (Math.abs(u) > GRAD_SKRETANJE_UGAO ? (u < 0 ? 12 : 6) : 0);
+        const ng = g.get(kk)! + f.duzina * cijena(f) + (Math.abs(u) > GRAD_SKRETANJE_UGAO ? (u < 0 ? 12 : 6) : 0);
         const sk = kljuc(sl);
         if (ng < (g.get(sk) ?? Infinity)) {
           g.set(sk, ng);
