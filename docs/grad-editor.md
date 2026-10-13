@@ -57,7 +57,9 @@ u fazi biraš:
 Pored toga za svaki krak postoje:
 - **dopunska zelena strelica**: smije se u njenom pravcu i kad je glavno
   crveno, uz ustupanje (ispitno pitanje 374);
-- **zeleno za pješake** (važiće kad dođu pješaci).
+- **zeleno za pješake**: u toj fazi pješaci prelaze preko tog kraka (ako
+  vozila sa njega tada stoje). Kad plan nema nijedno, pješaci prelaze krak
+  u svakoj fazi u kojoj vozila sa njega stoje.
 
 Za cijelu raskrsnicu se podešavaju **žuto**, **sve crveno** i **pomak**. Pomak
 služi za zeleni talas: susjedni semafori bulevara se pomaknu za vrijeme
@@ -103,6 +105,8 @@ u stvarnosti ne postoji uklanja se dugmetom „Ukloni ovaj komad ulice".
   **Gustina saobraćaja** određuje koliko drugih vozila ima oko igrača dok je
   u zoni: 0 = nema ih, 1 = 25, 2 = 33, 3 = 40. Van nacrtanih zona važi 1.
   Broj se još množi nivoom i dobom dana (noću ih je manje).
+  **Gustina pješaka** isto, za pješake: 0 = nema ih, 1 = 30, 2 = 45, 3 = 60.
+  Van zona važi 1; noću ih je manje.
 - **Zadaci**: klikni start, obavezne tačke i cilj. Zelena linija je ruta kojom bi
   bot vozio, po svim pravilima. Tačku u sredini možeš označiti kao
   manevar (parkiranje, polukružno, uspon). Zadatke vozi stavka 9.

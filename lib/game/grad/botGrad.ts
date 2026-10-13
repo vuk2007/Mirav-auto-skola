@@ -47,6 +47,7 @@ import { ogranicenjeNa } from "./brzine";
 import { naLinijiTraka, pojasBusa, punaIzmedju, punaTrakeOd } from "./linije";
 import { bokNaIvici, dvotracniPrsten, manevarKrakova, pravacKraja, ugaoSkretanja as ugao, type Ivica, type Manevar, type Mreza } from "./mreza";
 import { prekrsenaZabrana, svjetlo, zabranaKraka, zelenaStrelica, type Krak, type Raskrsnice, type Zabrana } from "./raskrsnica";
+import { svjetloZaVozila } from "./pjesackiSemafor";
 import { naPovrsini, type Povrsina } from "./povrsina";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
 import { noviSudija, stopLinija, sudi, type GradskiPrekrsaj, type GradZaSudiju, type Sudija } from "./sudija";
@@ -356,8 +357,18 @@ interface Najava {
   strana: "left" | "right";
 }
 
+/** Stop-linija pješačkog semafora na sredini ulice (stavka 8) na putanji. */
+export interface LinijaPjesackog {
+  /** `s` na putanji gdje sredina auta staje (nos na `STOP_MARGIN` pred linijom). */
+  s: number;
+  /** Indeks u `GradZaSudiju.pjesackiSemafori`. */
+  semafor: number;
+}
+
 export interface PlanBota {
   put: Putanja;
+  /** Pješački semafori na sredini ulice na putanji (stavka 8). */
+  pjesacki: LinijaPjesackog[];
   /** Najveća brzina u svakoj tački putanje [m/s] (ograničenje, krivina). */
   brzine: number[];
   linije: StopLinija[];
@@ -1360,6 +1371,20 @@ export function planBota(
     return null;
   };
   for (const l of linije) l.s = naLiniji(l.tacka, l.pravac, l.s - 40) ?? l.s;
+  // Pješački semafori na sredini ulice (stavka 8): linija na ivici koraka,
+  // u smjeru vožnje — gdje je putanja siječe.
+  const pjesacki: LinijaPjesackog[] = [];
+  koraci.forEach((k, i) => {
+    g.pjesackiSemafori.forEach((sem, j) => {
+      if (sem.ivica !== k.ivica) return;
+      const iv = m.ivice[k.ivica]!;
+      const sL = k.smjer === 1 ? sem.linijaNaprijed : sem.linijaNazad;
+      const h = headingAt(iv.tacke, iv.cum, sL);
+      const s = naLiniji(pointAt(iv.tacke, iv.cum, sL), k.smjer === 1 ? h : { x: -h.x, y: -h.y }, (pocetakKoraka[i] ?? 0) - 20);
+      if (s !== null && s <= (krajKoraka[i] ?? Infinity) + 1) pjesacki.push({ s, semafor: j });
+    });
+  });
+  pjesacki.sort((a, b) => a.s - b.s);
   // Brzina: ograničenje sa rezervom, i krivina (v² / R ≤ bočno ubrzanje).
   // Krivina se mjeri na susjedima udaljenim bar metar — dvije skoro iste
   // tačke dale bi poluprečnik od par centimetara i auto bi stao — i nije
@@ -1432,7 +1457,7 @@ export function planBota(
       linija,
     };
   });
-  return { put, brzine, linije, najave, prolazi: prolaziPlana, osovinom: osloncaOsovinom, neslaganja, nivoi };
+  return { put, pjesacki, brzine, linije, najave, prolazi: prolaziPlana, osovinom: osloncaOsovinom, neslaganja, nivoi };
 }
 
 /**
@@ -1476,6 +1501,9 @@ export interface Bot {
    */
   strelica: boolean[];
   poslijeStrelice: boolean[];
+  /** Pješački semafori (`plan.pjesacki`): vidio zeleno, odluka na žuto, prošao. */
+  pjesackiZeleno: boolean[];
+  pjesackiZuto: (boolean | null)[];
   gotov: boolean;
   /** Izvlačenje sa ivičnjaka: do kad unazad (pređeni put auta), i volan pri udaru. */
   izvlacenje: { doPredjeno: number; volan: number; od: number; traje: number } | null;
@@ -1497,6 +1525,8 @@ export function noviBot(plan: PlanBota): Bot {
     vidioZeleno: plan.linije.map(() => false),
     strelica: plan.linije.map(() => false),
     poslijeStrelice: plan.linije.map(() => false),
+    pjesackiZeleno: plan.pjesacki.map(() => false),
+    pjesackiZuto: plan.pjesacki.map(() => null),
     gotov: false,
     izvlacenje: null,
     izvlacenja: 0,
@@ -1511,7 +1541,8 @@ export function noviBot(plan: PlanBota): Bot {
  * najveća brzina koju dozvoljava saobraćaj oko njega [m/s] — vozilo ispred,
  * ustupanje, zatvoren izlaz (vidi `botUSaobracaju.ts`); bez nje vozi sam.
  */
-export function korakBota(b: Bot, r: Raskrsnice, st: SlobodnoVozilo, t: number, granica = Infinity): Input {
+export function korakBota(b: Bot, g: GradZaSudiju, st: SlobodnoVozilo, t: number, granica = Infinity): Input {
+  const r = g.raskrsnice;
   const p = b.plan;
   // Izvlačenje: zakačio ivičnjak i stao — polako unazad metar-dva sa volanom
   // na drugu stranu, pa ponovo naprijed. Sporije od praga pogrešnog smjera,
@@ -1599,6 +1630,24 @@ export function korakBota(b: Bot, r: Raskrsnice, st: SlobodnoVozilo, t: number, 
     b.staje = staniNa === null ? null : { s: l.s, zasto: `semafor ${sv} r${l.r}` };
     break;
   }
+  // Pješački semafor na sredini ulice (stavka 8): kao semafor raskrsnice.
+  for (let i = 0; i < p.pjesacki.length; i++) {
+    const l = p.pjesacki[i]!;
+    if (l.s - b.s > GRAD_PRILAZ_DO || b.s > l.s + 1) continue;
+    const sv = svjetloZaVozila(g.pjesackiSemafori[l.semafor]!, t);
+    if (sv === "zeleno") {
+      b.pjesackiZeleno[i] = true;
+      b.pjesackiZuto[i] = null;
+    }
+    if (sv === "zuto" && b.pjesackiZuto[i] === null) {
+      b.pjesackiZuto[i] = !b.pjesackiZeleno[i] || (l.s - b.s + STOP_MARGIN) / Math.max(st.v, 0.1) >= YELLOW_COMMIT_TTC * 0.8;
+    }
+    if (sv === "zuto" && b.pjesackiZuto[i] === false && Math.abs(st.v) < 0.1 && l.s >= b.s) b.pjesackiZuto[i] = true;
+    if ((sv === "crveno" || (sv === "zuto" && b.pjesackiZuto[i])) && (staniNa === null || l.s < staniNa)) {
+      staniNa = l.s;
+      b.staje = { s: l.s, zasto: `pjesacki semafor ${sv}` };
+    }
+  }
   const ulaz = vozi(st, p.put, b.s, { brzina: Math.min(dozvoljenaBrzina(p, b.s), granica), staniNa });
   const najava = p.najave.find((n) => b.s >= n.od && b.s <= n.do_);
   return { ...ulaz, indicator: najava ? najava.strana : null };
@@ -1653,7 +1702,7 @@ export function odveziRutu(
   let prviUdar: IshodVoznje["prviUdar"] = null;
   const trag: string[] = [];
   while (!bot.gotov && t - t0 < najvise) {
-    const ulaz = korakBota(bot, g.raskrsnice, st, t);
+    const ulaz = korakBota(bot, g, st, t);
     korakSlobodno(povrsina, st, ulaz);
     if (dnevnik) {
       const q = pointAt(plan.put.tacke, plan.put.cum, bot.s);

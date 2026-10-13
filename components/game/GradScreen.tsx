@@ -27,6 +27,8 @@ import { ulicaNa } from "@/lib/game/grad/povrsina";
 import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { svijetGrada } from "@/lib/game/grad/svijet";
 import { igracCekaSaobracaj, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, type Tijelo } from "@/lib/game/grad/saobracaj";
+import { korakPjesaka, noviPjesaci, tijelaPjesaka, udaraPjesaka } from "@/lib/game/grad/pjesaci";
+import { svjetloPjesaka } from "@/lib/game/grad/trotoari";
 import type { Manevar } from "@/lib/game/grad/mreza";
 import { polygonsOverlap, rectCorners } from "@/lib/game/sim/geometry";
 import { naslovPrekrsaja, praviloPrekrsaja } from "@/lib/game/ui/gradPrekrsaji";
@@ -61,6 +63,8 @@ interface Hud {
   vozila: number | null;
   /** Samo `?debug=1`: parkiranih uz ivičnjak (stavka 7e). */
   parkirano: number | null;
+  /** Samo `?debug=1`: pješaka (stavka 8). */
+  pjesaka: number | null;
   korakMs: number | null;
 }
 
@@ -85,11 +89,14 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const volan = useVolan(true, { pokazivacRukom: true });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [faza, setFaza] = useState<Faza>("ucitavam");
-  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null, vozila: null, parkirano: null, korakMs: null });
+  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null, vozila: null, parkirano: null, pjesaka: null, korakMs: null });
   const [ogranicenje, setOgranicenje] = useState<number | null>(null);
   // Sudija (stavka 5d): prekršaji ove vožnje, zadnji se kratko prikaže.
   const [prekrsaji, setPrekrsaji] = useState<GradskiPrekrsaj[]>([]);
   const [kartica, setKartica] = useState<GradskiPrekrsaj | null>(null);
+  // Udaren pješak (stavka 8): vožnja je gotova — posebna kartica, pa ponovo.
+  const [udaren, setUdaren] = useState<GradskiPrekrsaj | null>(null);
+  const [pokusaj, setPokusaj] = useState(0);
   const [nivo, setNivo] = useState<Level>(GRAD_NIVO);
   const nivoRef = useRef<Level>(GRAD_NIVO);
   /** Vrijeme simulacije — po njemu trepću i lampica pored volana i žmigavac na autu. */
@@ -149,11 +156,31 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       // Mjerilo: `?debug=1&gustina=3` — gustina van zona (0–3), npr. 40 vozila.
       const gustinaParam = debug ? Number(new URLSearchParams(window.location.search).get("gustina") ?? NaN) : NaN;
       if (Number.isFinite(gustinaParam)) saobracaj.gustinaVanZona = gustinaParam;
+      // Pješaci (stavka 8): po gustini zone × doba dana. Mjerilo:
+      // `?debug=1&pjesaci=3` — gustina pješaka van zona (0–3), npr. 60.
+      const gustinaPjesaka = () => GRAD_NPC_GUSTINA_DOBA[uslovRef.current.doba];
+      const pjesaci = noviPjesaci(svijet, 1, gustinaPjesaka());
+      saobracaj.pjesaci = pjesaci;
+      const pjesaciParam = debug ? Number(new URLSearchParams(window.location.search).get("pjesaci") ?? NaN) : NaN;
+      if (Number.isFinite(pjesaciParam)) pjesaci.gustinaVanZona = pjesaciParam;
       // Samo `?debug=1`, za QA snimke: parkirani auti i kamera na zadatoj tački.
       let kameraQa: Point | null = null;
       if (debug) {
         (window as unknown as { __grad?: object }).__grad = {
           parkirani: () => parkirani(saobracaj).map((p) => ({ x: p.x, y: p.y })),
+          pjesaci: () => pjesaci.lista.map((x) => ({ x: x.x, y: x.y, stanje: x.stanje })),
+          // Pješak prelazi ulicu `ispred` m pred autom (QA kartice udara).
+          pjesakIspred: (ispred: number) => {
+            const x = pjesaci.lista[0];
+            if (!x) return false;
+            const c = Math.cos(st.ugao);
+            const s = Math.sin(st.ugao);
+            const px = st.x + c * ispred;
+            const py = st.y + s * ispred;
+            x.vanZebre = { k: x.k, d: x.d, a: { x: px + s * 4, y: py - c * 4 }, b: { x: px - s * 4, y: py + c * 4 }, u: 0 };
+            x.stanje = "prelazi";
+            return true;
+          },
           kamera: (p: Point | null) => {
             kameraQa = p;
           },
@@ -191,7 +218,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       if (!canvas) return;
       // Pixi se učitava tek ovdje — ostatak igre ga ne plaća u početnom paketu.
       const { createGradRenderer } = await import("@/lib/game/ui/gradRenderer");
-      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: svijet.zone }, { raskrsnice, crtez, produzeci: zaSudiju.produzeci });
+      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: svijet.zone }, { raskrsnice, crtez, produzeci: zaSudiju.produzeci, pjesackiSemafori: zaSudiju.pjesackiSemafori });
       if (otkazano) {
         renderer?.destroy();
         return;
@@ -251,12 +278,14 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       /** Koraci simulacije od početka — njima teče vrijeme semafora, ne satom. */
       let koraka_ = 0;
       let ulica = start.ivica;
+      let gotovo = false;
       const kadar = (now: number) => {
         raf = requestAnimationFrame(kadar);
         const dt = zadnji === 0 ? 0 : Math.min(0.25, (now - zadnji) / 1000);
         zadnji = now;
         acc += dt;
         let koraka = 0;
+        if (gotovo) acc = 0;
         while (acc >= DT && koraka < 8) {
           const t0Koraka = debug ? performance.now() : 0;
           prije = sada;
@@ -271,6 +300,31 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             trakaUPrstenu: trakaPrstena,
           });
           if (saobracaj.kocenja.length > 200) saobracaj.kocenja.splice(0, 100);
+          // Pješaci vide vozila (i igrača): na prelaz ne stupaju ispred onoga ko ih ugrožava.
+          pjesaci.gustina = gustinaPjesaka();
+          korakPjesaka(pjesaci, { x: st.x, y: st.y }, [...saobracaj.npc, tijeloIgraca()].map((n) => ({
+            id: n.id,
+            x: n.x,
+            y: n.y,
+            ugao: n.ugao,
+            v: n.v,
+            duzina: CAR_LENGTH,
+            sirina: CAR_WIDTH,
+          })));
+          // Udar pješaka: trenutan kraj vožnje i posebna kartica (zadatak, odjeljak 6).
+          const tijeloAuta = { x: st.x, y: st.y, ugao: st.ugao, duzina: CAR_LENGTH, sirina: CAR_WIDTH };
+          const pjesak = pjesaci.lista.find((x) => Math.abs(x.x - st.x) < CAR_LENGTH && Math.abs(x.y - st.y) < CAR_LENGTH && udaraPjesaka(tijeloAuta, x));
+          if (pjesak) {
+            const p: GradskiPrekrsaj = { vrsta: "pedestrianCollision", ozbiljnost: "fail", t: koraka_ * DT, x: st.x, y: st.y, detalji: { pjesak: pjesak.id } };
+            sudija.prekrsaji.push(p);
+            st.v = 0;
+            gotovo = true;
+            setUdaren(p);
+            setPrekrsaji([...sudija.prekrsaji]);
+            prijavljeno = sudija.prekrsaji.length;
+            haptika(PREKRSAJ_HAPTIKA);
+            break;
+          }
           // Sudar sa drugim vozilom: prekršaj, i auto staje.
           const ja = rectCorners({ x: st.x, y: st.y }, { x: Math.cos(st.ugao), y: Math.sin(st.ugao) }, CAR_LENGTH, CAR_WIDTH);
           const nivoIgraca = tijeloIgraca().nivo;
@@ -289,7 +343,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           sudija.nivo = nivoRef.current;
           // Stoji zbog saobraćaja (kolona, čeka da prođe drugi) — nije parkiranje.
           const zbogSaobracaja = igracCekaSaobracaj(saobracaj, tijeloIgraca(), sudija.prolaz?.r ?? sudija.prilaz?.r ?? null);
-          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator, zbogSaobracaja);
+          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator, zbogSaobracaja, pjesaci);
           simTRef.current = koraka_ * DT;
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
@@ -346,6 +400,19 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               zmigavac: null,
             })),
           ],
+          pjesaci: tijelaPjesaka(pjesaci).map((p) => ({ pos: { x: p.x, y: p.y }, ugao: p.ugao, boja: p.boja, korak: p.korak, stoji: p.stoji })),
+          // Svjetla za pješake na prelazima sa semaforom oko kamere.
+          pjesackaSvjetla: pjesaci.mreza.prelazi.flatMap((p) => {
+            if (!p.semafor || Math.abs(p.centar.x - k.wx) > 120 || Math.abs(p.centar.y - k.wy) > 120) return [];
+            const s = svjetloPjesaka(svijet, p, koraka_ * DT)!.stanje;
+            const ux = (p.b.x - p.a.x) / p.duzina;
+            const uy = (p.b.y - p.a.y) / p.duzina;
+            // Na trotoaru, malo iza kraja prelaza, i u stranu od zebre.
+            return [
+              { x: p.a.x - ux * 0.6 - uy * 2, y: p.a.y - uy * 0.6 + ux * 2, stanje: s },
+              { x: p.b.x + ux * 0.6 + uy * 2, y: p.b.y + uy * 0.6 - ux * 2, stanje: s },
+            ];
+          }),
           osvjetljenje: { ...uslovRef.current, sekunde: now / 1000 },
           igrac: {
             pos,
@@ -375,6 +442,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             fps: debug ? fps : null,
             vozila: debug ? saobracaj.npc.length : null,
             parkirano: debug ? saobracaj.mjesta.filter((z) => z.parkirano).length : null,
+            pjesaka: debug ? pjesaci.lista.length : null,
             korakMs: debug && simKoraka > 0 ? simMs / simKoraka : null,
           });
           simMs = 0;
@@ -402,10 +470,11 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       observer?.disconnect();
       renderer?.destroy();
     };
-    // Petlja se pokreće jednom po otvaranju ekrana; `volan` i `inputRef` su
-    // stabilni za cijeli život komponente.
+    // Petlja se pokreće jednom po otvaranju ekrana (i iznova poslije udara
+    // pješaka — `pokusaj`); `volan` i `inputRef` su stabilni za cijeli život
+    // komponente.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pokusaj]);
 
   return (
     <div className="space-y-3">
@@ -421,6 +490,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       </button>
       <div className="relative">
         <canvas
+          // Novi canvas za svaki pokušaj: stari WebGL kontekst je uništen sa rendererom.
+          key={pokusaj}
           ref={canvasRef}
           role="img"
           aria-label={t.gradTitle}
@@ -433,7 +504,31 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             </p>
           </div>
         )}
-        {faza === "voznja" && kartica && (
+        {faza === "voznja" && udaren && (
+          <div className="absolute inset-0 flex items-center justify-center bg-ink/40 p-4">
+            <div role="alertdialog" aria-labelledby="udaren-naslov" className="max-w-sm rounded border border-red bg-paper p-4 text-center shadow-lg">
+              <p id="udaren-naslov" className="font-display text-lg font-bold text-red">
+                {t.gradHitTitle}
+              </p>
+              <p className="mt-2 text-sm">{t.gradHitText}</p>
+              <p className="mt-2 text-sm text-muted">{praviloPrekrsaja(udaren, t)}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setUdaren(null);
+                  setKartica(null);
+                  setPrekrsaji([]);
+                  setFaza("ucitavam");
+                  setPokusaj((x) => x + 1);
+                }}
+                className="mt-4 rounded border border-blue bg-blue px-4 py-2 font-semibold text-white"
+              >
+                {t.gradHitAgain}
+              </button>
+            </div>
+          </div>
+        )}
+        {faza === "voznja" && kartica && !udaren && (
           <div
             role="alert"
             className={`absolute top-2 right-2 max-w-[18rem] rounded border p-2 text-xs shadow ${
@@ -487,6 +582,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               {hud.fps !== null ? ` · ${hud.fps.toFixed(0)} fps` : ""}
               {hud.vozila !== null ? ` · ${hud.vozila} vozila` : ""}
               {hud.parkirano !== null ? ` · ${hud.parkirano} parkirano` : ""}
+              {hud.pjesaka !== null ? ` · ${hud.pjesaka} pješaka` : ""}
               {hud.korakMs !== null ? ` · korak ${hud.korakMs.toFixed(2)} ms` : ""}
             </p>
             {kisa && (

@@ -30,6 +30,8 @@ export interface Ugao {
   a: Point;
   b: Point;
   c: Point;
+  /** Ivice dvije ulice čiji je to ugao. */
+  ivice: [number, number];
 }
 
 export interface Povrsina {
@@ -111,13 +113,14 @@ interface Krak {
   uy: number;
   pola: number;
   ugao: number;
+  ivica: number;
 }
 
 /**
  * Pravac kojim ivica napušta čvor — do tačke nekoliko metara dalje, a ne po
  * prvom segmentu: OSM zna da ima tačku na pola metra od raskrsnice.
  */
-function krak(tacke: readonly Point[], cum: readonly number[], odPocetka: boolean, pola: number): Krak | null {
+function krak(tacke: readonly Point[], cum: readonly number[], odPocetka: boolean, pola: number, ivica: number): Krak | null {
   const duzina = cum[cum.length - 1] ?? 0;
   const d = Math.min(8, duzina);
   const p0 = odPocetka ? tacke[0]! : tacke[tacke.length - 1]!;
@@ -132,7 +135,7 @@ function krak(tacke: readonly Point[], cum: readonly number[], odPocetka: boolea
   const dy = p1.y - p0.y;
   const l = Math.hypot(dx, dy);
   if (l < 1e-6) return null;
-  return { ux: dx / l, uy: dy / l, pola, ugao: Math.atan2(dy, dx) };
+  return { ux: dx / l, uy: dy / l, pola, ugao: Math.atan2(dy, dx), ivica };
 }
 
 /**
@@ -148,11 +151,11 @@ function uglovRaskrsnice(m: Mreza, c: number): Ugao[] {
     if (!iv.vozna) continue;
     const pola = iv.sirina / 2;
     if (iv.a === c) {
-      const k = krak(iv.tacke, iv.cum, true, pola);
+      const k = krak(iv.tacke, iv.cum, true, pola, i);
       if (k) krakovi.push(k);
     }
     if (iv.b === c) {
-      const k = krak(iv.tacke, iv.cum, false, pola);
+      const k = krak(iv.tacke, iv.cum, false, pola, i);
       if (k) krakovi.push(k);
     }
   }
@@ -185,11 +188,11 @@ function uglovRaskrsnice(m: Mreza, c: number): Ugao[] {
     const cy = p.y + nAy * A.pola + t * A.uy;
     const ua = { x: cx + A.ux * GRAD_UGAO_ZASJEK, y: cy + A.uy * GRAD_UGAO_ZASJEK };
     const ub = { x: cx + B.ux * GRAD_UGAO_ZASJEK, y: cy + B.uy * GRAD_UGAO_ZASJEK };
-    uglovi.push({ c: { x: cx, y: cy }, a: ua, b: ub });
+    uglovi.push({ c: { x: cx, y: cy }, a: ua, b: ub, ivice: [A.ivica, B.ivica] });
     // I trougao od čvora do zasjeka: ivice kolovoza tik uz čvor nisu prave
     // (OSM izlomi ulicu na metar od raskrsnice), pa između njih i zasjeka
     // ostane procjep od par decimetara — rupa u asfaltu u koju auto udari.
-    uglovi.push({ c: { x: p.x, y: p.y }, a: ua, b: ub });
+    uglovi.push({ c: { x: p.x, y: p.y }, a: ua, b: ub, ivice: [A.ivica, B.ivica] });
   }
   return uglovi;
 }
@@ -204,6 +207,15 @@ function uTrouglu(u: Ugao, x: number, y: number): boolean {
   const neg = d1 < 0 || d2 < 0 || d3 < 0;
   const poz = d1 > 0 || d2 > 0 || d3 > 0;
   return !(neg && poz);
+}
+
+/** Udaljenost tačke od duži `a`–`b`. */
+function doDuzi(a: Point, b: Point, x: number, y: number): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const l2 = dx * dx + dy * dy;
+  const t = l2 > 0 ? Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / l2)) : 0;
+  return Math.hypot(a.x + dx * t - x, a.y + dy * t - y);
 }
 
 /** Kvadrat udaljenosti tačke od segmenta `j`. */
@@ -231,6 +243,39 @@ export function naPovrsini(p: Povrsina, x: number, y: number): boolean {
       const pola = p.seg[5 * j + 4]!;
       if (udaljenost2(p, j, x, y) <= pola * pola) return true;
     }
+  }
+  return false;
+}
+
+/**
+ * Da li je tačka na asfaltu (kolovoz ili zasječen ugao raskrsnice), osim
+ * ulica koje `preskoci` izostavlja — i uglova uz njih. `rezerva` [m] proširuje
+ * i kolovoz i uglove. Za pješake (stavka 8): trotoar i prelaz se mjere po
+ * asfaltu, a ušće servisnog puta se prelazi kao kolski ulaz.
+ */
+export function naKolovozu(
+  p: Povrsina,
+  x: number,
+  y: number,
+  preskoci?: (ivica: number) => boolean,
+  rezerva = 0,
+  /** Uglovi se preskaču po ovome (bez njega — po `preskoci`). */
+  preskociUgao: ((ivica: number) => boolean) | undefined = preskoci,
+): boolean {
+  const stavke = p.celije.get(kljuc(celija(x), celija(y)));
+  if (!stavke) return false;
+  for (const j of stavke) {
+    if (j < 0) {
+      const u = p.uglovi[-1 - j]!;
+      if (preskociUgao?.(u.ivice[0]) || preskociUgao?.(u.ivice[1])) continue;
+      if (uTrouglu(u, x, y)) return true;
+      if (rezerva > 0 && Math.min(doDuzi(u.a, u.b, x, y), doDuzi(u.b, u.c, x, y), doDuzi(u.c, u.a, x, y)) <= rezerva) return true;
+      continue;
+    }
+    const iv = p.segIvica[j]!;
+    if (preskoci?.(iv)) continue;
+    const pola = p.seg[5 * j + 4]! + rezerva;
+    if (udaljenost2(p, j, x, y) <= pola * pola) return true;
   }
   return false;
 }

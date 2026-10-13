@@ -3,6 +3,7 @@ import { polygonsOverlap, rectCorners } from "../sim/geometry";
 import { korakBota, noviBot, type IshodVoznje, type Korak, type PlanBota } from "./botGrad";
 import type { Manevar } from "./mreza";
 import { dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, IGRAC } from "./saobracaj";
+import { korakPjesaka, noviPjesaci, udaraPjesaka } from "./pjesaci";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
 import { noviSudija, sudi } from "./sudija";
 import type { SvijetGrada } from "./svijet";
@@ -17,6 +18,10 @@ import { naPutanji } from "./vozacGrad";
  * odluku po istim pravilima (vozilo ispred, ustupanje, zatvoren izlaz), a bot
  * je poštuje kao gornju granicu brzine. Sudi mu se sve što i igraču: i sudar
  * sa drugim vozilom, i oduzeto prvenstvo (neko je zbog njega naglo kočio).
+ *
+ * Oko njega su i pješaci (stavka 8, najviše — 60): ustupa im kao i drugi
+ * vozači (odluka saobraćaja), sudi mu se prednost pješaka, a udar pješaka je
+ * kraj vožnje.
  */
 export interface IshodUSaobracaju extends IshodVoznje {
   /** Zastoji u kojima je bot učestvovao. */
@@ -24,6 +29,8 @@ export interface IshodUSaobracaju extends IshodVoznje {
   /** Svi zastoji drugih vozila za to vrijeme (mjeri ih i fuzz saobraćaja). */
   zastoja: number;
   sudara: number;
+  /** Udarenih pješaka (vožnja se tu prekida). */
+  pjesaka: number;
 }
 
 export function odveziRutuUSaobracaju(
@@ -36,7 +43,7 @@ export function odveziRutuUSaobracaju(
   gustina = 1,
   najvise = 1800,
 ): IshodUSaobracaju {
-  const { povrsina, raskrsnice, zaSudiju: g } = svijet;
+  const { povrsina, zaSudiju: g } = svijet;
   const a = plan.put.tacke[0]!;
   const b = plan.put.tacke[1]!;
   const st: SlobodnoVozilo = {
@@ -57,6 +64,11 @@ export function odveziRutuUSaobracaju(
   sb.gustinaVanZona = 3;
   sb.t = t0;
   const senka = dodajVanjsko(sb, plan, koraci);
+  // Pješaci: najviše (gustina 3), na istom satu kao saobraćaj.
+  const pjesaci = noviPjesaci(svijet, sjeme, 1);
+  pjesaci.gustinaVanZona = 3;
+  pjesaci.t = t0;
+  sb.pjesaci = pjesaci;
 
   // Oduzeto prvenstvo, kao u igri: na kraju prolaza kroz raskrsnicu.
   let ulazak: { r: number; t: number } | null = null;
@@ -81,6 +93,7 @@ export function odveziRutuUSaobracaju(
 
   let udara = 0;
   let sudara = 0;
+  let pjesaka = 0;
   const sudari = new Map<number, number>();
   let prviUdar: IshodVoznje["prviUdar"] = null;
   while (!bot.gotov && sb.t - t0 < najvise) {
@@ -91,8 +104,21 @@ export function odveziRutuUSaobracaju(
     // svoj sat na `t + DT`; sudija sudi poslije pomaka, kao u `odveziRutu`.
     const t = sb.t;
     korakSaobracaja(sb, { x: st.x, y: st.y }, null);
-    const ulaz = korakBota(bot, raskrsnice, st, t, senka.odlukaV ?? Infinity);
+    const ulaz = korakBota(bot, g, st, t, senka.odlukaV ?? Infinity);
     korakSlobodno(povrsina, st, ulaz);
+    korakPjesaka(
+      pjesaci,
+      { x: st.x, y: st.y },
+      sb.npc.map((n) => ({ id: n.id, x: n.x, y: n.y, ugao: n.ugao, v: n.v, duzina: CAR_LENGTH, sirina: CAR_WIDTH })),
+    );
+    // Udar pješaka: kraj vožnje (zadatak, odjeljak 6).
+    const tijelo = { x: st.x, y: st.y, ugao: st.ugao, duzina: CAR_LENGTH, sirina: CAR_WIDTH };
+    const udaren = pjesaci.lista.find((x) => Math.abs(x.x - st.x) < CAR_LENGTH && Math.abs(x.y - st.y) < CAR_LENGTH && udaraPjesaka(tijelo, x));
+    if (udaren) {
+      pjesaka += 1;
+      sudija.prekrsaji.push({ vrsta: "pedestrianCollision", ozbiljnost: "fail", t, x: st.x, y: st.y, detalji: { pjesak: udaren.id } });
+      break;
+    }
     if (st.udar) {
       udara += 1;
       prviUdar ??= { s: bot.s, x: st.x, y: st.y, ugao: st.ugao };
@@ -111,7 +137,7 @@ export function odveziRutuUSaobracaju(
     // Zaustavio ga je saobraćaj (kolona, ustupanje, zatvoren izlaz) — nije
     // parkiranje (odluka korisnika 2026-09-30).
     const r = senka.razlog.vrsta;
-    sudi(g, sudija, st, t + DT, ulaz.indicator, r === "vozilo" || r === "ustupa" || r === "izlaz");
+    sudi(g, sudija, st, t + DT, ulaz.indicator, r === "vozilo" || r === "ustupa" || r === "izlaz" || r === "pjesak", pjesaci);
   }
   return {
     stigao: bot.gotov,
@@ -124,5 +150,6 @@ export function odveziRutuUSaobracaju(
     zastojaBota: sb.zastoji.filter((z) => z.ucesnici.includes(IGRAC)).length,
     zastoja: sb.zastoji.length,
     sudara,
+    pjesaka,
   };
 }

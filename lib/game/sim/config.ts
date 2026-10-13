@@ -2312,3 +2312,120 @@ export const GRAD_IGRAC_KOLONA = 10;
  * drugo vozilo — čeka da prođe (npr. lijevo skretanje i susretni).
  */
 export const GRAD_IGRAC_CEKA_PROLAZ = 30;
+
+// ── pješaci (faza 6, stavka 8) ─────────────────────────────────────────────
+
+/**
+ * Klase ulica bez trotoara za pješake: autoput i prilazi, servisni put i
+ * poljski put. Uz njih se trotoar i dalje crta (kao i dosad), ali pješak njime
+ * ne hoda — preko ušća servisnog puta prelazi kao preko kolskog ulaza.
+ */
+export const GRAD_PJ_KLASE_BEZ: readonly string[] = ["motorway", "motorway_link", "service", "track"];
+/** Trotoar se provjerava na svakih ovoliko [m]: tačka na asfaltu druge ulice nije trotoar. */
+export const GRAD_PJ_UZORAK = 3;
+/** Strana ulice čiji je ovoliki dio na asfaltu druge ulice nema trotoar (npr. uzak razdjelni pojas). */
+export const GRAD_PJ_NEVAZI_UDIO = 0.25;
+/** Kraj prelaza se vezuje za trotoar bliži od ovoga [m]. */
+export const GRAD_PJ_PRISTAJE = 1.6;
+/**
+ * Razdjelni pojas bulevara: pješak njime ide samo kad mora — put po njemu se
+ * računa kao ovoliko puta duži.
+ */
+export const GRAD_PJ_SREDNJA_CIJENA = 4;
+/** Prelaz se u ruti računa kao ovoliko [m] duži (čekanje na ivičnjaku). */
+export const GRAD_PJ_PRELAZ_CIJENA = 8;
+/** Prelaz preko kraka semaforisane raskrsnice: do ovoliko [m] od ivice raskrsnice (`odsjeci`). */
+export const GRAD_PJ_PRELAZ_UZ_RASKRSNICU = 30;
+/** Brzina hoda [m/s]: od–do, po pješaku. */
+export const GRAD_PJ_BRZINA_OD = 1.1;
+export const GRAD_PJ_BRZINA_DO = 1.6;
+/**
+ * Pješak drži desnu stranu trotoara (i prelaza), do ovoliko [m] od sredine —
+ * mimoilaze se. Malo: tijelo (`GRAD_PJ_POLUPRECNIK`) ostaje bar četvrt metra
+ * od ivičnjaka, i auto koje ga okrzne nije na trotoaru.
+ */
+export const GRAD_PJ_BOCNO = 0.15;
+/**
+ * Pješak se crta ovoliko puta veći od stvarnog (ramena ~1 m): ulice su u igri
+ * šire od stvarnih, a stvaran pješak je na ekranu telefona tačka.
+ */
+export const GRAD_PJ_CRTEZ = 1.6;
+/** Polumjer tijela pješaka [m] (trup kako je nacrtan, bez ruku) — za sudar i za „na putu je". */
+export const GRAD_PJ_POLUPRECNIK = 0.4;
+/**
+ * Broj pješaka oko igrača po gustini zone (`pedestrianDensity`, 0–3). Van
+ * nacrtanih zona važi gustina 1. Mjerilo (zadatak, odjeljak 8): 60.
+ */
+export const GRAD_PJ_PO_GUSTINI_ZONE: readonly number[] = [0, 30, 45, 60];
+export const GRAD_PJ_GUSTINA_ZONE_PODRAZUMIJEVANO = 1;
+/** Pojava: pri prvom popunjavanju od ovoliko [m], kasnije u prstenu van kadra; nestaje dalje od `NESTAJE`. */
+export const GRAD_PJ_POCETAK_OD = 10;
+export const GRAD_PJ_POJAVA_OD = 70;
+export const GRAD_PJ_POJAVA_DO = 200;
+export const GRAD_PJ_NESTAJE = 260;
+/** Najviše jedan novi pješak na ovoliko [s] (kad ih fali). */
+export const GRAD_PJ_POJAVA_RITAM = 0.4;
+/** Cilj pješaka: ovoliko [m] vazdušnom linijom od mjesta pojave. */
+export const GRAD_PJ_CILJ_OD = 80;
+export const GRAD_PJ_CILJ_DO = 350;
+/** Najviše koraka A* po pješačkoj mreži za jednu rutu. */
+export const GRAD_PJ_A_ZVIJEZDA = 20000;
+/** Ćelija indeksa trotoara [m]. */
+export const GRAD_PJ_CELIJA = 50;
+/**
+ * Na ivičnjaku pred zebrom pješak stoji bar ovoliko [s] prije nego što stupi
+ * na kolovoz — to je „jasno pokazuje namjeru" (odluka korisnika 2026-10-08).
+ */
+export const GRAD_PJ_NAMJERA = 1;
+/**
+ * Pješački semafor na sredini ulice (stavka 8, odluka korisnika 2026-10-08):
+ * zeleno za vozila, zeleno za pješake, i trepćuće zeleno za pješake (ko je na
+ * prelazu završava, novi ne kreću) [s]. Žuto i „sve crveno" kao na raskrsnici.
+ */
+export const GRAD_PJ_SEMAFOR_VOZILA = 30;
+export const GRAD_PJ_SEMAFOR_PJESACI = 12;
+export const GRAD_PJ_SEMAFOR_ZAVRSI = 6;
+/**
+ * Sredina trotoara je bar ovoliko [m] od asfalta druge ulice — inače tu
+ * trotoara nema (razdjelni pojas uži od toga, ulice jedna uz drugu).
+ */
+export const GRAD_PJ_REZERVA = 0.5;
+/**
+ * Sudija bilježi namjeru pješaka na ivičnjaku (i da li je auto tada moglo
+ * udobno stati) kad je auto do ovoliko [m] od zebre.
+ */
+export const GRAD_PJ_NAMJERA_DO = 80;
+/**
+ * Van zebre (zadatak, odjeljak 6: „rijetko i van njih na nivou ≥4"): ovoliki
+ * udio pješaka na nivou 4 i 5 jednom na putu pređe ulicu van prelaza — samo
+ * preko dvosmjerne ulice do ove širine [m], dalje od zebre od `GRAD_PJ_VAN_OD_ZEBRE`.
+ */
+export const GRAD_PJ_VAN_ZEBRE_UDIO = 0.08;
+export const GRAD_PJ_VAN_ZEBRE_SIRINA = 9;
+export const GRAD_PJ_VAN_OD_ZEBRE = 25;
+/**
+ * Van zebre pješak stupa na kolovoz tek kad nijedno vozilo nije bliže od
+ * ovolikog dijela udobnog zaustavnog puta (+ `GRAD_PJ_VAN_REZERVA` m) — vozač
+ * ga vidi na vrijeme.
+ */
+export const GRAD_PJ_VAN_PUTA = 1.5;
+export const GRAD_PJ_VAN_REZERVA = 10;
+/** Pješak koji na ivičnjaku čeka duže od ovoga [s] odustaje od tog prelaza i ide drugim putem. */
+export const GRAD_PJ_STRPLJENJE = 45;
+/**
+ * Prelaz ide preko kolovoza ulice zebre i njoj paralelnih (druga kolovozna
+ * traka bulevara): kosinus ugla između njih bar ovoliki. Ulica koja se tu
+ * priključuje nije dio prelaza.
+ */
+export const GRAD_PJ_PRELAZ_PARALELNO = 0.8;
+/** Vozilo se ne pojavljuje bliže od ovoga [m] od pješaka (stavka 8). */
+export const GRAD_PJ_POJAVA_VOZILA = 12;
+/**
+ * Vozilo koje je prošlo mjesto čekanja pred zebrom staje ovoliko [m] prije
+ * nego tijelom dodirne zebru, ako to stigne udobnim kočenjem (stavka 8).
+ */
+export const GRAD_PJ_TIK_PRED_ZEBROM = 0.3;
+/** Prelazi na putu vozila traže se i ovoliko [m] preko kraja njegove rute (stavka 8). */
+export const GRAD_PJ_PREKO_KRAJA = 8;
+/** „Pješak na putu": gdje će pješak na kolovozu biti za ovoliko [s] (stavka 8). */
+export const GRAD_PJ_PREDVIDJANJE = 1.5;

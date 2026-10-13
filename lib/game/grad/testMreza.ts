@@ -124,7 +124,7 @@ export function testPaket(
   n.rsOd = new Uint32Array(zabrane.map((z) => z[1]));
   n.rsCvor = new Uint32Array(zabrane.map((z) => z[2]));
   n.rsDo = new Uint32Array(zabrane.map((z) => z[3]));
-  const paket = { zaglavlje: { klase, stringovi, vrsteObjekata }, n } as unknown as Paket;
+  const paket = { zaglavlje: { klase, stringovi, vrsteObjekata, vrstePovrsina: [], vrsteZgrada: [], vrsteLinija: [] }, n } as unknown as Paket;
   return { paket, mreza: napraviMrezu(paket) };
 }
 

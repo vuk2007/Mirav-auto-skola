@@ -31,6 +31,7 @@ import {
   GRAD_SEMAFOR_VELICINA,
   GRAD_SEMAFOR_VISINA,
   GRAD_TROTOAR,
+  GRAD_PJ_CRTEZ,
   GRAD_ZEBRA_VRSTE,
   GRAD_ZNAK_NAJMANJE_PX,
   GRAD_ZNAK_VELICINA,
@@ -40,6 +41,7 @@ import type { Point } from "../sim/types";
 import type { Paket } from "../grad/paket";
 import { geometrijaDekora, type BojeDekora } from "../grad/dekor";
 import { svjetlo, zelenaStrelica, type Raskrsnice } from "../grad/raskrsnica";
+import { svjetloZaVozila, type PjesackiSemafor } from "../grad/pjesackiSemafor";
 import type { Produzeci } from "../grad/linije";
 import type { Temena } from "../grad/temena";
 import type { CrtezPravila, Semafor, Znak } from "../grad/znakovi";
@@ -87,6 +89,11 @@ const BOJE = {
 
 /** Boje drugih vozila — prigušene, da se plavi auto igrača izdvaja. */
 const BOJE_VOZILA: readonly string[] = ["#e9e6df", "#3b3d42", "#9aa0a6", "#a33a32", "#c9b48a", "#4f6b4a", "#6b5a7a", "#d7d3c8"];
+
+/** Odjeća pješaka (stavka 8) — po pješaku jedna. */
+const BOJE_PJESAKA: readonly string[] = ["#b5473a", "#2f5f8a", "#4a7a4f", "#7d5a8c", "#c7913a", "#4b5058", "#a8566f", "#3f8582"];
+const KOSA_PJESAKA: readonly string[] = ["#2b2118", "#5a3b22", "#1c1c1c", "#8a6a3d"];
+const KOZA_PJESAKA = "#d9b08c";
 
 /** Površine po vrsti iz paketa. Vrsta koje nema ne crta se. */
 const POVRSINE: Record<string, string> = {
@@ -297,6 +304,8 @@ export interface PravilaZaCrtanje {
   crtez: CrtezPravila;
   /** Produžeci ivica do raskrsnica i promjena traka — za pune linije pred raskrsnicom (editor). */
   produzeci?: Produzeci;
+  /** Pješački semafori na sredini ulice (stavka 8) — njihovo svjetlo za vozila. */
+  pjesackiSemafori?: readonly PjesackiSemafor[];
 }
 
 export interface GradScena {
@@ -312,6 +321,16 @@ export interface GradScena {
     koci: boolean;
     zmigavac: "left" | "right" | null;
   }[];
+  /**
+   * Pješaci (stavka 8): gdje su, kuda gledaju, boja odjeće (indeks), pređeni
+   * put (korak ruku) i da li stoje.
+   */
+  pjesaci?: readonly { pos: Point; ugao: number; boja: number; korak: number; stoji: boolean }[];
+  /**
+   * Svjetla za pješake na prelazima sa semaforom (stavka 8), na oba kraja
+   * prelaza: zeleno, trepćuće zeleno (završavaju) ili crveno.
+   */
+  pjesackaSvjetla?: readonly { x: number; y: number; stanje: "zeleno" | "zavrsi" | "crveno" }[];
   /** Auto igrača; `null` u editoru — grad bez auta. */
   igrac: {
     pos: Point;
@@ -750,7 +769,7 @@ export async function createGradRenderer(
       app.renderer.resize(cssW, cssH, dpr);
     },
 
-    draw({ kadar: k, igrac, osvjetljenje: o, simT, vozila = [] }) {
+    draw({ kadar: k, igrac, osvjetljenje: o, simT, vozila = [], pjesaci = [], pjesackaSvjetla = [] }) {
       kadar += 1;
       const pogled = vidljivo(k);
       vidljivih = 0;
@@ -834,8 +853,23 @@ export async function createGradRenderer(
         for (const { sprite, sjaj: sj, sem } of x.semafori) {
           const v = naNagibu(sem.x, sem.y, GRAD_SEMAFOR_VISINA);
           if (sem.pomak === 0) stubovi.moveTo(sem.x, sem.y).lineTo(v.x, v.y);
-          const rs = pravila.raskrsnice.lista[sem.raskrsnica]!;
           const vis = velicina(GRAD_SEMAFOR_VELICINA);
+          if (sem.pjesacki !== undefined) {
+            // Pješački semafor na sredini ulice: svjetlo za vozila.
+            const pj = pravila.pjesackiSemafori?.[sem.pjesacki];
+            const stanje = pj ? svjetloZaVozila(pj, simT) : "crveno";
+            const sir = (vis * 40) / 96;
+            sprite.position.set(v.x, v.y);
+            sprite.rotation = uspravno;
+            sj.position.set(v.x, v.y);
+            sprite.texture = teksture.semafor(stanje, null);
+            sprite.height = vis;
+            sprite.width = sir;
+            sj.visible = true;
+            sj.tint = stanje === "zeleno" ? "#34c759" : stanje === "zuto" ? "#ffcc00" : "#ff3b30";
+            continue;
+          }
+          const rs = pravila.raskrsnice.lista[sem.raskrsnica]!;
           const sir = (vis * 40) / 96;
           // Glave na istom stubu jedna pored druge, udesno na ekranu.
           const px = v.x + Math.cos(uspravno) * sir * 1.1 * sem.pomak;
@@ -920,6 +954,27 @@ export async function createGradRenderer(
       dinamika.clear();
       farovi.clear();
       snop.visible = false;
+      // Svjetla za pješake: mala glava semafora na ivičnjaku, uz prelaz.
+      const trepce = Math.floor(simT * 2) % 2 === 0;
+      for (const s of pjesackaSvjetla) {
+        const boja = s.stanje === "crveno" ? "#ff3b30" : s.stanje === "zeleno" || trepce ? "#34c759" : "#1d2a1f";
+        dinamika.circle(s.x, s.y, 0.45).fill("#2b2d31").circle(s.x, s.y, 0.3).fill(boja);
+      }
+      // Pješaci (stavka 8): odozgo — ramena, ruke koje se njišu u hodu, glava.
+      // Veći od stvarnih (`GRAD_PJ_CRTEZ`), kao što su i ulice šire: inače
+      // su na ekranu telefona tačka. Sudar se računa po ovom crtežu.
+      const v = GRAD_PJ_CRTEZ;
+      for (const p of pjesaci) {
+        const c = Math.cos(p.ugao) * v;
+        const s = Math.sin(p.ugao) * v;
+        dinamika.setTransform(c, s, -s, c, p.pos.x, p.pos.y);
+        const zamah = p.stoji ? 0 : Math.sin(p.korak * 4.5 / v) * 0.2;
+        dinamika.circle(zamah, -0.3, 0.085).fill(KOZA_PJESAKA);
+        dinamika.circle(-zamah, 0.3, 0.085).fill(KOZA_PJESAKA);
+        dinamika.ellipse(0, 0, 0.17, 0.31).fill(BOJE_PJESAKA[p.boja % BOJE_PJESAKA.length]!).stroke({ width: 0.03, color: "rgba(0,0,0,0.35)" });
+        dinamika.circle(0.02, 0, 0.13).fill(KOSA_PJESAKA[p.boja % KOSA_PJESAKA.length]!);
+      }
+      dinamika.resetTransform();
       // Drugi vozači (stavka 7): ista karoserija, njihova boja; kočnica i
       // žmigavac kao kod igrača, u mraku i kratak snop farova.
       for (const v of vozila) {

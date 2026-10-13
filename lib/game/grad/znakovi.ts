@@ -62,8 +62,11 @@ export interface Znak {
 }
 
 export interface Semafor {
+  /** Raskrsnica i krak; kod pješačkog semafora na sredini ulice (`pjesacki`) −1. */
   raskrsnica: number;
   krak: number;
+  /** Pješački semafor na sredini ulice (stavka 8): indeks u `GradZaSudiju.pjesackiSemafori`. */
+  pjesacki?: number;
   x: number;
   y: number;
   /**
@@ -316,6 +319,19 @@ export function crtezPravila(
     const iv = m.ivice[z.ivica]!;
     izlaz.znakovi.push({ vrsta: z.vrsta, ...desnoOdUlaza(iv, z.naprijed ? 1 : 0, z.s), izveden: z.izveden, nivo: 0 });
   }
+  // Pješački semafor na sredini ulice (stavka 8): stop-linija pred zebrom i
+  // semafor desno, za oba smjera — po tome sudi `redLightPedestrian`.
+  (g?.pjesackiSemafori ?? []).forEach((sem, i) => {
+    const iv = m.ivice[sem.ivica]!;
+    for (const kraj of [1, 0] as const) {
+      // Vožnja ka kraju `b` je `a → b`: linija `linijaNaprijed`.
+      if (iv.smjer !== 0 && iv.smjer !== (kraj === 1 ? 1 : -1)) continue;
+      const s = kraj === 1 ? sem.linijaNaprijed : sem.linijaNazad;
+      const [w0, w1] = trakeUlaza(iv, kraj);
+      izlaz.pune.push(poprijeko(iv, s, w0, w1, GRAD_LINIJA_STOP));
+      izlaz.semafori.push({ raskrsnica: -1, krak: -1, pjesacki: i, ...desnoOdUlaza(iv, kraj, s), manevri: null, dopunska: false, pomak: 0 });
+    }
+  });
   // Znakovi na (skoro) istom mjestu dijele stub, jedan iznad drugog.
   const stubovi: { x: number; y: number; znakova: number }[] = [];
   for (const z of izlaz.znakovi) {

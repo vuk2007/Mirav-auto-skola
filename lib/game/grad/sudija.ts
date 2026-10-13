@@ -24,6 +24,7 @@ import {
   GRAD_TOLERANCIJA_BRZINE,
   GRAD_ZEBRA_DUBINA,
   GRAD_ZEBRA_VRSTE,
+  GRAD_PJ_NAMJERA_DO,
   STOP_HOLD,
   STOP_ZONE,
   STOPPED_SPEED,
@@ -49,6 +50,10 @@ import {
 import { napraviOgranicenja, ogranicenjeNa, type Ogranicenja } from "./brzine";
 import { linijeSaVrstom, pojasBusa, produzeci, punaNa, type Produzeci } from "./linije";
 import type { Zona } from "./overlay";
+import { pjesackiSemafori, svjetloZaVozila, type PjesackiSemafor } from "./pjesackiSemafor";
+import { pjesaciSaPrednoscu, type Pjesaci } from "./pjesaci";
+import { doZebre, mozeMirnoStati, polovinaUlice, svjetloPjesaka, tijeloNaZebri } from "./trotoari";
+import { headingAt, pointAt } from "../sim/geometry";
 import type { SlobodnoVozilo } from "./slobodno";
 
 /**
@@ -89,7 +94,14 @@ export type VrstaGradskogPrekrsaja =
   | "busLane"
   /** Stavka 7: sudar sa drugim vozilom, i oduzeto prvenstvo (sude se uz saobraćaj). */
   | "collision"
-  | "rightOfWay";
+  | "rightOfWay"
+  /**
+   * Stavka 8: pješak sa prednošću na prelazu (odluka korisnika 2026-10-08),
+   * crveno na pješačkom semaforu, i udar pješaka (kraj vožnje).
+   */
+  | "pedestrianRightOfWay"
+  | "redLightPedestrian"
+  | "pedestrianCollision";
 
 export interface GradskiPrekrsaj {
   vrsta: VrstaGradskogPrekrsaja;
@@ -126,6 +138,8 @@ export interface GradZaSudiju {
   ogranicenja: Ogranicenja;
   /** Za pune linije pred raskrsnicom: produžeci ivica do raskrsnica i do promjene traka (`linije.ts`). */
   produzeci: Produzeci;
+  /** Pješački semafori na sredini ulice (stavka 8). */
+  pjesackiSemafori: PjesackiSemafor[];
 }
 
 export function gradZaSudiju(
@@ -168,10 +182,96 @@ export function gradZaSudiju(
     preliv: prelivi(m, raskrsnice, odsjeci),
     ogranicenja: napraviOgranicenja(paket, m, zone),
     produzeci: produzeci(m, odsjeci),
+    pjesackiSemafori: pjesackiSemafori(
+      paket,
+      raskrsnice.semaforiRaskrsnica,
+      zebre,
+      raskrsnice.lista.filter((r) => r.plan).flatMap((r) => r.cvorovi.map((c) => m.cvorovi[c]!)),
+    ),
   };
 }
 
 const MANEVRI: readonly Manevar[] = ["lijevo", "pravo", "desno", "polukruzno"];
+
+// ── pješaci (stavka 8) ─────────────────────────────────────────────────────
+
+/**
+ * Pješak sa prednošću (odluka korisnika 2026-10-08): kad tijelo auta stupi na
+ * pojas zebre, na prelazu ne smije biti pješak koji još nije prešao polovinu
+ * ulice auta, ni pješak koji je na ivičnjaku pokazao namjeru dok je auto još
+ * moglo udobno stati. Isto pravilo voze drugi vozači (`pjesaciSaPrednoscu`).
+ */
+function sudiPjesake(s: Sudija, st: SlobodnoVozilo, t: number, pj: Pjesaci): void {
+  const mp = pj.mreza;
+  const nx = st.x + Math.cos(st.ugao) * (CAR_LENGTH / 2);
+  const ny = st.y + Math.sin(st.ugao) * (CAR_LENGTH / 2);
+  // Namjera: zapisuje se kad je pješak prvi put viđen na ivičnjaku.
+  const cekaju = new Set<number>();
+  for (const x of pj.lista) {
+    if (x.stanje !== "ceka" || x.prelaz < 0) continue;
+    const p = mp.prelazi[x.prelaz]!;
+    // Na prelazu sa semaforom namjera počinje kad pješaci dobiju zeleno.
+    if (p.semafor && svjetloPjesaka(pj.svijet, p, t)?.stanje !== "zeleno") continue;
+    cekaju.add(x.id);
+    if (s.namjere.has(x.id)) continue;
+    if (doZebre(p, nx, ny) > GRAD_PJ_NAMJERA_DO) continue;
+    s.namjere.set(x.id, { prelaz: x.prelaz, mogaoStati: mozeMirnoStati(st.x, st.y, st.ugao, st.v, CAR_LENGTH, CAR_WIDTH, p) });
+  }
+  for (const id of [...s.namjere.keys()]) if (!cekaju.has(id)) s.namjere.delete(id);
+  // Prelazi blizu: auto stupa na zebru.
+  const sada = new Set<number>();
+  for (const p of mp.prelazi) {
+    if (Math.abs(p.centar.x - st.x) > 25 || Math.abs(p.centar.y - st.y) > 25) continue;
+    if (!tijeloNaZebri(st.x, st.y, st.ugao, CAR_LENGTH, CAR_WIDTH, p)) continue;
+    sada.add(p.id);
+    // Prvi korak sudije: auto je možda već na zebri — tu nije stupilo sada.
+    if (!s.naZebrama || s.naZebrama.has(p.id) || st.v < 0.5) continue;
+    const ux = (p.b.x - p.a.x) / p.duzina;
+    const uy = (p.b.y - p.a.y) / p.duzina;
+    const w = (st.x - p.a.x) * ux + (st.y - p.a.y) * uy;
+    const { naPrelazu, cekaju: naIvicnjaku } = pjesaciSaPrednoscu(pj, p, polovinaUlice(p, w));
+    const pjesak = naPrelazu[0] ?? naIvicnjaku.find((x) => s.namjere.get(x.id)?.mogaoStati);
+    if (pjesak) prijavi(s, st, t, "pedestrianRightOfWay", { pjesak: pjesak.id, gdje: naPrelazu[0] ? "naPrelazu" : "naIvicnjaku" });
+  }
+  s.naZebrama = sada;
+}
+
+/**
+ * Pješački semafor na sredini ulice ispred auta (na njegovoj ivici, u smjeru
+ * kretanja): prolazak stop-linije na crveno — ili na žuto upaljeno dok je
+ * auto još moglo stati — je `redLightPedestrian` (kao `redLight`).
+ */
+function sudiPjesackiSemafor(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, ivica: number, sNaIvici: number, krece: 1 | -1): void {
+  const iv = g.mreza.ivice[ivica]!;
+  if (s.pjesackiPrilaz) {
+    const p = s.pjesackiPrilaz;
+    const sem = g.pjesackiSemafori[p.semafor]!;
+    const doLinije = nosDoLinije(st, p.linija, p.pravac);
+    const sv = svjetloZaVozila(sem, t);
+    if (sv === "zuto" && p.svjetlo === "zeleno") p.zutoPrekasno = p.doLinije > 0 && p.doLinije / Math.max(st.v, 0.1) < YELLOW_COMMIT_TTC;
+    if (p.doLinije > 0 && doLinije <= 0 && st.v > 0 && (sv === "crveno" || (sv === "zuto" && !p.zutoPrekasno))) {
+      prijavi(s, st, t, "redLightPedestrian", { svjetlo: sv });
+    }
+    p.doLinije = doLinije;
+    p.svjetlo = sv;
+    if (doLinije < -CAR_LENGTH - 5 || doLinije > GRAD_PRILAZ_DO + 10) s.pjesackiPrilaz = null;
+  }
+  if (!s.pjesackiPrilaz) {
+    g.pjesackiSemafori.forEach((sem, i) => {
+      if (s.pjesackiPrilaz || sem.ivica !== ivica) return;
+      const sL = krece === 1 ? sem.linijaNaprijed : sem.linijaNazad;
+      const ispred = krece === 1 ? sL - sNaIvici : sNaIvici - sL;
+      if (ispred <= 0 || ispred > GRAD_PRILAZ_DO) return;
+      const h = headingAt(iv.tacke, iv.cum, sL);
+      const pravac = krece === 1 ? h : { x: -h.x, y: -h.y };
+      const linija = pointAt(iv.tacke, iv.cum, sL);
+      const doLinije = nosDoLinije(st, linija, pravac);
+      if (doLinije <= 0) return;
+      const sv = svjetloZaVozila(sem, t);
+      s.pjesackiPrilaz = { semafor: i, linija, pravac, doLinije, svjetlo: sv, zutoPrekasno: sv === "zuto" && doLinije / Math.max(st.v, 0.1) < YELLOW_COMMIT_TTC };
+    });
+  }
+}
 
 /** Prilaz raskrsnici sa kontrolisanog kraka — dok se ne pređe stop-linija. */
 interface Prilaz {
@@ -277,6 +377,23 @@ export interface Sudija {
   busPrijavljen: boolean;
   /** Ograničenje u prošlom koraku [km/h] — isto kao na brzinomjeru. */
   ogranicenje: number;
+  /** Pješački semafor na sredini ulice ispred (stavka 8) — kao `prilaz`. */
+  pjesackiPrilaz: {
+    semafor: number;
+    linija: Point;
+    pravac: Point;
+    doLinije: number;
+    svjetlo: Svjetlo;
+    zutoPrekasno: boolean;
+  } | null;
+  /**
+   * Pješaci koji na ivičnjaku pokazuju namjeru da pređu (stavka 8): na kojem
+   * prelazu, i da li je auto u tom trenutku moglo udobno stati — samo tada
+   * im mora ustupiti (odluka korisnika 2026-10-08).
+   */
+  namjere: Map<number, { prelaz: number; mogaoStati: boolean }>;
+  /** Prelazi preko čijeg je pojasa zebre auto bilo u prošlom koraku; `null` prije prvog koraka. */
+  naZebrama: Set<number> | null;
 }
 
 export function noviSudija(nivo: Level): Sudija {
@@ -305,6 +422,9 @@ export function noviSudija(nivo: Level): Sudija {
     busT: 0,
     busPrijavljen: false,
     ogranicenje: 0,
+    pjesackiPrilaz: null,
+    namjere: new Map(),
+    naZebrama: null,
   };
 }
 
@@ -617,10 +737,13 @@ export function sudi(
   t: number,
   zmigavac: Strana | null = null,
   uKoloni = false,
+  /** Pješaci (stavka 8) — bez njih se pravila za pješake ne sude. */
+  pjesaci: Pjesaci | null = null,
 ): void {
   s.zmigavac = zmigavac;
   const naUlici = ulicaAuta(g, s, st);
   if (!naUlici) return;
+  if (pjesaci) sudiPjesake(s, st, t, pjesaci);
   const osa = naUlici.osa;
   const iv = g.mreza.ivice[osa.ivica]!;
   const glava = { x: Math.cos(st.ugao), y: Math.sin(st.ugao) };
@@ -974,6 +1097,9 @@ export function sudi(
     // Prijava se obnavlja tek kad se vrati ispod ograničenja, ne tolerancije.
     if (kmh <= ogranicenje) s.brzinaPrijavljena = false;
   }
+
+  // ── pješački semafor na sredini ulice (stavka 8) ─────────────────────────
+  sudiPjesackiSemafor(g, s, st, t, osa.ivica, osa.s, krece);
 
   // ── zaustavljanje: zebra, raskrsnica, stajalište ────────────────────────
   // Auto koje još nije krenulo (start vožnje) ne „zaustavlja se" nigdje.

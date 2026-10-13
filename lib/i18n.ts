@@ -244,6 +244,13 @@ export interface Dict {
   gradRuleStop: string;
   gradRuleCollision: string;
   gradRuleRightOfWay: string;
+  gradRulePedestrianCrossing: string;
+  gradRulePedestrianIntent: string;
+  gradRuleRedLightPedestrian: string;
+  gradRulePedestrianCollision: string;
+  gradHitTitle: string;
+  gradHitText: string;
+  gradHitAgain: string;
   gradRuleWrongWay: string;
   gradRuleTurnBan: string;
   gradRuleUTurnSignal: string;
@@ -340,6 +347,9 @@ export interface Dict {
   vioStopSign: string;
   vioRedLight: string;
   vioCollision: string;
+  vioPedestrianRightOfWay: string;
+  vioRedLightPedestrian: string;
+  vioPedestrianCollision: string;
   vioObstruction: string;
   vioSpeeding: string;
 
@@ -699,6 +709,13 @@ const me: Dict = {
   gradRuleStop: "Na znak STOP auto mora potpuno stati ispred stop-linije.",
   gradRuleCollision: "Udario si drugo vozilo. Drži razmak i propusti onoga ko ima prednost.",
   gradRuleRightOfWay: "Vozilo koje je imalo prednost moralo je naglo da koči zbog tebe.",
+  gradRulePedestrianCrossing: "Pješak je bio na pješačkom prelazu i još nije prešao tvoju polovinu ulice. Stani pred zebrom i propusti ga.",
+  gradRulePedestrianIntent: "Pješak je stajao na ivičnjaku uz zebru i čekao da pređe, a ti si još mogao mirno da staneš. Pješaku koji pokazuje namjeru da pređe ustupa se prvenstvo.",
+  gradRuleRedLightPedestrian: "Prošao si kroz crveno na semaforu pješačkog prelaza. Dok pješaci imaju zeleno, vozila stoje.",
+  gradRulePedestrianCollision: "Udario si pješaka. Vožnja je gotova — pazi na pješake na prelazima i na one koji izađu na kolovoz.",
+  gradHitTitle: "Vožnja je prekinuta",
+  gradHitText: "Na pravom ispitu ovo je kraj ispita — i najteža posljedica greške za volanom.",
+  gradHitAgain: "Vozi ponovo",
   gradRuleWrongWay: "Jednosmjernom ulicom se vozi samo u dozvoljenom smjeru — na njenom ulazu stoji znak zabrane ulaska.",
   gradRuleTurnBan: "Znak na tom kraku raskrsnice zabranjuje ovaj pravac.",
   gradRuleUTurnSignal: "Polukružno okretanje je zabranjeno u raskrsnici sa semaforom.",
@@ -799,6 +816,9 @@ const me: Dict = {
   vioStopSign: "Prolazak stop-linije bez zaustavljanja",
   vioRedLight: "Prolazak na crveno svjetlo",
   vioCollision: "Sudar",
+  vioPedestrianRightOfWay: "Nisi propustio pješaka",
+  vioRedLightPedestrian: "Crveno na pješačkom semaforu",
+  vioPedestrianCollision: "Udaren pješak",
   vioObstruction: "Zadržavanje saobraćaja",
   vioSpeeding: "Prekoračenje dozvoljene brzine",
 
@@ -1143,6 +1163,13 @@ const en: Dict = {
   gradRuleStop: "At a STOP sign the car must stop completely before the stop line.",
   gradRuleCollision: "You hit another vehicle. Keep your distance and give way to whoever has priority.",
   gradRuleRightOfWay: "A vehicle that had priority had to brake hard because of you.",
+  gradRulePedestrianCrossing: "A pedestrian was on the crossing and had not yet passed your half of the road. Stop before the zebra and let them cross.",
+  gradRulePedestrianIntent: "A pedestrian was waiting at the kerb by the zebra, and you could still have stopped calmly. A pedestrian who shows the intention to cross has priority.",
+  gradRuleRedLightPedestrian: "You passed a red light at a pedestrian crossing. While pedestrians have green, vehicles stop.",
+  gradRulePedestrianCollision: "You hit a pedestrian. The drive is over — watch for pedestrians on crossings and for anyone who steps onto the road.",
+  gradHitTitle: "Drive stopped",
+  gradHitText: "On a real driving test this ends the exam — and it is the worst outcome of a mistake behind the wheel.",
+  gradHitAgain: "Drive again",
   gradRuleWrongWay: "A one-way street is driven only in the allowed direction — a no-entry sign stands at its entrance.",
   gradRuleTurnBan: "A sign on that arm of the junction forbids this direction.",
   gradRuleUTurnSignal: "U-turns are forbidden at a junction with traffic lights.",
@@ -1243,6 +1270,9 @@ const en: Dict = {
   vioStopSign: "Crossed the stop line without stopping",
   vioRedLight: "Entered on a red light",
   vioCollision: "Collision",
+  vioPedestrianRightOfWay: "Failed to give way to a pedestrian",
+  vioRedLightPedestrian: "Red light at a pedestrian crossing",
+  vioPedestrianCollision: "Pedestrian hit",
   vioObstruction: "Obstructing traffic",
   vioSpeeding: "Exceeding the speed limit",
 
@@ -1592,6 +1622,13 @@ const sq: Dict = {
   gradRuleStop: "Te shenja STOP makina duhet të ndalojë plotësisht para vijës së ndalimit.",
   gradRuleCollision: "Godite një automjet tjetër. Mbaj distancën dhe jepi përparësi atij që e ka.",
   gradRuleRightOfWay: "Një automjet që kishte përparësi u detyrua të frenonte fort për shkakun tënd.",
+  gradRulePedestrianCrossing: "Këmbësori ishte në vendkalim dhe ende nuk e kishte kaluar gjysmën tënde të rrugës. Ndalo para zebrës dhe lëre të kalojë.",
+  gradRulePedestrianIntent: "Këmbësori priste në trotuar pranë zebrës, ndërsa ti ende mund të ndaloje qetë. Këmbësorit që tregon qëllimin për të kaluar i jepet përparësia.",
+  gradRuleRedLightPedestrian: "Kalove në të kuqe te semafori i vendkalimit të këmbësorëve. Kur këmbësorët kanë jeshile, automjetet ndalojnë.",
+  gradRulePedestrianCollision: "Godite një këmbësor. Drejtimi mbaroi — ki kujdes për këmbësorët në vendkalime dhe për ata që dalin në rrugë.",
+  gradHitTitle: "Drejtimi u ndërpre",
+  gradHitText: "Në një provim të vërtetë kjo e mbyll provimin — dhe është pasoja më e rëndë e një gabimi në timon.",
+  gradHitAgain: "Drejto përsëri",
   gradRuleWrongWay: "Rruga njëkahëshe ngiset vetëm në drejtimin e lejuar — në hyrje të saj është shenja e ndalimit të hyrjes.",
   gradRuleTurnBan: "Shenja në atë krah të kryqëzimit e ndalon këtë drejtim.",
   gradRuleUTurnSignal: "Kthimi prapa është i ndaluar në kryqëzim me semafor.",
@@ -1692,6 +1729,9 @@ const sq: Dict = {
   vioStopSign: "Kalim i vijës së ndalimit pa ndaluar",
   vioRedLight: "Kalim në dritën e kuqe",
   vioCollision: "Përplasje",
+  vioPedestrianRightOfWay: "Nuk i dhe përparësi këmbësorit",
+  vioRedLightPedestrian: "E kuqe te semafori i këmbësorëve",
+  vioPedestrianCollision: "Goditje e këmbësorit",
   vioObstruction: "Pengim i trafikut",
   vioSpeeding: "Tejkalim i shpejtësisë së lejuar",
 
@@ -2043,6 +2083,13 @@ const ru: Dict = {
   gradRuleStop: "У знака STOP машина должна полностью остановиться перед стоп-линией.",
   gradRuleCollision: "Вы столкнулись с другим автомобилем. Держите дистанцию и уступайте тому, у кого приоритет.",
   gradRuleRightOfWay: "Автомобиль, имевший преимущество, был вынужден резко затормозить из-за вас.",
+  gradRulePedestrianCrossing: "Пешеход был на переходе и ещё не прошёл вашу половину дороги. Остановитесь перед зеброй и пропустите его.",
+  gradRulePedestrianIntent: "Пешеход ждал у бордюра возле зебры, а вы ещё могли спокойно остановиться. Пешеходу, который показывает намерение перейти, уступают дорогу.",
+  gradRuleRedLightPedestrian: "Вы проехали на красный на светофоре пешеходного перехода. Пока у пешеходов зелёный, машины стоят.",
+  gradRulePedestrianCollision: "Вы сбили пешехода. Поездка окончена — следите за пешеходами на переходах и за теми, кто выходит на дорогу.",
+  gradHitTitle: "Поездка остановлена",
+  gradHitText: "На настоящем экзамене это конец экзамена — и самое тяжёлое последствие ошибки за рулём.",
+  gradHitAgain: "Ехать снова",
   gradRuleWrongWay: "По улице с односторонним движением едут только в разрешённом направлении — на въезде стоит знак «въезд запрещён».",
   gradRuleTurnBan: "Знак на этом въезде в перекрёсток запрещает это направление.",
   gradRuleUTurnSignal: "Разворот запрещён на перекрёстке со светофором.",
@@ -2143,6 +2190,9 @@ const ru: Dict = {
   vioStopSign: "Проезд стоп-линии без остановки",
   vioRedLight: "Проезд на красный свет",
   vioCollision: "Столкновение",
+  vioPedestrianRightOfWay: "Не пропустили пешехода",
+  vioRedLightPedestrian: "Красный на пешеходном светофоре",
+  vioPedestrianCollision: "Наезд на пешехода",
   vioObstruction: "Создание помех движению",
   vioSpeeding: "Превышение разрешённой скорости",
 
