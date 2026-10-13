@@ -26,7 +26,7 @@ import { procitaj } from "@/lib/game/grad/paket";
 import { ulicaNa } from "@/lib/game/grad/povrsina";
 import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { svijetGrada } from "@/lib/game/grad/svijet";
-import { igracCekaSaobracaj, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, type Tijelo } from "@/lib/game/grad/saobracaj";
+import { igracCekaSaobracaj, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, tijeloNpc, type Tijelo } from "@/lib/game/grad/saobracaj";
 import { korakPjesaka, noviPjesaci, tijelaPjesaka, udaraPjesaka } from "@/lib/game/grad/pjesaci";
 import { svjetloPjesaka } from "@/lib/game/grad/trotoari";
 import type { Manevar } from "@/lib/game/grad/mreza";
@@ -302,15 +302,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           if (saobracaj.kocenja.length > 200) saobracaj.kocenja.splice(0, 100);
           // Pješaci vide vozila (i igrača): na prelaz ne stupaju ispred onoga ko ih ugrožava.
           pjesaci.gustina = gustinaPjesaka();
-          korakPjesaka(pjesaci, { x: st.x, y: st.y }, [...saobracaj.npc, tijeloIgraca()].map((n) => ({
-            id: n.id,
-            x: n.x,
-            y: n.y,
-            ugao: n.ugao,
-            v: n.v,
-            duzina: CAR_LENGTH,
-            sirina: CAR_WIDTH,
-          })));
+          korakPjesaka(pjesaci, { x: st.x, y: st.y }, [...saobracaj.npc.map(tijeloNpc), tijeloIgraca()]);
           // Udar pješaka: trenutan kraj vožnje i posebna kartica (zadatak, odjeljak 6).
           const tijeloAuta = { x: st.x, y: st.y, ugao: st.ugao, duzina: CAR_LENGTH, sirina: CAR_WIDTH };
           const pjesak = pjesaci.lista.find((x) => Math.abs(x.x - st.x) < CAR_LENGTH && Math.abs(x.y - st.y) < CAR_LENGTH && udaraPjesaka(tijeloAuta, x));
@@ -329,9 +321,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           const ja = rectCorners({ x: st.x, y: st.y }, { x: Math.cos(st.ugao), y: Math.sin(st.ugao) }, CAR_LENGTH, CAR_WIDTH);
           const nivoIgraca = tijeloIgraca().nivo;
           // Sudar i sa parkiranim autom uz ivičnjak (stavka 7e).
-          for (const n of [...saobracaj.npc, ...parkirani(saobracaj)]) {
-            if (n.nivo !== nivoIgraca || Math.hypot(n.x - st.x, n.y - st.y) > CAR_LENGTH + 0.5) continue;
-            if (!polygonsOverlap(ja, rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH))) continue;
+          for (const n of [...saobracaj.npc.map(tijeloNpc), ...parkirani(saobracaj)]) {
+            if (n.nivo !== nivoIgraca || Math.hypot(n.x - st.x, n.y - st.y) > (CAR_LENGTH + n.duzina) / 2 + 0.5) continue;
+            if (!polygonsOverlap(ja, rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, n.duzina, n.sirina))) continue;
             st.v = 0;
             const t = koraka_ * DT;
             if (t - (sudari.get(n.id) ?? -Infinity) > GRAD_SUDAR_PONOVO) {

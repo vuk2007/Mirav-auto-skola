@@ -2,7 +2,7 @@ import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_SUDAR_PONOVO, type Level } from "../sim
 import { polygonsOverlap, rectCorners } from "../sim/geometry";
 import { korakBota, noviBot, type IshodVoznje, type Korak, type PlanBota } from "./botGrad";
 import type { Manevar } from "./mreza";
-import { dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, IGRAC } from "./saobracaj";
+import { dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, tijeloNpc, IGRAC } from "./saobracaj";
 import { korakPjesaka, noviPjesaci, udaraPjesaka } from "./pjesaci";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
 import { noviSudija, sudi } from "./sudija";
@@ -109,7 +109,7 @@ export function odveziRutuUSaobracaju(
     korakPjesaka(
       pjesaci,
       { x: st.x, y: st.y },
-      sb.npc.map((n) => ({ id: n.id, x: n.x, y: n.y, ugao: n.ugao, v: n.v, duzina: CAR_LENGTH, sirina: CAR_WIDTH })),
+      sb.npc.map(tijeloNpc),
     );
     // Udar pješaka: kraj vožnje (zadatak, odjeljak 6).
     const tijelo = { x: st.x, y: st.y, ugao: st.ugao, duzina: CAR_LENGTH, sirina: CAR_WIDTH };
@@ -125,9 +125,9 @@ export function odveziRutuUSaobracaju(
     }
     // Sudar sa drugim vozilom — kao u igri.
     const ja = rectCorners({ x: st.x, y: st.y }, { x: Math.cos(st.ugao), y: Math.sin(st.ugao) }, CAR_LENGTH, CAR_WIDTH);
-    for (const n of [...sb.npc, ...parkirani(sb)]) {
-      if (n.id === IGRAC || n.nivo !== senka.nivo || Math.hypot(n.x - st.x, n.y - st.y) > CAR_LENGTH + 0.5) continue;
-      if (!polygonsOverlap(ja, rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH))) continue;
+    for (const n of [...sb.npc.map(tijeloNpc), ...parkirani(sb)]) {
+      if (n.id === IGRAC || n.nivo !== senka.nivo || Math.hypot(n.x - st.x, n.y - st.y) > (CAR_LENGTH + n.duzina) / 2 + 0.5) continue;
+      if (!polygonsOverlap(ja, rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, n.duzina, n.sirina))) continue;
       if (t - (sudari.get(n.id) ?? -Infinity) > GRAD_SUDAR_PONOVO) {
         sudara += 1;
         sudija.prekrsaji.push({ vrsta: "collision", ozbiljnost: "fail", t, x: st.x, y: st.y, detalji: { vozilo: n.id } });

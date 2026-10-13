@@ -168,7 +168,14 @@ export interface Sukob {
  * Spajanje (desno skretanje i pravo na isti izlaz) je sukob na mjestu gdje se
  * putanje sastaju; poslije njega idu zajedno.
  */
-export function sukobPutanja(a: readonly Point[], b: readonly Point[], razmak: number, tijelo?: { duzina: number; sirina: number }): Sukob | null {
+export function sukobPutanja(
+  a: readonly Point[],
+  b: readonly Point[],
+  razmak: number,
+  tijelo?: { duzina: number; sirina: number },
+  /** Tijelo na putanji `b`, kad nije isto kao na `a` (autobus i auto). */
+  tijeloB = tijelo,
+): Sukob | null {
   if (a.length < 2 || b.length < 2) return null;
   const r2 = razmak * razmak;
   const blizu = (p: Point, q: Point) => (p.x - q.x) ** 2 + (p.y - q.y) ** 2 < r2;
@@ -187,10 +194,10 @@ export function sukobPutanja(a: readonly Point[], b: readonly Point[], razmak: n
     ? (i: number, j: number) => {
         const p = a[i]!;
         const q = b[j]!;
-        if ((p.x - q.x) ** 2 + (p.y - q.y) ** 2 > (tijelo.duzina + 0.6) ** 2) return false;
+        if ((p.x - q.x) ** 2 + (p.y - q.y) ** 2 > ((tijelo.duzina + tijeloB!.duzina) / 2 + 0.6) ** 2) return false;
         return polygonsOverlap(
           rectCorners(p, pravac(a, i), tijelo.duzina, tijelo.sirina),
-          rectCorners(q, pravac(b, j), tijelo.duzina, tijelo.sirina),
+          rectCorners(q, pravac(b, j), tijeloB!.duzina, tijeloB!.sirina),
         );
       }
     : (i: number, j: number) => blizu(a[i]!, b[j]!);
