@@ -56,6 +56,22 @@ import {
   GRAD_PJ_PREKO_KRAJA,
   GRAD_PJ_PREDVIDJANJE,
   GRAD_STOP_ISPRED_ZEBRE,
+  GRAD_BUS_NA_STAJALISTU,
+  GRAD_OBILAZAK_SUSRET,
+  GRAD_PJ_POLOVINA_REZERVA,
+  GRAD_BUS_TIJESNO,
+  GRAD_BUS_TIJESNO_DO,
+  GRAD_BUS_PARKING_RAZMAK,
+  GRAD_BUS_POJAVA_RITAM,
+  GRAD_SIRINA_TRAKE,
+  GRAD_BUS_PO_GUSTINI_ZONE,
+  GRAD_BUS_POLAZAK_DO,
+  GRAD_BUS_PLATFORMA_DO,
+  GRAD_BUS_STAJALISTA_RAZMAK,
+  GRAD_BUS_STAJALISTE_RAZMAK,
+  GRAD_BUS_STAJE,
+  GRAD_BUS_ZMIGAVAC,
+  GRAD_ZEBRA_DUBINA,
   STOP_HOLD,
   STOP_MARGIN,
   YELLOW_COMMIT_TTC,
@@ -69,6 +85,9 @@ import { koUstupa, kontrolaUcesnika, manevarKroz, sukobPutanja, type Sukob, type
 import { doMjesta, mjestoNa, obidji, slobodno, uliceZaParkiranje, type MjestoParkiranja, type UlicaZaParkiranje } from "./parkiranje";
 import { svjetlo, zelenaStrelica } from "./raskrsnica";
 import type { SvijetGrada } from "./svijet";
+import { AUTOBUS, tijeloNaAsfaltu, voznjaLinijom, type LinijaAutobusa } from "./autobusi";
+import { izaAutobusa, type AutobusUPolasku } from "./polazak";
+import { oseBlizu } from "./povrsina";
 import { pjesaciSaPrednoscu, udaraPjesaka, type Pjesaci } from "./pjesaci";
 import { svjetloZaVozila } from "./pjesackiSemafor";
 import { mozeMirnoStati, polovinaUlice, prelaziNaPutanji, tijeloNaZebri } from "./trotoari";
@@ -110,6 +129,8 @@ export interface Tijelo {
   nivo: number;
   /** Parkiran uz ivičnjak (stavka 7e): ne pomjera se. */
   parkiran?: boolean;
+  /** Stoji zbog pješaka (za pješake, vidi `VoziloZaPjesaka`). */
+  cekaPjesaka?: boolean;
 }
 
 /** Zašto vozilo usporava ili stoji — za dijagnozu i za detektor zastoja. */
@@ -117,11 +138,16 @@ export type Razlog =
   | { vrsta: "slobodno" }
   | { vrsta: "crveno" }
   | { vrsta: "stop" }
-  | { vrsta: "ustupa"; kome: number[] }
+  /** `prolaz`: kojoj raskrsnici plana (indeks u `plan.prolazi`) ustupa. */
+  | { vrsta: "ustupa"; kome: number[]; prolaz?: number }
   | { vrsta: "izlaz"; kome: number }
   | { vrsta: "vozilo"; kome: number }
   /** Pješak: ima prednost na prelazu, ili je na putu (stavka 8). */
   | { vrsta: "pjesak"; kome: number }
+  /** Autobus staje na stajalištu (stavka 8c). */
+  | { vrsta: "stajaliste" }
+  /** Propušta autobus koji polazi sa stajališta (stavka 8c). */
+  | { vrsta: "autobus"; kome: number }
   | { vrsta: "cilj" };
 
 export interface Npc {
@@ -202,6 +228,27 @@ export interface Npc {
   namjere: Map<number, boolean>;
   /** Koliko dugo naglo koči zbog igrača, bez prekida [s] (`GRAD_PRVENSTVO_TRAJE`). */
   kociZbogIgraca?: number;
+  /** Autobus na liniji (stavka 8c). */
+  autobus?: StanjeAutobusa;
+  /**
+   * Autobusi koje je vidio da polaze sa stajališta: da li je tada mogao mirno
+   * stati iza njih — samo tada ih propušta (kao sudija, `Sudija.autobusi`).
+   */
+  namjereAutobusa: Map<number, boolean>;
+}
+
+/** Autobus: linija, stajališta na planu i stanje na stajalištu (stavka 8c). */
+export interface StanjeAutobusa {
+  ref: string;
+  /** Gdje sredina autobusa staje na svakom stajalištu na planu [m], rastuće. */
+  stajalista: number[];
+  /** Indeks sljedećeg stajališta. */
+  sljedece: number;
+  /** Od kad stoji na stajalištu [s], i koliko će stajati; `null` kad ne stoji. */
+  stojiOd: number | null;
+  staje: number;
+  /** Polazak sa stajališta: od kad daje žmigavac, i `s` stajališta; `null` kad ne polazi. */
+  polazi: { od: number; s: number } | null;
 }
 
 /** Zapis zastoja: ko, gdje, i kako je razriješen. */
@@ -222,6 +269,9 @@ export interface Metrika {
   /** Krugovi prvenstva razriješeni po tome ko najduže čeka (ispravno ponašanje, ne greška). */
   krugova: number;
   zastoja: number;
+  /** Autobusa pojavljeno, i stajanja na stajalištu (stavka 8c). */
+  autobusa: number;
+  stajalista: number;
 }
 
 export interface Saobracaj {
@@ -269,6 +319,13 @@ export interface Saobracaj {
   kocenja: KocenjeZbogIgraca[];
   /** Pješaci (stavka 8): drugi vozači im ustupaju na prelazu i staju pred njima. */
   pjesaci: Pjesaci | null;
+  /**
+   * Autobuske linije (stavka 8c, `linijeAutobusa`); `null` — bez autobusa
+   * (testovi bez linija).
+   */
+  linije: LinijaAutobusa[] | null;
+  /** Kad je zadnji put pokušana pojava autobusa [s]. */
+  zadnjiAutobus: number;
 }
 
 /** Kako igrač vozi — da mu drugi ustupe kad ima prednost (stavka 7c). */
@@ -339,7 +396,7 @@ export function noviSaobracaj(svijet: SvijetGrada, sjeme: number, gustina = 1): 
     ivice,
     krugovi: new Map(),
     zastoji: [],
-    metrika: { pojavljeno: 0, stiglo: 0, parkiralo: 0, udaljilo: 0, krugova: 0, zastoja: 0 },
+    metrika: { pojavljeno: 0, stiglo: 0, parkiralo: 0, udaljilo: 0, krugova: 0, zastoja: 0, autobusa: 0, stajalista: 0 },
     gustina,
     gustinaVanZona: GRAD_NPC_GUSTINA_ZONE_PODRAZUMIJEVANO,
     zoneGustine,
@@ -351,6 +408,8 @@ export function noviSaobracaj(svijet: SvijetGrada, sjeme: number, gustina = 1): 
     igracCekaOd: null,
     kocenja: [],
     pjesaci: null,
+    linije: null,
+    zadnjiAutobus: -Infinity,
   };
 }
 
@@ -382,7 +441,17 @@ export function sigurnaBrzina(v: number, vl: number, gap: number): number {
 }
 
 export function tijeloNpc(n: Npc): Tijelo {
-  return { id: n.id, x: n.x, y: n.y, ugao: n.ugao, v: n.v, duzina: n.plan.vozilo.duzina, sirina: n.plan.vozilo.sirina, nivo: n.nivo };
+  return {
+    id: n.id,
+    x: n.x,
+    y: n.y,
+    ugao: n.ugao,
+    v: n.v,
+    duzina: n.plan.vozilo.duzina,
+    sirina: n.plan.vozilo.sirina,
+    nivo: n.nivo,
+    cekaPjesaka: n.razlog.vrsta === "pjesak",
+  };
 }
 
 /** Parkirani auti (stavka 7e): tijela za sudar i za crtanje. */
@@ -474,7 +543,13 @@ interface Prepreka {
  * prepreka; ono koje mi siječe put jeste — osim kad sam ja njemu bliže na
  * putu nego ono meni: tada prolazim prvi, a ono koči (inače bi oba stala).
  */
-function naPutu(n: Npc, tijela: readonly Tijelo[], pogled: number): Prepreka | null {
+function naPutu(
+  n: Npc,
+  tijela: readonly Tijelo[],
+  pogled: number,
+  /** Da li vozilo `id` stoji jer sam mu ja ispred (prošli korak). */
+  cekaMeneIza: (id: number) => boolean = () => false,
+): Prepreka | null {
   const { tacke, cum } = n.plan.put;
   const L = n.plan.vozilo.duzina;
   const W = n.plan.vozilo.sirina;
@@ -487,6 +562,15 @@ function naPutu(n: Npc, tijela: readonly Tijelo[], pogled: number): Prepreka | n
     if (dx0 * dx0 + dy0 * dy0 > (pogled + L + o.duzina) ** 2) continue;
     const ux = Math.cos(o.ugao);
     const uy = Math.sin(o.ugao);
+    // Stoji i čeka baš mene (sam sam mu ispred), a meni putanja (oštro
+    // skretanje, ukosnica kroz čvor) prolazi uz njega: prolazi onaj ko je
+    // više ispred drugoga — po pravcu tog drugoga. Oba računaju iste dvije
+    // veličine, pa kreće tačno jedan; inače stoje oba (stavka 8c).
+    if (o.v < 0.1 && cekaMeneIza(o.id)) {
+      const jaIspred = -(dx0 * ux + dy0 * uy);
+      const onIspred = dx0 * Math.cos(n.ugao) + dy0 * Math.sin(n.ugao);
+      if (jaIspred > onIspred + 0.25 || (Math.abs(jaIspred - onIspred) <= 0.25 && n.id < o.id)) continue;
+    }
     for (let i = n.kursor; i < tacke.length; i++) {
       const si = cum[i]!;
       if (si < nos - 1) continue;
@@ -560,6 +644,11 @@ export interface Dolazak {
    * da je ušao prije svih (`-Infinity`): njega se uvijek propušta.
    */
   usaoOd: number | null;
+  /**
+   * Kad je stvarno prešao mjesto čekanja ove raskrsnice [s]; `null` kad nije
+   * (u njoj je samo kroz lanac, ili nije ni ušao). Igraču kao `usaoOd`.
+   */
+  presaoOd: number | null;
   /** Stoji na mjestu čekanja, i od kada. */
   ceka: boolean;
   /** Stoji u koloni iza drugog vozila (nije na mjestu čekanja). */
@@ -607,6 +696,7 @@ function dolazakNpc(sb: Saobracaj, n: Npc, qi: number, t: number): Dolazak {
     v: n.v,
     usao: uRaskrsnici(n, qi),
     usaoOd: n.usaoOd.get(qi) ?? null,
+    presaoOd: n.presaoLinijuOd.get(qi) ?? null,
     ceka,
     uKoloni: !ceka && n.v < GRAD_NPC_CEKA_BRZINA && n.razlog.vrsta === "vozilo",
     cekaOd: qi === n.cekaProlaz ? n.cekaOd : null,
@@ -619,10 +709,15 @@ function dolazakNpc(sb: Saobracaj, n: Npc, qi: number, t: number): Dolazak {
   };
 }
 
-/** Da li je tačka (x, y) na putanji između `od` i `do_` [m], bočno do `GRAD_NPC_ISTA_TRAKA`. */
-function naPutanjiIzmedju(put: Putanja, od: number, do_: number, x: number, y: number): boolean {
+/**
+ * Gdje je tačka (x, y) na putanji između `od` i `do_` [m], bočno do
+ * `GRAD_NPC_ISTA_TRAKA`: `s` prvog takvog mjesta (zadnjeg, sa `zadnje`), ili
+ * `null`.
+ */
+function naPutanjiIzmedju(put: Putanja, od: number, do_: number, x: number, y: number, zadnje = false): number | null {
   const { tacke, cum } = put;
   const b2 = GRAD_NPC_ISTA_TRAKA * GRAD_NPC_ISTA_TRAKA;
+  let nadjeno: number | null = null;
   for (let i = 1; i < tacke.length; i++) {
     if (cum[i]! < od) continue;
     if (cum[i - 1]! > do_) break;
@@ -632,18 +727,28 @@ function naPutanjiIzmedju(put: Putanja, od: number, do_: number, x: number, y: n
     const dy = b.y - a.y;
     const l2 = dx * dx + dy * dy;
     const t = l2 > 0 ? Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / l2)) : 0;
-    if ((a.x + dx * t - x) ** 2 + (a.y + dy * t - y) ** 2 < b2) return true;
+    if ((a.x + dx * t - x) ** 2 + (a.y + dy * t - y) ** 2 < b2) {
+      nadjeno = cum[i - 1]! + t * (cum[i]! - cum[i - 1]!);
+      if (!zadnje) return nadjeno;
+    }
   }
-  return false;
+  return nadjeno;
 }
 
 /**
  * Isti trak, jedan iza drugog: on je na mojoj putanji iza mene, ili sam ja na
- * njegovoj ispred njega. To nije pitanje prvenstva nego razmaka.
+ * njegovoj ispred njega. To nije pitanje prvenstva nego razmaka. Samo kad je
+ * put do tog mjesta približno vazdušna linija: ruta koja se kroz susjedne
+ * raskrsnice vraća istom ulicom (petlja) ga prolazi tek kasnije, a sada su
+ * u raskrsnici jedan naspram drugog (stavka 8c).
  */
 function istaTraka(n: Npc, on: Dolazak): boolean {
-  if (naPutanjiIzmedju(n.plan.put, n.s - 60, n.s, on.x, on.y)) return true;
-  return !!on.put && naPutanjiIzmedju(on.put, on.s, on.s + 60, n.x, n.y);
+  const d = Math.hypot(on.x - n.x, on.y - n.y);
+  const pravo = (luk: number) => luk <= 1.3 * d + 5;
+  const iza = naPutanjiIzmedju(n.plan.put, n.s - 60, n.s, on.x, on.y, true);
+  if (iza !== null && pravo(n.s - iza)) return true;
+  const ispred = on.put ? naPutanjiIzmedju(on.put, on.s, on.s + 60, n.x, n.y) : null;
+  return ispred !== null && pravo(ispred - on.s);
 }
 
 function sukob(n: Npc, ja: Dolazak, on: Dolazak): Sukob | null {
@@ -764,7 +869,11 @@ function komeUstupa(
     // „unutra, a on ne".
     if (ja.usao && ja.s + L / 2 > mojeMjesto && on.s + on.vozilo.duzina / 2 < on.s0 + sk.pb) continue;
     if (on.usao) {
-      if (ranijiOd !== null && !(on.usaoOd !== null && on.usaoOd < ranijiOd)) continue;
+      // Ustupa se onome ko je liniju ove raskrsnice stvarno prešao prije
+      // mene — ne onome ko je u njoj samo kroz lanac susjednih (njemu je
+      // linija još ispred, i on ustupa meni). Tako i sudija sudi oduzeto
+      // prvenstvo (stavka 8c).
+      if (ranijiOd !== null && !(on.presaoOd !== null && on.presaoOd < ranijiOd)) continue;
       // Spajanje, a on je bliže mjestu spajanja za više od dužine auta i
       // razmaka: iza njega se vozi (vidi `spajanja`), ne čeka se. Bliže od
       // toga — bok uz bok — čeka se na liniji dok ne prođe.
@@ -985,6 +1094,7 @@ function dolasciIgraca(sb: Saobracaj, vi: VoznjaIgraca): Dolazak[] {
       v: Math.max(0, t.v),
       usao: s > cekanje + 0.5,
       usaoOd: s > cekanje + 0.5 ? -Infinity : null,
+      presaoOd: s > cekanje + 0.5 ? -Infinity : null,
       ceka,
       uKoloni: false,
       cekaOd: ceka ? sb.igracCekaOd : null,
@@ -1186,10 +1296,11 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
       // je isti za oba, pa ne čekaju jedan drugog.
       if (prva === null) {
         const naLiniji = n.s <= cekanje + 0.5;
-        const k = komeUstupa(sb, n, dolazakNpc(sb, n, qi, t), poRaskrsnici.get(q.r) ?? [], true, naLiniji ? null : (n.usaoOd.get(qi) ?? null));
+        const ranije = n.presaoLinijuOd.get(qi) ?? n.usaoOd.get(qi) ?? null;
+        const k = komeUstupa(sb, n, dolazakNpc(sb, n, qi, t), poRaskrsnici.get(q.r) ?? [], true, naLiniji ? null : ranije);
         if (k.kome.length > 0 && (naLiniji || k.staniDo > n.s)) {
           kome = k.kome;
-          stani(k.staniDo, { vrsta: "ustupa", kome: k.kome });
+          stani(k.staniDo, { vrsta: "ustupa", kome: k.kome, prolaz: qi });
           break;
         }
       }
@@ -1210,7 +1321,7 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
     const kasno = n.v * n.v > 2 * B_MAX * GRAD_NPC_KOCENJE_UDIO * (Math.max(0, gdje - n.s) + 0.5);
     if (k.kome.length > 0 && (!kasno || k.unutra)) {
       kome = k.kome;
-      stani(Math.min(gdje, k.staniDo), { vrsta: "ustupa", kome: k.kome });
+      stani(Math.min(gdje, k.staniDo), { vrsta: "ustupa", kome: k.kome, prolaz: qi });
       break;
     }
     // Ne ulazi se u raskrsnicu ako se iz nje ne može izaći: vozilo ispred
@@ -1256,11 +1367,29 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
       // (tada pješak i kreće, vidi `ugrozava`); inače prolazi — na zebri se
       // ne staje.
       let staniNa = x.dodir - GRAD_STOP_ISPRED_ZEBRE;
+      let prolazi = false;
       if (n.s > staniNa + 0.5) {
         staniNa = x.dodir - GRAD_PJ_TIK_PRED_ZEBROM;
-        if (staniNa - n.s < (n.v * n.v) / (2 * GRAD_VOZAC_USPORENJE)) continue;
+        // Prolazi samo ako ne stiže stati prije dodira sa zebrom — ko stoji
+        // (i ko je tik do nje), tu i ostaje.
+        prolazi = x.dodir - n.s < (n.v * n.v) / (2 * GRAD_VOZAC_USPORENJE);
       }
-      const { naPrelazu, cekaju } = pjesaciSaPrednoscu(pj, pr, polovinaUlice(pr, x.w));
+      // Polovina ulice: sve polovine koje tijelo vozila (uz rezervu
+      // `GRAD_PJ_POLOVINA_REZERVA`) dodiruje — gdje putanja siječe prelaz, i
+      // gdje je sredina vozila kad dotakne zebru (tu je gleda sudija). U
+      // uskoj ulici auto u skretanju zahvati obje polovine (stavka 8c): tada
+      // se čeka da pješak pređe cijeli kolovoz.
+      const c = pointAt(p.put.tacke, p.put.cum, x.dodir);
+      const wDodir = ((c.x - pr.a.x) * (pr.b.x - pr.a.x) + (c.y - pr.a.y) * (pr.b.y - pr.a.y)) / pr.duzina;
+      const bok = p.vozilo.sirina / 2 + GRAD_PJ_POLOVINA_REZERVA;
+      let pol0 = Infinity;
+      let pol1 = -Infinity;
+      for (const w of [x.w - bok, x.w + bok, wDodir - bok, wDodir + bok]) {
+        const [a, b] = polovinaUlice(pr, w);
+        pol0 = Math.min(pol0, a);
+        pol1 = Math.max(pol1, b);
+      }
+      const { naPrelazu, cekaju } = pjesaciSaPrednoscu(pj, pr, [pol0, pol1]);
       // Pješak na ivičnjaku: namjera se pamti kad ga vozač prvi put vidi, i
       // da li je tada mogao mirno stati — kao sudija (`Sudija.namjere`), a i
       // duž svoje putanje (u krivini zebra nije pravo ispred haube). Ustupa
@@ -1271,7 +1400,10 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
         const poPutanji = staniNa - n.s >= (n.v * n.v) / (2 * GRAD_VOZAC_USPORENJE) - 0.5;
         n.namjere.set(q.id, poPutanji || mozeMirnoStati(n.x, n.y, n.ugao, n.v, p.vozilo.duzina, p.vozilo.sirina, pr));
       }
-      const pjesak = naPrelazu[0] ?? cekaju.find((q) => n.namjere.get(q.id));
+      // Ne stiže udobno stati ni tik pred zebrom: prolazi — osim pred
+      // pješakom za kojeg je, kad ga je vidio, mogao stati (i sudija tako
+      // računa: kreće sa mjesta tik do zebre, a pješak tek stane na ivičnjak).
+      const pjesak = prolazi ? cekaju.find((q) => n.namjere.get(q.id)) : (naPrelazu[0] ?? cekaju.find((q) => n.namjere.get(q.id)));
       if (pjesak) stani(staniNa, { vrsta: "pjesak", kome: pjesak.id });
     }
     for (const id of [...n.namjere.keys()]) if (!vidi.has(id)) n.namjere.delete(id);
@@ -1279,9 +1411,34 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
     if (naPutu) stani(naPutu.s, { vrsta: "pjesak", kome: naPutu.id });
   }
 
+  // Autobus (stavka 8c): staje na sljedećem stajalištu.
+  const stajaliste = n.autobus?.stajalista[n.autobus.sljedece];
+  if (stajaliste !== undefined) stani(stajaliste, { vrsta: "stajaliste" });
+  // Autobus koji polazi sa stajališta: vozilo iza njega (u njegovoj ili
+  // susjednoj traci) ga propušta ako je moglo mirno stati kad se upalio
+  // žmigavac — kao sudija (odluka korisnika 2026-10-13).
+  const vidi = new Set<number>();
+  for (const b of autobusiUPolasku(sb)) {
+    if (b.id === n.id || b.nivo !== n.nivo) continue;
+    const iza = izaAutobusa(b, n.x, n.y, n.ugao, p.vozilo.duzina);
+    if (!iza) continue;
+    vidi.add(b.id);
+    if (!n.namjereAutobusa.has(b.id)) {
+      // Do zadnjeg kraja autobusa duž moje putanje (u krivini, ne vazdušnom linijom).
+      const doZadnjeg = Math.max(iza.doZadnjeg, projekcija(p.put, n.s, n.s + 80, iza.zadnji.x, iza.zadnji.y).s - n.s - p.vozilo.duzina / 2);
+      n.namjereAutobusa.set(b.id, doZadnjeg - 1 >= (n.v * n.v) / (2 * GRAD_VOZAC_USPORENJE) - 0.5);
+    }
+    if (n.namjereAutobusa.get(b.id)) stani(n.s + iza.doZadnjeg - 1, { vrsta: "autobus", kome: b.id });
+  }
+  for (const id of [...n.namjereAutobusa.keys()]) if (!vidi.has(id)) n.namjereAutobusa.delete(id);
+
   // Vozilo ispred, i ono koje se spaja ispred mene.
   const pogled = Math.max(GRAD_NPC_POGLED, (n.v * n.v) / (2 * GRAD_VOZAC_USPORENJE) + 15);
-  for (const ispred of [naPutu(n, tijela, pogled), spajanja(sb, n, poRaskrsnici), prestrojavanja(n, sb.npc)]) {
+  const cekaMeneIza = (id: number) => {
+    const r = sb.poId?.get(id)?.razlog;
+    return r?.vrsta === "vozilo" && r.kome === n.id;
+  };
+  for (const ispred of [naPutu(n, tijela, pogled, cekaMeneIza), spajanja(sb, n, poRaskrsnici), prestrojavanja(n, sb.npc), cekaObilazak(n, tijela, sb.npc)]) {
     if (!ispred) continue;
     const vs = sigurnaBrzina(n.v, ispred.vl, ispred.gap);
     if (vs < v) {
@@ -1290,6 +1447,82 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
     }
   }
   return { v, razlog, kome };
+}
+
+/**
+ * Obilazak parkiranog vozila na svojoj strani (stavka 7e) uz autobus (stavka
+ * 8c): ko obilazi prepreku propušta vozila iz suprotnog smjera — prije
+ * početka pomaka čeka dok ih u zoni obilaska (i `GRAD_OBILAZAK_SUSRET` m
+ * iza nje) ima. Ko je već u obilasku, nastavlja; onaj ko dolazi njega vidi
+ * kao prepreku. Samo kad je jedno od dva vozila dugo — autobus ne može
+ * mimoići vozilo dok obilazi (auti mogu, i to im ostaje kako je bilo).
+ */
+/** Zona obilaska na planu od tačke `i` naprijed (do `do` m): indeksi početka i kraja; `null` kad je nema. */
+function zonaObilaska(plan: PlanBota, i: number, doS: number): { od: number; do_: number } | null {
+  const pom = plan.obilazak;
+  if (!pom) return null;
+  const cum = plan.put.cum;
+  let od = -1;
+  for (let j = i; j < cum.length && cum[j]! < doS; j++) {
+    if ((pom[j] ?? 0) > 0.3) {
+      od = j;
+      break;
+    }
+  }
+  if (od < 0) return null;
+  let do_ = od;
+  while (do_ + 1 < cum.length && (pom[do_ + 1] ?? 0) > 0.3) do_++;
+  return { od, do_ };
+}
+
+/** Indeks tačke plana pod nosom vozila. */
+function tackaNosa(n: Npc): number {
+  const cum = n.plan.put.cum;
+  const nos = n.s + n.plan.vozilo.duzina / 2;
+  let i = n.kursor;
+  while (i + 1 < cum.length && cum[i + 1]! < nos) i++;
+  return i;
+}
+
+function cekaObilazak(n: Npc, tijela: readonly Tijelo[], ostali: readonly Npc[]): Prepreka | null {
+  const { cum } = n.plan.put;
+  const L = n.plan.vozilo.duzina;
+  const nos = n.s + L / 2;
+  const suprotno = (o: { ugao: number }) => Math.cos(o.ugao) * Math.cos(n.ugao) + Math.sin(o.ugao) * Math.sin(n.ugao) <= -0.7;
+  let naj: Prepreka | null = null;
+  // Ja obilazim: prije početka pomaka čekam dok iz suprotnog smjera neko dolazi.
+  const i = tackaNosa(n);
+  const pom = n.plan.obilazak;
+  const zona = pom && (pom[i] ?? 0) <= 0.3 ? zonaObilaska(n.plan, i, nos + 40) : null;
+  if (zona) {
+    const kraj = cum[zona.do_]! + GRAD_OBILAZAK_SUSRET;
+    for (const o of tijela) {
+      if (o.id === n.id || o.nivo !== n.nivo || o.parkiran) continue;
+      if (Math.max(L, o.duzina) <= CAR_LENGTH + 1 || !suprotno(o)) continue;
+      const pr = projekcija(n.plan.put, nos, kraj, o.x, o.y);
+      if (pr.d > 2 * GRAD_SIRINA_TRAKE || pr.s <= nos) continue;
+      const gap = cum[zona.od]! - nos - 1;
+      if (!naj || gap < naj.gap) naj = { gap, vl: 0, id: o.id };
+    }
+  }
+  // On obilazi i već je u obilasku (ili tik pred njim, a ja još nisam stigao):
+  // ja iz suprotnog smjera staje prije kraja njegove zone — tuda on prolazi.
+  for (const o of ostali) {
+    if (o.id === n.id || o.nivo !== n.nivo || !o.plan.obilazak) continue;
+    if (Math.max(L, o.plan.vozilo.duzina) <= CAR_LENGTH + 1 || !suprotno(o)) continue;
+    const oi = tackaNosa(o);
+    if ((o.plan.obilazak[oi] ?? 0) <= 0.3) continue;
+    const z = zonaObilaska(o.plan, oi, Infinity);
+    if (!z) continue;
+    const t = o.plan.put.tacke[z.do_]!;
+    const pr = projekcija(n.plan.put, n.s - L, nos + 80, t.x, t.y);
+    if (pr.d > 2 * GRAD_SIRINA_TRAKE) continue;
+    const gap = pr.s - nos - 2;
+    // Već sam prošao kraj njegove zone (mimoilazimo se): ne čekam.
+    if (gap < -1) continue;
+    if (!naj || gap < naj.gap) naj = { gap: Math.max(0, gap), vl: 0, id: o.id };
+  }
+  return naj;
 }
 
 /**
@@ -1314,12 +1547,47 @@ function zaklon(n: Npc, sNovo: number, tijela: readonly Tijelo[]): number | null
     const ja = o.parkiran || susret ? rectCorners(p, h, L + 2 * z, W + 2 * zb) : ja0;
     const d = Math.hypot(o.x - p.x, o.y - p.y);
     if (d > L + o.duzina) continue;
+    const udaljava = d >= Math.hypot(o.x - n.x, o.y - n.y);
     // Udaljava se — smije (inače bi dva vozila koja se dotiču stajala vječno).
-    if (d >= Math.hypot(o.x - n.x, o.y - n.y)) continue;
+    // Dugo vozilo (autobus, stavka 8c) u krivini: sredina mu se udaljava, a
+    // kraj zalazi u drugo vozilo — tu smije samo ako se već dotiču.
+    const dugo = Math.max(L, o.duzina) > CAR_LENGTH + 1;
+    if (udaljava && !dugo) continue;
     const on = rectCorners({ x: o.x, y: o.y }, { x: Math.cos(o.ugao), y: Math.sin(o.ugao) }, o.duzina + 2 * z, o.sirina + 2 * zb);
-    if (polygonsOverlap(ja, on)) return o.id;
+    if (!polygonsOverlap(ja, on)) continue;
+    if (udaljava) {
+      const sada = rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, L + 2 * z, W + 2 * zb);
+      if (polygonsOverlap(sada, on)) continue;
+    }
+    if (dugo && tijesnoProlazi(n, sNovo, o)) continue;
+    return o.id;
   }
   return null;
+}
+
+/**
+ * Dugo vozilo (autobus, stavka 8c) u krivini prolazi tijesno pored vozila koje
+ * stoji (npr. na stop-liniji kraka u koji skreće): smije, ako mu je tijelo
+ * duž putanje do `GRAD_BUS_TIJESNO_DO` m dalje bar `2 × GRAD_BUS_TIJESNO`
+ * od njega, a razmak se tu i vrati na puni (`GRAD_NPC_ZAKLON`). Inače stoje oba:
+ * ono čeka da autobus prođe, a autobus pun razmak.
+ */
+function tijesnoProlazi(n: Npc, sNovo: number, o: Tijelo): boolean {
+  if (o.v > 0.1) return false;
+  const put = n.plan.put;
+  const { duzina: L, sirina: W } = n.plan.vozilo;
+  const smjer = { x: Math.cos(o.ugao), y: Math.sin(o.ugao) };
+  const z = GRAD_BUS_TIJESNO;
+  const on = rectCorners({ x: o.x, y: o.y }, smjer, o.duzina + 2 * z, o.sirina + 2 * z);
+  const z0 = GRAD_NPC_ZAKLON;
+  const onPun = rectCorners({ x: o.x, y: o.y }, smjer, o.duzina + 2 * z0, o.sirina + 2 * z0);
+  for (let s = sNovo; s <= Math.min(put.duzina, sNovo + GRAD_BUS_TIJESNO_DO); s += 0.5) {
+    const p = pointAt(put.tacke, put.cum, s);
+    const h = headingAt(put.tacke, put.cum, s);
+    if (polygonsOverlap(rectCorners(p, h, L + 2 * z, W + 2 * z), on)) return false;
+    if (!polygonsOverlap(rectCorners(p, h, L + 2 * z0, W + 2 * z0), onPun)) return true;
+  }
+  return false;
 }
 
 /** Prolaz, mjesto čekanja i vrijeme stajanja poslije pomaka vozila. */
@@ -1453,7 +1721,11 @@ export function korakSaobracaja(sb: Saobracaj, fokus: Point, igrac: Tijelo | nul
     if (n.kociZbogIgraca >= GRAD_PRVENSTVO_TRAJE - 1e-9) {
       const qi = Math.min(n.cekaProlaz, n.plan.prolazi.length - 1);
       const qk = Math.max(n.prolaz, 0);
-      const k = n.plan.prolazi[qk <= qi ? qk : qi];
+      // Ustupa igraču u raskrsnici ispred (tik iza ove u kojoj je, lanac):
+      // kočenje je za tu raskrsnicu — tamo je sukob, i tamo sudija gleda ko
+      // je ušao prvi (stavka 8c).
+      const zbog = n.razlog.vrsta === "ustupa" ? n.razlog.prolaz : undefined;
+      const k = n.plan.prolazi[zbog ?? (qk <= qi ? qk : qi)];
       if (k) {
         const ki = n.plan.prolazi.indexOf(k);
         const d = dolazakNpc(sb, n, ki, sb.t);
@@ -1465,6 +1737,7 @@ export function korakSaobracaja(sb: Saobracaj, fokus: Point, igrac: Tijelo | nul
     postaviPozu(n);
     const najava = n.plan.najave.find((x) => n.s >= x.od && n.s <= x.do_);
     n.zmigavac = najava ? najava.strana : null;
+    if (n.autobus) azurirajAutobus(sb, n);
     azurirajProlaz(sb, n, o);
   });
   sb.t += DT;
@@ -1555,7 +1828,9 @@ function otkrijZastoje(sb: Saobracaj): void {
     if (n.v >= 0.1) return true;
     const r = n.razlog;
     // Pješak se kreće (ili čeka da vozila stanu): čekati njega nije zastoj.
-    if (r.vrsta === "crveno" || r.vrsta === "stop" || r.vrsta === "cilj" || r.vrsta === "pjesak") return true;
+    if (r.vrsta === "crveno" || r.vrsta === "stop" || r.vrsta === "cilj" || r.vrsta === "pjesak" || r.vrsta === "stajaliste") return true;
+    // Propušta autobus koji polazi: on kreće (ili čeka da kolona ispred krene).
+    if (r.vrsta === "autobus") return true;
     if (vidjeni.has(n.id)) return false;
     vidjeni.add(n.id);
     // Stoji, a ništa ga ne drži: kreće (zeleno se upravo upalilo) — ili je greška.
@@ -1655,6 +1930,15 @@ export function gustinaZone(sb: Saobracaj, p: Point): number {
  * po gustini zone u kojoj je igrač (`GRAD_NPC_PO_GUSTINI_ZONE`) × nivo × doba
  * dana (`gustina`), najviše `GRAD_NPC_NAJVISE`.
  */
+export function ciljniBrojAutobusa(sb: Saobracaj, fokus: Point): number {
+  if (!sb.linije || sb.linije.length === 0) return 0;
+  return Math.round(GRAD_BUS_PO_GUSTINI_ZONE[gustinaZone(sb, fokus)]! * sb.gustina);
+}
+
+/**
+ * Koliko vozila treba oko igrača sada — vidi gore; od toga autobusa
+ * `ciljniBrojAutobusa`.
+ */
 export function ciljniBroj(sb: Saobracaj, fokus: Point): number {
   return Math.min(GRAD_NPC_NAJVISE, Math.round(GRAD_NPC_PO_GUSTINI_ZONE[gustinaZone(sb, fokus)]! * sb.gustina));
 }
@@ -1676,11 +1960,19 @@ function pojavi(sb: Saobracaj, fokus: Point, tijela: readonly Tijelo[]): void {
   if (sb.popunjeno && sb.t - sb.zadnjaPojava < GRAD_NPC_POJAVA_RITAM) return;
   const zauzeto = [...tijela];
   for (let k = 0; k < odjednom; k++) {
-    const n = novoVozilo(sb, fokus, zauzeto);
+    // Autobusi (stavka 8c) su dio ukupnog broja: prvo njih, dok ih fali.
+    const autobusa = sb.npc.filter((n) => n.autobus).length;
+    // Plan autobusa je skup (i često ne prođe): u vožnji najviše jedan
+    // pokušaj na `GRAD_BUS_POJAVA_RITAM` — inače trzaj kadra.
+    // Prvo popunjavanje je za vrijeme učitavanja: tu se ne štedi.
+    const probaAutobus = autobusa < ciljniBrojAutobusa(sb, fokus) && (!sb.popunjeno || sb.t - sb.zadnjiAutobus >= GRAD_BUS_POJAVA_RITAM);
+    if (probaAutobus) sb.zadnjiAutobus = sb.t;
+    const n = (probaAutobus ? noviAutobus(sb, fokus, zauzeto) : null) ?? novoVozilo(sb, fokus, zauzeto);
     if (!n) continue;
     sb.npc.push(n);
     zauzeto.push(tijeloNpc(n));
     sb.metrika.pojavljeno += 1;
+    if (n.autobus) sb.metrika.autobusa += 1;
     sb.zadnjaPojava = sb.t;
   }
   sb.popunjeno = true;
@@ -1720,6 +2012,10 @@ function novoVozilo(sb: Saobracaj, fokus: Point, tijela: readonly Tijelo[]): Npc
       const sMjesta = u.od + sl() * (u.do_ - u.od);
       if (!slobodno(sb.svijet, u, sMjesta, [...sb.mjesta, ...sb.bivsaMjesta])) continue;
       mjesto = mjestoNa(sb.svijet, u, sMjesta, 0, 0);
+      // Ne pred autobusom (stavka 8c): obilazak bi mu se pojavio tik ispred
+      // nosa, prekasno da propusti one iz suprotnog smjera (`cekaObilazak`).
+      const m0 = mjesto;
+      if (sb.npc.some((o) => o.plan.vozilo.duzina > CAR_LENGTH + 1 && Math.hypot(o.x - m0.x, o.y - m0.y) < GRAD_BUS_PARKING_RAZMAK)) continue;
       cilj = { ivica: u.ivica, smjer: u.smjer };
     } else {
       // Cilj: van prozora, `GRAD_NPC_CILJ_OD`–`DO` od pojave.
@@ -1772,6 +2068,170 @@ function novoVozilo(sb: Saobracaj, fokus: Point, tijela: readonly Tijelo[]): Npc
   return null;
 }
 
+// ── autobusi (stavka 8c) ───────────────────────────────────────────────────
+
+/** Autobus koji polazi sa stajališta (daje žmigavac ili tek kreće) — za druge vozače i sudiju. */
+export function autobusiUPolasku(sb: Saobracaj): AutobusUPolasku[] {
+  const out: AutobusUPolasku[] = [];
+  for (const n of sb.npc) {
+    if (!n.autobus?.polazi) continue;
+    out.push({ id: n.id, x: n.x, y: n.y, ugao: n.ugao, duzina: n.plan.vozilo.duzina, sirina: n.plan.vozilo.sirina, nivo: n.nivo });
+  }
+  return out;
+}
+
+/**
+ * Stajanje i polazak autobusa, poslije pomaka: stao na stajalištu — stoji
+ * `GRAD_BUS_STAJE`; zadnjih `GRAD_BUS_ZMIGAVAC` s daje lijevi žmigavac, i daje
+ * ga dok ne odmakne `GRAD_BUS_POLAZAK_DO` m (polazak).
+ */
+function azurirajAutobus(sb: Saobracaj, n: Npc): void {
+  const b = n.autobus!;
+  if (b.polazi && n.s > b.polazi.s + GRAD_BUS_POLAZAK_DO) b.polazi = null;
+  const s0 = b.stajalista[b.sljedece];
+  if (s0 !== undefined) {
+    if (b.stojiOd === null) {
+      if (n.v < 0.1 && Math.abs(n.s - s0) < 1.5) {
+        b.stojiOd = sb.t;
+        const [od, do_] = GRAD_BUS_STAJE;
+        b.staje = od + sb.slucajno() * (do_ - od);
+      } else if (n.s > s0 + 2) {
+        // Prošao ga (nije mogao stati): sljedeće.
+        b.sljedece++;
+      }
+    } else {
+      if (!b.polazi && sb.t >= b.stojiOd + b.staje - GRAD_BUS_ZMIGAVAC) b.polazi = { od: sb.t, s: s0 };
+      if (sb.t >= b.stojiOd + b.staje) {
+        b.sljedece++;
+        b.stojiOd = null;
+        sb.metrika.stajalista += 1;
+      }
+    }
+  }
+  if (b.polazi) n.zmigavac = "left";
+}
+
+/**
+ * Stajališta linije uz plan autobusa: platforma desno od putanje, bočno do
+ * `GRAD_BUS_PLATFORMA_DO`, a autobus u desnoj traci; prednji kraj kod
+ * platforme. Ne staje u raskrsnici, na zebri ni na stop-liniji, ni odmah na
+ * početku i kraju plana. Vraća `s` sredine autobusa, rastuće.
+ */
+function stajalistaNaPlanu(sb: Saobracaj, plan: PlanBota, linija: LinijaAutobusa): number[] {
+  const put = plan.put;
+  const L = plan.vozilo.duzina;
+  const razmak = GRAD_BUS_STAJALISTE_RAZMAK;
+  // Zone u kojima autobus ne stoji (cijelim tijelom van njih).
+  const zone: [number, number][] = plan.prolazi.map((q) => [q.od, q.do_]);
+  for (const l of plan.linije) zone.push([l.s, l.s + L]);
+  for (const l of plan.pjesacki) zone.push([l.s, l.s + L]);
+  if (sb.pjesaci) for (const x of prelaziPlana(sb.pjesaci, plan)) zone.push([x.dodir, x.s + GRAD_ZEBRA_DUBINA / 2 + L / 2]);
+  const out: number[] = [];
+  for (const pl of linija.stajalista) {
+    const pr = projekcija(put, 0, put.duzina, pl.x, pl.y);
+    if (pr.d > GRAD_BUS_PLATFORMA_DO) continue;
+    const q = pointAt(put.tacke, put.cum, pr.s);
+    const h = headingAt(put.tacke, put.cum, pr.s);
+    // Desno od smjera vožnje (y je na jug): (−h.y, h.x).
+    if ((pl.x - q.x) * -h.y + (pl.y - q.y) * h.x <= 0) continue;
+    // U desnoj traci: do desne ivice kolovoza najviše jedna traka.
+    const ob = oseBlizu(sb.svijet.povrsina, q.x, q.y, 10)[0];
+    if (!ob) continue;
+    const bok = ob.pravac.x * h.x + ob.pravac.y * h.y >= 0 ? ob.bok : -ob.bok;
+    if (ob.pola - bok > sb.svijet.mreza.ivice[ob.ivica]!.sirinaTrake + 0.5) continue;
+    const s = pr.s + 2 - L / 2;
+    if (s < 30 || s > put.duzina - L) continue;
+    if (zone.some(([a, b]) => s + L / 2 > a - razmak && s - L / 2 < b + razmak)) continue;
+    if (out.some((x) => Math.abs(x - s) < GRAD_BUS_STAJALISTA_RAZMAK)) continue;
+    out.push(s);
+  }
+  return out.sort((a, b) => a - b);
+}
+
+/**
+ * Novi autobus: linija čiji koridor prolazi kroz prsten oko igrača, ivica
+ * koridora u prstenu, dionica linije (`voznjaLinijom`) i plan za autobus.
+ * Dio autobusa (`GRAD_BUS_NA_STAJALISTU`) se pojavi kako stoji na stajalištu
+ * svoje linije u prstenu — inače bi kroz prozor oko igrača rijetko prošao
+ * pored stajališta. Mjesto pojave mora biti slobodno za cijelo njegovo tijelo.
+ */
+function noviAutobus(sb: Saobracaj, fokus: Point, tijela: readonly Tijelo[]): Npc | null {
+  const { mreza: m, zaSudiju } = sb.svijet;
+  const sl = sb.slucajno;
+  const odR = sb.popunjeno ? GRAD_NPC_POJAVA_OD : GRAD_NPC_POCETAK_OD;
+  const uPrstenu = (i: number) => {
+    const q = m.ivice[i]!.tacke[Math.floor(m.ivice[i]!.tacke.length / 2)]!;
+    const d = Math.hypot(q.x - fokus.x, q.y - fokus.y);
+    return d >= odR && d <= GRAD_NPC_POJAVA_DO;
+  };
+  const kandidati = (sb.linije ?? []).map((l) => ({ l, ivice: l.ivice.filter(uPrstenu) })).filter((x) => x.ivice.length > 0);
+  if (kandidati.length === 0) return null;
+  for (let pokusaj = 0; pokusaj < (sb.popunjeno ? 1 : 4); pokusaj++) {
+    const { l, ivice } = kandidati[Math.floor(sl() * kandidati.length)]!;
+    let iv = m.ivice[ivice[Math.floor(sl() * ivice.length)]!]!;
+    let smjer: 1 | -1 = iv.smjer !== 0 ? (iv.smjer as 1 | -1) : sl() < 0.5 ? 1 : -1;
+    // Na stajalištu: ivica koridora uz platformu u prstenu, u smjeru u kojem je platforma desno.
+    let naStajalistu = false;
+    if (sl() < GRAD_BUS_NA_STAJALISTU) {
+      const platforme = l.stajalista.filter((q) => {
+        const d = Math.hypot(q.x - fokus.x, q.y - fokus.y);
+        return d >= odR && d <= GRAD_NPC_POJAVA_DO;
+      });
+      const pl = platforme[Math.floor(sl() * platforme.length)];
+      const ob = pl ? oseBlizu(sb.svijet.povrsina, pl.x, pl.y, GRAD_BUS_PLATFORMA_DO).find((o) => l.koridor.has(o.ivica)) : undefined;
+      if (ob) {
+        iv = m.ivice[ob.ivica]!;
+        const desno: 1 | -1 = ob.bok >= 0 ? 1 : -1;
+        smjer = iv.smjer !== 0 ? (iv.smjer as 1 | -1) : desno;
+        naStajalistu = true;
+      }
+    }
+    if (sb.zoneGustine.length > 0 && gustinaZone(sb, iv.tacke[0]!) === 0) continue;
+    // Cilj dalje od granice nestajanja: autobus nestane prije kraja plana (kao
+    // i druga vozila, kojima je cilj van prozora).
+    const daleko = (q: Point) => Math.hypot(q.x - fokus.x, q.y - fokus.y) > GRAD_NPC_NESTAJE + 20;
+    const koraci = voznjaLinijom(sb.svijet, l, { ivica: iv.i, smjer }, sl, daleko);
+    if (!koraci || koraci.length < 2) continue;
+    const plan = planBota(zaSudiju, koraci, undefined, GRAD_NPC_REZERVA_LUKA, AUTOBUS);
+    if (plan.put.tacke.length < 2 || plan.neslaganja.length > 0 || plan.osovinom > 0) continue;
+    obidji(plan, sb.mjesta, 0);
+    // Cijelo tijelo autobusa na asfaltu duž cijele putanje: ravno tijelo od
+    // 12 m u oštroj krivini zalazi na trotoar (i u susjednu traku).
+    if (!tijeloNaAsfaltu(sb.svijet.povrsina, plan.put, AUTOBUS)) continue;
+    const stajalista = stajalistaNaPlanu(sb, plan, l);
+    // Stoji na prvom stajalištu, ako je ono na početnoj ivici (uz platformu iz prstena).
+    const s0 = naStajalistu && stajalista[0] !== undefined && stajalista[0] < m.ivice[koraci[0]!.ivica]!.duzina + 20 ? stajalista[0] : 0;
+    const p0 = pointAt(plan.put.tacke, plan.put.cum, s0);
+    if (tijela.some((o) => Math.hypot(o.x - p0.x, o.y - p0.y) < GRAD_NPC_POJAVA_SLOBODNO + AUTOBUS.duzina / 2)) continue;
+    if (sb.pjesaci?.lista.some((x) => Math.hypot(x.x - p0.x, x.y - p0.y) < GRAD_PJ_POJAVA_VOZILA + AUTOBUS.duzina / 2)) continue;
+    const n = napraviNpc(sb, plan, koraci);
+    n.autobus = { ref: l.ref, stajalista, sljedece: 0, stojiOd: null, staje: 0, polazi: null };
+    if (s0 > 0) {
+      // Stoji na stajalištu od ranije: ostatak stajanja.
+      n.s = s0;
+      n.kursor = 0;
+      postaviPozu(n);
+      n.v = 0;
+      const [od, do_] = GRAD_BUS_STAJE;
+      n.autobus.stojiOd = sb.t;
+      n.autobus.staje = sl() * (do_ - od) + GRAD_BUS_ZMIGAVAC;
+      return n;
+    }
+    const ispred = naPutu(n, tijela, 60);
+    const prva = plan.prolazi[0];
+    n.v = Math.min(
+      dozvoljena(n),
+      ispred ? sigurnaBrzina(dozvoljena(n), ispred.vl, ispred.gap) : Infinity,
+      prva ? zaStati(mjestoCekanja(n, prva)) : Infinity,
+      sb.pjesaci ? brzinaPredPjesacima(sb.pjesaci, plan) : Infinity,
+      n.autobus.stajalista.length > 0 ? zaStati(n.autobus.stajalista[0]!) : Infinity,
+    );
+    if (ispred && ispred.gap < GRAD_NPC_RAZMAK + 3) continue;
+    return n;
+  }
+  return null;
+}
+
 /** Novo vozilo na početku plana (stoji). */
 function napraviNpc(sb: Saobracaj, plan: PlanBota, koraci: Korak[]): Npc {
   const p0 = plan.put.tacke[0]!;
@@ -1811,6 +2271,7 @@ function napraviNpc(sb: Saobracaj, plan: PlanBota, koraci: Korak[]): Npc {
       pjesackiZuto: new Map(),
       pjesackiZeleno: new Set(),
       namjere: new Map(),
+      namjereAutobusa: new Map(),
     };
     postaviPozu(n);
     return n;
@@ -1821,8 +2282,8 @@ function napraviNpc(sb: Saobracaj, plan: PlanBota, koraci: Korak[]): Npc {
  * Vozilo sa zadatom rutom (testovi, kasnije zadaci): plan kao kod drugih
  * vozača, početna brzina `v`. Vraća ga, ili `null` kad plana nema.
  */
-export function dodajVozilo(sb: Saobracaj, koraci: Korak[], v = 0): Npc | null {
-  const plan = planBota(sb.svijet.zaSudiju, koraci, undefined, GRAD_NPC_REZERVA_LUKA);
+export function dodajVozilo(sb: Saobracaj, koraci: Korak[], v = 0, vozilo: Vozilo = AUTO): Npc | null {
+  const plan = planBota(sb.svijet.zaSudiju, koraci, undefined, GRAD_NPC_REZERVA_LUKA, vozilo);
   if (plan.put.tacke.length < 2) return null;
   obidji(plan, sb.mjesta, 0);
   const n = napraviNpc(sb, plan, koraci);

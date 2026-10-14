@@ -37,6 +37,8 @@ export type VrstaZnaka =
   | "djeca"
   /** Zabrana saobraćaja u oba smjera: zatvorena ulica (gradilište) iz editora. */
   | "zabranaSaobracaja"
+  /** Autobusko stajalište (stavka 8c): OSM `bus_stop`, na strani stajališta. */
+  | "stajaliste"
   | `brzina:${number}`
   | `zona:${number}`
   | `krajZone:${number}`
@@ -318,6 +320,14 @@ export function crtezPravila(
   for (const z of znakoviUzUlicu(g)) {
     const iv = m.ivice[z.ivica]!;
     izlaz.znakovi.push({ vrsta: z.vrsta, ...desnoOdUlaza(iv, z.naprijed ? 1 : 0, z.s), izveden: z.izveden, nivo: 0 });
+  }
+  // Autobusko stajalište (stavka 8c): znak na trotoaru, na strani stajališta
+  // (desno od smjera `a → b` je strana 1) — tu staje autobus, a drugima je
+  // zaustavljanje zabranjeno.
+  for (const [ivica, lista] of g?.stajalista ?? []) {
+    for (const st of lista) {
+      izlaz.znakovi.push({ vrsta: "stajaliste", ...desnoOdUlaza(m.ivice[ivica]!, st.strana === 1 ? 1 : 0, st.s), izveden: false, nivo: 0 });
+    }
   }
   // Pješački semafor na sredini ulice (stavka 8): stop-linija pred zebrom i
   // semafor desno, za oba smjera — po tome sudi `redLightPedestrian`.

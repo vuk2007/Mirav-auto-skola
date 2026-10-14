@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DT, GRAD_PJ_SEMAFOR_ZAVRSI, GRAD_TROTOAR } from "../sim/config";
+import { DT, GRAD_PJ_SEMAFOR_ZAVRSI, GRAD_TROTOAR, GRAD_ZEBRA_DUBINA } from "../sim/config";
 import type { Point } from "../sim/types";
 import { korakPjesaka, noviPjesaci, ugrozava, type VoziloZaPjesaka } from "./pjesaci";
 import { naKolovozu } from "./povrsina";
@@ -117,6 +117,28 @@ describe("pješak i vozilo na prelazu (stavka 8)", () => {
     expect(ugrozava(auto(90, 14), p, 8)).toBe(false);
     expect(ugrozava(auto(22, 0), p, 8)).toBe(false);
     expect(ugrozava(auto(5, 10), p, 8)).toBe(false);
+  });
+
+  it("ugrožava ga vozilo koje skreće ka prelazu, iako mu pravac (još) ne siječe zebru", () => {
+    // Uz liniju prelaza (pravcem a → b), 4 m od nje, nos tik pored zebre, u
+    // vožnji (krivina ka kraku).
+    const ux = (p.b.x - p.a.x) / p.duzina;
+    const uy = (p.b.y - p.a.y) / p.duzina;
+    const x = p.a.x - uy * 4 - ux * 3;
+    const y = p.a.y + ux * 4 - uy * 3;
+    const skrece = (v: number): VoziloZaPjesaka => ({ id: 2, x, y, ugao: Math.atan2(uy, ux), v, duzina: 4.5, sirina: 1.8 });
+    expect(ugrozava(skrece(5), p, 8)).toBe(true);
+    // Stoji: ne ugrožava.
+    expect(ugrozava(skrece(0), p, 8)).toBe(false);
+  });
+
+  it("ne ugrožava ga vozilo koje stoji tik pred zebrom (čeka njega)", () => {
+    // Nos ~1 m (pa i 0,1 m) pred zebrom: vozač je stao zbog pješaka.
+    const nos = (d: number) => auto(p.centar.x + GRAD_ZEBRA_DUBINA / 2 + 4.5 / 2 + d, 0);
+    expect(ugrozava(nos(0.96), p, 8)).toBe(false);
+    expect(ugrozava(nos(0.1), p, 8)).toBe(false);
+    // Na samoj zebri: ugrožava.
+    expect(ugrozava(nos(-0.5), p, 8)).toBe(true);
   });
 });
 

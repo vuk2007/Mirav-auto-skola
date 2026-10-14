@@ -30,6 +30,8 @@ import {
   STOPPED_SPEED,
   YELLOW_COMMIT_TTC,
   type Level,
+  GRAD_BUS_PROPUSTI_BOCNO,
+  GRAD_VOZAC_USPORENJE,
 } from "../sim/config";
 import type { Point } from "../sim/types";
 import { manevarIzUgla, manevarKrakova, pravacKraja, ugaoSkretanja, type Ivica, type Manevar, type Mreza } from "./mreza";
@@ -55,6 +57,8 @@ import { pjesaciSaPrednoscu, type Pjesaci } from "./pjesaci";
 import { doZebre, mozeMirnoStati, polovinaUlice, svjetloPjesaka, tijeloNaZebri } from "./trotoari";
 import { headingAt, pointAt } from "../sim/geometry";
 import type { SlobodnoVozilo } from "./slobodno";
+import type { Vozilo } from "./botGrad";
+import { izaAutobusa, type AutobusUPolasku } from "./polazak";
 
 /**
  * Sudija u gradu (faza 6, stavka 5d): prati igrača korak po korak i prijavljuje
@@ -101,7 +105,9 @@ export type VrstaGradskogPrekrsaja =
    */
   | "pedestrianRightOfWay"
   | "redLightPedestrian"
-  | "pedestrianCollision";
+  | "pedestrianCollision"
+  /** Stavka 8c: autobusu se ne omogućava polazak sa stajališta (odluka korisnika 2026-10-13). */
+  | "busDeparture";
 
 export interface GradskiPrekrsaj {
   vrsta: VrstaGradskogPrekrsaja;
@@ -203,8 +209,9 @@ const MANEVRI: readonly Manevar[] = ["lijevo", "pravo", "desno", "polukruzno"];
  */
 function sudiPjesake(s: Sudija, st: SlobodnoVozilo, t: number, pj: Pjesaci): void {
   const mp = pj.mreza;
-  const nx = st.x + Math.cos(st.ugao) * (CAR_LENGTH / 2);
-  const ny = st.y + Math.sin(st.ugao) * (CAR_LENGTH / 2);
+  const { duzina, sirina } = s.vozilo;
+  const nx = st.x + Math.cos(st.ugao) * (duzina / 2);
+  const ny = st.y + Math.sin(st.ugao) * (duzina / 2);
   // Namjera: zapisuje se kad je pješak prvi put viđen na ivičnjaku.
   const cekaju = new Set<number>();
   for (const x of pj.lista) {
@@ -215,14 +222,14 @@ function sudiPjesake(s: Sudija, st: SlobodnoVozilo, t: number, pj: Pjesaci): voi
     cekaju.add(x.id);
     if (s.namjere.has(x.id)) continue;
     if (doZebre(p, nx, ny) > GRAD_PJ_NAMJERA_DO) continue;
-    s.namjere.set(x.id, { prelaz: x.prelaz, mogaoStati: mozeMirnoStati(st.x, st.y, st.ugao, st.v, CAR_LENGTH, CAR_WIDTH, p) });
+    s.namjere.set(x.id, { prelaz: x.prelaz, mogaoStati: mozeMirnoStati(st.x, st.y, st.ugao, st.v, duzina, sirina, p) });
   }
   for (const id of [...s.namjere.keys()]) if (!cekaju.has(id)) s.namjere.delete(id);
   // Prelazi blizu: auto stupa na zebru.
   const sada = new Set<number>();
   for (const p of mp.prelazi) {
     if (Math.abs(p.centar.x - st.x) > 25 || Math.abs(p.centar.y - st.y) > 25) continue;
-    if (!tijeloNaZebri(st.x, st.y, st.ugao, CAR_LENGTH, CAR_WIDTH, p)) continue;
+    if (!tijeloNaZebri(st.x, st.y, st.ugao, duzina, sirina, p)) continue;
     sada.add(p.id);
     // Prvi korak sudije: auto je možda već na zebri — tu nije stupilo sada.
     if (!s.naZebrama || s.naZebrama.has(p.id) || st.v < 0.5) continue;
@@ -237,6 +244,37 @@ function sudiPjesake(s: Sudija, st: SlobodnoVozilo, t: number, pj: Pjesaci): voi
 }
 
 /**
+ * Polazak autobusa sa stajališta (stavka 8c, odluka korisnika 2026-10-13): u
+ * naselju se autobusu omogućava uključivanje u saobraćaj. Kad se upali
+ * žmigavac, zapiše se da li je auto iza njega (u njegovoj ili susjednoj
+ * traci) moglo mirno stati prije njegovog zadnjeg kraja; ako jeste, a ipak ga
+ * nosom prestigne dok polazi — prekršaj (upozorenje). Isto pravilo voze drugi
+ * vozači (`saobracaj.ts`).
+ */
+function sudiPolazakAutobusa(s: Sudija, st: SlobodnoVozilo, t: number, autobusi: readonly AutobusUPolasku[]): void {
+  const vidi = new Set<number>();
+  for (const b of autobusi) {
+    vidi.add(b.id);
+    const iza = izaAutobusa(b, st.x, st.y, st.ugao, s.vozilo.duzina);
+    let z = s.autobusi.get(b.id);
+    if (!z) {
+      z = { mogaoStati: !!iza && iza.doZadnjeg - 1 >= (st.v * st.v) / (2 * GRAD_VOZAC_USPORENJE) - 0.5, prijavljen: false };
+      s.autobusi.set(b.id, z);
+    }
+    if (iza || !z.mogaoStati || z.prijavljen || st.v < 0.5) continue;
+    // Nije više iza: prestigao ga je (isti smjer, bočno blizu), ili je skrenuo.
+    const bx = Math.cos(b.ugao);
+    const by = Math.sin(b.ugao);
+    const isti = Math.cos(st.ugao) * bx + Math.sin(st.ugao) * by >= 0.7;
+    const bocno = Math.abs(-(st.x - b.x) * by + (st.y - b.y) * bx);
+    if (!isti || bocno > GRAD_BUS_PROPUSTI_BOCNO) continue;
+    z.prijavljen = true;
+    prijavi(s, st, t, "busDeparture", { autobus: b.id }, "minor");
+  }
+  for (const id of [...s.autobusi.keys()]) if (!vidi.has(id)) s.autobusi.delete(id);
+}
+
+/**
  * Pješački semafor na sredini ulice ispred auta (na njegovoj ivici, u smjeru
  * kretanja): prolazak stop-linije na crveno — ili na žuto upaljeno dok je
  * auto još moglo stati — je `redLightPedestrian` (kao `redLight`).
@@ -246,7 +284,7 @@ function sudiPjesackiSemafor(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: 
   if (s.pjesackiPrilaz) {
     const p = s.pjesackiPrilaz;
     const sem = g.pjesackiSemafori[p.semafor]!;
-    const doLinije = nosDoLinije(st, p.linija, p.pravac);
+    const doLinije = nosDoLinije(st, p.linija, p.pravac, s.vozilo.duzina);
     const sv = svjetloZaVozila(sem, t);
     if (sv === "zuto" && p.svjetlo === "zeleno") p.zutoPrekasno = p.doLinije > 0 && p.doLinije / Math.max(st.v, 0.1) < YELLOW_COMMIT_TTC;
     if (p.doLinije > 0 && doLinije <= 0 && st.v > 0 && (sv === "crveno" || (sv === "zuto" && !p.zutoPrekasno))) {
@@ -254,7 +292,7 @@ function sudiPjesackiSemafor(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: 
     }
     p.doLinije = doLinije;
     p.svjetlo = sv;
-    if (doLinije < -CAR_LENGTH - 5 || doLinije > GRAD_PRILAZ_DO + 10) s.pjesackiPrilaz = null;
+    if (doLinije < -s.vozilo.duzina - 5 || doLinije > GRAD_PRILAZ_DO + 10) s.pjesackiPrilaz = null;
   }
   if (!s.pjesackiPrilaz) {
     g.pjesackiSemafori.forEach((sem, i) => {
@@ -265,7 +303,7 @@ function sudiPjesackiSemafor(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: 
       const h = headingAt(iv.tacke, iv.cum, sL);
       const pravac = krece === 1 ? h : { x: -h.x, y: -h.y };
       const linija = pointAt(iv.tacke, iv.cum, sL);
-      const doLinije = nosDoLinije(st, linija, pravac);
+      const doLinije = nosDoLinije(st, linija, pravac, s.vozilo.duzina);
       if (doLinije <= 0) return;
       const sv = svjetloZaVozila(sem, t);
       s.pjesackiPrilaz = { semafor: i, linija, pravac, doLinije, svjetlo: sv, zutoPrekasno: sv === "zuto" && doLinije / Math.max(st.v, 0.1) < YELLOW_COMMIT_TTC };
@@ -394,9 +432,16 @@ export interface Sudija {
   namjere: Map<number, { prelaz: number; mogaoStati: boolean }>;
   /** Prelazi preko čijeg je pojasa zebre auto bilo u prošlom koraku; `null` prije prvog koraka. */
   naZebrama: Set<number> | null;
+  /** Vozilo koje se sudi: auto igrača, ili u fuzz-u drugi vozač i autobus (stavka 8c). */
+  vozilo: Vozilo;
+  /**
+   * Autobusi koji polaze sa stajališta (stavka 8c): da li je auto moglo mirno
+   * stati iza njega kad se upalio žmigavac, i da li je prekršaj već prijavljen.
+   */
+  autobusi: Map<number, { mogaoStati: boolean; prijavljen: boolean }>;
 }
 
-export function noviSudija(nivo: Level): Sudija {
+export function noviSudija(nivo: Level, vozilo: Vozilo = { duzina: CAR_LENGTH, sirina: CAR_WIDTH }): Sudija {
   return {
     prekrsaji: [],
     zmigavac: null,
@@ -425,6 +470,8 @@ export function noviSudija(nivo: Level): Sudija {
     pjesackiPrilaz: null,
     namjere: new Map(),
     naZebrama: null,
+    vozilo,
+    autobusi: new Map(),
   };
 }
 
@@ -561,9 +608,9 @@ export function stopLinija(g: { mreza: Mreza }, k: Pick<Krak, "lanac" | "stopD">
  * krivini ispred linije projekcija na osovinu bi auto u unutrašnjoj traci
  * „pomakla" naprijed.
  */
-function nosDoLinije(st: SlobodnoVozilo, linija: Point, pravac: Point): number {
-  const nx = st.x + Math.cos(st.ugao) * (CAR_LENGTH / 2);
-  const ny = st.y + Math.sin(st.ugao) * (CAR_LENGTH / 2);
+function nosDoLinije(st: SlobodnoVozilo, linija: Point, pravac: Point, duzina = CAR_LENGTH): number {
+  const nx = st.x + Math.cos(st.ugao) * (duzina / 2);
+  const ny = st.y + Math.sin(st.ugao) * (duzina / 2);
   return -((nx - linija.x) * pravac.x + (ny - linija.y) * pravac.y);
 }
 
@@ -624,7 +671,7 @@ function krakIspred(g: GradZaSudiju, ivica: number, gleda: 1 | -1, sNaIvici: num
  * `GRAD_CEKA_NA_ULAZ` metara. Tako čeka i kad ustupa na kraku bez znaka — to
  * nije zaustavljanje na stajalištu (stavka 7).
  */
-function cekaNaUlaz(g: GradZaSudiju, ivica: number, gleda: 1 | -1, sNaIvici: number, st: SlobodnoVozilo): boolean {
+function cekaNaUlaz(g: GradZaSudiju, ivica: number, gleda: 1 | -1, sNaIvici: number, st: SlobodnoVozilo, duzina = CAR_LENGTH): boolean {
   let e = ivica;
   let smjer = gleda;
   let iv = g.mreza.ivice[e]!;
@@ -635,7 +682,7 @@ function cekaNaUlaz(g: GradZaSudiju, ivica: number, gleda: 1 | -1, sNaIvici: num
       const k = g.raskrsnice.lista[kr[0]]!.kraci[kr[1]]!;
       if (!k.ulaz) return false;
       const { linija, pravac } = stopLinija(g, { ...k, stopD: k.cekaD });
-      const d = nosDoLinije(st, linija, pravac);
+      const d = nosDoLinije(st, linija, pravac, duzina);
       return d >= -0.5 && d <= GRAD_CEKA_NA_ULAZ;
     }
     const cvor = smjer === 1 ? iv.b : iv.a;
@@ -739,8 +786,11 @@ export function sudi(
   uKoloni = false,
   /** Pješaci (stavka 8) — bez njih se pravila za pješake ne sude. */
   pjesaci: Pjesaci | null = null,
+  /** Autobusi koji polaze sa stajališta (stavka 8c). */
+  autobusi: readonly AutobusUPolasku[] = [],
 ): void {
   s.zmigavac = zmigavac;
+  sudiPolazakAutobusa(s, st, t, autobusi);
   const naUlici = ulicaAuta(g, s, st);
   if (!naUlici) return;
   if (pjesaci) sudiPjesake(s, st, t, pjesaci);
@@ -772,7 +822,7 @@ export function sudi(
     const traje = (ispred && ispred.r === p.r && ispred.k === p.k) || r === p.r;
     if (!traje) s.prilaz = null;
     else {
-      const doLinije = nosDoLinije(st, p.linija, p.pravac);
+      const doLinije = nosDoLinije(st, p.linija, p.pravac, s.vozilo.duzina);
       const rs = g.raskrsnice.lista[p.r]!;
       const sv = svjetlo(rs, p.k, t);
       const kasno = p.doLinije > 0 && p.doLinije / Math.max(st.v, 0.1) < YELLOW_COMMIT_TTC;
@@ -820,7 +870,7 @@ export function sudi(
   if (!s.prilaz && ispred) {
     const k = g.raskrsnice.lista[ispred.r]!.kraci[ispred.k]!;
     const { linija, pravac } = stopLinija(g, k);
-    const doLinije = nosDoLinije(st, linija, pravac);
+    const doLinije = nosDoLinije(st, linija, pravac, s.vozilo.duzina);
     if (doLinije > 0) {
       // Prilaz počinje sa već upaljenim žutim (linija je tik iza prethodne
       // raskrsnice, pa ju je sudija tek sad našao): kad se upalilo, ne zna se.
@@ -942,7 +992,7 @@ export function sudi(
     const c = Math.cos(st.ugao);
     const sn = Math.sin(st.ugao);
     const ose = oseBlizu(g.povrsina, st.x, st.y, GRAD_SUDIJA_DO_ULICE)
-      .filter((o) => o.d + CAR_WIDTH / 2 <= o.pola + 0.3 && Math.abs(o.pravac.x * c + o.pravac.y * sn) > 0.8)
+      .filter((o) => o.d + s.vozilo.sirina / 2 <= o.pola + 0.3 && Math.abs(o.pravac.x * c + o.pravac.y * sn) > 0.8)
       .concat([osa]);
     for (const o of ose) {
       const gl = o.pravac.x * c + o.pravac.y * sn >= 0 ? 1 : -1;
@@ -991,7 +1041,7 @@ export function sudi(
     const uzPromjenu =
       (pr.doPromjene[2 * iv.i] === 0 && osa.s < GRAD_PUNA_POSLIJE_PROMJENE) ||
       (pr.doPromjene[2 * iv.i + 1] === 0 && iv.duzina - osa.s < GRAD_PUNA_POSLIJE_PROMJENE);
-    if (imaStrane && st.v > 0 && !uzPromjenu && bokUSmjeru < razdjelnik - CAR_WIDTH / 2) {
+    if (imaStrane && st.v > 0 && !uzPromjenu && bokUSmjeru < razdjelnik - s.vozilo.sirina / 2) {
       s.lijevoT += DT;
       if (s.lijevoT >= GRAD_LIJEVO_TRAJE && !s.lijevoPrijavljeno) {
         prijavi(s, st, t, "wrongSide", { sekundi: GRAD_LIJEVO_TRAJE });
@@ -1004,7 +1054,7 @@ export function sudi(
     // Poprečni poluobim auta na ulici: auto ukoso zauzima više od svoje širine.
     const sinA = Math.abs(glava.x * osa.pravac.y - glava.y * osa.pravac.x);
     const cosA = Math.abs(glava.x * osa.pravac.x + glava.y * osa.pravac.y);
-    const pola = (CAR_LENGTH / 2) * sinA + (CAR_WIDTH / 2) * cosA;
+    const pola = (s.vozilo.duzina / 2) * sinA + (s.vozilo.sirina / 2) * cosA;
     // Puna linija (editor): tijelo preko nje više od `LINE_CROSS_TOL` — kao na
     // otvorenom putu (`crossingSolidLine`). Jednom po prelasku.
     const puna =
@@ -1103,7 +1153,7 @@ export function sudi(
 
   // ── zaustavljanje: zebra, raskrsnica, stajalište ────────────────────────
   // Auto koje još nije krenulo (start vožnje) ne „zaustavlja se" nigdje.
-  if (Math.abs(st.v) < STOPPED_SPEED && st.predjeno > CAR_LENGTH) {
+  if (Math.abs(st.v) < STOPPED_SPEED && st.predjeno > s.vozilo.duzina) {
     // Zaustavio ga je saobraćaj (kolona ispred) — nije prekršaj (odluka
     // korisnika 2026-09-30). Dok tako stoji, vrijeme se ne broji: i kad krene,
     // broji se tek od tada, ne od početka čekanja.
@@ -1113,9 +1163,9 @@ export function sudi(
       // Ispred stop-linije se čeka — to nije zaustavljanje na zabranjenom mjestu.
       // Isto na mjestu čekanja kraka bez linije (ustupanje).
       const cekaNaLiniji =
-        (s.prilaz !== null && s.prilaz.doLinije >= 0) || (r === null && cekaNaUlaz(g, osa.ivica, gleda, osa.s, st));
+        (s.prilaz !== null && s.prilaz.doLinije >= 0) || (r === null && cekaNaUlaz(g, osa.ivica, gleda, osa.s, st, s.vozilo.duzina));
       const naZebri = (g.zebre.get(osa.ivica) ?? []).some(
-        (z) => Math.abs(z - osa.s) < GRAD_ZEBRA_DUBINA / 2 + CAR_LENGTH / 2 - 0.2,
+        (z) => Math.abs(z - osa.s) < GRAD_ZEBRA_DUBINA / 2 + s.vozilo.duzina / 2 - 0.2,
       );
       const naStajalistu = (g.stajalista.get(osa.ivica) ?? []).some(
         (z) => Math.abs(z.s - osa.s) < GRAD_STAJALISTE_DUZINA / 2 && Math.sign(osa.bok) === z.strana,

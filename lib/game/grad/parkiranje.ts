@@ -192,7 +192,11 @@ export function obidji(plan: PlanBota, mjesta: readonly MjestoParkiranja[], odS:
   const { tacke, cum } = plan.put;
   const blizu = mjesta.filter((z) => z.id !== osim);
   if (blizu.length === 0) return;
-  const puno = CAR_LENGTH / 2 + GRAD_PARK_PUNO;
+  // Duže i šire vozilo (autobus, stavka 8c): pomak počinje ranije i veći je.
+  const duze = (plan.vozilo.duzina - CAR_LENGTH) / 2;
+  const razmak = RAZMAK_OBILASKA + (plan.vozilo.sirina - CAR_WIDTH) / 2;
+  const zona = ZONA_OBILASKA + duze;
+  const puno = CAR_LENGTH / 2 + GRAD_PARK_PUNO + duze;
   // Pomaci se računaju sa originalnih tačaka, pa tek onda upisuju.
   const pomaci: [number, Point][] = [];
   for (let i = 0; i < tacke.length; i++) {
@@ -204,17 +208,17 @@ export function obidji(plan: PlanBota, mjesta: readonly MjestoParkiranja[], odS:
     for (const z of blizu) {
       const dx = P.x - z.x;
       const dy = P.y - z.y;
-      if (Math.abs(dx) > ZONA_OBILASKA + 4 || Math.abs(dy) > ZONA_OBILASKA + 4) continue;
+      if (Math.abs(dx) > zona + 4 || Math.abs(dy) > zona + 4) continue;
       const duz = dx * z.hx + dy * z.hy;
-      if (Math.abs(duz) > ZONA_OBILASKA) continue;
+      if (Math.abs(duz) > zona) continue;
       const h = pravacTacke(tacke, i);
       if (h.x * z.hx + h.y * z.hy < 0.9) continue;
       // Bočno, + desno (ka ivičnjaku): parkirani je na 0.
       const bok = -dx * z.hy + dy * z.hx;
-      if (bok > RAZMAK_OBILASKA / 2 || bok <= -RAZMAK_OBILASKA) continue;
+      if (bok > razmak / 2 || bok <= -razmak) continue;
       let f = Math.abs(duz) <= puno ? 1 : 1 - (Math.abs(duz) - puno) / GRAD_PARK_NAGIB;
       f = Math.min(f, (cum[i]! - odS) / GRAD_PARK_NAGIB);
-      const pomak = (bok + RAZMAK_OBILASKA) * Math.max(0, f);
+      const pomak = (bok + razmak) * Math.max(0, f);
       if (pomak > naj) {
         naj = pomak;
         nx = z.hy;
@@ -224,7 +228,12 @@ export function obidji(plan: PlanBota, mjesta: readonly MjestoParkiranja[], odS:
     // Lijevo od pravca vožnje (ka sredini ulice).
     if (naj > 0) pomaci.push([i, { x: P.x + nx * naj, y: P.y + ny * naj }]);
   }
-  for (const [i, q] of pomaci) tacke[i] = q;
+  for (const [i, q] of pomaci) {
+    // Koliko je tačka pomjerena (vidi `PlanBota.obilazak`).
+    plan.obilazak ??= new Array<number>(tacke.length).fill(0);
+    plan.obilazak[i] = Math.max(plan.obilazak[i] ?? 0, Math.hypot(q.x - tacke[i]!.x, q.y - tacke[i]!.y));
+    tacke[i] = q;
+  }
 }
 
 /**

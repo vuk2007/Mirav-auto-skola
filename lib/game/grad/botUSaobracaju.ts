@@ -2,7 +2,8 @@ import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_SUDAR_PONOVO, type Level } from "../sim
 import { polygonsOverlap, rectCorners } from "../sim/geometry";
 import { korakBota, noviBot, type IshodVoznje, type Korak, type PlanBota } from "./botGrad";
 import type { Manevar } from "./mreza";
-import { dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, tijeloNpc, IGRAC } from "./saobracaj";
+import { autobusiUPolasku, dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, tijeloNpc, IGRAC } from "./saobracaj";
+import { linijeAutobusa, type SiroveLinije } from "./autobusi";
 import { korakPjesaka, noviPjesaci, udaraPjesaka } from "./pjesaci";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
 import { noviSudija, sudi } from "./sudija";
@@ -42,6 +43,8 @@ export function odveziRutuUSaobracaju(
   sjeme: number,
   gustina = 1,
   najvise = 1800,
+  /** Autobuske linije (stavka 8c); bez njih — bez autobusa. */
+  linije: SiroveLinije | null = null,
 ): IshodUSaobracaju {
   const { povrsina, zaSudiju: g } = svijet;
   const a = plan.put.tacke[0]!;
@@ -69,6 +72,7 @@ export function odveziRutuUSaobracaju(
   pjesaci.gustinaVanZona = 3;
   pjesaci.t = t0;
   sb.pjesaci = pjesaci;
+  if (linije) sb.linije = linijeAutobusa(svijet, linije);
 
   // Oduzeto prvenstvo, kao u igri: na kraju prolaza kroz raskrsnicu.
   let ulazak: { r: number; t: number } | null = null;
@@ -137,7 +141,7 @@ export function odveziRutuUSaobracaju(
     // Zaustavio ga je saobraćaj (kolona, ustupanje, zatvoren izlaz) — nije
     // parkiranje (odluka korisnika 2026-09-30).
     const r = senka.razlog.vrsta;
-    sudi(g, sudija, st, t + DT, ulaz.indicator, r === "vozilo" || r === "ustupa" || r === "izlaz" || r === "pjesak", pjesaci);
+    sudi(g, sudija, st, t + DT, ulaz.indicator, r === "vozilo" || r === "ustupa" || r === "izlaz" || r === "pjesak" || r === "autobus", pjesaci, autobusiUPolasku(sb));
   }
   return {
     stigao: bot.gotov,

@@ -60,6 +60,9 @@ if (sjemeSintetike !== null) {
   overlay = sintetickiOverlay(osnova.mreza, osnova.raskrsnice, sjemeSintetike, { lat, lon });
 }
 const sablonZona = JSON.parse(readFileSync(join(JAVNO, "cityZones", "podgorica.json"), "utf8")).zone;
+// Autobuske linije (stavka 8c) — bot u saobraćaju vozi i među autobusima.
+const fajlLinija = join(JAVNO, "linije", "podgorica.json");
+const linije = existsSync(fajlLinija) ? JSON.parse(readFileSync(fajlLinija, "utf8")) : null;
 const svijet = svijetGrada(osm, overlay, sablonZona);
 const { mreza, povrsina, raskrsnice, zabrane, zaSudiju: grad } = svijet;
 console.log(
@@ -87,7 +90,7 @@ for (let n = 0; n < ruta; n++) {
   // Semafori u različitim fazama: početak vožnje u nasumičnom trenutku ciklusa.
   const t0 = slucajno() * 300;
   const x = uSaobracaju
-    ? odveziRutuUSaobracaju(svijet, plan, koraci, t0, nivo, sjeme * 1000 + n, 1, 1800)
+    ? odveziRutuUSaobracaju(svijet, plan, koraci, t0, nivo, sjeme * 1000 + n, 1, 1800, linije)
     : odveziRutu(grad, povrsina, plan, t0, nivo, 1800);
   if (x.zastojaBota) x.prekrsaji.push({ vrsta: "zastoj", detalji: { zastoja: x.zastojaBota }, x: 0, y: 0 });
   km += x.predjeno / 1000;

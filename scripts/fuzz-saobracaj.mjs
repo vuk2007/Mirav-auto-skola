@@ -46,7 +46,8 @@ async function svijet() {
 /** Jedno sjeme: `trajanje` sekundi saobraćaja; vraća izvještaj. */
 async function sjeme(s, trajanje, trag) {
   const sv = await svijet();
-  const { noviSaobracaj, korakSaobracaja, parkirani } = await import(`${KOD}grad/saobracaj.ts`);
+  const { noviSaobracaj, korakSaobracaja, parkirani, tijeloNpc, autobusiUPolasku } = await import(`${KOD}grad/saobracaj.ts`);
+  const { linijeAutobusa } = await import(`${KOD}grad/autobusi.ts`);
   const { nasumicnaRuta, planBota } = await import(`${KOD}grad/botGrad.ts`);
   const { noviSudija, sudi } = await import(`${KOD}grad/sudija.ts`);
   const { noviPjesaci, korakPjesaka, udaraPjesaka } = await import(`${KOD}grad/pjesaci.ts`);
@@ -64,6 +65,9 @@ async function sjeme(s, trajanje, trag) {
   const sb = noviSaobracaj(sv, s, 1);
   // Najveća gustina (40 vozila): zadatak traži nula zastoja i pri punom gradu.
   sb.gustinaVanZona = 3;
+  // Autobusi po linijama iz OSM-a (stavka 8c).
+  const fajlLinija = join(JAVNO, "linije", "podgorica.json");
+  sb.linije = linijeAutobusa(sv, existsSync(fajlLinija) ? JSON.parse(readFileSync(fajlLinija, "utf8")) : null);
   // Pješaci: najviše (gustina 3 = 60), na istom satu kao saobraćaj.
   const pj = noviPjesaci(sv, s, 1);
   pj.gustinaVanZona = 3;
@@ -86,14 +90,15 @@ async function sjeme(s, trajanje, trag) {
     }
     const t0 = performance.now();
     korakSaobracaja(sb, fokus(), null);
-    korakPjesaka(pj, fokus(), sb.npc.map((n) => ({ id: n.id, x: n.x, y: n.y, ugao: n.ugao, v: n.v, duzina: CAR_LENGTH, sirina: CAR_WIDTH })));
+    korakPjesaka(pj, fokus(), sb.npc.map(tijeloNpc));
     const dt = performance.now() - t0;
     najviseP = Math.max(najviseP, pj.lista.length);
     // Udar pješaka: tijelo vozila dodiruje pješaka.
     for (const n of sb.npc) {
+      const { duzina, sirina } = n.plan.vozilo;
       for (const x of pj.lista) {
-        if (Math.abs(x.x - n.x) > CAR_LENGTH || Math.abs(x.y - n.y) > CAR_LENGTH) continue;
-        if (!udaraPjesaka({ x: n.x, y: n.y, ugao: n.ugao, duzina: CAR_LENGTH, sirina: CAR_WIDTH }, x)) continue;
+        if (Math.abs(x.x - n.x) > duzina || Math.abs(x.y - n.y) > duzina) continue;
+        if (!udaraPjesaka({ x: n.x, y: n.y, ugao: n.ugao, duzina, sirina }, x)) continue;
         const kljuc = `${n.id}-${x.id}`;
         if (!udari.some((u) => u.kljuc === kljuc)) udari.push({ kljuc, t: sb.t.toFixed(1), vozilo: n.id, pjesak: x.id, x: x.x.toFixed(1), y: x.y.toFixed(1), stanje: x.stanje, v: n.v.toFixed(1), razlog: JSON.stringify(n.razlog) });
       }
@@ -104,14 +109,17 @@ async function sjeme(s, trajanje, trag) {
     najvise = Math.max(najvise, sb.npc.length);
 
     // Sudari: tijela se preklapaju — i sa parkiranima (stavka 7e).
-    const tijela = [...sb.npc, ...parkirani(sb)].map((n) => ({ n, k: rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, CAR_LENGTH, CAR_WIDTH) }));
+    const tijela = [...sb.npc, ...parkirani(sb)].map((n) => {
+      const d = n.plan?.vozilo ?? { duzina: CAR_LENGTH, sirina: CAR_WIDTH };
+      return { n, d, k: rectCorners({ x: n.x, y: n.y }, { x: Math.cos(n.ugao), y: Math.sin(n.ugao) }, d.duzina, d.sirina) };
+    });
     for (let i = 0; i < tijela.length; i++) {
       for (let j = i + 1; j < tijela.length; j++) {
         const a = tijela[i].n;
         const b = tijela[j].n;
         // Dva parkirana se ne sudaraju (mjesta su razmaknuta).
         if (a.razlog === undefined && b.razlog === undefined) continue;
-        if (a.nivo !== b.nivo || Math.hypot(a.x - b.x, a.y - b.y) > CAR_LENGTH + 0.5) continue;
+        if (a.nivo !== b.nivo || Math.hypot(a.x - b.x, a.y - b.y) > (tijela[i].d.duzina + tijela[j].d.duzina) / 2 + 0.5) continue;
         if (!polygonsOverlap(tijela[i].k, tijela[j].k)) continue;
         const kljuc = `${a.id}-${b.id}`;
         if (!sudar.some((x) => x.kljuc === kljuc)) {
@@ -129,7 +137,7 @@ async function sjeme(s, trajanje, trag) {
       const linijaBlizu = n.plan.linije.some((l, i) => !n.prosao[i] && l.s - n.s < GRAD_PRILAZ_DO + 5);
       if (!sud && (n.prolaz < 1 || linijaBlizu || (n.plan.prolazi[n.prolaz]?.od ?? Infinity) - n.s < 15)) continue;
       if (!sud) {
-        sud = { s: noviSudija(5), predjeno: 0 };
+        sud = { s: noviSudija(5, n.plan.vozilo), predjeno: 0 };
         sudije.set(n.id, sud);
       }
       sud.predjeno += n.v * DT;
@@ -138,8 +146,9 @@ async function sjeme(s, trajanje, trag) {
       // Zaustavio ga je saobraćaj (odluka korisnika 2026-09-30): vozilo
       // ispred, ustupanje, ili zatvoren izlaz iz raskrsnice. I kad sudija još
       // ne vodi prolaz: na rubu raskrsnice auto je za parkiranje već u njoj.
-      const zbogSaobracaja = n.razlog.vrsta === "vozilo" || n.razlog.vrsta === "ustupa" || n.razlog.vrsta === "izlaz" || n.razlog.vrsta === "pjesak";
-      sudi(sv.zaSudiju, sud.s, st, sb.t, n.zmigavac, zbogSaobracaja, pj);
+      // Autobus na stajalištu i vozilo koje propušta autobus (stavka 8c) ne parkiraju.
+      const zbogSaobracaja = ["vozilo", "ustupa", "izlaz", "pjesak", "stajaliste", "autobus"].includes(n.razlog.vrsta);
+      sudi(sv.zaSudiju, sud.s, st, sb.t, n.zmigavac, zbogSaobracaja, pj, autobusiUPolasku(sb));
       for (const p of sud.s.prekrsaji.slice(prije)) prekrsaji.push({ id: n.id, t: sb.t.toFixed(1), vrsta: p.vrsta, x: p.x.toFixed(1), y: p.y.toFixed(1), detalji: JSON.stringify(p.detalji), razlog: JSON.stringify(n.razlog) });
     }
     for (const id of [...sudije.keys()]) if (!sb.npc.some((n) => n.id === id)) sudije.delete(id);
@@ -181,7 +190,7 @@ if (!isMainThread) {
           izvjestaji.push(iz);
           const los = iz.sudari.length + iz.zastoji.length + iz.prekrsaji.length + iz.udari.length;
           console.log(
-            `sjeme ${iz.sjeme}: ${los === 0 ? "ok" : "PAD"} · vozila do ${iz.najvise}, pojavilo ${iz.metrika.pojavljeno}, stiglo ${iz.metrika.stiglo}, parkiralo ${iz.metrika.parkiralo}, krugova ${iz.metrika.krugova} · pješaka do ${iz.pjesaci.najvise}, prešlo ${iz.pjesaci.preslo} · sudara ${iz.sudari.length}, zastoja ${iz.zastoji.length}, prekršaja ${iz.prekrsaji.length}, udarenih pješaka ${iz.udari.length} · korak ${iz.korakMs} ms (najduži ${iz.najduziKorakMs}) · ${iz.trajanje} s`,
+            `sjeme ${iz.sjeme}: ${los === 0 ? "ok" : "PAD"} · vozila do ${iz.najvise}, pojavilo ${iz.metrika.pojavljeno}, stiglo ${iz.metrika.stiglo}, parkiralo ${iz.metrika.parkiralo}, krugova ${iz.metrika.krugova} · autobusa ${iz.metrika.autobusa}, stajanja ${iz.metrika.stajalista} · pješaka do ${iz.pjesaci.najvise}, prešlo ${iz.pjesaci.preslo} · sudara ${iz.sudari.length}, zastoja ${iz.zastoji.length}, prekršaja ${iz.prekrsaji.length}, udarenih pješaka ${iz.udari.length} · korak ${iz.korakMs} ms (najduži ${iz.najduziKorakMs}) · ${iz.trajanje} s`,
           );
           for (const x of iz.sudari.slice(0, 3)) console.log(`   sudar ${JSON.stringify(x)}`);
           for (const x of iz.udari.slice(0, 3)) console.log(`   udar pješaka ${JSON.stringify(x)}`);
@@ -197,7 +206,7 @@ if (!isMainThread) {
   const pali = izvjestaji.filter((x) => x.sudari.length + x.zastoji.length + x.prekrsaji.length + x.udari.length > 0);
   const zbir = (f) => izvjestaji.reduce((s, x) => s + f(x), 0);
   console.log(
-    `\nUkupno: ${izvjestaji.length - pali.length}/${izvjestaji.length} čisto · sudara ${zbir((x) => x.sudari.length)}, zastoja ${zbir((x) => x.zastoji.length)}, prekršaja ${zbir((x) => x.prekrsaji.length)}, udarenih pješaka ${zbir((x) => x.udari.length)}, krugova prvenstva ${zbir((x) => x.metrika.krugova)}, vozila stiglo ${zbir((x) => x.metrika.stiglo)}, parkiralo ${zbir((x) => x.metrika.parkiralo)}, pješaka prešlo ${zbir((x) => x.pjesaci.preslo)}.`,
+    `\nUkupno: ${izvjestaji.length - pali.length}/${izvjestaji.length} čisto · sudara ${zbir((x) => x.sudari.length)}, zastoja ${zbir((x) => x.zastoji.length)}, prekršaja ${zbir((x) => x.prekrsaji.length)}, udarenih pješaka ${zbir((x) => x.udari.length)}, krugova prvenstva ${zbir((x) => x.metrika.krugova)}, vozila stiglo ${zbir((x) => x.metrika.stiglo)}, parkiralo ${zbir((x) => x.metrika.parkiralo)}, autobusa ${zbir((x) => x.metrika.autobusa)}, stajanja na stajalištu ${zbir((x) => x.metrika.stajalista)}, pješaka prešlo ${zbir((x) => x.pjesaci.preslo)}.`,
   );
   if (pali.length > 0) console.log(`Pala sjemena: ${pali.map((x) => x.sjeme).join(", ")}`);
   process.exit(pali.length > 0 ? 1 : 0);

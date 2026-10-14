@@ -26,7 +26,18 @@ import { procitaj } from "@/lib/game/grad/paket";
 import { ulicaNa } from "@/lib/game/grad/povrsina";
 import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { svijetGrada } from "@/lib/game/grad/svijet";
-import { igracCekaSaobracaj, IGRAC, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, tijeloNpc, type Tijelo } from "@/lib/game/grad/saobracaj";
+import {
+  autobusiUPolasku,
+  igracCekaSaobracaj,
+  IGRAC,
+  korakSaobracaja,
+  noviSaobracaj,
+  oduzetoPrvenstvo,
+  parkirani,
+  tijeloNpc,
+  type Tijelo,
+} from "@/lib/game/grad/saobracaj";
+import { linijeAutobusa, type SiroveLinije } from "@/lib/game/grad/autobusi";
 import { korakPjesaka, noviPjesaci, tijelaPjesaka, udaraPjesaka } from "@/lib/game/grad/pjesaci";
 import { svjetloPjesaka } from "@/lib/game/grad/trotoari";
 import type { Manevar } from "@/lib/game/grad/mreza";
@@ -134,11 +145,13 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         return (await r.json()) as T;
       };
       // Izgled zgrada je podatak: palete i zone (sa paletom po zoni).
-      const [spisak, palete, zone, overlay] = await Promise.all([
+      const [spisak, palete, zone, overlay, linije] = await Promise.all([
         json<Record<string, { fajl: string }>>("/data/grad/gradovi.json"),
         json<Palete & { dekor: BojeDekora; osvjetljenje: BojeOsvjetljenja }>("/data/grad/palete.json"),
         json<{ zone: Zona[] }>(`/data/grad/cityZones/${GRAD}.json`),
         ucitajOverlay(GRAD),
+        // Autobuske linije (stavka 8c); bez njih autobusi idu bulevarima.
+        json<SiroveLinije>(`/data/grad/linije/${GRAD}.json`).catch(() => null),
       ]);
       const fajl = spisak[GRAD]?.fajl;
       if (!fajl) throw new Error(`nema paketa za ${GRAD}`);
@@ -161,6 +174,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const gustinaPjesaka = () => GRAD_NPC_GUSTINA_DOBA[uslovRef.current.doba];
       const pjesaci = noviPjesaci(svijet, 1, gustinaPjesaka());
       saobracaj.pjesaci = pjesaci;
+      saobracaj.linije = linijeAutobusa(svijet, linije);
       const pjesaciParam = debug ? Number(new URLSearchParams(window.location.search).get("pjesaci") ?? NaN) : NaN;
       if (Number.isFinite(pjesaciParam)) pjesaci.gustinaVanZona = pjesaciParam;
       // Samo `?debug=1`, za QA snimke: parkirani auti i kamera na zadatoj tački.
@@ -169,6 +183,11 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         (window as unknown as { __grad?: object }).__grad = {
           parkirani: () => parkirani(saobracaj).map((p) => ({ x: p.x, y: p.y })),
           pjesaci: () => pjesaci.lista.map((x) => ({ x: x.x, y: x.y, stanje: x.stanje })),
+          // Autobusi (stavka 8c): gdje su, stoje li na stajalištu, polaze li.
+          autobusi: () =>
+            saobracaj.npc
+              .filter((n) => n.autobus)
+              .map((n) => ({ x: n.x, y: n.y, linija: n.autobus!.ref, stoji: n.autobus!.stojiOd !== null, polazi: !!n.autobus!.polazi })),
           // Pješak prelazi ulicu `ispred` m pred autom (QA kartice udara).
           pjesakIspred: (ispred: number) => {
             const x = pjesaci.lista[0];
@@ -335,7 +354,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           sudija.nivo = nivoRef.current;
           // Stoji zbog saobraćaja (kolona, čeka da prođe drugi) — nije parkiranje.
           const zbogSaobracaja = igracCekaSaobracaj(saobracaj, tijeloIgraca(), sudija.prolaz?.r ?? sudija.prilaz?.r ?? null);
-          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator, zbogSaobracaja, pjesaci);
+          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator, zbogSaobracaja, pjesaci, autobusiUPolasku(saobracaj));
           simTRef.current = koraka_ * DT;
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
@@ -382,6 +401,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               boja: n.boja,
               koci: n.a < -0.5 || n.v < 0.1,
               zmigavac: n.zmigavac,
+              duzina: n.plan.vozilo.duzina,
+              sirina: n.plan.vozilo.sirina,
+              autobus: !!n.autobus,
             })),
             // Parkirani: ugašena svjetla.
             ...parkirani(saobracaj).map((p) => ({

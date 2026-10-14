@@ -329,6 +329,26 @@ function znak(vrsta: VrstaZnaka): HTMLCanvasElement {
       djeca(g, 48, 58);
       break;
     }
+    case "stajaliste": {
+      // Autobusko stajalište: plavi kvadrat, bijelo polje, crni autobus.
+      g.fillStyle = PLAVA;
+      g.fillRect(6, 6, 84, 84);
+      g.fillStyle = "#ffffff";
+      g.fillRect(16, 16, 64, 64);
+      g.fillStyle = "#111111";
+      g.beginPath();
+      g.roundRect(24, 30, 48, 30, 4);
+      g.fill();
+      g.fillStyle = "#ffffff";
+      for (const x of [29, 41, 53]) g.fillRect(x, 35, 9, 9);
+      g.fillRect(65, 35, 4, 16);
+      g.fillStyle = "#111111";
+      g.beginPath();
+      g.arc(34, 62, 5, 0, Math.PI * 2);
+      g.arc(62, 62, 5, 0, Math.PI * 2);
+      g.fill();
+      break;
+    }
     case "skolskaZona": {
       g.fillStyle = PLAVA;
       g.fillRect(6, 6, 84, 84);

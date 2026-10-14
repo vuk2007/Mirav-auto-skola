@@ -211,6 +211,31 @@ export function pomaknuta(t: readonly Point[], d: number): Point[] {
     cist.push(q);
     izvor.push(k);
   }
+  // Tjeme koje je ostalo bliže osovini nego `d` (kratak segment osovine
+  // između dva zaokreta „progutan" na unutrašnjoj strani): na tačnu udaljenost
+  // od najbližeg segmenta, na istoj strani — inače trotoar ide preko kolovoza.
+  const ad = Math.abs(d);
+  for (let prolaz = 0; prolaz < 2; prolaz++) {
+    for (let i = 0; i < cist.length; i++) {
+      const p = cist[i]!;
+      let naj = { d2: Infinity, qx: 0, qy: 0, k: 0 };
+      for (let k = 0; k < n - 1; k++) {
+        const a = t[k]!;
+        const b = t[k + 1]!;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const l2 = dx * dx + dy * dy;
+        const f = l2 > 0 ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / l2)) : 0;
+        const qx = a.x + dx * f;
+        const qy = a.y + dy * f;
+        const d2 = (p.x - qx) ** 2 + (p.y - qy) ** 2;
+        if (d2 < naj.d2) naj = { d2, qx, qy, k };
+      }
+      if (Math.sqrt(naj.d2) >= ad - 0.05) continue;
+      const nm = normala(naj.k);
+      cist[i] = { x: naj.qx + nm.x * d, y: naj.qy + nm.y * d };
+    }
+  }
   return cist;
 }
 

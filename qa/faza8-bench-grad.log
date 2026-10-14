@@ -1,4 +1,7 @@
-Mjerilo grada sa pjesacima (qa/faza8_bench_grad.mjs, next start, 2026-10-13)
-Grad, -17,271, 20 s po mjerenju
-procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 33.4 ms, sporijih od 55 fps 1/1200; korak simulacije medijana 1.41 ms, max 4.94 ms; vozila 40–40, pješaka 60–60
-procesor x4: 59.5 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 133.4 ms, sporijih od 55 fps 4/1190; korak simulacije medijana 3.64 ms, max 13.38 ms; vozila 40–40, pješaka 60–60
+Mjerilo grada sa pjesacima i autobusima (qa/faza8_bench_grad.mjs, next start, 2026-10-15)
+Grad, -17,271 (centar), 20 s po mjerenju
+procesor x1: 60.1 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 16.8 ms, sporijih od 55 fps 0/1202; korak simulacije medijana 1.24 ms, max 4.21 ms; vozila 39–40, pješaka 60–60
+procesor x4: 58.8 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 100.0 ms, sporijih od 55 fps 9/1177; korak simulacije medijana 3.87 ms, max 13.94 ms; vozila 39–40, pješaka 60–60
+Grad, -1555,88 (Bulevar Dzordza Vasingtona, linije 4/18/19/20), 20 s po mjerenju
+procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 33.4 ms, sporijih od 55 fps 2/1200; korak simulacije medijana 1.33 ms, max 7.51 ms; vozila 40–40, pješaka 60–60
+procesor x4: 58.3 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 233.4 ms, sporijih od 55 fps 9/1167; korak simulacije medijana 4.01 ms, max 26.99 ms; vozila 40–40, pješaka 60–60

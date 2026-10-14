@@ -5,6 +5,9 @@ import {
   GRAD_PJ_BRZINA_OD,
   GRAD_PJ_CILJ_DO,
   GRAD_PJ_CILJ_OD,
+  GRAD_PJ_BLOKIRAN,
+  GRAD_PJ_PROPUSTA,
+  GRAD_PJ_PROPUSTA_DO,
   GRAD_PJ_GUSTINA_ZONE_PODRAZUMIJEVANO,
   GRAD_PJ_NAMJERA,
   GRAD_PJ_NESTAJE,
@@ -64,6 +67,11 @@ export interface VoziloZaPjesaka {
   v: number;
   duzina: number;
   sirina: number;
+  /**
+   * Stoji zbog pješaka (drugi vozači znaju zašto stoje); kod igrača se ne zna
+   * — tada se gleda da li stoji tik pred zebrom.
+   */
+  cekaPjesaka?: boolean;
 }
 
 export interface Pjesak {
@@ -96,6 +104,10 @@ export interface Pjesak {
    * od tačke `a` (trotoar) do `b` (trotoar preko puta); `u` — pređeno od `a`.
    */
   vanZebre: { k: number; d: number; a: Point; b: Point; u: number } | null;
+  /** Od kad mu vozilo stoji na putu na trotoaru (stavka 8c); `null` kad ne stoji. */
+  blokiranOd?: number | null;
+  /** Stoji pred ivičnjakom i propušta vozilo koje dugo čeka (prelaz; stavka 8c). */
+  propusta?: number;
 }
 
 export interface MetrikaPjesaka {
@@ -127,6 +139,11 @@ export interface Pjesaci {
   metrika: MetrikaPjesaka;
   /** Nivo vožnje: na 4 i 5 pješaci (rijetko) prelaze i van zebre. */
   nivo: number;
+  /**
+   * Prelaz bez semafora pred kojim vozilo čeka pješake: od kada (stavka 8c,
+   * vidi `GRAD_PJ_PROPUSTA`) i kad je zadnji put viđeno.
+   */
+  vozilaCekaju: Map<number, { od: number; zadnje: number }>;
 }
 
 const PALETA_PJESAKA = 8;
@@ -221,6 +238,7 @@ export function noviPjesaci(svijet: SvijetGrada, sjeme: number, gustina = 1): Pj
     ciljevi: ciljeviGrada(svijet, mp),
     metrika: { pojavljeno: 0, stiglo: 0, udaljilo: 0, preslo: 0, van: 0, odustalo: 0 },
     nivo: 5,
+    vozilaCekaju: new Map(),
   };
 }
 
@@ -244,8 +262,10 @@ export function ciljniBrojPjesaka(pj: Pjesaci, fokus: Point): number {
 /**
  * Gdje vozilo siječe prelaz, ako ide ka njemu: razdaljina od nosa do bliže
  * ivice zebre [m] (negativno — već je na njoj), ili `null` kad ga ne siječe.
- * Pravac vožnje se produži do linije prelaza (vozilo koje skreće se vidi
- * kad je pravcem ka njemu).
+ * Pravac vožnje se produži do linije prelaza. Vozilo koje skreće ka prelazu
+ * a pravcem ga (još) ne siječe — ide uz liniju prelaza, ili pored zebre —
+ * vidi se po blizini: razdaljina od nosa do zebre, dok je u vožnji bliže od
+ * zaustavnog puta (u krivini se ne zna kuda će; pješak ga ne čeka dugo).
  */
 export function doPrelaza(o: VoziloZaPjesaka, p: Prelaz): number | null {
   const hx = Math.cos(o.ugao);
@@ -264,11 +284,22 @@ export function doPrelaza(o: VoziloZaPjesaka, p: Prelaz): number | null {
     const w = (o.x - p.a.x) * ux + (o.y - p.a.y) * uy;
     return w >= -1 && w <= p.duzina + 1 ? -1 : null;
   }
-  // Ide ka liniji: dn i hn suprotnih znakova.
-  if (Math.abs(hn) < 0.2 || Math.sign(dn) === Math.sign(hn)) return null;
+  // Pravcem ne siječe prelaz: možda skreće ka njemu (vidi gore).
+  const blizu = (): number | null => {
+    if (o.v < 0.5) return null;
+    const nosX = o.x + hx * (o.duzina / 2);
+    const nosY = o.y + hy * (o.duzina / 2);
+    const w = (nosX - p.a.x) * ux + (nosY - p.a.y) * uy;
+    const n = (nosX - p.a.x) * nx + (nosY - p.a.y) * ny;
+    const d = Math.hypot(w - Math.min(Math.max(w, 0), p.duzina), Math.max(0, Math.abs(n) - pola));
+    return d < (o.v * o.v) / (2 * GRAD_VOZAC_USPORENJE) + 1 ? d : null;
+  };
+  // Udaljava se od linije: nije mu na putu.
+  if (Math.abs(hn) >= 0.2 && Math.sign(dn) === Math.sign(hn)) return null;
+  if (Math.abs(hn) < 0.2) return blizu();
   const t = Math.abs(dn) / Math.abs(hn);
   const w = (o.x + hx * t - p.a.x) * ux + (o.y + hy * t - p.a.y) * uy;
-  if (w < -2 || w > p.duzina + 2) return null;
+  if (w < -2 || w > p.duzina + 2) return blizu();
   return Math.max(0, Math.abs(dn) - pola - duz) / Math.abs(hn);
 }
 
@@ -281,9 +312,42 @@ export function ugrozava(o: VoziloZaPjesaka, p: Prelaz, prelaziZa: number): bool
   const d = doPrelaza(o, p);
   if (d === null) return false;
   if (d < 0) return true;
+  // Stoji pred zebrom (vozači staju `GRAD_STOP_ISPRED_ZEBRE`, ili tik pred
+  // njom): ne ugrožava — čeka baš pješaka. Sa rezervom od metra pješak bi
+  // čekao njega, a ono pješaka (stavka 8c).
+  if (o.v < 0.1) return false;
   const zaustavni = (o.v * o.v) / (2 * GRAD_VOZAC_USPORENJE) + 1;
   if (d >= zaustavni) return false;
   return d / Math.max(o.v, 0.1) < prelaziZa + 1;
+}
+
+/**
+ * Da li vozilo pred zebrom (bez semafora) čeka pješake duže od
+ * `GRAD_PJ_PROPUSTA`: stoji, nosom do `GRAD_PJ_PROPUSTA_DO` m pred zebrom,
+ * i čeka baš pješake (drugi vozači to znaju; igrač — stoji tik pred njom).
+ * Vrijeme se vodi po prelazu (`Pjesaci.vozilaCekaju`).
+ */
+function propustaVozilo(pj: Pjesaci, p: Prelaz, vozila: readonly VoziloZaPjesaka[]): boolean {
+  if (p.semafor) return false;
+  const c = p.centar;
+  const ceka = vozila.some((o) => {
+    if (o.v >= 0.1 || o.cekaPjesaka === false) return false;
+    if (Math.abs(o.x - c.x) > 30 || Math.abs(o.y - c.y) > 30) return false;
+    const d = doPrelaza(o, p);
+    return d !== null && d >= 0 && d <= GRAD_PJ_PROPUSTA_DO;
+  });
+  const z = pj.vozilaCekaju.get(p.id);
+  if (!ceka) {
+    pj.vozilaCekaju.delete(p.id);
+    return false;
+  }
+  // Niko ga nije gledao (nema pješaka uz prelaz): brojanje počinje iznova.
+  if (!z || pj.t - z.zadnje > 2 * DT) {
+    pj.vozilaCekaju.set(p.id, { od: pj.t, zadnje: pj.t });
+    return false;
+  }
+  z.zadnje = pj.t;
+  return pj.t - z.od > GRAD_PJ_PROPUSTA;
 }
 
 /** Smije li pješak sada stupiti na prelaz (svjetlo, vozila). */
@@ -356,6 +420,32 @@ function rutaOdTacke(pj: Pjesaci, x: Pjesak, b: Point): boolean {
   return true;
 }
 
+/**
+ * Okreće se: vozilo mu stoji na putu (na trotoaru preko kojeg vozilo zalazi u
+ * oštroj krivini, ili na rubu kolovoza) — vraća se istom vezom i ide drugim
+ * ciljem, bez nje. Inače bi vozilo čekalo pješaka, a pješak vozilo.
+ */
+function okreni(pj: Pjesaci, x: Pjesak): boolean {
+  const mp = pj.mreza;
+  const korak = x.put[x.k]!;
+  const v = mp.veze[korak.veza]!;
+  const stablo = dosegnuti(mp, korak.od, GRAD_PJ_CILJ_DO, korak.veza);
+  const daleki = [...stablo.entries()].filter(([, e]) => e.g >= GRAD_PJ_CILJ_OD / 2).map(([c]) => c);
+  if (daleki.length === 0) return false;
+  const ruta = rutaDo(mp, stablo, daleki[Math.floor(pj.slucajno() * daleki.length)]!);
+  if (ruta.length === 0) return false;
+  const drugi = korak.od === v.a ? v.b : v.a;
+  x.put = [{ ...korak, od: drugi }, ...ruta];
+  x.k = 0;
+  x.d = Math.max(0, v.duzina - x.d);
+  // Bočni pomak je desno od smjera hoda: okrenut, bio bi preko puta (i
+  // skočio bi u vozilo koje mu stoji na putu) — ostaje gdje je.
+  x.bocno = -x.bocno;
+  x.vanZebre = null;
+  x.blokiranOd = null;
+  return true;
+}
+
 /** Odustaje od prelaza na koji predugo čeka: nova ruta sa ivičnjaka, bez tog prelaza. */
 function odustani(pj: Pjesaci, x: Pjesak): boolean {
   const mp = pj.mreza;
@@ -402,6 +492,14 @@ function postaviPozu(pj: Pjesaci, x: Pjesak): void {
 export function korakPjesaka(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZaPjesaka[]): void {
   const mp = pj.mreza;
   const ukloni = new Set<number>();
+  // Vrijeme čekanja vozila pred prelazima uz koje ima pješaka (i onih koji ga
+  // propuštaju): vodi se svaki korak, ne samo kad neko stigne na ivičnjak.
+  const uzPrelaz = new Set<number>();
+  for (const x of pj.lista) {
+    if (x.prelaz >= 0) uzPrelaz.add(x.prelaz);
+    if (x.propusta !== undefined) uzPrelaz.add(x.propusta);
+  }
+  for (const id of [...uzPrelaz].sort((a, b) => a - b)) propustaVozilo(pj, mp.prelazi[id]!, vozila);
   for (const x of pj.lista) {
     let ostalo = x.brzina * DT;
     x.v = 0;
@@ -443,6 +541,15 @@ export function korakPjesaka(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZ
       const korak = x.put[x.k]!;
       const v = mp.veze[korak.veza]!;
       if (v.prelaz >= 0 && x.stanje !== "prelazi") {
+        // Vozilo pred zebrom već dugo čeka pješake (`GRAD_PJ_PROPUSTA`), a
+        // oni pristižu jedan za drugim: ko tek stiže, ne staje na ivičnjak
+        // (ne pokazuje namjeru) dok vozilo ne prođe — inače ono čeka
+        // beskonačno (stavka 8c).
+        if (x.stanje === "hoda" && propustaVozilo(pj, mp.prelazi[v.prelaz]!, vozila)) {
+          x.propusta = v.prelaz;
+          break;
+        }
+        x.propusta = undefined;
         // Na ivičnjaku pred prelazom: čeka dok ne smije.
         if (x.stanje !== "ceka") {
           x.stanje = "ceka";
@@ -465,8 +572,16 @@ export function korakPjesaka(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZ
         x.cekaOd = null;
       }
       // Na kolovozu se ne ulazi u vozilo (stoji na zebri, ili je tek stiglo):
-      // pješak tada stane i sačeka.
-      if (x.stanje === "prelazi" && blokira(x, vozila)) break;
+      // pješak tada stane i sačeka. Ni na trotoaru (vozilo zalazi na njega u
+      // oštroj krivini): stane, a kad vozilo predugo stoji — okreće se.
+      if (blokira(x, vozila)) {
+        if (x.stanje === "hoda") {
+          x.blokiranOd ??= pj.t;
+          if (pj.t - x.blokiranOd > GRAD_PJ_BLOKIRAN && !okreni(pj, x)) ukloni.add(x.id);
+        }
+        break;
+      }
+      x.blokiranOd = null;
       const dalje = Math.min(ostalo, v.duzina - x.d);
       x.d += dalje;
       x.predjeno += dalje;
@@ -497,10 +612,10 @@ export function korakPjesaka(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZ
     }
     return true;
   });
-  pojavi(pj, fokus);
+  pojavi(pj, fokus, vozila);
 }
 
-function pojavi(pj: Pjesaci, fokus: Point): void {
+function pojavi(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZaPjesaka[]): void {
   const cilj = ciljniBrojPjesaka(pj, fokus);
   if (pj.lista.length >= cilj) {
     pj.popunjeno = true;
@@ -513,7 +628,7 @@ function pojavi(pj: Pjesaci, fokus: Point): void {
   const prsten = trotoariUKrugu(pj.mreza, fokus, odR, GRAD_PJ_POJAVA_DO);
   if (prsten.length === 0) return;
   for (let k = 0; k < odjednom; k++) {
-    const x = noviPjesak(pj, prsten);
+    const x = noviPjesak(pj, prsten, vozila);
     if (!x) continue;
     pj.lista.push(x);
     pj.metrika.pojavljeno += 1;
@@ -569,7 +684,7 @@ function trotoariUKrugu(mp: MrezaPjesaka, c: Point, od: number, do_: number): nu
   return out.sort((a, b) => a - b);
 }
 
-function noviPjesak(pj: Pjesaci, prsten: readonly number[]): Pjesak | null {
+function noviPjesak(pj: Pjesaci, prsten: readonly number[], vozila: readonly VoziloZaPjesaka[]): Pjesak | null {
   const mp = pj.mreza;
   const sl = pj.slucajno;
   for (let pokusaj = 0; pokusaj < 6; pokusaj++) {
@@ -631,6 +746,15 @@ function noviPjesak(pj: Pjesaci, prsten: readonly number[]): Pjesak | null {
     if (v.prelaz >= 0) continue;
     postaviPozu(pj, x);
     if (pj.lista.some((o) => Math.hypot(o.x - x.x, o.y - x.y) < 2 * GRAD_PJ_POLUPRECNIK)) continue;
+    // Ni u vozilu, ni tik uz njega (staza na oštroj krivini zalazi na
+    // kolovoz, a vozilo i na trotoar; stavka 8c).
+    const uVozilu = vozila.some(
+      (o) =>
+        Math.abs(o.x - x.x) < o.duzina &&
+        Math.abs(o.y - x.y) < o.duzina &&
+        udaraPjesaka({ x: o.x, y: o.y, ugao: o.ugao, duzina: o.duzina + 1, sirina: o.sirina + 1 }, x),
+    );
+    if (uVozilu) continue;
     return x;
   }
   return null;

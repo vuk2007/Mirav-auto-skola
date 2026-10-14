@@ -2452,5 +2452,84 @@ export const GRAD_BUS_VAN_KORIDORA = 4;
  * vazdušne linije od početka (od, do).
  */
 export const GRAD_BUS_DIONICA = [400, 800] as const;
-/** Pretraga rute dionice linije — najviše ovoliko koraka A*. */
-export const GRAD_BUS_PRETRAGA = 20000;
+/** Cilj dionice je na ivici dužoj od ovoga [m] — na kraćoj autobus ne stane pred linijom. */
+export const GRAD_BUS_CILJ_IVICA = 60;
+/**
+ * Pretraga rute dionice linije — najviše ovoliko koraka A*. Uspješnoj ruti
+ * (400 nasumičnih dionica) treba najviše ~3700, a 99 % ispod 900; neuspješna
+ * pretraga potroši cijeli budžet, a pojava autobusa proba četiri cilja —
+ * sa 20000 koraka to je bio kadar od pola sekunde na telefonu.
+ */
+export const GRAD_BUS_PRETRAGA = 4000;
+/** Gradski autobus (stavka 8c): dužina i širina [m]. */
+export const GRAD_BUS_DUZINA = 12;
+export const GRAD_BUS_SIRINA = 2.55;
+/** Autobusa oko igrača po gustini zone (0–3) × doba dana — dio ukupnog broja vozila. */
+export const GRAD_BUS_PO_GUSTINI_ZONE = [0, 1, 2, 3] as const;
+/** Stajanje na stajalištu [s] (od, do). */
+export const GRAD_BUS_STAJE = [8, 15] as const;
+/** Lijevi žmigavac prije polaska sa stajališta [s]. */
+export const GRAD_BUS_ZMIGAVAC = 3;
+/** Polazak sa stajališta traje dok autobus ne odmakne ovoliko [m]. */
+export const GRAD_BUS_POLAZAK_DO = 12;
+/** Platforma je uz plan autobusa: desno od putanje, bočno najviše ovoliko [m]. */
+export const GRAD_BUS_PLATFORMA_DO = 15;
+/**
+ * Autobus na stajalištu ne stoji u raskrsnici, na zebri ni na stop-liniji:
+ * tijelo mu je bar ovoliko [m] od njih.
+ */
+export const GRAD_BUS_STAJALISTE_RAZMAK = 8;
+/** Dva stajališta na planu su bar ovoliko [m] jedno od drugog (isto mjesto oba smjera). */
+export const GRAD_BUS_STAJALISTA_RAZMAK = 40;
+/**
+ * Polazak autobusa sa stajališta (odluka korisnika 2026-10-13): vozilo iza
+ * njega, u njegovoj ili susjednoj traci do ovoliko [m] bočno, mora ga
+ * propustiti ako je moglo mirno stati kad se upalio žmigavac.
+ */
+export const GRAD_BUS_PROPUSTI_BOCNO = 7;
+/** Tijelo autobusa smije preko ivice kolovoza ovoliko [m] (zaobljen ivičnjak, uglovi). */
+export const GRAD_BUS_ASFALT_REZERVA = 0.2;
+/** Dio autobusa koji se pojavi kako stoji na stajalištu svoje linije (stavka 8c). */
+export const GRAD_BUS_NA_STAJALISTU = 0.5;
+/**
+ * Obilazak parkiranog uz autobus (stavka 8c): ko obilazi, čeka prije početka
+ * pomaka dok iz suprotnog smjera dolazi vozilo u zoni obilaska ili do ovoliko
+ * [m] iza nje.
+ */
+export const GRAD_OBILAZAK_SUSRET = 40;
+/** Novo mjesto za parkiranje se ne rezerviše bliže od ovoga [m] autobusu (stavka 8c). */
+export const GRAD_BUS_PARKING_RAZMAK = 80;
+/** Pojava autobusa se pokušava najviše jednom na ovoliko [s] (plan je skup, stavka 8c). */
+export const GRAD_BUS_POJAVA_RITAM = 0.5;
+/** Pješak na trotoaru kojem vozilo stoji na putu duže od ovoga [s] okreće se i ide drugim putem (stavka 8c). */
+export const GRAD_PJ_BLOKIRAN = 3;
+/**
+ * Autobus u krivini smije proći tijesno pored vozila koje stoji (stavka 8c):
+ * oba tijela uvećana za ovoliko [m] sa svake strane se ne dodiruju (između
+ * njih ostaje bar dvostruko), a puni razmak (`GRAD_NPC_ZAKLON`) se vrati na
+ * najviše `GRAD_BUS_TIJESNO_DO` m dalje. Krut pravougaonik autobusa u oštroj
+ * krivini zamahne zadnjim krajem i do auta na stop-liniji susjednog kraka.
+ */
+export const GRAD_BUS_TIJESNO = 0.02;
+export const GRAD_BUS_TIJESNO_DO = 6;
+/**
+ * Luk kroz raskrsnicu čiji je kraj (iza početka izlazne trake) dalje od nje
+ * od ovoga [m] — izlazna ulica se do tu savila — zamjenjuje se glatkom krivom
+ * do početka trake (stavka 8c): inače putanja sa kraja luka skače u traku.
+ */
+export const GRAD_BOT_LUK_VAN_TRAKE = 0.5;
+/**
+ * Polovina ulice vozila na prelazu (stavka 8c): sve polovine koje tijelo
+ * vozila, uvećano bočno za ovoliko [m], dodiruje gdje siječe prelaz — vozač
+ * (i bot) odstupa od putanje, a u uskoj ulici auto u skretanju zahvati obje.
+ */
+export const GRAD_PJ_POLOVINA_REZERVA = 0.5;
+/**
+ * Vozilo pred zebrom bez semafora čeka pješake duže od ovoga [s] (stavka 8c):
+ * pješak koji tek stiže ne staje na ivičnjak dok ono ne prođe — inače, kad
+ * pristižu jedan za drugim, vozilo čeka beskonačno. Oni na ivičnjaku i na
+ * zebri prelaze kao i prije.
+ */
+export const GRAD_PJ_PROPUSTA = 8;
+/** … a „pred zebrom" je nosom do ovoliko [m] od nje. */
+export const GRAD_PJ_PROPUSTA_DO = 6;

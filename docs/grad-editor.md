@@ -104,7 +104,9 @@ u stvarnosti ne postoji uklanja se dugmetom „Ukloni ovaj komad ulice".
   na izlazu *kraj zone*.
   **Gustina saobraćaja** određuje koliko drugih vozila ima oko igrača dok je
   u zoni: 0 = nema ih, 1 = 25, 2 = 33, 3 = 40. Van nacrtanih zona važi 1.
-  Broj se još množi nivoom i dobom dana (noću ih je manje).
+  Broj se još množi nivoom i dobom dana (noću ih je manje). Od tih vozila
+  su autobusi: 0, 1, 2 ili 3 po gustini — voze stvarnim linijama iz OSM-a
+  (3, 4, 10, 15, 18, 19, 20) i staju na stajalištima linije.
   **Gustina pješaka** isto, za pješake: 0 = nema ih, 1 = 30, 2 = 45, 3 = 60.
   Van zona važi 1; noću ih je manje.
 - **Zadaci**: klikni start, obavezne tačke i cilj. Zelena linija je ruta kojom bi

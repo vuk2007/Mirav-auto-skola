@@ -87,6 +87,9 @@ const BOJE = {
   igrac: "#2f6fd0",
 } as const;
 
+/** Gradski autobus (stavka 8c). */
+const BOJA_AUTOBUSA = "#e8a317";
+
 /** Boje drugih vozila — prigušene, da se plavi auto igrača izdvaja. */
 const BOJE_VOZILA: readonly string[] = ["#e9e6df", "#3b3d42", "#9aa0a6", "#a33a32", "#c9b48a", "#4f6b4a", "#6b5a7a", "#d7d3c8"];
 
@@ -320,6 +323,10 @@ export interface GradScena {
     boja: number;
     koci: boolean;
     zmigavac: "left" | "right" | null;
+    /** Dimenzije [m] — bez njih auto; autobus se crta drugačije (stavka 8c). */
+    duzina?: number;
+    sirina?: number;
+    autobus?: boolean;
   }[];
   /**
    * Pješaci (stavka 8): gdje su, kuda gledaju, boja odjeće (indeks), pređeni
@@ -898,7 +905,10 @@ export async function createGradRenderer(
       stubovi.stroke({ width: 0.12, color: "#4a4d52" });
       u.uUpaljeno = GRAD_PROZORI_UPALJENI[o.doba];
 
-      /** Auto na `pos`: točkovi (kad je `tocak` zadat), karoserija, svjetla, žmigavac. */
+      /**
+       * Vozilo na `pos`: točkovi (kad je `tocak` zadat), karoserija, svjetla,
+       * žmigavac. Autobus (stavka 8c): duža karoserija sa prozorima duž bokova.
+       */
       const nacrtajAuto = (
         pos: Point,
         heading: Point,
@@ -907,6 +917,9 @@ export async function createGradRenderer(
         rikverc: boolean,
         tocak: number | null,
         zmigavac: "left" | "right" | null,
+        L = CAR_LENGTH,
+        W = CAR_WIDTH,
+        autobus = false,
       ) => {
         const ugao = Math.atan2(heading.y, heading.x);
         const cos = Math.cos(ugao);
@@ -921,7 +934,7 @@ export async function createGradRenderer(
           const tPop = 0.11;
           for (const strana of [-1, 1]) {
             const cx = osovina;
-            const cy = strana * (CAR_WIDTH / 2 - 0.12);
+            const cy = strana * (W / 2 - 0.12);
             dinamika
               .poly([
                 cx + tDuz * tc - tPop * ts, cy + tDuz * ts + tPop * tc,
@@ -933,20 +946,26 @@ export async function createGradRenderer(
           }
         }
         dinamika
-          .roundRect(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH, CAR_WIDTH * 0.25)
+          .roundRect(-L / 2, -W / 2, L, W, autobus ? 0.35 : W * 0.25)
           .fill(boja)
           .stroke({ width: 0.08, color: "rgba(0,0,0,0.4)" });
-        dinamika.rect(CAR_LENGTH * 0.1, -CAR_WIDTH * 0.34, CAR_LENGTH * 0.2, CAR_WIDTH * 0.68).fill("rgba(255,255,255,0.7)");
+        if (autobus) {
+          // Krov: svijetla traka, prozori duž oba boka, vjetrobran sprijeda.
+          dinamika.rect(-L / 2 + 0.6, -W * 0.18, L - 1.6, W * 0.36).fill("rgba(255,255,255,0.35)");
+          for (const strana of [-1, 1]) dinamika.rect(-L / 2 + 1, strana > 0 ? W / 2 - 0.42 : -W / 2 + 0.12, L - 2.4, 0.3).fill("rgba(20,30,45,0.75)");
+          dinamika.rect(L / 2 - 0.45, -W * 0.4, 0.3, W * 0.8).fill("rgba(20,30,45,0.8)");
+        } else dinamika.rect(L * 0.1, -W * 0.34, L * 0.2, W * 0.68).fill("rgba(255,255,255,0.7)");
         // Zadnja svjetla: crvena kad se koči, bijela u rikvercu. U rikvercu kočnica
         // vozi unazad, pa crveno tada ne bi značilo ništa.
         const stop = rikverc ? "#ffffff" : koci ? "#ff3b30" : "rgba(0,0,0,0.35)";
-        dinamika.rect(-CAR_LENGTH / 2, -CAR_WIDTH * 0.42, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
-        dinamika.rect(-CAR_LENGTH / 2, CAR_WIDTH * 0.2, CAR_LENGTH * 0.1, CAR_WIDTH * 0.22).fill(stop);
+        const dSvjetla = Math.min(0.45, L * 0.1);
+        dinamika.rect(-L / 2, -W * 0.42, dSvjetla, W * 0.22).fill(stop);
+        dinamika.rect(-L / 2, W * 0.2, dSvjetla, W * 0.22).fill(stop);
         // Žmigavac: narandžasti ugao sprijeda i pozadi, na strani koja je upaljena.
         if (zmigavac && zmigavacSvijetli(simT)) {
-          const w = zmigavac === "left" ? -CAR_WIDTH / 2 : CAR_WIDTH / 2 - 0.3;
-          dinamika.rect(CAR_LENGTH / 2 - 0.35, w, 0.35, 0.3).fill("#ffa21a");
-          dinamika.rect(-CAR_LENGTH / 2, w, 0.35, 0.3).fill("#ffa21a");
+          const w = zmigavac === "left" ? -W / 2 : W / 2 - 0.3;
+          dinamika.rect(L / 2 - 0.35, w, 0.35, 0.3).fill("#ffa21a");
+          dinamika.rect(-L / 2, w, 0.35, 0.3).fill("#ffa21a");
         }
         dinamika.resetTransform();
       };
@@ -978,11 +997,13 @@ export async function createGradRenderer(
       // Drugi vozači (stavka 7): ista karoserija, njihova boja; kočnica i
       // žmigavac kao kod igrača, u mraku i kratak snop farova.
       for (const v of vozila) {
-        nacrtajAuto(v.pos, v.heading, BOJE_VOZILA[v.boja % BOJE_VOZILA.length]!, v.koci, false, null, v.zmigavac);
+        const L = v.duzina ?? CAR_LENGTH;
+        const boja = v.autobus ? BOJA_AUTOBUSA : BOJE_VOZILA[v.boja % BOJE_VOZILA.length]!;
+        nacrtajAuto(v.pos, v.heading, boja, v.koci, false, null, v.zmigavac, L, v.sirina ?? CAR_WIDTH, v.autobus);
         if (sSvjetla.visible) {
           const c = v.heading.x;
           const sn = v.heading.y;
-          farovi.circle(v.pos.x + c * (CAR_LENGTH / 2 + 3), v.pos.y + sn * (CAR_LENGTH / 2 + 3), 3).fill({ color: boje.farovi, alpha: mrak ? 0.25 : 0.1 });
+          farovi.circle(v.pos.x + c * (L / 2 + 3), v.pos.y + sn * (L / 2 + 3), 3).fill({ color: boje.farovi, alpha: mrak ? 0.25 : 0.1 });
         }
       }
       if (igrac) {

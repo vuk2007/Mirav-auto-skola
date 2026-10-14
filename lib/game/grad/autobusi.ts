@@ -20,18 +20,27 @@
  * `bus_stop` objektima uz njih.
  */
 import {
+  GRAD_BUS_ASFALT_REZERVA,
+  GRAD_BUS_CILJ_IVICA,
   GRAD_BUS_DIONICA,
+  GRAD_BUS_DUZINA,
   GRAD_BUS_KORIDOR_DO,
   GRAD_BUS_KORIDOR_UDIO,
   GRAD_BUS_PRETRAGA,
+  GRAD_BUS_SIRINA,
   GRAD_BUS_UZORAK,
   GRAD_BUS_VAN_KORIDORA,
 } from "../sim/config";
 import type { Point } from "../sim/types";
-import { ruta, ZA_BOTA, type Korak } from "./botGrad";
+import { ruta, ZA_BOTA, type Korak, type Vozilo } from "./botGrad";
 import type { Ivica } from "./mreza";
-import { oseBlizu } from "./povrsina";
+import { naKolovozu, oseBlizu, type Povrsina } from "./povrsina";
+import { headingAt, pointAt } from "../sim/geometry";
+import type { Putanja } from "./vozacGrad";
 import type { SvijetGrada } from "./svijet";
+
+/** Gradski autobus. */
+export const AUTOBUS: Vozilo = { duzina: GRAD_BUS_DUZINA, sirina: GRAD_BUS_SIRINA };
 
 /** Sadržaj `linije/<grad>.json`. */
 export interface SiroveLinije {
@@ -149,7 +158,14 @@ export function koridorLinije(sv: SvijetGrada, linija: SirovaLinija): Set<number
  * početka udaljava — A*-om sa skupljim ivicama van koridora. `null` kad u
  * nekoliko pokušaja nema rute.
  */
-export function voznjaLinijom(sv: SvijetGrada, linija: LinijaAutobusa, od: Korak, slucajno: () => number): Korak[] | null {
+export function voznjaLinijom(
+  sv: SvijetGrada,
+  linija: LinijaAutobusa,
+  od: Korak,
+  slucajno: () => number,
+  /** Uslov za cilj (npr. van prozora oko igrača, da autobus nestane prije kraja plana). */
+  ciljDozvoljen: (p: Point) => boolean = () => true,
+): Korak[] | null {
   const { mreza, raskrsnice, zabrane } = sv;
   const cijena = (iv: Ivica) => (linija.koridor.has(iv.i) ? 1 : GRAD_BUS_VAN_KORIDORA);
   const ivOd = mreza.ivice[od.ivica]!;
@@ -161,11 +177,14 @@ export function voznjaLinijom(sv: SvijetGrada, linija: LinijaAutobusa, od: Korak
   const ciljevi: Korak[] = [];
   for (const i of linija.ivice) {
     const iv = mreza.ivice[i]!;
+    // Cilj na dužoj ivici: na kratkoj pred raskrsnicom autobus ne stane prije
+    // njene linije (kao kod bota, `nasumicnaRuta`).
+    if (iv.duzina < GRAD_BUS_CILJ_IVICA) continue;
     const q = sredina(iv);
     const dx = q.x - p.x;
     const dy = q.y - p.y;
     const d = Math.hypot(dx, dy);
-    if (d < dmin || d > dmax || dx * h.x + dy * h.y <= 0) continue;
+    if (d < dmin || d > dmax || dx * h.x + dy * h.y <= 0 || !ciljDozvoljen(q)) continue;
     // Smjer ivice koji vodi dalje od početka.
     const a = mreza.cvorovi[iv.a]!;
     const b = mreza.cvorovi[iv.b]!;
@@ -182,3 +201,34 @@ export function voznjaLinijom(sv: SvijetGrada, linija: LinijaAutobusa, od: Korak
 }
 
 const sredina = (iv: Ivica): Point => iv.tacke[Math.floor(iv.tacke.length / 2)]!;
+
+/**
+ * Da li je tijelo vozila (pravougaonik u pravcu putanje) na asfaltu duž cijele
+ * putanje: uglovi i sredine dužih strana, uz `GRAD_BUS_ASFALT_REZERVA`
+ * (zaobljen ivičnjak).
+ */
+export function tijeloNaAsfaltu(povrsina: Povrsina, put: Putanja, vozilo: Vozilo): boolean {
+  const l = vozilo.duzina / 2 - GRAD_BUS_ASFALT_REZERVA;
+  const w = vozilo.sirina / 2 - GRAD_BUS_ASFALT_REZERVA;
+  const tacke = [
+    [l, w],
+    [l, -w],
+    [-l, w],
+    [-l, -w],
+    [0, w],
+    [0, -w],
+  ] as const;
+  // Svakih pola metra, i sa obje strane svake tačke putanje: na prelomu se
+  // pravac tijela naglo mijenja, pa ugao zna izaći baš između dva uzorka.
+  const uzorci: number[] = [];
+  for (let s = 0; s <= put.duzina; s += 0.5) uzorci.push(s);
+  for (const c of put.cum) uzorci.push(Math.max(0, c - 0.05), Math.min(put.duzina, c + 0.05));
+  for (const s of uzorci) {
+    const p = pointAt(put.tacke, put.cum, s);
+    const h = headingAt(put.tacke, put.cum, s);
+    for (const [a, b] of tacke) {
+      if (!naKolovozu(povrsina, p.x + h.x * a - h.y * b, p.y + h.y * a + h.x * b)) return false;
+    }
+  }
+  return true;
+}
