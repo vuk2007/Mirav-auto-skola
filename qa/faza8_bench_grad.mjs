@@ -20,7 +20,9 @@ import { chromium } from "playwright";
 const GDJE = process.argv[2] ?? "-17,271";
 const SEKUNDI = Number(process.argv[3] ?? 20);
 // Gustina 3 van zona: 40 vozila (van zona je inače 25, stavka 7e) i 60 pješaka (stavka 8).
-const URL = `http://localhost:3100/igra?debug=1&gustina=3&pjesaci=3&gdje=${GDJE}`;
+// Sat 8 (stavka 8d): dan, svjetlo kao i prije; broj vozila i pješaka uz `gustina` i
+// `pjesaci` ne zavisi od sata, pa se mjeri isti puni grad u svako doba.
+const URL = `http://localhost:3100/igra?debug=1&gustina=3&pjesaci=3&sat=8&gdje=${GDJE}`;
 const USPORENJA = [1, 4];
 
 const browser = await chromium.launch({ args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });

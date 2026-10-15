@@ -2232,8 +2232,7 @@ export const GRAD_NPC_PO_GUSTINI_ZONE: readonly number[] = [0, 25, 33, 40];
 export const GRAD_NPC_GUSTINA_ZONE_PODRAZUMIJEVANO = 1;
 /** Udio broja vozila zone po nivou (stavka 7). */
 export const GRAD_NPC_GUSTINA_NIVO: Readonly<Record<Level, number>> = { 1: 0.3, 2: 0.45, 3: 0.6, 4: 0.8, 5: 1 };
-/** …i po dobu dana: noću je ulica prazna. */
-export const GRAD_NPC_GUSTINA_DOBA: Readonly<Record<"dan" | "sumrak" | "noc", number>> = { dan: 1, sumrak: 0.8, noc: 0.4 };
+/** …i po satu igre (`GRAD_SAOBRACAJ_PO_SATU`, stavka 8d). */
 
 // ── Parkiranje drugih vozača uz desni ivičnjak (stavka 7e) ─────────────────
 // Odluke korisnika (2026-10-03 i 2026-10-08): na cilju, samo u stambenim i
@@ -2533,3 +2532,49 @@ export const GRAD_PJ_POLOVINA_REZERVA = 0.5;
 export const GRAD_PJ_PROPUSTA = 8;
 /** … a „pred zebrom" je nosom do ovoliko [m] od nje. */
 export const GRAD_PJ_PROPUSTA_DO = 6;
+
+// ── dnevni ciklus (faza 6, stavka 8d) ─────────────────────────────────────
+
+/** Jedan sat igre traje ovoliko [s]: 24 min igre = 24 h (zadatak, odjeljak 6). */
+export const GRAD_SAT_TRAJE = 60;
+/**
+ * Svjetlo po satu: od jednog sata do sljedećeg u tabeli nijansa grada, sjenke
+ * i svjetla prelaze postepeno (dan → sumrak → noć i nazad). Zora 5–7 h,
+ * sumrak 18:30–20:30 — Podgorica, prosjek godine.
+ */
+export const GRAD_SVJETLO_PO_SATU: readonly (readonly [number, "dan" | "sumrak" | "noc"])[] = [
+  [0, "noc"],
+  [5, "noc"],
+  [6, "sumrak"],
+  [7, "dan"],
+  [18.5, "dan"],
+  [19.5, "sumrak"],
+  [20.5, "noc"],
+  [24, "noc"],
+];
+/**
+ * Udio vozila po satu (0–23 h; između sati linearno): gužva ujutru (7–9) i
+ * popodne (14–17), noću rijetko. Množi se nivoom i gustinom zone.
+ */
+export const GRAD_SAOBRACAJ_PO_SATU: readonly number[] = [
+  0.25, 0.15, 0.1, 0.1, 0.12, 0.25, 0.5, 0.9, 1, 0.8, 0.7, 0.7, 0.75, 0.8, 0.9, 1, 1, 0.95, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3,
+];
+/** Udio pješaka po satu: najviše oko podne i u večernjoj šetnji, noću skoro niko. */
+export const GRAD_PJESACI_PO_SATU: readonly number[] = [
+  0.15, 0.1, 0.05, 0.05, 0.05, 0.1, 0.3, 0.7, 0.8, 0.7, 0.8, 0.9, 1, 1, 0.9, 0.8, 0.85, 0.95, 1, 1, 0.85, 0.6, 0.4, 0.25,
+];
+/**
+ * Kraj nastave [sat od, sat do]: prva smjena oko 13 h, druga oko 19 h. Tada
+ * oko škole (do `GRAD_SKOLA_KRUG` m od igrača) ima najviše pješaka, i dio se
+ * pojavljuje uz samu školu (`GRAD_SKOLA_UZ`).
+ */
+export const GRAD_SKOLA_KRAJ: readonly (readonly [number, number])[] = [
+  [12.75, 13.75],
+  [18.75, 19.5],
+];
+export const GRAD_SKOLA_KRUG = 300;
+/** …pješak se pojavljuje do ovoliko [m] od škole, sa ovom vjerovatnoćom. */
+export const GRAD_SKOLA_UZ = 150;
+export const GRAD_SKOLA_UZ_UDIO = 0.6;
+/** Prečice za sat igre (dugmad): jutro, dan, sumrak, noć [h]. */
+export const GRAD_SAT_PRECICE = { jutro: 7.5, dan: 12, sumrak: 19.5, noc: 23 } as const;

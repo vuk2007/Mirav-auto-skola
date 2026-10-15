@@ -1,3 +1,4 @@
+import { svjetloSata } from "../grad/dan";
 import {
   AlphaFilter,
   Application,
@@ -216,13 +217,27 @@ export interface IzgledGrada {
   zone: ZonaPalete[];
 }
 
-export type DobaDana = "dan" | "sumrak" | "noc";
-
-/** Doba dana i vrijeme koje se crta; `sekunde` pokreću kišu. */
+/**
+ * Doba dana i vrijeme koje se crta: sat igre (stavka 8d — svjetlo prelazi
+ * postepeno, `svjetloSata`); `sekunde` pokreću kišu.
+ */
 export interface Osvjetljenje {
-  doba: DobaDana;
+  sat: number;
   kisa: boolean;
   sekunde: number;
+}
+
+/** Mješavina boja `#rrggbb` po težinama (zbir 1). */
+function pomijesaj(boje: readonly (readonly [number, number])[]): number {
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  for (const [c, w] of boje) {
+    r += ((c >> 16) & 255) * w;
+    g += ((c >> 8) & 255) * w;
+    b += (c & 255) * w;
+  }
+  return (Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b);
 }
 
 /** Proizvod dvije boje `#rrggbb` — kiša u sumrak je sumrak pod oblakom. */
@@ -813,26 +828,28 @@ export async function createGradRenderer(
       const spratPx = GRAD_SPRAT * k.scale;
       u.uProzori = Math.max(0, Math.min(1, spratPx / GRAD_PROZOR_PIKSELA - 1));
 
-      // Doba dana i vrijeme: nijansa, sjenke samo uz sunce, svjetla kad je mrak.
-      const nijansa =
-        o.doba === "dan"
-          ? o.kisa
-            ? pomnozi(boje.kisa, "#ffffff")
-            : pomnozi(boje.dan, "#ffffff")
-          : o.doba === "sumrak"
-            ? pomnozi(boje.sumrak, o.kisa ? boje.kisa : "#ffffff")
-            : pomnozi(o.kisa ? boje.kisaNoc : boje.noc, "#ffffff");
+      // Doba dana i vrijeme: nijansa, sjenke samo uz sunce, svjetla kad je
+      // mrak — po satu igre, sa postepenim prelazom zore i sumraka (stavka 8d).
+      const sv = svjetloSata(o.sat);
+      const nijansa = pomijesaj([
+        [pomnozi(o.kisa ? boje.kisa : boje.dan, "#ffffff"), sv.dan],
+        [pomnozi(boje.sumrak, o.kisa ? boje.kisa : "#ffffff"), sv.sumrak],
+        [pomnozi(o.kisa ? boje.kisaNoc : boje.noc, "#ffffff"), sv.noc],
+      ]);
       for (const c of osvijetljeni) c.tint = nijansa;
       // Golo tlo je pozadina crtača, van svih slojeva — i nju tamni doba dana.
       app.renderer.background.color = pomnozi(BOJE.tlo, "#" + nijansa.toString(16).padStart(6, "0"));
-      const sunce = o.kisa ? 0 : o.doba === "dan" ? 1 : o.doba === "sumrak" ? 0.5 : 0;
-      sSjene.visible = sunce > 0;
+      const sunce = o.kisa ? 0 : sv.dan + 0.5 * sv.sumrak;
+      sSjene.visible = sunce > 0.01;
       sjenkaFilter.alpha = GRAD_SJENKA_ALFA * sunce;
-      const mrak = o.doba !== "dan";
-      sSvjetla.visible = mrak || o.kisa;
+      // Svjetla (lampe, farovi, prozori): pale se u sumrak, puna su noću; po
+      // kiši farovi gore i danju.
+      const mrak = Math.min(1, sv.noc + 0.6 * sv.sumrak);
+      sSvjetla.visible = mrak > 0.01 || o.kisa;
+      sSvjetla.alpha = o.kisa ? 1 : mrak;
       for (const x of sagradjeni.values()) {
-        x.slojevi[10]!.visible = x.slojevi[0]!.visible && mrak;
-        x.slojevi[12]!.visible = x.slojevi[0]!.visible && mrak;
+        x.slojevi[10]!.visible = x.slojevi[0]!.visible && mrak > 0.3;
+        x.slojevi[12]!.visible = x.slojevi[0]!.visible && mrak > 0.3;
       }
 
       // Znakovi i semafori: uspravni prema ekranu, podignuti na stub i nagnuti
@@ -903,7 +920,7 @@ export async function createGradRenderer(
         }
       }
       stubovi.stroke({ width: 0.12, color: "#4a4d52" });
-      u.uUpaljeno = GRAD_PROZORI_UPALJENI[o.doba];
+      u.uUpaljeno = GRAD_PROZORI_UPALJENI.dan * sv.dan + GRAD_PROZORI_UPALJENI.sumrak * sv.sumrak + GRAD_PROZORI_UPALJENI.noc * sv.noc;
 
       /**
        * Vozilo na `pos`: točkovi (kad je `tocak` zadat), karoserija, svjetla,

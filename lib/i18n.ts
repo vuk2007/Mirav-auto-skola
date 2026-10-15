@@ -225,6 +225,10 @@ export interface Dict {
   gradZoomOut: string;
   gradReverse: string;
   gradTimeOfDay: string;
+  /** Prečica sata „jutro" (stavka 8d). */
+  gradMorning: string;
+  /** Sat igre u HUD-u (za čitač ekrana). */
+  gradClock: string;
   gradDay: string;
   gradDusk: string;
   gradNight: string;
@@ -692,6 +696,8 @@ const me: Dict = {
   gradZoomOut: "Udalji",
   gradReverse: "Rikverc",
   gradTimeOfDay: "Doba dana",
+  gradMorning: "Jutro",
+  gradClock: "Sat u igri",
   gradDay: "Dan",
   gradDusk: "Sumrak",
   gradNight: "Noć",
@@ -1149,6 +1155,8 @@ const en: Dict = {
   gradZoomOut: "Zoom out",
   gradReverse: "Reverse",
   gradTimeOfDay: "Time of day",
+  gradMorning: "Morning",
+  gradClock: "In-game time",
   gradDay: "Day",
   gradDusk: "Dusk",
   gradNight: "Night",
@@ -1611,6 +1619,8 @@ const sq: Dict = {
   gradZoomOut: "Largo",
   gradReverse: "Mbrapsht",
   gradTimeOfDay: "Koha e ditës",
+  gradMorning: "Mëngjes",
+  gradClock: "Ora në lojë",
   gradDay: "Ditë",
   gradDusk: "Muzg",
   gradNight: "Natë",
@@ -2075,6 +2085,8 @@ const ru: Dict = {
   gradZoomOut: "Отдалить",
   gradReverse: "Задний ход",
   gradTimeOfDay: "Время суток",
+  gradMorning: "Утро",
+  gradClock: "Время в игре",
   gradDay: "День",
   gradDusk: "Сумерки",
   gradNight: "Ночь",

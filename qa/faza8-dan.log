@@ -1,0 +1,11 @@
+Dnevni ciklus (qa/faza8_dan.mjs, next start, 2026-10-15) — sat i broj iz HUD-a (?debug=1)
+Svjetlo (centar, -17,271; sat pomjeren dugmadima, 20:16 je 45 s poslije „Sumrak"):
+  12:00 dan, 19:31 sumrak, 20:16 prelaz (lampe upaljene, grad tamni), 23:01 noć — qa/faza8-dan-sumrak.png je 20:16
+Gustina po satu (centar, 25 s poslije početka, bez ?gustina i ?pjesaci):
+  03:55 (noć):           2 vozila,  2 pješaka
+  08:25 (jutarnja gužva): 15 vozila, 24 pješaka
+Kraj nastave (škola -151,-165, 25 s poslije početka):
+  10:55: 27 pješaka
+  13:19: 59 pješaka (kraj nastave: najveća gustina oko škole) — qa/faza8-dan-skola.png
+Greške u konzoli: nema
+Fuzz bez sata (sjemena 1-20 × 300 s): isti brojevi kao prije stavke 8d (simulacija bez sata nepromijenjena).

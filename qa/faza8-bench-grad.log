@@ -1,7 +1,10 @@
-Mjerilo grada sa pjesacima i autobusima (qa/faza8_bench_grad.mjs, next start, 2026-10-15)
-Grad, -17,271 (centar), 20 s po mjerenju
-procesor x1: 60.1 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 16.8 ms, sporijih od 55 fps 0/1202; korak simulacije medijana 1.24 ms, max 4.21 ms; vozila 39–40, pješaka 60–60
-procesor x4: 58.8 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 100.0 ms, sporijih od 55 fps 9/1177; korak simulacije medijana 3.87 ms, max 13.94 ms; vozila 39–40, pješaka 60–60
-Grad, -1555,88 (Bulevar Dzordza Vasingtona, linije 4/18/19/20), 20 s po mjerenju
-procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 33.4 ms, sporijih od 55 fps 2/1200; korak simulacije medijana 1.33 ms, max 7.51 ms; vozila 40–40, pješaka 60–60
-procesor x4: 58.3 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 233.4 ms, sporijih od 55 fps 9/1167; korak simulacije medijana 4.01 ms, max 26.99 ms; vozila 40–40, pješaka 60–60
+Mjerilo grada sa pjesacima, autobusima i dnevnim ciklusom (qa/faza8_bench_grad.mjs, next start, 2026-10-15)
+Grad, -17,271 (centar), sat 8, 20 s po mjerenju
+procesor x1: 60.1 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 16.8 ms, sporijih od 55 fps 0/1202; korak simulacije medijana 1.21 ms, max 4.27 ms; vozila 40–40, pješaka 60–60
+procesor x4: 58.6 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 133.3 ms, sporijih od 55 fps 11/1172; korak simulacije medijana 3.88 ms, max 21.43 ms; vozila 39–40, pješaka 60–60
+Grad, -1555,88 (Bulevar Dzordza Vasingtona, linije 4/18/19/20), sat 8, 20 s po mjerenju
+procesor x1: 59.9 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 33.3 ms, sporijih od 55 fps 2/1199; korak simulacije medijana 1.45 ms, max 6.95 ms; vozila 40–40, pješaka 60–60
+procesor x4: 58.4 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 200.0 ms, sporijih od 55 fps 7/1169; korak simulacije medijana 3.80 ms, max 37.17 ms; vozila 40–40, pješaka 60–60
+Grad, -17,271 (centar), sat 23 (noć: lampe, farovi, prozori), 20 s po mjerenju
+procesor x1: 60.0 fps, kadar medijana 16.7 ms, p95 16.7 ms, max 16.8 ms, sporijih od 55 fps 0/1201; korak simulacije medijana 1.30 ms, max 4.84 ms; vozila 39–40, pješaka 60–60
+procesor x4: 58.7 fps, kadar medijana 16.7 ms, p95 16.8 ms, max 100.0 ms, sporijih od 55 fps 13/1174; korak simulacije medijana 3.91 ms, max 17.20 ms; vozila 40–40, pješaka 60–60

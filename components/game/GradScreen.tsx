@@ -7,7 +7,8 @@ import {
   CAR_WIDTH,
   DT,
   GRAD_BRZINA_PODRAZUMIJEVANA,
-  GRAD_NPC_GUSTINA_DOBA,
+  GRAD_SAT_PRECICE,
+  GRAD_SAT_TRAJE,
   GRAD_NPC_GUSTINA_NIVO,
   GRAD_SUDAR_PONOVO,
   GRAD_NIVO,
@@ -46,7 +47,8 @@ import { naslovPrekrsaja, praviloPrekrsaja } from "@/lib/game/ui/gradPrekrsaji";
 import { korakSlobodno, pozaSlobodno, slobodnoNaIvici, type SlobodnoVozilo } from "@/lib/game/grad/slobodno";
 import type { BojeDekora } from "@/lib/game/grad/dekor";
 import type { Palete } from "@/lib/game/grad/zgrade";
-import type { BojeOsvjetljenja, DobaDana, GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
+import type { BojeOsvjetljenja, GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
+import { pjesaciSata, saobracajSata, satIgre, satTekst } from "@/lib/game/grad/dan";
 import { haptika } from "@/lib/game/ui/haptika";
 import { zmigavacSvijetli } from "@/lib/game/ui/zmigavac";
 import { dprUredjaja } from "@/lib/game/ui/renderer";
@@ -69,6 +71,8 @@ interface Hud {
   kmh: number;
   ulica: string;
   rikverc: boolean;
+  /** Sat igre (stavka 8d), npr. „08:15". */
+  sat: string;
   fps: number | null;
   /** Samo `?debug=1`: broj drugih vozila i prosječan korak simulacije [ms] (mjerilo, stavka 7d). */
   vozila: number | null;
@@ -100,7 +104,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const volan = useVolan(true, { pokazivacRukom: true });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [faza, setFaza] = useState<Faza>("ucitavam");
-  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, fps: null, vozila: null, parkirano: null, pjesaka: null, korakMs: null });
+  const [hud, setHud] = useState<Hud>({ kmh: 0, ulica: "", rikverc: false, sat: "", fps: null, vozila: null, parkirano: null, pjesaka: null, korakMs: null });
   const [ogranicenje, setOgranicenje] = useState<number | null>(null);
   // Sudija (stavka 5d): prekršaji ove vožnje, zadnji se kratko prikaže.
   const [prekrsaji, setPrekrsaji] = useState<GradskiPrekrsaj[]>([]);
@@ -119,11 +123,18 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const [zum, setZum] = useState(0);
   const zumRef = useRef(0);
   zumRef.current = zum;
-  // Doba dana i vrijeme (stavka 4d): bira igrač; kiša mijenja i kočenje.
-  const [doba, setDoba] = useState<DobaDana>("dan");
+  // Vrijeme (stavka 4d): kiša mijenja i kočenje. Doba dana teče samo
+  // (stavka 8d, 24 min = 24 h): sat igre je početni sat + vrijeme simulacije;
+  // dugmad samo pomjere sat (`GRAD_SAT_PRECICE`).
   const [kisa, setKisa] = useState(false);
-  const uslovRef = useRef({ doba, kisa });
-  uslovRef.current = { doba, kisa };
+  const uslovRef = useRef({ kisa });
+  uslovRef.current = { kisa };
+  // Početni sat [h]: lokalno vrijeme uređaja, ili `?debug=1&sat=8` (mjerilo, QA).
+  const pocetakSataRef = useRef<number | null>(null);
+  const sat = () => satIgre(pocetakSataRef.current ?? 12, simTRef.current);
+  const pomjeriSat = (h: number) => {
+    pocetakSataRef.current = h - simTRef.current / GRAD_SAT_TRAJE;
+  };
 
   useEffect(() => {
     if (!kartica) return;
@@ -163,19 +174,30 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const { paket, mreza, povrsina, raskrsnice, crtez, zaSudiju } = svijet;
       const sudija = noviSudija(nivoRef.current);
       let prijavljeno = 0;
-      // Drugi učesnici (stavka 7): vozila sa ciljem oko igrača.
-      const gustina = () => GRAD_NPC_GUSTINA_NIVO[nivoRef.current] * GRAD_NPC_GUSTINA_DOBA[uslovRef.current.doba];
-      const saobracaj = noviSaobracaj(svijet, 1, gustina());
-      // Mjerilo: `?debug=1&gustina=3` — gustina van zona (0–3), npr. 40 vozila.
+      const parametarSata = debug ? Number(new URLSearchParams(window.location.search).get("sat") ?? NaN) : NaN;
+      if (pocetakSataRef.current === null) {
+        const d = new Date();
+        pocetakSataRef.current = Number.isFinite(parametarSata) ? parametarSata : d.getHours() + d.getMinutes() / 60;
+      } else {
+        // Nova vožnja (poslije udara): dan teče dalje, ne vraća se na početak.
+        pocetakSataRef.current = sat();
+      }
+      simTRef.current = 0;
+      // Drugi učesnici (stavka 7): vozila sa ciljem oko igrača — po nivou i
+      // satu (gužva ujutru i popodne, noću rijetko; stavka 8d).
+      // Mjerilo: `?debug=1&gustina=3` — gustina van zona (0–3), npr. 40 vozila,
+      // i tada bez obzira na doba dana (mjeri se puni grad u svako doba).
       const gustinaParam = debug ? Number(new URLSearchParams(window.location.search).get("gustina") ?? NaN) : NaN;
+      const gustina = () => GRAD_NPC_GUSTINA_NIVO[nivoRef.current] * (Number.isFinite(gustinaParam) ? 1 : saobracajSata(sat()));
+      const saobracaj = noviSaobracaj(svijet, 1, gustina());
       if (Number.isFinite(gustinaParam)) saobracaj.gustinaVanZona = gustinaParam;
       // Pješaci (stavka 8): po gustini zone × doba dana. Mjerilo:
-      // `?debug=1&pjesaci=3` — gustina pješaka van zona (0–3), npr. 60.
-      const gustinaPjesaka = () => GRAD_NPC_GUSTINA_DOBA[uslovRef.current.doba];
+      // `?debug=1&pjesaci=3` — gustina pješaka van zona (0–3), npr. 60, u svako doba.
+      const pjesaciParam = debug ? Number(new URLSearchParams(window.location.search).get("pjesaci") ?? NaN) : NaN;
+      const gustinaPjesaka = () => (Number.isFinite(pjesaciParam) ? 1 : pjesaciSata(sat()));
       const pjesaci = noviPjesaci(svijet, 1, gustinaPjesaka());
       saobracaj.pjesaci = pjesaci;
       saobracaj.linije = linijeAutobusa(svijet, linije);
-      const pjesaciParam = debug ? Number(new URLSearchParams(window.location.search).get("pjesaci") ?? NaN) : NaN;
       if (Number.isFinite(pjesaciParam)) pjesaci.gustinaVanZona = pjesaciParam;
       // Samo `?debug=1`, za QA snimke: parkirani auti i kamera na zadatoj tački.
       let kameraQa: Point | null = null;
@@ -321,6 +343,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           if (saobracaj.kocenja.length > 200) saobracaj.kocenja.splice(0, 100);
           // Pješaci vide vozila (i igrača): na prelaz ne stupaju ispred onoga ko ih ugrožava.
           pjesaci.gustina = gustinaPjesaka();
+          pjesaci.sat = sat();
           korakPjesaka(pjesaci, { x: st.x, y: st.y }, [...saobracaj.npc.map(tijeloNpc), tijeloIgraca()]);
           // Udar pješaka: trenutan kraj vožnje i posebna kartica (zadatak, odjeljak 6).
           const tijeloAuta = { x: st.x, y: st.y, ugao: st.ugao, duzina: CAR_LENGTH, sirina: CAR_WIDTH };
@@ -427,7 +450,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               { x: p.b.x + ux * 0.6 + uy * 2, y: p.b.y + uy * 0.6 - ux * 2, stanje: s },
             ];
           }),
-          osvjetljenje: { ...uslovRef.current, sekunde: now / 1000 },
+          osvjetljenje: { ...uslovRef.current, sat: sat(), sekunde: now / 1000 },
           igrac: {
             pos,
             heading: sada.heading,
@@ -453,6 +476,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             kmh: Math.abs(st.v) * 3.6,
             ulica: iv.ime,
             rikverc: st.rikverc,
+            sat: satTekst(sat()),
             fps: debug ? fps : null,
             vozila: debug ? saobracaj.npc.length : null,
             parkirano: debug ? saobracaj.mjesta.filter((z) => z.parkirano).length : null,
@@ -592,7 +616,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               )}
             </div>
             <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
-              {t.gradStreet}: {hud.ulica || t.gradUnnamed}
+              <span aria-label={t.gradClock}>{hud.sat}</span> · {t.gradStreet}: {hud.ulica || t.gradUnnamed}
               {hud.fps !== null ? ` · ${hud.fps.toFixed(0)} fps` : ""}
               {hud.vozila !== null ? ` · ${hud.vozila} vozila` : ""}
               {hud.parkirano !== null ? ` · ${hud.parkirano} parkirano` : ""}
@@ -616,8 +640,10 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           <span className="mr-1 text-muted" aria-hidden>
             {t.gradTimeOfDay}:
           </span>
+          {/* Dan teče sam (stavka 8d); dugmad pomjere sat na to doba. */}
           {(
             [
+              ["jutro", t.gradMorning],
               ["dan", t.gradDay],
               ["sumrak", t.gradDusk],
               ["noc", t.gradNight],
@@ -626,9 +652,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             <button
               key={d}
               type="button"
-              aria-pressed={doba === d}
-              onClick={() => setDoba(d)}
-              className={`rounded border px-2 py-1 font-semibold ${doba === d ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+              onClick={() => pomjeriSat(GRAD_SAT_PRECICE[d])}
+              aria-label={`${ime} (${satTekst(GRAD_SAT_PRECICE[d])})`}
+              className="rounded border border-line bg-panel px-2 py-1 font-semibold"
             >
               {ime}
             </button>

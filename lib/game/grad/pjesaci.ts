@@ -12,6 +12,9 @@ import {
   GRAD_PJ_NAMJERA,
   GRAD_PJ_NESTAJE,
   GRAD_PJ_PO_GUSTINI_ZONE,
+  GRAD_SKOLA_KRUG,
+  GRAD_SKOLA_UZ,
+  GRAD_SKOLA_UZ_UDIO,
   GRAD_PJ_POCETAK_OD,
   GRAD_PJ_POJAVA_DO,
   GRAD_PJ_POJAVA_OD,
@@ -28,6 +31,7 @@ import {
 } from "../sim/config";
 import { pointAt, rng } from "../sim/geometry";
 import type { Point } from "../sim/types";
+import { krajNastave } from "./dan";
 import { najblizaOsa } from "./povrsina";
 import type { SvijetGrada } from "./svijet";
 import {
@@ -136,6 +140,13 @@ export interface Pjesaci {
   zone: { poligon: Point[]; minX: number; minY: number; maxX: number; maxY: number; gustina: number }[];
   /** Ciljevi: čvor mreže i tačka (stajališta, škole, javne zgrade). */
   ciljevi: { cvor: number; x: number; y: number }[];
+  /** Škole (sredine površina i zgrada škola iz OSM-a): oko njih se završava nastava. */
+  skole: Point[];
+  /**
+   * Sat igre (stavka 8d); `null` — bez dnevnog ciklusa (fuzz, testovi). Na
+   * kraju nastave (`krajNastave`) oko škole je najviše pješaka.
+   */
+  sat: number | null;
   metrika: MetrikaPjesaka;
   /** Nivo vožnje: na 4 i 5 pješaci (rijetko) prelaze i van zebre. */
   nivo: number;
@@ -167,6 +178,35 @@ function cvorBlizu(mp: MrezaPjesaka, x: number, y: number, do_: number): number 
   if (vi < 0) return -1;
   const v = mp.veze[vi]!;
   return Math.abs(t.u - v.u0) <= Math.abs(v.u1 - t.u) ? v.a : v.b;
+}
+
+/** Škole iz OSM-a: sredine površina škola i zgrada škola (bez dvije bliže od 60 m). */
+function skoleGrada(sv: SvijetGrada): Point[] {
+  const out: Point[] = [];
+  const n = sv.paket.n;
+  const z = sv.paket.zaglavlje;
+  const dodaj = (xy: ArrayLike<number>, od: number, do_: number) => {
+    if (do_ <= od) return;
+    let sx = 0;
+    let sy = 0;
+    for (let k = od; k < do_; k++) {
+      sx += xy[2 * k]!;
+      sy += xy[2 * k + 1]!;
+    }
+    const p = { x: sx / (do_ - od), y: sy / (do_ - od) };
+    if (!out.some((q) => Math.hypot(q.x - p.x, q.y - p.y) < 60)) out.push(p);
+  };
+  const skola = z.vrstePovrsina.indexOf("skola");
+  for (let i = 0; i + 1 < n.pvOd.length; i++) if (n.pvVrsta[i] === skola) dodaj(n.pvXY, n.pvOd[i]!, n.pvOd[i + 1]!);
+  const zgrada = z.vrsteZgrada.indexOf("school");
+  for (let i = 0; i + 1 < n.zgOd.length; i++) if (n.zgVrsta[i] === zgrada) dodaj(n.zgXY, n.zgOd[i]!, n.zgOd[i + 1]!);
+  return out;
+}
+
+/** Škola do `GRAD_SKOLA_KRUG` m od tačke, a sad je kraj nastave (stavka 8d). */
+function skolaSeZavrsava(pj: Pjesaci, p: Point): boolean {
+  if (pj.sat === null || !krajNastave(pj.sat)) return false;
+  return pj.skole.some((s) => Math.hypot(s.x - p.x, s.y - p.y) <= GRAD_SKOLA_KRUG);
 }
 
 /** Ciljevi pješaka iz OSM-a: stajališta, škole (površine) i javne zgrade (sa imenom). */
@@ -236,6 +276,8 @@ export function noviPjesaci(svijet: SvijetGrada, sjeme: number, gustina = 1): Pj
     gustinaVanZona: GRAD_PJ_GUSTINA_ZONE_PODRAZUMIJEVANO,
     zone,
     ciljevi: ciljeviGrada(svijet, mp),
+    skole: skoleGrada(svijet),
+    sat: null,
     metrika: { pojavljeno: 0, stiglo: 0, udaljilo: 0, preslo: 0, van: 0, odustalo: 0 },
     nivo: 5,
     vozilaCekaju: new Map(),
@@ -252,9 +294,13 @@ export function gustinaPjesakaZone(pj: Pjesaci, p: Point): number {
   return Math.max(0, Math.min(GRAD_PJ_PO_GUSTINI_ZONE.length - 1, Math.round(g)));
 }
 
-/** Koliko pješaka treba oko igrača sada: po gustini zone × doba dana. */
+/**
+ * Koliko pješaka treba oko igrača sada: po gustini zone × doba dana. Na kraju
+ * nastave oko škole gustina je najveća (stavka 8d).
+ */
 export function ciljniBrojPjesaka(pj: Pjesaci, fokus: Point): number {
-  return Math.round(GRAD_PJ_PO_GUSTINI_ZONE[gustinaPjesakaZone(pj, fokus)]! * pj.gustina);
+  const g = skolaSeZavrsava(pj, fokus) ? GRAD_PJ_PO_GUSTINI_ZONE.length - 1 : gustinaPjesakaZone(pj, fokus);
+  return Math.round(GRAD_PJ_PO_GUSTINI_ZONE[g]! * pj.gustina);
 }
 
 // ── prelaz: smije li se stupiti na kolovoz ─────────────────────────────────
@@ -627,8 +673,25 @@ function pojavi(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZaPjesaka[]): 
   // Trotoari u prstenu (sredina staze).
   const prsten = trotoariUKrugu(pj.mreza, fokus, odR, GRAD_PJ_POJAVA_DO);
   if (prsten.length === 0) return;
+  // Kraj nastave (stavka 8d): dio pješaka izlazi iz škole — trotoari uz nju,
+  // i dalje u prstenu (ne pojavljuju se igraču pred očima).
+  let uzSkolu: number[] = [];
+  if (skolaSeZavrsava(pj, fokus)) {
+    const uPrstenu = new Set(prsten);
+    const vidjen = new Set<number>();
+    for (const s of pj.skole) {
+      if (Math.hypot(s.x - fokus.x, s.y - fokus.y) > GRAD_PJ_POJAVA_DO + GRAD_SKOLA_UZ) continue;
+      for (const k of trotoariUKrugu(pj.mreza, s, 0, GRAD_SKOLA_UZ)) {
+        if (uPrstenu.has(k) && !vidjen.has(k)) {
+          vidjen.add(k);
+          uzSkolu.push(k);
+        }
+      }
+    }
+    uzSkolu = uzSkolu.sort((a, b) => a - b);
+  }
   for (let k = 0; k < odjednom; k++) {
-    const x = noviPjesak(pj, prsten, vozila);
+    const x = noviPjesak(pj, uzSkolu.length > 0 && pj.slucajno() < GRAD_SKOLA_UZ_UDIO ? uzSkolu : prsten, vozila);
     if (!x) continue;
     pj.lista.push(x);
     pj.metrika.pojavljeno += 1;

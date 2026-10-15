@@ -212,7 +212,7 @@ export default function GradEditor() {
       rendererRef.current?.draw({
         kadar: { wx: k.wx, wy: k.wy, cx: W / 2, cy: H / 2, rot: -Math.PI, scale: k.scale },
         simT: vrijemeRef.current,
-        osvjetljenje: { doba: "dan", kisa: false, sekunde: sada / 1000 },
+        osvjetljenje: { sat: 12, kisa: false, sekunde: sada / 1000 },
         igrac: null,
       });
       const g = preklop.getContext("2d");
