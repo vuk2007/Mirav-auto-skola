@@ -23,6 +23,9 @@ import {
   GRAD_KISA_KAPI,
   GRAD_LAMPA_SVJETLO,
   GRAD_PROZORI_UPALJENI,
+  GRAD_RADNJA_DUBINA,
+  GRAD_RADNJA_DUZINA,
+  GRAD_RADNJA_SJAJ,
   GRAD_KOMADA_NAJVISE,
   GRAD_MEDJUOSOVINSKO,
   GRAD_PROZOR_PIKSELA,
@@ -89,6 +92,10 @@ const BOJE = {
 } as const;
 
 /** Gradski autobus (stavka 8c). */
+/** Tende otvorenih radnji (stavka 8d) — po radnji, iz njenog broja. */
+const BOJE_TENDI = ["#c0392b", "#1f6f8b", "#2e8b57", "#d4a017", "#8e44ad", "#d35400", "#2c3e50"] as const;
+/** Spuštena roletna zatvorene radnje. */
+const ROLETNA = "#8a8f96";
 const BOJA_AUTOBUSA = "#e8a317";
 
 /** Boje drugih vozila — prigušene, da se plavi auto igrača izdvaja. */
@@ -353,6 +360,11 @@ export interface GradScena {
    * prelaza: zeleno, trepćuće zeleno (završavaju) ili crveno.
    */
   pjesackaSvjetla?: readonly { x: number; y: number; stanje: "zeleno" | "zavrsi" | "crveno" }[];
+  /**
+   * Izlozi radnji oko kamere (stavka 8d): sredina, pravac duž ulice, boja
+   * tende (indeks) i da li je radnja sada otvorena.
+   */
+  radnje?: readonly { x: number; y: number; ugao: number; otvorena: boolean; boja: number }[];
   /** Auto igrača; `null` u editoru — grad bez auta. */
   igrac: {
     pos: Point;
@@ -545,9 +557,17 @@ export async function createGradRenderer(
   snop.anchor.set(0, 0.5);
   snop.tint = boje.farovi;
   sSvjetla.addChild(snop);
-  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sSvjetla, sIznad, sSjene, sDekor, sZgrade, sZnakovi, dinamika);
+  // Sjaj otvorenih radnji uveče (stavka 8d): po jedan meki sjaj, iz zalihe.
+  const sjajRadnji = new Container();
+  sSvjetla.addChild(sjajRadnji);
+  // Izlozi radnji (stavka 8d): poseban sloj, iznad zgrada kao pješaci, i
+  // crta se ponovo samo kad se promijene (vidi `kljucRadnji`).
+  const izlozi = new Graphics();
+  let kljucRadnji = "";
+  let zadnjeRadnje: GradScena["radnje"] = undefined;
+  svijet.addChild(sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sSvjetla, sIznad, sSjene, sDekor, sZgrade, sZnakovi, izlozi, dinamika);
   /** Slojevi koje doba dana tamni (sve osim svjetala i sjenki). */
-  const osvijetljeni: Container[] = [sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sDekor, sZgrade, sZnakovi, dinamika];
+  const osvijetljeni: Container[] = [sPovrsine, sVoda, sTrotoari, sUlice, sOznake, sIznad, sDekor, sZgrade, sZnakovi, izlozi, dinamika];
   const sjenkaFilter = sSjene.filters![0] as AlphaFilter;
 
 
@@ -791,7 +811,7 @@ export async function createGradRenderer(
       app.renderer.resize(cssW, cssH, dpr);
     },
 
-    draw({ kadar: k, igrac, osvjetljenje: o, simT, vozila = [], pjesaci = [], pjesackaSvjetla = [] }) {
+    draw({ kadar: k, igrac, osvjetljenje: o, simT, vozila = [], pjesaci = [], pjesackaSvjetla = [], radnje = [] }) {
       kadar += 1;
       const pogled = vidljivo(k);
       vidljivih = 0;
@@ -1000,6 +1020,45 @@ export async function createGradRenderer(
       // Veći od stvarnih (`GRAD_PJ_CRTEZ`), kao što su i ulice šire: inače
       // su na ekranu telefona tačka. Sudar se računa po ovom crtežu.
       const v = GRAD_PJ_CRTEZ;
+      // Radnje (stavka 8d): izlog — otvorena: tenda u boji sa bijelim
+      // prugama, uveče osvijetljena; zatvorena: spuštena roletna. Crta se
+      // ponovo samo kad se promijeni koje su u kadru i koje su otvorene.
+      const kljuc = radnje === zadnjeRadnje ? kljucRadnji : radnje.map((r) => `${r.boja}${r.otvorena ? "o" : "z"}`).join(",");
+      zadnjeRadnje = radnje;
+      if (kljuc !== kljucRadnji) {
+        kljucRadnji = kljuc;
+        izlozi.clear();
+        let sjajeva = 0;
+        for (const r of radnje) {
+          const c = Math.cos(r.ugao);
+          const s = Math.sin(r.ugao);
+          const L = GRAD_RADNJA_DUZINA;
+          const D = GRAD_RADNJA_DUBINA;
+          izlozi.setTransform(c, s, -s, c, r.x, r.y);
+          if (r.otvorena) {
+            izlozi.rect(-L / 2, -D / 2, L, D).fill(BOJE_TENDI[r.boja % BOJE_TENDI.length]!);
+            for (let k = 0; k < 4; k++) izlozi.rect(-L / 2 + ((2 * k + 1) * L) / 8, -D / 2, L / 8, D).fill("rgba(255,255,255,0.6)");
+          } else {
+            izlozi.rect(-L / 2, -D / 2, L, D).fill(ROLETNA);
+            for (let k = 1; k < 4; k++) izlozi.rect(-L / 2, -D / 2 + (k * D) / 4 - 0.03, L, 0.06).fill("rgba(40,44,50,0.45)");
+          }
+          izlozi.rect(-L / 2, -D / 2, L, D).stroke({ width: 0.05, color: "rgba(0,0,0,0.35)" });
+          if (r.otvorena) {
+            const sp = (sjajRadnji.children[sjajeva] as Sprite | undefined) ?? sjajRadnji.addChild(new Sprite(sjaj));
+            sp.anchor.set(0.5);
+            sp.tint = boje.prozor;
+            sp.width = sp.height = GRAD_RADNJA_SJAJ;
+            sp.position.set(r.x, r.y);
+            sp.visible = true;
+            sjajeva += 1;
+          }
+        }
+        izlozi.resetTransform();
+        for (let i = sjajeva; i < sjajRadnji.children.length; i++) sjajRadnji.children[i]!.visible = false;
+      }
+      // Sjaj izloga: koliko je mrak (pali se sa lampama).
+      sjajRadnji.visible = mrak > 0.01;
+      sjajRadnji.alpha = 0.6 * mrak;
       for (const p of pjesaci) {
         const c = Math.cos(p.ugao) * v;
         const s = Math.sin(p.ugao) * v;

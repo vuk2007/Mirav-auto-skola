@@ -8,6 +8,7 @@ import {
   DT,
   GRAD_BRZINA_PODRAZUMIJEVANA,
   GRAD_SAT_PRECICE,
+  GRAD_RADNJE_KADAR,
   GRAD_SAT_TRAJE,
   GRAD_NPC_GUSTINA_NIVO,
   GRAD_SUDAR_PONOVO,
@@ -49,6 +50,7 @@ import type { BojeDekora } from "@/lib/game/grad/dekor";
 import type { Palete } from "@/lib/game/grad/zgrade";
 import type { BojeOsvjetljenja, GradKadar, GradRenderer } from "@/lib/game/ui/gradRenderer";
 import { pjesaciSata, saobracajSata, satIgre, satTekst } from "@/lib/game/grad/dan";
+import { otvorena, radnjeGrada } from "@/lib/game/grad/radnje";
 import { haptika } from "@/lib/game/ui/haptika";
 import { zmigavacSvijetli } from "@/lib/game/ui/zmigavac";
 import { dprUredjaja } from "@/lib/game/ui/renderer";
@@ -198,6 +200,24 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const pjesaci = noviPjesaci(svijet, 1, gustinaPjesaka());
       saobracaj.pjesaci = pjesaci;
       saobracaj.linije = linijeAutobusa(svijet, linije);
+      // Izlozi radnji (stavka 8d): otvorene po satu igre. Spisak u kadru se
+      // računa ponovo tek kad se kamera pomjeri 5 m ili prođe minut igre —
+      // inače isti niz (renderer ga tada ne crta ponovo).
+      // `?debug=1&radnje=0` — bez izloga (mjerilo: koliko koštaju).
+      const bezRadnji = debug && new URLSearchParams(window.location.search).get("radnje") === "0";
+      const radnje = bezRadnji ? [] : radnjeGrada(svijet, pjesaci.mreza);
+      let uKadru: { x: number; y: number; ugao: number; boja: number; otvorena: boolean }[] = [];
+      let kadarRadnji = { x: Infinity, y: Infinity, minut: -1 };
+      const radnjeKadra = (x: number, y: number) => {
+        const minut = Math.floor(sat() * 60);
+        if (Math.abs(x - kadarRadnji.x) < 5 && Math.abs(y - kadarRadnji.y) < 5 && minut === kadarRadnji.minut) return uKadru;
+        kadarRadnji = { x, y, minut };
+        const h = sat();
+        uKadru = radnje
+          .filter((r) => Math.abs(r.x - x) < GRAD_RADNJE_KADAR && Math.abs(r.y - y) < GRAD_RADNJE_KADAR)
+          .map((r) => ({ x: r.x, y: r.y, ugao: r.ugao, boja: r.boja, otvorena: otvorena(r.vrijeme, h) }));
+        return uKadru;
+      };
       if (Number.isFinite(pjesaciParam)) pjesaci.gustinaVanZona = pjesaciParam;
       // Samo `?debug=1`, za QA snimke: parkirani auti i kamera na zadatoj tački.
       let kameraQa: Point | null = null;
@@ -450,6 +470,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               { x: p.b.x + ux * 0.6 + uy * 2, y: p.b.y + uy * 0.6 - ux * 2, stanje: s },
             ];
           }),
+          radnje: radnjeKadra(k.wx, k.wy),
           osvjetljenje: { ...uslovRef.current, sat: sat(), sekunde: now / 1000 },
           igrac: {
             pos,

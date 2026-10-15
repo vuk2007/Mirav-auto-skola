@@ -115,7 +115,7 @@ export const NIZOVI = {
  * Nizovi kojih u starijem paketu nema: čita se nula za svaku ivicu. Uvedeni
  * su sa editorom (stavka 6); OSM ih ne puni, puni ih overlay.
  */
-const NEOBAVEZNI_IVICE: readonly ImeNiza[] = ["ivLinija", "ivPunaPrije", "ivTrakePrije"];
+export const NEOBAVEZNI_IVICE: readonly ImeNiza[] = ["ivLinija", "ivPunaPrije", "ivTrakePrije"];
 
 /** Oznaka „nema" u `obIvica` i `obCvor`. */
 export const BEZ = 0xffffffff;

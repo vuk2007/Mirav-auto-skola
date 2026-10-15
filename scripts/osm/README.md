@@ -104,7 +104,15 @@ npm run osm:grad:linije -- podgorica     # autobuske linije u public/data/grad/l
 Za grad se povlači ono što traži zadatak faze 6 (odjeljak 2): sve ulice
 (`highway=*` osim pješačkih staza, stepenica i prolaza kroz parking) sa
 oznakama, čvorovi pravila (STOP, „ustupi", semafor, prelaz, usporivač,
-stajalište), zgrade, površine i objekti. Okvir grada je u `gradovi.mjs`.
+stajalište), zgrade, površine i objekti, i radnje (`shop=*`, stavka 8d:
+dnevni ciklus ograničava koje su otvorene) — vrsta i radno vrijeme, bez imena.
+Okvir grada je u `gradovi.mjs`.
+
+Radnja je u paketu objekat vrste `radnja`, sa radnim vremenom kao podatkom
+(„7-22", „8-12,17-21"): iz `opening_hours` kad se da pročitati (`24/7`, ili
+rasponi prvog pravila koje nije `off` — igra nema dane u sedmici), inače po
+vrsti radnje (`GRAD_RADNJA_VRIJEME`). Pravila su u `lib/game/grad/radnje.ts`,
+i čita ih i priprema i igra.
 
 Izlaz je **jedan binarni paket po gradu** (`lib/game/grad/paket.ts`, isti modul
 ga piše i čita), sa otiskom sadržaja u imenu: `podgorica-<otisak>.bin`. Mreža

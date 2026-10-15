@@ -3,8 +3,8 @@
  *
  * Za razliku od `upiti.mjs` (putevi između gradova, okolina), ovdje se povlači
  * sve što treba da bi se gradom vozilo bilo kojom ulicom i da bi izgledao kao
- * grad. Spisak je iz zadatka, odjeljak 2 — ništa više: bez adresa, bez
- * radnji, bez imena stambenih zgrada.
+ * grad. Spisak je iz zadatka, odjeljak 2, i radnje za dnevni ciklus
+ * (odjeljak 6) — ništa više: bez adresa, bez imena stambenih zgrada i radnji.
  *
  * Svaki upit prima okvir („jug,zapad,sjever,istok"), jer se dijeli na mrežu
  * manjih (`lib/mreza.mjs`).
@@ -129,3 +129,15 @@ export const objekti = (okvir) => `[out:json][timeout:600];
   way[leisure=stadium](${okvir});
 );
 out geom;`;
+
+/**
+ * Radnje (faza 6, stavka 8d): dnevni ciklus „ograničava koje su radnje
+ * otvorene" (dekor). Vrsta radnje i radno vrijeme — ime se ne koristi (radnje
+ * se ne označavaju imenima firmi, odjeljak 10). Oblik radnje: samo središte.
+ */
+export const radnje = (okvir) => `[out:json][timeout:600];
+(
+  node[shop][shop!~"^(vacant|no|disused)$"](${okvir});
+  way[shop][shop!~"^(vacant|no|disused|mall)$"](${okvir});
+);
+out center tags;`;

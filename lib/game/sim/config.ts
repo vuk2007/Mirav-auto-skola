@@ -2578,3 +2578,46 @@ export const GRAD_SKOLA_UZ = 150;
 export const GRAD_SKOLA_UZ_UDIO = 0.6;
 /** Prečice za sat igre (dugmad): jutro, dan, sumrak, noć [h]. */
 export const GRAD_SAT_PRECICE = { jutro: 7.5, dan: 12, sumrak: 19.5, noc: 23 } as const;
+
+// ── radnje (faza 6, stavka 8d) ────────────────────────────────────────────
+
+/**
+ * Radno vrijeme radnje bez `opening_hours` u OSM-u, po vrsti (`shop=*`) [h od,
+ * h do]; ostale `GRAD_RADNJA_VRIJEME_OSTALO`. Igra nema dane u sedmici: važi
+ * radni dan.
+ */
+export const GRAD_RADNJA_VRIJEME: Readonly<Record<string, readonly [number, number]>> = {
+  supermarket: [7, 22],
+  convenience: [7, 23],
+  kiosk: [6, 22],
+  bakery: [6, 21],
+  pastry: [7, 21],
+  butcher: [7, 19],
+  greengrocer: [7, 20],
+  bookmaker: [8, 24],
+  tobacco: [7, 22],
+  hairdresser: [9, 20],
+  beauty: [9, 20],
+  car_repair: [8, 17],
+  car_parts: [8, 17],
+  tyres: [8, 17],
+  doityourself: [8, 20],
+  hardware: [8, 18],
+  laundry: [8, 20],
+};
+export const GRAD_RADNJA_VRIJEME_OSTALO: readonly [number, number] = [9, 21];
+/** Izlog se stavlja na trotoar najbliži radnji — do ovoliko [m] od nje; dalje (dvorište, tržni centar) se ne crta. */
+export const GRAD_RADNJA_DO = 30;
+/** …pomjeren od staze hoda ka zgradama za ovoliko [m] (ivica trotoara uz zgradu). */
+export const GRAD_RADNJA_ODMAK = 1.1;
+/** Izlozi bliži od ovoga [m] se ne crtaju dvaput (više radnji u istoj zgradi). */
+export const GRAD_RADNJA_RAZMAK = 3.5;
+/** Izlog: dužina uz ulicu i dubina tende [m]. */
+export const GRAD_RADNJA_DUZINA = 3.2;
+export const GRAD_RADNJA_DUBINA = 0.9;
+/** Prečnik sjaja osvijetljenog izloga uveče [m]. */
+export const GRAD_RADNJA_SJAJ = 7;
+/** Izlozi se crtaju do ovoliko [m] od kamere (po osi) — kadar je do ~80 m. */
+export const GRAD_RADNJE_KADAR = 90;
+/** Radnja u zgradi ili do ovoliko [m] od nje dobija izlog na njenoj fasadi ka trotoaru. */
+export const GRAD_RADNJA_ZGRADA = 10;

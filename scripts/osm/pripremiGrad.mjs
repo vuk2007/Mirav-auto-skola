@@ -32,6 +32,7 @@ import { iseciLiniju, iseciPoligon } from "./lib/iseci.mjs";
 import { GRADOVI } from "./gradovi.mjs";
 import { ULICE_BEZ } from "./upitiGrad.mjs";
 import { napraviMrezu } from "../../lib/game/grad/mreza.ts";
+import { radnoVrijemeOsm, zapisiRadnoVrijeme } from "../../lib/game/grad/radnje.ts";
 import { krajeviLinija } from "../../lib/game/grad/oznake.ts";
 import { napraviRaskrsnice } from "../../lib/game/grad/raskrsnica.ts";
 import {
@@ -40,6 +41,7 @@ import {
   IVICA_TUNEL,
   IVICA_VOZNA,
   BEZ,
+  NEOBAVEZNI_IVICE,
   NIZOVI,
   procitaj as procitajPaket,
   zapisi,
@@ -116,6 +118,8 @@ const VRSTE_LINIJA = [
 
 const VRSTE_OBJEKATA = [
   "stop", "give_way", "traffic_signals", "crossing", "bus_stop", "traffic_calming", "fuel", "place_of_worship",
+  // Na kraju: postojeće vrste zadržavaju indekse (stavka 8d).
+  "radnja",
 ];
 
 // ── pomagala ────────────────────────────────────────────────────────────────
@@ -477,6 +481,15 @@ for (const el of objektiEl) {
   if (!Number.isFinite(p.x)) continue;
   dodajObjekat(t.amenity, p, t.amenity === "place_of_worship" ? t.name : "");
 }
+// Radnje (stavka 8d): središte i radno vrijeme — bez imena (odjeljak 10).
+// Grad povučen prije stavke 8d nema upit `radnje`: tada bez radnji.
+const radnjeEl = existsSync(join(KES, `grad-${kljucGrada}-radnje.json`)) ? await ucitaj(kljucGrada, "radnje") : [];
+for (const el of radnjeEl) {
+  const t = el.tags ?? {};
+  const c = el.type === "node" ? el : el.center;
+  if (!c || !Number.isFinite(c.lat)) continue;
+  dodajObjekat("radnja", lok(c.lat, c.lon), zapisiRadnoVrijeme(radnoVrijemeOsm(t.shop, t.opening_hours)));
+}
 
 // ── zgrade ──────────────────────────────────────────────────────────────────
 
@@ -612,7 +625,9 @@ const n = {
   rsCvor: new Uint32Array(rs.Cvor),
   rsDo: new Uint32Array(rs.Do),
 };
-if (Object.keys(n).length !== Object.keys(NIZOVI).length) throw new Error("paket nema sve nizove");
+// Neobavezne (`NEOBAVEZNI_IVICE`: linije iz editora) popunjava `zapisi`.
+const nedostaju = Object.keys(NIZOVI).filter((ime) => !(ime in n) && !NEOBAVEZNI_IVICE.includes(ime));
+if (nedostaju.length > 0) throw new Error(`paket nema nizove: ${nedostaju.join(", ")}`);
 if (stringovi.niz.length > 65535) throw new Error("previše stringova za u16");
 
 const datum = Object.values(izvor.datumi).filter(Boolean).sort().pop() ?? null;

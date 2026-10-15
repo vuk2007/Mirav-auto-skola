@@ -1,5 +1,6 @@
 // QA 8d: dnevni ciklus — sat u HUD-u, svjetlo po satu (dan, sumrak, prelaz,
-// noć), gustina po satu (noć vs jutarnja gužva) i kraj nastave kod škole.
+// noć), gustina po satu (noć vs jutarnja gužva), kraj nastave kod škole i
+// radnje (otvorene danju, dio uveče, zatvorene noću).
 // Pokretanje: `npm run build && npx next start -p 3100`, pa iz foldera sa
 // `npm i playwright`: node faza8_dan.mjs [port]. Snimci: dan-*.png.
 import { chromium } from "playwright";
@@ -55,6 +56,14 @@ for (const sat of [10.5, 12.9]) {
   await page.waitForTimeout(25000);
   izvjestaj[`skola-${sat}`] = await hud(page);
   if (sat > 12) await snimi(page, "dan-skola-13.png");
+  await page.context().close();
+}
+// 4. Radnje: najgušći niz izloga (-1794,76) u 11 h, 21:15 i 2 h.
+for (const [sat, ime] of [[11, "dan-radnje-11.png"], [21.25, "dan-radnje-2115.png"], [2, "dan-radnje-02.png"]]) {
+  const page = await otvori(`gdje=-1794,76&sat=${sat}`);
+  await page.waitForTimeout(2500);
+  await snimi(page, ime);
+  izvjestaj[ime] = await hud(page);
   await page.context().close();
 }
 await browser.close();

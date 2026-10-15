@@ -9,3 +9,8 @@ Kraj nastave (škola -151,-165, 25 s poslije početka):
   13:19: 59 pješaka (kraj nastave: najveća gustina oko škole) — qa/faza8-dan-skola.png
 Greške u konzoli: nema
 Fuzz bez sata (sjemena 1-20 × 300 s): isti brojevi kao prije stavke 8d (simulacija bez sata nepromijenjena).
+Radnje (najgušći niz izloga, -1794,76; 585 izloga u gradu od 777 radnji iz OSM-a):
+  11:02 — sve otvorene (tende u boji), jedna zatvorena (roletna) — qa/faza8-radnje-dan.png
+  21:17 — dvije otvorene i osvijetljene, ostale zatvorene — qa/faza8-radnje-vece.png
+  02:02 — zatvorene
+  Greške u konzoli: nema
