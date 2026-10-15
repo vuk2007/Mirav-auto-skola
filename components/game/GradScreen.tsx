@@ -8,6 +8,8 @@ import {
   DT,
   GRAD_BRZINA_PODRAZUMIJEVANA,
   GRAD_SAT_PRECICE,
+  GRAD_HITNO_RITAM,
+  GRAD_HITNO_RITAM_NIZAK,
   GRAD_RADNJE_KADAR,
   GRAD_SAT_TRAJE,
   GRAD_NPC_GUSTINA_NIVO,
@@ -30,6 +32,7 @@ import { noviSudija, sudi, type GradskiPrekrsaj } from "@/lib/game/grad/sudija";
 import { svijetGrada } from "@/lib/game/grad/svijet";
 import {
   autobusiUPolasku,
+  hitnaZaSudiju,
   igracCekaSaobracaj,
   IGRAC,
   korakSaobracaja,
@@ -219,6 +222,10 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         return uKadru;
       };
       if (Number.isFinite(pjesaciParam)) pjesaci.gustinaVanZona = pjesaciParam;
+      // `?debug=1&hitno=20` — hitno vozilo u prosjeku na ovoliko s (QA).
+      const hitnoParam = debug ? Number(new URLSearchParams(window.location.search).get("hitno") ?? NaN) : NaN;
+      // `?debug=1&hitnoPrsten=1` — hitno iz prstena oko igrača, ne iza njega (QA sklanjanja).
+      const hitnoPrsten = debug && new URLSearchParams(window.location.search).get("hitnoPrsten") === "1";
       // Samo `?debug=1`, za QA snimke: parkirani auti i kamera na zadatoj tački.
       let kameraQa: Point | null = null;
       if (debug) {
@@ -230,6 +237,29 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             saobracaj.npc
               .filter((n) => n.autobus)
               .map((n) => ({ x: n.x, y: n.y, linija: n.autobus!.ref, stoji: n.autobus!.stojiOd !== null, polazi: !!n.autobus!.polazi })),
+          // Hitna vozila (stavka 8e): gdje su i koja, i ko se pred njima sklonio.
+          hitna: () =>
+            saobracaj.npc
+              .filter((n) => n.hitno)
+              .map((n) => ({
+                x: n.x,
+                y: n.y,
+                vrsta: n.hitno,
+                v: n.v,
+                razlog: n.razlog,
+                sklonjeni: saobracaj.npc
+                  .filter((o) => o.razlog.vrsta === "hitno" && o.razlog.kome === n.id && o.bok > 0.5)
+                  .map((o) => ({ x: o.x, y: o.y })),
+              })),
+          // Stanje sudije oko hitnih vozila (stavka 8e): da li ga vidi iza, i zašto ne sudi.
+          sudijaHitno: () => ({
+            hitnoIza: sudija.hitnoIza,
+            hitni: [...sudija.hitni.entries()],
+            prolaz: sudija.prolaz?.r ?? null,
+            prilaz: sudija.prilaz ? { r: sudija.prilaz.r, doLinije: sudija.prilaz.doLinije, svjetlo: sudija.prilaz.svjetlo } : null,
+            uKoloni: igracCekaSaobracaj(saobracaj, tijeloIgraca(), sudija.prolaz?.r ?? sudija.prilaz?.r ?? null),
+            igrac: { x: st.x, y: st.y, ugao: st.ugao, v: st.v },
+          }),
           // Pješak prelazi ulicu `ispred` m pred autom (QA kartice udara).
           pjesakIspred: (ispred: number) => {
             const x = pjesaci.lista[0];
@@ -352,6 +382,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           prije = sada;
           korakSlobodno(povrsina, st, inputRef.current, { kisa: uslovRef.current.kisa });
           saobracaj.gustina = gustina();
+          // Hitna vozila (stavka 8e): oko jednom u 5 min, na nivou 1–2 rjeđe.
+          saobracaj.hitnoRitam = Number.isFinite(hitnoParam) ? hitnoParam : nivoRef.current <= 2 ? GRAD_HITNO_RITAM_NIZAK : GRAD_HITNO_RITAM;
+          saobracaj.hitnoUPrstenu = hitnoPrsten;
           if (sudija.prsten) trakaPrstena = sudija.prsten.uzorci.at(-1)?.traka ?? null;
           korakSaobracaja(saobracaj, { x: st.x, y: st.y }, tijeloIgraca(), {
             tijelo: tijeloIgraca(),
@@ -397,7 +430,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           sudija.nivo = nivoRef.current;
           // Stoji zbog saobraćaja (kolona, čeka da prođe drugi) — nije parkiranje.
           const zbogSaobracaja = igracCekaSaobracaj(saobracaj, tijeloIgraca(), sudija.prolaz?.r ?? sudija.prilaz?.r ?? null);
-          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator, zbogSaobracaja, pjesaci, autobusiUPolasku(saobracaj));
+          sudi(zaSudiju, sudija, st, koraka_ * DT, inputRef.current.indicator, zbogSaobracaja, pjesaci, autobusiUPolasku(saobracaj), hitnaZaSudiju(saobracaj, IGRAC));
           simTRef.current = koraka_ * DT;
           sada = pozaSlobodno(st);
           if (st.udar && !bioUdar) haptika(UDAR_HAPTIKA);
@@ -447,6 +480,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               duzina: n.plan.vozilo.duzina,
               sirina: n.plan.vozilo.sirina,
               autobus: !!n.autobus,
+              hitno: n.hitno,
             })),
             // Parkirani: ugašena svjetla.
             ...parkirani(saobracaj).map((p) => ({

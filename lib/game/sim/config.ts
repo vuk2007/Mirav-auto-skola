@@ -2150,6 +2150,11 @@ export const GRAD_NPC_REZERVA_PROLAZA = 1.5;
  */
 export const GRAD_NPC_LANAC_CEKANJA = 8;
 /**
+ * …i to se pamti ovoliko [s]: dva vozila čiji lanac ide kroz onog drugog bi
+ * se inače klackala (jedan korak ustupa, drugi ne) i stajala oba.
+ */
+export const GRAD_NPC_LANAC_PAMTI = 1;
+/**
  * Isto za savršenog bota među vozilima (stavka 7d) [s]. Bot ne smije nikoga
  * natjerati na naglo kočenje (`GRAD_PRVENSTVO_KOCENJE` — sudija to sudi kao
  * oduzeto prvenstvo), pa je oprezniji od drugih vozača: kod uključivanja ispred
@@ -2621,3 +2626,53 @@ export const GRAD_RADNJA_SJAJ = 7;
 export const GRAD_RADNJE_KADAR = 90;
 /** Radnja u zgradi ili do ovoliko [m] od nje dobija izlog na njenoj fasadi ka trotoaru. */
 export const GRAD_RADNJA_ZGRADA = 10;
+
+// ── hitna vozila (faza 6, stavka 8e) ─────────────────────────────────────
+// Odluke korisnika (2026-10-08, 2026-10-15): u raskrsnici im se ustupa bez
+// obzira na znak i svjetlo; iza vozila — ono se skloni udesno i uspori ili
+// stane; igrač koji to ne uradi pada; na crvenom smije oprezno preći liniju
+// da ga propusti; u slobodnoj vožnji rijetko, oko jednom u 5 min.
+
+/** Hitno vozilo se pojavljuje u prosjeku jednom na ovoliko [s] (nivo 1–2: `GRAD_HITNO_RITAM_NIZAK`). */
+export const GRAD_HITNO_RITAM = 300;
+export const GRAD_HITNO_RITAM_NIZAK = 600;
+/** Pojavljuje se iza igrača, ovoliko [m] uzvodno njegovom ulicom, i vozi ovoliko [m] dalje od njega. */
+export const GRAD_HITNO_IZA_POJAVA = 180;
+export const GRAD_HITNO_DALJE = 260;
+/** Vozi brže od ograničenja (×), ali ne brže od ovoga [m/s]. */
+export const GRAD_HITNO_BRZINA = 1.25;
+export const GRAD_HITNO_NAJVISE = 20;
+/** Kroz crveno i STOP prolazi oprezno: na liniji najviše ovoliko [m/s]. */
+export const GRAD_HITNO_KROZ = 4;
+/** Vozilo ispred hitnog (u istom smjeru), do ovoliko [m] ispred njega, sklanja se udesno i staje. */
+export const GRAD_HITNO_IZA = 45;
+/** …za ovoliko [m] udesno; hitno ga obilazi pomjereno za `GRAD_HITNO_OBILAZI` ulijevo. */
+export const GRAD_HITNO_SKLONI = 1.2;
+export const GRAD_HITNO_OBILAZI = 1.4;
+/** Susretno vozilo (hitno mu dolazi u susret, do ovoliko [m]) se pomjera udesno za ovoliko [m] i usporava na najviše ovoliko [m/s]. */
+export const GRAD_HITNO_SUSRET = 60;
+export const GRAD_HITNO_SUSRET_BOK = 0.8;
+export const GRAD_HITNO_SUSRET_BRZINA = 5;
+/** Bočno pomjeranje (sklanjanje i povratak) ovoliko [m/s]. */
+export const GRAD_HITNO_BOK_BRZINA = 0.9;
+/**
+ * Sudija (stavka 8e): igrač je ispred hitnog vozila — do ovoliko [m] ispred
+ * njegovog nosa, u njegovoj traci (bočno do `GRAD_HITNO_TRAKA` m od putanje).
+ */
+export const GRAD_HITNO_SUDI_DO = 30;
+export const GRAD_HITNO_TRAKA = 2.6;
+/** Sklonio se: bar ovoliko [m] udesno od putanje hitnog, i ne brže od ovoga [m/s]. */
+export const GRAD_HITNO_SKLONJEN = 0.6;
+export const GRAD_HITNO_SPORO = 5;
+/** Prekršaj kad mu je hitno vozilo tik iza, a on se ne skloni, duže od ovoga [s]. */
+export const GRAD_HITNO_TRPI = 5;
+/** Na crvenom, sa hitnim iza: smije preći stop-liniju najviše ovoliko [m], da ga propusti. */
+export const GRAD_HITNO_PREKO_LINIJE = 6;
+/** Prečnik [m] mekog odsjaja rotacije hitnog vozila na ulici, uveče i po kiši (stavka 8e). */
+export const GRAD_HITNO_SJAJ = 16;
+/** Hitno vozilo bliže od ovoga [m], iz bilo kog smjera: ko stoji, stao je zbog njega — nije parkiranje (stavka 8e). */
+export const GRAD_HITNO_BLIZU = 40;
+/** Do ovoliko [m] pred raskrsnicom drugi vozači vide (i čuju) hitno vozilo i ustupaju mu (stavka 8e). */
+export const GRAD_HITNO_VIDI = 160;
+/** Dodatna rezerva [s] kad se na raskrsnici procjenjuje da li se stigne proći prije hitnog vozila (stavka 8e). */
+export const GRAD_HITNO_REZERVA_PROLAZA = 4;

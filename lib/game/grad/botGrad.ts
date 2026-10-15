@@ -1603,7 +1603,15 @@ export function noviBot(plan: PlanBota): Bot {
  * najveća brzina koju dozvoljava saobraćaj oko njega [m/s] — vozilo ispred,
  * ustupanje, zatvoren izlaz (vidi `botUSaobracaju.ts`); bez nje vozi sam.
  */
-export function korakBota(b: Bot, g: GradZaSudiju, st: SlobodnoVozilo, t: number, granica = Infinity): Input {
+export function korakBota(
+  b: Bot,
+  g: GradZaSudiju,
+  st: SlobodnoVozilo,
+  t: number,
+  granica = Infinity,
+  /** Bočni pomak od plana [m, + desno] — sklanjanje pred hitnim vozilom (stavka 8e). */
+  bok = 0,
+): Input {
   const r = g.raskrsnice;
   const p = b.plan;
   // Izvlačenje: zakačio ivičnjak i stao — polako unazad metar-dva sa volanom
@@ -1710,7 +1718,7 @@ export function korakBota(b: Bot, g: GradZaSudiju, st: SlobodnoVozilo, t: number
       b.staje = { s: l.s, zasto: `pjesacki semafor ${sv}` };
     }
   }
-  const ulaz = vozi(st, p.put, b.s, { brzina: Math.min(dozvoljenaBrzina(p, b.s), granica), staniNa });
+  const ulaz = vozi(st, p.put, b.s, { brzina: Math.min(dozvoljenaBrzina(p, b.s), granica), staniNa, bok });
   const najava = p.najave.find((n) => b.s >= n.od && b.s <= n.do_);
   return { ...ulaz, indicator: najava ? najava.strana : null };
 }

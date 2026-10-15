@@ -1,0 +1,60 @@
+{
+ "izvjestaj": {
+  "hitna-sklanjanje-dan.png": {
+   "uhvaceno": {
+    "x": -70.86356534781707,
+    "y": 301.6194023078711,
+    "vrsta": "hitna",
+    "v": 7.1533104717323965,
+    "razlog": {
+     "vrsta": "vozilo",
+     "kome": 16
+    },
+    "sklonjeni": [
+     {
+      "x": -66.72958584231505,
+      "y": 294.88236075962106
+     }
+    ]
+   }
+  },
+  "hitna-noc.png": {
+   "uhvaceno": {
+    "x": 35.4821622950591,
+    "y": 500.0733720477746,
+    "vrsta": "hitna",
+    "v": 10.124981854311862,
+    "razlog": {
+     "vrsta": "slobodno"
+    },
+    "sklonjeni": []
+   }
+  },
+  "hitna-prekrsaj.png": {
+   "naEkranu": true,
+   "sudija": [
+    [
+     1,
+     {
+      "od": 28.266666666666666,
+      "prijavljen": true
+     }
+    ]
+   ],
+   "hitna": [
+    {
+     "x": -6.46561056250235,
+     "y": 273.66445370236585,
+     "vrsta": "policija",
+     "v": 0,
+     "razlog": {
+      "vrsta": "izlaz",
+      "kome": 0
+     },
+     "sklonjeni": []
+    }
+   ]
+  }
+ },
+ "greske": []
+}

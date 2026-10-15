@@ -1,4 +1,5 @@
 import { svjetloSata } from "../grad/dan";
+import type { VrstaHitnog } from "../grad/hitna";
 import {
   AlphaFilter,
   Application,
@@ -25,6 +26,7 @@ import {
   GRAD_PROZORI_UPALJENI,
   GRAD_RADNJA_DUBINA,
   GRAD_RADNJA_DUZINA,
+  GRAD_HITNO_SJAJ,
   GRAD_RADNJA_SJAJ,
   GRAD_KOMADA_NAJVISE,
   GRAD_MEDJUOSOVINSKO,
@@ -92,6 +94,8 @@ const BOJE = {
 } as const;
 
 /** Gradski autobus (stavka 8c). */
+/** Karoserija hitnih vozila (stavka 8e): bijela hitna pomoć, plava policija, crveni vatrogasci. */
+const BOJE_HITNIH: Readonly<Record<VrstaHitnog, string>> = { hitna: "#f4f4f2", policija: "#1d3c8f", vatrogasci: "#c62828" };
 /** Tende otvorenih radnji (stavka 8d) — po radnji, iz njenog broja. */
 const BOJE_TENDI = ["#c0392b", "#1f6f8b", "#2e8b57", "#d4a017", "#8e44ad", "#d35400", "#2c3e50"] as const;
 /** Spuštena roletna zatvorene radnje. */
@@ -349,6 +353,8 @@ export interface GradScena {
     duzina?: number;
     sirina?: number;
     autobus?: boolean;
+    /** Hitno vozilo sa rotacijom (stavka 8e). */
+    hitno?: VrstaHitnog;
   }[];
   /**
    * Pješaci (stavka 8): gdje su, kuda gledaju, boja odjeće (indeks), pređeni
@@ -560,6 +566,9 @@ export async function createGradRenderer(
   // Sjaj otvorenih radnji uveče (stavka 8d): po jedan meki sjaj, iz zalihe.
   const sjajRadnji = new Container();
   sSvjetla.addChild(sjajRadnji);
+  // Odsjaj rotacije hitnih vozila na ulici (stavka 8e): meki sjaj, iz zalihe.
+  const sjajHitnih = new Container();
+  sSvjetla.addChild(sjajHitnih);
   // Izlozi radnji (stavka 8d): poseban sloj, iznad zgrada kao pješaci, i
   // crta se ponovo samo kad se promijene (vidi `kljucRadnji`).
   const izlozi = new Graphics();
@@ -957,6 +966,7 @@ export async function createGradRenderer(
         L = CAR_LENGTH,
         W = CAR_WIDTH,
         autobus = false,
+        hitno?: VrstaHitnog,
       ) => {
         const ugao = Math.atan2(heading.y, heading.x);
         const cos = Math.cos(ugao);
@@ -991,6 +1001,18 @@ export async function createGradRenderer(
           dinamika.rect(-L / 2 + 0.6, -W * 0.18, L - 1.6, W * 0.36).fill("rgba(255,255,255,0.35)");
           for (const strana of [-1, 1]) dinamika.rect(-L / 2 + 1, strana > 0 ? W / 2 - 0.42 : -W / 2 + 0.12, L - 2.4, 0.3).fill("rgba(20,30,45,0.75)");
           dinamika.rect(L / 2 - 0.45, -W * 0.4, 0.3, W * 0.8).fill("rgba(20,30,45,0.8)");
+        } else if (hitno) {
+          // Hitna pomoć: crvena pruga duž bokova; policija: bijeli krov.
+          if (hitno === "hitna") for (const strana of [-1, 1]) dinamika.rect(-L / 2 + 0.3, strana * (W / 2 - 0.2) - 0.09, L - 0.6, 0.18).fill("#d32f2f");
+          if (hitno === "policija") dinamika.rect(-L * 0.2, -W * 0.36, L * 0.38, W * 0.72).fill("#f4f6f8");
+          dinamika.rect(L * 0.18, -W * 0.34, L * 0.14, W * 0.68).fill("rgba(255,255,255,0.7)");
+          // Rotacija: poprijeko krova, polovine naizmjenično (policija plavo-crveno).
+          const faza = Math.floor(simT * 8) % 2 === 0;
+          const x0 = L * 0.02;
+          const d = Math.min(0.5, L * 0.1);
+          const druga = hitno === "policija" ? "#ff1f2d" : "#1e6bff";
+          dinamika.rect(x0, -W * 0.42, d, W * 0.42).fill(faza ? "#1e6bff" : "#0b1f4d");
+          dinamika.rect(x0, 0, d, W * 0.42).fill(faza ? "#3a1015" : druga);
         } else dinamika.rect(L * 0.1, -W * 0.34, L * 0.2, W * 0.68).fill("rgba(255,255,255,0.7)");
         // Zadnja svjetla: crvena kad se koči, bijela u rikvercu. U rikvercu kočnica
         // vozi unazad, pa crveno tada ne bi značilo ništa.
@@ -1072,16 +1094,30 @@ export async function createGradRenderer(
       dinamika.resetTransform();
       // Drugi vozači (stavka 7): ista karoserija, njihova boja; kočnica i
       // žmigavac kao kod igrača, u mraku i kratak snop farova.
+      let hitnih = 0;
       for (const v of vozila) {
         const L = v.duzina ?? CAR_LENGTH;
-        const boja = v.autobus ? BOJA_AUTOBUSA : BOJE_VOZILA[v.boja % BOJE_VOZILA.length]!;
-        nacrtajAuto(v.pos, v.heading, boja, v.koci, false, null, v.zmigavac, L, v.sirina ?? CAR_WIDTH, v.autobus);
+        const boja = v.hitno ? BOJE_HITNIH[v.hitno] : v.autobus ? BOJA_AUTOBUSA : BOJE_VOZILA[v.boja % BOJE_VOZILA.length]!;
+        nacrtajAuto(v.pos, v.heading, boja, v.koci, false, null, v.zmigavac, L, v.sirina ?? CAR_WIDTH, v.autobus, v.hitno);
+        // Odsjaj rotacije na ulici (uveče i po kiši), u ritmu svjetla.
+        if (v.hitno && sSvjetla.visible) {
+          const plavo = Math.floor(simT * 8) % 2 === 0;
+          const sp = (sjajHitnih.children[hitnih] as Sprite | undefined) ?? sjajHitnih.addChild(new Sprite(sjaj));
+          sp.anchor.set(0.5);
+          sp.tint = plavo ? "#1e6bff" : v.hitno === "policija" ? "#ff1f2d" : "#1e6bff";
+          sp.alpha = plavo ? 0.9 : 0.45;
+          sp.width = sp.height = GRAD_HITNO_SJAJ;
+          sp.position.set(v.pos.x, v.pos.y);
+          sp.visible = true;
+          hitnih += 1;
+        }
         if (sSvjetla.visible) {
           const c = v.heading.x;
           const sn = v.heading.y;
           farovi.circle(v.pos.x + c * (L / 2 + 3), v.pos.y + sn * (L / 2 + 3), 3).fill({ color: boje.farovi, alpha: mrak ? 0.25 : 0.1 });
         }
       }
+      for (let i = hitnih; i < sjajHitnih.children.length; i++) sjajHitnih.children[i]!.visible = false;
       if (igrac) {
         const ugao = Math.atan2(igrac.heading.y, igrac.heading.x);
         const cos = Math.cos(ugao);

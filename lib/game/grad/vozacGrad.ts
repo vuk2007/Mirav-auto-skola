@@ -1,5 +1,5 @@
 import { B_MAX, GRAD_MEDJUOSOVINSKO, GRAD_RIKVERC_PEDALA, GRAD_VOZAC_USPORENJE } from "../sim/config";
-import { cumulative, pointAt } from "../sim/geometry";
+import { cumulative, headingAt, pointAt } from "../sim/geometry";
 import type { Input, Point } from "../sim/types";
 import { najveciTocak, type SlobodnoVozilo } from "./slobodno";
 
@@ -50,6 +50,8 @@ export interface Cilj {
   brzina: number;
   /** Mjesto na putanji na kojem da stane (nos auta), ili `null`. */
   staniNa: number | null;
+  /** Bočni pomak od putanje [m, + desno] — sklanjanje pred hitnim vozilom (stavka 8e). */
+  bok?: number;
 }
 
 /**
@@ -61,7 +63,12 @@ export function vozi(st: SlobodnoVozilo, p: Putanja, sNaPutanji: number, cilj: C
   // Pogled naprijed: kratak pri maloj brzini (uska skretanja — duži bi sjekao
   // ugao i zakačio ivičnjak), duži pri većoj (mirno držanje trake).
   const naprijed = Math.max(2.2, Math.min(12, 1.2 + 0.55 * v));
-  const meta = pointAt(p.tacke, p.cum, Math.min(p.duzina, sNaPutanji + naprijed));
+  const sMeta = Math.min(p.duzina, sNaPutanji + naprijed);
+  const naPutu = pointAt(p.tacke, p.cum, sMeta);
+  // Bočni pomak od putanje (sklanjanje pred hitnim vozilom, stavka 8e): meta
+  // je pomjerena udesno (+) ili ulijevo.
+  const hm = cilj.bok ? headingAt(p.tacke, p.cum, sMeta) : null;
+  const meta = hm ? { x: naPutu.x - hm.y * cilj.bok!, y: naPutu.y + hm.x * cilj.bok! } : naPutu;
   // Pure pursuit: ugao ka meti od zadnje osovine, pa ugao točkova.
   const pola = GRAD_MEDJUOSOVINSKO / 2;
   const zx = st.x - Math.cos(st.ugao) * pola;

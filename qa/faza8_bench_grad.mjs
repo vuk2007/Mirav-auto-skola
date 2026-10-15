@@ -7,6 +7,7 @@
 //
 //     node faza8_bench_grad.mjs                  # Podgorica, centar
 //     node faza8_bench_grad.mjs 140,-216 30      # druga tačka, 30 s mjerenja
+//     DODATAK="&hitno=8&hitnoPrsten=1" node faza8_bench_grad.mjs   # i hitna vozila u kadru (8e)
 //
 // Kao `igra_bench.mjs`: ekran telefona (390 px, gustina piksela 2), procesor
 // punom brzinom i usporen četiri puta (≈ telefon srednje klase 2021–22).
@@ -22,7 +23,7 @@ const SEKUNDI = Number(process.argv[3] ?? 20);
 // Gustina 3 van zona: 40 vozila (van zona je inače 25, stavka 7e) i 60 pješaka (stavka 8).
 // Sat 8 (stavka 8d): dan, svjetlo kao i prije; broj vozila i pješaka uz `gustina` i
 // `pjesaci` ne zavisi od sata, pa se mjeri isti puni grad u svako doba.
-const URL = `http://localhost:3100/igra?debug=1&gustina=3&pjesaci=3&sat=8&gdje=${GDJE}`;
+const URL = `http://localhost:3100/igra?debug=1&gustina=3&pjesaci=3&sat=8&gdje=${GDJE}${process.env.DODATAK ?? ""}`;
 const USPORENJA = [1, 4];
 
 const browser = await chromium.launch({ args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });

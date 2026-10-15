@@ -1,3 +1,4 @@
+import { bokNaAsfaltu, ispredHitnog, type HitnoZaSudiju } from "./hitna";
 import {
   CAR_LENGTH,
   CAR_WIDTH,
@@ -31,6 +32,15 @@ import {
   YELLOW_COMMIT_TTC,
   type Level,
   GRAD_BUS_PROPUSTI_BOCNO,
+  GRAD_HITNO_BLIZU,
+  GRAD_HITNO_OBILAZI,
+  GRAD_HITNO_PREKO_LINIJE,
+  GRAD_HITNO_SKLONI,
+  GRAD_HITNO_SKLONJEN,
+  GRAD_HITNO_SPORO,
+  GRAD_HITNO_SUDI_DO,
+  GRAD_HITNO_TRAKA,
+  GRAD_HITNO_TRPI,
   GRAD_VOZAC_USPORENJE,
 } from "../sim/config";
 import type { Point } from "../sim/types";
@@ -107,7 +117,9 @@ export type VrstaGradskogPrekrsaja =
   | "redLightPedestrian"
   | "pedestrianCollision"
   /** Stavka 8c: autobusu se ne omogućava polazak sa stajališta (odluka korisnika 2026-10-13). */
-  | "busDeparture";
+  | "busDeparture"
+  /** Ne propušta hitno vozilo koje mu je tik iza (stavka 8e). */
+  | "emergencyVehicle";
 
 export interface GradskiPrekrsaj {
   vrsta: VrstaGradskogPrekrsaja;
@@ -251,6 +263,76 @@ function sudiPjesake(s: Sudija, st: SlobodnoVozilo, t: number, pj: Pjesaci): voi
  * nosom prestigne dok polazi — prekršaj (upozorenje). Isto pravilo voze drugi
  * vozači (`saobracaj.ts`).
  */
+/**
+ * Hitno vozilo iza igrača (stavka 8e, odluke korisnika 2026-10-08 i
+ * 2026-10-15): kad je igrač ispred njega u njegovoj traci (do
+ * `GRAD_HITNO_SUDI_DO` m), mora se skloniti udesno i usporiti ili stati — bar
+ * `GRAD_HITNO_SKLONJEN` m od putanje hitnog, ne brže od `GRAD_HITNO_SPORO`.
+ * Ko to ne uradi duže od `GRAD_HITNO_TRPI` s — pad. Na crvenom smije preći
+ * stop-liniju da ga propusti, najviše `GRAD_HITNO_PREKO_LINIJE` m. Ne sudi
+ * se u raskrsnici, ni dok stoji u koloni ili čeka na crvenom pred linijom
+ * (smije, ne mora preći liniju), ni gdje nema mjesta da se skloni
+ * (`GRAD_HITNO_SKLONI` udesno na asfaltu, a hitno pored njega ulijevo) —
+ * tu vozi dalje dok ne nađe mjesto, kao i ostali vozači. I kad nije u
+ * traci hitnog, a hitno stoji i čeka baš njega (npr. treba mu njegova traka).
+ */
+function sudiHitna(g: GradZaSudiju, s: Sudija, st: SlobodnoVozilo, t: number, hitni: readonly HitnoZaSudiju[], uKoloni: boolean): void {
+  const vidi = new Set<number>();
+  s.hitnoIza = false;
+  s.hitnoBlizu = hitni.some((h) => Math.hypot(h.x - st.x, h.y - st.y) < GRAD_HITNO_BLIZU);
+  for (const h of hitni) {
+    vidi.add(h.id);
+    let z = s.hitni.get(h.id);
+    if (!z) {
+      z = { od: null, prijavljen: false };
+      s.hitni.set(h.id, z);
+    }
+    const ja = ispredHitnog(h, st.x, st.y, st.ugao, GRAD_HITNO_SUDI_DO, GRAD_HITNO_TRAKA);
+    if (!ja && !h.cekaMe) {
+      z.od = null;
+      continue;
+    }
+    s.hitnoIza = true;
+    const stoji = Math.abs(st.v) < STOPPED_SPEED;
+    const p = s.prilaz;
+    const naCrvenom = stoji && p !== null && p.svjetlo !== null && p.svjetlo !== "zeleno" && p.doLinije >= 0 && p.doLinije <= STOP_ZONE;
+    const nemaKud =
+      s.prolaz !== null ||
+      (uKoloni && stoji) ||
+      naCrvenom ||
+      // Nema mjesta da se skloni — ali kad hitno stoji i čeka baš njega, može
+      // bar krenuti dalje i osloboditi mu put.
+      (ja !== null &&
+        !h.cekaMe &&
+        (!bokNaAsfaltu(g.povrsina, ja.tacka, ja.pravac, s.vozilo, GRAD_HITNO_SKLONI) || !bokNaAsfaltu(g.povrsina, ja.tacka, ja.pravac, h, -GRAD_HITNO_OBILAZI)));
+    // Sklonjen je udesno i spor — osim kad ga hitno i dalje stoji i čeka:
+    // tada mu nije napravio dovoljno mjesta (npr. hitnom treba njegova traka).
+    const sklonio = nemaKud || (!h.cekaMe && ja !== null && ja.bok >= GRAD_HITNO_SKLONJEN && Math.abs(st.v) <= GRAD_HITNO_SPORO);
+    if (sklonio) {
+      z.od = null;
+      continue;
+    }
+    z.od ??= t;
+    if (!z.prijavljen && t - z.od > GRAD_HITNO_TRPI) {
+      z.prijavljen = true;
+      prijavi(s, st, t, "emergencyVehicle", { hitno: h.id });
+    }
+  }
+  for (const id of [...s.hitni.keys()]) if (!vidi.has(id)) s.hitni.delete(id);
+  // Prešao liniju na crveno da propusti hitno: dalje od dozvoljenog dok je
+  // još crveno — to je prolazak kroz crveno.
+  const pr = s.propustaHitno;
+  if (pr) {
+    const sv = svjetlo(g.raskrsnice.lista[pr.r]!, pr.k, t);
+    const preko = -nosDoLinije(st, pr.linija, pr.pravac, s.vozilo.duzina);
+    if (sv === "zeleno" || preko < -1) s.propustaHitno = null;
+    else if (preko > GRAD_HITNO_PREKO_LINIJE && sv === "crveno") {
+      prijavi(s, st, t, "redLight", { svjetlo: sv });
+      s.propustaHitno = null;
+    }
+  }
+}
+
 function sudiPolazakAutobusa(s: Sudija, st: SlobodnoVozilo, t: number, autobusi: readonly AutobusUPolasku[]): void {
   const vidi = new Set<number>();
   for (const b of autobusi) {
@@ -439,6 +521,21 @@ export interface Sudija {
    * stati iza njega kad se upalio žmigavac, i da li je prekršaj već prijavljen.
    */
   autobusi: Map<number, { mogaoStati: boolean; prijavljen: boolean }>;
+  /**
+   * Hitna vozila iza igrača (stavka 8e): od kad ga drži iza sebe a ne
+   * sklanja se (`null` — sklonio se), i da li je prijavljeno.
+   */
+  hitni: Map<number, { od: number | null; prijavljen: boolean }>;
+  /** Hitno vozilo mu je sada tik iza (u njegovoj traci). */
+  hitnoIza: boolean;
+  /** Hitno vozilo je blizu (`GRAD_HITNO_BLIZU` m, iz bilo kog smjera): ko stoji, stao je zbog njega. */
+  hitnoBlizu: boolean;
+  /**
+   * Prešao je stop-liniju na crveno da propusti hitno vozilo (stavka 8e):
+   * prilaz kojim je ušao. Prekršaj tek ako ode dalje od
+   * `GRAD_HITNO_PREKO_LINIJE` dok je još crveno.
+   */
+  propustaHitno: { r: number; k: number; linija: Point; pravac: Point } | null;
 }
 
 export function noviSudija(nivo: Level, vozilo: Vozilo = { duzina: CAR_LENGTH, sirina: CAR_WIDTH }): Sudija {
@@ -472,6 +569,10 @@ export function noviSudija(nivo: Level, vozilo: Vozilo = { duzina: CAR_LENGTH, s
     naZebrama: null,
     vozilo,
     autobusi: new Map(),
+    hitni: new Map(),
+    hitnoIza: false,
+    hitnoBlizu: false,
+    propustaHitno: null,
   };
 }
 
@@ -788,9 +889,12 @@ export function sudi(
   pjesaci: Pjesaci | null = null,
   /** Autobusi koji polaze sa stajališta (stavka 8c). */
   autobusi: readonly AutobusUPolasku[] = [],
+  /** Hitna vozila (stavka 8e). */
+  hitni: readonly HitnoZaSudiju[] = [],
 ): void {
   s.zmigavac = zmigavac;
   sudiPolazakAutobusa(s, st, t, autobusi);
+  sudiHitna(g, s, st, t, hitni, uKoloni);
   const naUlici = ulicaAuta(g, s, st);
   if (!naUlici) return;
   if (pjesaci) sudiPjesake(s, st, t, pjesaci);
@@ -844,7 +948,11 @@ export function sudi(
         }
       }
       if (doLinije >= 0 && doLinije <= STOP_ZONE && Math.abs(st.v) < STOPPED_SPEED) p.stajao += DT;
-      if (p.doLinije > 0 && doLinije <= 0 && st.v > 0) {
+      // Prešao liniju na crveno da propusti hitno vozilo (stavka 8e): sudi se
+      // tek ako ode dalje (vidi `sudiHitna`).
+      const propusta = p.doLinije > 0 && doLinije <= 0 && st.v > 0 && s.hitnoIza && k.kontrola === "semafor" && (sv === "crveno" || (sv === "zuto" && !p.zutoPrekasno));
+      if (propusta) s.propustaHitno = { r: p.r, k: p.k, linija: p.linija, pravac: p.pravac };
+      if (p.doLinije > 0 && doLinije <= 0 && st.v > 0 && !propusta) {
         if (k.kontrola === "stop" && p.stajao < STOP_HOLD) {
           prijavi(s, st, t, "stopSign", { stajao: Number(p.stajao.toFixed(2)) });
         }
@@ -1157,7 +1265,8 @@ export function sudi(
     // Zaustavio ga je saobraćaj (kolona ispred) — nije prekršaj (odluka
     // korisnika 2026-09-30). Dok tako stoji, vrijeme se ne broji: i kad krene,
     // broji se tek od tada, ne od početka čekanja.
-    if (uKoloni) s.stojiT = 0;
+    // Stao da propusti hitno vozilo (stavka 8e) — ni to nije parkiranje.
+    if (uKoloni || s.hitnoIza || s.hitnoBlizu) s.stojiT = 0;
     else s.stojiT += DT;
     if (s.stojiT >= GRAD_STAJANJE_TRAJE && !s.stojiPrijavljeno) {
       // Ispred stop-linije se čeka — to nije zaustavljanje na zabranjenom mjestu.

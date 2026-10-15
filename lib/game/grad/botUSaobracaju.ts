@@ -1,8 +1,8 @@
-import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_SUDAR_PONOVO, type Level } from "../sim/config";
+import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_HITNO_BOK_BRZINA, GRAD_SUDAR_PONOVO, type Level } from "../sim/config";
 import { polygonsOverlap, rectCorners } from "../sim/geometry";
 import { korakBota, noviBot, type IshodVoznje, type Korak, type PlanBota } from "./botGrad";
 import type { Manevar } from "./mreza";
-import { autobusiUPolasku, dodajVanjsko, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, tijeloNpc, IGRAC } from "./saobracaj";
+import { autobusiUPolasku, dodajVanjsko, hitnaZaSudiju, korakSaobracaja, noviSaobracaj, oduzetoPrvenstvo, parkirani, postaviVanjsko, tijeloNpc, IGRAC } from "./saobracaj";
 import { linijeAutobusa, type SiroveLinije } from "./autobusi";
 import { korakPjesaka, noviPjesaci, udaraPjesaka } from "./pjesaci";
 import { korakSlobodno, type SlobodnoVozilo } from "./slobodno";
@@ -95,6 +95,9 @@ export function odveziRutuUSaobracaju(
     sb.kocenja = sb.kocenja.filter((x) => x.t > p.t - 30);
   };
 
+  // Bočni pomak bota (sklanjanje pred hitnim vozilom, stavka 8e): ka onom
+  // koji traži saobraćaj, polako, kao drugi vozači.
+  let bok = 0;
   let udara = 0;
   let sudara = 0;
   let pjesaka = 0;
@@ -108,7 +111,10 @@ export function odveziRutuUSaobracaju(
     // svoj sat na `t + DT`; sudija sudi poslije pomaka, kao u `odveziRutu`.
     const t = sb.t;
     korakSaobracaja(sb, { x: st.x, y: st.y }, null);
-    const ulaz = korakBota(bot, g, st, t, senka.odlukaV ?? Infinity);
+    const bokCilj = senka.odlukaBok ?? 0;
+    bok += Math.max(-GRAD_HITNO_BOK_BRZINA * DT, Math.min(GRAD_HITNO_BOK_BRZINA * DT, bokCilj - bok));
+    senka.bok = bok;
+    const ulaz = korakBota(bot, g, st, t, senka.odlukaV ?? Infinity, bok);
     korakSlobodno(povrsina, st, ulaz);
     korakPjesaka(
       pjesaci,
@@ -141,7 +147,7 @@ export function odveziRutuUSaobracaju(
     // Zaustavio ga je saobraćaj (kolona, ustupanje, zatvoren izlaz) — nije
     // parkiranje (odluka korisnika 2026-09-30).
     const r = senka.razlog.vrsta;
-    sudi(g, sudija, st, t + DT, ulaz.indicator, r === "vozilo" || r === "ustupa" || r === "izlaz" || r === "pjesak" || r === "autobus", pjesaci, autobusiUPolasku(sb));
+    sudi(g, sudija, st, t + DT, ulaz.indicator, r === "vozilo" || r === "ustupa" || r === "izlaz" || r === "pjesak" || r === "autobus", pjesaci, autobusiUPolasku(sb), hitnaZaSudiju(sb, IGRAC));
   }
   return {
     stigao: bot.gotov,

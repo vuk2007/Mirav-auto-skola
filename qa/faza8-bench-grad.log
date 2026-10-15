@@ -1,3 +1,9 @@
+Stavka 8e (hitna vozila), 2026-10-15 uveče, A/B u istoj sesiji (centar, sat 8, po 20 s):
+  8d2 (612b264):            x1 60.0 fps, korak 1.08 ms; x4 57.2 fps, korak med 5.41 ms, max 19.1 ms
+  8e:                       x1 60.0 fps, korak 1.21 ms; x4 58.2 fps, korak med 4.73 ms, max 20.6 ms
+  8e, hitno u kadru (DODATAK="&hitno=8&hitnoPrsten=1"):
+                            x1 60.0 fps, korak 1.36 ms; x4 58.9 fps, korak med 5.20 ms, max 14.0 ms
+
 Mjerilo grada sa pjesacima, autobusima, dnevnim ciklusom i radnjama (qa/faza8_bench_grad.mjs, next start, 2026-10-15)
 Napomena: mašina je popodne sporija nego ujutru (korak simulacije na x4 ~5.5 ms umjesto ~3.9),
 pa je stavka 8d2 poređena sa 8d1 u istim uslovima, naizmjenično (centar, sat 8, x4, po 20 s):

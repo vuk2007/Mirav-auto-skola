@@ -253,6 +253,7 @@ export interface Dict {
   gradRuleRedLightPedestrian: string;
   gradRulePedestrianCollision: string;
   gradRuleBusDeparture: string;
+  gradRuleEmergencyVehicle: string;
   gradHitTitle: string;
   gradHitText: string;
   gradHitAgain: string;
@@ -356,6 +357,7 @@ export interface Dict {
   vioRedLightPedestrian: string;
   vioPedestrianCollision: string;
   vioBusDeparture: string;
+  vioEmergencyVehicle: string;
   vioObstruction: string;
   vioSpeeding: string;
 
@@ -723,6 +725,8 @@ const me: Dict = {
   gradRulePedestrianCollision: "Udario si pješaka. Vožnja je gotova — pazi na pješake na prelazima i na one koji izađu na kolovoz.",
   gradRuleBusDeparture:
     "U naselju autobusu koji daje znak da polazi sa stajališta moraš omogućiti uključivanje u saobraćaj: uspori i propusti ga — ne prestiži ga dok polazi.",
+  gradRuleEmergencyVehicle:
+    "Vozilu sa rotacijom i sirenom koje ti dolazi s leđa moraš omogućiti nesmetan prolaz: skloni se udesno i uspori ili stani. Na crvenom smiješ oprezno preći stop-liniju da mu napraviš mjesto, ali ne i ući u raskrsnicu.",
   gradHitTitle: "Vožnja je prekinuta",
   gradHitText: "Na pravom ispitu ovo je kraj ispita — i najteža posljedica greške za volanom.",
   gradHitAgain: "Vozi ponovo",
@@ -830,6 +834,7 @@ const me: Dict = {
   vioRedLightPedestrian: "Crveno na pješačkom semaforu",
   vioPedestrianCollision: "Udaren pješak",
   vioBusDeparture: "Ometanje polaska autobusa",
+  vioEmergencyVehicle: "Nepropuštanje vozila sa prvenstvom prolaza",
   vioObstruction: "Zadržavanje saobraćaja",
   vioSpeeding: "Prekoračenje dozvoljene brzine",
 
@@ -1182,6 +1187,8 @@ const en: Dict = {
   gradRulePedestrianCollision: "You hit a pedestrian. The drive is over — watch for pedestrians on crossings and for anyone who steps onto the road.",
   gradRuleBusDeparture:
     "In a built-up area you must let a bus that signals it is leaving a stop rejoin traffic: slow down and let it go — do not pass it while it pulls out.",
+  gradRuleEmergencyVehicle:
+    "You must give way to a vehicle with flashing lights and siren coming up behind you: move to the right and slow down or stop. At a red light you may carefully roll past the stop line to make room, but not into the junction.",
   gradHitTitle: "Drive stopped",
   gradHitText: "On a real driving test this ends the exam — and it is the worst outcome of a mistake behind the wheel.",
   gradHitAgain: "Drive again",
@@ -1289,6 +1296,7 @@ const en: Dict = {
   vioRedLightPedestrian: "Red light at a pedestrian crossing",
   vioPedestrianCollision: "Pedestrian hit",
   vioBusDeparture: "Blocking a bus pulling out",
+  vioEmergencyVehicle: "Not giving way to an emergency vehicle",
   vioObstruction: "Obstructing traffic",
   vioSpeeding: "Exceeding the speed limit",
 
@@ -1646,6 +1654,8 @@ const sq: Dict = {
   gradRulePedestrianCollision: "Godite një këmbësor. Drejtimi mbaroi — ki kujdes për këmbësorët në vendkalime dhe për ata që dalin në rrugë.",
   gradRuleBusDeparture:
     "Në vendbanim duhet t'i lejosh autobusit që sinjalizon nisjen nga stacioni të hyjë në trafik: ngadalëso dhe lëre të kalojë — mos e parakalo ndërsa niset.",
+  gradRuleEmergencyVehicle:
+    "Automjetit me drita rrotulluese dhe sirenë që vjen pas teje duhet t'i lësh kalim të lirë: shmangu djathtas dhe ngadalëso ose ndalo. Në të kuqe mund ta kalosh me kujdes vijën e ndalimit për t'i bërë vend, por jo të hysh në kryqëzim.",
   gradHitTitle: "Drejtimi u ndërpre",
   gradHitText: "Në një provim të vërtetë kjo e mbyll provimin — dhe është pasoja më e rëndë e një gabimi në timon.",
   gradHitAgain: "Drejto përsëri",
@@ -1753,6 +1763,7 @@ const sq: Dict = {
   vioRedLightPedestrian: "E kuqe te semafori i këmbësorëve",
   vioPedestrianCollision: "Goditje e këmbësorit",
   vioBusDeparture: "Pengim i nisjes së autobusit",
+  vioEmergencyVehicle: "Moslënia e kalimit automjetit të urgjencës",
   vioObstruction: "Pengim i trafikut",
   vioSpeeding: "Tejkalim i shpejtësisë së lejuar",
 
@@ -2112,6 +2123,8 @@ const ru: Dict = {
   gradRulePedestrianCollision: "Вы сбили пешехода. Поездка окончена — следите за пешеходами на переходах и за теми, кто выходит на дорогу.",
   gradRuleBusDeparture:
     "В населённом пункте вы обязаны дать автобусу, который подаёт сигнал об отъезде от остановки, выехать: снизьте скорость и пропустите его — не обгоняйте, пока он отъезжает.",
+  gradRuleEmergencyVehicle:
+    "Машине с проблесковыми маячками и сиреной, которая едет сзади, вы обязаны уступить дорогу: примите вправо и снизьте скорость или остановитесь. На красный можно осторожно заехать за стоп-линию, чтобы освободить место, но не въезжать на перекрёсток.",
   gradHitTitle: "Поездка остановлена",
   gradHitText: "На настоящем экзамене это конец экзамена — и самое тяжёлое последствие ошибки за рулём.",
   gradHitAgain: "Ехать снова",
@@ -2219,6 +2232,7 @@ const ru: Dict = {
   vioRedLightPedestrian: "Красный на пешеходном светофоре",
   vioPedestrianCollision: "Наезд на пешехода",
   vioBusDeparture: "Помеха отъезду автобуса",
+  vioEmergencyVehicle: "Непредоставление преимущества спецтранспорту",
   vioObstruction: "Создание помех движению",
   vioSpeeding: "Превышение разрешённой скорости",
 
