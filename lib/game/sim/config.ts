@@ -2676,3 +2676,21 @@ export const GRAD_HITNO_BLIZU = 40;
 export const GRAD_HITNO_VIDI = 160;
 /** Dodatna rezerva [s] kad se na raskrsnici procjenjuje da li se stigne proći prije hitnog vozila (stavka 8e). */
 export const GRAD_HITNO_REZERVA_PROLAZA = 4;
+/** Bot pred hitnim vozilom (stavka 8e): najviše ovoliko [m/s] — ispod `GRAD_HITNO_SPORO`. */
+export const GRAD_HITNO_BOT_BRZINA = 4;
+/** Odredište zadatka (stavka 9) je vezano za voznu ulicu najviše ovoliko [m] od objekta. */
+export const GRAD_ODREDISTE_DO_ULICE = 200;
+/** Dva odredišta iste kategorije bliža od ovoga [m] su isti objekat (tačka i zgrada u OSM-u). */
+export const GRAD_ODREDISTE_ISTO = 60;
+/** Navigacija (stavka 9): ulica auta se traži do ovoliko [m] od njega. */
+export const GRAD_NAV_TRAZI_ULICU = 30;
+/** Auto je van rute kad je dalje od ovoga [m] od njene linije… */
+export const GRAD_NAV_SA_RUTE = 15;
+/** …duže od ovoga [s] — tada se traži nova ruta. */
+export const GRAD_NAV_SA_RUTE_TRAJE = 1.5;
+/** Stigao je kad je do ulaza odredišta (i do kraja rute) manje od ovoga [m]. */
+export const GRAD_NAV_DOLAZAK = 20;
+/** Mini mapa grada (stavka 9) crta ostatak rute do ovoliko [m] ispred auta. */
+export const GRAD_MINI_RUTA = 900;
+/** Statistika vožnje (stavka 9): čiste minute teku samo dok auto ide brže od ovoga [m/s]. */
+export const GRAD_STAT_VOZI = 1;

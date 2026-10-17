@@ -238,6 +238,36 @@ export interface Dict {
   gradRainNote: string;
   gradLevel: string;
   gradViolations: string;
+  gradNavDestination: string;
+  gradNavChoose: string;
+  gradNavSearch: string;
+  gradNavRandom: string;
+  gradNavClear: string;
+  gradNavClose: string;
+  gradNavIn: string;
+  gradNavTurnLeft: string;
+  gradNavTurnRight: string;
+  gradNavUTurn: string;
+  gradNavRoundabout: string;
+  gradNavStraight: string;
+  gradNavOnto: string;
+  gradNavArrived: string;
+  gradNavRemaining: string;
+  gradNavRerouting: string;
+  gradNavNoRoute: string;
+  gradKatSkola: string;
+  gradKatZdravlje: string;
+  gradKatUstanova: string;
+  gradKatKultura: string;
+  gradKatBogomolja: string;
+  gradKatStanica: string;
+  gradKatSport: string;
+  gradKatTrgovina: string;
+  gradKatZnamenitost: string;
+  gradStatClean: string;
+  gradStatToday: string;
+  gradMiniMap: string;
+  gradOsmAttribution: string;
   vioWrongWay: string;
   vioTurnBan: string;
   vioUTurn: string;
@@ -709,6 +739,36 @@ const me: Dict = {
   gradRainNote: "Kiša: kočnica drži slabije — zaustavni put je duži.",
   gradLevel: "Nivo",
   gradViolations: "Prekršaji",
+  gradNavDestination: "Cilj",
+  gradNavChoose: "Izaberi cilj",
+  gradNavSearch: "Traži po imenu",
+  gradNavRandom: "Nasumično",
+  gradNavClear: "Bez cilja",
+  gradNavClose: "Zatvori",
+  gradNavIn: "za {d}",
+  gradNavTurnLeft: "Skreni lijevo",
+  gradNavTurnRight: "Skreni desno",
+  gradNavUTurn: "Polukružno okretanje",
+  gradNavRoundabout: "Kružni tok: {n}. izlaz",
+  gradNavStraight: "Pravo",
+  gradNavOnto: "na {ulica}",
+  gradNavArrived: "Stigao si: {cilj}",
+  gradNavRemaining: "do cilja {d}",
+  gradNavRerouting: "Nova ruta…",
+  gradNavNoRoute: "Do ovog cilja odavde nema puta.",
+  gradKatSkola: "Škole i fakulteti",
+  gradKatZdravlje: "Zdravstvo",
+  gradKatUstanova: "Institucije",
+  gradKatKultura: "Kultura",
+  gradKatBogomolja: "Bogomolje",
+  gradKatStanica: "Stanice",
+  gradKatSport: "Sport",
+  gradKatTrgovina: "Tržni centri i pijace",
+  gradKatZnamenitost: "Znamenitosti",
+  gradStatClean: "Bez prekršaja: {n} min",
+  gradStatToday: "Danas: {km} km · {cisto} min bez prekršaja · prekršaja {prekrsaji}",
+  gradMiniMap: "Mini mapa",
+  gradOsmAttribution: "© OpenStreetMap",
   vioWrongWay: "Vožnja u suprotnom smjeru jednosmjerne ulice",
   vioTurnBan: "Skretanje tamo gdje znak zabranjuje",
   vioUTurn: "Polukružno okretanje gdje je zabranjeno",
@@ -1171,6 +1231,36 @@ const en: Dict = {
   gradRainNote: "Rain: the brakes grip less — the stopping distance is longer.",
   gradLevel: "Level",
   gradViolations: "Violations",
+  gradNavDestination: "Destination",
+  gradNavChoose: "Choose a destination",
+  gradNavSearch: "Search by name",
+  gradNavRandom: "Random",
+  gradNavClear: "No destination",
+  gradNavClose: "Close",
+  gradNavIn: "in {d}",
+  gradNavTurnLeft: "Turn left",
+  gradNavTurnRight: "Turn right",
+  gradNavUTurn: "Make a U-turn",
+  gradNavRoundabout: "Roundabout: exit {n}",
+  gradNavStraight: "Straight on",
+  gradNavOnto: "onto {ulica}",
+  gradNavArrived: "You have arrived: {cilj}",
+  gradNavRemaining: "{d} to go",
+  gradNavRerouting: "Rerouting…",
+  gradNavNoRoute: "There is no way to this destination from here.",
+  gradKatSkola: "Schools and faculties",
+  gradKatZdravlje: "Healthcare",
+  gradKatUstanova: "Institutions",
+  gradKatKultura: "Culture",
+  gradKatBogomolja: "Places of worship",
+  gradKatStanica: "Stations",
+  gradKatSport: "Sport",
+  gradKatTrgovina: "Shopping centres and markets",
+  gradKatZnamenitost: "Landmarks",
+  gradStatClean: "Clean driving: {n} min",
+  gradStatToday: "Today: {km} km · {cisto} clean min · {prekrsaji} violations",
+  gradMiniMap: "Mini map",
+  gradOsmAttribution: "© OpenStreetMap",
   vioWrongWay: "Driving the wrong way on a one-way street",
   vioTurnBan: "Turning where a sign forbids it",
   vioUTurn: "U-turn where it is forbidden",
@@ -1638,6 +1728,36 @@ const sq: Dict = {
   gradRainNote: "Shi: frenat kapin më pak — distanca e ndalimit është më e gjatë.",
   gradLevel: "Niveli",
   gradViolations: "Shkeljet",
+  gradNavDestination: "Destinacioni",
+  gradNavChoose: "Zgjidh destinacionin",
+  gradNavSearch: "Kërko sipas emrit",
+  gradNavRandom: "Rastësisht",
+  gradNavClear: "Pa destinacion",
+  gradNavClose: "Mbyll",
+  gradNavIn: "pas {d}",
+  gradNavTurnLeft: "Kthehu majtas",
+  gradNavTurnRight: "Kthehu djathtas",
+  gradNavUTurn: "Kthehu mbrapsht (U)",
+  gradNavRoundabout: "Rrethrrotullim: dalja {n}",
+  gradNavStraight: "Drejt",
+  gradNavOnto: "në {ulica}",
+  gradNavArrived: "Arrite: {cilj}",
+  gradNavRemaining: "edhe {d}",
+  gradNavRerouting: "Rrugë e re…",
+  gradNavNoRoute: "Nga këtu nuk ka rrugë për këtë destinacion.",
+  gradKatSkola: "Shkolla dhe fakultete",
+  gradKatZdravlje: "Shëndetësia",
+  gradKatUstanova: "Institucione",
+  gradKatKultura: "Kultura",
+  gradKatBogomolja: "Objekte fetare",
+  gradKatStanica: "Stacione",
+  gradKatSport: "Sport",
+  gradKatTrgovina: "Qendra tregtare dhe tregje",
+  gradKatZnamenitost: "Pika të njohura",
+  gradStatClean: "Pa shkelje: {n} min",
+  gradStatToday: "Sot: {km} km · {cisto} min pa shkelje · {prekrsaji} shkelje",
+  gradMiniMap: "Harta e vogël",
+  gradOsmAttribution: "© OpenStreetMap",
   vioWrongWay: "Ngasje në drejtim të kundërt në rrugë njëkahëshe",
   vioTurnBan: "Kthesë aty ku shenja e ndalon",
   vioUTurn: "Kthim prapa aty ku është i ndaluar",
@@ -2107,6 +2227,36 @@ const ru: Dict = {
   gradRainNote: "Дождь: тормоза держат хуже — тормозной путь длиннее.",
   gradLevel: "Уровень",
   gradViolations: "Нарушения",
+  gradNavDestination: "Цель",
+  gradNavChoose: "Выберите цель",
+  gradNavSearch: "Поиск по названию",
+  gradNavRandom: "Случайно",
+  gradNavClear: "Без цели",
+  gradNavClose: "Закрыть",
+  gradNavIn: "через {d}",
+  gradNavTurnLeft: "Поверните налево",
+  gradNavTurnRight: "Поверните направо",
+  gradNavUTurn: "Развернитесь",
+  gradNavRoundabout: "Круговое движение: {n}-й съезд",
+  gradNavStraight: "Прямо",
+  gradNavOnto: "на {ulica}",
+  gradNavArrived: "Вы прибыли: {cilj}",
+  gradNavRemaining: "осталось {d}",
+  gradNavRerouting: "Новый маршрут…",
+  gradNavNoRoute: "Отсюда до этой цели нет пути.",
+  gradKatSkola: "Школы и факультеты",
+  gradKatZdravlje: "Здравоохранение",
+  gradKatUstanova: "Учреждения",
+  gradKatKultura: "Культура",
+  gradKatBogomolja: "Храмы",
+  gradKatStanica: "Вокзалы",
+  gradKatSport: "Спорт",
+  gradKatTrgovina: "Торговые центры и рынки",
+  gradKatZnamenitost: "Достопримечательности",
+  gradStatClean: "Без нарушений: {n} мин",
+  gradStatToday: "Сегодня: {km} км · {cisto} мин без нарушений · нарушений {prekrsaji}",
+  gradMiniMap: "Мини-карта",
+  gradOsmAttribution: "© OpenStreetMap",
   vioWrongWay: "Движение против направления одностороннего движения",
   vioTurnBan: "Поворот там, где знак запрещает",
   vioUTurn: "Разворот там, где он запрещён",

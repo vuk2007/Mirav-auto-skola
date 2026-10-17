@@ -1482,7 +1482,12 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
       // Ne stiže udobno stati ni tik pred zebrom: prolazi — osim pred
       // pješakom za kojeg je, kad ga je vidio, mogao stati (i sudija tako
       // računa: kreće sa mjesta tik do zebre, a pješak tek stane na ivičnjak).
-      const pjesak = prolazi ? cekaju.find((q) => n.namjere.get(q.id)) : (naPrelazu[0] ?? cekaju.find((q) => n.namjere.get(q.id)));
+      // Već je tijelom na zebri (stao je kasno): pješake na ivičnjaku ne
+      // čeka — oni ne kreću dok je on na zebri (`ugrozava`), pa bi čekali
+      // jedno drugo. Propušta ih tako što je oslobodi.
+      const naZebri = n.s > x.dodir + 0.25;
+      const saNamjerom = naZebri ? undefined : cekaju.find((q) => n.namjere.get(q.id));
+      const pjesak = prolazi ? saNamjerom : (naPrelazu[0] ?? saNamjerom);
       if (pjesak) stani(staniNa, { vrsta: "pjesak", kome: pjesak.id });
     }
     for (const id of [...n.namjere.keys()]) if (!vidi.has(id)) n.namjere.delete(id);

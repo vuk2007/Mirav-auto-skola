@@ -1,6 +1,6 @@
 # Podgorica — paket grada
 
-Okvir upita 42.395,19.195,42.485,19.315; stanje baze 2026-10-15T14:30:11Z. Paket `podgorica-d06f433704.bin`: 2.87 MB, 441 tile-ova po 500 m (21 × 21).
+Okvir upita 42.395,19.195,42.485,19.315; stanje baze 2026-10-15T21:15:48Z. Paket `podgorica-0d9636de87.bin`: 2.88 MB, 441 tile-ova po 500 m (21 × 21).
 
 | | broj | napomena |
 |---|---|---|
@@ -11,7 +11,7 @@ Okvir upita 42.395,19.195,42.485,19.315; stanje baze 2026-10-15T14:30:11Z. Paket
 | zgrada | 33833 | sa spratnošću 1 %, sa visinom 0 %, sa imenom (javne) 62 |
 | površina | 1207 | voda 10, most 11, stadion 6, park 28, igraliste 175, trg 12, parking 274, skola 47, bolnica 6, suma 80, trava 205, groblje 7, poslovno 14, industrija 31, stambeno 282, njiva 19 |
 | linija | 160 | rijeka 15, kanal 0, potok 8, pruga 133, drvored 4 |
-| objekata | 3624 | stop 110, give_way 80, traffic_signals 190, crossing 1974, bus_stop 354, traffic_calming 96, fuel 25, place_of_worship 18, radnja 777 |
+| objekata | 3743 | stop 110, give_way 80, traffic_signals 190, crossing 1974, bus_stop 354, traffic_calming 96, fuel 25, place_of_worship 18, radnja 777, odrediste 119 |
 
 Oznake na ulicama (udio OSM puteva):
 

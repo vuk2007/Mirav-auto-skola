@@ -131,6 +131,23 @@ export const objekti = (okvir) => `[out:json][timeout:600];
 out geom;`;
 
 /**
+ * Odredišta (faza 6, stavka 9): imenovani javni objekti do kojih se vozi
+ * („Vožnja od–do": Klinički centar, Tehnička škola, Delta City…) i
+ * znamenitosti. Samo ime, vrsta i središte. Firme se ne biraju (odjeljak 10),
+ * osim tržnih centara koje zadatak izričito navodi kao cilj.
+ */
+export const odredista = (okvir) => `[out:json][timeout:600];
+(
+  nwr[name][amenity~"^(school|college|university|hospital|clinic|theatre|library|arts_centre|townhall|courthouse|police|fire_station|bus_station|place_of_worship|marketplace)$"](${okvir});
+  nwr[name][shop=mall](${okvir});
+  nwr[name][leisure~"^(stadium|sports_centre)$"](${okvir});
+  nwr[name][tourism~"^(museum|attraction)$"](${okvir});
+  nwr[name][historic~"^(monument|memorial|castle|archaeological_site|tower|ruins|city_gate)$"](${okvir});
+  nwr[name][railway=station](${okvir});
+);
+out center tags;`;
+
+/**
  * Radnje (faza 6, stavka 8d): dnevni ciklus „ograničava koje su radnje
  * otvorene" (dekor). Vrsta radnje i radno vrijeme — ime se ne koristi (radnje
  * se ne označavaju imenima firmi, odjeljak 10). Oblik radnje: samo središte.

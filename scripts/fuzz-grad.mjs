@@ -40,6 +40,8 @@ const sjeme = Number(process.argv[4] ?? 1);
 const iSint = process.argv.indexOf("--sinteticki");
 const sjemeSintetike = iSint >= 0 ? Number(process.argv[iSint + 1] ?? 1) : null;
 const uSaobracaju = process.argv.includes("--saobracaj");
+// Zadaci (stavka 9): rute do odredišta — redom po spisku, sa nasumičnog starta.
+const doOdredista = process.argv.includes("--odredista");
 
 const { procitaj } = await import(`${KOD}grad/paket.ts`);
 const { procitajOverlay } = await import(`${KOD}grad/overlay.ts`);
@@ -47,6 +49,8 @@ const { svijetGrada } = await import(`${KOD}grad/svijet.ts`);
 const { nasumicnaRuta, odveziRutu, planBota } = await import(`${KOD}grad/botGrad.ts`);
 const { rng } = await import(`${KOD}sim/geometry.ts`);
 const { odveziRutuUSaobracaju } = await import(`${KOD}grad/botUSaobracaju.ts`);
+const { odredistaGrada } = await import(`${KOD}grad/odredista.ts`);
+const { koraciDoOdredista } = await import(`${KOD}grad/navigacija.ts`);
 
 const spisak = JSON.parse(readFileSync(join(JAVNO, "gradovi.json"), "utf8"));
 const b = readFileSync(join(JAVNO, spisak.podgorica.fajl));
@@ -78,6 +82,7 @@ if (sjemeSintetike !== null) {
 }
 
 const slucajno = rng(sjeme);
+const odredista = doOdredista ? odredistaGrada(svijet) : [];
 const padovi = [];
 let km = 0;
 let sati = 0;
@@ -85,7 +90,17 @@ let osovinom = 0;
 let izvlacenja = 0;
 const pocetak = Date.now();
 for (let n = 0; n < ruta; n++) {
-  const koraci = nasumicnaRuta(mreza, raskrsnice, zabrane, slucajno);
+  let koraci = nasumicnaRuta(mreza, raskrsnice, zabrane, slucajno);
+  let cilj = null;
+  if (doOdredista) {
+    cilj = odredista[n % odredista.length];
+    koraci = koraciDoOdredista(svijet, koraci[0], cilj);
+    if (!koraci) {
+      console.log(`PAD  ruta ${String(n).padStart(2)}: nema rute do „${cilj.ime}"`);
+      padovi.push(n);
+      continue;
+    }
+  }
   const plan = planBota(grad, koraci);
   // Semafori u različitim fazama: početak vožnje u nasumičnom trenutku ciklusa.
   const t0 = slucajno() * 300;
@@ -99,7 +114,7 @@ for (let n = 0; n < ruta; n++) {
   izvlacenja += x.izvlacenja;
   const ok = x.stigao && x.prekrsaji.length === 0;
   console.log(
-    `${ok ? "OK  " : "PAD "} ruta ${String(n).padStart(2)}: ${(plan.put.duzina / 1000).toFixed(1)} km, ` +
+    `${ok ? "OK  " : "PAD "} ruta ${String(n).padStart(2)}: ${cilj ? `do „${cilj.ime}", ` : ""}${(plan.put.duzina / 1000).toFixed(1)} km, ` +
       `${x.trajanje.toFixed(0)} s, raskrsnica osovinom ${plan.osovinom}, izvlačenja ${x.izvlacenja}` +
       (uSaobracaju ? `, zastoja oko njega ${x.zastoja}` : "") +
       (x.stigao ? "" : " — NIJE STIGAO") +

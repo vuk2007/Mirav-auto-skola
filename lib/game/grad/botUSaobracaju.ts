@@ -1,4 +1,4 @@
-import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_HITNO_BOK_BRZINA, GRAD_SUDAR_PONOVO, type Level } from "../sim/config";
+import { CAR_LENGTH, CAR_WIDTH, DT, GRAD_HITNO_BOK_BRZINA, GRAD_HITNO_BOT_BRZINA, GRAD_SUDAR_PONOVO, type Level } from "../sim/config";
 import { polygonsOverlap, rectCorners } from "../sim/geometry";
 import { korakBota, noviBot, type IshodVoznje, type Korak, type PlanBota } from "./botGrad";
 import type { Manevar } from "./mreza";
@@ -114,7 +114,12 @@ export function odveziRutuUSaobracaju(
     const bokCilj = senka.odlukaBok ?? 0;
     bok += Math.max(-GRAD_HITNO_BOK_BRZINA * DT, Math.min(GRAD_HITNO_BOK_BRZINA * DT, bokCilj - bok));
     senka.bok = bok;
-    const ulaz = korakBota(bot, g, st, t, senka.odlukaV ?? Infinity, bok);
+    // Pred hitnim vozilom (stavka 8e) saobraćaj traži udobno zaustavljanje
+    // brzinom koja tek malo pada iz koraka u korak — NPC je prati tačno, a
+    // bot je blag prema maloj razlici. Sudija traži da uspori: zato najviše
+    // `GRAD_HITNO_BOT_BRZINA`.
+    const granica = Math.min(senka.odlukaV ?? Infinity, senka.razlog.vrsta === "hitno" ? GRAD_HITNO_BOT_BRZINA : Infinity);
+    const ulaz = korakBota(bot, g, st, t, granica, bok);
     korakSlobodno(povrsina, st, ulaz);
     korakPjesaka(
       pjesaci,

@@ -63,8 +63,10 @@ export interface TestIvica {
 }
 
 export interface TestObjekat {
-  vrsta: "stop" | "give_way" | "traffic_signals" | "crossing";
+  vrsta: "stop" | "give_way" | "traffic_signals" | "crossing" | "odrediste";
   podatak?: string;
+  /** Van ulice (odredište, stavka 9): tačka objekta. */
+  tacka?: Point;
   /** Na ivici (`s` metara od `a`) ili u čvoru. */
   ivica?: number;
   s?: number;
@@ -85,7 +87,8 @@ export function testPaket(
   const n = prazniNizovi();
   const klase = [...new Set(["residential", ...ivice.map((e) => e.klasa ?? "residential")])];
   const stringovi = ["", "forward", "backward", ...GRAD_ZEBRA_VRSTE, ...zabrane.map((z) => z[0])];
-  const vrsteObjekata = ["stop", "give_way", "traffic_signals", "crossing"];
+  for (const o of objekti) if (o.podatak && !stringovi.includes(o.podatak)) stringovi.push(o.podatak);
+  const vrsteObjekata = ["stop", "give_way", "traffic_signals", "crossing", "odrediste"];
   n.cvXY = new Float32Array(cvorovi.flatMap((p) => [p.x, p.y]));
   n.ivA = new Uint32Array(ivice.map((e) => e.a));
   n.ivB = new Uint32Array(ivice.map((e) => e.b));
@@ -112,6 +115,7 @@ export function testPaket(
   n.obCvor = new Uint32Array(objekti.map((o) => o.cvor ?? BEZ));
   n.obXY = new Float32Array(
     objekti.flatMap((o) => {
+      if (o.tacka) return [o.tacka.x, o.tacka.y];
       if (o.cvor !== undefined) return [cvorovi[o.cvor]!.x, cvorovi[o.cvor]!.y];
       const e = ivice[o.ivica!]!;
       const A = cvorovi[e.a]!;

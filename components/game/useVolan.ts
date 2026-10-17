@@ -127,7 +127,13 @@ export function useVolan(
       if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") return "kocnica";
       return null;
     };
+    // Kucanje u polju (pretraga cilja, stavka 9) nije vožnja.
+    const uPolju = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
+    };
     const down = (e: KeyboardEvent) => {
+      if (uPolju(e)) return;
       if (e.key === "q" || e.key === "Q" || e.key === "e" || e.key === "E") {
         // Kad pokazivač pali simulacija, Q i E nemaju šta da mijenjaju.
         if (!pokazivacRukom) return;

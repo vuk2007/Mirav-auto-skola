@@ -33,6 +33,8 @@ import { GRADOVI } from "./gradovi.mjs";
 import { ULICE_BEZ } from "./upitiGrad.mjs";
 import { napraviMrezu } from "../../lib/game/grad/mreza.ts";
 import { radnoVrijemeOsm, zapisiRadnoVrijeme } from "../../lib/game/grad/radnje.ts";
+import { kategorijaOdredista, zapisiOdrediste } from "../../lib/game/grad/odredista.ts";
+import { GRAD_ODREDISTE_ISTO } from "../../lib/game/sim/config.ts";
 import { krajeviLinija } from "../../lib/game/grad/oznake.ts";
 import { napraviRaskrsnice } from "../../lib/game/grad/raskrsnica.ts";
 import {
@@ -120,6 +122,8 @@ const VRSTE_OBJEKATA = [
   "stop", "give_way", "traffic_signals", "crossing", "bus_stop", "traffic_calming", "fuel", "place_of_worship",
   // Na kraju: postojeće vrste zadržavaju indekse (stavka 8d).
   "radnja",
+  // Odredišta (stavka 9): podatak je „kategorija|ime" (vidi `odredista.ts`).
+  "odrediste",
 ];
 
 // ── pomagala ────────────────────────────────────────────────────────────────
@@ -489,6 +493,25 @@ for (const el of radnjeEl) {
   const c = el.type === "node" ? el : el.center;
   if (!c || !Number.isFinite(c.lat)) continue;
   dodajObjekat("radnja", lok(c.lat, c.lon), zapisiRadnoVrijeme(radnoVrijemeOsm(t.shop, t.opening_hours)));
+}
+
+// Odredišta (stavka 9): imenovani javni objekti i znamenitosti, kategorija i
+// ime. Grad povučen prije stavke 9 nema upit `odredista`: tada bez njih.
+const odredistaEl = existsSync(join(KES, `grad-${kljucGrada}-odredista.json`)) ? await ucitaj(kljucGrada, "odredista") : [];
+const odredista = [];
+for (const el of odredistaEl) {
+  const t = el.tags ?? {};
+  const c = el.type === "node" ? el : el.center;
+  const kategorija = kategorijaOdredista(t);
+  if (!c || !Number.isFinite(c.lat) || !kategorija || !t.name) continue;
+  odredista.push({ tacka: lok(c.lat, c.lon), kategorija, ime: t.name, tackaOsm: el.type === "node" });
+}
+// Isti objekat kao tačka i kao zgrada, pod različitim imenima (npr. tržni
+// centar i hotel u njemu): zgrada otpada kad je tačka iste kategorije bliže
+// od `GRAD_ODREDISTE_ISTO`. Susjedne zgrade (škole na istom kampusu) ostaju.
+for (const o of odredista) {
+  const dupla = !o.tackaOsm && odredista.some((x) => x.tackaOsm && x.kategorija === o.kategorija && Math.hypot(x.tacka.x - o.tacka.x, x.tacka.y - o.tacka.y) < GRAD_ODREDISTE_ISTO);
+  if (!dupla) dodajObjekat("odrediste", o.tacka, zapisiOdrediste(o.kategorija, o.ime));
 }
 
 // ── zgrade ──────────────────────────────────────────────────────────────────
