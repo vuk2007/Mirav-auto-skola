@@ -2694,3 +2694,21 @@ export const GRAD_NAV_DOLAZAK = 20;
 export const GRAD_MINI_RUTA = 900;
 /** Statistika vožnje (stavka 9): čiste minute teku samo dok auto ide brže od ovoga [m/s]. */
 export const GRAD_STAT_VOZI = 1;
+/**
+ * Vožnja od–do (stavka 9): po težini nivo saobraćaja i sudije, zračno
+ * rastojanje nasumičnog cilja [m] i referentna prosječna brzina [m/s] (vožnja
+ * po pravilima kroz grad, sa semaforima).
+ */
+export const GRAD_ODDO_TEZINE = {
+  lako: { nivo: 1 as Level, odM: 500, doM: 1500, brzina: 5 },
+  srednje: { nivo: 3 as Level, odM: 1500, doM: 3000, brzina: 6 },
+  tesko: { nivo: 5 as Level, odM: 3000, doM: 6000, brzina: 7 },
+} as const;
+/** Bodovi za pravila (bez prekršaja), i koliko oduzima upozorenje i pad. */
+export const GRAD_ODDO_PRAVILA = 700;
+export const GRAD_ODDO_MINOR = 100;
+export const GRAD_ODDO_FAIL = 350;
+/** Bodovi za vrijeme — puni do referentnog vremena. */
+export const GRAD_ODDO_VRIJEME = 300;
+/** Pragovi za jednu, dvije i tri zvjezdice. */
+export const GRAD_ODDO_ZVJEZDICE = [400, 700, 900] as const;

@@ -62,8 +62,10 @@ import { odredistaGrada, type Odrediste } from "@/lib/game/grad/odredista";
 import { korakNavigacije, novaNavigacija, rutaDo, sljedeciManevar, type ManevarRute, type Navigacija } from "@/lib/game/grad/navigacija";
 import { uliceOko } from "@/lib/game/grad/miniMapa";
 import { dodajDanu, korakStatistike, novaStatistika, procitajDan, type DanVoznje } from "@/lib/game/grad/statistika";
+import { najbolji, nasumicanCilj, ocjenaOdDo, tezina as tezinaOdDo, zapisiNajbolji, type Tezina } from "@/lib/game/grad/odDo";
 import Brzinomjer from "./Brzinomjer";
 import IzborCilja from "./grad/IzborCilja";
+import { minSek, OdDoIzbor, OdDoRezultat, type RezultatOdDo } from "./grad/OdDo";
 import MiniMapaGrada, { MINI_POLUPRECNIK, type MrljaUlica } from "./grad/MiniMapaGrada";
 import Putokaz from "./grad/Putokaz";
 import DriveControls from "./DriveControls";
@@ -100,6 +102,8 @@ interface Hud {
   mini: { auto: { x: number; y: number; ugao: number }; ruta: Point[] | null; cilj: Point | null };
   /** Uzastopni minuti vožnje bez prekršaja (statistika slobodne vožnje). */
   cisto: number;
+  /** Vožnja od–do u toku: koliko traje [s]. */
+  odDo: number | null;
 }
 
 /** Ostatak rute za mini mapu: od auta, najviše `GRAD_MINI_RUTA` metara. */
@@ -151,13 +155,26 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
     nav: null,
     mini: { auto: { x: 0, y: 0, ugao: 0 }, ruta: null, cilj: null },
     cisto: 0,
+    odDo: null,
   });
   // Zadaci (stavka 9): odredišta grada, cilj vožnje i poruke navigacije.
   const [odredista, setOdredista] = useState<Odrediste[]>([]);
   const [izborCilja, setIzborCilja] = useState(false);
   const [cilj, setCilj] = useState<Odrediste | null>(null);
-  /** Novi cilj iz menija — petlja ga preuzme u sljedećem kadru (`null` — bez cilja). */
-  const zahtjevCiljaRef = useRef<{ o: Odrediste | null } | null>(null);
+  /**
+   * Novi cilj iz menija — petlja ga preuzme u sljedećem kadru (`null` — bez
+   * cilja). Sa `odDo` počinje vožnja od–do te težine; `nasumicno` — cilj bira
+   * petlja, po mjestu auta.
+   */
+  const zahtjevCiljaRef = useRef<{ o: Odrediste | null; odDo?: Tezina; nasumicno?: boolean } | null>(null);
+  // Vožnja od–do (stavka 9): težina vožnje u toku, izbor težine, izbor cilja
+  // za nju, i rezultat na cilju (dok se vidi, simulacija stoji).
+  const [odDo, setOdDo] = useState<Tezina | null>(null);
+  const [odDoIzbor, setOdDoIzbor] = useState(false);
+  const [ciljZaOdDo, setCiljZaOdDo] = useState<Tezina | null>(null);
+  const [rezultat, setRezultat] = useState<RezultatOdDo | null>(null);
+  const zadnjaTezinaRef = useRef<Tezina>("srednje");
+  const pauzaRef = useRef(false);
   const [poruka, setPoruka] = useState<string | null>(null);
   const [ulice, setUlice] = useState<MrljaUlica | null>(null);
   const [dan, setDan] = useState<DanVoznje>({ km: 0, cisteMinute: 0, prekrsaja: 0 });
@@ -190,10 +207,26 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
   const sat = () => satIgre(pocetakSataRef.current ?? 12, simTRef.current);
   /** Upis statistike u današnji zbir — i pri izlasku sa ekrana. */
   const upisiDanRef = useRef<(() => void) | null>(null);
-  const izaberiCilj = (o: Odrediste | null) => {
+  const izaberiCilj = (o: Odrediste | null, tez?: Tezina) => {
     setCilj(o);
     setIzborCilja(false);
-    zahtjevCiljaRef.current = { o };
+    setCiljZaOdDo(null);
+    setOdDo(o && tez ? tez : null);
+    zahtjevCiljaRef.current = { o, odDo: tez };
+  };
+  /** Vožnja od–do: težina postavlja nivo saobraćaja i sudije; cilj nasumičan ili izabran. */
+  const pocniOdDo = (tez: Tezina, o: Odrediste | null) => {
+    zadnjaTezinaRef.current = tez;
+    setOdDoIzbor(false);
+    setNivo(tezinaOdDo(tez).nivo);
+    if (o) izaberiCilj(o, tez);
+    else {
+      setCilj(null);
+      setIzborCilja(false);
+      setCiljZaOdDo(null);
+      setOdDo(tez);
+      zahtjevCiljaRef.current = { o: null, odDo: tez, nasumicno: true };
+    }
   };
   const pomjeriSat = (h: number) => {
     pocetakSataRef.current = h - simTRef.current / GRAD_SAT_TRAJE;
@@ -243,7 +276,8 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       const { paket, mreza, povrsina, raskrsnice, crtez, zaSudiju } = svijet;
       const sudija = noviSudija(nivoRef.current);
       // Odredišta (stavka 9): javni objekti iz OSM-a, za cilj vožnje.
-      setOdredista(odredistaGrada(svijet));
+      const svaOdredista = odredistaGrada(svijet);
+      setOdredista(svaOdredista);
       setDan(procitajDan());
       let prijavljeno = 0;
       const parametarSata = debug ? Number(new URLSearchParams(window.location.search).get("sat") ?? NaN) : NaN;
@@ -342,6 +376,11 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           kamera: (p: Point | null) => {
             kameraQa = p;
           },
+          // Navigacija javlja dolazak u sljedećem koraku (QA kartice od–do).
+          stigni: () => {
+            if (nav) nav.stigao = true;
+            return nav !== null;
+          },
         };
       }
       /** Zadnji sudar sa svakim vozilom [s] — isti se ne prijavljuje ponovo odmah. */
@@ -439,8 +478,14 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       let gotovo = false;
       // Navigacija (stavka 9): ruta do cilja; nova kad igrač ode sa nje.
       let nav: Navigacija | null = null;
-      // Cilj iz prethodne vožnje (poslije udara pješaka) ostaje.
+      // Vožnja od–do u toku: od kada [s], dužina prve rute (po njoj je
+      // referentno vrijeme) i od kojeg prekršaja se broji.
+      let odDoV: { tezina: Tezina; t0: number; duzina: number; od: number } | null = null;
+      // Cilj iz prethodne vožnje (poslije udara pješaka) ostaje — vožnja
+      // od–do ne (udar je kraj vožnje).
       if (cilj) zahtjevCiljaRef.current = { o: cilj };
+      setOdDo(null);
+      pauzaRef.current = false;
       // Statistika slobodne vožnje i dio koji je već upisan u današnji zbir.
       const stat = novaStatistika();
       let upisano = { metara: 0, cisteMinute: 0, prekrsaja: 0 };
@@ -458,13 +503,24 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         zadnji = now;
         acc += dt;
         let koraka = 0;
-        if (gotovo) acc = 0;
+        if (gotovo || pauzaRef.current) acc = 0;
         const zahtjev = zahtjevCiljaRef.current;
         if (zahtjev) {
           zahtjevCiljaRef.current = null;
-          const r = zahtjev.o ? rutaDo(svijet, st.x, st.y, st.ugao, zahtjev.o) : null;
+          let o = zahtjev.o;
+          if (zahtjev.nasumicno && zahtjev.odDo) {
+            o = nasumicanCilj(svaOdredista, st.x, st.y, zahtjev.odDo, Math.random);
+            setCilj(o);
+            if (!o) setPoruka(tRef.current.gradOdDoNoTarget);
+          }
+          const r = o ? rutaDo(svijet, st.x, st.y, st.ugao, o) : null;
           nav = r ? novaNavigacija(r) : null;
-          if (zahtjev.o && !r) setPoruka(tRef.current.gradNavNoRoute);
+          odDoV = r && zahtjev.odDo ? { tezina: zahtjev.odDo, t0: koraka_ * DT, duzina: r.duzina, od: sudija.prekrsaji.length } : null;
+          if (o && !r) setPoruka(tRef.current.gradNavNoRoute);
+          if (zahtjev.odDo && !r) {
+            setOdDo(null);
+            setCilj(null);
+          }
         }
         while (acc >= DT && koraka < 8) {
           const t0Koraka = debug ? performance.now() : 0;
@@ -525,7 +581,21 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           if (nav) {
             const { novaRuta } = korakNavigacije(nav, st.x, st.y, koraka_ * DT);
             if (nav.stigao) {
-              setPoruka(tRef.current.gradNavArrived.replace("{cilj}", nav.ruta.cilj.ime));
+              if (odDoV) {
+                // Na cilju od–do: ocjena, najbolji rezultat, i stanka dok se gleda.
+                const nove = sudija.prekrsaji.slice(odDoV.od);
+                const upozorenja = nove.filter((p) => p.ozbiljnost === "minor").length;
+                const padova = nove.length - upozorenja;
+                const sekundi = koraka_ * DT - odDoV.t0;
+                const ocjena = ocjenaOdDo(odDoV.tezina, odDoV.duzina, sekundi, upozorenja, padova);
+                const ime = nav.ruta.cilj.ime;
+                const prije = najbolji(ime, odDoV.tezina);
+                const rekord = zapisiNajbolji(ime, odDoV.tezina, ocjena.bodovi);
+                setRezultat({ cilj: ime, tezina: odDoV.tezina, sekundi, upozorenja, padova, ocjena, prije, rekord });
+                setOdDo(null);
+                odDoV = null;
+                pauzaRef.current = true;
+              } else setPoruka(tRef.current.gradNavArrived.replace("{cilj}", nav.ruta.cilj.ime));
               setCilj(null);
               nav = null;
             } else if (novaRuta) {
@@ -653,6 +723,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               cilj: nav ? nav.ruta.cilj.ulaz : null,
             },
             cisto: stat.niz,
+            odDo: odDoV ? koraka_ * DT - odDoV.t0 : null,
           });
           // Ulice mini mape: ponovo tek kad auto ode dalje od pola kruga.
           if (!mrlja || Math.hypot(st.x - mrlja.centar.x, st.y - mrlja.centar.y) > MINI_POLUPRECNIK / 2) {
@@ -813,6 +884,11 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             <p className="rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold" aria-live="polite">
               {t.gradViolations}: {prekrsaji.length} · {t.gradStatClean.replace("{n}", String(hud.cisto))}
             </p>
+            {hud.odDo !== null && (
+              <p className="rounded border border-blue bg-blue px-2 py-1 text-xs font-bold text-white tabular-nums">
+                {t.gradOdDoTimer.replace("{vrijeme}", minSek(hud.odDo))}
+              </p>
+            )}
             {hud.nav && <Putokaz manevar={hud.nav.manevar} za={hud.nav.za} doCilja={hud.nav.doCilja} cilj={hud.nav.cilj} t={t} />}
           </div>
         )}
@@ -828,13 +904,49 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         )}
         {faza === "voznja" && izborCilja && (
           <IzborCilja
-            odredista={odredista}
-            izaberi={(o) => izaberiCilj(o)}
+            odredista={ciljZaOdDo ? odredista.filter((o) => o.kategorija !== "znamenitost") : odredista}
+            izaberi={(o) => (ciljZaOdDo ? pocniOdDo(ciljZaOdDo, o) : izaberiCilj(o))}
             nasumicno={() => {
+              if (ciljZaOdDo) {
+                pocniOdDo(ciljZaOdDo, null);
+                return;
+              }
               const lista = odredista.filter((o) => o.kategorija !== "znamenitost");
               if (lista.length > 0) izaberiCilj(lista[Math.floor(Math.random() * lista.length)]!);
             }}
-            zatvori={() => setIzborCilja(false)}
+            zatvori={() => {
+              setIzborCilja(false);
+              setCiljZaOdDo(null);
+            }}
+            t={t}
+          />
+        )}
+        {faza === "voznja" && odDoIzbor && (
+          <OdDoIzbor
+            pocetna={zadnjaTezinaRef.current}
+            nasumicno={(tez) => pocniOdDo(tez, null)}
+            izaberi={(tez) => {
+              zadnjaTezinaRef.current = tez;
+              setOdDoIzbor(false);
+              setCiljZaOdDo(tez);
+              setIzborCilja(true);
+            }}
+            zatvori={() => setOdDoIzbor(false)}
+            t={t}
+          />
+        )}
+        {faza === "voznja" && rezultat && !udaren && (
+          <OdDoRezultat
+            r={rezultat}
+            ponovo={() => {
+              setRezultat(null);
+              pauzaRef.current = false;
+              pocniOdDo(rezultat.tezina, null);
+            }}
+            zatvori={() => {
+              setRezultat(null);
+              pauzaRef.current = false;
+            }}
             t={t}
           />
         )}
@@ -851,9 +963,22 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         >
           {cilj ? `${t.gradNavDestination}: ${cilj.ime}` : t.gradNavChoose}
         </button>
-        {cilj && (
+        {(cilj || odDo) && (
           <button type="button" onClick={() => izaberiCilj(null)} className="rounded border border-line bg-panel px-2 py-1 font-semibold">
-            {t.gradNavClear}
+            {odDo ? t.gradOdDoCancel : t.gradNavClear}
+          </button>
+        )}
+        {!odDo && (
+          <button
+            type="button"
+            onClick={() => {
+              volan.release();
+              setOdDoIzbor(true);
+            }}
+            disabled={faza !== "voznja"}
+            className="rounded border border-blue bg-panel px-3 py-1 font-semibold text-blue disabled:opacity-40"
+          >
+            {t.gradOdDo}
           </button>
         )}
         <span className="text-muted">
@@ -900,7 +1025,9 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               type="button"
               aria-pressed={nivo === n}
               onClick={() => setNivo(n)}
-              className={`h-8 w-8 rounded border font-semibold ${nivo === n ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+              // Za vožnju od–do nivo je dio težine.
+              disabled={odDo !== null}
+              className={`h-8 w-8 rounded border font-semibold disabled:opacity-40 ${nivo === n ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
             >
               {n}
             </button>

@@ -268,6 +268,26 @@ export interface Dict {
   gradStatToday: string;
   gradMiniMap: string;
   gradOsmAttribution: string;
+  gradOdDo: string;
+  gradOdDoIntro: string;
+  gradOdDoEasy: string;
+  gradOdDoMedium: string;
+  gradOdDoHard: string;
+  gradOdDoRange: string;
+  gradOdDoRandom: string;
+  gradOdDoPick: string;
+  gradOdDoCancel: string;
+  gradOdDoTimer: string;
+  gradOdDoDone: string;
+  gradOdDoScore: string;
+  gradOdDoRules: string;
+  gradOdDoTime: string;
+  gradOdDoViolations: string;
+  gradOdDoStars: string;
+  gradOdDoBest: string;
+  gradOdDoNewBest: string;
+  gradOdDoAgain: string;
+  gradOdDoNoTarget: string;
   vioWrongWay: string;
   vioTurnBan: string;
   vioUTurn: string;
@@ -769,6 +789,26 @@ const me: Dict = {
   gradStatToday: "Danas: {km} km · {cisto} min bez prekršaja · prekršaja {prekrsaji}",
   gradMiniMap: "Mini mapa",
   gradOsmAttribution: "© OpenStreetMap",
+  gradOdDo: "Vožnja od–do",
+  gradOdDoIntro: "Vozi do cilja po pravilima. Bodovi: vožnja bez prekršaja i vrijeme. Težina određuje dužinu rute, gustinu saobraćaja i strogost sudije.",
+  gradOdDoEasy: "Lako",
+  gradOdDoMedium: "Srednje",
+  gradOdDoHard: "Teško",
+  gradOdDoRange: "{od}–{do} km · nivo {nivo}",
+  gradOdDoRandom: "Nasumičan cilj",
+  gradOdDoPick: "Izaberi cilj",
+  gradOdDoCancel: "Prekini od–do",
+  gradOdDoTimer: "Od–do · {vrijeme}",
+  gradOdDoDone: "Na cilju: {cilj}",
+  gradOdDoScore: "{bodovi} / 1000 bodova",
+  gradOdDoRules: "Vožnja po pravilima: {n} / {max}",
+  gradOdDoTime: "Vrijeme {vrijeme} (očekivano {ref}): {n} / {max}",
+  gradOdDoViolations: "Prekršaji: {minor} lakših, {fail} teških",
+  gradOdDoStars: "{n} od 3 zvjezdice",
+  gradOdDoBest: "Najbolje do sada: {n}",
+  gradOdDoNewBest: "Novi najbolji rezultat!",
+  gradOdDoAgain: "Nova vožnja",
+  gradOdDoNoTarget: "Nema odredišta za ovu težinu.",
   vioWrongWay: "Vožnja u suprotnom smjeru jednosmjerne ulice",
   vioTurnBan: "Skretanje tamo gdje znak zabranjuje",
   vioUTurn: "Polukružno okretanje gdje je zabranjeno",
@@ -1261,6 +1301,26 @@ const en: Dict = {
   gradStatToday: "Today: {km} km · {cisto} clean min · {prekrsaji} violations",
   gradMiniMap: "Mini map",
   gradOsmAttribution: "© OpenStreetMap",
+  gradOdDo: "A-to-B drive",
+  gradOdDoIntro: "Drive to the destination by the rules. Score: driving without violations, plus time. Difficulty sets the route length, traffic density and how strict the examiner is.",
+  gradOdDoEasy: "Easy",
+  gradOdDoMedium: "Medium",
+  gradOdDoHard: "Hard",
+  gradOdDoRange: "{od}–{do} km · level {nivo}",
+  gradOdDoRandom: "Random destination",
+  gradOdDoPick: "Choose destination",
+  gradOdDoCancel: "Stop A-to-B",
+  gradOdDoTimer: "A-to-B · {vrijeme}",
+  gradOdDoDone: "At the destination: {cilj}",
+  gradOdDoScore: "{bodovi} / 1000 points",
+  gradOdDoRules: "Driving by the rules: {n} / {max}",
+  gradOdDoTime: "Time {vrijeme} (expected {ref}): {n} / {max}",
+  gradOdDoViolations: "Violations: {minor} minor, {fail} serious",
+  gradOdDoStars: "{n} of 3 stars",
+  gradOdDoBest: "Best so far: {n}",
+  gradOdDoNewBest: "New best score!",
+  gradOdDoAgain: "New drive",
+  gradOdDoNoTarget: "No destination for this difficulty.",
   vioWrongWay: "Driving the wrong way on a one-way street",
   vioTurnBan: "Turning where a sign forbids it",
   vioUTurn: "U-turn where it is forbidden",
@@ -1758,6 +1818,26 @@ const sq: Dict = {
   gradStatToday: "Sot: {km} km · {cisto} min pa shkelje · {prekrsaji} shkelje",
   gradMiniMap: "Harta e vogël",
   gradOsmAttribution: "© OpenStreetMap",
+  gradOdDo: "Udhëtim nga–deri",
+  gradOdDoIntro: "Ngisni deri te destinacioni sipas rregullave. Pikët: ngasja pa shkelje dhe koha. Vështirësia përcakton gjatësinë e rrugës, dendësinë e trafikut dhe rreptësinë e gjykatësit.",
+  gradOdDoEasy: "Lehtë",
+  gradOdDoMedium: "Mesatare",
+  gradOdDoHard: "Vështirë",
+  gradOdDoRange: "{od}–{do} km · niveli {nivo}",
+  gradOdDoRandom: "Destinacion i rastësishëm",
+  gradOdDoPick: "Zgjidh destinacionin",
+  gradOdDoCancel: "Ndalo nga–deri",
+  gradOdDoTimer: "Nga–deri · {vrijeme}",
+  gradOdDoDone: "Në destinacion: {cilj}",
+  gradOdDoScore: "{bodovi} / 1000 pikë",
+  gradOdDoRules: "Ngasja sipas rregullave: {n} / {max}",
+  gradOdDoTime: "Koha {vrijeme} (e pritur {ref}): {n} / {max}",
+  gradOdDoViolations: "Shkelje: {minor} të lehta, {fail} të rënda",
+  gradOdDoStars: "{n} nga 3 yje",
+  gradOdDoBest: "Më e mira deri tani: {n}",
+  gradOdDoNewBest: "Rezultat i ri më i mirë!",
+  gradOdDoAgain: "Udhëtim i ri",
+  gradOdDoNoTarget: "Nuk ka destinacion për këtë vështirësi.",
   vioWrongWay: "Ngasje në drejtim të kundërt në rrugë njëkahëshe",
   vioTurnBan: "Kthesë aty ku shenja e ndalon",
   vioUTurn: "Kthim prapa aty ku është i ndaluar",
@@ -2257,6 +2337,26 @@ const ru: Dict = {
   gradStatToday: "Сегодня: {km} км · {cisto} мин без нарушений · нарушений {prekrsaji}",
   gradMiniMap: "Мини-карта",
   gradOsmAttribution: "© OpenStreetMap",
+  gradOdDo: "Поездка из А в Б",
+  gradOdDoIntro: "Доедьте до цели по правилам. Очки: езда без нарушений и время. Сложность задаёт длину маршрута, плотность движения и строгость экзаменатора.",
+  gradOdDoEasy: "Легко",
+  gradOdDoMedium: "Средне",
+  gradOdDoHard: "Сложно",
+  gradOdDoRange: "{od}–{do} км · уровень {nivo}",
+  gradOdDoRandom: "Случайная цель",
+  gradOdDoPick: "Выбрать цель",
+  gradOdDoCancel: "Прервать поездку",
+  gradOdDoTimer: "Из А в Б · {vrijeme}",
+  gradOdDoDone: "Цель достигнута: {cilj}",
+  gradOdDoScore: "{bodovi} / 1000 очков",
+  gradOdDoRules: "Езда по правилам: {n} / {max}",
+  gradOdDoTime: "Время {vrijeme} (ожидаемое {ref}): {n} / {max}",
+  gradOdDoViolations: "Нарушения: лёгких {minor}, серьёзных {fail}",
+  gradOdDoStars: "{n} из 3 звёзд",
+  gradOdDoBest: "Лучший результат: {n}",
+  gradOdDoNewBest: "Новый лучший результат!",
+  gradOdDoAgain: "Новая поездка",
+  gradOdDoNoTarget: "Нет цели для этой сложности.",
   vioWrongWay: "Движение против направления одностороннего движения",
   vioTurnBan: "Поворот там, где знак запрещает",
   vioUTurn: "Разворот там, где он запрещён",
