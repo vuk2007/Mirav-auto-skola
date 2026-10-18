@@ -33,6 +33,12 @@
       "b": "në një pjesë të shkurtër të rrugës në tunel",
       "c": "në një pjesë të shkurtër të rrugës"
     },
+    "text_tr": "Aracın geri gitmesine izin verilir:",
+    "options_tr": {
+      "a": "görüşü kapalı virajda yolun kısa bir bölümünde",
+      "b": "tünelde yolun kısa bir bölümünde",
+      "c": "yolun kısa bir bölümünde"
+    },
     "kind": "teorija"
   },
   {
@@ -68,6 +74,12 @@
       "a": "60 km/h",
       "b": "70 km/h",
       "c": "80 km/h"
+    },
+    "text_tr": "Yerleşim yeri dışındaki ana yolda, hız sınırı levhası olmayan yerde sürücü aracını şu hızdan daha yüksek hızla süremez:",
+    "options_tr": {
+      "a": "60 km/sa",
+      "b": "70 km/sa",
+      "c": "80 km/sa"
     },
     "kind": "teorija"
   },
@@ -105,6 +117,12 @@
       "b": "gjithmonë nga ana e majtë",
       "c": "nga cilado anë"
     },
+    "text_tr": "Trafiğin iki yönlü aktığı taşıt yolunun ortasındaki yaya adası araçla şu şekilde geçilir:",
+    "options_tr": {
+      "a": "her zaman sağ taraftan",
+      "b": "her zaman sol taraftan",
+      "c": "herhangi bir taraftan"
+    },
     "kind": "teorija"
   },
   {
@@ -140,6 +158,12 @@
       "a": "mund të tejkalojë biçikletën, mopedin ose motoçikletën",
       "b": "mund të tejkalojë të gjitha automjetet që ruajnë kahun e lëvizjes",
       "c": "mund të tejkalojë automjetet udhëtare që ruajnë kahun e lëvizjes"
+    },
+    "text_tr": "Ana yolda, trafik ışığı veya trafik levhalarıyla düzenlenmemiş bir kavşağın hemen önünde sürücü:",
+    "options_tr": {
+      "a": "bisiklet, moped veya motosikleti sollayabilir",
+      "b": "hareket yönünü koruyan tüm araçları sollayabilir",
+      "c": "hareket yönünü koruyan binek araçları sollayabilir"
     },
     "kind": "teorija"
   },
@@ -177,6 +201,12 @@
       "b": "anashkalimit",
       "c": "kalimit përballë"
     },
+    "text_tr": "Karşı yönden gelen bir aracın yanından araçla geçmek şu manevradır:",
+    "options_tr": {
+      "a": "sollama",
+      "b": "engel geçme (yanından dolanma)",
+      "c": "karşılaşma (karşılıklı geçme)"
+    },
     "kind": "teorija"
   },
   {
@@ -212,6 +242,12 @@
       "a": "të gjitha objektet që ndodhen në karrexhatë",
       "b": "objektet dhe substancat që vijnë nga automjeti me të cilin drejton",
       "c": "të gjitha objektet që ndodhen në korsinë nëpër të cilën lëviz"
+    },
+    "text_tr": "Sürücü taşıt yolundan gecikmeden şunları kaldırmak zorundadır:",
+    "options_tr": {
+      "a": "taşıt yolundaki tüm nesneleri",
+      "b": "kullandığı araçtan düşen nesne ve maddeleri",
+      "c": "ilerlediği şeritte bulunan tüm nesneleri"
     },
     "kind": "teorija"
   },
@@ -249,6 +285,12 @@
       "b": "katërcikli",
       "c": "automjeti transportues me motor"
     },
+    "text_tr": "İki adet ışık yansıtıcı yelek bulundurmak zorunda olan:",
+    "options_tr": {
+      "a": "binek motorlu araç",
+      "b": "dört tekerlekli motosiklet (kuadrisiklet)",
+      "c": "yük motorlu aracı"
+    },
     "kind": "teorija"
   },
   {
@@ -284,6 +326,12 @@
       "a": "duhet të përdorë brezin e djathtë të karrexhatës",
       "b": "duhet të përdorë vetëm korsinë e djathtë",
       "c": "duhet të përdorë vetëm korsinë e majtë"
+    },
+    "text_tr": "En az dört şeridi bulunan çift yönlü yolda sürücü:",
+    "options_tr": {
+      "a": "sağdaki taşıt yolu bölümünü kullanmak zorundadır",
+      "b": "yalnızca sağ şeridi kullanmak zorundadır",
+      "c": "yalnızca sol şeridi kullanmak zorundadır"
     },
     "kind": "teorija"
   },
@@ -321,6 +369,12 @@
       "b": "50 km/h",
       "c": "60 km/h"
     },
+    "text_tr": "Normal trafik koşullarında yolda motorlu araçların hızı trafik levhasıyla şu değerin altına sınırlandırılamaz:",
+    "options_tr": {
+      "a": "40 km/sa",
+      "b": "50 km/sa",
+      "c": "60 km/sa"
+    },
     "kind": "teorija"
   },
   {
@@ -356,6 +410,12 @@
       "a": "konsiderohet tejkalim",
       "b": "nuk konsiderohet tejkalim",
       "c": "konsiderohet anashkalim"
+    },
+    "text_tr": "Aynı yöndeki trafik için iki şeridi bulunan yolda, bir şeritteki araçların diğer şeritteki araçlardan daha hızlı ilerlemesi:",
+    "options_tr": {
+      "a": "sollama sayılır",
+      "b": "sollama sayılmaz",
+      "c": "engel geçme sayılır"
     },
     "kind": "teorija"
   },
@@ -393,6 +453,12 @@
       "b": "50 km/h",
       "c": "60 km/h"
     },
+    "text_tr": "Yolda arızalı bir aracı çeken motorlu araç şu hızdan daha yüksek hızla gidemez:",
+    "options_tr": {
+      "a": "40 km/sa",
+      "b": "50 km/sa",
+      "c": "60 km/sa"
+    },
     "kind": "teorija"
   },
   {
@@ -428,6 +494,12 @@
       "a": "automjetet me shoqërim",
       "b": "automjetet e shërbimit komunal",
       "c": "automjetet udhëtare"
+    },
+    "text_tr": "Toplu yolcu taşıma araçlarına ayrılmış şeridi şunlar kullanabilir:",
+    "options_tr": {
+      "a": "eskortlu araçlar",
+      "b": "belediye hizmet araçları",
+      "c": "binek araçlar"
     },
     "kind": "teorija"
   },
@@ -465,6 +537,12 @@
       "b": "pa ndërprerje në kohëzgjatje prej 5 sekondash",
       "c": "në masën e mjaftueshme që pjesëmarrësit e tjerë në komunikacion të paralajmërohen"
     },
+    "text_tr": "Sürücü sesli uyarı işaretini şu şekilde vermek zorundadır:",
+    "options_tr": {
+      "a": "aralıklı olarak birkaç kez",
+      "b": "5 saniye boyunca kesintisiz",
+      "c": "diğer trafik katılımcılarını uyarmaya yetecek ölçüde"
+    },
     "kind": "teorija"
   },
   {
@@ -500,6 +578,12 @@
       "a": "gjatë arritjes së automjeteve që lëvizin ngadalë tatëpjetë",
       "b": "kur anashkalohet automjeti i parkuar në anën e djathtë të karrexhatës",
       "c": "kur pranë karrexhatës ndodhen fëmijë që nuk i kushtojnë vëmendje lëvizjes së shoferit"
+    },
+    "text_tr": "Sürücü genel yolda sesli uyarı işaretini şu durumda kullanmak zorundadır:",
+    "options_tr": {
+      "a": "yokuş aşağı yavaş giden araçlara yetişirken",
+      "b": "taşıt yolunun sağında park etmiş bir aracın yanından geçerken",
+      "c": "taşıt yolunun yanında sürücünün hareketine dikkat etmeyen çocuklar bulunduğunda"
     },
     "kind": "teorija"
   },
@@ -537,6 +621,12 @@
       "b": "brez i karrexhatës",
       "c": "karrexhatë"
     },
+    "text_tr": "Taşıt yolunun, bir veya daha fazla şeritle tek yöndeki trafiğe ayrılmış boyuna bölümüne ne denir:",
+    "options_tr": {
+      "a": "trafik şeridi",
+      "b": "taşıt yolu bölümü (kolovozna traka)",
+      "c": "taşıt yolu"
+    },
     "kind": "teorija"
   },
   {
@@ -572,6 +662,12 @@
       "a": "është i detyruar të veprojë sipas urdhrave të zyrtarit të autorizuar policor",
       "b": "është i detyruar të veprojë sipas rregullave të komunikacionit",
       "c": "nuk është i detyruar të veprojë sipas urdhrave të zyrtarit të autorizuar policor"
+    },
+    "text_tr": "Yetkili polis memuru trafik kurallarından farklı talimatlar verdiğinde trafik katılımcısı:",
+    "options_tr": {
+      "a": "yetkili polis memurunun talimatlarına uymak zorundadır",
+      "b": "trafik kurallarına uymak zorundadır",
+      "c": "yetkili polis memurunun talimatlarına uymak zorunda değildir"
     },
     "kind": "teorija"
   },
@@ -609,6 +705,12 @@
       "b": "nën 12 vjeç",
       "c": "nën 14 vjeç"
     },
+    "text_tr": "Çocuk güvenlik koltuğunda taşınmıyorsa, motorlu aracın ön koltuğunda şu çocuk taşınamaz:",
+    "options_tr": {
+      "a": "10 yaşından küçük",
+      "b": "12 yaşından küçük",
+      "c": "14 yaşından küçük"
+    },
     "kind": "teorija"
   },
   {
@@ -644,6 +746,12 @@
       "a": "lejohet në vendbanim",
       "b": "lejohet në një pjesë të shkurtër të rrugës",
       "c": "nuk lejohet"
+    },
+    "text_tr": "Görüşün azaldığı koşullarda aracın geri gitmesi:",
+    "options_tr": {
+      "a": "yerleşim yerinde serbesttir",
+      "b": "yolun kısa bir bölümünde serbesttir",
+      "c": "yasaktır"
     },
     "kind": "teorija"
   },
@@ -681,6 +789,12 @@
       "b": "50 km/h",
       "c": "60 km/h"
     },
+    "text_tr": "Yerleşim yerinde trafik levhasıyla motorlu araçlara en fazla şu hıza izin verilebilir:",
+    "options_tr": {
+      "a": "80 km/sa",
+      "b": "50 km/sa",
+      "c": "60 km/sa"
+    },
     "kind": "teorija"
   },
   {
@@ -716,6 +830,12 @@
       "a": "nuk guxon ta presë me automjet kolonën e organizuar të këmbësorëve",
       "b": "guxon ta presë me automjet kolonën e organizuar të këmbësorëve duke përdorur sinjalin zanor paralajmërues",
       "c": "guxon ta presë me automjet kolonën e organizuar të këmbësorëve, nëse kolonën nuk e përbëjnë fëmijë"
+    },
+    "text_tr": "Sürücü, taşıt yolunu geçen düzenli bir yaya koluna rastladığında:",
+    "options_tr": {
+      "a": "düzenli yaya kolunu araçla kesemez",
+      "b": "sesli uyarı işareti vererek düzenli yaya kolunu araçla kesebilir",
+      "c": "kol çocuklardan oluşmuyorsa düzenli yaya kolunu araçla kesebilir"
     },
     "kind": "teorija"
   },
@@ -753,6 +873,12 @@
       "b": "lejohet transporti i vetëm një udhëtari",
       "c": "ndalohet transporti i udhëtarëve"
     },
+    "text_tr": "Çekilen motorlu araçta, onu yöneten sürücü dışında:",
+    "options_tr": {
+      "a": "yolcu yeri sayısına göre yolcu taşınabilir",
+      "b": "yalnızca bir yolcu taşınabilir",
+      "c": "yolcu taşımak yasaktır"
+    },
     "kind": "teorija"
   },
   {
@@ -788,6 +914,12 @@
       "a": "rreshtim",
       "b": "tejkalim",
       "c": "anashkalim"
+    },
+    "text_tr": "Aracın, aynı yöndeki trafiğe ayrılmış bir şeritten diğerine geçmesi:",
+    "options_tr": {
+      "a": "şerit değiştirmedir",
+      "b": "sollamadır",
+      "c": "engel geçmedir"
     },
     "kind": "teorija"
   },
@@ -825,6 +957,12 @@
       "b": "100 km/h",
       "c": "110 km/h"
     },
+    "text_tr": "Genç sürücü ve acemi sürücü otoyolda şu hızdan daha yüksek hızla araç kullanamaz:",
+    "options_tr": {
+      "a": "70 km/sa",
+      "b": "100 km/sa",
+      "c": "110 km/sa"
+    },
     "kind": "teorija"
   },
   {
@@ -860,6 +998,12 @@
       "a": "nuk është i detyruar",
       "b": "është i detyruar",
       "c": "është i detyruar vetëm në vendbanim"
+    },
+    "text_tr": "Trafik katılımcısı, trafik kurallarından farklı olsa bile trafik işaretlerine uymak zorunda mıdır:",
+    "options_tr": {
+      "a": "zorunda değildir",
+      "b": "zorundadır",
+      "c": "yalnızca yerleşim yerinde zorundadır"
     },
     "kind": "teorija"
   },
@@ -897,6 +1041,12 @@
       "b": "në rastin e shmangies së rrezikut të drejtpërdrejtë",
       "c": "në rastin e çkyçjes më të shpejtë nga qarkullimi"
     },
+    "text_tr": "Yolda aracın hızını ani olarak değiştirmeye şu durumda izin verilir:",
+    "options_tr": {
+      "a": "toprak yoldan genel yola katılırken",
+      "b": "yakın bir tehlikeden kaçınmak için",
+      "c": "trafikten daha hızlı çıkmak için"
+    },
     "kind": "teorija"
   },
   {
@@ -932,6 +1082,12 @@
       "a": "nuk guxojnë të tërheqin rimorkio traktori",
       "b": "guxojnë të tërheqin rimorkio traktori",
       "c": "nuk guxojnë të tërheqin rimorkio traktori, nëse masa e grupit të automjeteve tejkalon -500 kg"
+    },
+    "text_tr": "Traktör dışındaki diğer motorlu araçlar:",
+    "options_tr": {
+      "a": "traktör römorku çekemez",
+      "b": "traktör römorku çekebilir",
+      "c": "araç kombinasyonunun kütlesi -500 kg'ı aşarsa traktör römorku çekemez"
     },
     "kind": "teorija"
   },
@@ -969,6 +1125,12 @@
       "b": "në rrugë në vendbanim para hyrjes në kryqëzim",
       "c": "në rrugë jashtë vendbanimit para afrimit te kthesa pa dukshmëri dhe e ngushtë"
     },
+    "text_tr": "Sürücü sesli uyarı işaretini şu durumda kullanmak zorundadır:",
+    "options_tr": {
+      "a": "aydınlatması olmayan tünele girmeden önce",
+      "b": "yerleşim yerindeki yolda kavşağa girmeden önce",
+      "c": "yerleşim yeri dışındaki yolda görüşü kapalı ve dar bir virajdan önce"
+    },
     "kind": "teorija"
   },
   {
@@ -1004,6 +1166,12 @@
       "a": "motoçikletën, mopedin, as triciklin e lehtë e as të rëndë",
       "b": "automjetin transportues",
       "c": "automjetin udhëtar"
+    },
+    "text_tr": "Motorlu araç şunları çekemez:",
+    "options_tr": {
+      "a": "motosiklet, moped, hafif veya ağır üç tekerlekli araç",
+      "b": "yük aracı",
+      "c": "binek araç"
     },
     "kind": "teorija"
   },
@@ -1041,6 +1209,12 @@
       "b": "nuk guxon të lëvizë në kolonë",
       "c": "nuk guxon të lëvizë nëpër karrexhatën e autostradës"
     },
+    "text_tr": "Yerleşim yeri dışındaki genel yolda yaya:",
+    "options_tr": {
+      "a": "taşıt yolunun sağ tarafından yürüyemez",
+      "b": "kol halinde yürüyemez",
+      "c": "otoyolun taşıt yolunda yürüyemez"
+    },
     "kind": "teorija"
   },
   {
@@ -1076,6 +1250,12 @@
       "a": "guxon të tejkalohet nga ana e majtë",
       "b": "guxon të tejkalohet nga cilado anë",
       "c": "guxon të tejkalohet nga ana e djathtë"
+    },
+    "text_tr": "Taşıt yolunun ortasına döşenmiş raylarda giden araç:",
+    "options_tr": {
+      "a": "soldan sollanabilir",
+      "b": "herhangi bir taraftan sollanabilir",
+      "c": "sağdan sollanabilir"
     },
     "kind": "teorija"
   },
@@ -1113,6 +1293,12 @@
       "b": "po, nëse i ka të ndezur të gjithë treguesit e drejtimit",
       "c": "nuk guxon"
     },
+    "text_tr": "Ekspres yolda sürücü U dönüşü yapabilir mi:",
+    "options_tr": {
+      "a": "evet, diğer trafik katılımcılarını tehlikeye atmıyorsa",
+      "b": "evet, tüm sinyal lambaları açıksa",
+      "c": "yapamaz"
+    },
     "kind": "teorija"
   },
   {
@@ -1148,6 +1334,12 @@
       "a": "automjetet me përparësi kalimi",
       "b": "automjetet me shoqërim",
       "c": "automjetet speciale"
+    },
+    "text_tr": "Araç üzerinde dönüşümlü yanan kırmızı ve mavi yanıp sönen ışıklar şunların verdiği ışıklı işaretlerdir:",
+    "options_tr": {
+      "a": "geçiş üstünlüğüne sahip araçlar",
+      "b": "eskortlu araçlar",
+      "c": "özel araçlar"
     },
     "kind": "teorija"
   },
@@ -1185,6 +1377,12 @@
       "b": "guxon ta rrisë shpejtësinë e lëvizjes",
       "c": "nuk guxon ta zvogëlojë shpejtësinë e lëvizjes"
     },
+    "text_tr": "Başka bir araç onu sollarken aracın sürücüsü:",
+    "options_tr": {
+      "a": "hızını artıramaz",
+      "b": "hızını artırabilir",
+      "c": "hızını azaltamaz"
+    },
     "kind": "teorija"
   },
   {
@@ -1220,6 +1418,12 @@
       "a": "kthim rrethor",
       "b": "kthim majtas",
       "c": "kthim gjysmërrethor"
+    },
+    "text_tr": "Aracın, karşı yöndeki trafik akışına katılmak için önceki hareket yönünden 180° döndürülmesi:",
+    "options_tr": {
+      "a": "dairesel dönüştür",
+      "b": "sola dönüştür",
+      "c": "U dönüşüdür (yarım dönüş)"
     },
     "kind": "teorija"
   },
@@ -1257,6 +1461,12 @@
       "b": "60 km/h",
       "c": "70 km/h"
     },
+    "text_tr": "Genç sürücü ana yolda şu hızdan daha yüksek hızla araç kullanamaz:",
+    "options_tr": {
+      "a": "50 km/sa",
+      "b": "60 km/sa",
+      "c": "70 km/sa"
+    },
     "kind": "teorija"
   },
   {
@@ -1292,6 +1502,12 @@
       "a": "kalimit përballë me një automjet tjetër",
       "b": "kalimit përballë me një këmbësor",
       "c": "tejkalimit të një automjeti tjetër"
+    },
+    "text_tr": "Gece, yerleşim yerindeki yolda sürücü ışıklı uyarı işaretini şu sırada kullanabilir:",
+    "options_tr": {
+      "a": "başka bir araçla karşılaşırken",
+      "b": "bir yayayla karşılaşırken",
+      "c": "başka bir aracı sollarken"
     },
     "kind": "teorija"
   },
@@ -1329,6 +1545,12 @@
       "b": "kuptimit të sinjalizimit ndriçues",
       "c": "shenjave në karrexhatë"
     },
+    "text_tr": "Kavşakta hem yatay hem de ışıklı işaretleme varsa sürücü şuna göre hareket eder:",
+    "options_tr": {
+      "a": "sağdan gelen araca yol verme kuralına",
+      "b": "ışıklı işaretlemenin anlamına",
+      "c": "taşıt yolundaki çizgilere"
+    },
     "kind": "teorija"
   },
   {
@@ -1364,6 +1586,12 @@
       "a": "100 km/h",
       "b": "80 km/h",
       "c": "70 km/h"
+    },
+    "text_tr": "Genç sürücü, otoyol dışında, şu hızdan daha yüksek hızla araç kullanamaz:",
+    "options_tr": {
+      "a": "100 km/sa",
+      "b": "80 km/sa",
+      "c": "70 km/sa"
     },
     "kind": "teorija"
   },
@@ -1401,6 +1629,12 @@
       "b": "ta zvogëlojë shpejtësinë dhe të vazhdojë lëvizjen pavarësisht nga situata në komunikacion",
       "c": "ta përshtatë shpejtësinë e lëvizjes së automjetit ashtu që në çdo situatë të mund të ndalojë në mënyrë të sigurt"
     },
+    "text_tr": "İşaretli bir yaya geçidine yaklaşan sürücü:",
+    "options_tr": {
+      "a": "aracın hızını 30 km/sa'e düşürmelidir",
+      "b": "hızını azaltıp trafik durumundan bağımsız olarak yoluna devam etmelidir",
+      "c": "aracın hızını her durumda güvenle durabileceği şekilde ayarlamalıdır"
+    },
     "kind": "teorija"
   },
   {
@@ -1436,6 +1670,12 @@
       "a": "80 km/h",
       "b": "70 km/h",
       "c": "60 km/h"
+    },
+    "text_tr": "İzin verilen azami kütlesi 7 -500 kg'a kadar olan yük motorlu aracının hızı şu değerle sınırlıdır:",
+    "options_tr": {
+      "a": "80 km/sa",
+      "b": "70 km/sa",
+      "c": "60 km/sa"
     },
     "kind": "teorija"
   },
@@ -1473,6 +1713,12 @@
       "b": "parkimi i automjetit",
       "c": "çkyçja e automjetit nga komunikacioni"
     },
+    "text_tr": "Trafiği düzenleyen bir işarete veya kurala uymak için yapılan duruş dışında, aracın beş dakikadan uzun süren hareketsizliği:",
+    "options_tr": {
+      "a": "aracın durmasıdır",
+      "b": "aracın park edilmesidir",
+      "c": "aracın trafikten çıkarılmasıdır"
+    },
     "kind": "teorija"
   },
   {
@@ -1508,6 +1754,12 @@
       "a": "50 km/h",
       "b": "60 km/h",
       "c": "70 km/h"
+    },
+    "text_tr": "Şehir içi toplu yolcu taşımacılığındaki otobüsün hızı şu değere kadar sınırlıdır:",
+    "options_tr": {
+      "a": "50 km/sa",
+      "b": "60 km/sa",
+      "c": "70 km/sa"
     },
     "kind": "teorija"
   },
@@ -1545,6 +1797,12 @@
       "b": "sinjalin ndriçues paralajmërues",
       "c": "dritat për mjegull"
     },
+    "text_tr": "Sürücü gece sesli uyarı işareti yerine şunu kullanabilir:",
+    "options_tr": {
+      "a": "gündüz farlarını",
+      "b": "ışıklı uyarı işaretini",
+      "c": "sis farlarını"
+    },
     "kind": "teorija"
   },
   {
@@ -1580,6 +1838,12 @@
       "a": "mund të anashkalohet nga ana e majtë ose e djathtë",
       "b": "mund të anashkalohet vetëm nga ana e djathtë",
       "c": "mund të anashkalohet vetëm nga ana e majtë"
+    },
+    "text_tr": "Tek yönlü trafiğin aktığı taşıt yolunun ortasında bulunan, araç trafiğine ayrılmamış alan, trafik levhasıyla aksi belirlenmemişse:",
+    "options_tr": {
+      "a": "soldan veya sağdan dolanılabilir",
+      "b": "yalnızca sağdan dolanılabilir",
+      "c": "yalnızca soldan dolanılabilir"
     },
     "kind": "teorija"
   },
@@ -1617,6 +1881,12 @@
       "b": "nuk guxon të përdorë korsinë pranë skajit të djathtë të karrexhatës",
       "c": "nuk guxon të përdorë korsinë pranë skajit të majtë të karrexhatës"
     },
+    "text_tr": "Üç şeridi bulunan çift yönlü yolda sürücü:",
+    "options_tr": {
+      "a": "herhangi bir şeridi kullanabilir",
+      "b": "taşıt yolunun sağ kenarındaki şeridi kullanamaz",
+      "c": "taşıt yolunun sol kenarındaki şeridi kullanamaz"
+    },
     "kind": "teorija"
   },
   {
@@ -1652,6 +1922,12 @@
       "a": "t'i lëshojë rrugë automjetit që vjen nga ana e tij e majtë",
       "b": "t'i lëshojë rrugë automjetit që vjen nga ana e tij e djathtë",
       "c": "t'u lëshojë rrugë të gjitha automjeteve"
+    },
+    "text_tr": "Kavşakta sürücü şunu yapmak zorundadır:",
+    "options_tr": {
+      "a": "solundan gelen araca yol vermek",
+      "b": "sağından gelen araca yol vermek",
+      "c": "tüm araçlara yol vermek"
     },
     "kind": "teorija"
   },
@@ -1689,6 +1965,12 @@
       "b": "nga 3 deri në 5 metra",
       "c": "mbi 5 metra"
     },
+    "text_tr": "Halatla çekme yapılıyorsa, çeken ve çekilen binek araç arasındaki mesafe:",
+    "options_tr": {
+      "a": "1 ile 2 metre arasıdır",
+      "b": "3 ile 5 metre arasıdır",
+      "c": "5 metreden fazladır"
+    },
     "kind": "teorija"
   },
   {
@@ -1724,6 +2006,12 @@
       "a": "vetëm shoferi",
       "b": "shoferi dhe udhëtarët",
       "c": "vetëm shoferi dhe bashkudhëtari"
+    },
+    "text_tr": "Emniyet kemeri takılı araçta sürüş sırasında emniyet kemerini şu kişi(ler) takmak zorundadır:",
+    "options_tr": {
+      "a": "yalnızca sürücü",
+      "b": "sürücü ve yolcular",
+      "c": "yalnızca sürücü ve ön koltuktaki yolcu"
     },
     "kind": "teorija"
   },
@@ -1761,6 +2049,12 @@
       "b": "duhet të ndezë treguesin e drejtimit djathtas",
       "c": "duhet të ndezë të gjithë treguesit e drejtimit"
     },
+    "text_tr": "Çocukların toplu taşınmasında kullanılan araç, çocukların binmesi veya inmesi için taşıt yolunda durduğunda sürücü:",
+    "options_tr": {
+      "a": "sol sinyali açmalıdır",
+      "b": "sağ sinyali açmalıdır",
+      "c": "tüm sinyal lambalarını (dörtlüleri) açmalıdır"
+    },
     "kind": "teorija"
   },
   {
@@ -1796,6 +2090,12 @@
       "a": "80 km/h",
       "b": "50 km/h",
       "c": "60 km/h"
+    },
+    "text_tr": "Yerleşim yerinde trafik levhasıyla motorlu araçların hızı en fazla şu değere kadar sınırlandırılabilir:",
+    "options_tr": {
+      "a": "80 km/sa",
+      "b": "50 km/sa",
+      "c": "60 km/sa"
     },
     "kind": "teorija"
   },
@@ -1833,6 +2133,12 @@
       "b": "të ndezë të gjithë treguesit e drejtimit",
       "c": "të ndezë treguesin e drejtimit djathtas"
     },
+    "text_tr": "Çocukların toplu taşınmasında kullanılan aracın sürücüsü, çocukların inip binmesi için aracı taşıt yolunda durdurduğunda:",
+    "options_tr": {
+      "a": "sol sinyali açmalıdır",
+      "b": "tüm sinyal lambalarını (dörtlüleri) açmalıdır",
+      "c": "sağ sinyali açmalıdır"
+    },
     "kind": "teorija"
   },
   {
@@ -1868,6 +2174,12 @@
       "a": "nga ana e djathtë",
       "b": "nga ana e majtë",
       "c": "sipas marrëveshjes"
+    },
+    "text_tr": "Kavşağa karşı yönlerden gelip sola dönen araçlar birbirleriyle şu şekilde karşılaşır:",
+    "options_tr": {
+      "a": "sağ taraftan",
+      "b": "sol taraftan",
+      "c": "anlaşarak"
     },
     "kind": "teorija"
   },
@@ -1905,6 +2217,12 @@
       "b": "të ndezë të gjithë treguesit e drejtimit",
       "c": "të sigurohet se këtë mund ta bëjë në mënyrë të sigurt dhe të ndezë treguesin përkatës të drejtimit"
     },
+    "text_tr": "Trafiğe katılırken sürücü şunu yapmak zorundadır:",
+    "options_tr": {
+      "a": "sesli uyarı işareti vermek ve uygun sinyali açmak",
+      "b": "tüm sinyal lambalarını açmak",
+      "c": "bunu güvenli şekilde yapabileceğinden emin olmak ve uygun sinyali açmak"
+    },
     "kind": "teorija"
   },
   {
@@ -1940,6 +2258,12 @@
       "a": "guxon të tejkalohet nga ana e djathtë",
       "b": "guxon të tejkalohet nga ana e majtë",
       "c": "nuk guxon të tejkalohet"
+    },
+    "text_tr": "Taşıt yolunun ortasına döşenmiş raylarda giden araç:",
+    "options_tr": {
+      "a": "sağdan sollanabilir",
+      "b": "soldan sollanabilir",
+      "c": "sollanamaz"
     },
     "kind": "teorija"
   },
@@ -1977,6 +2301,12 @@
       "b": "ta paralajmërojë këmbësorin me borí që këmbësori ta lëshojë karrexhatën",
       "c": "ta shpejtojë automjetin që sa më shpejt të kalojë pranë këmbësorit"
     },
+    "text_tr": "Bir yayayla karşılaşırken sürücü şunu yapmak zorundadır:",
+    "options_tr": {
+      "a": "aracıyla yaya arasında güvenli mesafe bırakmak",
+      "b": "yayanın taşıt yolundan çıkması için kornayla uyarmak",
+      "c": "yayanın yanından bir an önce geçmek için hızlanmak"
+    },
     "kind": "teorija"
   },
   {
@@ -2012,6 +2342,12 @@
       "a": "nga 3 deri në 5 metra",
       "b": "mbi 5 metra",
       "c": "deri në 3 m"
+    },
+    "text_tr": "Sabit bağlantıyla (çeki demiri) çekme yapılıyorsa, çeken ve çekilen motorlu araç arasındaki mesafe:",
+    "options_tr": {
+      "a": "3 ile 5 metre arasıdır",
+      "b": "5 metreden fazladır",
+      "c": "3 m'ye kadardır"
     },
     "kind": "teorija"
   },
@@ -2049,6 +2385,12 @@
       "b": "anashkalimit",
       "c": "rreshtimit"
     },
+    "text_tr": "Hareket etmeyen başka bir aracın yanından araçla geçmek şu manevradır:",
+    "options_tr": {
+      "a": "sollama",
+      "b": "engel geçme (yanından dolanma)",
+      "c": "şerit değiştirme"
+    },
     "kind": "teorija"
   },
   {
@@ -2084,6 +2426,12 @@
       "a": "60 km/h",
       "b": "70 km/h",
       "c": "80 km/h"
+    },
+    "text_tr": "Römorklu yük aracının hızı şu değerle sınırlıdır:",
+    "options_tr": {
+      "a": "60 km/sa",
+      "b": "70 km/sa",
+      "c": "80 km/sa"
     },
     "kind": "teorija"
   },
@@ -2121,6 +2469,12 @@
       "b": "është i detyruar ta zhvendosë automjetin e tij drejt vijës ndarëse",
       "c": "është i detyruar ta zhvendosë automjetin drejt skajit të majtë të karrexhatës"
     },
+    "text_tr": "Kendisine sollama işareti verilen sürücü:",
+    "options_tr": {
+      "a": "aracını taşıt yolunun sağ kenarına doğru kaydırmak zorundadır",
+      "b": "aracını ayırma çizgisine doğru kaydırmak zorundadır",
+      "c": "aracını taşıt yolunun sol kenarına doğru kaydırmak zorundadır"
+    },
     "kind": "teorija"
   },
   {
@@ -2156,6 +2510,12 @@
       "a": "jo, nëse kolona është më e gjatë se 30 metra",
       "b": "jo, pavarësisht nga gjatësia e kolonës",
       "c": "po, pavarësisht nga gjatësia e kolonës"
+    },
+    "text_tr": "Eskortlu araçlar bir yaya kolunu kesebilir mi:",
+    "options_tr": {
+      "a": "hayır, kol 30 metreden uzunsa",
+      "b": "hayır, kolun uzunluğundan bağımsız olarak",
+      "c": "evet, kolun uzunluğundan bağımsız olarak"
     },
     "kind": "teorija"
   },
@@ -2193,6 +2553,12 @@
       "b": "nuk guxojnë të transportohen persona",
       "c": "nuk guxojnë të transportohen më shumë se pesë persona"
     },
+    "text_tr": "Konaklama amaçlı römorkta – karavanda:",
+    "options_tr": {
+      "a": "kişi taşınabilir",
+      "b": "kişi taşınamaz",
+      "c": "beş kişiden fazla taşınamaz"
+    },
     "kind": "teorija"
   },
   {
@@ -2228,6 +2594,12 @@
       "a": "deri në 1,5 metra",
       "b": "deri në 1 metër",
       "c": "nuk është e kufizuar, por duhet të shënohet me tabelën e paraparë"
+    },
+    "text_tr": "Motorlu araçtaki yük, aracın ön tarafındaki en uç noktayı şu kadar aşabilir:",
+    "options_tr": {
+      "a": "1,5 metreye kadar",
+      "b": "1 metreye kadar",
+      "c": "sınırlı değildir, ancak öngörülen levhayla işaretlenmelidir"
     },
     "kind": "teorija"
   },
@@ -2265,6 +2637,12 @@
       "b": "deri në 24 vjeç",
       "c": "deri në 21 vjeç"
     },
+    "text_tr": "Genç sürücü şu sürücüdür:",
+    "options_tr": {
+      "a": "12 aydan az sürüş deneyimi olan",
+      "b": "24 yaşına kadar olan",
+      "c": "21 yaşına kadar olan"
+    },
     "kind": "teorija"
   },
   {
@@ -2300,6 +2678,12 @@
       "a": "me kujdes të veçantë do ta vazhdoni lëvizjen që të mund ta ndalni automjetin me kohë",
       "b": "do ta përshtatni shpejtësinë sipas kufizimit të përgjithshëm për atë pjesë të rrugës",
       "c": "do ta përshtatni shpejtësinë sipas kushteve atmosferike"
+    },
+    "text_tr": "Yolda araç sürerken “yolda çocuklar” trafik levhasına rastlarsanız şöyle hareket edersiniz:",
+    "options_tr": {
+      "a": "aracı zamanında durdurabilmek için özel bir dikkatle yolunuza devam edersiniz",
+      "b": "hızınızı o yol kesimi için geçerli genel sınıra göre ayarlarsınız",
+      "c": "hızınızı hava koşullarına göre ayarlarsınız"
     },
     "kind": "teorija"
   },
@@ -2337,6 +2721,12 @@
       "b": "do ta ndizni borinë dhe do ta vazhdoni lëvizjen pa vëmendje shtesë ndaj personave që hyjnë në autobus, përkatësisht dalin",
       "c": "do të lëvizni me shpejtësi të zvogëluar që të mos i rrezikoni personat që hyjnë në autobus, përkatësisht dalin"
     },
+    "text_tr": "Durakta duran bir otobüsün yanından araçla geçerken şöyle hareket edersin:",
+    "options_tr": {
+      "a": "aracı durdurup yolcuların otobüse binmesini bekler, sonra yoluna devam edersin",
+      "b": "kornayı çalıp otobüse binen veya inen kişilere ayrıca dikkat etmeden yoluna devam edersin",
+      "c": "otobüse binen veya inen kişileri tehlikeye atmamak için düşük hızla ilerlersin"
+    },
     "kind": "teorija"
   },
   {
@@ -2372,6 +2762,12 @@
       "a": "së paku dy jelekë me veti reflektuese",
       "b": "aq jelekë me veti reflektuese sa ka edhe vende për ulje",
       "c": "një jelek me veti reflektuese"
+    },
+    "text_tr": "Trafikte binek motorlu aracı kullanan sürücü araçta şunları bulundurmak zorundadır:",
+    "options_tr": {
+      "a": "en az iki adet ışık yansıtıcı yelek",
+      "b": "oturma yeri sayısı kadar ışık yansıtıcı yelek",
+      "c": "bir adet ışık yansıtıcı yelek"
     },
     "kind": "teorija"
   },
@@ -2409,6 +2805,12 @@
       "b": "60 km/h",
       "c": "70 km/h"
     },
+    "text_tr": "Yerleşim yerinde hızın trafik levhasıyla sınırlanmadığı yolda sürücü şu hızdan daha hızlı gidemez:",
+    "options_tr": {
+      "a": "50 km/sa",
+      "b": "60 km/sa",
+      "c": "70 km/sa"
+    },
     "kind": "teorija"
   },
   {
@@ -2444,6 +2846,12 @@
       "a": "ta ndalë automjetin dhe ta heqë baltën nga rrotat pas kyçjes",
       "b": "ta shpejtojë dhe ta ngadalësojë automjetin në mënyrë të alternuar pas kyçjes, që balta të bjerë nga rrotat",
       "c": "ta ndalë automjetin dhe ta heqë baltën nga rrotat para kyçjes"
+    },
+    "text_tr": "Sürücü toprak yoldan asfalt kaplamalı yola araçla katılırken şunu yapmalıdır:",
+    "options_tr": {
+      "a": "katıldıktan sonra aracı durdurup tekerleklerdeki çamuru temizlemek",
+      "b": "katıldıktan sonra çamur tekerleklerden düşsün diye aracı dönüşümlü olarak hızlandırıp yavaşlatmak",
+      "c": "katılmadan önce aracı durdurup tekerleklerdeki çamuru temizlemek"
     },
     "kind": "teorija"
   },
@@ -2481,6 +2889,12 @@
       "b": "në mes të brezit të karrexhatës",
       "c": "më afër vijës ndarëse"
     },
+    "text_tr": "Taşıt yolunda araç sürerken sürücü aracı şu şekilde tutmak zorundadır:",
+    "options_tr": {
+      "a": "taşıt yolunun sağ kenarına mümkün olduğunca yakın",
+      "b": "taşıt yolu bölümünün ortasında",
+      "c": "ayırma çizgisine daha yakın"
+    },
     "kind": "teorija"
   },
   {
@@ -2516,6 +2930,12 @@
       "a": "automjetet për heqjen e mbeturinave",
       "b": "automjetet me përparësi kalimi",
       "c": "automjetet udhëtare gjatë tejkalimit"
+    },
+    "text_tr": "Şehir içi yolcu taşıma araçlarına ayrılmış şeridi şunlar kullanabilir:",
+    "options_tr": {
+      "a": "çöp toplama araçları",
+      "b": "geçiş üstünlüğüne sahip araçlar",
+      "c": "sollama sırasında binek araçlar"
     },
     "kind": "teorija"
   },
@@ -2553,6 +2973,12 @@
       "b": "në vendin e përshtatshëm në rrugë t'u mundësojë automjeteve ta tejkalojnë, ta anashkalojnë ose të kalojnë pranë tij në mënyrë të sigurt",
       "c": "ta vazhdojë lëvizjen deri te kryqëzimi i parë me rrugë lokale dhe të çkyçet nga komunikacioni"
     },
+    "text_tr": "Yavaş sürüş nedeniyle aracın arkasında bir araç kolonu oluştuğunda sürücü şunu yapmak zorundadır:",
+    "options_tr": {
+      "a": "diğer trafik katılımcılarına karşı bir yükümlülüğü olmadan yoluna devam etmek",
+      "b": "yolun uygun bir yerinde araçların kendisini güvenle sollamasına, dolanmasına veya geçmesine imkân vermek",
+      "c": "yerel bir yolla ilk kavşağa kadar devam edip trafikten çıkmak"
+    },
     "kind": "teorija"
   },
   {
@@ -2588,6 +3014,12 @@
       "a": "nëse trotuari ka gjerësi më shumë se 1,6 metra",
       "b": "nëse është e lejuar me shenjë rrugore, pavarësisht nga gjerësia e trotuarit dhe e kalimit për këmbësorë",
       "c": "nëse është e lejuar me sinjalizim rrugor dhe nëse mbetet kalim për këmbësorë me gjerësi së paku 1,6 metra, i cili nuk guxon të jetë pranë skajit të karrexhatës"
+    },
+    "text_tr": "Sürücü aracını kaldırımda şu durumda durdurabilir veya park edebilir:",
+    "options_tr": {
+      "a": "kaldırımın genişliği 1,6 metreden fazlaysa",
+      "b": "trafik levhasıyla izin verilmişse, kaldırımın ve yaya geçiş alanının genişliğinden bağımsız olarak",
+      "c": "trafik işaretleriyle izin verilmişse ve taşıt yolu kenarında olmayan, en az 1,6 metre genişliğinde bir yaya geçiş alanı kalıyorsa"
     },
     "kind": "teorija"
   },
@@ -2625,6 +3057,12 @@
       "b": "nga ana e majtë",
       "c": "nga ana e djathtë"
     },
+    "text_tr": "Taşıt yolunun sağ kenarı boyunca döşenmiş raylarda giden araç şu şekilde sollanır:",
+    "options_tr": {
+      "a": "herhangi bir taraftan",
+      "b": "soldan",
+      "c": "sağdan"
+    },
     "kind": "teorija"
   },
   {
@@ -2660,6 +3098,12 @@
       "a": "duhet të jenë të ndezur të gjithë treguesit e drejtimit",
       "b": "nuk është e domosdoshme të jenë të ndezur të gjithë treguesit e drejtimit",
       "c": "duhet të jetë i ndezur vetëm treguesi i drejtimit djathtas"
+    },
+    "text_tr": "Araç geri giderken:",
+    "options_tr": {
+      "a": "tüm sinyal lambaları açık olmalıdır",
+      "b": "tüm sinyal lambalarının açık olması gerekmez",
+      "c": "yalnızca sağ sinyal açık olmalıdır"
     },
     "kind": "teorija"
   },
@@ -2697,6 +3141,12 @@
       "b": "17 vjet e 6 muaj",
       "c": "18 vjet"
     },
+    "text_tr": "B sınıfı sürücü belgesi şu yaşı doldurmuş kişiye verilebilir:",
+    "options_tr": {
+      "a": "17 yaş",
+      "b": "17 yaş 6 ay",
+      "c": "18 yaş"
+    },
     "kind": "teorija"
   },
   {
@@ -2732,6 +3182,12 @@
       "a": "dritat e shkurtra",
       "b": "dritat e parkimit, përkatësisht dritat e pozicionit",
       "c": "dritat për mjegull"
+    },
+    "text_tr": "Sokak aydınlatması olmayan taşıt yolunda gece veya görüşün azaldığı koşullarda aracını durduran ya da park eden sürücü araçta şunu açmalıdır:",
+    "options_tr": {
+      "a": "kısa farları",
+      "b": "park, yani konum (pozisyon) lambalarını",
+      "c": "sis farlarını"
     },
     "kind": "teorija"
   },
@@ -2769,6 +3225,12 @@
       "b": "fusha e shikimit",
       "c": "dukshmëria"
     },
+    "text_tr": "Trafik katılımcısının taşıt yolunu açıkça görebildiği mesafe:",
+    "options_tr": {
+      "a": "görüş mesafesidir (preglednost)",
+      "b": "görüş alanıdır",
+      "c": "görünürlüktür"
+    },
     "kind": "teorija"
   },
   {
@@ -2804,6 +3266,12 @@
       "a": "në gjerësi deri në 1 metër nga skaji i djathtë i karrexhatës",
       "b": "në gjerësi deri në 1,5 metra nga skaji i djathtë i karrexhatës",
       "c": "në gjerësi deri në 1,2 metra nga skaji i djathtë i karrexhatës"
+    },
+    "text_tr": "Ayrı bir bisiklet yolu veya şeridi olmayan yerde bisiklet sürmek için taşıt yolu şu genişlikte kullanılabilir:",
+    "options_tr": {
+      "a": "taşıt yolunun sağ kenarından 1 metreye kadar",
+      "b": "taşıt yolunun sağ kenarından 1,5 metreye kadar",
+      "c": "taşıt yolunun sağ kenarından 1,2 metreye kadar"
     },
     "kind": "teorija"
   },
@@ -2841,6 +3309,12 @@
       "b": "në 70 km/h",
       "c": "në 80 km/h"
     },
+    "text_tr": "Yerleşim yeri dışında tehlikeli madde taşıyan aracın genel yoldaki hızı şu değerle sınırlıdır:",
+    "options_tr": {
+      "a": "60 km/sa",
+      "b": "70 km/sa",
+      "c": "80 km/sa"
+    },
     "kind": "teorija"
   },
   {
@@ -2876,6 +3350,12 @@
       "a": "ndez sinjalin zanor dhe të gjithë treguesit e drejtimit",
       "b": "ndez vetëm treguesin e drejtimit",
       "c": "sigurohet se nuk pengon dhe në mënyrën e paraparë i njofton pjesëmarrësit e tjerë"
+    },
+    "text_tr": "Sürücü aracıyla trafiğe şu durumda katılabilir:",
+    "options_tr": {
+      "a": "sesli işareti ve tüm sinyal lambalarını açtığında",
+      "b": "yalnızca sinyali açtığında",
+      "c": "kimseyi engellemediğinden emin olup diğer katılımcıları öngörülen şekilde bilgilendirdiğinde"
     },
     "kind": "teorija"
   },
@@ -2913,6 +3393,12 @@
       "b": "fëmija nuk është i detyruar të jetë i lidhur, nëse ndenjësja është e fiksuar me rrip sigurie",
       "c": "fëmija duhet të jetë i lidhur me rrip sigurie"
     },
+    "text_tr": "Araçta çocuk güvenlik koltuğunda çocuk taşınırken:",
+    "options_tr": {
+      "a": "çocuğun emniyet kemeriyle bağlanması gerekmez",
+      "b": "koltuk emniyet kemeriyle sabitlenmişse çocuğun bağlanması gerekmez",
+      "c": "çocuk emniyet kemeriyle bağlanmalıdır"
+    },
     "kind": "teorija"
   },
   {
@@ -2948,6 +3434,12 @@
       "a": "në brezin e karrexhatës të destinuar për qarkullim të automjeteve nga kahu i kundërt",
       "b": "në brezin e djathtë të karrexhatës",
       "c": "në brezin e majtë dhe të djathtë të karrexhatës"
+    },
+    "text_tr": "Taşıt yolu bölümlerinin fiziksel olarak ayrıldığı genel yolda sürücü aracıyla şuradan gidebilir:",
+    "options_tr": {
+      "a": "karşı yönden gelen trafiğe ayrılmış taşıt yolu bölümünden",
+      "b": "sağdaki taşıt yolu bölümünden",
+      "c": "soldaki ve sağdaki taşıt yolu bölümünden"
     },
     "kind": "teorija"
   },
@@ -2985,6 +3477,12 @@
       "b": "ta pengojë shoferin në drejtimin e automjetit",
       "c": "të përdorë kufje"
     },
+    "text_tr": "Araçta taşınan kişi şunu yapamaz:",
+    "options_tr": {
+      "a": "telefonla mesaj yazmak",
+      "b": "sürücüyü araç kullanırken engellemek",
+      "c": "kulaklık kullanmak"
+    },
     "kind": "teorija"
   },
   {
@@ -3020,6 +3518,12 @@
       "a": "i detyruar t'i lëshojë rrugë automjetit që vjen pas automjetit të tij",
       "b": "i detyruar ta ndezë treguesin e drejtimit majtas",
       "c": "nuk është i detyruar t'i lëshojë rrugë automjetit që vjen pas automjetit të tij"
+    },
+    "text_tr": "Araçla geri giderken sürücü:",
+    "options_tr": {
+      "a": "aracının arkasından gelen araca yol vermek zorundadır",
+      "b": "sol sinyali açmak zorundadır",
+      "c": "aracının arkasından gelen araca yol vermek zorunda değildir"
     },
     "kind": "teorija"
   },
@@ -3057,6 +3561,12 @@
       "b": "guxon të përdoret në pjesën e rrugës ku nuk ekziston tabela plotësuese kontroll me radar",
       "c": "nuk guxon as të përdoret as të gjendet në automjet"
     },
+    "text_tr": "Araçların hızını ölçen cihazların çalışmasını engelleyen bir alet:",
+    "options_tr": {
+      "a": "“radar denetimi” ek levhası bulunan yol kesiminde kullanılamaz",
+      "b": "“radar denetimi” ek levhası bulunmayan yol kesiminde kullanılabilir",
+      "c": "araçta kullanılamaz ve bulundurulamaz"
+    },
     "kind": "teorija"
   },
   {
@@ -3092,6 +3602,12 @@
       "a": "është i detyruar të mbajë jelek me veti reflektuese të dritës",
       "b": "nuk është i detyruar të mbajë jelek me veti reflektuese të dritës",
       "c": "është i detyruar t'i paralajmërojë pjesëmarrësit e tjerë për praninë e tij me pozicionin e duarve"
+    },
+    "text_tr": "Sürücü aracının dışında, taşıt yolunda bulunuyorsa:",
+    "options_tr": {
+      "a": "ışık yansıtıcı yelek giymek zorundadır",
+      "b": "ışık yansıtıcı yelek giymek zorunda değildir",
+      "c": "kollarının pozisyonuyla diğer katılımcıları varlığından haberdar etmek zorundadır"
     },
     "kind": "teorija"
   },
@@ -3129,6 +3645,12 @@
       "b": "ana e majtë",
       "c": "ana e majtë dhe e djathtë"
     },
+    "text_tr": "Kavşakta karşı yönlerden gelip sola dönen araçlar birbirleriyle şu taraftan karşılaşır:",
+    "options_tr": {
+      "a": "sağ taraftan",
+      "b": "sol taraftan",
+      "c": "sol ve sağ taraftan"
+    },
     "kind": "teorija"
   },
   {
@@ -3164,6 +3686,12 @@
       "a": "dritat e gjata",
       "b": "dritat e shkurtra",
       "c": "treguesit e drejtimit"
+    },
+    "text_tr": "Sisli havada sürüş sırasında araçta şunlar açık olmalıdır:",
+    "options_tr": {
+      "a": "uzun farlar",
+      "b": "kısa farlar",
+      "c": "sinyal lambaları"
     },
     "kind": "teorija"
   },
@@ -3201,6 +3729,12 @@
       "b": "ta përshtatë vozitjen me kushtet e komunikacionit në kryqëzim",
       "c": "të vozitë me shpejtësinë e paraparë me kufizimin e përgjithshëm"
     },
+    "text_tr": "Kavşağa yaklaşan sürücü şunu yapmak zorundadır:",
+    "options_tr": {
+      "a": "kavşaktan bir an önce geçmek için hızını artırmak",
+      "b": "sürüşünü kavşaktaki trafik koşullarına uydurmak",
+      "c": "genel sınırla öngörülen hızla gitmek"
+    },
     "kind": "teorija"
   },
   {
@@ -3236,6 +3770,12 @@
       "a": "7 vjeç",
       "b": "6 vjeç",
       "c": "5 vjeç"
+    },
+    "text_tr": "Çocuk güvenlik koltuğunda şu yaşa kadar çocuk taşınmalıdır:",
+    "options_tr": {
+      "a": "7 yaş",
+      "b": "6 yaş",
+      "c": "5 yaş"
     },
     "kind": "teorija"
   },
@@ -3273,6 +3813,12 @@
       "b": "vetëm sipas markës, tipit, dimensioneve, aftësisë mbajtëse, llojit dhe thellësisë së vizatimit",
       "c": "vetëm sipas dimensioneve, markës dhe tipit"
     },
+    "text_tr": "Aracın aynı aksındaki lastikler şunlar bakımından aynı olmalıdır:",
+    "options_tr": {
+      "a": "ölçü, yük taşıma kapasitesi, hız özellikleri, cins, yapı, marka ve tip",
+      "b": "yalnızca marka, tip, ölçü, yük taşıma kapasitesi, cins ve diş derinliği",
+      "c": "yalnızca ölçü, marka ve tip"
+    },
     "kind": "teorija"
   },
   {
@@ -3308,6 +3854,12 @@
       "a": "15 metra",
       "b": "30 metra",
       "c": "35 metra"
+    },
+    "text_tr": "Motorlu araçtaki sis farları, aracın önündeki yolu şu mesafeden uzun olmayacak şekilde aydınlatacak biçimde yerleştirilmelidir:",
+    "options_tr": {
+      "a": "15 metre",
+      "b": "30 metre",
+      "c": "35 metre"
     },
     "kind": "teorija"
   },
@@ -3345,6 +3897,12 @@
       "b": "nuk është i lidhur",
       "c": "është i lidhur në tri pika"
     },
+    "text_tr": "Baş desteği, emniyet kemeri şu şekilde olan koltuğa takılmalıdır:",
+    "options_tr": {
+      "a": "iki noktadan bağlanan",
+      "b": "bağlanmayan",
+      "c": "üç noktadan bağlanan"
+    },
     "kind": "teorija"
   },
   {
@@ -3381,6 +3939,12 @@
       "b": "fashë kompresive",
       "c": "alkool dhe garzë sterile"
     },
+    "text_tr": "Yaralıda kanamayı durdurmak istediğimizde şunu kullanırız:",
+    "options_tr": {
+      "a": "iyot ve steril gazlı bez",
+      "b": "basınçlı (kompresif) sargı",
+      "c": "alkol ve steril gazlı bez"
+    },
     "kind": "opste",
     "firstAid": true
   },
@@ -3414,6 +3978,12 @@
     },
     "text_sq": "Numri i ndihmës së shpejtë është:",
     "options_sq": {
+      "a": "122",
+      "b": "123",
+      "c": "124"
+    },
+    "text_tr": "Acil tıbbi yardım numarası:",
+    "options_tr": {
       "a": "122",
       "b": "123",
       "c": "124"
@@ -3456,6 +4026,12 @@
       "b": "do t'i lëshoj rrugë automjetit që kthehet majtas dhe do ta vazhdoj lëvizjen",
       "c": "do ta vazhdoj lëvizjen drejt"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşağın önünde dururum",
+      "b": "sola dönen araca yol verip devam ederim",
+      "c": "düz devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -3492,6 +4068,12 @@
       "a": "sipas dritës së ndezur në semafor",
       "b": "sipas sinjalizimit rrugor vertikal",
       "c": "sipas sinjalit që e jep zyrtari i autorizuar policor"
+    },
+    "text_tr": "Resimde gösterilen durumda şuna göre hareket etmek zorundasınız:",
+    "options_tr": {
+      "a": "trafik ışığında yanan ışığa göre",
+      "b": "düşey trafik işaretlerine göre",
+      "c": "yetkili polis memurunun verdiği işarete göre"
     },
     "kind": "situacija",
     "subOf": 96
@@ -3531,6 +4113,12 @@
       "b": "do t'i lëshoj rrugë automjetit 1 dhe do ta vazhdoj lëvizjen",
       "c": "do ta shpejtoj lëvizjen dhe do të kaloj nëpër kryqëzim para automjetit 1"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "1 numaralı araca yol vermeden düz devam ederim",
+      "b": "1 numaralı araca yol verip devam ederim",
+      "c": "hızlanıp 1 numaralı araçtan önce kavşaktan geçerim"
+    },
     "kind": "situacija"
   },
   {
@@ -3567,6 +4155,12 @@
       "a": "kryqëzim me rrugë me përparësi kalimi",
       "b": "përparësi ndaj automjeteve nga kahu i kundërt",
       "c": "ndalje e detyrueshme"
+    },
+    "text_tr": "Resimdeki gibi bir durumda emir işaretinin anlamı:",
+    "options_tr": {
+      "a": "ana yolla kesişme",
+      "b": "karşı yönden gelen araçlara göre öncelik",
+      "c": "mecburi duruş"
     },
     "kind": "znak",
     "subOf": 98
@@ -3606,6 +4200,12 @@
       "b": "do ta vazhdoj lëvizjen duke i lëshuar rrugë vetëm automjetit 1",
       "c": "do ta vazhdoj lëvizjen duke u lëshuar rrugë automjeteve 3 dhe 4"
     },
+    "text_tr": "2 numaralı araçla hareket yönünüzü koruyorsanız, resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "hiçbir araca yol vermeden devam ederim",
+      "b": "yalnızca 1 numaralı araca yol vererek devam ederim",
+      "c": "3 ve 4 numaralı araçlara yol vererek devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -3628,6 +4228,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles proceed is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:",
+    "text_tr": "Resimde gösterilen durumda araçların geçiş sırası:",
     "kind": "situacija",
     "subOf": 100
   },
@@ -3666,6 +4267,12 @@
       "b": "jo rregullisht, sepse duhet ta shtyjë biçikletën pranë vetes",
       "c": "e kryen jo rregullisht veprimin e kalimit nëpër kryqëzim"
     },
+    "text_tr": "Bisikletli, resimdeki gibi, hareket yönündeki trafik ışığında kırmızı yanarken kavşağa girdiyse:",
+    "options_tr": {
+      "a": "kavşaktan kurallara uygun şekilde geçiyordur",
+      "b": "kurallara aykırıdır, çünkü bisikleti yanında yürüterek geçmelidir",
+      "c": "kavşaktan kurallara aykırı şekilde geçiyordur"
+    },
     "kind": "situacija"
   },
   {
@@ -3702,6 +4309,12 @@
       "a": "shtegun e shënuar për biçikleta",
       "b": "korsinë e shënuar për biçikleta",
       "c": "vijën ndarëse të shënuar të vendkalimit për këmbësorë"
+    },
+    "text_tr": "Resimde gösterilen durumda bisikletli taşıt yolunu şurada geçiyor:",
+    "options_tr": {
+      "a": "işaretli bisiklet yolunda",
+      "b": "işaretli bisiklet şeridinde",
+      "c": "yaya geçidinin işaretli ayırma çizgisinde"
     },
     "kind": "situacija",
     "subOf": 102
@@ -3741,6 +4354,12 @@
       "b": "do t'i lëshoj rrugë tramvajit 2 dhe do ta vazhdoj lëvizjen",
       "c": "do t'i lëshoj rrugë tramvajit 2 dhe automjetit udhëtar 3, e pastaj do ta vazhdoj lëvizjen"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "3 numaralı binek araca yol verip devam ederim",
+      "b": "2 numaralı tramvaya yol verip devam ederim",
+      "c": "2 numaralı tramvaya ve 3 numaralı binek araca yol verip sonra devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -3762,6 +4381,7 @@
     "text_en": "The order in which the vehicles pass through the intersection is:",
     "text_ru": "Порядок проезда транспортных средств через перекрёсток:",
     "text_sq": "Radha e kalimit të automjeteve nëpër kryqëzim është:",
+    "text_tr": "Araçların kavşaktan geçiş sırası:",
     "kind": "situacija",
     "subOf": 104
   },
@@ -3800,6 +4420,12 @@
       "b": "do ta vazhdoj lëvizjen drejt duke u lëshuar rrugë automjeteve 4 dhe 5",
       "c": "do ta ndal automjetin"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "düz devam ederim",
+      "b": "4 ve 5 numaralı araçlara yol vererek düz devam ederim",
+      "c": "aracı durdururum"
+    },
     "kind": "situacija"
   },
   {
@@ -3836,6 +4462,12 @@
       "a": "ndalet dhe do t'i lëshojë rrugë automjetit 1",
       "b": "vazhdojë lëvizjen majtas pa i lëshuar rrugë automjetit 1",
       "c": "ndalet për shkak të sinjalit që e jep personi i autorizuar"
+    },
+    "text_tr": "Gösterilen durumda 2 numaralı araç:",
+    "options_tr": {
+      "a": "durup 1 numaralı araca yol verecek",
+      "b": "1 numaralı araca yol vermeden sola dönerek devam edecek",
+      "c": "yetkili kişinin verdiği işaret nedeniyle duracak"
     },
     "kind": "situacija",
     "subOf": 106
@@ -3875,6 +4507,12 @@
       "b": "automjeti 2 ndaj automjetit 1",
       "c": "automjeti 1 për shkak të rregullës së së djathtës"
     },
+    "text_tr": "Resimde gösterilen durumda geçiş üstünlüğü kimdedir:",
+    "options_tr": {
+      "a": "2 numaralı araca göre 1 numaralı araçta",
+      "b": "1 numaralı araca göre 2 numaralı araçta",
+      "c": "sağdan gelen kuralı nedeniyle 1 numaralı araçta"
+    },
     "kind": "situacija"
   },
   {
@@ -3911,6 +4549,12 @@
       "a": "rregullën e lëshimit të rrugës automjeteve nga ana e djathtë",
       "b": "rregullën e lëshimit të rrugës automjeteve nga ana e majtë",
       "c": "shenjë rrugore vertikale"
+    },
+    "text_tr": "Resimde gösterilen durumda araçların geçiş sırası şununla düzenlenmiştir:",
+    "options_tr": {
+      "a": "sağdan gelen araca yol verme kuralıyla",
+      "b": "soldan gelen araca yol verme kuralıyla",
+      "c": "düşey trafik levhasıyla"
     },
     "kind": "situacija",
     "subOf": 108
@@ -3950,6 +4594,12 @@
       "b": "do ta vazhdoj lëvizjen drejt sepse kam përparësi kalimi",
       "c": "do të ndalem para kryqëzimit për shkak të shenjës STOP"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "sola dönen araca yol veririm",
+      "b": "geçiş üstünlüğüm olduğu için düz devam ederim",
+      "c": "DUR levhası nedeniyle kavşağın önünde dururum"
+    },
     "kind": "situacija"
   },
   {
@@ -3987,6 +4637,12 @@
       "b": "kuptimit të sinjaleve ndriçuese në semafor",
       "c": "rregullës së komunikacionit për hyrje në kryqëzim të parregulluar"
     },
+    "text_tr": "Resimde gösterilen durumda şuna göre hareket edersiniz:",
+    "options_tr": {
+      "a": "DUR trafik levhasına göre",
+      "b": "trafik ışığındaki ışıklı işaretlerin anlamına göre",
+      "c": "düzenlenmemiş kavşağa giriş trafik kuralına göre"
+    },
     "kind": "situacija",
     "subOf": 110
   },
@@ -4009,6 +4665,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles proceed is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:",
+    "text_tr": "Resimde gösterilen durumda araçların geçiş sırası:",
     "kind": "situacija"
   },
   {
@@ -4045,6 +4702,12 @@
       "a": "shenjë rrugore",
       "b": "rregullën e lëshimit të rrugës automjeteve nga ana e djathtë",
       "c": "shenja horizontale"
+    },
+    "text_tr": "Resimde gösterilen durumda kavşaktan geçiş sırası şununla düzenlenmiştir:",
+    "options_tr": {
+      "a": "trafik levhasıyla",
+      "b": "sağdan gelen araca yol verme kuralıyla",
+      "c": "yatay işaretlerle (yol çizgileriyle)"
     },
     "kind": "situacija",
     "subOf": 112
@@ -4084,6 +4747,12 @@
       "b": "t'u lëshoj rrugë automjeteve 3 dhe 4",
       "c": "t'u lëshoj rrugë automjeteve 2, 3 dhe 4"
     },
+    "text_tr": "Resimde gösterilen durumda sola dönerken şunu yapmalıyım:",
+    "options_tr": {
+      "a": "2, 3 ve 4 numaralı araçlara yol vermeden devam etmek",
+      "b": "3 ve 4 numaralı araçlara yol vermek",
+      "c": "2, 3 ve 4 numaralı araçlara yol vermek"
+    },
     "kind": "situacija"
   },
   {
@@ -4120,6 +4789,12 @@
       "a": "vijën e drejtimit",
       "b": "kahun e detyrueshëm vetëm për automjetet udhëtare",
       "c": "kahun e detyrueshëm të lëvizjes"
+    },
+    "text_tr": "Resimde gösterilen durumda taşıt yolundaki (beyaz renkli) oklar şunu belirtir:",
+    "options_tr": {
+      "a": "yönlendirme çizgisini",
+      "b": "yalnızca binek araçlar için mecburi yönü",
+      "c": "mecburi hareket yönünü"
     },
     "kind": "situacija",
     "subOf": 114
@@ -4159,6 +4834,12 @@
       "b": "do ta vazhdoj lëvizjen drejt pasi t'i lëshoj rrugë tramvajit",
       "c": "me kujdes të shtuar do ta vazhdoj lëvizjen drejt"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "tramvaya yol vermeden düz devam ederim",
+      "b": "tramvaya yol verdikten sonra düz devam ederim",
+      "c": "artırılmış dikkatle düz devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -4195,6 +4876,12 @@
       "a": "sinjalizim vertikal",
       "b": "zbatimin e rregullës së së djathtës",
       "c": "zbatimin e rregullës së përparësisë së kalimit"
+    },
+    "text_tr": "Resimde gösterilen durumda kavşaktan geçiş sırası şununla düzenlenmiştir:",
+    "options_tr": {
+      "a": "düşey işaretlerle",
+      "b": "sağdan gelen kuralının uygulanmasıyla",
+      "c": "geçiş üstünlüğü kuralının uygulanmasıyla"
     },
     "kind": "situacija",
     "subOf": 116
@@ -4234,6 +4921,12 @@
       "b": "do ta vazhdoj lëvizjen drejt me vëmendje të shtuar",
       "c": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit 2"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşağın önünde durup 2 numaralı araca yol veririm",
+      "b": "artırılmış dikkatle düz devam ederim",
+      "c": "2 numaralı araca yol vermeden düz devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -4270,6 +4963,12 @@
       "a": "afrimin te rruga anësore rrethuese",
       "b": "se po lëviz në rrugë me përparësi kalimi",
       "c": "bashkimin me rrugën me përparësi kalimi"
+    },
+    "text_tr": "Resimde gösterilen durumda ek levha şunu belirtir:",
+    "options_tr": {
+      "a": "çevre yoluna yaklaşıldığını",
+      "b": "ana yolda ilerlediğimi",
+      "c": "ana yolla birleşmeyi"
     },
     "kind": "znak",
     "subOf": 118
@@ -4309,6 +5008,12 @@
       "b": "kalimit përballë",
       "c": "tejkalimit"
     },
+    "text_tr": "Resimdeki gibi bir durumda, karşı yönden gelen 2 numaralı aracın yanından geçmeniz şu manevradır:",
+    "options_tr": {
+      "a": "engel geçme (yanından dolanma)",
+      "b": "karşılaşma (karşılıklı geçme)",
+      "c": "sollama"
+    },
     "kind": "situacija"
   },
   {
@@ -4345,6 +5050,12 @@
       "a": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë këmbësorit",
       "b": "do ta shpejtoj lëvizjen e automjetit dhe do të kaloj para këmbësorit",
       "c": "do të ndalem dhe do t'i lëshoj rrugë këmbësorit"
+    },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "yayaya yol vermeden düz devam ederim",
+      "b": "aracı hızlandırıp yayanın önünden geçerim",
+      "c": "durup yayaya yol veririm"
     },
     "kind": "situacija",
     "subOf": 120
@@ -4384,6 +5095,12 @@
       "b": "nuk guxoj të tejkaloj",
       "c": "guxoj të tejkaloj për shkak të shenjave në karrexhatë"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "sollayabilirim",
+      "b": "sollayamam",
+      "c": "yol çizgileri nedeniyle sollayabilirim"
+    },
     "kind": "situacija"
   },
   {
@@ -4420,6 +5137,12 @@
       "a": "skajin e karrexhatës",
       "b": "vijën anësore",
       "c": "vijën ndarëse"
+    },
+    "text_tr": "Resimde gösterilen durumda taşıt yolunun sağ kenarı boyunca uzanan kesintisiz boyuna çizgi şunu belirtir:",
+    "options_tr": {
+      "a": "taşıt yolunun kenarını",
+      "b": "kenar çizgisini",
+      "c": "ayırma çizgisini"
     },
     "kind": "situacija",
     "subOf": 122
@@ -4459,6 +5182,12 @@
       "b": "do t'u lëshoj rrugë automjeteve nga kahu i kundërt e pastaj do ta vazhdoj lëvizjen",
       "c": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve nga kahu i kundërt"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşağın önünde dururum",
+      "b": "karşı yönden gelen araçlara yol verip sonra devam ederim",
+      "c": "karşı yönden gelen araçlara yol vermeden devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -4495,6 +5224,12 @@
       "a": "jo rregullisht, sepse kanë formuar kolonë",
       "b": "jo rregullisht, sepse nuk mbajnë jelek me veti reflektuese",
       "c": "rregullisht"
+    },
+    "text_tr": "Resimde gösterilen durumda bisikletliler şöyle ilerliyor:",
+    "options_tr": {
+      "a": "kurallara aykırı, çünkü kol oluşturmuşlar",
+      "b": "kurallara aykırı, çünkü ışık yansıtıcı yelek giymiyorlar",
+      "c": "kurallara uygun"
     },
     "kind": "situacija",
     "subOf": 124
@@ -4534,6 +5269,12 @@
       "b": "do të ndalem para kryqëzimit",
       "c": "do ta vazhdoj lëvizjen drejt"
     },
+    "text_tr": "Resimdeki gibi bir durumda:",
+    "options_tr": {
+      "a": "sağa doğru devam ederim",
+      "b": "kavşağın önünde dururum",
+      "c": "düz devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -4570,6 +5311,12 @@
       "a": "shenjës ndriçuese rrugore",
       "b": "shenjës rrugore vertikale",
       "c": "shenjave horizontale"
+    },
+    "text_tr": "Resimde gösterilen durumda şuna göre hareket edersiniz:",
+    "options_tr": {
+      "a": "ışıklı trafik işaretine göre",
+      "b": "düşey trafik levhasına göre",
+      "c": "yatay işaretlere (yol çizgilerine) göre"
     },
     "kind": "situacija",
     "subOf": 126
@@ -4609,6 +5356,12 @@
       "b": "do ta ndal automjetin",
       "c": "do ta vazhdoj lëvizjen majtas pasi t'u lëshoj rrugë automjeteve 2 dhe 3"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "düz devam ederim",
+      "b": "aracı durdururum",
+      "c": "2 ve 3 numaralı araçlara yol verdikten sonra sola doğru devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -4645,6 +5398,12 @@
       "a": "mund ta vazhdojë lëvizjen drejt",
       "b": "duhet të ndalet",
       "c": "mund ta vazhdojë lëvizjen në cilindo drejtim"
+    },
+    "text_tr": "Resimde gösterilen durumda polis aracı:",
+    "options_tr": {
+      "a": "düz devam edebilir",
+      "b": "durmak zorundadır",
+      "c": "herhangi bir yönde devam edebilir"
     },
     "kind": "situacija",
     "subOf": 128
@@ -4684,6 +5443,12 @@
       "b": "i automjetit 2 duhet ta shpejtojë lëvizjen dhe të kalojë para automjetit 1",
       "c": "i automjetit 2 duhet t'i lëshojë rrugë automjetit 1"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "1 numaralı aracın sürücüsü 2 numaralı araca yol vermelidir",
+      "b": "2 numaralı aracın sürücüsü hızlanıp 1 numaralı aracın önünden geçmelidir",
+      "c": "2 numaralı aracın sürücüsü 1 numaralı araca yol vermelidir"
+    },
     "kind": "situacija"
   },
   {
@@ -4720,6 +5485,12 @@
       "a": "nuk guxon të ndalet ose të parkohet",
       "b": "guxon të ndalet",
       "c": "guxon të ndalet ose të parkohet"
+    },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı araç:",
+    "options_tr": {
+      "a": "duramaz ve park edemez",
+      "b": "durabilir",
+      "c": "durabilir veya park edebilir"
     },
     "kind": "situacija",
     "subOf": 130
@@ -4759,6 +5530,12 @@
       "b": "automjetet 2, 3 dhe 4 e kanë kalimin e lejuar",
       "c": "vetëm automjeti policor 4 e ka kalimin e lejuar"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "1 numaralı binek aracın geçmesine izin verilir",
+      "b": "2, 3 ve 4 numaralı araçların geçmesine izin verilir",
+      "c": "yalnızca 4 numaralı polis aracının geçmesine izin verilir"
+    },
     "kind": "situacija"
   },
   {
@@ -4795,6 +5572,12 @@
       "a": "mund ta vazhdojë lëvizjen drejt",
       "b": "duhet të ndalet",
       "c": "mund ta vazhdojë lëvizjen drejt pas kalimit të automjetit 1"
+    },
+    "text_tr": "Resimde gösterilen durumda 4 numaralı polis aracı:",
+    "options_tr": {
+      "a": "düz devam edebilir",
+      "b": "durmak zorundadır",
+      "c": "1 numaralı araç geçtikten sonra düz devam edebilir"
     },
     "kind": "situacija",
     "subOf": 132
@@ -4834,6 +5617,12 @@
       "b": "kam përparësi kalimi ndaj automjetit 2",
       "c": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë të gjitha automjeteve"
     },
+    "text_tr": "1 numaralı aracı kullanıyorsanız, resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "2 numaralı araca yol verdikten sonra sağa dönmek zorundayım",
+      "b": "2 numaralı araca göre geçiş üstünlüğüm var",
+      "c": "kavşağın önünde durup tüm araçlara yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -4870,6 +5659,12 @@
       "a": "automjeteve transportuese dhe rimorkiove",
       "b": "të gjitha automjeteve përveç atyre transportuese",
       "c": "automjeteve transportuese"
+    },
+    "text_tr": "Resimdeki durumda sağa mecburi yön şunlar için geçerlidir:",
+    "options_tr": {
+      "a": "yük araçları ve römorklar için",
+      "b": "yük araçları dışındaki tüm araçlar için",
+      "c": "yük araçları için"
     },
     "kind": "situacija",
     "subOf": 134
@@ -4909,6 +5704,12 @@
       "b": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 2",
       "c": "do të ndalem para kryqëzimit dhe do t'i lëshoj rrugë automjetit 3"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşaktan düz devam ederim",
+      "b": "kavşağın önünde durup 2 numaralı araca yol veririm",
+      "c": "kavşağın önünde durup 3 numaralı araca yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -4930,6 +5731,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles pass through the intersection is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств через перекрёсток:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është:",
+    "text_tr": "Resimde gösterilen durumda araçların kavşaktan geçiş sırası:",
     "kind": "situacija",
     "subOf": 136
   },
@@ -4968,6 +5770,12 @@
       "b": "do ta vazhdoj lëvizjen pasi t'u lëshoj rrugë vetëm automjeteve 3 dhe 4",
       "c": "do ta vazhdoj lëvizjen duke i lëshuar rrugë automjetit 1"
     },
+    "text_tr": "Araçlar hareket yönlerini koruyorsa ve siz 2 numaralı aracı kullanıyorsanız, resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "hiçbir araca yol vermeden devam ederim",
+      "b": "yalnızca 3 ve 4 numaralı araçlara yol verdikten sonra devam ederim",
+      "c": "1 numaralı araca yol vererek devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -4990,6 +5798,7 @@
     "text_en": "In the situation in the picture, when the vehicles keep to their direction of travel, the order in which the vehicles proceed is:",
     "text_ru": "В ситуации на рисунке, когда транспортные средства сохраняют направление движения, порядок их проезда:",
     "text_sq": "Në situatën në figurë, kur automjetet e ruajnë kahun e lëvizjes, radha e kalimit të automjeteve është:",
+    "text_tr": "Resimdeki durumda, araçlar hareket yönlerini koruduğunda araçların geçiş sırası:",
     "kind": "situacija",
     "subOf": 138
   },
@@ -5028,6 +5837,12 @@
       "b": "do të ndalem para kryqëzimit",
       "c": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşaktan durmadan sola doğru devam ederim",
+      "b": "kavşağın önünde dururum",
+      "c": "kavşaktan düz devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -5064,6 +5879,12 @@
       "a": "ndalim i kalimit vetëm drejt",
       "b": "kalim i lirë vetëm drejt",
       "c": "ndalim i kalimit nëpër kryqëzim"
+    },
+    "text_tr": "Resimde gösterilen durumda trafik ışığında yanan sarı ışık şu anlama gelir:",
+    "options_tr": {
+      "a": "yalnızca düz geçiş yasağı",
+      "b": "yalnızca düz geçiş serbest",
+      "c": "kavşaktan geçiş yasağı"
     },
     "kind": "situacija",
     "subOf": 140
@@ -5103,6 +5924,12 @@
       "b": "do t'i lëshoj rrugë vetëm automjetit 4 dhe do ta vazhdoj lëvizjen",
       "c": "do ta vazhdoj lëvizjen pa u lëshuar rrugë automjeteve 2, 3 dhe 4"
     },
+    "text_tr": "Polis memuru kollarını yana açmış ve gövdesi 2 ve 3 numaralı araçlara dönük şekilde trafiği yönetirken, resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "yalnızca 2 ve 3 numaralı araçlara yol veririm",
+      "b": "yalnızca 4 numaralı araca yol verip devam ederim",
+      "c": "2, 3 ve 4 numaralı araçlara yol vermeden devam ederim"
+    },
     "kind": "policajac"
   },
   {
@@ -5123,6 +5950,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles that are allowed to proceed pass is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств, которым разрешён проезд:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve të cilave u lejohet kalimi është:",
+    "text_tr": "Resimde gösterilen durumda geçmesine izin verilen araçların geçiş sırası:",
     "kind": "situacija",
     "subOf": 142
   },
@@ -5161,6 +5989,12 @@
       "b": "nuk do t'i lëshoj rrugë automjetit 3",
       "c": "do t'u lëshoj rrugë automjeteve 2 dhe 3"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "araçlara yol vermeden devam ederim",
+      "b": "3 numaralı araca yol vermem",
+      "c": "2 ve 3 numaralı araçlara yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -5197,6 +6031,12 @@
       "a": "kaloj përballë nga ana e djathtë",
       "b": "kaloj përballë nga ana e majtë",
       "c": "e anashkaloj nga ana e djathtë"
+    },
+    "text_tr": "Resimde gösterilen durumda 4 numaralı araçla:",
+    "options_tr": {
+      "a": "sağ taraftan karşılaşırım",
+      "b": "sol taraftan karşılaşırım",
+      "c": "onu sağ taraftan dolanırım"
     },
     "kind": "situacija",
     "subOf": 144
@@ -5236,6 +6076,12 @@
       "b": "do ta vazhdoj lëvizjen, sepse e ruaj kahun",
       "c": "do të ndalem para kryqëzimit për shkak të dritës në semafor"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "DUR levhası nedeniyle kavşağın önünde dururum",
+      "b": "yönümü koruduğum için devam ederim",
+      "c": "trafik ışığındaki ışık nedeniyle kavşağın önünde dururum"
+    },
     "kind": "situacija"
   },
   {
@@ -5272,6 +6118,12 @@
       "a": "shenjë ndriçuese rrugore",
       "b": "rregullën e së djathtës",
       "c": "shenjë rrugore"
+    },
+    "text_tr": "Resimde gösterilen durumda kavşaktan geçiş şununla düzenlenmiştir:",
+    "options_tr": {
+      "a": "ışıklı trafik işaretiyle",
+      "b": "sağdan gelen kuralıyla",
+      "c": "trafik levhasıyla"
     },
     "kind": "situacija",
     "subOf": 146
@@ -5311,6 +6163,12 @@
       "b": "do ta vazhdoj lëvizjen drejt sepse semafori nuk punon",
       "c": "do të ndalem para kryqëzimit"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "hareket yönümü koruduğum için düz devam ederim",
+      "b": "trafik ışığı çalışmadığı için düz devam ederim",
+      "c": "kavşağın önünde dururum"
+    },
     "kind": "situacija"
   },
   {
@@ -5347,6 +6205,12 @@
       "a": "sipas shenjave rrugore",
       "b": "sipas semaforit",
       "c": "sipas rregullës së lëshimit të rrugës automjeteve vetëm nga ana e djathtë"
+    },
+    "text_tr": "Resimde gösterilen durumda şuna göre hareket etmek zorundasınız:",
+    "options_tr": {
+      "a": "trafik levhalarına göre",
+      "b": "trafik ışığına göre",
+      "c": "yalnızca sağdan gelen araca yol verme kuralına göre"
     },
     "kind": "situacija",
     "subOf": 148
@@ -5386,6 +6250,12 @@
       "b": "do t'u lëshoj rrugë vetëm automjeteve nga ana e majtë",
       "c": "do ta ndal automjetin"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "yalnızca sağdan gelen araçlara yol veririm",
+      "b": "yalnızca soldan gelen araçlara yol veririm",
+      "c": "aracı durdururum"
+    },
     "kind": "situacija"
   },
   {
@@ -5406,6 +6276,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles that are allowed to proceed pass is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств, которым разрешён проезд:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve të cilave u lejohet kalimi është:",
+    "text_tr": "Resimde gösterilen durumda geçmesine izin verilen araçların geçiş sırası:",
     "kind": "situacija",
     "subOf": 150
   },
@@ -5444,6 +6315,12 @@
       "b": "të ndalet dhe pasi t'i lëshojë rrugë automjetit 2 ta vazhdojë lëvizjen",
       "c": "të ndalet dhe të rreshtohet në korsinë e djathtë"
     },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı aracın sürücüsü şunu yapmalıdır:",
+    "options_tr": {
+      "a": "2 numaralı araca yol vermeden devam etmek",
+      "b": "durmak ve 2 numaralı araca yol verdikten sonra devam etmek",
+      "c": "durmak ve sağ şeride geçmek"
+    },
     "kind": "situacija"
   },
   {
@@ -5480,6 +6357,12 @@
       "a": "rregullës së kalimit përballë të automjeteve të kategorive të ndryshme",
       "b": "rregullës së lëshimit të rrugës automjeteve nga ana e djathtë",
       "c": "sinjalizimit rrugor vertikal dhe horizontal"
+    },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı aracın sürücüsü şuna göre hareket eder:",
+    "options_tr": {
+      "a": "farklı kategorideki araçların karşılaşma kuralına göre",
+      "b": "sağdan gelen araca yol verme kuralına göre",
+      "c": "düşey ve yatay trafik işaretlerine göre"
     },
     "kind": "situacija",
     "subOf": 152
@@ -5519,6 +6402,12 @@
       "b": "mund të rreshtohem në korsinë e djathtë",
       "c": "pa u rreshtuar do ta vazhdoj lëvizjen drejt"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "sola doğru devam etmeliyim",
+      "b": "sağ şeride geçebilirim",
+      "c": "şerit değiştirmeden düz devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -5555,6 +6444,12 @@
       "a": "kahun e detyrueshëm të lëvizjes majtas",
       "b": "destinimin e korsive",
       "c": "kahun e detyrueshëm të lëvizjes djathtas"
+    },
+    "text_tr": "Gösterilen durumda taşıt yolundaki oklar şunu belirtir:",
+    "options_tr": {
+      "a": "sola mecburi hareket yönünü",
+      "b": "trafik şeritlerinin kullanım amacını",
+      "c": "sağa mecburi hareket yönünü"
     },
     "kind": "situacija",
     "subOf": 154
@@ -5594,6 +6489,12 @@
       "b": "jam i detyruar t'u lëshoj rrugë vetëm automjeteve që më vijnë nga ana e djathtë",
       "c": "jam i detyruar t'u lëshoj rrugë të gjitha automjeteve që lëvizin në rrethrrotullim"
     },
+    "text_tr": "Resimdeki gibi bir kavşakta:",
+    "options_tr": {
+      "a": "dönel kavşaktaki araçlara yol vermek zorunda değilim",
+      "b": "yalnızca sağımdan gelen araçlara yol vermek zorundayım",
+      "c": "dönel kavşakta dönen tüm araçlara yol vermek zorundayım"
+    },
     "kind": "situacija"
   },
   {
@@ -5630,6 +6531,12 @@
       "a": "kthehet rregullisht djathtas nëpër trajektoren a",
       "b": "kthehet jo rregullisht djathtas",
       "c": "kthehet rregullisht djathtas nëpër trajektoren b"
+    },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı yük aracı:",
+    "options_tr": {
+      "a": "a yolu boyunca kurallara uygun şekilde sağa dönüyor",
+      "b": "kurallara aykırı şekilde sağa dönüyor",
+      "c": "b yolu boyunca kurallara uygun şekilde sağa dönüyor"
     },
     "kind": "situacija",
     "subOf": 156
@@ -5669,6 +6576,12 @@
       "b": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë të gjitha automjeteve",
       "c": "do t'i lëshoj rrugë vetëm automjetit 3"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşağın önünde durup 4 ve 2 numaralı araçlara yol veririm",
+      "b": "kavşağın önünde durup tüm araçlara yol veririm",
+      "c": "yalnızca 3 numaralı araca yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -5691,6 +6604,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles pass through the intersection is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств через перекрёсток:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është:",
+    "text_tr": "Resimde gösterilen durumda araçların kavşaktan geçiş sırası:",
     "kind": "situacija",
     "subOf": 158
   },
@@ -5729,6 +6643,12 @@
       "b": "do ta vazhdoj lëvizjen majtas pa i lëshuar rrugë automjetit 2",
       "c": "do ta shpejtoj lëvizjen e automjetit dhe do të kaloj para automjetit"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "2 numaralı araca yol verip sola doğru devam ederim",
+      "b": "2 numaralı araca yol vermeden sola doğru devam ederim",
+      "c": "aracı hızlandırıp aracın önünden geçerim"
+    },
     "kind": "situacija"
   },
   {
@@ -5765,6 +6685,12 @@
       "a": "rregullisht nëpër trajektoren a",
       "b": "rregullisht nëpër trajektoren b",
       "c": "rregullisht më afër skajit të djathtë të karrexhatës"
+    },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı araç şöyle ilerliyor:",
+    "options_tr": {
+      "a": "a yolu boyunca kurallara uygun",
+      "b": "b yolu boyunca kurallara uygun",
+      "c": "taşıt yolunun sağ kenarına daha yakın, kurallara uygun"
     },
     "kind": "situacija",
     "subOf": 160
@@ -5804,6 +6730,12 @@
       "b": "do të ndalem para kryqëzimit e pastaj do ta vazhdoj lëvizjen drejt",
       "c": "do ta vazhdoj lëvizjen majtas nëpër kryqëzim"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşaktan düz devam ederim",
+      "b": "kavşağın önünde durup sonra düz devam ederim",
+      "c": "kavşaktan sola doğru devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -5840,6 +6772,12 @@
       "a": "kahun e detyrueshëm",
       "b": "destinimin e korsive",
       "c": "tabelën e drejtimit"
+    },
+    "text_tr": "Resimde gösterilen durumda taşıt yolundaki oklar şunu belirtir:",
+    "options_tr": {
+      "a": "mecburi yönü",
+      "b": "trafik şeritlerinin kullanım amacını",
+      "c": "yön levhasını"
     },
     "kind": "situacija",
     "subOf": 162
@@ -5879,6 +6817,12 @@
       "b": "do ta vazhdoj lëvizjen majtas pa u lëshuar rrugë automjeteve 2 dhe 3",
       "c": "do të ndalem dhe do t'u lëshoj rrugë automjeteve 2 dhe 3"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "3 numaralı araca yol verdikten sonra sola doğru devam ederim",
+      "b": "2 ve 3 numaralı araçlara yol vermeden sola doğru devam ederim",
+      "c": "durup 2 ve 3 numaralı araçlara yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -5900,6 +6844,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles proceed is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve është:",
+    "text_tr": "Resimde gösterilen durumda araçların geçiş sırası:",
     "kind": "situacija",
     "subOf": 164
   },
@@ -5938,6 +6883,12 @@
       "b": "2 duhet t'i lëshojë rrugë automjetit 1 dhe ta vazhdojë lëvizjen",
       "c": "1 duhet t'i lëshojë rrugë automjetit 2 e pastaj ta vazhdojë lëvizjen"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "1 numaralı araç 2 numaralı araca yol vermeden devam etmelidir",
+      "b": "2 numaralı araç 1 numaralı araca yol verip devam etmelidir",
+      "c": "1 numaralı araç 2 numaralı araca yol verip sonra devam etmelidir"
+    },
     "kind": "situacija"
   },
   {
@@ -5974,6 +6925,12 @@
       "a": "rregullës së lëshimit të rrugës automjeteve vetëm nga ana e djathtë",
       "b": "rregullës së kalimit nëpër kryqëzim të parregulluar",
       "c": "shenjës rrugore"
+    },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı aracın sürücüsü şuna göre hareket eder:",
+    "options_tr": {
+      "a": "yalnızca sağdan gelen araca yol verme kuralına göre",
+      "b": "düzenlenmemiş kavşaktan geçiş kuralına göre",
+      "c": "trafik levhasına göre"
     },
     "kind": "situacija",
     "subOf": 166
@@ -6013,6 +6970,12 @@
       "b": "do ta vazhdoj lëvizjen drejt pasi t'i lëshoj rrugë tramvajit",
       "c": "do të ndalem dhe do t'i lëshoj rrugë tramvajit"
     },
+    "text_tr": "Aşağıdaki durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "tramvaya yol vermeden düz devam ederim",
+      "b": "tramvaya yol verdikten sonra düz devam ederim",
+      "c": "durup tramvaya yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -6049,6 +7012,12 @@
       "a": "sinjalizim rrugor vertikal",
       "b": "përparësinë e kalimit të automjetit mbi shina",
       "c": "rregullën e lëshimit të rrugës automjeteve vetëm nga ana e djathtë"
+    },
+    "text_tr": "Resimde gösterilen durumda araçların kavşaktan geçişi şununla düzenlenmiştir:",
+    "options_tr": {
+      "a": "düşey trafik işaretleriyle",
+      "b": "raylı aracın geçiş önceliğiyle",
+      "c": "yalnızca sağdan gelen araca yol verme kuralıyla"
     },
     "kind": "situacija",
     "subOf": 168
@@ -6088,6 +7057,12 @@
       "b": "do ta vazhdoj lëvizjen me shpejtësi të zvogëluar",
       "c": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë automjeteve nga kahu i kundërt"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "geçiş üstünlüğüm olduğu için düz devam ederim",
+      "b": "düşük hızla devam ederim",
+      "c": "kavşağın önünde durup karşı yönden gelen araçlara yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -6125,6 +7100,12 @@
       "b": "sinjalizimit rrugor vertikal",
       "c": "rregullës së lëshimit të rrugës automjeteve nga ana e djathtë"
     },
+    "text_tr": "Resimde gösterilen durumda şuna göre hareket etmek zorundasınız:",
+    "options_tr": {
+      "a": "ışıklı trafik işaretlerine göre",
+      "b": "düşey trafik işaretlerine göre",
+      "c": "sağdan gelen araca yol verme kuralına göre"
+    },
     "kind": "situacija",
     "subOf": 170
   },
@@ -6147,6 +7128,7 @@
     "text_en": "In the situation shown in the picture the order in which the vehicles pass through the intersection is:",
     "text_ru": "В ситуации, показанной на рисунке, порядок проезда транспортных средств через перекрёсток следующий:",
     "text_sq": "Në situatën e paraqitur në figurë radha e kalimit të automjeteve nëpër kryqëzim është kjo:",
+    "text_tr": "Resimde gösterilen durumda araçların kavşaktan geçiş sırası:",
     "kind": "situacija"
   },
   {
@@ -6183,6 +7165,12 @@
       "a": "në cilindo kah",
       "b": "në kahun e akrepave të orës",
       "c": "në kahun e kundërt të akrepave të orës"
+    },
+    "text_tr": "Dönel kavşakta araçlar şu yönde hareket eder:",
+    "options_tr": {
+      "a": "herhangi bir yönde",
+      "b": "saat yönünde",
+      "c": "saat yönünün tersine"
     },
     "kind": "situacija",
     "subOf": 172
@@ -6222,6 +7210,12 @@
       "b": "do ta vazhdoj lëvizjen drejt pas automjetit 2",
       "c": "do ta zvogëloj shpejtësinë e lëvizjes dhe do t'i lëshoj rrugë automjetit 3"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "durup 3 numaralı araca yol veririm",
+      "b": "2 numaralı aracın arkasından düz devam ederim",
+      "c": "hızımı azaltıp 3 numaralı araca yol veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -6258,6 +7252,12 @@
       "a": "rimorkio",
       "b": "rimorkio e lehtë",
       "c": "gjysmërimorkio"
+    },
+    "text_tr": "Resimde gösterilen durumda 3 numaralı çeken araç bir çekicidir (tır çekicisi), çekilen araç ise:",
+    "options_tr": {
+      "a": "römork",
+      "b": "hafif römork",
+      "c": "yarı römork (dorse)"
     },
     "kind": "situacija",
     "subOf": 174
@@ -6297,6 +7297,12 @@
       "b": "traktori 2 sepse e ruan kahun e lëvizjes",
       "c": "automjeti udhëtar 1"
     },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı binek araç sola dönüyor, 2 numaralı traktör ise hareket yönünü koruyor. Geçiş üstünlüğü kimdedir:",
+    "options_tr": {
+      "a": "sarı döner lambası açık olduğu için 2 numaralı traktörde",
+      "b": "hareket yönünü koruduğu için 2 numaralı traktörde",
+      "c": "1 numaralı binek araçta"
+    },
     "kind": "situacija"
   },
   {
@@ -6333,6 +7339,12 @@
       "a": "shoferi dhe një person",
       "b": "vetëm shoferi",
       "c": "shoferi dhe dy persona"
+    },
+    "text_tr": "Hareket halindeyken traktörde şunlar bulunabilir:",
+    "options_tr": {
+      "a": "sürücü ve bir kişi",
+      "b": "yalnızca sürücü",
+      "c": "sürücü ve iki kişi"
     },
     "kind": "situacija",
     "subOf": 176
@@ -6372,6 +7384,12 @@
       "b": "nuk do të hyj në kryqëzim për shkak të dendësisë së komunikacionit",
       "c": "do ta vazhdoj lëvizjen djathtas nëpër kryqëzim"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz: * kavşaktan düz devam ederim, çünkü trafik ışığında",
+    "options_tr": {
+      "a": "yeşil ışık yanıyor",
+      "b": "trafik yoğunluğu nedeniyle kavşağa girmem",
+      "c": "kavşaktan sağa doğru devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -6408,6 +7426,12 @@
       "a": "guxoj të bëj kthim gjysmërrethor",
       "b": "guxoj të ndalem në kryqëzim",
       "c": "nuk guxoj të bëj kthim gjysmërrethor me automjetin"
+    },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "U dönüşü yapabilirim",
+      "b": "kavşakta durabilirim",
+      "c": "araçla U dönüşü yapamam"
     },
     "kind": "situacija",
     "subOf": 178
@@ -6447,6 +7471,12 @@
       "b": "ta vazhdojë lëvizjen drejt pa i lëshuar rrugë automjetit transportues",
       "c": "të ndalet para kryqëzimit dhe t'i lëshojë rrugë automjetit transportues"
     },
+    "text_tr": "Resimdeki gibi bir durumda binek aracın sürücüsü şunu yapmalıdır:",
+    "options_tr": {
+      "a": "yük aracına yol vermeden sola doğru devam etmek",
+      "b": "yük aracına yol vermeden düz devam etmek",
+      "c": "kavşağın önünde durup yük aracına yol vermek"
+    },
     "kind": "situacija"
   },
   {
@@ -6483,6 +7513,12 @@
       "a": "sinjalizimit rrugor vertikal",
       "b": "rregullës së lëshimit të rrugës automjeteve nga ana e djathtë",
       "c": "rregullës së lëshimit të rrugës automjeteve të kategorisë më të madhe"
+    },
+    "text_tr": "Resimde gösterilen durumda binek aracın sürücüsü şuna göre hareket eder:",
+    "options_tr": {
+      "a": "düşey trafik işaretlerine göre",
+      "b": "sağdan gelen araca yol verme kuralına göre",
+      "c": "daha büyük kategorideki araca yol verme kuralına göre"
     },
     "kind": "situacija",
     "subOf": 180
@@ -6522,6 +7558,12 @@
       "b": "do ta vazhdoj lëvizjen pa u lëshuar rrugë këmbësorëve",
       "c": "do t'i paralajmëroj këmbësorët me borí dhe do ta vazhdoj lëvizjen"
     },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "aracı durdurup yayalara yol veririm",
+      "b": "yayalara yol vermeden devam ederim",
+      "c": "kornayla yayaları uyarıp devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -6558,6 +7600,12 @@
       "a": "vendkalimin për këmbësorë",
       "b": "ishullin për këmbësorë",
       "c": "shtegun për këmbësorë"
+    },
+    "text_tr": "Resimde gösterilen durumda taşıt yolundaki enine işaretler şunu belirtir:",
+    "options_tr": {
+      "a": "yaya geçidini",
+      "b": "yaya adasını",
+      "c": "yaya yolunu"
     },
     "kind": "situacija",
     "subOf": 182
@@ -6597,6 +7645,12 @@
       "b": "ta tejkaloj automjetin policor",
       "c": "ta ndal automjetin"
     },
+    "text_tr": "Resimde gösterilen durumda şunu yapmalıyım:",
+    "options_tr": {
+      "a": "sağ şeritte yoluma devam etmek",
+      "b": "polis aracını sollamak",
+      "c": "aracı durdurmak"
+    },
     "kind": "situacija"
   },
   {
@@ -6633,6 +7687,12 @@
       "a": "është i detyrueshëm për të gjithë pjesëmarrësit në komunikacion",
       "b": "nuk është i detyrueshëm kur jepet nga automjeti",
       "c": "është i detyrueshëm vetëm për çiklistët"
+    },
+    "text_tr": "Yetkili polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "tüm trafik katılımcıları için bağlayıcıdır",
+      "b": "araçtan verildiğinde bağlayıcı değildir",
+      "c": "yalnızca bisikletliler için bağlayıcıdır"
     },
     "kind": "policajac",
     "subOf": 184
@@ -6672,6 +7732,12 @@
       "b": "jo rregullisht, sepse e rrezikon çiklistin",
       "c": "rregullisht"
     },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı araç bisikletliyi şöyle solluyor:",
+    "options_tr": {
+      "a": "kurallara aykırı, çünkü karşı şeride geçiyor",
+      "b": "kurallara aykırı, çünkü bisikletliyi tehlikeye atıyor",
+      "c": "kurallara uygun"
+    },
     "kind": "situacija"
   },
   {
@@ -6708,6 +7774,12 @@
       "a": "ta vazhdojë lëvizjen në korsinë në të cilën e ka kryer tejkalimin",
       "b": "të kthehet në korsinë e vet dhe ta vazhdojë lëvizjen",
       "c": "ta vazhdojë lëvizjen pranë skajit të majtë të karrexhatës"
+    },
+    "text_tr": "Sollamadan sonra 1 numaralı aracın sürücüsü şunu yapmak zorundadır:",
+    "options_tr": {
+      "a": "sollamayı yaptığı şeritte devam etmek",
+      "b": "kendi şeridine dönüp devam etmek",
+      "c": "taşıt yolunun sol kenarı boyunca devam etmek"
     },
     "kind": "situacija",
     "subOf": 186
@@ -6747,6 +7819,12 @@
       "b": "është veprim i anashkalimit të automjetit",
       "c": "nuk konsiderohet veprim i tejkalimit të automjetit"
     },
+    "text_tr": "Resimde gösterilen durumda kullandığınız aracın 1 ve 2 numaralı araçlardan daha hızlı ilerlemesi:",
+    "options_tr": {
+      "a": "araç sollama manevrasıdır",
+      "b": "aracı dolanma (engel geçme) manevrasıdır",
+      "c": "araç sollama manevrası sayılmaz"
+    },
     "kind": "situacija"
   },
   {
@@ -6783,6 +7861,12 @@
       "a": "formojnë kolonë automjetesh dhe nuk guxojnë të tejkalohen",
       "b": "formojnë kolonë automjetesh dhe guxojnë të tejkalohen",
       "c": "nuk formojnë kolonë automjetesh"
+    },
+    "text_tr": "Resimde gösterilen durumda birbiri ardına ilerleyen 1 ve 2 numaralı araçlar:",
+    "options_tr": {
+      "a": "bir araç kolonu oluşturur ve sollanamaz",
+      "b": "bir araç kolonu oluşturur ve sollanabilir",
+      "c": "araç kolonu oluşturmaz"
     },
     "kind": "situacija",
     "subOf": 188
@@ -6822,6 +7906,12 @@
       "b": "guxojnë të ndalen, por jo edhe të parkohen",
       "c": "guxojnë të ndalen dhe të parkohen"
     },
+    "text_tr": "Resimde gösterilen konumda 1, 2, 3 ve 4 numaralı araçlar:",
+    "options_tr": {
+      "a": "duramaz veya park edemez",
+      "b": "durabilir ama park edemez",
+      "c": "durabilir ve park edebilir"
+    },
     "kind": "situacija"
   },
   {
@@ -6858,6 +7948,12 @@
       "a": "nuk guxon të ndalet",
       "b": "guxon të ndalet vetëm për hyrjen ose daljen e udhëtarëve",
       "c": "guxon të parkohet më së shumti 15 minuta"
+    },
+    "text_tr": "Garaj girişinde veya çıkışında taksi sürücüsü:",
+    "options_tr": {
+      "a": "duramaz",
+      "b": "yalnızca yolcuların binmesi veya inmesi için durabilir",
+      "c": "en fazla 15 dakika park edebilir"
     },
     "kind": "situacija",
     "subOf": 190
@@ -6897,6 +7993,12 @@
       "b": "anashkalim",
       "c": "kalim përballë"
     },
+    "text_tr": "Resimdeki gibi 1 ve 2 numaralı araçların karşı yönlerde ilerlediği manevra:",
+    "options_tr": {
+      "a": "kesişmedir",
+      "b": "dolanmadır (engel geçme)",
+      "c": "karşılaşmadır (karşılıklı geçme)"
+    },
     "kind": "situacija"
   },
   {
@@ -6933,6 +8035,12 @@
       "a": "e lejuar",
       "b": "e lejuar, por duhet të shënohet me tabelë të kuqe",
       "c": "nuk është e lejuar"
+    },
+    "text_tr": "2 numaralı araçtaki yük, aracın ön tarafındaki en uç noktayı 1,5 m aşıyor; bu:",
+    "options_tr": {
+      "a": "serbesttir",
+      "b": "serbesttir, ama kırmızı levhayla işaretlenmelidir",
+      "c": "serbest değildir"
     },
     "kind": "situacija",
     "subOf": 192
@@ -6972,6 +8080,12 @@
       "b": "nuk do t'u lëshosh rrugë këmbësorëve, sepse nuk janë në korsinë tënde",
       "c": "do ta ndalësh automjetin dhe do t'u lëshosh rrugë këmbësorëve"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "yayaları engellememek için hızlanırsın",
+      "b": "yayalar senin şeridinde olmadığı için onlara yol vermezsin",
+      "c": "aracı durdurup yayalara yol verirsin"
+    },
     "kind": "situacija"
   },
   {
@@ -7008,6 +8122,12 @@
       "a": "zona e shkollës",
       "b": "tabela drejtuese deri te shkolla",
       "c": "pjesa e karrexhatës e destinuar për parkimin e autobusit shkollor"
+    },
+    "text_tr": "Resimde gösterilen durumda taşıt yolundaki işaretler, yaya geçidinin yakınında şunun bulunduğunu belirtir:",
+    "options_tr": {
+      "a": "okul bölgesi",
+      "b": "okula giden yön levhası",
+      "c": "okul otobüsünün park etmesine ayrılmış taşıt yolu bölümü"
     },
     "kind": "situacija",
     "subOf": 194
@@ -7047,6 +8167,12 @@
       "b": "guxon të kryejë tejkalim, nëse nuk i pengon automjetet nga kahu i kundërt",
       "c": "nuk guxon të kryejë tejkalim"
     },
+    "text_tr": "Resimde gösterilen durumda, çift yönlü trafiğe ayrılmış taşıt yolu kesiminde 2 numaralı araç:",
+    "options_tr": {
+      "a": "sollama yapabilir",
+      "b": "karşı yönden gelen araçları engellemiyorsa sollama yapabilir",
+      "c": "sollama yapamaz"
+    },
     "kind": "situacija"
   },
   {
@@ -7083,6 +8209,12 @@
       "a": "ndalimin e kalimit dhe të shkeljes së kësaj vije",
       "b": "pjesën e karrexhatës ku lejohet shkelja e kësaj vije",
       "c": "pjesën e karrexhatës ku lejohet kalimi mbi këtë vijë"
+    },
+    "text_tr": "Resimde gösterilen durumda ayırma çizgisi şunu belirtir:",
+    "options_tr": {
+      "a": "bu çizginin geçilmesi ve üzerine basılması yasağını",
+      "b": "bu çizginin üzerine basılmasına izin verilen taşıt yolu bölümünü",
+      "c": "bu çizginin geçilmesine izin verilen taşıt yolu bölümünü"
     },
     "kind": "situacija",
     "subOf": 196
@@ -7122,6 +8254,12 @@
       "b": "i ndalur rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
     },
+    "text_tr": "Resimdeki gibi bir durumda 1 numaralı araç:",
+    "options_tr": {
+      "a": "kurallara uygun park edilmiştir",
+      "b": "kurallara uygun durdurulmuştur",
+      "c": "kurallara aykırı durdurulmuş veya park edilmiştir"
+    },
     "kind": "situacija"
   },
   {
@@ -7158,6 +8296,12 @@
       "a": "guxon ta ndalë automjetin",
       "b": "nuk guxon ta ndalë ose ta parkojë automjetin",
       "c": "guxon ta parkojë automjetin"
+    },
+    "text_tr": "Avlu giriş-çıkışında sürücü:",
+    "options_tr": {
+      "a": "aracı durdurabilir",
+      "b": "aracı durduramaz veya park edemez",
+      "c": "aracı park edebilir"
     },
     "kind": "situacija",
     "subOf": 198
@@ -7197,6 +8341,12 @@
       "b": "jo rregullisht",
       "c": "rregullisht pranë skajit të majtë të karrexhatës"
     },
+    "text_tr": "Resimde gösterilen durumda bisikletli şöyle ilerliyor:",
+    "options_tr": {
+      "a": "kurallara uygun, çünkü bisiklet şeridi yok",
+      "b": "kurallara aykırı",
+      "c": "taşıt yolunun sol kenarı boyunca, kurallara uygun"
+    },
     "kind": "situacija"
   },
   {
@@ -7233,6 +8383,12 @@
       "a": "i ndalur rregullisht",
       "b": "i ndalur ose i parkuar rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
+    },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı araç:",
+    "options_tr": {
+      "a": "kurallara uygun durdurulmuştur",
+      "b": "kurallara uygun durdurulmuş veya park edilmiştir",
+      "c": "kurallara aykırı durdurulmuş veya park edilmiştir"
     },
     "kind": "situacija",
     "subOf": 200
@@ -7272,6 +8428,12 @@
       "b": "do t'i lëshoj rrugë automjetit udhëtar 2 sepse më vjen nga ana e djathtë",
       "c": "do ta zhvendos automjetin drejt skajit të majtë të karrexhatës"
     },
+    "text_tr": "Resimdeki gibi bir durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "2 numaralı binek araca yol vermeden düz devam ederim",
+      "b": "sağımdan geldiği için 2 numaralı binek araca yol veririm",
+      "c": "aracı taşıt yolunun sol kenarına doğru kaydırırım"
+    },
     "kind": "situacija"
   },
   {
@@ -7308,6 +8470,12 @@
       "a": "vazhdojë lëvizjen pa u lëshuar rrugë automjeteve që lëvizin në rrugën në të cilën ai del",
       "b": "vazhdojë lëvizjen sepse ka përparësi ndaj automjetit 1",
       "c": "ndalë automjetin dhe t'u lëshojë rrugë të gjitha automjeteve që lëvizin në rrugën në të cilën ai del"
+    },
+    "text_tr": "Resimdeki gibi bir durumda 2 numaralı aracın sürücüsü sola dönerken:",
+    "options_tr": {
+      "a": "girdiği yolda ilerleyen araçlara yol vermeden devam eder",
+      "b": "1 numaralı araca göre önceliği olduğu için devam eder",
+      "c": "aracı durdurur ve girdiği yolda ilerleyen tüm araçlara yol verir"
     },
     "kind": "situacija",
     "subOf": 202
@@ -7347,6 +8515,12 @@
       "b": "guxoj të tejkaloj",
       "c": "guxoj të tejkaloj nëse nuk kaloj në korsinë e kahut të kundërt"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "yol çizgileri nedeniyle sollayamam",
+      "b": "sollayabilirim",
+      "c": "karşı yön şeridine geçmezsem sollayabilirim"
+    },
     "kind": "situacija"
   },
   {
@@ -7383,6 +8557,12 @@
       "a": "nuk është e kufizuar",
       "b": "është deri në 80 km/h",
       "c": "është deri në 20 km/h mbi kufizimin"
+    },
+    "text_tr": "Resimde gösterilen durumda, yerleşim yeri dışındaki yolda sollama yapabileceğiniz hız:",
+    "options_tr": {
+      "a": "sınırlı değildir",
+      "b": "80 km/sa'e kadardır",
+      "c": "sınırın en fazla 20 km/sa üstüdür"
     },
     "kind": "situacija",
     "subOf": 204
@@ -7422,6 +8602,12 @@
       "b": "pa i lëshuar rrugë automjetit udhëtar 2",
       "c": "pa detyrim ndaj pjesëmarrësve të tjerë në komunikacion"
     },
+    "text_tr": "Resimde gösterilen durumda 3 numaralı binek araç otoparktan taşıt yoluna şu şekilde katılır:",
+    "options_tr": {
+      "a": "2 numaralı binek araca yol verdikten sonra",
+      "b": "2 numaralı binek araca yol vermeden",
+      "c": "diğer trafik katılımcılarına karşı bir yükümlülüğü olmadan"
+    },
     "kind": "situacija"
   },
   {
@@ -7458,6 +8644,12 @@
       "a": "do të ndalem para kryqëzimit dhe do t'u lëshoj rrugë këmbësorëve",
       "b": "do t'i paralajmëroj këmbësorët me sinjal zanor dhe do ta vazhdoj lëvizjen",
       "c": "do ta shpejtoj lëvizjen që të kaloj para këmbësorëve"
+    },
+    "text_tr": "Resimde gösterilen durumda nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "kavşağın önünde durup yayalara yol veririm",
+      "b": "sesli işaretle yayaları uyarıp devam ederim",
+      "c": "yayalardan önce geçmek için hızlanırım"
     },
     "kind": "situacija",
     "subOf": 206
@@ -7497,6 +8689,12 @@
       "b": "rregullisht në mes të karrexhatës",
       "c": "rregullisht, sepse korsia e majtë është e zënë nga një automjet"
     },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı araç şöyle ilerliyor:",
+    "options_tr": {
+      "a": "kurallara aykırı",
+      "b": "taşıt yolunun ortasından, kurallara uygun",
+      "c": "kurallara uygun, çünkü sol şerit bir araçla dolu"
+    },
     "kind": "situacija"
   },
   {
@@ -7533,6 +8731,12 @@
       "a": "guxon të ndalet ose të parkohet",
       "b": "guxon të ndalet",
       "c": "nuk guxon të ndalet ose të parkohet"
+    },
+    "text_tr": "Resimdeki gibi bir durumda 2 numaralı binek araç:",
+    "options_tr": {
+      "a": "durabilir veya park edebilir",
+      "b": "durabilir",
+      "c": "duramaz veya park edemez"
     },
     "kind": "situacija",
     "subOf": 208
@@ -7572,6 +8776,12 @@
       "b": "nuk guxoj, sepse karrexhata është në kthesë të majtë",
       "c": "nuk guxoj, sepse është e ndaluar me shenjat në karrexhatë"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "binek aracı sollayabilirim",
+      "b": "sollayamam, çünkü taşıt yolu sol virajda",
+      "c": "sollayamam, çünkü yol çizgileriyle yasaklanmıştır"
+    },
     "kind": "situacija"
   },
   {
@@ -7608,6 +8818,12 @@
       "a": "e ndan karrexhatën dhe nuk guxon të kalohet mbi të",
       "b": "e ndan karrexhatën dhe guxon të shkelet e të kalohet mbi të",
       "c": "e ndan brezin e karrexhatës dhe nuk guxon të kalohet mbi të"
+    },
+    "text_tr": "Resimde gösterilen durumda kesik ayırma çizgisi:",
+    "options_tr": {
+      "a": "taşıt yolunu ayırır ve geçilemez",
+      "b": "taşıt yolunu ayırır; üzerine basılabilir ve geçilebilir",
+      "c": "taşıt yolu bölümünü ayırır ve geçilemez"
     },
     "kind": "situacija",
     "subOf": 210
@@ -7647,6 +8863,12 @@
       "b": "do ta zhvendos automjetin drejt skajit të djathtë të karrexhatës",
       "c": "do ta zhvendos automjetin drejt skajit të majtë të karrexhatës"
     },
+    "text_tr": "Resimdeki gibi bir durumda 2 numaralı binek araç sizi sollarken nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "hızımı artırırım",
+      "b": "aracı taşıt yolunun sağ kenarına doğru kaydırırım",
+      "c": "aracı taşıt yolunun sol kenarına doğru kaydırırım"
+    },
     "kind": "situacija"
   },
   {
@@ -7683,6 +8905,12 @@
       "a": "deri te kryqëzimi i parë",
       "b": "deri te shenja e parë e njoftimit",
       "c": "deri te shenja e parë e rrezikut"
+    },
+    "text_tr": "Resimde gösterilen emir işareti şuraya kadar geçerlidir:",
+    "options_tr": {
+      "a": "ilk kavşağa kadar",
+      "b": "ilk bilgi işaretine kadar",
+      "c": "ilk tehlike işaretine kadar"
     },
     "kind": "znak",
     "subOf": 212
@@ -7722,6 +8950,12 @@
       "b": "t'i lëshojë rrugë vetëm këmbësorit të shënuar me a dhe ta vazhdojë lëvizjen",
       "c": "të ndalet dhe t'u lëshojë rrugë të gjithë këmbësorëve"
     },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı yük aracının sürücüsü şunu yapmalıdır:",
+    "options_tr": {
+      "a": "aracı hızlandırıp yayalara yol vermeden devam etmek",
+      "b": "yalnızca a ile işaretli yayaya yol verip devam etmek",
+      "c": "durup tüm yayalara yol vermek"
+    },
     "kind": "situacija"
   },
   {
@@ -7758,6 +8992,12 @@
       "a": "guxon të ndalet ose të parkohet",
       "b": "guxon të ndalet",
       "c": "nuk guxon të ndalet ose të parkohet"
+    },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı yük aracının sürücüsü yaya geçidini geçtikten hemen sonra:",
+    "options_tr": {
+      "a": "durabilir veya park edebilir",
+      "b": "durabilir",
+      "c": "duramaz veya park edemez"
     },
     "kind": "situacija",
     "subOf": 214
@@ -7797,6 +9037,12 @@
       "b": "i ndalur ose i parkuar rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
     },
+    "text_tr": "Resimde gösterilen konumda 1 numaralı binek araç:",
+    "options_tr": {
+      "a": "kurallara uygun durdurulmuştur",
+      "b": "kurallara uygun durdurulmuş veya park edilmiştir",
+      "c": "kurallara aykırı durdurulmuş veya park edilmiştir"
+    },
     "kind": "situacija"
   },
   {
@@ -7833,6 +9079,12 @@
       "a": "largësia e parkingut",
       "b": "kufizimi kohor i parkimit",
       "c": "parkim vetëm në kohë të caktuar"
+    },
+    "text_tr": "Resimde gösterilen bilgi işareti:",
+    "options_tr": {
+      "a": "otoparka olan uzaklık",
+      "b": "park etmede süre sınırlaması",
+      "c": "yalnızca belirli saatlerde park"
     },
     "kind": "znak",
     "subOf": 216
@@ -7872,6 +9124,12 @@
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "guxon të ndalet"
     },
+    "text_tr": "Resimdeki gibi bir durumda 1 numaralı binek araç:",
+    "options_tr": {
+      "a": "park edebilir",
+      "b": "duramaz veya park edemez",
+      "c": "durabilir"
+    },
     "kind": "situacija"
   },
   {
@@ -7908,6 +9166,12 @@
       "a": "së paku 10 metra",
       "b": "së paku 5 metra",
       "c": "së paku 7 metra"
+    },
+    "text_tr": "Sürücü işaretli yaya geçidinden ne kadar uzakta durabilir veya park edebilir:",
+    "options_tr": {
+      "a": "en az 10 metre",
+      "b": "en az 5 metre",
+      "c": "en az 7 metre"
     },
     "kind": "situacija",
     "subOf": 218
@@ -7947,6 +9211,12 @@
       "b": "rregullisht",
       "c": "jo rregullisht"
     },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı araç şöyle ilerliyor:",
+    "options_tr": {
+      "a": "karşı yönden gelen araçları engellemiyorsa kurallara uygun",
+      "b": "kurallara uygun",
+      "c": "kurallara aykırı"
+    },
     "kind": "situacija"
   },
   {
@@ -7983,6 +9253,12 @@
       "a": "të lëvizë sa më afër vijës ndarëse",
       "b": "të lëvizë sa më afër skajit të djathtë të karrexhatës",
       "c": "të lëvizë në mes të korsisë"
+    },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı aracın sürücüsü şunu yapmalıdır:",
+    "options_tr": {
+      "a": "ayırma çizgisine mümkün olduğunca yakın gitmek",
+      "b": "taşıt yolunun sağ kenarına mümkün olduğunca yakın gitmek",
+      "c": "şeridin ortasından gitmek"
     },
     "kind": "situacija",
     "subOf": 220
@@ -8022,6 +9298,12 @@
       "b": "do ta vazhdoj lëvizjen djathtas nëpër kryqëzim",
       "c": "do ta vazhdoj lëvizjen drejt nëpër kryqëzim"
     },
+    "text_tr": "Resimdeki gibi bir durumda:",
+    "options_tr": {
+      "a": "kavşaktan sola doğru devam ederim",
+      "b": "kavşaktan sağa doğru devam ederim",
+      "c": "kavşaktan düz devam ederim"
+    },
     "kind": "situacija"
   },
   {
@@ -8058,6 +9340,12 @@
       "a": "destinimin e korsive",
       "b": "kahun e detyrueshëm",
       "c": "vijat e drejtimit"
+    },
+    "text_tr": "Taşıt yolundaki yatay işaretler şu anlama gelir:",
+    "options_tr": {
+      "a": "trafik şeritlerinin kullanım amacı",
+      "b": "mecburi yön",
+      "c": "yönlendirme çizgileri"
     },
     "kind": "situacija",
     "subOf": 222
@@ -8097,6 +9385,12 @@
       "b": "nëpër trajektoren 2 pasi t'u lëshoni rrugë këmbësorëve",
       "c": "nëpër trajektoren 1 pasi t'u lëshoni rrugë këmbësorëve"
     },
+    "text_tr": "Resimde gösterilen durumda kavşaktan şu şekilde geçersiniz:",
+    "options_tr": {
+      "a": "yayalara yol vermeden 1 numaralı yoldan",
+      "b": "yayalara yol verdikten sonra 2 numaralı yoldan",
+      "c": "yayalara yol verdikten sonra 1 numaralı yoldan"
+    },
     "kind": "situacija"
   },
   {
@@ -8133,6 +9427,12 @@
       "a": "guxon të ndalet",
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "guxon të ndalet ose të parkohet"
+    },
+    "text_tr": "Resimdeki gibi bir durumda 3 numaralı araç:",
+    "options_tr": {
+      "a": "durabilir",
+      "b": "duramaz veya park edemez",
+      "c": "durabilir veya park edebilir"
     },
     "kind": "situacija",
     "subOf": 224
@@ -8172,6 +9472,12 @@
       "b": "guxon të ndalet dhe të parkohet",
       "c": "guxon të ndalet"
     },
+    "text_tr": "Resimdeki gibi 2 numaralı binek araç:",
+    "options_tr": {
+      "a": "duramaz veya park edemez",
+      "b": "durabilir ve park edebilir",
+      "c": "durabilir"
+    },
     "kind": "situacija"
   },
   {
@@ -8208,6 +9514,12 @@
       "a": "nuk guxoj të ndalem ose të parkohem",
       "b": "guxoj të ndalem ose të parkohem",
       "c": "nuk guxoj të parkohem"
+    },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "duramam veya park edemem",
+      "b": "durabilirim veya park edebilirim",
+      "c": "park edemem"
     },
     "kind": "situacija",
     "subOf": 226
@@ -8247,6 +9559,12 @@
       "b": "rregullisht, sepse nuk ka shenjë për ndalim tejkalimi",
       "c": "jo rregullisht për shkak të kalimit mbi vijën e pandërprerë"
     },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı araç bisikletliyi şöyle solluyor:",
+    "options_tr": {
+      "a": "kurallara uygun, çünkü sol sinyal açık",
+      "b": "kurallara uygun, çünkü sollama yasağı levhası yok",
+      "c": "düz çizgiyi geçtiği için kurallara aykırı"
+    },
     "kind": "situacija"
   },
   {
@@ -8283,6 +9601,12 @@
       "a": "jo rregullisht, sepse duhet të lëvizë nëpër trotuar",
       "b": "jo rregullisht, sepse duhet të mbajë helmetë mbrojtëse",
       "c": "rregullisht pranë skajit të djathtë të karrexhatës"
+    },
+    "text_tr": "Resimdeki durumda bisikletli yerleşim yerinde şöyle ilerliyor:",
+    "options_tr": {
+      "a": "kurallara aykırı, çünkü kaldırımdan gitmelidir",
+      "b": "kurallara aykırı, çünkü koruyucu kask takmalıdır",
+      "c": "taşıt yolunun sağ kenarı boyunca, kurallara uygun"
     },
     "kind": "situacija",
     "subOf": 228
@@ -8322,6 +9646,12 @@
       "b": "duhet të ndalem dhe t'i mundësoj kalimin automjetit transportues 2",
       "c": "duhet të ndalemi dhe të merremi vesh për radhën e kalimit"
     },
+    "text_tr": "Resimdeki durumda römorklu yük aracı kullanıyorum ve 2 numaralı yük aracıyla karşılaşıyorum; taşıt yolunun genişliği güvenli karşılaşma için yeterli olmadığından:",
+    "options_tr": {
+      "a": "2 numaralı yük aracı durup bana geçiş imkânı vermelidir",
+      "b": "ben durup 2 numaralı yük aracına geçiş imkânı vermeliyim",
+      "c": "durup geçiş sırası konusunda anlaşmalıyız"
+    },
     "kind": "situacija"
   },
   {
@@ -8358,6 +9688,12 @@
       "a": "se karrexhata është në tatëpjetë deri në 6%",
       "b": "se pjerrësia tërthore e karrexhatës është deri në 6%",
       "c": "se karrexhata është në ngjitje deri në 6%"
+    },
+    "text_tr": "Resimdeki trafik levhası şu anlama gelir:",
+    "options_tr": {
+      "a": "taşıt yolu %6'ya kadar inişte",
+      "b": "taşıt yolunun enine eğimi %6'ya kadar",
+      "c": "taşıt yolu %6'ya kadar yokuşta"
     },
     "kind": "znak"
   },
@@ -8396,6 +9732,12 @@
       "b": "do ta vazhdoj lëvizjen drejt pa i lëshuar rrugë automjetit 2",
       "c": "do të ndalem dhe do t'i mundësoj kyçjen automjetit 2 sepse më vjen nga ana e djathtë"
     },
+    "text_tr": "Resimdeki gibi bir durumda 2 numaralı araç toprak yoldan taşıt yoluna katılırken nasıl hareket edersiniz:",
+    "options_tr": {
+      "a": "2 numaralı aracın sürücüsünü taşıt yoluna katılırken engellememek için sol taşıt yolu bölümüne geçerim",
+      "b": "2 numaralı araca yol vermeden düz devam ederim",
+      "c": "sağımdan geldiği için durup 2 numaralı aracın katılmasına imkân veririm"
+    },
     "kind": "situacija"
   },
   {
@@ -8432,6 +9774,12 @@
       "a": "qafa e karrexhatës",
       "b": "shenja e radhës e kufizimit të shpejtësisë",
       "c": "kryqëzimi i parë"
+    },
+    "text_tr": "Resimdeki gibi bir durumda trafik levhası şuraya kadar geçerlidir:",
+    "options_tr": {
+      "a": "taşıt yolunun tepe noktasına kadar",
+      "b": "bir sonraki hız sınırı levhasına kadar",
+      "c": "ilk kavşağa kadar"
     },
     "kind": "znak"
   },
@@ -8470,6 +9818,12 @@
       "b": "i parkuar ose i ndalur jo rregullisht",
       "c": "i parkuar ose i ndalur rregullisht"
     },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı yük aracı:",
+    "options_tr": {
+      "a": "kurallara uygun durdurulmuştur",
+      "b": "kurallara aykırı park edilmiş veya durdurulmuştur",
+      "c": "kurallara uygun park edilmiş veya durdurulmuştur"
+    },
     "kind": "situacija"
   },
   {
@@ -8506,6 +9860,12 @@
       "a": "kalimit përballë",
       "b": "rreshtimit",
       "c": "anashkalimit"
+    },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı aracın yanından geçerek şu manevrayı yaparsın:",
+    "options_tr": {
+      "a": "karşılaşma (karşılıklı geçme)",
+      "b": "şerit değiştirme",
+      "c": "dolanma (engel geçme)"
     },
     "kind": "situacija",
     "subOf": 234
@@ -8545,6 +9905,12 @@
       "b": "brezin e djathtë të karrexhatës",
       "c": "brezin e majtë të karrexhatës"
     },
+    "text_tr": "Resimde gösterilen durumda, çift yönlü yolda 1 numaralı aracın sürücüsü şunu kullanabilir:",
+    "options_tr": {
+      "a": "her iki taşıt yolu bölümünü",
+      "b": "sağdaki taşıt yolu bölümünü",
+      "c": "soldaki taşıt yolu bölümünü"
+    },
     "kind": "situacija"
   },
   {
@@ -8581,6 +9947,12 @@
       "a": "guxon të parkohet",
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "guxon të ndalet pranë skajit të djathtë të karrexhatës"
+    },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı aracın sürücüsü alt geçitte:",
+    "options_tr": {
+      "a": "park edebilir",
+      "b": "duramaz veya park edemez",
+      "c": "taşıt yolunun sağ kenarında durabilir"
     },
     "kind": "situacija",
     "subOf": 236
@@ -8620,6 +9992,12 @@
       "b": "nuk guxon të tejkalohet për shkak të shenjave në karrexhatë",
       "c": "nuk guxon të tejkalohet nga ana e majtë"
     },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı araç:",
+    "options_tr": {
+      "a": "sollanabilir",
+      "b": "yol çizgileri nedeniyle sollanamaz",
+      "c": "soldan sollanamaz"
+    },
     "kind": "situacija"
   },
   {
@@ -8656,6 +10034,12 @@
       "a": "lejohet tejkalimi nga kahu i kundërt",
       "b": "lejohet tejkalimi në kahun e lëvizjes",
       "c": "lejohet tejkalimi vetëm i automjeteve transportuese"
+    },
+    "text_tr": "Resimde gösterilen durumda yol çizgileri şu anlama gelir:",
+    "options_tr": {
+      "a": "karşı yönden sollamaya izin verilir",
+      "b": "hareket yönünde sollamaya izin verilir",
+      "c": "yalnızca yük araçlarının sollamasına izin verilir"
     },
     "kind": "situacija",
     "subOf": 238
@@ -8695,6 +10079,12 @@
       "b": "jam i detyruar ta ndez borinë dhe ta vazhdoj lëvizjen",
       "c": "jam i detyruar t'i lëshoj rrugë këmbësorit"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "yayaya yol vermek zorunda değilim",
+      "b": "korna çalıp devam etmek zorundayım",
+      "c": "yayaya yol vermek zorundayım"
+    },
     "kind": "situacija"
   },
   {
@@ -8731,6 +10121,12 @@
       "a": "është i detyruar ta ngrejë dorën e pastaj të hyjë në vendkalimin për këmbësorë",
       "b": "nuk është i detyruar të sigurohet se i pengon pjesëmarrësit e tjerë",
       "c": "është i detyruar të sigurohet se me këtë nuk i pengon pjesëmarrësit e tjerë"
+    },
+    "text_tr": "Yayanın, resimdeki gibi, yaya geçidinde taşıt yolunu güvenli şekilde geçebilmesi için:",
+    "options_tr": {
+      "a": "elini kaldırıp sonra yaya geçidine adım atmalıdır",
+      "b": "diğer katılımcıları engelleyip engellemediğinden emin olmak zorunda değildir",
+      "c": "bununla diğer katılımcıları engellemediğinden emin olmalıdır"
     },
     "kind": "situacija",
     "subOf": 240
@@ -8770,6 +10166,12 @@
       "b": "i ndalur ose i parkuar jo rregullisht",
       "c": "i ndalur ose i parkuar rregullisht"
     },
+    "text_tr": "Resimde gösterilen konumda 1 numaralı araç:",
+    "options_tr": {
+      "a": "kurallara uygun park edilmiştir",
+      "b": "kurallara aykırı durdurulmuş veya park edilmiştir",
+      "c": "kurallara uygun durdurulmuş veya park edilmiştir"
+    },
     "kind": "situacija"
   },
   {
@@ -8806,6 +10208,12 @@
       "a": "në korsinë në kahun e lëvizjes",
       "b": "në korsinë për kahun e kundërt të lëvizjes",
       "c": "në vendin e shënuar të parkimit"
+    },
+    "text_tr": "Resimde gösterilen durumda 1 numaralı araç:",
+    "options_tr": {
+      "a": "hareket yönündeki şeritte",
+      "b": "karşı hareket yönüne ait şeritte",
+      "c": "işaretli park yerinde"
     },
     "kind": "situacija",
     "subOf": 242
@@ -8845,6 +10253,12 @@
       "b": "të ndalura ose të parkuara rregullisht",
       "c": "të ndalura rregullisht"
     },
+    "text_tr": "Resimde gösterilen durumda taşıt yolunun sağ kenarındaki araçlar:",
+    "options_tr": {
+      "a": "kurallara aykırı durdurulmuş veya park edilmiştir",
+      "b": "kurallara uygun durdurulmuş veya park edilmiştir",
+      "c": "kurallara uygun durdurulmuştur"
+    },
     "kind": "situacija"
   },
   {
@@ -8881,6 +10295,12 @@
       "a": "skajin e karrexhatës",
       "b": "vijën ndarëse",
       "c": "vijën anësore"
+    },
+    "text_tr": "Resimdeki gibi bir durumda kesintisiz beyaz boyuna çizgi şunu belirtir:",
+    "options_tr": {
+      "a": "taşıt yolunun kenarını",
+      "b": "ayırma çizgisini",
+      "c": "kenar çizgisini"
     },
     "kind": "situacija",
     "subOf": 244
@@ -8920,6 +10340,12 @@
       "b": "kthehet rregullisht majtas",
       "c": "bën kthim gjysmërrethor jo rregullisht"
     },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı binek araç:",
+    "options_tr": {
+      "a": "kurallara uygun şekilde U dönüşü yapıyor",
+      "b": "kurallara uygun şekilde sola dönüyor",
+      "c": "kurallara aykırı şekilde U dönüşü yapıyor"
+    },
     "kind": "situacija"
   },
   {
@@ -8956,6 +10382,12 @@
       "a": "në breza të karrexhatës",
       "b": "në korsi",
       "c": "në dy karrexhata"
+    },
+    "text_tr": "Kesintisiz boyuna çizgi taşıt yolunu şunlara ayırır:",
+    "options_tr": {
+      "a": "taşıt yolu bölümlerine",
+      "b": "trafik şeritlerine",
+      "c": "iki taşıt yoluna"
     },
     "kind": "situacija",
     "subOf": 246
@@ -8995,6 +10427,12 @@
       "b": "lëviz rregullisht",
       "c": "lëviz jo rregullisht nëpër vendkalimin për këmbësorë"
     },
+    "text_tr": "Resimde gösterilen durumda bisikletli:",
+    "options_tr": {
+      "a": "kurallara aykırı ilerliyor, çünkü bisikleti yanında yürütmelidir",
+      "b": "kurallara uygun ilerliyor",
+      "c": "yaya geçidinde kurallara aykırı ilerliyor"
+    },
     "kind": "situacija"
   },
   {
@@ -9031,6 +10469,12 @@
       "a": "shtigjet për biçikleta",
       "b": "korsitë për biçikleta",
       "c": "shtigjet për vrapim të këmbësorëve"
+    },
+    "text_tr": "Resimde gösterilen durumda yaya geçidinin üzerindeki geniş kırmızı boyuna çizgiler şunu belirtir:",
+    "options_tr": {
+      "a": "bisiklet yollarını",
+      "b": "bisiklet şeritlerini",
+      "c": "yayaların koşu yollarını"
     },
     "kind": "situacija",
     "subOf": 248
@@ -9070,6 +10514,12 @@
       "b": "do ta ngadalësoj lëvizjen e automjetit dhe do t'u lëshoj rrugë këmbësorëve",
       "c": "do ta shpejtoj lëvizjen e automjetit që të kaloj para këmbësorëve"
     },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "yayalara yol vermeden devam ederim",
+      "b": "aracı yavaşlatıp yayalara yol veririm",
+      "c": "yayaların önünden geçmek için aracı hızlandırırım"
+    },
     "kind": "situacija"
   },
   {
@@ -9106,6 +10556,12 @@
       "a": "ta kalojnë karrexhatën rrugës më të shkurtër",
       "b": "ta kalojnë karrexhatën aty ku ka më së paku pjesëmarrës në komunikacion",
       "c": "ta kalojnë karrexhatën sa më ngadalë"
+    },
+    "text_tr": "Resimde gösterilen durumda yayalar taşıt yolunu geçerken şunu yapmak zorundadır:",
+    "options_tr": {
+      "a": "taşıt yolunu en kısa yoldan geçmek",
+      "b": "taşıt yolunu en az trafik katılımcısının olduğu yerden geçmek",
+      "c": "taşıt yolunu olabildiğince yavaş geçmek"
     },
     "kind": "situacija",
     "subOf": 250
@@ -9145,6 +10601,12 @@
       "b": "i parkuar jo rregullisht",
       "c": "i ndalur ose i parkuar jo rregullisht"
     },
+    "text_tr": "Resimde gösterilen durumda 2 numaralı polis aracı:",
+    "options_tr": {
+      "a": "kurallara uygun durdurulmuş veya park edilmiştir",
+      "b": "kurallara aykırı park edilmiştir",
+      "c": "kurallara aykırı durdurulmuş veya park edilmiştir"
+    },
     "kind": "situacija"
   },
   {
@@ -9181,6 +10643,12 @@
       "a": "nuk guxoj të ndalem ose të parkohem pas automjetit 2",
       "b": "guxoj të ndalem ose të parkohem pas automjetit 2",
       "c": "guxoj të parkohem pranë automjetit 2"
+    },
+    "text_tr": "Resimde gösterilen durumda:",
+    "options_tr": {
+      "a": "2 numaralı aracın arkasında duramam veya park edemem",
+      "b": "2 numaralı aracın arkasında durabilirim veya park edebilirim",
+      "c": "2 numaralı aracın yanına park edebilirim"
     },
     "kind": "situacija",
     "subOf": 252
@@ -9220,6 +10688,12 @@
       "b": "nuk guxon të ndalet ose të parkohet",
       "c": "nuk guxon të parkohet, por guxon të ndalet"
     },
+    "text_tr": "Resimdeki gibi bir durumda 1 numaralı aracın sürücüsü:",
+    "options_tr": {
+      "a": "durabilir veya park edebilir",
+      "b": "duramaz veya park edemez",
+      "c": "park edemez, ama durabilir"
+    },
     "kind": "situacija"
   },
   {
@@ -9256,6 +10730,12 @@
       "a": "guxon të ndalet",
       "b": "guxon të ndalet ose të parkohet",
       "c": "nuk guxon të ndalet ose të parkohet"
+    },
+    "text_tr": "İşaretli bir yaya geçidinin beş metreden daha yakın önünde veya arkasında sürücü aracıyla:",
+    "options_tr": {
+      "a": "durabilir",
+      "b": "durabilir veya park edebilir",
+      "c": "duramaz veya park edemez"
     },
     "kind": "situacija",
     "subOf": 254
@@ -9295,6 +10775,12 @@
       "b": "shteg për çiklistë",
       "c": "çiklistë në rrugë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bisiklet geçidi",
+      "b": "bisiklet yolu",
+      "c": "yolda bisikletliler"
+    },
     "kind": "znak"
   },
   {
@@ -9331,6 +10817,12 @@
       "a": "ndalim ndaljeje",
       "b": "ndalim ndaljeje dhe parkimi",
       "c": "ndalim parkimi"
+    },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "durma yasağı",
+      "b": "durma ve park etme yasağı",
+      "c": "park etme yasağı"
     },
     "kind": "situacija"
   },
@@ -9369,6 +10861,12 @@
       "b": "rrugë me komunikacion njëkahësh",
       "c": "kah i lejuar"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "mecburi yön",
+      "b": "tek yönlü yol",
+      "c": "izin verilen yön"
+    },
     "kind": "znak"
   },
   {
@@ -9405,6 +10903,12 @@
       "a": "ndalim komunikacioni për automjetet masa e përgjithshme e të cilave nuk e kalon masën e caktuar në shenjë",
       "b": "ndalim komunikacioni për automjetet aftësia mbajtëse e të cilave e kalon masën e caktuar në shenjë",
       "c": "ndalim komunikacioni për automjetet masa e përgjithshme e të cilave e kalon masën e caktuar në shenjë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "toplam kütlesi levhada belirtilen kütleyi aşmayan araçlara giriş yasağı",
+      "b": "taşıma kapasitesi levhada belirtilen kütleyi aşan araçlara giriş yasağı",
+      "c": "toplam kütlesi levhada belirtilen kütleyi aşan araçlara giriş yasağı"
     },
     "kind": "znak"
   },
@@ -9443,6 +10947,12 @@
       "b": "kthim të detyrueshëm majtas në kohën e shënuar",
       "c": "kthim të detyrueshëm majtas në periudhën prej orës 8 deri në orën 18"
     },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "belirtilen saatlerde mecburi yön",
+      "b": "belirtilen saatlerde mecburi sola dönüş",
+      "c": "saat 8'den 18'e kadar mecburi sola dönüş"
+    },
     "kind": "situacija"
   },
   {
@@ -9479,6 +10989,12 @@
       "a": "korsi për biçikleta",
       "b": "shteg për biçikleta",
       "c": "korsi për lëvizjen e çiklistëve"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bisiklet şeridi",
+      "b": "bisiklet yolu",
+      "c": "bisikletlilerin hareketine ayrılmış şerit"
     },
     "kind": "znak"
   },
@@ -9517,6 +11033,12 @@
       "b": "automjete të ndalura në rrugë",
       "c": "kolonë automjetesh të ndalura"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "araçların durma yasağı",
+      "b": "yolda durmuş araçlar",
+      "c": "duran araç kolonu"
+    },
     "kind": "znak"
   },
   {
@@ -9553,6 +11075,12 @@
       "a": "kryqi i Shën Andreas me një binar e gjysmë",
       "b": "kryqi i Shën Andreas me dy ose më shumë binarë",
       "c": "binari i Andreas me një ose më shumë binarë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bir buçuk hatlı Andreas haçı",
+      "b": "iki veya daha fazla hatlı Andreas haçı",
+      "c": "bir veya daha fazla hatlı Andreas hattı"
     },
     "kind": "znak"
   },
@@ -9591,6 +11119,12 @@
       "b": "rrezik në rrugë",
       "c": "rrezik nga rrëshqitja e gurëve në gjatësi prej 300 m"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "tehlikeli yol kesimi",
+      "b": "yolda tehlike",
+      "c": "300 m boyunca taş düşme tehlikesi"
+    },
     "kind": "znak"
   },
   {
@@ -9627,6 +11161,12 @@
       "a": "përparësi kalimi ndaj automjeteve nga kahu i kundërt",
       "b": "automjetet nga kahu i kundërt kanë përparësi kalimi",
       "c": "përparësi kalimi e automjeteve që lëvizin tatëpjetë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "karşı yönden gelen araçlara göre geçiş üstünlüğü",
+      "b": "karşı yönden gelen araçların geçiş üstünlüğü var",
+      "c": "yokuş aşağı giden araçların geçiş üstünlüğü"
     },
     "kind": "znak"
   },
@@ -9665,6 +11205,12 @@
       "b": "autostradë",
       "c": "rrugë ndërkombëtare"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "otoyolda köprüye yaklaşma",
+      "b": "otoyol",
+      "c": "uluslararası yol"
+    },
     "kind": "znak"
   },
   {
@@ -9701,6 +11247,12 @@
       "a": "pistë aeroplanësh",
       "b": "afërsi e pistës së aeroplanëve",
       "c": "afërsi e aeroportit"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "uçak pisti",
+      "b": "uçak pistine yakınlık",
+      "c": "havalimanına yakınlık"
     },
     "kind": "znak"
   },
@@ -9739,6 +11291,12 @@
       "b": "rreshtim i automjeteve me emrat e vendbanimeve",
       "c": "tabelë drejtuese"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "ön yön levhası",
+      "b": "yerleşim yeri adlarıyla şerit seçimi",
+      "c": "yönlendirme levhası"
+    },
     "kind": "znak"
   },
   {
@@ -9775,6 +11333,12 @@
       "a": "ndalim komunikacioni në të dy kahet",
       "b": "ndalim komunikacioni në një kah",
       "c": "komunikacion i lejuar në të dy kahet"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "her iki yönde trafik yasağı",
+      "b": "bir yönde trafik yasağı (girişi olmayan yol)",
+      "c": "her iki yönde trafik serbest"
     },
     "kind": "znak"
   },
@@ -9813,6 +11377,12 @@
       "b": "shteg për biçikleta",
       "c": "çiklistë në rrugë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bisikletlere giriş yasağı",
+      "b": "bisiklet yolu",
+      "c": "yolda bisikletliler"
+    },
     "kind": "znak"
   },
   {
@@ -9849,6 +11419,12 @@
       "a": "urë e lëvizshme",
       "b": "dëmtim në karrexhatë",
       "c": "ngjitje e rrezikshme"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "hareketli köprü",
+      "b": "taşıt yolunda hasar",
+      "c": "tehlikeli yokuş"
     },
     "kind": "znak"
   },
@@ -9887,6 +11463,12 @@
       "b": "afrimi te kalimi i rrugës mbi hekurudhë pa bariera ose gjysmëbariera",
       "c": "afrimi te hekurudha e tramvajit"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bariyerli veya yarım bariyerli hemzemin geçit",
+      "b": "bariyersiz veya yarım bariyersiz hemzemin geçide yaklaşma",
+      "c": "tramvay hattına yaklaşma"
+    },
     "kind": "znak"
   },
   {
@@ -9923,6 +11505,12 @@
       "a": "shpejtësia më e madhe e lejuar",
       "b": "shpejtësi e detyrueshme",
       "c": "shpejtësi që rekomandohet"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "izin verilen azami hız",
+      "b": "mecburi hız",
+      "c": "tavsiye edilen hız"
     },
     "kind": "znak"
   },
@@ -9961,6 +11549,12 @@
       "b": "kryqëzim me rrugë me përparësi kalimi",
       "c": "kryqëzim me rrugë anësore"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "mecburi duruş",
+      "b": "ana yolla kesişme",
+      "c": "tali yolla kesişme"
+    },
     "kind": "znak"
   },
   {
@@ -9997,6 +11591,12 @@
       "a": "afrimi te semafori",
       "b": "afrimi te hekurudha",
       "c": "afrimi te punimet në rrugë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "trafik ışığına yaklaşma",
+      "b": "demiryoluna yaklaşma",
+      "c": "yol çalışmasına yaklaşma"
     },
     "kind": "znak"
   },
@@ -10035,6 +11635,12 @@
       "b": "shënimin e kahut të detyrueshëm të lëvizjes së automjeteve",
       "c": "shënimin e destinimit të korsive"
     },
+    "text_tr": "Resimde taşıt yolundaki oklar şuna yarar:",
+    "options_tr": {
+      "a": "araçları yönlendirmeye",
+      "b": "araçların mecburi hareket yönünü işaretlemeye",
+      "c": "trafik şeritlerinin kullanım amacını işaretlemeye"
+    },
     "kind": "situacija"
   },
   {
@@ -10071,6 +11677,12 @@
       "a": "skajin e karrexhatës",
       "b": "shtegun për biçikleta",
       "c": "ndalimin e kalimit mbi atë vijë ose të lëvizjes nëpër to"
+    },
+    "text_tr": "Çift düz çizgi şunu belirtir:",
+    "options_tr": {
+      "a": "taşıt yolunun kenarını",
+      "b": "bisiklet yolunu",
+      "c": "bu çizginin geçilmesi veya üzerinde gidilmesi yasağını"
     },
     "kind": "situacija"
   },
@@ -10109,6 +11721,12 @@
       "b": "ndalim tejkalimi për të gjitha automjetet me motor",
       "c": "ndalim tejkalimi për të gjitha automjetet me motor, përveç mopedëve"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "sepetsiz motosiklet ve moped dışındaki tüm motorlu araçlar için sollama yasağı",
+      "b": "tüm motorlu araçlar için sollama yasağı",
+      "c": "moped dışındaki tüm motorlu araçlar için sollama yasağı"
+    },
     "kind": "znak"
   },
   {
@@ -10145,6 +11763,12 @@
       "a": "kalim i rrugës mbi hekurudhë pa bariera",
       "b": "kalim i rrugës mbi hekurudhë me bariera ose gjysmëbariera",
       "c": "kalim i rrugës mbi hekurudhë pa bariera ose gjysmëbariera"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bariyersiz hemzemin geçit",
+      "b": "bariyerli veya yarım bariyerli hemzemin geçit",
+      "c": "bariyersiz veya yarım bariyersiz hemzemin geçit"
     },
     "kind": "znak"
   },
@@ -10183,6 +11807,12 @@
       "b": "kafshë në rrugë",
       "c": "kafshë të egra në rrugë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yolda hayvan geçidi",
+      "b": "yolda hayvanlar",
+      "c": "yolda yabani hayvanlar"
+    },
     "kind": "znak"
   },
   {
@@ -10219,6 +11849,12 @@
       "a": "ndalim komunikacioni për automjetet që nuk e tejkalojnë ngarkesën e caktuar boshtore",
       "b": "ndalim komunikacioni për automjetet që e tejkalojnë ngarkesën e caktuar boshtore",
       "c": "ndalim komunikacioni për automjetet që nuk e tejkalojnë aftësinë mbajtëse të shënuar në shenjë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "belirli dingil yükünü aşmayan araçlara giriş yasağı",
+      "b": "belirli dingil yükünü aşan araçlara giriş yasağı",
+      "c": "levhada belirtilen taşıma kapasitesini aşmayan araçlara giriş yasağı"
     },
     "kind": "znak"
   },
@@ -10257,6 +11893,12 @@
       "b": "kah i detyrueshëm për llojet e automjeteve që nuk janë dhënë në shenjë",
       "c": "rrugë rrethuese për lloje të caktuara automjetesh"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yük araçları ve römorklar için tek yönlü yol",
+      "b": "levhada gösterilmeyen araç türleri için mecburi yön",
+      "c": "belirli araç türleri için çevre yolu"
+    },
     "kind": "znak"
   },
   {
@@ -10293,6 +11935,12 @@
       "a": "qarkullim rrethor",
       "b": "kryqëzim me qarkullim rrethor",
       "c": "kryqëzim rrethor"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "dönel trafik akışı",
+      "b": "dönel kavşak",
+      "c": "dairesel kavşak"
     },
     "kind": "znak"
   },
@@ -10331,6 +11979,12 @@
       "b": "afërsinë e pjesës së rrugës në të cilën bora pastrohet me makina",
       "c": "afërsinë e pjesës së rrugës në të cilën ka ngricë dhe akull"
     },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "karlı bir yol kesiminin yakınlığını",
+      "b": "karın makineyle temizlendiği bir yol kesiminin yakınlığını",
+      "c": "gizli buzlanma ve buz olan bir yol kesiminin yakınlığını"
+    },
     "kind": "situacija"
   },
   {
@@ -10367,6 +12021,12 @@
       "a": "përparësi kalimi ndaj automjeteve nga kahu i kundërt",
       "b": "përparësi kalimi për automjetet nga kahu i kundërt",
       "c": "komunikacion në të dy kahet"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "karşı yönden gelen araçlara göre geçiş üstünlüğü",
+      "b": "karşı yönden gelen araçlar için geçiş üstünlüğü",
+      "c": "çift yönlü trafik"
     },
     "kind": "znak"
   },
@@ -10405,6 +12065,12 @@
       "b": "pushim i kufizimit të shpejtësisë",
       "c": "pushim i shpejtësisë që rekomandohet"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "asgari hız sınırının sonu",
+      "b": "hız sınırının sonu",
+      "c": "tavsiye edilen hızın sonu"
+    },
     "kind": "znak"
   },
   {
@@ -10441,6 +12107,12 @@
       "a": "ndalim komunikacioni për automjetet me motor gjerësia e të cilave e kalon gjerësinë e shënuar në shenjë",
       "b": "ndalim komunikacioni për automjetet transportuese gjatësia e të cilave e kalon gjatësinë e shënuar në shenjë",
       "c": "ndalim komunikacioni për automjetet transportuese gjerësia e të cilave e kalon gjerësinë e shënuar në shenjë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "genişliği levhada belirtilen genişliği aşan motorlu araçlara giriş yasağı",
+      "b": "uzunluğu levhada belirtilen uzunluğu aşan yük araçlarına giriş yasağı",
+      "c": "genişliği levhada belirtilen genişliği aşan yük araçlarına giriş yasağı"
     },
     "kind": "situacija"
   },
@@ -10479,6 +12151,12 @@
       "b": "ndalim komunikacioni për këmbësorë",
       "c": "ndalim i lëvizjes së këmbësorëve nëpër karrexhatë jashtë vendbanimit"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yayaların taşıt yolunda yürüme yasağı",
+      "b": "yayalara giriş yasağı",
+      "c": "yayaların yerleşim yeri dışında taşıt yolunda yürüme yasağı"
+    },
     "kind": "znak"
   },
   {
@@ -10515,6 +12193,12 @@
       "a": "tabelë drejtuese",
       "b": "parashenjë për rrugë rrethuese",
       "c": "tabelë drejtuese për rrugë rrethuese"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yönlendirme levhası",
+      "b": "dolambaçlı yol (sapma) ön işareti",
+      "c": "dolambaçlı yol (sapma) yön levhası"
     },
     "kind": "znak"
   },
@@ -10553,6 +12237,12 @@
       "b": "emri i vendbanimit",
       "c": "emri i nyjës rrugore"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "otoyoldan çıkış yön levhası",
+      "b": "yerleşim yerinin adı",
+      "c": "kavşak (kavşak düğümü) adı"
+    },
     "kind": "znak"
   },
   {
@@ -10589,6 +12279,12 @@
       "a": "tabelë drejtuese për vendbanim",
       "b": "tabelë drejtuese në formë shigjete",
       "c": "tabelë orientuese për vendbanim"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yerleşim yeri yön levhası",
+      "b": "ok biçimli yön levhası",
+      "c": "yerleşim yeri için yönlendirme levhası"
     },
     "kind": "znak"
   },
@@ -10627,6 +12323,12 @@
       "b": "sipërfaqe në karrexhatë ku dy korsi bashkohen në një",
       "c": "lëshim i rrugës në mënyrë të alternuar"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "aynı hareket yönünde iki şeritten bire geçiş",
+      "b": "taşıt yolunda iki şeridin bire birleştiği alan",
+      "c": "araçların sırayla (fermuar usulü) geçişi"
+    },
     "kind": "znak"
   },
   {
@@ -10663,6 +12365,12 @@
       "a": "afrimi te kalimi i rrugës mbi hekurudhë me bariera ose gjysmëbariera",
       "b": "afrimi te kalimi i rrugës mbi hekurudhë",
       "c": "afrimi te kalimi mbi hekurudhë pa bariera ose gjysmëbariera"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bariyerli veya yarım bariyerli hemzemin geçide yaklaşma",
+      "b": "hemzemin geçide yaklaşma",
+      "c": "bariyersiz veya yarım bariyersiz hemzemin geçide yaklaşma"
     },
     "kind": "znak"
   },
@@ -10701,6 +12409,12 @@
       "b": "karrexhatë e rrëshqitshme",
       "c": "akull dhe ngricë në rrugë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "aracın devrilmesi veya kayması",
+      "b": "kaygan taşıt yolu",
+      "c": "yolda buz ve gizli buzlanma"
+    },
     "kind": "znak"
   },
   {
@@ -10737,6 +12451,12 @@
       "a": "kufizim i shpejtësisë së lëvizjes",
       "b": "shpejtësi që rekomandohet",
       "c": "shpejtësia më e vogël e lejuar"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "hız sınırlaması",
+      "b": "tavsiye edilen hız",
+      "c": "izin verilen asgari hız"
     },
     "kind": "znak"
   },
@@ -10775,6 +12495,12 @@
       "b": "hedhje gurësh në rrugë",
       "c": "rrëshqitje dheu në rrugë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "taş düşmesi",
+      "b": "yolda taş sıçraması",
+      "c": "yolda heyelan"
+    },
     "kind": "znak"
   },
   {
@@ -10811,6 +12537,12 @@
       "a": "shkallë lëvizëse në largësi prej 10 metrash",
       "b": "vendkalim nëntokësor ose mbitokësor për këmbësorë në largësi prej 10 metrash",
       "c": "hyrje në garazh në largësi deri në 10 metra"
+    },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "10 metre mesafede yürüyen merdiven",
+      "b": "10 metre mesafede yaya alt geçidi veya üst geçidi",
+      "c": "10 metreye kadar mesafede garaj girişi"
     },
     "kind": "situacija"
   },
@@ -10849,6 +12581,12 @@
       "b": "rrezik nga bora",
       "c": "rrezik nga ngrica"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "kar zinciri kullanma zorunluluğu",
+      "b": "kar tehlikesi",
+      "c": "gizli buzlanma tehlikesi"
+    },
     "kind": "znak"
   },
   {
@@ -10885,6 +12623,12 @@
       "a": "ndalim komunikacioni për të gjitha automjetet me motor përveç motoçikletave",
       "b": "ndalim komunikacioni për motoçikleta",
       "c": "ndalim komunikacioni për biçikleta me motor"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "motosikletler dışındaki tüm motorlu araçlara giriş yasağı",
+      "b": "motosikletlere giriş yasağı",
+      "c": "motorlu bisikletlere giriş yasağı"
     },
     "kind": "znak"
   },
@@ -10923,6 +12667,12 @@
       "b": "distanca më e vogël ndërmjet automjeteve",
       "c": "distanca e nevojshme që automjetet të kalojnë përballë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "park etmiş araçlar arasındaki en az mesafe",
+      "b": "araçlar arasındaki en az mesafe",
+      "c": "araçların karşılaşması için gereken mesafe"
+    },
     "kind": "znak"
   },
   {
@@ -10959,6 +12709,12 @@
       "a": "parashenjë për rrugë rrethuese nga ana e djathtë",
       "b": "parashenjë drejtuese për dalje deri te një vend i caktuar",
       "c": "tabelë drejtuese për rreshtim për lëvizje deri te një vend i caktuar"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "sağdan dolanma ön işareti",
+      "b": "belirli bir yere çıkış için ön yön levhası",
+      "c": "belirli bir yere gitmek için şerit seçimi yön levhası"
     },
     "kind": "znak"
   },
@@ -10997,6 +12753,12 @@
       "b": "rregullim i komunikacionit në kryqëzim me ndihmën e flamurit",
       "c": "përfundim i rrugës për shkak të kryerjes së punimeve"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "çalışma yapılan yerde trafiğin doğrudan yönetilmesine ilişkin ön işaret",
+      "b": "kavşakta trafiğin bayrakla yönetilmesi",
+      "c": "çalışma yapıldığı için yolun sonu"
+    },
     "kind": "znak"
   },
   {
@@ -11033,6 +12795,12 @@
       "a": "ndalim ndaljeje",
       "b": "ndalim komunikacioni në një kah",
       "c": "ndalim parkimi"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "durma yasağı",
+      "b": "bir yönde trafik yasağı",
+      "c": "park etme yasağı"
     },
     "kind": "znak"
   },
@@ -11071,6 +12839,12 @@
       "b": "kthesë e dyfishtë ose disa kthesa të njëpasnjëshme prej të cilave e para është djathtas",
       "c": "kthesë e dyfishtë e rrezikshme ose disa kthesa të njëpasnjëshme prej të cilave e para është majtas"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "ilki sağa olan çift tehlikeli viraj veya birbirini izleyen birkaç viraj",
+      "b": "ilki sağa olan çift viraj veya birbirini izleyen birkaç viraj",
+      "c": "ilki sola olan çift tehlikeli viraj veya birbirini izleyen birkaç viraj"
+    },
     "kind": "znak"
   },
   {
@@ -11107,6 +12881,12 @@
       "a": "shpejtësinë më të vogël të lejuar në gjatësi rruge prej 2000 metrash",
       "b": "shpejtësinë që rekomandohet në gjatësi rruge prej 2000 metrash",
       "c": "shpejtësinë më të vogël të lejuar pas kalimit të 2000 metrave"
+    },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "2000 metrelik yol boyunca izin verilen asgari hız",
+      "b": "2000 metrelik yol boyunca tavsiye edilen hız",
+      "c": "2000 metre katedildikten sonra izin verilen asgari hız"
     },
     "kind": "situacija"
   },
@@ -11145,6 +12925,12 @@
       "b": "gjysmërimorkio në kohën e shënuar",
       "c": "rimorkio në kohën e shënuar"
     },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu çeken motorlu araçlara giriş yasağını belirtir:",
+    "options_tr": {
+      "a": "belirtilen saatlerde hafif römork",
+      "b": "belirtilen saatlerde yarı römork",
+      "c": "belirtilen saatlerde römork"
+    },
     "kind": "situacija"
   },
   {
@@ -11181,6 +12967,12 @@
       "a": "dalje e detyrueshme në rast rreziku",
       "b": "largësia e daljes në rast rreziku",
       "c": "tabelë drejtuese për këmbësorë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "zorunlu acil çıkış",
+      "b": "acil çıkışa olan uzaklık",
+      "c": "yaya yön levhası"
     },
     "kind": "znak"
   },
@@ -11219,6 +13011,12 @@
       "b": "përfundimi i korsisë për automjete të ngadalta",
       "c": "përfundimi i korsisë për ndalje të detyruar"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yavaş araçlar şeridinin başlangıcı",
+      "b": "yavaş araçlar şeridinin sonu",
+      "c": "zorunlu duruş (emniyet) şeridinin sonu"
+    },
     "kind": "znak"
   },
   {
@@ -11255,6 +13053,12 @@
       "a": "ndalim komunikacioni për automjetet me mbulesë",
       "b": "afrimi te karrexhata e pabarabartë",
       "c": "ndalim komunikacioni për cisterna"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "brandalı araçlara giriş yasağı",
+      "b": "bozuk taşıt yoluna yaklaşma",
+      "c": "tanker araçlara giriş yasağı"
     },
     "kind": "znak"
   },
@@ -11293,6 +13097,12 @@
       "b": "kufizim i shpejtësisë",
       "c": "shpejtësi që rekomandohet"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "izin verilen asgari hız",
+      "b": "hız sınırlaması",
+      "c": "tavsiye edilen hız"
+    },
     "kind": "znak"
   },
   {
@@ -11329,6 +13139,12 @@
       "a": "fëmijë në rrugë",
       "b": "zonë e shkollës",
       "c": "shteg për këmbësorë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yolda çocuklar",
+      "b": "okul bölgesi",
+      "c": "yaya yolu"
     },
     "kind": "znak"
   },
@@ -11367,6 +13183,12 @@
       "b": "bankinë e pastabilizuar",
       "c": "karrexhatë e dëmtuar"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "taş sıçraması",
+      "b": "sağlam olmayan banket",
+      "c": "bozuk taşıt yolu"
+    },
     "kind": "znak"
   },
   {
@@ -11403,6 +13225,12 @@
       "a": "ndalim komunikacioni për automjetet e shënuara me simbol",
       "b": "ndalim komunikacioni për automjetet transportuese",
       "c": "komunikacion i lejuar për automjetet e shënuara me simbol"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "sembolle gösterilen araçlara giriş yasağı",
+      "b": "yük araçlarına giriş yasağı",
+      "c": "sembolle gösterilen araçlara giriş serbest"
     },
     "kind": "znak"
   },
@@ -11441,6 +13269,12 @@
       "b": "afrimi te rruga me përparësi kalimi",
       "c": "shtrirja e rrugës me përparësi kalimi"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "ana yolların kesişmesi",
+      "b": "ana yola yaklaşma",
+      "c": "ana yolun yönü"
+    },
     "kind": "znak"
   },
   {
@@ -11477,6 +13311,12 @@
       "a": "kryqëzim me qarkullim rrethor",
       "b": "qarkullim rrethor",
       "c": "kthim gjysmërrethor i detyrueshëm"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "dönel kavşak",
+      "b": "dönel trafik akışı",
+      "c": "mecburi U dönüşü"
     },
     "kind": "znak"
   },
@@ -11515,6 +13355,12 @@
       "b": "ndalje e detyrueshme",
       "c": "kryqëzim me rrugë me përparësi kalimi"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "eşit önemdeki yolların kesişmesi",
+      "b": "mecburi duruş",
+      "c": "ana yolla kesişme"
+    },
     "kind": "znak"
   },
   {
@@ -11551,6 +13397,12 @@
       "a": "zonë e komunikacionit të ngadalësuar",
       "b": "fëmijë në rrugë",
       "c": "shesh lojërash për fëmijë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yavaş trafik bölgesi",
+      "b": "yolda çocuklar",
+      "c": "çocuk oyun alanı"
     },
     "kind": "znak"
   },
@@ -11589,6 +13441,12 @@
       "b": "kryqëzim me qarkullim rrethor",
       "c": "qarkullim rrethor"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "dairesel kavşak",
+      "b": "dönel kavşak",
+      "c": "dönel trafik akışı"
+    },
     "kind": "znak"
   },
   {
@@ -11625,6 +13483,12 @@
       "a": "punime në rrugë",
       "b": "largim i rrëshqitjes së gurëve në rrugë",
       "c": "punime për heqjen e gurëve në rrugë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yol çalışması",
+      "b": "yoldaki heyelan döküntüsünün temizlenmesi",
+      "c": "yoldan taş temizleme çalışması"
     },
     "kind": "znak"
   },
@@ -11663,6 +13527,12 @@
       "b": "parkim në trotuar pingul me boshtin gjatësor të karrexhatës",
       "c": "parkim në trotuar paralel me boshtin gjatësor të karrexhatës"
     },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "kaldırımda taşıt yolu eksenine enine park",
+      "b": "kaldırımda taşıt yolunun boyuna eksenine dik park",
+      "c": "kaldırımda taşıt yolunun boyuna eksenine paralel park"
+    },
     "kind": "situacija"
   },
   {
@@ -11699,6 +13569,12 @@
       "a": "numri i rrugës ndërkombëtare",
       "b": "numri i rrugës rajonale",
       "c": "numri i rrugës magjistrale"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "uluslararası yol numarası",
+      "b": "bölgesel yol numarası",
+      "c": "ana yol numarası"
     },
     "kind": "znak"
   },
@@ -11737,6 +13613,12 @@
       "b": "parashenjë drejtuese për dalje",
       "c": "tabelë drejtuese"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yerleşim yerleri yön levhası",
+      "b": "çıkış için ön yön levhası",
+      "c": "yönlendirme levhası"
+    },
     "kind": "znak"
   },
   {
@@ -11773,6 +13655,12 @@
       "a": "shteg i përbashkët për çiklistë dhe këmbësorë",
       "b": "shtigje të ndara për çiklistë dhe këmbësorë",
       "c": "ndalim komunikacioni për çiklistë dhe këmbësorë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bisikletliler ve yayalar için ortak yol",
+      "b": "bisikletliler ve yayalar için ayrılmış yollar",
+      "c": "bisikletlilere ve yayalara giriş yasağı"
     },
     "kind": "znak"
   },
@@ -11811,6 +13699,12 @@
       "b": "ndalim kalimi pa u ndalur në pikën doganore",
       "c": "ndalim kalimi për shkak të pagesës së rrugës"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "durmadan geçme yasağı",
+      "b": "gümrük kapısında durmadan geçme yasağı",
+      "c": "geçiş ücreti nedeniyle geçme yasağı"
+    },
     "kind": "znak"
   },
   {
@@ -11847,6 +13741,12 @@
       "a": "kryqëzim me rrugë me përparësi kalimi",
       "b": "kryqëzim me rrugë anësore",
       "c": "ndalje e detyrueshme"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "ana yolla kesişme",
+      "b": "tali yolla kesişme",
+      "c": "mecburi duruş"
     },
     "kind": "znak"
   },
@@ -11885,6 +13785,12 @@
       "b": "kalim i rrugës mbi hekurudhë pa bariera ose gjysmëbariera",
       "c": "afrimi te kalimi i rrugës mbi hekurudhë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "bariyerli veya yarım bariyerli hemzemin geçit",
+      "b": "bariyersiz veya yarım bariyersiz hemzemin geçit",
+      "c": "hemzemin geçide yaklaşma"
+    },
     "kind": "znak"
   },
   {
@@ -11921,6 +13827,12 @@
       "a": "tabelë paradrejtuese për kthim majtas",
       "b": "tabelë drejtuese",
       "c": "tabelë treguese e drejtimit"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "sola dönüş için ön yön levhası",
+      "b": "yönlendirme levhası",
+      "c": "yön levhası"
     },
     "kind": "znak"
   },
@@ -11959,6 +13871,12 @@
       "b": "ndalim tejkalimi për të gjitha automjetet me motor",
       "c": "ndalim i tejkalimit të automjeteve transportuese"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yük araçları için sollama yasağı",
+      "b": "tüm motorlu araçlar için sollama yasağı",
+      "c": "yük araçlarını sollama yasağı"
+    },
     "kind": "znak"
   },
   {
@@ -11995,6 +13913,12 @@
       "a": "kthim i lejuar majtas në kohën e shënuar",
       "b": "ndalim i kthimit gjysmërrethor në kohën e shënuar",
       "c": "ndalim i kthimit majtas në kohën e shënuar"
+    },
+    "text_tr": "Resimde gösterilen trafik levhaları şunu belirtir:",
+    "options_tr": {
+      "a": "belirtilen saatlerde sola dönüş serbest",
+      "b": "belirtilen saatlerde U dönüşü yasağı",
+      "c": "belirtilen saatlerde sola dönüş yasağı"
     },
     "kind": "situacija"
   },
@@ -12033,6 +13957,12 @@
       "b": "rrugë me komunikacion njëkahësh me kthim të detyrueshëm djathtas e pastaj majtas",
       "c": "kahu i lëvizjes së automjetit që synon të kthehet majtas në kryqëzimin ku kthimi majtas është i ndaluar"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "önce sağa, sonra sola mecburi yön ve kavşaktan çıkış",
+      "b": "önce sağa sonra sola mecburi dönüşlü tek yönlü yol",
+      "c": "sola dönüşün yasak olduğu kavşakta sola dönmek isteyen aracın hareket yönü"
+    },
     "kind": "znak"
   },
   {
@@ -12069,6 +13999,12 @@
       "a": "rrugë me përparësi kalimi",
       "b": "përfundim i rrugës me përparësi kalimi",
       "c": "shtrirja e rrugës me përparësi kalimi"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "ana yol",
+      "b": "ana yolun sonu",
+      "c": "ana yolun yönü"
     },
     "kind": "znak"
   },
@@ -12107,6 +14043,12 @@
       "b": "hekurudhë tramvaji",
       "c": "automjet mbi shina në rrugë"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "troleybüs hattı",
+      "b": "tramvay hattı",
+      "c": "yolda raylı araç"
+    },
     "kind": "znak"
   },
   {
@@ -12143,6 +14085,12 @@
       "a": "ngushtim i rrugës nga ana e djathtë",
       "b": "ngushtim i rrugës nga ana e majtë",
       "c": "brezi i djathtë i karrexhatës nuk është i drejtë"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "sağdan daralan yol",
+      "b": "soldan daralan yol",
+      "c": "sağ taşıt yolu bölümü düz değil"
     },
     "kind": "znak"
   },
@@ -12181,6 +14129,12 @@
       "b": "ndalim komunikacioni për automjetet që e tejkalojnë një gjatësi të caktuar",
       "c": "ndalim komunikacioni për automjetet transportuese me motor gjatësia e të cilave është deri në 10 metra"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "belirli uzunluğu aşmayan araçlara giriş yasağı",
+      "b": "belirli uzunluğu aşan araçlara giriş yasağı",
+      "c": "uzunluğu 10 metreye kadar olan yük motorlu araçlarına giriş yasağı"
+    },
     "kind": "znak"
   },
   {
@@ -12217,6 +14171,12 @@
       "a": "zonë qytetëse",
       "b": "zonë industriale",
       "c": "vendbanim"
+    },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "kentsel alan",
+      "b": "sanayi bölgesi",
+      "c": "yerleşim yeri"
     },
     "kind": "znak"
   },
@@ -12255,6 +14215,12 @@
       "b": "mënyra e shfrytëzimit të korsisë",
       "c": "lëvizje e detyrueshme e automjeteve transportuese"
     },
+    "text_tr": "Resimde gösterilen trafik levhası:",
+    "options_tr": {
+      "a": "yük araçlarının hareketine ayrılmış şerit",
+      "b": "trafik şeridinin kullanım şekli",
+      "c": "yük araçlarının mecburi hareketi"
+    },
     "kind": "znak"
   },
   {
@@ -12292,6 +14258,12 @@
       "b": "pushim i afërt i ndalimit të lëvizjes për shoferin dhe përgatitje për lëvizje të lirë me automjet në drejtim të shigjetave",
       "c": "lëvizje e lejuar për shoferin në drejtim të shigjetave"
     },
+    "text_tr": "Resimdeki gibi trafik ışıkları şu anlama gelir:",
+    "options_tr": {
+      "a": "okların yönünde araçların izin verilen hareketinin yakında sona ermesi",
+      "b": "sürücüye hareket yasağının yakında sona ermesi ve okların yönünde serbest harekete hazırlık",
+      "c": "sürücüye okların yönünde hareket serbest"
+    },
     "kind": "semafor"
   },
   {
@@ -12328,6 +14300,12 @@
       "a": "të zeza në sfond të gjelbër",
       "b": "me ngjyrë të gjelbër në sfond të zi",
       "c": "me ngjyrë të kuqe në sfond të gjelbër"
+    },
+    "text_tr": "İzin verilen hareket yönünü gösteren oklar:",
+    "options_tr": {
+      "a": "yeşil zemin üzerinde siyahtır",
+      "b": "siyah zemin üzerinde yeşildir",
+      "c": "yeşil zemin üzerinde kırmızıdır"
     },
     "kind": "semafor",
     "subOf": 337
@@ -12367,6 +14345,12 @@
       "b": "të gjithë pjesëmarrësit në komunikacion ta shpejtojnë lëvizjen",
       "c": "shoferin në kahun e të cilit jepet ky sinjal ta shpejtojë lëvizjen e automjetit"
     },
+    "text_tr": "Resimdeki gibi yatay olarak öne uzatılmış kol şunu zorunlu kılar:",
+    "options_tr": {
+      "a": "işaretin verildiği yöndeki sürücünün aracı durdurmasını",
+      "b": "tüm trafik katılımcılarının hızlanmasını",
+      "c": "bu işaretin verildiği yöndeki sürücünün aracı hızlandırmasını"
+    },
     "kind": "policajac"
   },
   {
@@ -12403,6 +14387,12 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet në kryqëzim dhe në rrugë të hapur",
       "c": "mund të jepet vetëm në rrugë të hapur"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "yalnızca kavşakta verilebilir",
+      "b": "kavşakta ve açık yolda verilebilir",
+      "c": "yalnızca açık yolda verilebilir"
     },
     "kind": "policajac",
     "subOf": 339
@@ -12442,6 +14432,12 @@
       "b": "komunikacioni është i ndaluar për shkak të derdhjes nga rruga hyrëse",
       "c": "komunikacioni është i ndaluar për shkak të përfundimit të korsisë"
     },
+    "text_tr": "Resimde, taşıt yolunun şu bölümünü belirten bir sınır levhası (graničnik) gösteriliyor:",
+    "options_tr": {
+      "a": "yoldaki bir engel nedeniyle trafiğin yasak olduğu",
+      "b": "bağlantı yolundan katılım nedeniyle trafiğin yasak olduğu",
+      "c": "şeridin sona ermesi nedeniyle trafiğin yasak olduğu"
+    },
     "kind": "kosnik"
   },
   {
@@ -12478,6 +14474,12 @@
       "a": "semafor për rregullimin e anashkalimit nga ana e djathtë",
       "b": "semafor për rregullimin e kalimit të automjeteve mbi shina",
       "c": "semafor për rregullimin e ndryshimit të korsisë"
+    },
+    "text_tr": "Resimde gösterilen:",
+    "options_tr": {
+      "a": "sağdan dolanmayı düzenleyen trafik ışığı",
+      "b": "raylı araçların geçişini düzenleyen trafik ışığı",
+      "c": "şerit değiştirmeyi düzenleyen trafik ışığı"
     },
     "kind": "situacija"
   },
@@ -12516,6 +14518,12 @@
       "b": "duhet të ndalet",
       "c": "duhet ta shpejtojë lëvizjen"
     },
+    "text_tr": "Polis memuru resimdeki gibi elini hafifçe sallarsa, bu, işaretin verildiği yöndeki sürücünün:",
+    "options_tr": {
+      "a": "hızını azaltması gerektiği anlamına gelir",
+      "b": "durması gerektiği anlamına gelir",
+      "c": "hızlanması gerektiği anlamına gelir"
+    },
     "kind": "policajac"
   },
   {
@@ -12552,6 +14560,12 @@
       "a": "vetëm jashtë vendbanimit për shoferin në kahun e të cilit jepet ai sinjal",
       "b": "për shoferin në kahun e të cilit jepet ai sinjal",
       "c": "vetëm në vendbanim për shoferin në kahun e të cilit jepet ai sinjal"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret şu kişi için bağlayıcıdır:",
+    "options_tr": {
+      "a": "yalnızca yerleşim yeri dışında, işaretin verildiği yöndeki sürücü için",
+      "b": "işaretin verildiği yöndeki sürücü için",
+      "c": "yalnızca yerleşim yerinde, işaretin verildiği yöndeki sürücü için"
     },
     "kind": "policajac",
     "subOf": 343
@@ -12591,6 +14605,12 @@
       "b": "se shoferi duhet ta ndalë automjetin",
       "c": "se shoferit i lejohet lëvizja"
     },
+    "text_tr": "Yeşil ışıklı ok şunu belirtir:",
+    "options_tr": {
+      "a": "sürücünün aracın yüksekliğine dikkat etmesi gerektiğini",
+      "b": "sürücünün aracı durdurması gerektiğini",
+      "c": "sürücünün hareket etmesine izin verildiğini"
+    },
     "kind": "semafor"
   },
   {
@@ -12627,6 +14647,12 @@
       "a": "komunikacionit në rampat e pagesës",
       "b": "komunikacionit në korsitë me kah të ndryshueshëm lëvizjeje",
       "c": "kalimit nëpër tunel"
+    },
+    "text_tr": "Resimdeki gibi ışıklı işaretler şunu düzenlemek için kullanılır:",
+    "options_tr": {
+      "a": "gişe bariyerlerindeki trafiği",
+      "b": "yönü değişken şeritlerdeki trafiği",
+      "c": "tünelden geçişi"
     },
     "kind": "semafor"
   },
@@ -12665,6 +14691,12 @@
       "b": "kalim i lirë për automjetet që vijnë anash",
       "c": "ndalje e detyrueshme për të gjithë pjesëmarrësit"
     },
+    "text_tr": "Polis memurunun dikey olarak kaldırılmış kolu ve resimdeki el pozisyonu şu anlama gelir:",
+    "options_tr": {
+      "a": "tüm araçlar için serbest geçiş",
+      "b": "yandan gelen araçlar için serbest geçiş",
+      "c": "tüm katılımcılar için mecburi duruş"
+    },
     "kind": "policajac"
   },
   {
@@ -12701,6 +14733,12 @@
       "a": "mund të jepet nga automjeti",
       "b": "mund të jepet nga automjeti, por vetëm me tabelën STOP",
       "c": "nuk mund të jepet nga automjeti"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "araçtan verilebilir",
+      "b": "araçtan verilebilir, ama yalnızca DUR levhasıyla",
+      "c": "araçtan verilemez"
     },
     "kind": "policajac",
     "subOf": 347
@@ -12740,6 +14778,12 @@
       "b": "ndalim i lëvizjes për automjetin mbi shina",
       "c": "ndalim i lëvizjes së të gjithë pjesëmarrësve në komunikacion"
     },
+    "text_tr": "Resimde verilen ışıklı trafik işareti, iki yuvarlak kırmızı ışık dönüşümlü yandığında şu anlama gelir:",
+    "options_tr": {
+      "a": "hemzemin geçit yerinde sürücüye hareket yasağı",
+      "b": "raylı aracın hareket yasağı",
+      "c": "tüm trafik katılımcılarının hareket yasağı"
+    },
     "kind": "znak"
   },
   {
@@ -12776,6 +14820,12 @@
       "a": "biçikletave vetëm nëpër korsitë për biçikleta",
       "b": "biçikletave dhe mopedëve vetëm nëpër shtigjet për biçikleta",
       "c": "biçikletave dhe mopedëve nëpër korsitë për biçikleta"
+    },
+    "text_tr": "Resimde şunların hareketini düzenleyen trafik ışığı gösteriliyor:",
+    "options_tr": {
+      "a": "yalnızca bisiklet şeritlerindeki bisikletlerin",
+      "b": "yalnızca bisiklet yollarındaki bisiklet ve mopedlerin",
+      "c": "bisiklet şeritlerindeki bisiklet ve mopedlerin"
     },
     "kind": "semafor"
   },
@@ -12814,6 +14864,12 @@
       "b": "në kryqëzim dhe në rrugë të hapur",
       "c": "në rrugë të hapur, por vetëm me tabelën stop"
     },
+    "text_tr": "Resimdeki gibi polis memurunun verdiği işaret şurada verilebilir:",
+    "options_tr": {
+      "a": "kavşakta, ama yalnızca dur levhasıyla",
+      "b": "kavşakta ve açık yolda",
+      "c": "açık yolda, ama yalnızca dur levhasıyla"
+    },
     "kind": "policajac"
   },
   {
@@ -12850,6 +14906,12 @@
       "a": "që vijnë nga anët e tij anësore kanë të drejtë përparësie",
       "b": "të cilëve u është kthyer shpina kanë të drejtë përparësie",
       "c": "ta vazhdojnë lëvizjen në pajtim me kuptimin e dritave në semafor"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaretin anlamı:",
+    "options_tr": {
+      "a": "yanlarından gelen araçların sürücülerinin geçiş hakkı vardır",
+      "b": "sırtını döndüğü araçların sürücülerinin geçiş hakkı vardır",
+      "c": "araçların sürücüleri trafik ışıklarının anlamına göre devam eder"
     },
     "kind": "policajac",
     "subOf": 351
@@ -12889,6 +14951,12 @@
       "b": "shënon vendin e hapjes së korsisë",
       "c": "shënon vendin e mbylljes së korsisë"
     },
+    "text_tr": "Resimde gösterilen şerit yön levhası (kosnik):",
+    "options_tr": {
+      "a": "yavaş araçlar şeridini belirtir",
+      "b": "şeridin açıldığı yeri belirtir",
+      "c": "şeridin kapandığı yeri belirtir"
+    },
     "kind": "kosnik"
   },
   {
@@ -12925,6 +14993,12 @@
       "a": "pajisje për rregullimin e lëvizjes së tramvajëve",
       "b": "pajisje për rregullimin e lëvizjes së këmbësorëve",
       "c": "pajisje për shënimin e drejtimit të binarit"
+    },
+    "text_tr": "Resimde gösterilen:",
+    "options_tr": {
+      "a": "tramvay hareketini düzenleyen cihaz",
+      "b": "yaya hareketini düzenleyen cihaz",
+      "c": "ray hattının yönünü gösteren cihaz"
     },
     "kind": "situacija"
   },
@@ -12963,6 +15037,12 @@
       "b": "shoferi i atij automjeti ta ngadalësojë automjetin dhe ta vazhdojë lëvizjen majtas",
       "c": "shoferi i atij automjeti është i detyruar ta ndalë automjetin"
     },
+    "text_tr": "Resimdeki gibi polis memurunun kolunu yatay olarak yana açması şu anlama gelir:",
+    "options_tr": {
+      "a": "o aracın sürücüsü hızını azaltmalıdır",
+      "b": "o aracın sürücüsü aracı yavaşlatıp sola doğru devam etmelidir",
+      "c": "o aracın sürücüsü aracı durdurmak zorundadır"
+    },
     "kind": "policajac"
   },
   {
@@ -12999,6 +15079,12 @@
       "a": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur",
       "b": "mund të jepet vetëm në vendbanim",
       "c": "mund të jepet vetëm në rrugë të hapur"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "hem kavşakta hem açık yolda verilebilir",
+      "b": "yalnızca yerleşim yerinde verilebilir",
+      "c": "yalnızca açık yolda verilebilir"
     },
     "kind": "policajac",
     "subOf": 355
@@ -13038,6 +15124,12 @@
       "b": "pengesë vertikale",
       "c": "barierë orientuese"
     },
+    "text_tr": "Resimde verilen geçici trafik işaretlemesi şunu belirtir:",
+    "options_tr": {
+      "a": "yolda engel",
+      "b": "düşey engel",
+      "c": "yönlendirme bariyeri"
+    },
     "kind": "situacija"
   },
   {
@@ -13074,6 +15166,12 @@
       "a": "natën dhe në kushte të dukshmërisë së kufizuar",
       "b": "nëse ka fluks të madh të komunikacionit",
       "c": "vetëm në rrugë lokale"
+    },
+    "text_tr": "Gösterilen ışıklı işaretleme şu durumda açık olmalıdır:",
+    "options_tr": {
+      "a": "gece ve görüşün azaldığı koşullarda",
+      "b": "trafik akışı yoğunsa",
+      "c": "yalnızca yerel yollarda"
     },
     "kind": "situacija",
     "subOf": 357
@@ -13113,6 +15211,12 @@
       "b": "që vijnë nga ana e tij anësore kanë të drejtë kalimi",
       "c": "se të gjithë shoferët janë të detyruar ta ndalin automjetin"
     },
+    "text_tr": "Polis memurunun kolları yatay olarak yana açık gövde pozisyonunun anlamı:",
+    "options_tr": {
+      "a": "sırtını döndüğü araçların geçiş hakkı vardır",
+      "b": "yanından gelen araçların geçiş hakkı vardır",
+      "c": "tüm sürücüler aracı durdurmak zorundadır"
+    },
     "kind": "policajac"
   },
   {
@@ -13149,6 +15253,12 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur",
       "c": "mund të jepet vetëm në rrugë të hapur"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "yalnızca kavşakta verilebilir",
+      "b": "hem kavşakta hem açık yolda verilebilir",
+      "c": "yalnızca açık yolda verilebilir"
     },
     "kind": "policajac",
     "subOf": 359
@@ -13188,6 +15298,12 @@
       "b": "vijën kufitare të karrexhatës",
       "c": "vijën e ndaljes"
     },
+    "text_tr": "Taşıt yolundaki enine işaretler şunu temsil eder:",
+    "options_tr": {
+      "a": "taşıt yolunun enine kenarını",
+      "b": "taşıt yolunun sınır çizgisini",
+      "c": "dur çizgisini"
+    },
     "kind": "situacija"
   },
   {
@@ -13224,6 +15340,12 @@
       "a": "tramvajëve dhe autobusëve",
       "b": "vetëm autobusëve",
       "c": "vetëm tramvajëve"
+    },
+    "text_tr": "Şehir içi toplu taşıma araçları raylı araçların da gittiği aynı şeridi kullanıyorsa, resimde gösterilen cihaz şunların hareketini düzenlemek için kullanılır:",
+    "options_tr": {
+      "a": "tramvay ve otobüslerin",
+      "b": "yalnızca otobüslerin",
+      "c": "yalnızca tramvayların"
     },
     "kind": "situacija"
   },
@@ -13262,6 +15384,12 @@
       "b": "kalim të lirë vetëm për automjetet që vijnë anash",
       "c": "ndalim kalimi vetëm për automjetet që vijnë anash"
     },
+    "text_tr": "Resimdeki gibi kolu kaldırma ve düdük kullanma birleşik işareti şunu ifade eder:",
+    "options_tr": {
+      "a": "tüm sürücüler için geçiş yasağı",
+      "b": "yalnızca yandan gelen araçlar için serbest geçiş",
+      "c": "yalnızca yandan gelen araçlar için geçiş yasağı"
+    },
     "kind": "policajac"
   },
   {
@@ -13299,6 +15427,12 @@
       "b": "mund të jepet me bilbil në kryqëzim",
       "c": "nuk mund të jepet me tabelën STOP"
     },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "kavşakta düdükle verilemez",
+      "b": "kavşakta düdükle verilebilir",
+      "c": "DUR levhasıyla verilemez"
+    },
     "kind": "policajac",
     "subOf": 363
   },
@@ -13333,6 +15467,12 @@
     },
     "text_sq": "Në figurë janë paraqitur dritat në semafor, kurse radha e ndezjes së dritave është:",
     "options_sq": {
+      "a": "1-2-3-4",
+      "b": "1-4-3-2",
+      "c": "1-3-2-4"
+    },
+    "text_tr": "Resimde trafik ışıkları gösteriliyor; ışıkların yanma sırası:",
+    "options_tr": {
       "a": "1-2-3-4",
       "b": "1-4-3-2",
       "c": "1-3-2-4"
@@ -13374,6 +15514,12 @@
       "b": "drita e gjelbër nuk mund të jetë vezulluese",
       "c": "drita e gjelbër mund të jetë e ndezur bashkë me dritën e kuqe"
     },
+    "text_tr": "Üç renkli ışıkları olan trafik ışıklarında:",
+    "options_tr": {
+      "a": "yeşil ışık yanıp sönebilir",
+      "b": "yeşil ışık yanıp sönemez",
+      "c": "yeşil ışık kırmızı ışıkla birlikte yanabilir"
+    },
     "kind": "semafor",
     "subOf": 365
   },
@@ -13412,6 +15558,12 @@
       "b": "se të gjithë shoferët janë të detyruar ta ndalin automjetin",
       "c": "që vijnë nga ana e tij anësore kanë të drejtë kalimi"
     },
+    "text_tr": "Resimdeki gibi polis memurunun gövde pozisyonunun anlamı:",
+    "options_tr": {
+      "a": "yanından gelen araçların geçiş hakkı yoktur",
+      "b": "tüm sürücüler aracı durdurmak zorundadır",
+      "c": "yanından gelen araçların geçiş hakkı vardır"
+    },
     "kind": "policajac"
   },
   {
@@ -13448,6 +15600,12 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet vetëm në rrugë të hapur",
       "c": "mund të jepet edhe në kryqëzim edhe në rrugë të hapur"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "yalnızca kavşakta verilebilir",
+      "b": "yalnızca açık yolda verilebilir",
+      "c": "hem kavşakta hem açık yolda verilebilir"
     },
     "kind": "policajac",
     "subOf": 367
@@ -13487,6 +15645,12 @@
       "b": "barierë ballore",
       "c": "pengesë në rrugë"
     },
+    "text_tr": "Resimde gösterilen:",
+    "options_tr": {
+      "a": "yönlendirme bariyeri",
+      "b": "ön (cephe) bariyeri",
+      "c": "yolda engel"
+    },
     "kind": "situacija"
   },
   {
@@ -13523,6 +15687,12 @@
       "a": "semafor për rregullimin e lëvizjes së të gjithë pjesëmarrësve",
       "b": "semafor për rregullimin e lëvizjes së çiklistëve",
       "c": "semafor për rregullimin e lëvizjes së këmbësorëve"
+    },
+    "text_tr": "Resimde gösterilen:",
+    "options_tr": {
+      "a": "tüm katılımcıların hareketini düzenleyen trafik ışığı",
+      "b": "bisikletlilerin hareketini düzenleyen trafik ışığı",
+      "c": "yayaların hareketini düzenleyen trafik ışığı"
     },
     "kind": "situacija"
   },
@@ -13561,6 +15731,12 @@
       "b": "ndalim kalimi për të gjithë shoferët në komunikacion",
       "c": "se automjetet që vijnë anash kanë kalim të lirë"
     },
+    "text_tr": "Resimdeki gibi dikey olarak kaldırılmış kol şu anlama gelir:",
+    "options_tr": {
+      "a": "polis memurunun verdiği talimatların geçerliliğinin sona ermesi",
+      "b": "trafikteki tüm sürücüler için geçiş yasağı",
+      "c": "yandan gelen araçların serbest geçişi olduğu"
+    },
     "kind": "policajac"
   },
   {
@@ -13597,6 +15773,12 @@
       "a": "mund të jepet vetëm në kryqëzim",
       "b": "mund të jepet vetëm në rrugë të hapur",
       "c": "nuk mund të jepet në kryqëzim"
+    },
+    "text_tr": "Resimdeki polis memurunun verdiği işaret:",
+    "options_tr": {
+      "a": "yalnızca kavşakta verilebilir",
+      "b": "yalnızca açık yolda verilebilir",
+      "c": "kavşakta verilemez"
     },
     "kind": "policajac",
     "subOf": 371
@@ -13636,6 +15818,12 @@
       "b": "automjetit transportues vetëm për ngarkim ose shkarkim",
       "c": "automjetit të transportit publik të udhëtarëve"
     },
+    "text_tr": "Resimdeki gibi işaretli durakta şu sürücü durabilir:",
+    "options_tr": {
+      "a": "yolcuların binmesi veya inmesi için binek araç sürücüsü",
+      "b": "yalnızca yükleme veya boşaltma için yük aracı sürücüsü",
+      "c": "toplu yolcu taşıma aracı sürücüsü"
+    },
     "kind": "situacija"
   },
   {
@@ -13672,6 +15860,12 @@
       "a": "se shoferi mund të lëvizë në drejtim të shigjetës duke mos i penguar pjesëmarrësit e tjerë në komunikacion",
       "b": "se shoferi mund të lëvizë në drejtim të shigjetës pa u kushtuar vëmendje pjesëmarrësve të tjerë në komunikacion",
       "c": "lëvizja e ndaluar në kahun e shënuar me shigjetën plotësuese të gjelbër"
+    },
+    "text_tr": "Resimdeki gibi trafik ışıklarında yanan ışıklar şu anlama gelir:",
+    "options_tr": {
+      "a": "sürücü diğer trafik katılımcılarını engellememek kaydıyla ok yönünde hareket edebilir",
+      "b": "sürücü diğer trafik katılımcılarına dikkat etmeden ok yönünde hareket edebilir",
+      "c": "ek yeşil okla gösterilen yönde hareket yasaktır"
     },
     "kind": "semafor"
   },
@@ -13710,6 +15904,12 @@
       "b": "në kundërshtim me rregullat",
       "c": "në pajtim me rregullat vetëm në vendbanim"
     },
+    "text_tr": "Polis memuru resimdeki gibi araçtan işaret veriyor:",
+    "options_tr": {
+      "a": "mevzuata uygun şekilde",
+      "b": "mevzuata aykırı şekilde",
+      "c": "yalnızca yerleşim yerinde mevzuata uygun şekilde"
+    },
     "kind": "policajac"
   },
   {
@@ -13746,6 +15946,12 @@
       "a": "ta shpejtojë lëvizjen e automjetit",
       "b": "të kryejë tejkalim nga ana e djathtë",
       "c": "ta ndalë automjetin"
+    },
+    "text_tr": "Resimde gösterilen durumda polis memurunun sürücüye verdiği işaret şu anlama gelir:",
+    "options_tr": {
+      "a": "aracı hızlandırması",
+      "b": "sağdan sollama yapması",
+      "c": "aracı durdurması"
     },
     "kind": "policajac",
     "subOf": 375
@@ -13784,6 +15990,12 @@
       "b": "automjeti udhëtar deri në 750 kg masë vetjake",
       "c": "rimorkioja e lehtë"
     },
+    "text_tr": "Servis freni (işletme freni) bulunması zorunlu olmayan:",
+    "options_tr": {
+      "a": "üç dingilli yarı römork",
+      "b": "boş ağırlığı 750 kg'a kadar olan binek araç",
+      "c": "hafif römork"
+    },
     "kind": "opste"
   },
   {
@@ -13819,6 +16031,12 @@
       "a": "me ngjyrë të kuqe",
       "b": "me ngjyrë të verdhë",
       "c": "me ngjyrë të bardhë"
+    },
+    "text_tr": "Aracın arkasındaki sis lambası:",
+    "options_tr": {
+      "a": "kırmızı renklidir",
+      "b": "sarı renklidir",
+      "c": "beyaz renklidir"
     },
     "kind": "opste"
   },
@@ -13856,6 +16074,12 @@
       "b": "vetëm rrotave të përparme",
       "c": "të gjitha rrotave"
     },
+    "text_tr": "Motorlu araçtaki çamurluklar şunların genişliğini örtecek şekilde takılmalıdır:",
+    "options_tr": {
+      "a": "yalnızca arka tekerleklerin",
+      "b": "yalnızca ön tekerleklerin",
+      "c": "tüm tekerleklerin"
+    },
     "kind": "opste"
   },
   {
@@ -13891,6 +16115,12 @@
       "a": "në pozicion të shtrirë",
       "b": "në anën anësore",
       "c": "në pozicion gjysmë të ulur"
+    },
+    "text_tr": "Trafik kazasında göğüs kafesinden yaralanan kişiyi şu pozisyona yerleştiririz:",
+    "options_tr": {
+      "a": "yatar pozisyona",
+      "b": "yan tarafına",
+      "c": "yarı oturur pozisyona"
     },
     "kind": "opste",
     "firstAid": true
@@ -13929,6 +16159,12 @@
       "b": "veprimi i nxehtësisë",
       "c": "shpimi nga një objekt i fortë"
     },
+    "text_tr": "Yanık denince şundan kaynaklanan yaralanmayı anlarız:",
+    "options_tr": {
+      "a": "deri iltihabından",
+      "b": "ısının etkisinden",
+      "c": "sert bir cismin batmasından"
+    },
     "kind": "opste",
     "firstAid": true
   },
@@ -13966,6 +16202,12 @@
       "b": "drita e pozicionit",
       "c": "xhami i përparmë"
     },
+    "text_tr": "Araçta normal görüşü sağlayan donanım olarak şu kabul edilir:",
+    "options_tr": {
+      "a": "sis lambası",
+      "b": "konum (pozisyon) lambası",
+      "c": "ön cam"
+    },
     "kind": "opste"
   },
   {
@@ -14001,6 +16243,12 @@
       "a": "me ngjyrë të verdhë",
       "b": "me ngjyrë të bardhë",
       "c": "me ngjyrë të kuqe"
+    },
+    "text_tr": "Sinyal lambasının ışığı şu renkte olmalıdır:",
+    "options_tr": {
+      "a": "sarı",
+      "b": "beyaz",
+      "c": "kırmızı"
     },
     "kind": "opste"
   },
@@ -14038,6 +16286,12 @@
       "b": "transmetimin e fuqisë",
       "c": "frenimin"
     },
+    "text_tr": "Kilitlenme önleyici fren sistemi (ABS) şu sistemin parçasıdır:",
+    "options_tr": {
+      "a": "taşıt yolunu aydınlatma",
+      "b": "güç aktarma",
+      "c": "frenleme"
+    },
     "kind": "opste"
   },
   {
@@ -14073,6 +16327,12 @@
       "a": "vendosjen e garzës sterile në pjesën e lënduar të trupit",
       "b": "vendosjen e pjesës së lënduar të trupit në gjendje qetësie",
       "c": "kthimin e të lënduarit në gjendje të vetëdijes"
+    },
+    "text_tr": "Hareketsiz hale getirme (immobilizasyon) denince şunu anlarız:",
+    "options_tr": {
+      "a": "yaralı vücut bölümüne steril gazlı bez koymak",
+      "b": "yaralı vücut bölümünü hareketsiz hale getirmek",
+      "c": "yaralıyı yeniden bilincine kavuşturmak"
     },
     "kind": "opste",
     "firstAid": true
@@ -14111,6 +16371,12 @@
       "b": "60 deri në 80 rrahje në një minutë",
       "c": "mbi 100 rrahje në një minutë"
     },
+    "text_tr": "Normal, sağlıklı bir kişinin kalp atış sayısı ne kadardır:",
+    "options_tr": {
+      "a": "bir saniyede 60 atışa kadar",
+      "b": "bir dakikada 60 ila 80 atış",
+      "c": "bir dakikada 100 atıştan fazla"
+    },
     "kind": "opste",
     "firstAid": true
   },
@@ -14148,6 +16414,12 @@
       "b": "30 gradë",
       "c": "40 gradë"
     },
+    "text_tr": "Motorlu aracın direksiyon simidinin boşluğu şu değerden büyük olamaz:",
+    "options_tr": {
+      "a": "20 derece",
+      "b": "30 derece",
+      "c": "40 derece"
+    },
     "kind": "opste"
   },
   {
@@ -14183,6 +16455,12 @@
       "a": "freni i punës, ai ndihmës dhe ai i parkimit",
       "b": "freni i punës dhe ai ndihmës dhe ngadalësuesi i qëndrueshëm",
       "c": "freni i punës dhe ai i parkimit dhe ngadalësuesi i qëndrueshëm"
+    },
+    "text_tr": "Motorlu araca seri olarak şunlar takılır:",
+    "options_tr": {
+      "a": "servis, yardımcı ve park freni",
+      "b": "servis ve yardımcı fren ile sürekli yavaşlatıcı (retarder)",
+      "c": "servis ve park freni ile sürekli yavaşlatıcı (retarder)"
     },
     "kind": "opste"
   },
@@ -14220,6 +16498,12 @@
       "b": "10 metra",
       "c": "12 metra"
     },
+    "text_tr": "Otobüs dışındaki motorlu aracın izin verilen azami uzunluğu:",
+    "options_tr": {
+      "a": "8 metre",
+      "b": "10 metre",
+      "c": "12 metre"
+    },
     "kind": "opste"
   },
   {
@@ -14256,6 +16540,12 @@
       "b": "të konsumohen pije energjike dhe të vazhdohet vozitja",
       "c": "të bëhet pauzë për pushim"
     },
+    "text_tr": "Sürüş sırasında yorgunluk ortaya çıktığında şunu yapmak gerekir:",
+    "options_tr": {
+      "a": "yavaşlayarak sürüşe devam etmek",
+      "b": "enerji içeceği içip sürüşe devam etmek",
+      "c": "dinlenmek için mola vermek"
+    },
     "kind": "opste"
   },
   {
@@ -14291,6 +16581,12 @@
       "a": "rrjedhja e gjakut nga enët e gjakut",
       "b": "thyerje e mbyllur e kërcirit",
       "c": "mpiksja e gjakut në enën e gjakut"
+    },
+    "text_tr": "Yaralıda kanama:",
+    "options_tr": {
+      "a": "kanın kan damarlarından dışarı akmasıdır",
+      "b": "baldırın kapalı kırığıdır",
+      "c": "kanın kan damarında pıhtılaşmasıdır"
     },
     "kind": "opste",
     "firstAid": true
@@ -14329,6 +16625,12 @@
       "b": "dy kuti të ndihmës së parë",
       "c": "një kuti e ndihmës së parë"
     },
+    "text_tr": "Öngörülen donanımdan otobüste şunlar bulunmalıdır:",
+    "options_tr": {
+      "a": "üç ilk yardım çantası",
+      "b": "iki ilk yardım çantası",
+      "c": "bir ilk yardım çantası"
+    },
     "kind": "opste"
   },
   {
@@ -14364,6 +16666,12 @@
       "a": "dritat e frenimit",
       "b": "treguesit e drejtimit",
       "c": "katadiopterët"
+    },
+    "text_tr": "Işıklı işaret verme donanımı sayılmayanlar:",
+    "options_tr": {
+      "a": "fren (stop) lambaları",
+      "b": "sinyal lambaları",
+      "c": "reflektörler (kedi gözleri)"
     },
     "kind": "opste"
   },
@@ -14401,6 +16709,12 @@
       "b": "për ta penguar lëvizjen e automjetit të ndalur",
       "c": "për ta penguar lëvizjen e automjetit vetëm derisa është i parkuar në garazh"
     },
+    "text_tr": "Sürücü araçtaki park frenini şunun için kullanır:",
+    "options_tr": {
+      "a": "ani bir engelle karşılaştığında aracı durdurmak için",
+      "b": "durmuş aracın hareket etmesini önlemek için",
+      "c": "aracın yalnızca garajda park halindeyken hareket etmesini önlemek için"
+    },
     "kind": "opste"
   },
   {
@@ -14436,6 +16750,12 @@
       "a": "rrjedhja e ngadaltë e gjakut dhe mpiksja në pjesën e lënduar të trupit",
       "b": "gjaku në rrjedha të fuqishme",
       "c": "ënjtja dhe mavijosjet e pjesës së lënduar të trupit"
+    },
+    "text_tr": "Yaralıdaki atardamar kanaması şundan anlaşılır:",
+    "options_tr": {
+      "a": "yaralı bölgede kanın yavaşça akması ve pıhtılaşmasından",
+      "b": "kanın fışkırarak akmasından",
+      "c": "yaralı bölgedeki şişlik ve morluklardan"
     },
     "kind": "opste",
     "firstAid": true
@@ -14474,6 +16794,12 @@
       "b": "të vendoset në pozicion të ulur",
       "c": "të vendoset anash në pozicion të shtrirë"
     },
+    "text_tr": "Trafik kazasında kişinin başı ve boynu yaralanmışsa:",
+    "options_tr": {
+      "a": "yaralı mümkün olduğunca az hareket ettirilmelidir",
+      "b": "oturur pozisyona getirilmelidir",
+      "c": "yan tarafına yatar pozisyona getirilmelidir"
+    },
     "kind": "opste",
     "firstAid": true
   },
@@ -14511,6 +16837,12 @@
       "b": "boshti kardanik",
       "c": "gjysmëboshti"
     },
+    "text_tr": "İçten yanmalı motorun bir parçası:",
+    "options_tr": {
+      "a": "krank mili",
+      "b": "kardan mili",
+      "c": "aks mili"
+    },
     "kind": "opste"
   },
   {
@@ -14546,6 +16878,12 @@
       "a": "e zvogëlon këndin e rrotullimit të rrotave drejtuese",
       "b": "e zvogëlon forcën e përgjithshme të veprimit të shoferit gjatë rrotullimit të timonit dhe siguron lehtësi në drejtim",
       "c": "e zvogëlon diametrin e trajektores gjatë kthimit të automjetit"
+    },
+    "text_tr": "Hidrolik direksiyon (servo direksiyon):",
+    "options_tr": {
+      "a": "yönlendirilen tekerleklerin dönüş açısını azaltır",
+      "b": "sürücünün direksiyon simidini çevirirken uyguladığı toplam kuvveti azaltır ve kolay yönlendirme sağlar",
+      "c": "aracın dönüşteki yörünge çapını azaltır"
     },
     "kind": "opste"
   },
@@ -14583,6 +16921,12 @@
       "b": "me ngjyrë të verdhë",
       "c": "me ngjyrë të kuqe"
     },
+    "text_tr": "Ana farların ışığı şu renkte olmalıdır:",
+    "options_tr": {
+      "a": "beyaz",
+      "b": "sarı",
+      "c": "kırmızı"
+    },
     "kind": "opste"
   },
   {
@@ -14619,6 +16963,12 @@
       "b": "guxon të konsumojë qetësues",
       "c": "nuk guxon të konsumojë pije alkoolike"
     },
+    "text_tr": "Trafik kazasından hemen sonra kazaya karışan kişi:",
+    "options_tr": {
+      "a": "alkollü içki içebilir",
+      "b": "sakinleşmek için yatıştırıcı alabilir",
+      "c": "alkollü içki içemez"
+    },
     "kind": "opste"
   },
   {
@@ -14654,6 +17004,12 @@
       "a": "të vendoset në pozicion të shtrirë në shpinë",
       "b": "të vendoset në pozicion të shtrirë në bark",
       "c": "të vendoset në pozicion anësor"
+    },
+    "text_tr": "Trafik kazasında yaralanan kişi bilinçsizse:",
+    "options_tr": {
+      "a": "sırtüstü yatar pozisyona getirilmelidir",
+      "b": "yüzüstü yatar pozisyona getirilmelidir",
+      "c": "yan yatış (koma) pozisyonuna getirilmelidir"
     },
     "kind": "opste",
     "firstAid": true
@@ -14692,6 +17048,12 @@
       "b": "rrota rezervë",
       "c": "llambat rezervë"
     },
+    "text_tr": "Motorlu araçların ve römorkların donanımından sayılmayan:",
+    "options_tr": {
+      "a": "yan ayna",
+      "b": "yedek tekerlek",
+      "c": "yedek ampuller"
+    },
     "kind": "opste"
   },
   {
@@ -14727,6 +17089,12 @@
       "a": "me ngjyrë të verdhë",
       "b": "me ngjyrë të kaltër",
       "c": "me ngjyrë të bardhë"
+    },
+    "text_tr": "Gündüz farının ışığı şu renkte olmalıdır:",
+    "options_tr": {
+      "a": "sarı",
+      "b": "mavi",
+      "c": "beyaz"
     },
     "kind": "opste"
   },
@@ -14764,6 +17132,12 @@
       "b": "4 mm",
       "c": "1,6 mm"
     },
+    "text_tr": "Kış kullanımı için lastiğin sırt yüzeyindeki asgari diş derinliği şu olmalıdır:",
+    "options_tr": {
+      "a": "2 mm",
+      "b": "4 mm",
+      "c": "1,6 mm"
+    },
     "kind": "opste"
   },
   {
@@ -14796,6 +17170,12 @@
     },
     "text_sq": "Numri i policisë është:",
     "options_sq": {
+      "a": "124",
+      "b": "112",
+      "c": "122"
+    },
+    "text_tr": "Polisin numarası:",
+    "options_tr": {
       "a": "124",
       "b": "112",
       "c": "122"
@@ -14837,6 +17217,12 @@
       "b": "ujë",
       "c": "garzë sterile"
     },
+    "text_tr": "Yaralı kişinin yarasına ilk olarak şu konur:",
+    "options_tr": {
+      "a": "alkol",
+      "b": "su",
+      "c": "steril gazlı bez"
+    },
     "kind": "opste",
     "firstAid": true
   },
@@ -14874,6 +17260,12 @@
       "b": "larëse xhami",
       "c": "pajisje për ngrohjen e xhamit të përparmë"
     },
+    "text_tr": "Ön cam silecekleri olan araçlarda ayrıca şunlar da bulunmalıdır:",
+    "options_tr": {
+      "a": "cam yıkama süngeri",
+      "b": "ön cam yıkayıcıları",
+      "c": "ön cam ısıtma donanımı"
+    },
     "kind": "opste"
   },
   {
@@ -14909,6 +17301,12 @@
       "a": "e realizuar si asimetrike e majtë",
       "b": "simetrike",
       "c": "e realizuar si asimetrike e djathtë"
+    },
+    "text_tr": "Kısa farın ışık demeti şöyle olmalıdır:",
+    "options_tr": {
+      "a": "sol asimetrik olarak yapılmış",
+      "b": "simetrik",
+      "c": "sağ asimetrik olarak yapılmış"
     },
     "kind": "opste"
   },
@@ -14946,6 +17344,12 @@
       "b": "për nga lartësia",
       "c": "më shumë se 0,1 metër për nga gjatësia"
     },
+    "text_tr": "Egzoz gazlarını ileten ve dışarı atan donanımlar aracın boyutlarını şu bakımdan aşamaz:",
+    "options_tr": {
+      "a": "uzunluk veya genişlik bakımından",
+      "b": "yükseklik bakımından",
+      "c": "uzunlukta 0,1 metreden fazla"
+    },
     "kind": "opste"
   },
   {
@@ -14982,6 +17386,12 @@
       "b": "shenjë e sigurt e vdekjes",
       "c": "shenjë e sigurt e lodhjes"
     },
+    "text_tr": "Ölü lekeleri ve soğumuş vücut:",
+    "options_tr": {
+      "a": "soğuk nedeniyle bilincini kaybeden yaralının halleridir",
+      "b": "kesin ölüm belirtisidir",
+      "c": "kesin yorgunluk belirtisidir"
+    },
     "kind": "opste",
     "firstAid": true
   },
@@ -15015,6 +17425,12 @@
     },
     "text_sq": "Numri i telefonit i shërbimit zjarrfikës është:",
     "options_sq": {
+      "a": "123",
+      "b": "122",
+      "c": "124"
+    },
+    "text_tr": "İtfaiyenin telefon numarası:",
+    "options_tr": {
       "a": "123",
       "b": "122",
       "c": "124"
@@ -15056,6 +17472,12 @@
       "b": "me ngjyrë të kuqe",
       "c": "me ngjyrë të verdhë"
     },
+    "text_tr": "Motorlu araçlarda geri vites lambaları şu renkte olmalıdır:",
+    "options_tr": {
+      "a": "beyaz",
+      "b": "kırmızı",
+      "c": "sarı"
+    },
     "kind": "opste"
   },
   {
@@ -15091,6 +17513,12 @@
       "a": "në të gjitha rrotat",
       "b": "vetëm në rrotat e përparme",
       "c": "vetëm në rrotat e pasme"
+    },
+    "text_tr": "Motorlu araçların servis freni şunlara etki etmelidir:",
+    "options_tr": {
+      "a": "tüm tekerleklere",
+      "b": "yalnızca ön tekerleklere",
+      "c": "yalnızca arka tekerleklere"
     },
     "kind": "opste"
   },
@@ -15128,6 +17556,12 @@
       "b": "automjet transportues",
       "c": "automjet udhëtar"
     },
+    "text_tr": "Sürücü koltuğuna ek olarak en fazla sekiz koltuğu daha olan motorlu araç:",
+    "options_tr": {
+      "a": "otobüstür",
+      "b": "yük aracıdır",
+      "c": "binek araçtır"
+    },
     "kind": "opste"
   },
   {
@@ -15163,6 +17597,12 @@
       "a": "duhet të lahet me ujë",
       "b": "duhet të lahet me alkool",
       "c": "nuk duhet të lahet me lëng"
+    },
+    "text_tr": "Trafik kazasında ilk yardım verirken yaralının yarası:",
+    "options_tr": {
+      "a": "suyla yıkanmalıdır",
+      "b": "alkolle yıkanmalıdır",
+      "c": "herhangi bir sıvıyla yıkanmamalıdır"
     },
     "kind": "opste",
     "firstAid": true
@@ -15201,6 +17641,12 @@
       "b": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,3 g/kg",
       "c": "nëse në organizëm konstatohet përmbajtje alkooli deri në 0,2 g/kg"
     },
+    "text_tr": "Sürücü şu durumda alkolün etkisi altındadır:",
+    "options_tr": {
+      "a": "vücudunda 0,3 g/kg'dan fazla alkol tespit edilirse",
+      "b": "vücudunda 0,3 g/kg'a kadar alkol tespit edilirse",
+      "c": "vücudunda 0,2 g/kg'a kadar alkol tespit edilirse"
+    },
     "kind": "opste"
   },
   {
@@ -15236,6 +17682,12 @@
       "a": "goma",
       "b": "timoni",
       "c": "amortizatori"
+    },
+    "text_tr": "Direksiyon sisteminin bir parçası:",
+    "options_tr": {
+      "a": "lastik",
+      "b": "direksiyon simidi",
+      "c": "amortisör"
     },
     "kind": "opste"
   },
@@ -15273,6 +17725,12 @@
       "b": "drita gabarite",
       "c": "drita për vozitje prapa"
     },
+    "text_tr": "Motorlu araçlarda yol aydınlatma donanımının bir parçası:",
+    "options_tr": {
+      "a": "fren (stop) lambası",
+      "b": "gabari (boyut) lambası",
+      "c": "geri vites lambası"
+    },
     "kind": "opste"
   },
   {
@@ -15308,6 +17766,12 @@
       "a": "kambio",
       "b": "timoni",
       "c": "leva e frenit të parkimit"
+    },
+    "text_tr": "Motorlu araçta güç aktarma sisteminin bir parçası:",
+    "options_tr": {
+      "a": "vites kutusu",
+      "b": "direksiyon simidi",
+      "c": "park freni kolu"
     },
     "kind": "opste"
   },
@@ -15345,6 +17809,12 @@
       "b": "të imobilizohen dy nyjet fqinje",
       "c": "të imobilizohet vetëm nyja që është më afër vendit të lënduar"
     },
+    "text_tr": "Yaralı kişiyi hareketsiz hale getirirken temel kural:",
+    "options_tr": {
+      "a": "yaralının tüm vücudunu hareketsiz hale getirmek",
+      "b": "komşu iki eklemi hareketsiz hale getirmek",
+      "c": "yalnızca yaralı bölgeye en yakın eklemi hareketsiz hale getirmek"
+    },
     "kind": "opste",
     "firstAid": true
   },
@@ -15381,6 +17851,12 @@
       "a": "presion gjaku dukshëm të rritur",
       "b": "puls dukshëm të ngadalësuar",
       "c": "frymëmarrje të shpejtuar dhe të parregullt"
+    },
+    "text_tr": "Çok kan kaybeden yaralı kişide şu görülür:",
+    "options_tr": {
+      "a": "oldukça yükselmiş kan basıncı",
+      "b": "oldukça yavaşlamış nabız",
+      "c": "hızlı ve düzensiz solunum"
     },
     "kind": "opste",
     "firstAid": true
