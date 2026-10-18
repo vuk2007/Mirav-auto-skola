@@ -11,6 +11,7 @@ import { playerControl } from "@/lib/game/ui/draw";
 import { CONTROL_LABEL, taskTextFor, zonesForLevel } from "@/lib/game/ui/labels";
 import { createPlayback, createRunner, type Playback } from "@/lib/game/ui/runner";
 import GameCanvas, { type HudState } from "./GameCanvas";
+import IgraOkvir from "./IgraOkvir";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
 import IndicatorTimeline from "./IndicatorTimeline";
@@ -138,26 +139,8 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
   const title = scenario.title[lang] ?? scenario.title.me ?? "";
   const replaying = playback !== null && !replayDone;
 
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-        >
-          ← {t.gameBack}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          aria-pressed={muted}
-          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
-          className="ml-auto rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
-        >
-          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
-        </button>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+  const oznakaKontrole = (
+    <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
           {control.kind === "officer" ? (
             <span className="flex items-center gap-1.5">
               <span
@@ -193,6 +176,95 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
             t[CONTROL_LABEL[control.kind] ?? "gameSignNone"]
           )}
         </span>
+  );
+
+  // Vožnja (redizajn za telefon): preko cijelog ekrana, dolje samo pedale.
+  // Uvod i rezultat ostaju na stranici — kartica rezultata stoji ispod
+  // platna, da se vidi vozilo kojem je oduzeta prednost.
+  if (phase === "play") {
+    return (
+      <IgraOkvir
+        izlaz={{ label: t.gameBack, onClick: onBack }}
+        naslov={title}
+        podesavanja={
+          <>
+            <p>{zadatak}</p>
+            <button
+              type="button"
+              onClick={() => setMuted((m) => !m)}
+              aria-pressed={muted}
+              className="rounded border border-line bg-panel px-3 py-1 font-semibold"
+            >
+              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
+            </button>
+            <p className="text-xs text-muted">
+              {t.gameKeyHint} {t.gameKeyHintIndicator}
+              {autoput ? ` ${t.gameKeyHintLane}` : ""}
+            </p>
+          </>
+        }
+        kontrole={
+          <PedalControls
+            pedals={pedals}
+            disabled={false}
+            throttleLabel={t.gameThrottle}
+            brakeLabel={t.gameBrake}
+            indicatorLabel={t.gameIndicator}
+            leftLabel={t.gameIndicatorLeft}
+            rightLabel={t.gameIndicatorRight}
+            lanes={autoput ? { leftLabel: t.gameLaneLeft, rightLabel: t.gameLaneRight } : null}
+          />
+        }
+      >
+        <div className="absolute inset-0">
+          <GameCanvas
+            runner={runner}
+            inputRef={pedals.inputRef}
+            running
+            onHud={setHud}
+            onFinish={finish}
+            flagVehicleId={null}
+            officer={scenario.officer ?? null}
+            indicatorZones={zones}
+            level={scenario.difficulty}
+            sound={sound}
+            camera={autoput ? { follow: true, half: tpl.viewHalf } : undefined}
+            label={`${title} — ${zadatak}`}
+            ispuni
+          />
+          <div className="pointer-events-none absolute top-2 left-2 flex max-w-[60%] flex-col items-start gap-2">
+            <div className="flex gap-2">
+              <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
+              <Hud label={t.gameTime} value={`${hud.t.toFixed(1)} s`} />
+            </div>
+            <p className="rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">{zadatak}</p>
+          </div>
+          <div className="pointer-events-none absolute top-2 right-2">{oznakaKontrole}</div>
+        </div>
+      </IgraOkvir>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
+        >
+          ← {t.gameBack}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMuted((m) => !m)}
+          aria-pressed={muted}
+          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
+          className="ml-auto rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
+        >
+          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+        </button>
+        {oznakaKontrole}
       </div>
 
       <div>
@@ -213,7 +285,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
         <GameCanvas
           runner={playback ?? runner}
           inputRef={pedals.inputRef}
-          running={phase === "play" || playback !== null}
+          running={playback !== null}
           onHud={setHud}
           onFinish={finish}
           flagVehicleId={phase === "over" ? flagged : null}
@@ -225,7 +297,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           label={`${title} — ${zadatak}`}
         />
 
-        {(phase === "play" || playback) && (
+        {playback && (
           <div className="pointer-events-none absolute top-2 left-2 flex gap-2">
             <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
             <Hud label={t.gameTime} value={`${hud.t.toFixed(1)} s`} />
@@ -242,24 +314,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
       {/* Kartica stoji ISPOD platna, ne preko njega: na prekršaj se vozilo
           kojem je oduzeta prednost oboji crveno, a to se ne vidi ako ga
           poklopi tekst. Na telefonu je preklop gutao cijelu scenu. */}
-      {phase === "play" ? (
-        <>
-          <PedalControls
-            pedals={pedals}
-            disabled={false}
-            throttleLabel={t.gameThrottle}
-            brakeLabel={t.gameBrake}
-            indicatorLabel={t.gameIndicator}
-            leftLabel={t.gameIndicatorLeft}
-            rightLabel={t.gameIndicatorRight}
-            lanes={autoput ? { leftLabel: t.gameLaneLeft, rightLabel: t.gameLaneRight } : null}
-          />
-          <p className="text-xs text-muted">
-            {t.gameKeyHint} {t.gameKeyHintIndicator}
-            {autoput ? ` ${t.gameKeyHintLane}` : ""}
-          </p>
-        </>
-      ) : (
+      {(
         <div className="rounded border border-line bg-panel p-4">
           {phase === "brief" ? (
             <>

@@ -43,6 +43,7 @@ import {
 import Brzinomjer from "./Brzinomjer";
 import DebugPreklop from "./DebugPreklop";
 import GameCanvas, { type HudState } from "./GameCanvas";
+import IgraOkvir from "./IgraOkvir";
 import DriveControls from "./DriveControls";
 import PokazivaciIzbor from "./PokazivaciIzbor";
 import SaobracajIzbor from "./SaobracajIzbor";
@@ -302,8 +303,14 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
     );
   }
 
-  return (
-    <Okvir t={t} onExit={onExit} muted={muted} setMuted={setMuted}>
+  if ((phase === "voznja" || phase === "grad") && runner && scenario) {
+    return (
+      <IgraOkvir
+        izlaz={{ label: t.tripBack, onClick: onExit }}
+        naslov={t.tripTitle}
+        naOtvaranje={() => volan.release()}
+        podesavanja={
+          <>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
           {t.tripKm} {trip.km} km
@@ -318,10 +325,38 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
           {t.tripCollected} {trip.seen.length}
         </span>
       </div>
-
-      {(phase === "voznja" || phase === "grad") && runner && scenario ? (
-        <>
-          <div className="relative mx-auto w-full max-w-[min(100%,58vh)]">
+            <button
+              type="button"
+              onClick={() => setMuted((m) => !m)}
+              aria-pressed={muted}
+              className="rounded border border-line bg-panel px-3 py-1 font-semibold"
+            >
+              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
+            </button>
+          </>
+        }
+        kontrole={
+          <DriveControls
+            className=""
+            volan={volan}
+            steerLabel={t.gameSteer}
+            throttleLabel={t.gameThrottle}
+            brakeLabel={t.gameBrake}
+            // Pokazivač je na ekranu i na otvorenom putu: pri preticanju se
+            // traži isto kao na raskrsnici.
+            indicator={{
+              label: t.gameIndicator,
+              leftLabel: t.gameIndicatorLeft,
+              rightLabel: t.gameIndicatorRight,
+              rezim: pokazivaci,
+              autoLabel: t.gameIndicatorAuto,
+              autoShort: t.gameIndicatorAutoShort,
+              stanje: stanjePokazivaca,
+            }}
+          />
+        }
+      >
+          <div className="absolute inset-0">
             <GameCanvas
               runner={runner}
               inputRef={volan.inputRef}
@@ -343,6 +378,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               }
               zvukPokazivaca
               label={uGradu ? t.tripCity : (scenario.title.me ?? t.tripTitle)}
+              ispuni
             />
             <DebugPreklop
               svijet={citajSvijet}
@@ -372,25 +408,28 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               </p>
             </div>
           </div>
-          <DriveControls
-            volan={volan}
-            steerLabel={t.gameSteer}
-            throttleLabel={t.gameThrottle}
-            brakeLabel={t.gameBrake}
-            // Pokazivač je na ekranu i na otvorenom putu: pri preticanju se
-            // traži isto kao na raskrsnici.
-            indicator={{
-              label: t.gameIndicator,
-              leftLabel: t.gameIndicatorLeft,
-              rightLabel: t.gameIndicatorRight,
-              rezim: pokazivaci,
-              autoLabel: t.gameIndicatorAuto,
-              autoShort: t.gameIndicatorAutoShort,
-              stanje: stanjePokazivaca,
-            }}
-          />
-        </>
-      ) : phase === "sudar" ? (
+      </IgraOkvir>
+    );
+  }
+
+  return (
+    <Okvir t={t} onExit={onExit} muted={muted} setMuted={setMuted}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+          {t.tripKm} {trip.km} km
+        </span>
+        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+          {t.tripLegs} {trip.legs}
+        </span>
+        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+          {t.tripTowns} {opstina(trip)}/25
+        </span>
+        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+          {t.tripCollected} {trip.seen.length}
+        </span>
+      </div>
+
+      {phase === "sudar" ? (
         <div className="rounded border border-line bg-panel p-4">
           <p className="font-display text-lg font-bold text-red uppercase">
             {grad ? t.tripCrashJunction : t.tripCrash}

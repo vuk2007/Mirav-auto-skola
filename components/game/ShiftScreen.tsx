@@ -18,6 +18,7 @@ import { createRunner } from "@/lib/game/ui/runner";
 import { createSound } from "@/lib/game/ui/sound";
 import { loadBestShift, saveBestShift, type BestShift } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
+import IgraOkvir from "./IgraOkvir";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
 
@@ -118,40 +119,33 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
   const prekrsaji = Object.entries(state.violations) as [keyof typeof state.violations, number][];
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <button
-          type="button"
-          onClick={onExit}
-          className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-        >
-          ← {t.shiftBack}
-        </button>
+    <IgraOkvir
+      izlaz={{ label: t.shiftBack, onClick: onExit }}
+      naslov={t.shiftTitle}
+      podesavanja={
         <button
           type="button"
           onClick={() => setMuted((m) => !m)}
           aria-pressed={muted}
-          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
-          className="rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
+          className="rounded border border-line bg-panel px-3 py-1 font-semibold"
         >
-          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
         </button>
-        <span className="font-display ml-auto text-sm font-semibold tracking-wide uppercase">
-          {t.shiftLives}{" "}
-          <span aria-label={`${state.lives}/${LIVES}`}>
-            {"●".repeat(state.lives)}
-            <span className="opacity-25">{"●".repeat(LIVES - state.lives)}</span>
-          </span>
-        </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
-          {t.shiftLevel} {state.level}
-        </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
-          {t.shiftSegments} {state.segments}
-        </span>
-      </div>
-
-      <div className="relative mx-auto w-full max-w-[min(100%,58vh)]">
+      }
+      kontrole={phase === "play" || phase === "freeze" ? (
+        <PedalControls
+          pedals={pedals}
+          disabled={phase !== "play"}
+          throttleLabel={t.gameThrottle}
+          brakeLabel={t.gameBrake}
+          indicatorLabel={t.gameIndicator}
+          leftLabel={t.gameIndicatorLeft}
+          rightLabel={t.gameIndicatorRight}
+          lanes={autoput ? { leftLabel: t.gameLaneLeft, rightLabel: t.gameLaneRight } : null}
+        />
+      ) : undefined}
+    >
+      <div className="absolute inset-0">
         <GameCanvas
           runner={runner}
           inputRef={pedals.inputRef}
@@ -165,6 +159,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
           sound={sound}
           camera={{ follow: true, half: autoput ? tpl.viewHalf : SHIFT_VIEW_HALF }}
           label={t.shiftTitle}
+          ispuni
         />
 
         {phase === "play" && (
@@ -196,20 +191,25 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
             </div>
           </div>
         )}
-      </div>
-
-      {phase === "play" || phase === "freeze" ? (
-        <PedalControls
-          pedals={pedals}
-          disabled={phase !== "play"}
-          throttleLabel={t.gameThrottle}
-          brakeLabel={t.gameBrake}
-          indicatorLabel={t.gameIndicator}
-          leftLabel={t.gameIndicatorLeft}
-          rightLabel={t.gameIndicatorRight}
-          lanes={autoput ? { leftLabel: t.gameLaneLeft, rightLabel: t.gameLaneRight } : null}
-        />
-      ) : (
+        {/* Stanje smjene: životi, nivo i dionice — gore desno, preko platna. */}
+        <div className="pointer-events-none absolute top-2 right-2 flex flex-col items-end gap-1">
+        <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+          {t.shiftLives}{" "}
+          <span aria-label={`${state.lives}/${LIVES}`}>
+            {"●".repeat(state.lives)}
+            <span className="opacity-25">{"●".repeat(LIVES - state.lives)}</span>
+          </span>
+        </span>
+        <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+          {t.shiftLevel} {state.level}
+        </span>
+        <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+          {t.shiftSegments} {state.segments}
+        </span>
+        </div>
+        {phase !== "play" && phase !== "freeze" && (
+          <div className="absolute inset-0 flex items-center justify-center overflow-y-auto bg-ink/40 p-4">
+            <div className="w-full max-w-sm">
         <div className="rounded border border-line bg-panel p-4">
           {phase === "brief" ? (
             <>
@@ -264,8 +264,11 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
             </>
           )}
         </div>
-      )}
-    </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </IgraOkvir>
   );
 }
 

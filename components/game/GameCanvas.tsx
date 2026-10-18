@@ -60,6 +60,8 @@ interface GameCanvasProps {
    */
   zvukPokazivaca?: boolean;
   label: string;
+  /** Platno ispuni roditelja (okvir vožnje na telefonu), umjesto kvadrata. */
+  ispuni?: boolean;
 }
 
 /**
@@ -84,6 +86,7 @@ export default function GameCanvas({
   okolinaRef,
   zvukPokazivaca = false,
   label,
+  ispuni = false,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   // Otvoreni put se crta na WebGL-u, sve ostalo na Canvas 2D (vidi
@@ -249,7 +252,7 @@ export default function GameCanvas({
       ref={canvasRef}
       role="img"
       aria-label={label}
-      className="block aspect-square w-full rounded border border-line bg-[#dfe3d8] touch-none select-none"
+      className={`block bg-[#dfe3d8] touch-none select-none ${ispuni ? "h-full w-full" : "aspect-square w-full rounded border border-line"}`}
     />
   );
 }

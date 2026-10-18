@@ -73,6 +73,7 @@ import { minSek, OdDoIzbor, OdDoRezultat, type RezultatOdDo } from "./grad/OdDo"
 import MiniMapaGrada, { MINI_POLUPRECNIK, type MrljaUlica } from "./grad/MiniMapaGrada";
 import Putokaz from "./grad/Putokaz";
 import DriveControls from "./DriveControls";
+import IgraOkvir from "./IgraOkvir";
 import { useVolan } from "./useVolan";
 
 /** Grad koji se vozi — za sada samo Podgorica (faza 6, stavka 3). */
@@ -836,26 +837,191 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokusaj]);
 
+  /** Meni podešavanja (redizajn za telefon): sve što nije vožnja, van platna. */
+  const podesavanja = (zatvori: () => void) => (
+    <>
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        {ispit ? (
+          <button
+            type="button"
+            onClick={() => {
+              prekiniIspit();
+              zatvori();
+            }}
+            className="rounded border border-line bg-panel px-2 py-1 font-semibold">
+            {t.gradExamCancel}
+          </button>
+        ) : (
+          ispitne.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                volan.release();
+                zatvori();
+                setIzborIspita(true);
+              }}
+              disabled={faza !== "voznja"}
+              className="rounded border border-blue bg-panel px-3 py-1 font-semibold text-blue disabled:opacity-40"
+            >
+              {t.gradExam}
+            </button>
+          )
+        )}
+        <button
+          type="button"
+          onClick={() => {
+            volan.release();
+            zatvori();
+            setIzborCilja(true);
+          }}
+          disabled={faza !== "voznja" || ispit !== null}
+          className="rounded border border-blue bg-blue px-3 py-1 font-semibold text-white disabled:opacity-40"
+        >
+          {cilj ? `${t.gradNavDestination}: ${cilj.ime}` : t.gradNavChoose}
+        </button>
+        {(cilj || odDo) && (
+          <button
+            type="button"
+            onClick={() => {
+              izaberiCilj(null);
+              zatvori();
+            }}
+            className="rounded border border-line bg-panel px-2 py-1 font-semibold">
+            {odDo ? t.gradOdDoCancel : t.gradNavClear}
+          </button>
+        )}
+        {!odDo && (
+          <button
+            type="button"
+            onClick={() => {
+              volan.release();
+              zatvori();
+              setOdDoIzbor(true);
+            }}
+            disabled={faza !== "voznja" || ispit !== null}
+            className="rounded border border-blue bg-panel px-3 py-1 font-semibold text-blue disabled:opacity-40"
+          >
+            {t.gradOdDo}
+          </button>
+        )}
+        <span className="text-muted">
+          {t.gradStatToday
+            .replace("{km}", dan.km.toFixed(1))
+            .replace("{cisto}", String(dan.cisteMinute))
+            .replace("{prekrsaji}", String(dan.prekrsaja))}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+        <fieldset className="flex items-center gap-1">
+          <legend className="sr-only">{t.gradTimeOfDay}</legend>
+          <span className="mr-1 text-muted" aria-hidden>
+            {t.gradTimeOfDay}:
+          </span>
+          {/* Dan teče sam (stavka 8d); dugmad pomjere sat na to doba. */}
+          {(
+            [
+              ["jutro", t.gradMorning],
+              ["dan", t.gradDay],
+              ["sumrak", t.gradDusk],
+              ["noc", t.gradNight],
+            ] as const
+          ).map(([d, ime]) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => pomjeriSat(GRAD_SAT_PRECICE[d])}
+              aria-label={`${ime} (${satTekst(GRAD_SAT_PRECICE[d])})`}
+              className="rounded border border-line bg-panel px-2 py-1 font-semibold"
+            >
+              {ime}
+            </button>
+          ))}
+        </fieldset>
+        <fieldset className="flex items-center gap-1">
+          <legend className="sr-only">{t.gradLevel}</legend>
+          <span className="mr-1 text-muted" aria-hidden>
+            {t.gradLevel}:
+          </span>
+          {([1, 2, 3, 4, 5] as const).map((n) => (
+            <button
+              key={n}
+              type="button"
+              aria-pressed={nivo === n}
+              onClick={() => setNivo(n)}
+              // Za vožnju od–do nivo je dio težine.
+              disabled={odDo !== null || ispit !== null}
+              className={`h-8 w-8 rounded border font-semibold disabled:opacity-40 ${nivo === n ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+            >
+              {n}
+            </button>
+          ))}
+        </fieldset>
+        <fieldset className="flex items-center gap-1">
+          <legend className="sr-only">{t.gradWeather}</legend>
+          <span className="mr-1 text-muted" aria-hidden>
+            {t.gradWeather}:
+          </span>
+          {(
+            [
+              [false, t.gradSun],
+              [true, t.gradRain],
+            ] as const
+          ).map(([k, ime]) => (
+            <button
+              key={ime}
+              type="button"
+              aria-pressed={kisa === k}
+              onClick={() => setKisa(k)}
+              className={`rounded border px-2 py-1 font-semibold ${kisa === k ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+            >
+              {ime}
+            </button>
+          ))}
+        </fieldset>
+      </div>
+      <p className="text-sm text-muted">{t.gradHint}</p>
+    </>
+  );
+
   return (
-    <div className="space-y-3">
-      <button
-        type="button"
-        onClick={() => {
+    <IgraOkvir
+      izlaz={{
+        label: t.tripBack,
+        onClick: () => {
           volan.release();
           onExit();
-        }}
-        className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-      >
-        ← {t.tripBack}
-      </button>
-      <div className="relative">
+        },
+      }}
+      naslov={t.gradTitle}
+      naOtvaranje={() => volan.release()}
+      podesavanja={(zatvori) => podesavanja(zatvori)}
+      kontrole={
+        <DriveControls
+          volan={volan}
+          steerLabel={t.gameSteer}
+          throttleLabel={t.gameThrottle}
+          brakeLabel={t.gameBrake}
+          className=""
+          indicator={{
+            label: t.gameIndicator,
+            leftLabel: t.gameIndicatorLeft,
+            rightLabel: t.gameIndicatorRight,
+            rezim: "rucni",
+            autoLabel: t.gameIndicatorAuto,
+            autoShort: t.gameIndicatorAutoShort,
+            stanje: () => ({ strana: inputRef.current.indicator, svijetli: zmigavacSvijetli(simTRef.current) }),
+          }}
+        />
+      }
+    >
+      <div className="absolute inset-0">
         <canvas
           // Novi canvas za svaki pokušaj: stari WebGL kontekst je uništen sa rendererom.
           key={pokusaj}
           ref={canvasRef}
           role="img"
           aria-label={t.gradTitle}
-          className="block aspect-square w-full rounded border border-line bg-[#e8e4dc] touch-none select-none"
+          className="block h-full w-full bg-[#e8e4dc] touch-none select-none"
         />
         {faza !== "voznja" && (
           <div className="absolute inset-0 flex items-center justify-center p-4 text-center">
@@ -1046,146 +1212,6 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           />
         )}
       </div>
-      <div className="flex flex-wrap items-center gap-2 text-sm">
-        {ispit ? (
-          <button type="button" onClick={prekiniIspit} className="rounded border border-line bg-panel px-2 py-1 font-semibold">
-            {t.gradExamCancel}
-          </button>
-        ) : (
-          ispitne.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                volan.release();
-                setIzborIspita(true);
-              }}
-              disabled={faza !== "voznja"}
-              className="rounded border border-blue bg-panel px-3 py-1 font-semibold text-blue disabled:opacity-40"
-            >
-              {t.gradExam}
-            </button>
-          )
-        )}
-        <button
-          type="button"
-          onClick={() => {
-            volan.release();
-            setIzborCilja(true);
-          }}
-          disabled={faza !== "voznja" || ispit !== null}
-          className="rounded border border-blue bg-blue px-3 py-1 font-semibold text-white disabled:opacity-40"
-        >
-          {cilj ? `${t.gradNavDestination}: ${cilj.ime}` : t.gradNavChoose}
-        </button>
-        {(cilj || odDo) && (
-          <button type="button" onClick={() => izaberiCilj(null)} className="rounded border border-line bg-panel px-2 py-1 font-semibold">
-            {odDo ? t.gradOdDoCancel : t.gradNavClear}
-          </button>
-        )}
-        {!odDo && (
-          <button
-            type="button"
-            onClick={() => {
-              volan.release();
-              setOdDoIzbor(true);
-            }}
-            disabled={faza !== "voznja" || ispit !== null}
-            className="rounded border border-blue bg-panel px-3 py-1 font-semibold text-blue disabled:opacity-40"
-          >
-            {t.gradOdDo}
-          </button>
-        )}
-        <span className="text-muted">
-          {t.gradStatToday
-            .replace("{km}", dan.km.toFixed(1))
-            .replace("{cisto}", String(dan.cisteMinute))
-            .replace("{prekrsaji}", String(dan.prekrsaja))}
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-        <fieldset className="flex items-center gap-1">
-          <legend className="sr-only">{t.gradTimeOfDay}</legend>
-          <span className="mr-1 text-muted" aria-hidden>
-            {t.gradTimeOfDay}:
-          </span>
-          {/* Dan teče sam (stavka 8d); dugmad pomjere sat na to doba. */}
-          {(
-            [
-              ["jutro", t.gradMorning],
-              ["dan", t.gradDay],
-              ["sumrak", t.gradDusk],
-              ["noc", t.gradNight],
-            ] as const
-          ).map(([d, ime]) => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => pomjeriSat(GRAD_SAT_PRECICE[d])}
-              aria-label={`${ime} (${satTekst(GRAD_SAT_PRECICE[d])})`}
-              className="rounded border border-line bg-panel px-2 py-1 font-semibold"
-            >
-              {ime}
-            </button>
-          ))}
-        </fieldset>
-        <fieldset className="flex items-center gap-1">
-          <legend className="sr-only">{t.gradLevel}</legend>
-          <span className="mr-1 text-muted" aria-hidden>
-            {t.gradLevel}:
-          </span>
-          {([1, 2, 3, 4, 5] as const).map((n) => (
-            <button
-              key={n}
-              type="button"
-              aria-pressed={nivo === n}
-              onClick={() => setNivo(n)}
-              // Za vožnju od–do nivo je dio težine.
-              disabled={odDo !== null || ispit !== null}
-              className={`h-8 w-8 rounded border font-semibold disabled:opacity-40 ${nivo === n ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
-            >
-              {n}
-            </button>
-          ))}
-        </fieldset>
-        <fieldset className="flex items-center gap-1">
-          <legend className="sr-only">{t.gradWeather}</legend>
-          <span className="mr-1 text-muted" aria-hidden>
-            {t.gradWeather}:
-          </span>
-          {(
-            [
-              [false, t.gradSun],
-              [true, t.gradRain],
-            ] as const
-          ).map(([k, ime]) => (
-            <button
-              key={ime}
-              type="button"
-              aria-pressed={kisa === k}
-              onClick={() => setKisa(k)}
-              className={`rounded border px-2 py-1 font-semibold ${kisa === k ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
-            >
-              {ime}
-            </button>
-          ))}
-        </fieldset>
-      </div>
-      <p className="text-sm text-muted">{t.gradHint}</p>
-      <DriveControls
-        volan={volan}
-        steerLabel={t.gameSteer}
-        throttleLabel={t.gameThrottle}
-        brakeLabel={t.gameBrake}
-        indicator={{
-          label: t.gameIndicator,
-          leftLabel: t.gameIndicatorLeft,
-          rightLabel: t.gameIndicatorRight,
-          rezim: "rucni",
-          autoLabel: t.gameIndicatorAuto,
-          autoShort: t.gameIndicatorAutoShort,
-          stanje: () => ({ strana: inputRef.current.indicator, svijetli: zmigavacSvijetli(simTRef.current) }),
-        }}
-      />
-    </div>
+    </IgraOkvir>
   );
 }

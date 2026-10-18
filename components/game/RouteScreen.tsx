@@ -16,6 +16,7 @@ import type { Dict } from "@/lib/i18n";
 import { SAOBRACAJ_NIVO, type Level } from "@/lib/game/sim/config";
 import { loadPokazivaci, loadSaobracaj, savePokazivaci, saveSaobracaj } from "@/lib/storage";
 import GameCanvas, { type HudState } from "./GameCanvas";
+import IgraOkvir from "./IgraOkvir";
 import MiniMapa from "./MiniMapa";
 import Brzinomjer from "./Brzinomjer";
 import DebugPreklop from "./DebugPreklop";
@@ -175,13 +176,45 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
 
   if (faza === "voznja" && runner && scenario && ruta && tpl) {
     return (
-      <Okvir t={t} onExit={onExit} muted={muted} setMuted={setMuted}>
-        {/* Platno izlazi iz okvira stranice i zauzima cio prozor: ruta se vozi
-            po stvarnom putu i treba vidjeti što dalje ispred sebe. Ostatak
-            sajta zadržava svoju širinu — mijenja se samo ovaj ekran, i samo
-            dok se vozi. Kvadrat ograničava ono što je manje, širina ili visina. */}
-        <div className="relative left-1/2 w-screen -translate-x-1/2 px-2">
-          <div className="relative mx-auto w-full max-w-[min(100vw-1rem,86vh)]">
+      <IgraOkvir
+        izlaz={{ label: t.tripBack, onClick: onExit }}
+        naslov={t.rutaTitle}
+        naOtvaranje={() => volan.release()}
+        podesavanja={
+          <>
+            <p className="text-muted">
+              {ruta.cvorovi.map((c) => nodeById(c)?.name ?? c).join(" — ")} · {kilometraza(ruta)} km · {ruta.dionice.length} {t.rutaLegs.toLowerCase()}
+            </p>
+            <button
+              type="button"
+              onClick={() => setMuted((m) => !m)}
+              aria-pressed={muted}
+              className="rounded border border-line bg-panel px-3 py-1 font-semibold"
+            >
+              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
+            </button>
+          </>
+        }
+        kontrole={
+        <DriveControls
+          className=""
+          volan={volan}
+          steerLabel={t.gameSteer}
+          throttleLabel={t.gameThrottle}
+          brakeLabel={t.gameBrake}
+          indicator={{
+            label: t.gameIndicator,
+            leftLabel: t.gameIndicatorLeft,
+            rightLabel: t.gameIndicatorRight,
+            rezim: pokazivaci,
+            autoLabel: t.gameIndicatorAuto,
+            autoShort: t.gameIndicatorAutoShort,
+            stanje: stanjePokazivaca,
+          }}
+        />
+        }
+      >
+        <div className="absolute inset-0">
           <GameCanvas
             runner={runner}
             inputRef={volan.inputRef}
@@ -199,6 +232,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
             okolinaRef={okolinaRef}
             zvukPokazivaca
             label={ruta.cvorovi.map((c) => nodeById(c)?.name ?? c).join(" — ")}
+            ispuni
           />
           <div className="pointer-events-none absolute top-2 left-2 flex flex-col items-start gap-2">
             <div className="flex gap-2">
@@ -237,24 +271,8 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
               <MiniMapa ruta={ruta} s={hud.s} granica={granica} t={t} />
             </div>
           )}
-          </div>
         </div>
-        <DriveControls
-          volan={volan}
-          steerLabel={t.gameSteer}
-          throttleLabel={t.gameThrottle}
-          brakeLabel={t.gameBrake}
-          indicator={{
-            label: t.gameIndicator,
-            leftLabel: t.gameIndicatorLeft,
-            rightLabel: t.gameIndicatorRight,
-            rezim: pokazivaci,
-            autoLabel: t.gameIndicatorAuto,
-            autoShort: t.gameIndicatorAutoShort,
-            stanje: stanjePokazivaca,
-          }}
-        />
-      </Okvir>
+      </IgraOkvir>
     );
   }
 

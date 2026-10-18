@@ -15,8 +15,7 @@ import type { Dict } from "@/lib/i18n";
 
 /** Poluprečnik prikaza [m]. */
 export const MINI_POLUPRECNIK = 260;
-/** Strana mape [px]. */
-const STRANA = 150;
+// Strana mape: 150 px, na niskom ekranu 96 px (klase na `figure`).
 
 export interface MrljaUlica {
   centar: Point;
@@ -54,10 +53,14 @@ export default function MiniMapaGrada({ ulice, auto, ruta, cilj, t }: MiniMapaGr
   return (
     <figure
       aria-label={t.gradMiniMap}
-      className="relative overflow-hidden rounded-full border-2 border-line bg-panel/90 shadow"
-      style={{ width: STRANA, height: STRANA }}
+      // Na niskom ekranu (telefon položen) manja, da ne pokrije HUD.
+      className="relative h-[150px] w-[150px] overflow-hidden rounded-full border-2 border-line bg-panel/90 shadow [@media(max-height:500px)]:h-24 [@media(max-height:500px)]:w-24"
     >
-      <svg viewBox={`${-R} ${-R} ${2 * R} ${2 * R}`} width={STRANA} height={STRANA} aria-hidden>
+      <svg
+        viewBox={`${-R} ${-R} ${2 * R} ${2 * R}`}
+        className="h-full w-full"
+        aria-hidden
+      >
         <g transform={`rotate(${okret.toFixed(2)}) translate(${(-auto.x).toFixed(1)} ${(-auto.y).toFixed(1)})`}>
           {ulice && (
             <>

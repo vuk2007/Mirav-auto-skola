@@ -19,6 +19,7 @@ import {
   PALETTE,
   ikona,
   kamera,
+  omjerKadra,
   px,
   rasporedHorizonta,
   scenaVozila,
@@ -760,7 +761,7 @@ export async function createPixiRenderer(canvas: HTMLCanvasElement, opcije: Pixi
         const sIgraca = renderS(runner, player.id, player.s);
         const svih = brojTacaka(tpl);
         const poTacki = tpl.length / Math.max(1, svih - 1);
-        const domet = v.half * 3;
+        const domet = v.half * 3 * omjerKadra(v);
         const i0 = Math.max(0, Math.floor((sIgraca - domet) / poTacki));
         const i1 = Math.min(svih - 1, Math.ceil((sIgraca + domet) / poTacki));
         for (const x of stvariUzPut(tpl, komadPuta(tpl, i0, i1))) {

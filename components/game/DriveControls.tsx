@@ -40,6 +40,8 @@ interface DriveControlsProps {
   /** Pokazivač pravca; bez ovoga se ne crta. */
   indicator?: DriveIndicator | null;
   disabled?: boolean;
+  /** Razmak iznad kontrola; u okviru vožnje (`IgraOkvir`) bez njega. */
+  className?: string;
 }
 
 /** Strana klizača: +1 ili −1 van mrtve zone, 0 u njoj. */
@@ -69,6 +71,7 @@ export default function DriveControls({
   brakeLabel,
   indicator = null,
   disabled = false,
+  className = "mt-3",
 }: DriveControlsProps) {
   const volanKvaka = useRef<HTMLDivElement>(null);
   const gasKvaka = useRef<HTMLDivElement>(null);
@@ -164,7 +167,8 @@ export default function DriveControls({
   );
 
   return (
-    <div className="mt-3 flex h-32 items-stretch gap-3">
+    // Na niskom ekranu (telefon položen) niže, da platnu ostane više mjesta.
+    <div className={`${className} flex h-32 items-stretch gap-3 [@media(max-height:500px)]:h-24`}>
       {indicator?.rezim === "rucni" && (
         <div className="flex w-20 flex-col gap-2">
           {zmigavac("left", indicator.leftLabel, "◄")}

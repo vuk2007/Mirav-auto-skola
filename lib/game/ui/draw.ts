@@ -169,6 +169,13 @@ export interface View {
   hPx: number;
 }
 
+/**
+ * Koliko je duža strana platna od kraće (≥ 1). Razmjera kadra ide po kraćoj
+ * strani (`viewFor`), pa na visokom platnu telefona kadar duž duže strane
+ * vidi dalje od `half` — ono što se crta „do ivice" mora i toliko dalje.
+ */
+export const omjerKadra = (v: View): number => Math.max(1, Math.max(v.wPx, v.hPx) / Math.max(1, Math.min(v.wPx, v.hPx)));
+
 export function viewFor(widthPx: number, heightPx: number, half = VIEW_HALF): View {
   return {
     cx: widthPx / 2,
@@ -280,7 +287,7 @@ function fillCircle(
  * manje nego crtanje prstena kao debele linije, i ivice ispadnu čiste.
  */
 function drawRoundabout(ctx: CanvasRenderingContext2D, v: View, tpl: RoundaboutTemplate): void {
-  const reach = v.half * 1.5;
+  const reach = v.half * 1.5 * omjerKadra(v);
   const lane = tpl.geometry.laneWidth;
   const spolja = tpl.radius + lane / 2;
 
@@ -456,7 +463,7 @@ function drawRoad(
   // na Herceg Novi — Rožaje: 41 umjesto 60.
   const svih = brojTacaka(tpl);
   const poTacki = tpl.length / Math.max(1, svih - 1);
-  const domet = v.half * 3;
+  const domet = v.half * 3 * omjerKadra(v);
   const i0 = sIgraca === undefined ? 0 : Math.max(0, Math.floor((sIgraca - domet) / poTacki));
   const i1 =
     sIgraca === undefined
@@ -691,7 +698,7 @@ function drawHighway(ctx: CanvasRenderingContext2D, v: View, tpl: HighwayTemplat
 }
 
 function drawRoads(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionTemplate): void {
-  const reach = v.half * 1.5; // preko ivice ekrana, da nema šava
+  const reach = v.half * 1.5 * omjerKadra(v); // preko ivice ekrana, da nema šava
 
   // Trotoar je samo malo širi kolovoz ispod njega.
   for (const pass of ["kerb", "asphalt"] as const) {
@@ -723,7 +730,7 @@ function drawMarkings(ctx: CanvasRenderingContext2D, v: View, tpl: IntersectionT
   for (const a of tpl.arms) {
     const out = OUTBOUND[a.id];
     const from = px(v, mul(out, line + 1));
-    const to = px(v, mul(out, v.half * 1.5));
+    const to = px(v, mul(out, v.half * 1.5 * omjerKadra(v)));
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);

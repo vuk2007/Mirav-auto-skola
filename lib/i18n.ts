@@ -26,6 +26,8 @@ export interface Dict {
   close: string;
   literature: string;
   langLabel: string;
+  igraPodesavanja: string;
+  igraZatvoriPodesavanja: string;
   footerNote: string;
 
   // Landing
@@ -538,6 +540,8 @@ const me: Dict = {
   close: "Zatvori",
   literature: "Literatura",
   langLabel: "Jezik",
+  igraPodesavanja: "Podešavanja",
+  igraZatvoriPodesavanja: "Zatvori podešavanja",
   footerNote:
     "Baza pitanja služi isključivo za pripremu i vježbu. Zvanični ispit sprovodi nadležni organ.",
 
@@ -1073,6 +1077,8 @@ const en: Dict = {
   close: "Close",
   literature: "Sources",
   langLabel: "Language",
+  igraPodesavanja: "Settings",
+  igraZatvoriPodesavanja: "Close settings",
   footerNote:
     "This question bank is for practice only. The official exam is administered by the competent authority.",
 
@@ -1605,6 +1611,8 @@ const sq: Dict = {
   close: "Mbyll",
   literature: "Literatura",
   langLabel: "Gjuha",
+  igraPodesavanja: "Cilësimet",
+  igraZatvoriPodesavanja: "Mbyll cilësimet",
   footerNote:
     "Baza e pyetjeve shërben vetëm për përgatitje dhe ushtrim. Provimin zyrtar e zhvillon organi kompetent.",
 
@@ -2144,6 +2152,8 @@ const ru: Dict = {
   close: "Закрыть",
   literature: "Источники",
   langLabel: "Язык",
+  igraPodesavanja: "Настройки",
+  igraZatvoriPodesavanja: "Закрыть настройки",
   footerNote:
     "База вопросов предназначена только для подготовки и тренировки. Официальный экзамен проводит компетентный орган.",
 

@@ -97,8 +97,8 @@ export default function MiniMapa({ ruta, s, granica, t }: MiniMapaProps) {
   return (
     <div className="rounded border border-line bg-panel/90 p-1">
       <svg
-        width={SIROKO}
-        height={okvir.visina}
+        // Na telefonu manja (do 30 % širine), da ne pokrije put u kadru.
+        style={{ width: `min(${SIROKO}px, 30vw)`, height: "auto" }}
         viewBox={`0 0 ${SIROKO} ${okvir.visina}`}
         role="img"
         aria-label={t.rutaMap}
