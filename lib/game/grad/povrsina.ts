@@ -173,6 +173,9 @@ function uglovRaskrsnice(m: Mreza, c: number): Ugao[] {
     let raspon = B.ugao - A.ugao;
     if (raspon <= 0) raspon += 2 * Math.PI;
     if (raspon < od || raspon > doU) continue;
+    // Između dvije ivice prstena kružnog toka je ostrvo (ili prsten nastavlja
+    // pravo): ugao se ne zasijeca — zasjek bi štrčao u ostrvo.
+    if (m.ivice[A.ivica]!.kruzni && m.ivice[B.ivica]!.kruzni) continue;
     // Ivica kolovoza A okrenuta ka B (normala A ka B), i ivica B okrenuta ka A.
     const nAx = -A.uy;
     const nAy = A.ux;

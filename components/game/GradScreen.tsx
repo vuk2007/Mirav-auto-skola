@@ -453,7 +453,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       if (!canvas) return;
       // Pixi se učitava tek ovdje — ostatak igre ga ne plaća u početnom paketu.
       const { createGradRenderer } = await import("@/lib/game/ui/gradRenderer");
-      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: svijet.zone }, { raskrsnice, crtez, produzeci: zaSudiju.produzeci, pjesackiSemafori: zaSudiju.pjesackiSemafori });
+      renderer = await createGradRenderer(canvas, paket, povrsina, { palete, zone: svijet.zone }, { raskrsnice, crtez, produzeci: zaSudiju.produzeci, pjesackiSemafori: zaSudiju.pjesackiSemafori, prelazi: pjesaci.mreza.prelazi });
       if (otkazano) {
         renderer?.destroy();
         return;

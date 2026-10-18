@@ -2723,3 +2723,9 @@ export const GRAD_ISPIT_NIVO: Level = 3;
 export const GRAD_ISPIT_LAKSIH = 3;
 /** Obavezna tačka je pređena kad je auto po ruti stigao do nje bliže od ovoga [m]. */
 export const GRAD_ISPIT_TACKA = 10;
+
+// ── provjera mape (faza 6, poslije stavke 9c) ────────────────────────────
+/** Kružni tok se poravna na krug samo ako mu se čvorovi i tačke ne odmiču od srednjeg poluprečnika više od ovog dijela (u Podgorici najviše 0,12). */
+export const GRAD_KRUZNI_ODSTUPANJE = 0.2;
+/** Luk ivice prstena: tačka na najviše ovoliko [m]. */
+export const GRAD_KRUZNI_KORAK = 1.5;

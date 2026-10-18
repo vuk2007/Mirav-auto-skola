@@ -13,6 +13,7 @@ import type { Point } from "../sim/types";
 import { linijeSaVrstom, pojasBusa, puniDijelovi, uzBus, type Produzeci } from "./linije";
 import type { Ivica, Mreza } from "./mreza";
 import { najblizaOsa, type Povrsina } from "./povrsina";
+import type { Prelaz } from "./trotoari";
 
 /**
  * Oznake na kolovozu (faza 6, stavka 4b): linije traka, strelice iz OSM
@@ -365,6 +366,50 @@ export function streliceIvice(iv: Ivica, odA: number, odB: number): Poligon[] {
 }
 
 // ── zebre ───────────────────────────────────────────────────────────────────
+
+/**
+ * Zebra prelaza mreže pješaka (provjera mape, faza 6): pruge duž ulice,
+ * samo na asfaltu duž prelaza (`pojasevi` — preko razdjelnog pojasa bulevara
+ * ih nema), simetrično u svakom pojasu. Isti prelaz po kojem idu pješaci i
+ * sude pravila — jedan, i kad ga OSM ima na svakoj kolovoznoj traci.
+ */
+export function zebraPrelaza(p: Prelaz): Poligon[] {
+  const ex = (p.b.x - p.a.x) / p.duzina;
+  const ey = (p.b.y - p.a.y) / p.duzina;
+  const h = p.pravac;
+  const u0 = -GRAD_ZEBRA_DUBINA / 2;
+  const u1 = GRAD_ZEBRA_DUBINA / 2;
+  const korak = 2 * GRAD_ZEBRA_PRUGA;
+  // Sredina zebre duž ulice: na liniji prelaza (`a`–`b`).
+  const izlaz: Poligon[] = [];
+  // Pojasevi se mogu preklapati (dvije ivice na istom asfaltu): spoje se.
+  const spojeni: [number, number][] = [];
+  for (const q of [...p.pojasevi].sort((x, y) => x.w0 - y.w0)) {
+    const zadnji = spojeni[spojeni.length - 1];
+    if (zadnji && q.w0 <= zadnji[1] + 0.3) zadnji[1] = Math.max(zadnji[1], q.w1);
+    else spojeni.push([q.w0, q.w1]);
+  }
+  for (const [a, b] of spojeni) {
+    const pruga = Math.floor((b - a) / korak);
+    if (pruga < 1) continue;
+    const pocetak = (a + b) / 2 - (pruga * korak) / 2 + GRAD_ZEBRA_PRUGA / 2;
+    for (let k = 0; k < pruga; k++) {
+      const w0 = pocetak + k * korak;
+      const w1 = w0 + GRAD_ZEBRA_PRUGA;
+      izlaz.push(
+        (
+          [
+            [u0, w0],
+            [u1, w0],
+            [u1, w1],
+            [u0, w1],
+          ] as const
+        ).map(([u, w]) => ({ x: p.a.x + ex * w + h.x * u, y: p.a.y + ey * w + h.y * u })),
+      );
+    }
+  }
+  return izlaz;
+}
 
 /**
  * Zebra na prelazu u (`x`, `y`): pruge duž ulice, preko cijelog kolovoza.

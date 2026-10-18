@@ -9,6 +9,8 @@ import {
   GRAD_SIRINA_TRAKE,
   GRAD_SIRINA_TRAKE_NAJMANJE,
   GRAD_TRAKE_PO_KLASI,
+  GRAD_KRUZNI_KORAK,
+  GRAD_KRUZNI_ODSTUPANJE,
 } from "../sim/config";
 import { cumulative, pointAt } from "../sim/geometry";
 import type { Point } from "../sim/types";
@@ -173,8 +175,101 @@ export function napraviMrezu(p: Paket): Mreza {
     izCvora[n.ivA[i]!]!.push(i);
     if (n.ivB[i]! !== n.ivA[i]!) izCvora[n.ivB[i]!]!.push(i);
   }
+  zaobliKruzneTokove(cvorovi, ivice, izCvora);
   suziPreklopljene(ivice, izCvora);
   return { cvorovi, ivice, izCvora };
+}
+
+/**
+ * Kružni tok kao krug (provjera mape, faza 6): OSM prsten je mnogougao od
+ * nekoliko čvorova, pa bi ostrvo i ivičnjak oko njega bili uglasti (i
+ * zasjeci uglova na čvorovima prstena štrče u ostrvo). Zatvoren prsten
+ * ivica `kruzni`, koji je skoro okrugao (najveće odstupanje od srednjeg
+ * poluprečnika do `GRAD_KRUZNI_ODSTUPANJE`), poravna se na krug: čvorovi
+ * prstena na poluprečnik, ivice prstena na lukove (tačka na najviše
+ * `GRAD_KRUZNI_KORAK` m), a krakovi dobiju pomjeren kraj u čvoru.
+ *
+ * Mijenja čvorove i tačke ivica na mjestu. Deterministično.
+ */
+function zaobliKruzneTokove(cvorovi: Point[], ivice: Ivica[], izCvora: number[][]): void {
+  const vidjena = new Set<number>();
+  const preracunaj = (iv: Ivica) => {
+    iv.cum = cumulative(iv.tacke);
+    iv.duzina = iv.cum[iv.cum.length - 1] ?? 0;
+  };
+  for (const pocetna of ivice) {
+    if (!pocetna.kruzni || vidjena.has(pocetna.i) || pocetna.a === pocetna.b) continue;
+    // Obilazak prstena: u svakom čvoru tačno još jedna ivica prstena.
+    const prsten: { iv: Ivica; od: number }[] = [];
+    let iv = pocetna;
+    let od = pocetna.a;
+    let zatvoren = false;
+    for (let k = 0; k < 200; k++) {
+      prsten.push({ iv, od });
+      vidjena.add(iv.i);
+      const doCvora = iv.a === od ? iv.b : iv.a;
+      if (doCvora === pocetna.a) {
+        zatvoren = true;
+        break;
+      }
+      const dalje = (izCvora[doCvora] ?? []).filter((j) => j !== iv.i && ivice[j]!.kruzni);
+      if (dalje.length !== 1) break;
+      iv = ivice[dalje[0]!]!;
+      od = doCvora;
+    }
+    if (!zatvoren || prsten.length < 2) continue;
+    // Središte: težište mnogougla (redom po prstenu), poluprečnik: srednje rastojanje.
+    const poligon: Point[] = [];
+    for (const { iv: e, od: c } of prsten) {
+      const t = e.a === c ? e.tacke : [...e.tacke].reverse();
+      poligon.push(...t.slice(0, -1));
+    }
+    let A = 0;
+    let cx = 0;
+    let cy = 0;
+    for (let k = 0; k < poligon.length; k++) {
+      const p = poligon[k]!;
+      const q = poligon[(k + 1) % poligon.length]!;
+      const f = p.x * q.y - q.x * p.y;
+      A += f;
+      cx += (p.x + q.x) * f;
+      cy += (p.y + q.y) * f;
+    }
+    if (Math.abs(A) < 1e-6) continue;
+    const centar = { x: cx / (3 * A), y: cy / (3 * A) };
+    const r = poligon.reduce((z, p) => z + Math.hypot(p.x - centar.x, p.y - centar.y), 0) / poligon.length;
+    if (!(r > 3) || poligon.some((p) => Math.abs(Math.hypot(p.x - centar.x, p.y - centar.y) - r) > GRAD_KRUZNI_ODSTUPANJE * r)) continue;
+    // Smjer obilaska (znak površine) — lukovi idu istim smjerom.
+    const smjer = A > 0 ? 1 : -1;
+    const ugao = (p: Point) => Math.atan2(p.y - centar.y, p.x - centar.x);
+    const naKrugu = (u: number): Point => ({ x: centar.x + r * Math.cos(u), y: centar.y + r * Math.sin(u) });
+    const cvoroviPrstena = new Set(prsten.map((x) => x.od));
+    for (const c of cvoroviPrstena) cvorovi[c] = naKrugu(ugao(cvorovi[c]!));
+    for (const { iv: e, od: c } of prsten) {
+      const u0 = ugao(cvorovi[c]!);
+      const kraj = e.a === c ? e.b : e.a;
+      let du = ugao(cvorovi[kraj]!) - u0;
+      // Luk u smjeru obilaska prstena, (0, 2π].
+      if (smjer > 0) while (du <= 1e-9) du += 2 * Math.PI;
+      else while (du >= -1e-9) du -= 2 * Math.PI;
+      const n = Math.max(1, Math.ceil((Math.abs(du) * r) / GRAD_KRUZNI_KORAK));
+      const luk = Array.from({ length: n + 1 }, (_, j) => naKrugu(u0 + (du * j) / n));
+      luk[0] = { ...cvorovi[c]! };
+      luk[n] = { ...cvorovi[kraj]! };
+      e.tacke = e.a === c ? luk : luk.reverse();
+      preracunaj(e);
+    }
+    // Krakovi: kraj u pomjerenom čvoru.
+    for (const c of cvoroviPrstena) {
+      for (const j of izCvora[c] ?? []) {
+        const e = ivice[j]!;
+        if (e.kruzni) continue;
+        if (e.a === c) e.tacke[0] = { ...cvorovi[c]! };
+        if (e.b === c) e.tacke[e.tacke.length - 1] = { ...cvorovi[c]! };
+        preracunaj(e);
+      }
+    }
+  }
 }
 
 /**

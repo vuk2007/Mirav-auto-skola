@@ -38,6 +38,7 @@ import {
   GRAD_SEMAFOR_VISINA,
   GRAD_TROTOAR,
   GRAD_PJ_CRTEZ,
+  GRAD_ZEBRA_DUBINA,
   GRAD_ZEBRA_VRSTE,
   GRAD_ZNAK_NAJMANJE_PX,
   GRAD_ZNAK_VELICINA,
@@ -53,7 +54,8 @@ import type { Temena } from "../grad/temena";
 import type { CrtezPravila, Semafor, Znak } from "../grad/znakovi";
 import { tekstureZnakova } from "./tekstureZnakova";
 import { zmigavacSvijetli } from "./zmigavac";
-import { krajeviLinija, linijeIvice, natpisiBusa, ogradaZatvorene, streliceIvice, zebra, type Poligon } from "../grad/oznake";
+import { krajeviLinija, linijeIvice, natpisiBusa, ogradaZatvorene, streliceIvice, zebra, zebraPrelaza, type Poligon } from "../grad/oznake";
+import type { Prelaz } from "../grad/trotoari";
 import type { Povrsina } from "../grad/povrsina";
 import {
   geometrijaSjenki,
@@ -335,6 +337,11 @@ export interface PravilaZaCrtanje {
   produzeci?: Produzeci;
   /** Pješački semafori na sredini ulice (stavka 8) — njihovo svjetlo za vozila. */
   pjesackiSemafori?: readonly PjesackiSemafor[];
+  /**
+   * Prelazi mreže pješaka: zebre se crtaju po njima (isti prelaz po kojem
+   * idu pješaci i sudi se). Bez njih (editor) — po OSM čvorovima prelaza.
+   */
+  prelazi?: readonly Prelaz[];
 }
 
 export interface GradScena {
@@ -406,6 +413,8 @@ interface Tile {
   linije: [number, number];
   ivice: number[];
   uglovi: number[];
+  /** Prelazi mreže pješaka (indeksi u `pravila.prelazi`) — zebre. */
+  prelazi: number[];
   pune: number[];
   isprekidane: number[];
   znakovi: number[];
@@ -475,6 +484,7 @@ export async function createGradRenderer(
         linije: opseg(n.lnTileOd, t),
         ivice: [],
         uglovi: [],
+        prelazi: [],
         pune: [],
         isprekidane: [],
         znakovi: [],
@@ -503,6 +513,29 @@ export async function createGradRenderer(
       tile.uglovi.push(i);
       for (const p of [u.a, u.b, u.c]) prosiri(tile.okvir, p.x, p.y, TROTOAR);
     }
+    for (const p of pravila.prelazi ?? []) {
+      const tile = tileovi[tileZa(p.centar.x, p.centar.y)]!;
+      tile.prelazi.push(p.id);
+      for (const t of [p.a, p.b]) prosiri(tile.okvir, t.x, t.y, GRAD_ZEBRA_DUBINA);
+    }
+    // OSM čvorovi zebri koje već crta prelaz (čvor blizu linije prelaza).
+    pokriveneZebre = new Set();
+    if (pravila.prelazi) {
+      const vrsta = z.vrsteObjekata.indexOf("crossing");
+      for (let o = 0; o < n.obVrsta.length; o++) {
+        if (n.obVrsta[o] !== vrsta) continue;
+        const x = n.obXY[2 * o]!;
+        const y = n.obXY[2 * o + 1]!;
+        const pokriva = pravila.prelazi.some((p) => {
+          if (Math.abs(p.centar.x - x) > 40 || Math.abs(p.centar.y - y) > 40) return false;
+          const ex = p.b.x - p.a.x;
+          const ey = p.b.y - p.a.y;
+          const u = Math.max(0, Math.min(1, ((x - p.a.x) * ex + (y - p.a.y) * ey) / (ex * ex + ey * ey)));
+          return Math.hypot(p.a.x + ex * u - x, p.a.y + ey * u - y) < 2 * GRAD_ZEBRA_DUBINA;
+        });
+        if (pokriva) pokriveneZebre.add(o);
+      }
+    }
     // Pravila raskrsnica: linije, znakovi i semafori po tile-u, po prvoj tački.
     crtez.pune.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.pune.push(i));
     crtez.isprekidane.forEach((p, i) => tileovi[tileZa(p[0]!.x, p[0]!.y)]!.isprekidane.push(i));
@@ -524,6 +557,7 @@ export async function createGradRenderer(
   let odsjeci: Float32Array = new Float32Array(0);
   let vrstaPrelaza = -1;
   let zebraKodovi = new Set<number>();
+  let pokriveneZebre = new Set<number>();
   indeksiraj();
 
   // ── slojevi ───────────────────────────────────────────────────────────────
@@ -649,15 +683,26 @@ export async function createGradRenderer(
     // zaobljavaju u raskrsnicu, bez posebnog računa za svaki čvor.
     const trotoari = new Graphics();
     const ulice = new Graphics();
+    const pjesacke: { tacke: Point[]; sirina: number }[] = [];
     for (const i of tile.ivice) {
       const iv = mreza.ivice[i]!;
       // Ulica koju je editor uklonio (greška u OSM-u) ne postoji.
       if (iv.uklonjena) continue;
       linija(trotoari, iv.tacke);
       trotoari.stroke({ width: iv.sirina + 2 * TROTOAR, color: BOJE.trotoar, cap: "round", join: "round" });
+      // Pješačka staza je u sloju trotoara (poslije svih trotoara): gdje
+      // prelazi ulicu, asfalt je prekrije — ne crta se traka preko kolovoza.
+      if (!iv.vozna && !iv.zatvorena) {
+        pjesacke.push({ tacke: iv.tacke, sirina: iv.sirina });
+        continue;
+      }
       linija(ulice, iv.tacke);
       // Zatvorena ulica (gradilište) je asfalt, samo se u nju ne može.
-      ulice.stroke({ width: iv.sirina, color: iv.vozna || iv.zatvorena ? BOJE.asfalt : BOJE.pjesacka, cap: "round", join: "round" });
+      ulice.stroke({ width: iv.sirina, color: BOJE.asfalt, cap: "round", join: "round" });
+    }
+    for (const { tacke, sirina } of pjesacke) {
+      linija(trotoari, tacke);
+      trotoari.stroke({ width: sirina, color: BOJE.pjesacka, cap: "round", join: "round" });
     }
     // Zasječen ugao: trotoar prati kosi ivičnjak (linija širine dva trotoara,
     // čiju unutrašnju polovinu prekrije asfalt), a asfalt popuni trougao.
@@ -688,8 +733,11 @@ export async function createGradRenderer(
       oboji(natpisiBusa(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
     }
 
+    if (pravila.prelazi) for (const i of tile.prelazi) oboji(zebraPrelaza(pravila.prelazi[i]!));
+    // OSM zebra koju nijedan prelaz ne pokriva (servisna ulica, prelaz bez
+    // trotoara na kraju): crta se po čvoru, kao i prije.
     for (let o = tile.objekti[0]; o < tile.objekti[1]; o++) {
-      if (n.obVrsta[o] !== vrstaPrelaza || !zebraKodovi.has(n.obPodatak[o]!)) continue;
+      if (n.obVrsta[o] !== vrstaPrelaza || !zebraKodovi.has(n.obPodatak[o]!) || pokriveneZebre.has(o)) continue;
       oboji(zebra(povrsina, n.obXY[2 * o]!, n.obXY[2 * o + 1]!));
     }
     oboji(tile.pune.map((i) => crtez.pune[i]!));

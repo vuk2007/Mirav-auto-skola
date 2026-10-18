@@ -722,7 +722,13 @@ export function napraviMrezuPjesaka(sv: SvijetGrada): MrezaPjesaka {
       prelazi.some((q) => {
         if (Math.abs(q.pravac.x * h.x + q.pravac.y * h.y) < 0.9) return false;
         const qc = { x: (q.a.x + q.b.x) / 2, y: (q.a.y + q.b.y) / 2 };
-        return Math.hypot(qc.x - centar.x, qc.y - centar.y) < 4 + Math.abs(q.duzina - duzina) / 2;
+        if (Math.hypot(qc.x - centar.x, qc.y - centar.y) < 4 + Math.abs(q.duzina - duzina) / 2) return true;
+        // Isti prelaz, čvor pomjeren duž ulice (po jedan na svakoj traci
+        // bulevara, nekoliko metara jedan od drugog): blizu duž ulice, a
+        // preko nje se preklapaju — dvije zebre bi stajale jedna uz drugu.
+        const duz = Math.abs((qc.x - centar.x) * h.x + (qc.y - centar.y) * h.y);
+        const preko = Math.abs((qc.x - centar.x) * nn.x + (qc.y - centar.y) * nn.y);
+        return duz < 2 * GRAD_ZEBRA_DUBINA && preko < (q.duzina + duzina) / 2;
       })
     )
       continue;
