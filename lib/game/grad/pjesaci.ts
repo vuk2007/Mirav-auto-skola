@@ -76,6 +76,11 @@ export interface VoziloZaPjesaka {
    * — tada se gleda da li stoji tik pred zebrom.
    */
   cekaPjesaka?: boolean;
+  /**
+   * Čeka pred raskrsnicom (na mjestu čekanja, dalje od zebre) baš pješake na
+   * ovom prelazu na njenom izlazu (stavka 9c) — i to je „vozilo pred zebrom".
+   */
+  cekaPrelaz?: number;
 }
 
 export interface Pjesak {
@@ -112,6 +117,11 @@ export interface Pjesak {
   blokiranOd?: number | null;
   /** Stoji pred ivičnjakom i propušta vozilo koje dugo čeka (prelaz; stavka 8c). */
   propusta?: number;
+  /**
+   * Od kad je uz prelaz kojim ide (stao na ivičnjak, pa prelazi) [s] — sudija
+   * po tome zna da li je pješak stigao poslije igrača (stavka 9c).
+   */
+  uzPrelazOd?: number;
 }
 
 export interface MetrikaPjesaka {
@@ -378,6 +388,7 @@ function propustaVozilo(pj: Pjesaci, p: Prelaz, vozila: readonly VoziloZaPjesaka
   const c = p.centar;
   const ceka = vozila.some((o) => {
     if (o.v >= 0.1 || o.cekaPjesaka === false) return false;
+    if (o.cekaPrelaz === p.id) return true;
     if (Math.abs(o.x - c.x) > 30 || Math.abs(o.y - c.y) > 30) return false;
     const d = doPrelaza(o, p);
     return d !== null && d >= 0 && d <= GRAD_PJ_PROPUSTA_DO;
@@ -555,6 +566,7 @@ export function korakPjesaka(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZ
       if (x.stanje === "hoda") {
         x.stanje = "ceka";
         x.cekaOd = pj.t;
+        x.uzPrelazOd = pj.t;
         x.prelaz = -1;
       }
       if (x.stanje === "ceka") {
@@ -567,7 +579,18 @@ export function korakPjesaka(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZ
           x.cekaOd = null;
         }
       }
-      if (x.stanje === "prelazi" && !blokira(x, vozila)) {
+      // Vozilo mu je stalo na put nasred kolovoza (npr. sklonilo se udesno
+      // pred hitnim, pa čeka baš njega): ne čeka dovijeka — poslije
+      // `GRAD_PJ_BLOKIRAN` vraća se na ivičnjak sa kojeg je krenuo.
+      if (x.stanje === "prelazi" && blokira(x, vozila)) {
+        x.blokiranOd ??= pj.t;
+        if (pj.t - x.blokiranOd > GRAD_PJ_BLOKIRAN) {
+          const l = Math.hypot(van.b.x - van.a.x, van.b.y - van.a.y);
+          x.vanZebre = { ...van, a: van.b, b: van.a, u: Math.max(0, l - van.u) };
+          x.blokiranOd = null;
+        }
+      } else if (x.stanje === "prelazi") {
+        x.blokiranOd = null;
         const l = Math.hypot(van.b.x - van.a.x, van.b.y - van.a.y);
         const dalje = Math.min(ostalo, l - van.u);
         van.u += dalje;
@@ -600,6 +623,7 @@ export function korakPjesaka(pj: Pjesaci, fokus: Point, vozila: readonly VoziloZ
         if (x.stanje !== "ceka") {
           x.stanje = "ceka";
           x.cekaOd = pj.t;
+          x.uzPrelazOd = pj.t;
           x.prelaz = v.prelaz;
         }
         if (!smijePreci(pj, x, mp.prelazi[v.prelaz]!, vozila)) {

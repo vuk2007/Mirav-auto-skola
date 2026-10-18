@@ -38,6 +38,14 @@ export interface RutaDo {
   duzina: number;
   manevri: ManevarRute[];
   cilj: Odrediste;
+  /** Gdje su na ruti [m] obavezne tačke, redom (zadnja je cilj). */
+  mete: number[];
+}
+
+/** Mjesto na mreži: korak (ivica i smjer vožnje) i metara od početka ivice. */
+export interface MjestoNaMrezi {
+  korak: Korak;
+  s: number;
 }
 
 const kraj = (iv: Ivica, smjer: 1 | -1) => (smjer === 1 ? iv.b : iv.a);
@@ -133,54 +141,82 @@ function manevriRute(sv: SvijetGrada, koraci: Korak[], pocetakS: number[]): Mane
 }
 
 /**
+ * Ruta od `start` redom kroz `mete` (zadnja je kraj rute): A* od mete do mete,
+ * linija po osovini ulica i manevri. `null` kad neka dionica nema propisne
+ * rute (ili je meta iza auta na istoj ulici — tad bi trebalo kružiti).
+ */
+export function rutaKroz(sv: SvijetGrada, start: MjestoNaMrezi, mete: readonly MjestoNaMrezi[], cilj: Odrediste): RutaDo | null {
+  const m: Mreza = sv.mreza;
+  if (mete.length === 0) return null;
+  const pocetakIvice = (k: Korak) => (k.smjer === 1 ? 0 : m.ivice[k.ivica]!.duzina);
+  const krajIvice = (k: Korak) => (k.smjer === 1 ? m.ivice[k.ivica]!.duzina : 0);
+  // Dijelovi rute: ivica u smjeru vožnje, od–do metara na njoj. Zadnji je
+  // otvoren dok se ne zna gdje se na njemu staje.
+  const dijelovi: { korak: Korak; od: number; do_: number }[] = [];
+  let otvoren = { korak: start.korak, od: start.s };
+  const naDijelu: { i: number; s: number }[] = [];
+  let tu = start;
+  for (const meta of mete) {
+    const isti = tu.korak.ivica === meta.korak.ivica && tu.korak.smjer === meta.korak.smjer;
+    const ispred = isti && (meta.korak.smjer === 1 ? meta.s >= tu.s : meta.s <= tu.s);
+    if (!ispred) {
+      const k = ruta(m, sv.raskrsnice, sv.zabrane, tu.korak, meta.korak);
+      if (!k || k.length < 2) return null;
+      dijelovi.push({ korak: otvoren.korak, od: otvoren.od, do_: krajIvice(otvoren.korak) });
+      for (const x of k.slice(1, -1)) dijelovi.push({ korak: x, od: pocetakIvice(x), do_: krajIvice(x) });
+      const z = k[k.length - 1]!;
+      otvoren = { korak: z, od: pocetakIvice(z) };
+    }
+    naDijelu.push({ i: dijelovi.length, s: meta.s });
+    tu = meta;
+  }
+  dijelovi.push({ korak: otvoren.korak, od: otvoren.od, do_: tu.s });
+  const tacke: Point[] = [];
+  const pocetakS: number[] = [];
+  let duz = 0;
+  for (const d of dijelovi) {
+    pocetakS.push(duz);
+    for (const p of dioIvice(m.ivice[d.korak.ivica]!, d.korak.smjer, d.od, d.do_)) {
+      const zadnja = tacke[tacke.length - 1];
+      if (zadnja && Math.hypot(p.x - zadnja.x, p.y - zadnja.y) < 0.01) continue;
+      tacke.push(p);
+    }
+    duz += Math.abs(d.do_ - d.od);
+  }
+  if (tacke.length < 2) tacke.push({ ...tacke[0]! });
+  const cum = [0];
+  for (let k = 1; k < tacke.length; k++) cum.push(cum[k - 1]! + Math.hypot(tacke[k]!.x - tacke[k - 1]!.x, tacke[k]!.y - tacke[k - 1]!.y));
+  // `pocetakS` je po dužinama ivica; linija ima svoju dužinu — razmjera.
+  const r = duz > 0 ? cum[cum.length - 1]! / duz : 1;
+  return {
+    koraci: dijelovi.map((d) => d.korak),
+    tacke,
+    cum,
+    duzina: cum[cum.length - 1]!,
+    manevri: manevriRute(
+      sv,
+      dijelovi.map((d) => d.korak),
+      pocetakS.map((s) => s * r),
+    ),
+    cilj,
+    mete: naDijelu.map(({ i, s }) => (pocetakS[i]! + Math.abs(s - dijelovi[i]!.od)) * r),
+  };
+}
+
+/**
  * Ruta od mjesta auta do ulaza odredišta; `null` kad je nema (auto van
  * ulica, cilj nedostižan). Dvosmjerna ulica cilja se probava u oba smjera —
  * uzima se kraća ruta.
  */
 export function rutaDo(sv: SvijetGrada, x: number, y: number, ugao: number, cilj: Odrediste): RutaDo | null {
-  const m: Mreza = sv.mreza;
   const start = mjestoAuta(sv, x, y, ugao);
   if (!start) return null;
-  const civ = m.ivice[cilj.ivica]!;
+  const civ = sv.mreza.ivice[cilj.ivica]!;
   let naj: RutaDo | null = null;
   for (const smjer of [1, -1] as const) {
     if (!smije(civ, smjer)) continue;
-    const doK: Korak = { ivica: civ.i, smjer };
-    // Ista ulica, isti smjer, cilj ispred: bez pretrage.
-    const ispred = start.korak.ivica === civ.i && start.korak.smjer === smjer && (smjer === 1 ? cilj.s >= start.s : cilj.s <= start.s);
-    const koraci = ispred ? [start.korak] : ruta(m, sv.raskrsnice, sv.zabrane, start.korak, doK);
-    if (!koraci || koraci.length === 0) continue;
-    const tacke: Point[] = [];
-    const pocetakS: number[] = [];
-    let duz = 0;
-    koraci.forEach((k, i) => {
-      const iv = m.ivice[k.ivica]!;
-      const od = i === 0 ? start.s : k.smjer === 1 ? 0 : iv.duzina;
-      const posljednji = i === koraci.length - 1;
-      const do_ = posljednji ? cilj.s : k.smjer === 1 ? iv.duzina : 0;
-      pocetakS.push(duz);
-      const dio = dioIvice(iv, k.smjer, od, do_);
-      for (const p of dio) {
-        const zadnja = tacke[tacke.length - 1];
-        if (zadnja && Math.hypot(p.x - zadnja.x, p.y - zadnja.y) < 0.01) continue;
-        tacke.push(p);
-      }
-      duz += Math.abs(do_ - od);
-    });
-    if (tacke.length < 2) tacke.push({ ...tacke[0]! });
-    const cum = [0];
-    for (let k = 1; k < tacke.length; k++) cum.push(cum[k - 1]! + Math.hypot(tacke[k]!.x - tacke[k - 1]!.x, tacke[k]!.y - tacke[k - 1]!.y));
-    // `pocetakS` je po dužinama ivica; linija ima svoju dužinu — razmjera.
-    const r = duz > 0 ? cum[cum.length - 1]! / duz : 1;
-    const kandidat: RutaDo = {
-      koraci,
-      tacke,
-      cum,
-      duzina: cum[cum.length - 1]!,
-      manevri: manevriRute(sv, koraci, pocetakS.map((s) => s * r)),
-      cilj,
-    };
-    if (!naj || kandidat.duzina < naj.duzina) naj = kandidat;
+    const kandidat = rutaKroz(sv, start, [{ korak: { ivica: civ.i, smjer }, s: cilj.s }], cilj);
+    if (kandidat && (!naj || kandidat.duzina < naj.duzina)) naj = kandidat;
   }
   return naj;
 }

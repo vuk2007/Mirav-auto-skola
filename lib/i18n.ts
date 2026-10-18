@@ -288,6 +288,26 @@ export interface Dict {
   gradOdDoNewBest: string;
   gradOdDoAgain: string;
   gradOdDoNoTarget: string;
+  gradExam: string;
+  gradExamIntro: string;
+  gradExamRouteInfo: string;
+  gradExamHud: string;
+  gradExamCancel: string;
+  gradExamPoint: string;
+  gradExamPassed: string;
+  gradExamFailed: string;
+  gradExamSummary: string;
+  gradExamRule: string;
+  gradExamRecord: string;
+  gradExamMinor: string;
+  gradExamSerious: string;
+  gradExamAgain: string;
+  gradExamCatJunctions: string;
+  gradExamCatSpeed: string;
+  gradExamCatSigns: string;
+  gradExamCatPedestrians: string;
+  gradExamCatLane: string;
+  gradExamCatManoeuvres: string;
   vioWrongWay: string;
   vioTurnBan: string;
   vioUTurn: string;
@@ -809,6 +829,26 @@ const me: Dict = {
   gradOdDoNewBest: "Novi najbolji rezultat!",
   gradOdDoAgain: "Nova vožnja",
   gradOdDoNoTarget: "Nema odredišta za ovu težinu.",
+  gradExam: "Ispitna ruta",
+  gradExamIntro: "Ruta kao na ispitu: kreće se sa istog mjesta, prolazi kroz obavezne tačke redom i završava na cilju. Pada se na bilo koji teži prekršaj ili na više od {n} lakših.",
+  gradExamRouteInfo: "{km} km · {n} tačaka",
+  gradExamHud: "Ispit · tačka {k}/{n} · {vrijeme}",
+  gradExamCancel: "Prekini ispit",
+  gradExamPoint: "Obavezna tačka {k} od {n}",
+  gradExamPassed: "Položeno",
+  gradExamFailed: "Nije položeno",
+  gradExamSummary: "Lakših: {minor} · teških: {fail} · vrijeme {vrijeme} · {km} km",
+  gradExamRule: "Pada se na bilo koji teži prekršaj ili na više od {n} lakših.",
+  gradExamRecord: "Zapisnik",
+  gradExamMinor: "Lakše",
+  gradExamSerious: "Teške",
+  gradExamAgain: "Ponovi ispit",
+  gradExamCatJunctions: "Raskrsnice i prvenstvo",
+  gradExamCatSpeed: "Brzina",
+  gradExamCatSigns: "Znakovi, svjetla i oznake",
+  gradExamCatPedestrians: "Pješaci",
+  gradExamCatLane: "Položaj na putu i trake",
+  gradExamCatManoeuvres: "Manevri i pokazivači",
   vioWrongWay: "Vožnja u suprotnom smjeru jednosmjerne ulice",
   vioTurnBan: "Skretanje tamo gdje znak zabranjuje",
   vioUTurn: "Polukružno okretanje gdje je zabranjeno",
@@ -1321,6 +1361,26 @@ const en: Dict = {
   gradOdDoNewBest: "New best score!",
   gradOdDoAgain: "New drive",
   gradOdDoNoTarget: "No destination for this difficulty.",
+  gradExam: "Exam route",
+  gradExamIntro: "A route like the real exam: it starts from the same place, passes the required points in order and ends at the finish. Any serious violation or more than {n} minor ones fails the exam.",
+  gradExamRouteInfo: "{km} km · {n} points",
+  gradExamHud: "Exam · point {k}/{n} · {vrijeme}",
+  gradExamCancel: "Stop the exam",
+  gradExamPoint: "Required point {k} of {n}",
+  gradExamPassed: "Passed",
+  gradExamFailed: "Not passed",
+  gradExamSummary: "Minor: {minor} · serious: {fail} · time {vrijeme} · {km} km",
+  gradExamRule: "Any serious violation or more than {n} minor ones fails the exam.",
+  gradExamRecord: "Exam record",
+  gradExamMinor: "Minor",
+  gradExamSerious: "Serious",
+  gradExamAgain: "Retake the exam",
+  gradExamCatJunctions: "Junctions and right of way",
+  gradExamCatSpeed: "Speed",
+  gradExamCatSigns: "Signs, lights and road markings",
+  gradExamCatPedestrians: "Pedestrians",
+  gradExamCatLane: "Road position and lanes",
+  gradExamCatManoeuvres: "Manoeuvres and indicators",
   vioWrongWay: "Driving the wrong way on a one-way street",
   vioTurnBan: "Turning where a sign forbids it",
   vioUTurn: "U-turn where it is forbidden",
@@ -1838,6 +1898,26 @@ const sq: Dict = {
   gradOdDoNewBest: "Rezultat i ri më i mirë!",
   gradOdDoAgain: "Udhëtim i ri",
   gradOdDoNoTarget: "Nuk ka destinacion për këtë vështirësi.",
+  gradExam: "Rruga e provimit",
+  gradExamIntro: "Rrugë si në provim: nis nga i njëjti vend, kalon pikat e detyrueshme me radhë dhe mbaron në cak. Provimi bie me çdo shkelje të rëndë ose me më shumë se {n} të lehta.",
+  gradExamRouteInfo: "{km} km · {n} pika",
+  gradExamHud: "Provim · pika {k}/{n} · {vrijeme}",
+  gradExamCancel: "Ndalo provimin",
+  gradExamPoint: "Pika e detyrueshme {k} nga {n}",
+  gradExamPassed: "I kaluar",
+  gradExamFailed: "I pakaluar",
+  gradExamSummary: "Të lehta: {minor} · të rënda: {fail} · koha {vrijeme} · {km} km",
+  gradExamRule: "Provimi bie me çdo shkelje të rëndë ose me më shumë se {n} të lehta.",
+  gradExamRecord: "Procesverbali",
+  gradExamMinor: "Të lehta",
+  gradExamSerious: "Të rënda",
+  gradExamAgain: "Përsërit provimin",
+  gradExamCatJunctions: "Kryqëzime dhe përparësi",
+  gradExamCatSpeed: "Shpejtësia",
+  gradExamCatSigns: "Shenja, semaforë dhe vija",
+  gradExamCatPedestrians: "Këmbësorët",
+  gradExamCatLane: "Pozicioni në rrugë dhe korsitë",
+  gradExamCatManoeuvres: "Manovrat dhe sinjalet",
   vioWrongWay: "Ngasje në drejtim të kundërt në rrugë njëkahëshe",
   vioTurnBan: "Kthesë aty ku shenja e ndalon",
   vioUTurn: "Kthim prapa aty ku është i ndaluar",
@@ -2357,6 +2437,26 @@ const ru: Dict = {
   gradOdDoNewBest: "Новый лучший результат!",
   gradOdDoAgain: "Новая поездка",
   gradOdDoNoTarget: "Нет цели для этой сложности.",
+  gradExam: "Экзаменационный маршрут",
+  gradExamIntro: "Маршрут как на экзамене: старт с одного и того же места, обязательные точки по порядку и финиш. Экзамен не сдан при любом серьёзном нарушении или больше чем {n} лёгких.",
+  gradExamRouteInfo: "{km} км · точек: {n}",
+  gradExamHud: "Экзамен · точка {k}/{n} · {vrijeme}",
+  gradExamCancel: "Прервать экзамен",
+  gradExamPoint: "Обязательная точка {k} из {n}",
+  gradExamPassed: "Сдано",
+  gradExamFailed: "Не сдано",
+  gradExamSummary: "Лёгких: {minor} · серьёзных: {fail} · время {vrijeme} · {km} км",
+  gradExamRule: "Экзамен не сдан при любом серьёзном нарушении или больше чем {n} лёгких.",
+  gradExamRecord: "Протокол",
+  gradExamMinor: "Лёгкие",
+  gradExamSerious: "Серьёзные",
+  gradExamAgain: "Пересдать",
+  gradExamCatJunctions: "Перекрёстки и приоритет",
+  gradExamCatSpeed: "Скорость",
+  gradExamCatSigns: "Знаки, светофоры и разметка",
+  gradExamCatPedestrians: "Пешеходы",
+  gradExamCatLane: "Положение на дороге и полосы",
+  gradExamCatManoeuvres: "Манёвры и указатели поворота",
   vioWrongWay: "Движение против направления одностороннего движения",
   vioTurnBan: "Поворот там, где знак запрещает",
   vioUTurn: "Разворот там, где он запрещён",

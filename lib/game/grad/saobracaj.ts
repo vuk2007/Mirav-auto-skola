@@ -107,7 +107,7 @@ import { AUTOBUS, tijeloNaAsfaltu, voznjaLinijom, type LinijaAutobusa } from "./
 import { izaAutobusa, type AutobusUPolasku } from "./polazak";
 import { najblizaOsa, oseBlizu } from "./povrsina";
 import { bokNaAsfaltu, nizvodno, uzvodno, VOZILO_HITNOG, VRSTE_HITNIH, type HitnoZaSudiju, type VrstaHitnog } from "./hitna";
-import { pjesaciSaPrednoscu, udaraPjesaka, type Pjesaci } from "./pjesaci";
+import { pjesaciSaPrednoscu, udaraPjesaka, type Pjesak, type Pjesaci } from "./pjesaci";
 import { svjetloZaVozila } from "./pjesackiSemafor";
 import { mozeMirnoStati, polovinaUlice, prelaziNaPutanji, tijeloNaZebri } from "./trotoari";
 
@@ -150,6 +150,8 @@ export interface Tijelo {
   parkiran?: boolean;
   /** Stoji zbog pješaka (za pješake, vidi `VoziloZaPjesaka`). */
   cekaPjesaka?: boolean;
+  /** Čeka pred raskrsnicom pješake na zebri na njenom izlazu (vidi `VoziloZaPjesaka`). */
+  cekaPrelaz?: number;
 }
 
 /** Zašto vozilo usporava ili stoji — za dijagnozu i za detektor zastoja. */
@@ -162,7 +164,8 @@ export type Razlog =
   | { vrsta: "izlaz"; kome: number }
   | { vrsta: "vozilo"; kome: number }
   /** Pješak: ima prednost na prelazu, ili je na putu (stavka 8). */
-  | { vrsta: "pjesak"; kome: number }
+  /** `prelaz` — čeka na mjestu čekanja raskrsnice pješaka na zebri na njenom izlazu (stavka 9c). */
+  | { vrsta: "pjesak"; kome: number; prelaz?: number }
   /** Autobus staje na stajalištu (stavka 8c). */
   | { vrsta: "stajaliste" }
   /** Propušta autobus koji polazi sa stajališta (stavka 8c). */
@@ -398,6 +401,11 @@ export interface KocenjeZbogIgraca {
   usao: boolean;
   /** Kad je to vozilo ušlo u raskrsnicu [s]; `null` kad nije. */
   usaoOd: number | null;
+  /**
+   * Igrač je tada stajao zbog pješaka ispred sebe: od kad je taj pješak uz
+   * prelaz [s] (`-Infinity` — ne zna se); `null` — igrač nije stajao zbog pješaka.
+   */
+  pjesakOd: number | null;
 }
 
 /** Id igrača među učesnicima. */
@@ -499,6 +507,7 @@ export function tijeloNpc(n: Npc): Tijelo {
     sirina: n.plan.vozilo.sirina,
     nivo: n.nivo,
     cekaPjesaka: n.razlog.vrsta === "pjesak",
+    cekaPrelaz: n.razlog.vrsta === "pjesak" ? n.razlog.prelaz : undefined,
   };
 }
 
@@ -912,6 +921,11 @@ function komeUstupa(
       continue;
     }
     if ((n.cekaMeneDo?.get(on.id) ?? -Infinity) > sb.t) continue;
+    // Stoji na mjestu čekanja i čeka pješake na zebri na izlazu (stavka 9c):
+    // ne ulazi dok oni ne pređu — njega se ne čeka. Kad krene, ulazi tek
+    // kad je slobodno (ustupa onima koji su već u raskrsnici).
+    const razlogOn = sb.poId?.get(on.id)?.razlog;
+    if (!on.usao && on.v < GRAD_NPC_CEKA_BRZINA && razlogOn?.vrsta === "pjesak" && razlogOn.prelaz !== undefined) continue;
     const sk = sukob(n, ja, on);
     if (!sk || istaTraka(n, on)) continue;
     const mojeMjesto = ja.s0 + sk.sa;
@@ -1362,8 +1376,11 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
   let prva: ProlazPlana | null = null;
   for (let qi = n.prolaz; qi < p.prolazi.length; qi++) {
     const q = p.prolazi[qi]!;
-    if (q.od - n.s > GRAD_NPC_HORIZONT) break;
     const cekanje = mjestoCekanja(n, q);
+    // Raskrsnica tik iza prve (mjesto čekanja prije njenog izlaza) gleda se
+    // zajedno sa prvom i kad je dalje od horizonta: o obje se odlučuje pred
+    // prvom — inače bi je vozač ugledao kasno, pa naglo kočio pred prvom.
+    if (q.od - n.s > GRAD_NPC_HORIZONT && !(prva && cekanje <= prva.do_)) break;
     if (uRaskrsnici(n, qi)) {
       // U nju je ušao samo kroz lanac (linija mu je još ispred): ko je u
       // međuvremenu fizički ušao u nju, njemu ustupa — staje pred sukobom.
@@ -1488,7 +1505,23 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
       const naZebri = n.s > x.dodir + 0.25;
       const saNamjerom = naZebri ? undefined : cekaju.find((q) => n.namjere.get(q.id));
       const pjesak = prolazi ? saNamjerom : (naPrelazu[0] ?? saNamjerom);
-      if (pjesak) stani(staniNa, { vrsta: "pjesak", kome: pjesak.id });
+      // Zebra na izlazu iz raskrsnice bez semafora ispred: dok je pješak sa
+      // prednošću na njoj ili uz nju, u raskrsnicu se ne ulazi — čeka se na
+      // mjestu čekanja, da se u raskrsnici ne stoji pred onima koji imaju
+      // prvenstvo (odluka korisnika 2026-10-17). Ko više ne stiže udobno
+      // stati pred mjestom čekanja, ili je već prošao, staje pred zebrom kao
+      // i prije. Na semaforu skretači i pješaci idu u istoj fazi — tu se
+      // čeka u raskrsnici. Hitnom vozilu svi ustupaju (stavka 8e): ono ne
+      // čeka na liniji, nego pred zebrom.
+      const izlaz = pjesak && !pr.semafor && !n.hitno
+        ? p.prolazi.slice(n.prolaz).find((q) => {
+            if (r.lista[q.r]!.plan !== null) return false;
+            const cekanje = mjestoCekanja(n, q);
+            return x.dodir > cekanje && x.dodir <= q.do_ + p.vozilo.duzina && n.s <= cekanje + 0.5 && cekanje - n.s >= (n.v * n.v) / (2 * GRAD_VOZAC_USPORENJE) - 0.5;
+          })
+        : undefined;
+      if (pjesak && izlaz) stani(mjestoCekanja(n, izlaz), { vrsta: "pjesak", kome: pjesak.id, prelaz: pr.id });
+      else if (pjesak) stani(staniNa, { vrsta: "pjesak", kome: pjesak.id });
     }
     for (const id of [...n.namjere.keys()]) if (!vidi.has(id)) n.namjere.delete(id);
     const naPutu = pjesakNaPutu(n, pj, pogledP);
@@ -1522,12 +1555,28 @@ function odluci(sb: Saobracaj, n: Npc, tijela: readonly Tijelo[], poRaskrsnici: 
     const r = sb.poId?.get(id)?.razlog;
     return r?.vrsta === "vozilo" && r.kome === n.id;
   };
-  for (const ispred of [naPutu(n, tijela, pogled, cekaMeneIza), spajanja(sb, n, poRaskrsnici), prestrojavanja(n, sb.npc), cekaObilazak(n, tijela, sb.npc)]) {
+  const naPutuIspred = naPutu(n, tijela, pogled, cekaMeneIza);
+  for (const ispred of [naPutuIspred, spajanja(sb, n, poRaskrsnici), prestrojavanja(n, sb.npc), cekaObilazak(n, tijela, sb.npc)]) {
     if (!ispred) continue;
     const vs = sigurnaBrzina(n.v, ispred.vl, ispred.gap);
     if (vs < v) {
       v = vs;
       razlog = { vrsta: "vozilo", kome: ispred.id };
+    }
+  }
+  // Kolona koja stoji: na pješačkom prelazu se ne staje (ZOBS) — ko bi iza
+  // vozila ispred stao tijelom na zebri, čeka pred njom dok se kolona ne
+  // pomjeri dovoljno da je pređe cijelim tijelom. Inače pješak ne može preći,
+  // a vozila koja ga čekaju zatvaraju krug (stavka 9c).
+  if (naPutuIspred && naPutuIspred.vl < GRAD_NPC_CEKA_BRZINA && sb.pjesaci) {
+    const staje = n.s + naPutuIspred.gap - GRAD_NPC_RAZMAK;
+    for (const x of prelaziPlana(sb.pjesaci, p)) {
+      if (x.dodir - n.s > pogled + p.vozilo.duzina) break;
+      const kraj = x.s + GRAD_ZEBRA_DUBINA / 2 + p.vozilo.duzina / 2;
+      if (n.s <= x.dodir - GRAD_PJ_TIK_PRED_ZEBROM && staje > x.dodir && staje < kraj) {
+        stani(x.dodir - GRAD_STOP_ISPRED_ZEBRE, { vrsta: "vozilo", kome: naPutuIspred.id });
+        break;
+      }
     }
   }
 
@@ -1967,7 +2016,11 @@ export function korakSaobracaja(sb: Saobracaj, fokus: Point, igrac: Tijelo | nul
         const d = dolazakNpc(sb, n, ki, sb.t);
         // Za sudiju: da li je stvarno bio u raskrsnici (prošao njeno mjesto čekanja).
         const presao = n.presaoLinijuOd.get(ki) ?? null;
-        sb.kocenja.push({ id: n.id, t: sb.t, r: k.r, ucesnik: d.ucesnik, usao: presao !== null, usaoOd: presao });
+        // Igrač stoji zbog pješaka pred sobom (stavka 9c): od kad je tu prvi od njih.
+        const ja = sb.poId?.get(IGRAC);
+        const pred = ja && ja.v < GRAD_NPC_CEKA_BRZINA ? pjesaciPredIgracem(sb, ja) : [];
+        const pjesakOd = pred.length > 0 ? Math.min(...pred.map((x) => x.uzPrelazOd ?? -Infinity)) : null;
+        sb.kocenja.push({ id: n.id, t: sb.t, r: k.r, ucesnik: d.ucesnik, usao: presao !== null, usaoOd: presao, pjesakOd });
       }
     }
     postaviPozu(n);
@@ -2656,6 +2709,11 @@ export function oduzetoPrvenstvo(
       izUnutrasnje: m.ivice[prolaz.ulaz]!.kruzni && !m.ivice[prolaz.izlaz]!.kruzni && Boolean(prolaz.izUnutrasnje),
       ukljucivanje: rs.kraci[ki]!.klasa === "service",
     };
+    // Igrač je ušao ispravno, pa u raskrsnici stao zbog pješaka koji je do
+    // prelaza stigao tek poslije njegovog ulaska: drugi je stao zbog pješaka,
+    // ne zbog igrača (odluka korisnika 2026-10-17). Pješak koji je već bio na
+    // zebri ili na ivičnjaku kad je igrač ulazio — igrač nije smio ući.
+    if (k.pjesakOd !== null && prolaz.ulazak !== undefined && k.pjesakOd > prolaz.ulazak) continue;
     // Bio je u raskrsnici prije igrača: njega je trebalo pustiti. Ušao
     // poslije njega — o tome odlučuje prvenstvo.
     const bioUnutra = k.usao && k.usaoOd !== null && (prolaz.ulazak === undefined || k.usaoOd <= prolaz.ulazak);
@@ -2671,17 +2729,42 @@ export function oduzetoPrvenstvo(
  * raskrsnici `r`, a kroz nju se kreće neko drugi (`GRAD_IGRAC_CEKA_PROLAZ`).
  * Igrač nema plan, pa se ne zna kome ustupa — samo da ima kome.
  */
-export function igracCekaSaobracaj(sb: Saobracaj, igrac: Tijelo, r: number | null): boolean {
+/**
+ * Pješaci ispred igrača kojima on ustupa (stavka 8): na prelazu ili na
+ * ivičnjaku pred njim — tik ispred haube, ili na zebri koju pravac vožnje
+ * siječe blizu (kosa zebra na izlazu iz raskrsnice, stavka 9c).
+ */
+function pjesaciPredIgracem(sb: Saobracaj, igrac: { x: number; y: number; ugao: number }): Pjesak[] {
+  const pj = sb.pjesaci;
+  if (!pj) return [];
   const hx = Math.cos(igrac.ugao);
   const hy = Math.sin(igrac.ugao);
-  // Pješak ispred, na prelazu ili na ivičnjaku pred njim (stavka 8): igrač mu ustupa.
-  for (const x of sb.pjesaci?.lista ?? []) {
-    if (x.stanje === "hoda") continue;
+  const do_ = GRAD_IGRAC_KOLONA + CAR_LENGTH;
+  return pj.lista.filter((x) => {
+    if (x.stanje === "hoda") return false;
     const dx = x.x - igrac.x;
     const dy = x.y - igrac.y;
     const naprijed = dx * hx + dy * hy;
-    if (naprijed > 0 && naprijed < GRAD_IGRAC_KOLONA + CAR_LENGTH && Math.abs(-dx * hy + dy * hx) < 3 * CAR_WIDTH) return true;
-  }
+    if (naprijed > 0 && naprijed < do_ && Math.abs(-dx * hy + dy * hx) < 3 * CAR_WIDTH) return true;
+    if (x.prelaz < 0) return false;
+    // Presjek pravca vožnje sa prelazom: igrač + t·h = a + u·(b − a).
+    const pr = pj.mreza.prelazi[x.prelaz]!;
+    const ex = pr.b.x - pr.a.x;
+    const ey = pr.b.y - pr.a.y;
+    const det = ex * hy - ey * hx;
+    if (Math.abs(det) < 1e-9) return false;
+    const ax = pr.a.x - igrac.x;
+    const ay = pr.a.y - igrac.y;
+    const t = (ex * ay - ey * ax) / det;
+    const u = (hx * ay - hy * ax) / det;
+    return t > 0 && t < do_ && u >= 0 && u <= 1;
+  });
+}
+
+export function igracCekaSaobracaj(sb: Saobracaj, igrac: Tijelo, r: number | null): boolean {
+  const hx = Math.cos(igrac.ugao);
+  const hy = Math.sin(igrac.ugao);
+  if (pjesaciPredIgracem(sb, igrac).length > 0) return true;
   for (const n of sb.npc) {
     if (n.vanjski || n.nivo !== igrac.nivo) continue;
     const dx = n.x - igrac.x;

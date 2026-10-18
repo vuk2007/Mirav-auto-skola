@@ -490,6 +490,9 @@ function prolaziSudije(
   tacke: Point[],
   gusto: readonly [number, number][],
 ): { r: number; od: number; do_: number; manevar: string }[] {
+  // Putanja bez dužine (sve tačke skinute u čišćenju): nema prolaza — plan
+  // takve putanje pozivaoci odbacuju.
+  if (tacke.length < 2) return [];
   const cum = cumulative(tacke);
   const duzina = cum[cum.length - 1] ?? 0;
   const sudija = noviSudija(5);

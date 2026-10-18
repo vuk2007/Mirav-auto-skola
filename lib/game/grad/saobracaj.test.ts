@@ -156,6 +156,30 @@ describe("saobraćaj i igrač", () => {
     // Da je igrač bio na glavnoj (sa zapada), ustupalo bi vozilo — nije prekršaj.
     expect(oduzetoPrvenstvo(sb, { r, ulaz: 2, izlaz: 0, manevar: "pravo", od: 0, do_: sb.t })?.usao ?? false).toBe(sb.kocenja[0]!.usao);
   });
+
+  it("igrač stoji u raskrsnici zbog pješaka koji je stigao poslije njegovog ulaska: nije oduzeto prvenstvo", () => {
+    // Odluka korisnika 2026-10-17: ušao je ispravno, pa stao zbog pješaka koji
+    // je naišao tek poslije — drugi je stao zbog pješaka. Pješak koji je već
+    // bio uz prelaz kad je igrač ulazio — prekršaj ostaje.
+    const sb = noviSaobracaj(krst(["primary", "residential", "primary", "residential"]), 1, 0);
+    dodajVozilo(sb, ruta(0, 2), 12)!.s = 110;
+    let y = 12;
+    sb.popunjeno = true;
+    for (let t = 0; t < 4; t += DT) {
+      y -= 8 * DT;
+      korakSaobracaja(sb, DALEKO, { id: IGRAC, x: 2.125, y, ugao: -Math.PI / 2, v: 8, duzina: CAR_LENGTH, sirina: CAR_WIDTH, nivo: 0 });
+    }
+    const k = sb.kocenja[0]!;
+    const prolaz = { r: k.r, ulaz: 1, izlaz: 3, manevar: "pravo" as const, od: 0, do_: sb.t, ulazak: 1 };
+    expect(k.pjesakOd).toBeNull();
+    expect(oduzetoPrvenstvo(sb, prolaz)).not.toBeNull();
+    for (const x of sb.kocenja) x.pjesakOd = 2;
+    expect(oduzetoPrvenstvo(sb, prolaz)).toBeNull();
+    for (const x of sb.kocenja) x.pjesakOd = 0.5;
+    expect(oduzetoPrvenstvo(sb, prolaz)).not.toBeNull();
+    for (const x of sb.kocenja) x.pjesakOd = -Infinity;
+    expect(oduzetoPrvenstvo(sb, prolaz)).not.toBeNull();
+  });
 });
 
 describe("igrač stoji zbog saobraćaja (nije parkiranje)", () => {

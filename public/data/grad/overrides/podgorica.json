@@ -1,0 +1,102 @@
+{
+  "verzija": 1,
+  "grad": "podgorica",
+  "licenca": "ODbL 1.0 — izmjene preko podataka © OpenStreetMap saradnici",
+  "ishodiste": {
+    "lat": 42.4413,
+    "lon": 19.2629
+  },
+  "izmjene": [
+    {
+      "id": "mvcheyo3-1-30jc",
+      "autor": "Claude (ispitne rute, stavka 9c)",
+      "datum": "2026-10-17T14:18:28.217Z",
+      "vrsta": "zadatak",
+      "zadatak": {
+        "id": "zadatak-mvcheynz",
+        "ime": "Ispitna ruta 1: KBC – Gintaš",
+        "vrsta": "ispitna",
+        "start": {
+          "osm": 27706827,
+          "x": -732.82,
+          "y": -316.43,
+          "hx": -0.9197000000000001,
+          "hy": -0.3926
+        },
+        "cilj": {
+          "osm": 27706827,
+          "x": -772.71,
+          "y": -333.48,
+          "hx": -0.9194,
+          "hy": -0.3934
+        },
+        "tacke": [
+          {
+            "osm": 607582361,
+            "x": -1431.03,
+            "y": 265.15,
+            "hx": 0.9803000000000001,
+            "hy": 0.19770000000000001
+          },
+          {
+            "osm": 1160570620,
+            "x": -88.2,
+            "y": 1013.89,
+            "hx": 0.4244,
+            "hy": -0.9055000000000001
+          }
+        ],
+        "manevri": []
+      }
+    },
+    {
+      "id": "mvchfkh1-2-xe7g",
+      "autor": "Claude (ispitne rute, stavka 9c)",
+      "datum": "2026-10-17T14:18:56.475Z",
+      "vrsta": "zadatak",
+      "zadatak": {
+        "id": "zadatak-mvchfkgw",
+        "ime": "Ispitna ruta 2: kružni tok 13. jula – Blokovi",
+        "vrsta": "ispitna",
+        "start": {
+          "osm": 27706827,
+          "x": -732.82,
+          "y": -316.43,
+          "hx": -0.9197000000000001,
+          "hy": -0.3926
+        },
+        "cilj": {
+          "osm": 27706827,
+          "x": -772.71,
+          "y": -333.48,
+          "hx": 0.9194,
+          "hy": 0.3934
+        },
+        "tacke": [
+          {
+            "osm": 1036524877,
+            "x": -950.0600000000001,
+            "y": -679.87,
+            "hx": -0.9176000000000001,
+            "hy": -0.3975
+          },
+          {
+            "osm": 1039397510,
+            "x": -1032.78,
+            "y": -715.49,
+            "hx": -0.917,
+            "hy": -0.39880000000000004
+          },
+          {
+            "osm": 1215619251,
+            "x": -1601.64,
+            "y": -389.79,
+            "hx": -0.9052,
+            "hy": -0.42510000000000003
+          }
+        ],
+        "manevri": []
+      }
+    }
+  ]
+}

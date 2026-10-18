@@ -165,6 +165,43 @@ describe("drugi vozač i pješak (stavka 8)", () => {
     expect(sb.npc.includes(n)).toBe(false);
   });
 
+  it("pješak na zebri na izlazu raskrsnice bez semafora: vozilo čeka na liniji, ne u raskrsnici", () => {
+    // Vozilo dolazi sa zapada i ide na istok; zebra je na istočnom kraku,
+    // 15 m od centra (izlaz). Odluka korisnika 2026-10-17 (stavka 9c).
+    const sv = krst();
+    const sb = noviSaobracaj(sv, 1, 0);
+    const pj = bezPojave(sv);
+    sb.pjesaci = pj;
+    sb.popunjeno = true;
+    const n = dodajVozilo(sb, [{ ivica: 2, smjer: 1 }, { ivica: 0, smjer: -1 }], 10)!;
+    const x = pjesak(pj, 0, 1, "ceka");
+    let najdalje = -Infinity;
+    for (let t = 0; t < 30 && x.stanje === "ceka"; t += DT) {
+      korakSaobracaja(sb, { x: 0, y: 0 }, null);
+      // Pješak čeka (kao da ga drži nešto drugo): vozilo ga ne smije čekati u raskrsnici.
+      x.cekaOd = pj.t;
+      najdalje = Math.max(najdalje, n.x);
+    }
+    expect(n.v).toBeLessThan(0.1);
+    expect(n.razlog.vrsta).toBe("pjesak");
+    // Stoji pred raskrsnicom (zapadni krak), ne u njoj.
+    expect(najdalje + CAR_LENGTH / 2).toBeLessThan(-GRAD_SIRINA_TRAKE);
+  });
+
+  it("kolona: iza vozila koje stoji tik iza zebre ne staje na zebru, nego pred njom", () => {
+    // Igrač stoji 6 m iza zebre (x = 9, zebra je na x = 15): vozilo iza
+    // njega bi stalo tijelom na zebri — ZOBS: na prelazu se ne staje (9c).
+    const sv = krst();
+    const sb = noviSaobracaj(sv, 1, 0);
+    sb.pjesaci = bezPojave(sv);
+    sb.popunjeno = true;
+    const n = dodajVozilo(sb, ISTOK_ZAPAD, 12)!;
+    const igrac = { id: 0, x: 9, y: -T, ugao: Math.PI, v: 0, duzina: CAR_LENGTH, sirina: 1.8, nivo: 0 };
+    for (let t = 0; t < 20; t += DT) korakSaobracaja(sb, { x: 0, y: 0 }, igrac);
+    expect(n.v).toBeLessThan(0.1);
+    expect(n.x - CAR_LENGTH / 2).toBeGreaterThan(15 + GRAD_ZEBRA_DUBINA / 2);
+  });
+
   it("pješaku na ivičnjaku ustupa kad može stati; pješak tada prelazi", () => {
     const sv = krst();
     const sb = noviSaobracaj(sv, 1, 0);
@@ -240,5 +277,31 @@ describe("udar pješaka", () => {
     expect(udaraPjesaka(auto, { x: 0, y: 0.9 + r - 0.05 })).toBe(true);
     // Ugao: dijagonala od tjemena.
     expect(udaraPjesaka(auto, { x: CAR_LENGTH / 2 + r * 0.8, y: 0.9 + r * 0.8 })).toBe(false);
+  });
+});
+
+describe("pješak van zebre i vozilo na putu (stavka 9)", () => {
+  it("vozilo mu stane na put nasred kolovoza: poslije `GRAD_PJ_BLOKIRAN` vraća se na ivičnjak", () => {
+    const sv = krst();
+    const pj = bezPojave(sv);
+    // Prelazi istočni krak van zebre (x = 60), od juga ka sjeveru; auto stoji
+    // u sjevernoj traci tik ispred njega (npr. sklonio se pred hitnim).
+    const x = pjesak(pj, 0, 1);
+    x.vanZebre = { k: x.k, d: x.d, a: { x: 60, y: 8 }, b: { x: 60, y: -8 }, u: 5 };
+    x.x = 60;
+    x.y = 3;
+    x.ugao = -Math.PI / 2;
+    const auto = { id: 1, x: 60, y: -T, ugao: Math.PI, v: 0, duzina: CAR_LENGTH, sirina: 1.8, cekaPjesaka: true };
+    // Priđe autu i stane: ne ulazi u vozilo.
+    for (let t = 0; t < 3; t += DT) korakPjesaka(pj, { x: 60, y: 0 }, [auto]);
+    const stao = x.y;
+    for (let t = 0; t < 1; t += DT) korakPjesaka(pj, { x: 60, y: 0 }, [auto]);
+    expect(x.y).toBeCloseTo(stao, 5);
+    expect(udaraPjesaka(auto, x)).toBe(false);
+    // Poslije `GRAD_PJ_BLOKIRAN` okrenuo se: ide nazad, ka jugu.
+    for (let t = 0; t < 4; t += DT) korakPjesaka(pj, { x: 60, y: 0 }, [auto]);
+    expect(x.vanZebre?.b).toEqual({ x: 60, y: 8 });
+    expect(x.y).toBeGreaterThan(stao + 1);
+    expect(udaraPjesaka(auto, x)).toBe(false);
   });
 });

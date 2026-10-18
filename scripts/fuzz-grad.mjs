@@ -15,6 +15,8 @@
  *                                       # umjesto overlay fajla: sintetički
  *                                       # overlay sa sjemenom 3 (sve vrste
  *                                       # izmjena iz editora, u memoriji)
+ *     npm run test:fuzz:grad -- 10 3 1 --ispitne --saobracaj
+ *                                       # ispitne rute iz editora (stavka 9c)
  *     npm run test:fuzz:grad -- 50 5 1 --saobracaj
  *                                       # među drugim vozačima (stavka 7d):
  *                                       # i bez sudara, oduzetog prvenstva i
@@ -42,6 +44,9 @@ const sjemeSintetike = iSint >= 0 ? Number(process.argv[iSint + 1] ?? 1) : null;
 const uSaobracaju = process.argv.includes("--saobracaj");
 // Zadaci (stavka 9): rute do odredišta — redom po spisku, sa nasumičnog starta.
 const doOdredista = process.argv.includes("--odredista");
+// Ispitne rute (stavka 9c): rute iz editora, redom, svaka više puta (drugi
+// trenutak semafora i drugi saobraćaj).
+const ispitne = process.argv.includes("--ispitne");
 
 const { procitaj } = await import(`${KOD}grad/paket.ts`);
 const { procitajOverlay } = await import(`${KOD}grad/overlay.ts`);
@@ -51,6 +56,8 @@ const { rng } = await import(`${KOD}sim/geometry.ts`);
 const { odveziRutuUSaobracaju } = await import(`${KOD}grad/botUSaobracaju.ts`);
 const { odredistaGrada } = await import(`${KOD}grad/odredista.ts`);
 const { koraciDoOdredista } = await import(`${KOD}grad/navigacija.ts`);
+const { ispitneRute, rutaIspita } = await import(`${KOD}grad/ispit.ts`);
+const { zadaciGrada } = await import(`${KOD}grad/overlay.ts`);
 
 const spisak = JSON.parse(readFileSync(join(JAVNO, "gradovi.json"), "utf8"));
 const b = readFileSync(join(JAVNO, spisak.podgorica.fajl));
@@ -83,6 +90,11 @@ if (sjemeSintetike !== null) {
 
 const slucajno = rng(sjeme);
 const odredista = doOdredista ? odredistaGrada(svijet) : [];
+const ispitneRuteGrada = ispitne && overlay ? ispitneRute(zadaciGrada(overlay)) : [];
+if (ispitne && ispitneRuteGrada.length === 0) {
+  console.log("Nema ispitnih ruta u overlay-u.");
+  process.exit(1);
+}
 const padovi = [];
 let km = 0;
 let sati = 0;
@@ -97,6 +109,16 @@ for (let n = 0; n < ruta; n++) {
     koraci = koraciDoOdredista(svijet, koraci[0], cilj);
     if (!koraci) {
       console.log(`PAD  ruta ${String(n).padStart(2)}: nema rute do „${cilj.ime}"`);
+      padovi.push(n);
+      continue;
+    }
+  }
+  if (ispitne) {
+    const z = ispitneRuteGrada[n % ispitneRuteGrada.length];
+    cilj = { ime: z.ime };
+    koraci = rutaIspita(svijet, z)?.koraci ?? null;
+    if (!koraci) {
+      console.log(`PAD  ruta ${String(n).padStart(2)}: nema rute za „${z.ime}"`);
       padovi.push(n);
       continue;
     }

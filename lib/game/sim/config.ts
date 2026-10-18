@@ -2712,3 +2712,14 @@ export const GRAD_ODDO_FAIL = 350;
 export const GRAD_ODDO_VRIJEME = 300;
 /** Pragovi za jednu, dvije i tri zvjezdice. */
 export const GRAD_ODDO_ZVJEZDICE = [400, 700, 900] as const;
+
+// ── ispitna ruta (faza 6, stavka 9c) ─────────────────────────────────────
+// Odluke korisnika (2026-10-15, 2026-10-17): rute samo iz editora, kao prave
+// ispitne rute u Podgorici; pada se na bilo koji teži prekršaj ili na više od
+// `GRAD_ISPIT_LAKSIH` lakših.
+/** Nivo saobraćaja i sudije na ispitu. */
+export const GRAD_ISPIT_NIVO: Level = 3;
+/** Najviše lakših prekršaja da bi se ispit položio. */
+export const GRAD_ISPIT_LAKSIH = 3;
+/** Obavezna tačka je pređena kad je auto po ruti stigao do nje bliže od ovoga [m]. */
+export const GRAD_ISPIT_TACKA = 10;
