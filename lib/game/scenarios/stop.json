@@ -6,7 +6,8 @@
     "me": "Znak STOP",
     "en": "STOP sign",
     "sq": "Shenja STOP",
-    "ru": "Знак STOP"
+    "ru": "Знак STOP",
+    "tr": "DUR levhası"
   },
   "player": {
     "arm": "W",
@@ -28,6 +29,7 @@
     "me": "Znak STOP traži POTPUNO zaustavljanje na stop-liniji, čak i kad je put slobodan. Tek poslije zaustavljanja propuštate vozila sa glavnog puta i krećete.",
     "en": "A STOP sign demands a COMPLETE stop at the stop line, even when the road is clear. Only after stopping do you give way to traffic on the priority road and move off.",
     "sq": "Shenja STOP kërkon ndalim të PLOTË te vija e ndalimit, edhe kur rruga është e lirë. Vetëm pas ndalimit u jepni përparësi automjeteve nga rruga me përparësi dhe niseni.",
-    "ru": "Знак STOP требует ПОЛНОЙ остановки у стоп-линии, даже если дорога свободна. Только после остановки вы пропускаете транспорт с главной дороги и трогаетесь."
+    "ru": "Знак STOP требует ПОЛНОЙ остановки у стоп-линии, даже если дорога свободна. Только после остановки вы пропускаете транспорт с главной дороги и трогаетесь.",
+    "tr": "DUR levhası, yol boş olsa bile dur çizgisinde TAM duruş ister. Ancak durduktan sonra ana yoldaki trafiğe yol verir ve hareket edersiniz."
   }
 }

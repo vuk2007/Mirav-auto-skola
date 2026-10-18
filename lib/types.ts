@@ -90,6 +90,7 @@ interface QuestionBase {
    */
   text_en?: string;
   text_ru?: string;
+  text_tr?: string;
   text_sq?: string;
 }
 
@@ -101,6 +102,7 @@ export interface TextQuestion extends QuestionBase {
   /** Prevodi ponuđenih odgovora; ako nedostaju, koriste se crnogorski. */
   options_en?: Record<OptionKey, string>;
   options_ru?: Record<OptionKey, string>;
+  options_tr?: Record<OptionKey, string>;
   options_sq?: Record<OptionKey, string>;
 }
 
@@ -112,6 +114,7 @@ export interface ImageQuestion extends QuestionBase {
   correct: OptionKey;
   options_en?: Record<OptionKey, string>;
   options_ru?: Record<OptionKey, string>;
+  options_tr?: Record<OptionKey, string>;
   options_sq?: Record<OptionKey, string>;
 }
 

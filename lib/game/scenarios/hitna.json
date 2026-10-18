@@ -6,7 +6,8 @@
     "me": "Vozilo pod pratnjom",
     "en": "Emergency vehicle",
     "sq": "Automjet me përparësi",
-    "ru": "Автомобиль со спецсигналом"
+    "ru": "Автомобиль со спецсигналом",
+    "tr": "Acil durum aracı"
   },
   "player": {
     "arm": "N",
@@ -26,6 +27,7 @@
     "me": "Vi ste na glavnom putu, a vozilo sa sporednog ima uključeno rotaciono svjetlo i sirenu. Njemu se ustupa prvenstvo bez obzira na znakove — propuštate ga, pa nastavljate.",
     "en": "You are on the priority road, but the vehicle from the side road has its beacon and siren on. It has the right of way regardless of the signs — let it pass, then carry on.",
     "sq": "Ju jeni në rrugën me përparësi, por automjeti nga rruga dytësore ka të ndezur dritën rrotulluese dhe sirenën. Atij i jepet përparësia pavarësisht shenjave — lëreni të kalojë, pastaj vazhdoni.",
-    "ru": "Вы на главной дороге, но у автомобиля со второстепенной включены проблесковый маячок и сирена. Ему уступают дорогу независимо от знаков — пропустите его, затем продолжайте."
+    "ru": "Вы на главной дороге, но у автомобиля со второстепенной включены проблесковый маячок и сирена. Ему уступают дорогу независимо от знаков — пропустите его, затем продолжайте.",
+    "tr": "Ana yoldasınız, ama tali yoldaki aracın tepe lambası ve sireni açık. Levhalardan bağımsız olarak geçiş hakkı onundur — önce onu geçirin, sonra devam edin."
   }
 }

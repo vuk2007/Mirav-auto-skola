@@ -6,7 +6,8 @@
     "me": "Zeleno ne znači slobodno",
     "en": "Green does not mean clear",
     "sq": "E gjelbra nuk do të thotë e lirë",
-    "ru": "Зелёный не значит «свободно»"
+    "ru": "Зелёный не значит «свободно»",
+    "tr": "Yeşil, yolun boş olduğu anlamına gelmez"
   },
   "lightStartPhase": 0,
   "lightStartT": 0,
@@ -27,6 +28,7 @@
     "me": "I vi i susretno vozilo imate zeleno — zeleno svjetlo ne ukida ostala pravila. Vi skrećete ulijevo, pa propuštate vozilo koje ide pravo, tek onda skrećete.",
     "en": "You and the oncoming car both have green — a green light does not cancel the other rules. You are turning left, so you let the vehicle going straight pass, and only then turn.",
     "sq": "Edhe ju edhe automjeti përballë keni të gjelbrën — drita e gjelbër nuk i heq rregullat e tjera. Ju ktheheni majtas, prandaj e lini të kalojë automjetin që vazhdon drejt dhe vetëm pastaj ktheheni.",
-    "ru": "И у вас, и у встречного автомобиля зелёный — зелёный сигнал не отменяет остальных правил. Вы поворачиваете налево, поэтому пропускаете едущего прямо и только затем поворачиваете."
+    "ru": "И у вас, и у встречного автомобиля зелёный — зелёный сигнал не отменяет остальных правил. Вы поворачиваете налево, поэтому пропускаете едущего прямо и только затем поворачиваете.",
+    "tr": "Hem size hem karşıdan gelen araca yeşil yanıyor — yeşil ışık diğer kuralları ortadan kaldırmaz. Sola dönüyorsunuz, bu yüzden düz giden aracı geçirir, ancak ondan sonra dönersiniz."
   }
 }

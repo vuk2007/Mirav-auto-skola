@@ -6,7 +6,8 @@
     "me": "Policajac vas zaustavlja na zeleno",
     "en": "The officer stops you on a green",
     "sq": "Polici ju ndalon në dritën e gjelbër",
-    "ru": "Регулировщик останавливает вас на зелёный"
+    "ru": "Регулировщик останавливает вас на зелёный",
+    "tr": "Polis sizi yeşilde durduruyor"
   },
   "lightStartPhase": 0,
   "lightStartT": 0,
@@ -33,6 +34,7 @@
     "me": "Semafor vam pokazuje zeleno, ali policajac zaustavlja vaš pravac i propušta poprečni. Zeleno svjetlo tu ne znači ništa — čeka se da policajac propusti vaš pravac.",
     "en": "The light shows green for you, but the officer is holding your direction and letting the cross traffic through. The green means nothing here — you wait until the officer releases your direction.",
     "sq": "Semafori ju tregon të gjelbër, por polici e ndalon drejtimin tuaj dhe lëshon trafikun tërthor. E gjelbra këtu nuk do të thotë asgjë — pritet derisa polici ta lëshojë drejtimin tuaj.",
-    "ru": "Светофор показывает вам зелёный, но регулировщик останавливает ваше направление и пропускает поперечное. Зелёный здесь ничего не значит — вы ждёте, пока регулировщик не разрешит ваше направление."
+    "ru": "Светофор показывает вам зелёный, но регулировщик останавливает ваше направление и пропускает поперечное. Зелёный здесь ничего не значит — вы ждёте, пока регулировщик не разрешит ваше направление.",
+    "tr": "Size yeşil yanıyor, ama polis sizin yönünüzü durdurup kesişen trafiği geçiriyor. Burada yeşilin bir anlamı yok — polis yönünüzü serbest bırakana kadar beklersiniz."
   }
 }

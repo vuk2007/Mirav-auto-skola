@@ -1,11 +1,11 @@
 /**
- * Upozorenje o jeziku ispita — samo za EN i RU.
+ * Upozorenje o jeziku ispita — samo za EN, RU i TR.
  *
  * Na pravom ispitu teorija se polaže samo na crnogorskom ili albanskom, pa
- * kandidat koji koristi engleski ili ruski mora učiti pitanja na crnogorskom;
+ * kandidat koji koristi engleski, ruski ili turski mora učiti pitanja na crnogorskom;
  * prevod mu je samo pomoć (vidi `Bilingual` u lib/questions.ts).
  *
- * Tekstovi su van `Dict`-a jer postoje samo za ta dva jezika. Za ME i AL se
+ * Tekstovi su van `Dict`-a jer postoje samo za te jezike. Za ME i AL se
  * upozorenje nikad ne prikazuje.
  */
 
@@ -38,5 +38,14 @@ export const EXAM_LANGUAGE_NOTICE: Partial<Record<Lang, ExamLanguageNotice>> = {
       "черногорском — именно так они будут выглядеть на экзамене.",
     confirm: "Понятно",
     strip: "Язык экзамена: только черногорский / албанский",
+  },
+  tr: {
+    title: "Sınav dili",
+    body:
+      "Önemli: Karadağ'da resmî sürücü teori sınavına yalnızca Karadağca veya Arnavutça girilebilir. " +
+      "Sizi gerçek sınava hazırlamak için her soru ve cevap önce Karadağca, altında ise Türkçe çevirisiyle " +
+      "gösterilir. Soruları Karadağca tanımayı öğrenin — sınavınızda bu şekilde karşınıza çıkacaklar.",
+    confirm: "Anladım",
+    strip: "Sınav dili: yalnızca Karadağca / Arnavutça",
   },
 };

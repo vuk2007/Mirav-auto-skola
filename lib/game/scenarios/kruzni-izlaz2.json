@@ -6,7 +6,8 @@
     "me": "Kružni tok — drugi izlaz",
     "en": "Roundabout — second exit",
     "sq": "Rrethrrotullim — dalja e dytë",
-    "ru": "Круговое движение — второй съезд"
+    "ru": "Круговое движение — второй съезд",
+    "tr": "Dönel kavşak — ikinci çıkış"
   },
   "player": {
     "arm": "N",
@@ -34,6 +35,7 @@
     "me": "Pri ulasku u kružni tok propuštate vozila koja su već u prstenu. Za drugi izlaz se na prilazu ne pali nijedan pokazivač; desni se pali tek kad prođete izlaz prije svog.",
     "en": "When entering a roundabout you give way to vehicles already circulating. For the second exit you signal nothing on the approach; the right indicator goes on only once you pass the exit before yours.",
     "sq": "Kur hyni në rrethrrotullim u jepni përparësi automjeteve që janë tashmë në unazë. Për daljen e dytë në afrim nuk ndizet asnjë tregues; i djathti ndizet vetëm pasi kaloni daljen para tuajës.",
-    "ru": "При въезде на круг вы уступаете тем, кто уже движется по кольцу. Для второго съезда на подъезде указатель не включается; правый включается только после того, как вы минуете съезд перед своим."
+    "ru": "При въезде на круг вы уступаете тем, кто уже движется по кольцу. Для второго съезда на подъезде указатель не включается; правый включается только после того, как вы минуете съезд перед своим.",
+    "tr": "Dönel kavşağa girerken içeride dönen araçlara yol verirsiniz. İkinci çıkış için yaklaşırken sinyal vermezsiniz; sağ sinyal ancak sizinkinden önceki çıkışı geçtiğinizde açılır."
   }
 }

@@ -6,7 +6,8 @@
     "me": "Neko vam ne ustupa",
     "en": "Someone fails to give way",
     "sq": "Dikush nuk ju jep përparësi",
-    "ru": "Вам не уступают"
+    "ru": "Вам не уступают",
+    "tr": "Biri yol vermiyor"
   },
   "player": {
     "arm": "N",
@@ -35,6 +36,7 @@
     "me": "Vi ste na glavnom putu i prednost je vaša — ali vozilo sa sporednog puta ne staje. Prednost se ne uzima silom: kočite i propustite ga. To nije vaša greška i ne računa se protiv vas.",
     "en": "You are on the priority road and the right of way is yours — but the car from the side road does not stop. Right of way is not taken by force: brake and let it through. That is not your mistake and it is not held against you.",
     "sq": "Ju jeni në rrugën me përparësi dhe përparësia është e juaja — por automjeti nga rruga dytësore nuk ndalon. Përparësia nuk merret me forcë: frenoni dhe lëreni të kalojë. Kjo nuk është faji juaj dhe nuk llogaritet kundër jush.",
-    "ru": "Вы на главной дороге, преимущество ваше — но автомобиль со второстепенной не останавливается. Преимущество не берут силой: тормозите и пропустите его. Это не ваша ошибка и против вас не засчитывается."
+    "ru": "Вы на главной дороге, преимущество ваше — но автомобиль со второстепенной не останавливается. Преимущество не берут силой: тормозите и пропустите его. Это не ваша ошибка и против вас не засчитывается.",
+    "tr": "Ana yoldasınız ve geçiş hakkı sizde — ama tali yoldaki araç durmuyor. Geçiş hakkı zorla alınmaz: fren yapın ve geçmesine izin verin. Bu sizin hatanız değildir ve size yazılmaz."
   }
 }

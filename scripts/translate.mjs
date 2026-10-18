@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Mašinski prevod baze pitanja na engleski i ruski.
+ * Mašinski prevod baze pitanja na engleski, ruski, albanski i turski.
  *
  * VAŽNO: ovo je pomoć u učenju, a ne zvanični prevod. Zvanični ispit je na
  * crnogorskom. Prije objave prevoda izvorni govornik EN/RU mora da provjeri
@@ -19,7 +19,7 @@
  *   node scripts/translate.mjs --stats                               # samo izvještaj, bez API-ja
  *
  * Opcije:
- *   --lang=en,ru   koje jezike prevoditi (podrazumijevano oba)
+ *   --lang=en,ru   koje jezike prevoditi (podrazumijevano svi)
  *   --limit=N      najviše N pitanja po jeziku (za probni krug)
  *   --batch=N      koliko pitanja ide u jedan zahtjev (podrazumijevano 8)
  *   --model=ID     model (podrazumijevano claude-opus-5)
@@ -46,13 +46,14 @@ const LANGS = {
   en: { name: "English", textField: "text_en", optionsField: "options_en" },
   ru: { name: "Russian", textField: "text_ru", optionsField: "options_ru" },
   sq: { name: "Albanian", textField: "text_sq", optionsField: "options_sq" },
+  tr: { name: "Turkish", textField: "text_tr", optionsField: "options_tr" },
 };
 
 // ── argumenti ──────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
   const out = {
-    langs: ["en", "ru", "sq"],
+    langs: ["en", "ru", "sq", "tr"],
     limit: Infinity,
     batch: DEFAULT_BATCH,
     model: DEFAULT_MODEL,

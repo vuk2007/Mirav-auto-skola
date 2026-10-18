@@ -6,7 +6,8 @@
     "me": "Kružni tok — gust saobraćaj",
     "en": "Roundabout — heavy traffic",
     "sq": "Rrethrrotullim — trafik i dendur",
-    "ru": "Круговое движение — плотный поток"
+    "ru": "Круговое движение — плотный поток",
+    "tr": "Dönel kavşak — yoğun trafik"
   },
   "player": {
     "arm": "N",
@@ -58,6 +59,7 @@
     "me": "Prsten je pun i ulazak se mora sačekati — ali samo dok stvarno nema praznine. Kad se praznina pojavi, ulazi se bez oklijevanja; nepotrebno stajanje na slobodnom ulazu zadržava saobraćaj iza vas.",
     "en": "The ring is busy and you have to wait — but only while there really is no gap. As soon as a gap appears you go without hesitating; standing at a clear entry holds up the traffic behind you.",
     "sq": "Unaza është e ngarkuar dhe hyrja duhet pritur — por vetëm derisa vërtet nuk ka hapësirë. Sapo hapësira shfaqet, hyni pa hezituar; ndalimi i panevojshëm në hyrje të lirë e pengon trafikun pas jush.",
-    "ru": "Кольцо загружено, и въезд приходится ждать — но только пока действительно нет промежутка. Как только промежуток появился, въезжайте без колебаний: стоянка на свободном въезде задерживает тех, кто позади."
+    "ru": "Кольцо загружено, и въезд приходится ждать — но только пока действительно нет промежутка. Как только промежуток появился, въезжайте без колебаний: стоянка на свободном въезде задерживает тех, кто позади.",
+    "tr": "Halka dolu ve beklemeniz gerekiyor — ama yalnızca gerçekten boşluk olmadığı sürece. Boşluk açılır açılmaz tereddüt etmeden gidersiniz; boş bir girişte beklemek arkanızdaki trafiği bekletir."
   }
 }

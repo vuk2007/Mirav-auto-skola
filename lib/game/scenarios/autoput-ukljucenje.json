@@ -7,7 +7,8 @@
     "me": "Autoput — uključivanje",
     "en": "Motorway — joining",
     "sq": "Autostradë — futja",
-    "ru": "Автомагистраль — въезд"
+    "ru": "Автомагистраль — въезд",
+    "tr": "Otoyol — katılma"
   },
   "player": {
     "arm": "N",
@@ -51,6 +52,7 @@
     "me": "Na traci za ubrzavanje se izjednačava brzina sa saobraćajem na autoputu, pali lijevi pokazivač i ulazi u prazninu koja se ne mora zatvarati zbog vas. Traka za ubrzavanje se mora napustiti prije nego što pređe u zaustavnu.",
     "en": "On the acceleration lane you match the speed of the motorway traffic, signal left and move into a gap that nobody has to close for you. The acceleration lane must be left before it turns into the hard shoulder.",
     "sq": "Në korsinë e përshpejtimit barazoni shpejtësinë me trafikun e autostradës, ndizni treguesin e majtë dhe futeni në një hapësirë që askush nuk duhet ta mbyllë për ju. Korsia e përshpejtimit duhet lëshuar para se të kthehet në korsi emergjence.",
-    "ru": "На полосе разгона вы сравниваете скорость с потоком, включаете левый указатель и входите в промежуток, который никому не приходится закрывать из-за вас. Полосу разгона нужно покинуть до того, как она перейдёт в аварийную."
+    "ru": "На полосе разгона вы сравниваете скорость с потоком, включаете левый указатель и входите в промежуток, который никому не приходится закрывать из-за вас. Полосу разгона нужно покинуть до того, как она перейдёт в аварийную.",
+    "tr": "Hızlanma şeridinde otoyol trafiğinin hızına uyar, sola sinyal verir ve kimsenin sizin için kapatmak zorunda olmadığı bir boşluğa geçersiniz. Hızlanma şeridi emniyet şeridine dönüşmeden önce terk edilmelidir."
   }
 }

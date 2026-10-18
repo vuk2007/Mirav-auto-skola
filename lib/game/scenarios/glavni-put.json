@@ -6,7 +6,8 @@
     "me": "Glavni put — imate prednost",
     "en": "Priority road — you have priority",
     "sq": "Rrugë me përparësi — ju keni përparësi",
-    "ru": "Главная дорога — преимущество у вас"
+    "ru": "Главная дорога — преимущество у вас",
+    "tr": "Ana yol — öncelik sizde"
   },
   "player": {
     "arm": "N",
@@ -28,6 +29,7 @@
     "me": "Vi ste na glavnom putu i imate prednost. Vozilo sa sporednog puta dužno je da vas propusti — nastavljate normalno, bez usporavanja.",
     "en": "You are on the priority road and the right of way is yours. The car on the side road must let you pass — carry on normally, without slowing down.",
     "sq": "Ju jeni në rrugën me përparësi dhe përparësia është e juaja. Automjeti nga rruga dytësore është i detyruar t'ju lërë të kaloni — vazhdoni normalisht, pa ngadalësuar.",
-    "ru": "Вы на главной дороге, преимущество у вас. Автомобиль со второстепенной дороги обязан вас пропустить — продолжайте движение как обычно, не снижая скорости."
+    "ru": "Вы на главной дороге, преимущество у вас. Автомобиль со второстепенной дороги обязан вас пропустить — продолжайте движение как обычно, не снижая скорости.",
+    "tr": "Ana yoldasınız ve geçiş hakkı sizde. Tali yoldaki araç size yol vermek zorunda — yavaşlamadan normal şekilde devam edin."
   }
 }

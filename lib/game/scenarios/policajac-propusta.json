@@ -6,7 +6,8 @@
     "me": "Policajac vas propušta na crveno",
     "en": "The officer waves you through a red",
     "sq": "Polici ju lëshon në dritën e kuqe",
-    "ru": "Регулировщик пропускает вас на красный"
+    "ru": "Регулировщик пропускает вас на красный",
+    "tr": "Polis sizi kırmızıda geçiriyor"
   },
   "lightStartPhase": 3,
   "lightStartT": 0,
@@ -30,6 +31,7 @@
     "me": "Semafor vam pokazuje crveno, ali saobraćaj reguliše policajac i propušta vaš pravac. Naredba policajca jača je od semafora, pa se prolazi — a vozilo sa istoka stoji iako ima zeleno.",
     "en": "The light shows red for you, but a police officer is directing traffic and is letting your direction through. The officer's order overrides the light, so you go — while the car from the east waits even though it has green.",
     "sq": "Semafori ju tregon të kuqe, por trafikun e rregullon polici dhe e lëshon drejtimin tuaj. Urdhri i policit është më i fortë se semafori, prandaj kaloni — ndërsa automjeti nga lindja pret edhe pse ka të gjelbër.",
-    "ru": "Светофор показывает вам красный, но движением управляет регулировщик и пропускает ваше направление. Указание регулировщика важнее светофора, поэтому вы едете, а автомобиль с востока стоит, хотя у него зелёный."
+    "ru": "Светофор показывает вам красный, но движением управляет регулировщик и пропускает ваше направление. Указание регулировщика важнее светофора, поэтому вы едете, а автомобиль с востока стоит, хотя у него зелёный.",
+    "tr": "Size kırmızı yanıyor, ama trafiği bir polis memuru yönetiyor ve sizin yönünüzü geçiriyor. Polisin işareti ışıktan önce gelir, bu yüzden gidersiniz — doğudan gelen araç ise yeşili olmasına rağmen bekler."
   }
 }

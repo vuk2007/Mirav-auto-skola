@@ -7,7 +7,8 @@
     "me": "Autoput — isključivanje",
     "en": "Motorway — leaving",
     "sq": "Autostradë — dalja",
-    "ru": "Автомагистраль — съезд"
+    "ru": "Автомагистраль — съезд",
+    "tr": "Otoyol — çıkış"
   },
   "player": {
     "arm": "N",
@@ -51,6 +52,7 @@
     "me": "Sa autoputa se izlazi preko trake za usporavanje: desni pokazivač, pa prelazak u nju tek kad ona počne, i usporavanje u njoj — a ne na voznoj traci. U zaustavnu traku prije početka izlaza se ne ulazi.",
     "en": "You leave a motorway through the deceleration lane: right indicator, move into it only once it begins, and slow down in it — not in the running lane. You do not enter the hard shoulder before the exit lane starts.",
     "sq": "Nga autostrada dilet përmes korsisë së ngadalësimit: treguesi i djathtë, kalimi në të vetëm kur ajo fillon, dhe ngadalësimi brenda saj — jo në korsinë e qarkullimit. Në korsinë e emergjencës para fillimit të daljes nuk hyhet.",
-    "ru": "С автомагистрали съезжают по полосе торможения: правый указатель, перестроение только там, где она начинается, и торможение уже в ней — не в ходовой полосе. В аварийную полосу до начала съезда не выезжают."
+    "ru": "С автомагистрали съезжают по полосе торможения: правый указатель, перестроение только там, где она начинается, и торможение уже в ней — не в ходовой полосе. В аварийную полосу до начала съезда не выезжают.",
+    "tr": "Otoyoldan yavaşlama şeridiyle çıkarsınız: sağ sinyal, şeride ancak başladığında girin ve onun içinde yavaşlayın — ana şeritte değil. Çıkış şeridi başlamadan emniyet şeridine girmezsiniz."
   }
 }

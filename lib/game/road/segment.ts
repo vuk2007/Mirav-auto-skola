@@ -40,37 +40,42 @@ import { sabijenaIvica, type Sabijeno } from "./sabijanje";
 import { prikljucciIvice, prorijedi, punaPred } from "./prikljucci";
 import { curvesFor, type RoadEdge, type RoadKind, nodeById } from "./roadGraph";
 
-/** Kratak opis dionice po vrsti puta, na sva četiri jezika. */
+/** Kratak opis dionice po vrsti puta, na svih pet jezika. */
 const OPIS: Record<RoadKind, Record<string, string>> = {
   autoput: {
     me: "Autoput. Držite se svoje trake i odstojanja od vozila ispred.",
     en: "A motorway. Keep your lane and your distance from the vehicle ahead.",
     sq: "Autostradë. Mbani korsinë tuaj dhe distancën nga automjeti përpara.",
     ru: "Автомагистраль. Держитесь своей полосы и дистанции до впереди идущего.",
+    tr: "Otoyol. Şeridinizde kalın ve öndeki araçla mesafenizi koruyun.",
   },
   magistrala: {
     me: "Magistralni put sa po jednom trakom u svakom smjeru. Susretna vozila prolaze blizu — držite se svoje strane.",
     en: "A main road with one lane each way. Oncoming vehicles pass close — keep to your side.",
     sq: "Rrugë magjistrale me nga një korsi për çdo drejtim. Automjetet përballë kalojnë afër — mbani anën tuaj.",
     ru: "Магистраль с одной полосой в каждом направлении. Встречные проходят близко — держитесь своей стороны.",
+    tr: "Her yönde bir şeritli ana yol. Karşıdan gelen araçlar yakından geçer — kendi tarafınızda kalın.",
   },
   regionalni: {
     me: "Regionalni put. Uži je i sporiji od magistrale, a susretni saobraćaj je isti.",
     en: "A regional road. Narrower and slower than a main road, with the same oncoming traffic.",
     sq: "Rrugë rajonale. Më e ngushtë dhe më e ngadaltë se magjistralja, me të njëjtin trafik përballë.",
     ru: "Региональная дорога. Уже и медленнее магистрали, встречное движение то же.",
+    tr: "Bölgesel yol. Ana yoldan daha dar ve yavaştır, karşıdan gelen trafik aynıdır.",
   },
   planinski: {
     me: "Planinski put sa krivinama. Table pokazuju preporučenu brzinu prije svake.",
     en: "A mountain road with bends. Signs show the advisory speed before each one.",
     sq: "Rrugë malore me kthesa. Tabelat tregojnë shpejtësinë e rekomanduar para secilës.",
     ru: "Горная дорога с поворотами. Знаки показывают рекомендуемую скорость перед каждым.",
+    tr: "Virajlı dağ yolu. Levhalar her virajdan önce önerilen hızı gösterir.",
   },
   gradski: {
     me: "Gradska ulica.",
     en: "A city street.",
     sq: "Rrugë qytetit.",
     ru: "Городская улица.",
+    tr: "Şehir sokağı.",
   },
 };
 

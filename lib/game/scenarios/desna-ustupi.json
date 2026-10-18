@@ -6,7 +6,8 @@
     "me": "Pravilo desne strane — ustupate",
     "en": "Right-hand rule — you give way",
     "sq": "Rregulli i së djathtës — ju jepni përparësi",
-    "ru": "Правило правой руки — уступаете"
+    "ru": "Правило правой руки — уступаете",
+    "tr": "Sağdan gelen kuralı — yol veriyorsunuz"
   },
   "player": {
     "arm": "N",
@@ -28,6 +29,7 @@
     "me": "Raskrsnica nije regulisana ni znakom ni semaforom, pa važi pravilo desne strane. Vozilo dolazi sa vaše desne strane — propuštate ga, pa nastavljate.",
     "en": "The intersection has neither signs nor lights, so the right-hand rule applies. The car is coming from your right — let it pass, then go.",
     "sq": "Kryqëzimi nuk është i rregulluar as me shenja as me semafor, prandaj vlen rregulli i së djathtës. Automjeti vjen nga e djathta juaj — lëreni të kalojë, pastaj vazhdoni.",
-    "ru": "Перекрёсток не регулируется ни знаками, ни светофором, поэтому действует правило правой руки. Автомобиль приближается справа — пропустите его, затем продолжайте движение."
+    "ru": "Перекрёсток не регулируется ни знаками, ни светофором, поэтому действует правило правой руки. Автомобиль приближается справа — пропустите его, затем продолжайте движение.",
+    "tr": "Kavşakta ne levha ne ışık var, bu yüzden sağdan gelen kuralı geçerlidir. Araç sağınızdan geliyor — önce onu geçirin, sonra gidin."
   }
 }

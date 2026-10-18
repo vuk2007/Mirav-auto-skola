@@ -7,7 +7,8 @@
     "me": "Autoput — uključivanje u gust saobraćaj",
     "en": "Motorway — joining heavy traffic",
     "sq": "Autostradë — futja në trafik të dendur",
-    "ru": "Автомагистраль — въезд в плотный поток"
+    "ru": "Автомагистраль — въезд в плотный поток",
+    "tr": "Otoyol — yoğun trafiğe katılma"
   },
   "player": {
     "arm": "N",
@@ -90,6 +91,7 @@
     "me": "U gustom saobraćaju se ulazi u prazninu, a ne u kolonu: brzina se izjednači sa saobraćajem, pa se traži razmak koji ostaje dovoljan i ispred i iza vas. Vozilo koje već vozi tom trakom ne smije zbog vas da koči, a traka za ubrzavanje se mora napustiti dok još traje.",
     "en": "In heavy traffic you join a gap, not a column: match the speed of the traffic, then look for a space that stays wide enough both ahead of and behind you. A vehicle already in that lane must not brake because of you, and the acceleration lane has to be left while it still lasts.",
     "sq": "Në trafik të dendur futeni në një hapësirë, jo në kolonë: barazoni shpejtësinë me trafikun, pastaj kërkoni një distancë që mbetet e mjaftueshme si para ashtu edhe pas jush. Automjeti që tashmë lëviz në atë korsi nuk duhet të frenojë për shkakun tuaj, dhe korsia e përshpejtimit duhet lëshuar sa është ende.",
-    "ru": "В плотном потоке въезжают в промежуток, а не в колонну: сравняйте скорость с потоком, затем найдите интервал, который остаётся достаточным и спереди, и сзади. Автомобиль, уже едущий по этой полосе, не должен тормозить из-за вас, а полосу разгона нужно покинуть, пока она ещё есть."
+    "ru": "В плотном потоке въезжают в промежуток, а не в колонну: сравняйте скорость с потоком, затем найдите интервал, который остаётся достаточным и спереди, и сзади. Автомобиль, уже едущий по этой полосе, не должен тормозить из-за вас, а полосу разгона нужно покинуть, пока она ещё есть.",
+    "tr": "Yoğun trafikte bir konvoya değil bir boşluğa katılırsınız: trafiğin hızına uyun, sonra hem önünüzde hem arkanızda yeterince geniş kalan bir aralık arayın. O şeritteki araç sizin yüzünüzden fren yapmamalı ve hızlanma şeridinden o bitmeden çıkılmalıdır."
   }
 }

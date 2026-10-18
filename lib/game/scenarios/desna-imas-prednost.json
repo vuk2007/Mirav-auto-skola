@@ -6,7 +6,8 @@
     "me": "Pravilo desne strane — imate prednost",
     "en": "Right-hand rule — you have priority",
     "sq": "Rregulli i së djathtës — ju keni përparësi",
-    "ru": "Правило правой руки — преимущество у вас"
+    "ru": "Правило правой руки — преимущество у вас",
+    "tr": "Sağdan gelen kuralı — öncelik sizde"
   },
   "player": {
     "arm": "W",
@@ -28,6 +29,7 @@
     "me": "Neregulisana raskrsnica. Vozilo dolazi sa vaše lijeve strane — vi imate prednost. Prolazite bez zaustavljanja; nepotrebno stajanje zadržava saobraćaj i takođe je greška.",
     "en": "An uncontrolled intersection. The car is coming from your left, so priority is yours. Drive through without stopping — stopping for no reason holds up traffic and is a mistake too.",
     "sq": "Kryqëzim i parregulluar. Automjeti vjen nga e majta juaj — përparësia është e juaja. Kaloni pa u ndalur; ndalimi i panevojshëm e pengon trafikun dhe gjithashtu është gabim.",
-    "ru": "Нерегулируемый перекрёсток. Автомобиль приближается слева — преимущество у вас. Проезжайте без остановки: остановка без причины задерживает движение и тоже является ошибкой."
+    "ru": "Нерегулируемый перекрёсток. Автомобиль приближается слева — преимущество у вас. Проезжайте без остановки: остановка без причины задерживает движение и тоже является ошибкой.",
+    "tr": "Kontrolsüz bir kavşak. Araç solunuzdan geliyor, bu yüzden öncelik sizde. Durmadan geçin — sebepsiz durmak trafiği bekletir ve bu da bir hatadır."
   }
 }

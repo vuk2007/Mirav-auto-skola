@@ -14,6 +14,7 @@ import {
   examCards,
   examPoints,
   groupId,
+  isHelperLang,
   situationPairPoints,
 } from "./questions";
 import { isChoice, type Question } from "./types";
@@ -188,6 +189,18 @@ describe("dvojezični prikaz — ispit se polaže samo na ME ili AL", () => {
         secondary: q[`options_${lang}`]!.b,
       });
     }
+  });
+
+  it("TR: pomoćni jezik kao EN/RU — crnogorski gore, turski ispod", () => {
+    expect(isHelperLang("tr")).toBe(true);
+    const saTurskim = { ...q, text_tr: "Türkçe çeviri" };
+    expect(bilingualText(saTurskim, "tr")).toMatchObject({
+      primary: q.text,
+      primaryLang: "me",
+      secondary: "Türkçe çeviri",
+      secondaryLang: "tr",
+      fallback: false,
+    });
   });
 
   it("bez prevoda: samo crnogorski, bez praznog reda", () => {

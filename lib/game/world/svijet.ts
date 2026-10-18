@@ -118,7 +118,7 @@ export function rutaScenario(
 ): Scenario {
   const tpl = rutaTemplate(ruta);
   const naslov = ruta.cvorovi.join(" — ");
-  const jezici = ["me", "en", "sq", "ru"];
+  const jezici = ["me", "en", "sq", "ru", "tr"];
   const tekst = (x: string): Record<string, string> =>
     Object.fromEntries(jezici.map((j) => [j, x]));
 

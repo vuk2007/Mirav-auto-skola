@@ -6,7 +6,8 @@
     "me": "Pješak na prelazu pri skretanju",
     "en": "Pedestrian on the crossing as you turn",
     "sq": "Këmbësor në vendkalim gjatë kthesës",
-    "ru": "Пешеход на переходе при повороте"
+    "ru": "Пешеход на переходе при повороте",
+    "tr": "Dönerken geçitteki yaya"
   },
   "player": {
     "arm": "N",
@@ -29,6 +30,7 @@
     "me": "Skrećete desno i prelazite pješački prelaz na ulici u koju ulazite. Pješaka koji je na tom prelazu morate propustiti — sačekate da siđe sa kolovoza, pa nastavite.",
     "en": "You are turning right and crossing the pedestrian crossing on the street you are entering. You must give way to the pedestrian on it — wait until they are off the roadway, then carry on.",
     "sq": "Ju ktheheni djathtas dhe kaloni vendkalimin e këmbësorëve në rrugën ku po hyni. Këmbësorin që është në të duhet ta lini të kalojë — prisni derisa të dalë nga karrexhata, pastaj vazhdoni.",
-    "ru": "Вы поворачиваете направо и пересекаете пешеходный переход на улице, в которую въезжаете. Пешехода на нём вы обязаны пропустить — дождитесь, пока он сойдёт с проезжей части, затем продолжайте."
+    "ru": "Вы поворачиваете направо и пересекаете пешеходный переход на улице, в которую въезжаете. Пешехода на нём вы обязаны пропустить — дождитесь, пока он сойдёт с проезжей части, затем продолжайте.",
+    "tr": "Sağa dönüyorsunuz ve girdiğiniz sokaktaki yaya geçidini geçiyorsunuz. Üzerindeki yayaya yol vermek zorundasınız — taşıt yolundan çıkana kadar bekleyin, sonra devam edin."
   }
 }

@@ -6,7 +6,8 @@
     "me": "Vozilo pod pratnjom iza zaklona",
     "en": "Emergency vehicle from behind cover",
     "sq": "Automjet me përparësi nga pas pengesës",
-    "ru": "Спецтранспорт из-за укрытия"
+    "ru": "Спецтранспорт из-за укрытия",
+    "tr": "Görüşü kapalı yerden çıkan acil durum aracı"
   },
   "player": {
     "arm": "N",
@@ -42,6 +43,7 @@
     "me": "Vozilo pod pratnjom izlazi iza zaklona sa vaše lijeve strane. Njemu se ustupa bez obzira na znakove i bez obzira na to što ste na glavnom putu. Jedini ispravan potez je kočnica.",
     "en": "An emergency vehicle comes out from behind cover on your left. You give way to it regardless of the signs and regardless of being on the priority road. The only correct move is the brake.",
     "sq": "Automjeti me përparësi del nga pas pengesës në të majtën tuaj. Atij i jepet përparësia pavarësisht shenjave dhe pavarësisht se ju jeni në rrugën me përparësi. Lëvizja e vetme e drejtë është frena.",
-    "ru": "Спецтранспорт выезжает из-за укрытия слева от вас. Ему уступают независимо от знаков и от того, что вы на главной дороге. Единственно правильное действие — торможение."
+    "ru": "Спецтранспорт выезжает из-за укрытия слева от вас. Ему уступают независимо от знаков и от того, что вы на главной дороге. Единственно правильное действие — торможение.",
+    "tr": "Solunuzda görüşü kapatan bir engelin arkasından acil durum aracı çıkıyor. Levhalardan ve ana yolda olmanızdan bağımsız olarak ona yol verirsiniz. Tek doğru hareket frendir."
   }
 }

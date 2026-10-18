@@ -65,7 +65,7 @@ export function localizedOption(q: ChoiceQuestion, key: OptionKey, lang: Lang): 
  *  - `me` — samo crnogorski,
  *  - `sq` — samo albanski (zvanični ispitni jezik); bez prevoda pada na
  *    crnogorski i to javlja kroz `fallback`,
- *  - `en` / `ru` — crnogorski kao glavni tekst, prevod ispod. Kandidat uči
+ *  - `en` / `ru` / `tr` — crnogorski kao glavni tekst, prevod ispod. Kandidat uči
  *    pitanje onako kako će ga vidjeti na ispitu.
  */
 export interface Bilingual {
@@ -81,7 +81,7 @@ export interface Bilingual {
 
 /** Jezici kojih nema na pravom ispitu — tu je prevod samo pomoć uz crnogorski. */
 export function isHelperLang(lang: Lang): boolean {
-  return lang === "en" || lang === "ru";
+  return lang === "en" || lang === "ru" || lang === "tr";
 }
 
 /** Prijavljeni nedostajući prevodi — svaki se javlja jednom, ne na svakom crtanju. */

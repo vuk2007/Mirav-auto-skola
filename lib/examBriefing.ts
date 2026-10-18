@@ -31,6 +31,7 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
       en: "Important",
       ru: "Важно",
       sq: "Me rëndësi",
+      tr: "Önemli",
     },
     items: {
       me: [
@@ -53,6 +54,11 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
         "Provimit nuk mund t'i qaseni me pantallona të shkurtra, fund mini, me shpatulla të zbuluara, shpinë të zbuluar ose me dekolte të thellë.",
         "Në provim dëgjoni me kujdes udhëzimet që ju jep komisioni.",
       ],
+      tr: [
+        "Kimlik kartı, pasaport veya oturma izni olmadan sınava girilemez.",
+        "Şort, mini etek, çıplak omuz, açık sırt veya derin dekolte ile sınava girilemez.",
+        "Sınavda komisyonun verdiği talimatları dikkatle dinleyin.",
+      ],
     },
   },
   {
@@ -63,6 +69,7 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
       en: "How the test works",
       ru: "Как решается тест",
       sq: "Si zgjidhet testi",
+      tr: "Test nasıl çözülür",
     },
     items: {
       me: [
@@ -97,6 +104,14 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
         "Koha e punimit të testit është {minutes} minuta. Kur të skadojë, testi dorëzohet automatikisht.",
         "Përgjigjen mund ta ndryshoni derisa zgjat testi — te çdo pyetje arrini edhe përmes pasqyrës së pyetjeve.",
       ],
+      tr: [
+        "Test {pages} sayfada {count} sorudan oluşur.",
+        "Yalnızca bir cevap doğrudur — birden fazla doğru cevabı olan soru yoktur.",
+        "Cevabın önündeki yuvarlağa tıklayarak cevaplarsınız. Geçiş sırasıyla ilgili sorularda araçların numaralarını yazarsınız.",
+        "Sayfalar arasında “Önceki” ve “Sonraki” düğmeleriyle geçersiniz; cevaplarınız saklanır.",
+        "Testin süresi {minutes} dakikadır. Süre dolunca test otomatik olarak teslim edilir.",
+        "Test sürerken cevabınızı değiştirebilirsiniz — her soruya soru genel görünümünden de ulaşabilirsiniz.",
+      ],
     },
   },
   {
@@ -107,6 +122,7 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
       en: "Scoring",
       ru: "Подсчёт баллов",
       sq: "Llogaritja e pikëve",
+      tr: "Puanlama",
     },
     items: {
       me: [
@@ -136,6 +152,13 @@ export const EXAM_BRIEFING: readonly BriefingSection[] = [
         "Përbërja e testit: 9 pyetje teorike, 8 situata në komunikacion me nga dy pyetje për secilën figurë, 8 shenja rrugore dhe një kosnik ose kufizues, një sinjal i punonjësit të policisë me dy pyetje, 2 pyetje për semaforët dhe 2 pyetje për automjetin dhe ndihmën e parë.",
         "Pikët dhe përgjigjet e sakta shihen vetëm pas dorëzimit të testit.",
         "Pjesa teorike e provimit e kaluar vlen një vit nga dita e dhënies.",
+      ],
+      tr: [
+        "Her sorunun belirli bir puanı vardır; testin toplamı {points} puandır.",
+        "Geçmek için {points} puandan en az {pass} puan gerekir.",
+        "Testin yapısı: 9 teori sorusu, her resim için iki soru olan 8 trafik durumu, 8 trafik levhası ve bir şerit yön levhası (kosnik) veya sınır direği (graničnik), iki sorulu bir polis memuru işareti, trafik ışıklarıyla ilgili 2 soru ve araç bilgisi ile ilk yardımla ilgili 2 soru.",
+        "Puanlar ve doğru cevaplar ancak test teslim edildikten sonra görülür.",
+        "Geçilen teori sınavı, sınav gününden itibaren bir yıl geçerlidir.",
       ],
     },
   },
