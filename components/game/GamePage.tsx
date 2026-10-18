@@ -27,6 +27,13 @@ const GradEditor =
   process.env.NODE_ENV !== "production" ? dynamic(() => import("./editor/GradEditor"), { ssr: false }) : null;
 
 /**
+ * Putovanje i ruta su za sada skriveni od korisnika (odluka 2026-10-18): kod
+ * ostaje, ali ulaz postoji samo uz `npm run dev` — u produkcijskom buildu nema
+ * dugmeta, pa ni načina da se uđe.
+ */
+const PRIKAZI_PUTOVANJE_I_RUTU = process.env.NODE_ENV !== "production";
+
+/**
  * Igra „Prođi raskrsnicu" — spisak situacija i jedna situacija u toku.
  *
  * Napredak se čita tek na klijentu (`localStorage` na serveru ne postoji), pa
@@ -122,6 +129,8 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
             onPick={setActiveId}
           />
 
+          {PRIKAZI_PUTOVANJE_I_RUTU && (
+            <>
           {/* Putovanje stoji ispod spiska, uz smjenu: obje su vožnje bez
               ocjene po situaciji, samo se jedna vozi u mjestu, a druga kroz
               zemlju. */}
@@ -154,6 +163,8 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
               {t.rutaStart}
             </button>
           </section>
+            </>
+          )}
 
           {/* Grad u razmjeri 1:1 (faza 6) — za sada probna vožnja bez pravila,
               da se Podgorica pogleda dok se gradi. */}
