@@ -2213,6 +2213,8 @@ export const GRAD_BOT_PETLJA_PROZOR = 40;
 export const GRAD_BOT_OSTAR_LOM = 25;
 /** Vozilo je u mojoj traci (iza mene) kad mu je sredina bliže od ovoga mojoj putanji [m]. */
 export const GRAD_NPC_ISTA_TRAKA = 1.5;
+/** Dva vozila sa istog kraka su u susjednim trakama kad nijedno nije na putanji drugoga ovoliko naprijed i nazad [m]. */
+export const GRAD_NPC_POGLED_TRAKE = 60;
 /** Promjena trake: koliko naprijed vozač gleda gdje ulazi u susjednu traku [m]… */
 export const GRAD_NPC_PRESTROJ_POGLED = 30;
 /** …i propušta vozilo te trake koje tamo stiže prije njega ili manje od ovoliko poslije [s]. */

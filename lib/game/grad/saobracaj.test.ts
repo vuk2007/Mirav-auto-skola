@@ -85,6 +85,49 @@ describe("saobraćaj: vozila ustupaju po pravilima", () => {
     expect(sb.metrika.stiglo).toBe(4);
   });
 
+  it("sa istog kraka u susjednim trakama, putanje se sijeku u raskrsnici: jedno sačeka, ne provlače se (provjera mape)", () => {
+    // Jednosmjerna tercijarna sa dvije trake ide na sjever kroz dvije
+    // raskrsnice (y = 0 i y = −40). A iz lijeve trake skreće lijevo na prvoj;
+    // B ide pravo i skreće lijevo tek na drugoj, pa kroz prvu prelazi iz desne
+    // u lijevu traku — preko A-ove putanje. B je dva metra ispred.
+    const { paket } = testPaket(
+      [
+        { x: 0, y: 150 },
+        { x: 0, y: 0 },
+        { x: 0, y: -40 },
+        { x: 0, y: -150 },
+        { x: -150, y: 0 },
+        { x: -150, y: -40 },
+      ],
+      [
+        { a: 0, b: 1, klasa: "tertiary", smjer: 1, trake: 2 },
+        { a: 1, b: 2, klasa: "tertiary", smjer: 1, trake: 2 },
+        { a: 2, b: 3, klasa: "tertiary", smjer: 1, trake: 2 },
+        { a: 1, b: 4 },
+        { a: 2, b: 5 },
+      ],
+    );
+    const sb = noviSaobracaj(svijetGrada(paket, null), 1, 0);
+    const A = dodajVozilo(sb, [
+      { ivica: 0, smjer: 1 },
+      { ivica: 3, smjer: 1 },
+    ], 8)!;
+    const B = dodajVozilo(sb, [
+      { ivica: 0, smjer: 1 },
+      { ivica: 1, smjer: 1 },
+      { ivica: 4, smjer: 1 },
+    ], 8)!;
+    B.s += 2;
+    let najbliza = Infinity;
+    vozi(sb, 60, undefined, () => {
+      if (sb.npc.includes(A) && sb.npc.includes(B)) najbliza = Math.min(najbliza, daljina(A, B));
+    });
+    // Nikad bliže od razmaka traka (bez provlačenja uz kočenje u zadnji čas).
+    expect(najbliza).toBeGreaterThan(CAR_WIDTH + 2);
+    expect(sb.metrika.stiglo).toBe(2);
+    expect(sb.metrika.zastoja).toBe(0);
+  });
+
   it("vozilo iza drži razmak do onoga koje stane", () => {
     const sb = noviSaobracaj(krst(), 1, 0);
     // Prvo stoji na kraju svoje rute (pred centrom), drugo dolazi iza njega.

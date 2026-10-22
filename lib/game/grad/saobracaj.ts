@@ -11,6 +11,7 @@ import {
   GRAD_NPC_CILJ_OD,
   GRAD_NPC_HORIZONT,
   GRAD_NPC_ISTA_TRAKA,
+  GRAD_NPC_POGLED_TRAKE,
   GRAD_NPC_KOCENJE_UDIO,
   GRAD_NPC_NAJVISE,
   GRAD_NPC_NESTAJE,
@@ -811,6 +812,16 @@ function istaTraka(n: Npc, on: Dolazak): boolean {
   return ispred !== null && pravo(ispred - on.s);
 }
 
+/**
+ * Sa istog kraka, a nijedan nije na putanji drugoga (`GRAD_NPC_POGLED_TRAKE`
+ * m naprijed i nazad): voze se u susjednim trakama, ne jedan za drugim.
+ */
+function uSusjednojTraci(n: Npc, on: Dolazak): boolean {
+  const d = GRAD_NPC_POGLED_TRAKE;
+  if (naPutanjiIzmedju(n.plan.put, n.s - d, n.s + d, on.x, on.y) !== null) return false;
+  return !on.put || naPutanjiIzmedju(on.put, on.s - d, on.s + d, n.x, n.y) === null;
+}
+
 function sukob(n: Npc, ja: Dolazak, on: Dolazak): Sukob | null {
   const k = `${ja.kljuc}|${on.kljuc}`;
   let x = n.sukobi.get(k);
@@ -985,7 +996,11 @@ function komeUstupa(
       // Sa istog kraka: među njima nema prvenstva — idu jedan za drugim (vozilo
       // ispred). Tako i kad se o ovoj raskrsnici odlučuje unaprijed, iz
       // prethodne (tik jedna uz drugu), u koju ulaze sa različitih krakova.
-      if (on.ucesnik.ulaz === ja.ucesnik.ulaz) continue;
+      // Osim kad su u susjednim trakama, a putanje im se u raskrsnici sijeku
+      // (jedan kroz nju prelazi u traku drugoga): bok uz bok nijedan nije
+      // „ispred", pa bi ušla oba i stala jedan pred drugim. Tada odlučuje ko
+      // je prije stigao, kao i dolje (provjera mape).
+      if (on.ucesnik.ulaz === ja.ucesnik.ulaz && !uSusjednojTraci(n, on)) continue;
       // Pravilo ne odlučuje: ko je prije stigao (čeka duže, ili prije stiže).
       const onPrije = on.cekaOd !== null && (ja.cekaOd === null || on.cekaOd < ja.cekaOd || (on.cekaOd === ja.cekaOd && on.id < n.id));
       const jaCekam = ja.cekaOd !== null;
