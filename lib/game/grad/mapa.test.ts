@@ -66,6 +66,30 @@ describe("zebre", () => {
     expect(mrezaPjesaka(daleko).prelazi).toHaveLength(2);
   });
 
+  it("OSM čvor zebre preblizu ušću sporedne ulice: prelaz se pomjeri duž ulice, okomit, sa oba kraja na trotoaru", () => {
+    // Glavna ulica duž x (0–300), sporedna sa sjevera ulazi u (150, 0). Čvor
+    // zebre na glavnoj, 4 m od ose sporedne: sjeverni kraj pada u njeno ušće.
+    const cvorovi: Point[] = [
+      { x: 0, y: 0 },
+      { x: 150, y: 0 },
+      { x: 300, y: 0 },
+      { x: 150, y: -100 },
+    ];
+    const ivice = [
+      { a: 0, b: 1, klasa: "secondary" },
+      { a: 1, b: 2, klasa: "secondary" },
+      { a: 3, b: 1 },
+    ];
+    const sv = svijetGrada(testPaket(cvorovi, ivice, [{ vrsta: "crossing", podatak: "zebra", ivica: 0, s: 146 }]).paket, null, []);
+    const prelazi = mrezaPjesaka(sv).prelazi;
+    expect(prelazi).toHaveLength(1);
+    const p = prelazi[0]!;
+    // Okomit na glavnu ulicu (pravac x), i van ušća sporedne.
+    expect(Math.abs(p.b.x - p.a.x)).toBeLessThan(0.5);
+    expect(150 - p.centar.x).toBeGreaterThan(4);
+    expect(p.objekat).toBe(0);
+  });
+
   it("pruge samo na asfaltu duž prelaza (preko razdjelnog pojasa ih nema)", () => {
     // Prelaz od (0,0) do (0,20), ulica ide duž x: dva kolovoza, 1–8 i 11–18 m.
     const p: Prelaz = {
@@ -81,6 +105,7 @@ describe("zebre", () => {
       ivice: [],
       duzina: 20,
       semafor: null,
+      objekat: 0,
       pojasevi: [
         { ivica: 0, w0: 1, w1: 8, wOsa: 4.5, dvosmjerna: false },
         { ivica: 1, w0: 11, w1: 18, wOsa: 14.5, dvosmjerna: false },

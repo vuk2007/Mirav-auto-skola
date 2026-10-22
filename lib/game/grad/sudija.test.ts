@@ -240,15 +240,22 @@ describe("sudija: polukružno na sredini ulice", () => {
   // Na južnom kraku, 80 m od centra, luk kroz obje strane široke ulice.
   const put: Point[] = [{ x: S, y: 140 }, { x: S, y: 80 }, ...luk(0, 80, S, 0, -Math.PI, 16), { x: -S, y: 140 }];
 
+  // Isprekidana razdjelna linija (iz editora): ovdje se sudi samo polukružno.
+  const ISPREKIDANE = SIROKE.map((x) => ({ ...x, linija: "isprekidana" as const }));
+
   it("na mostu je zabranjeno", () => {
-    const most = grad(SIROKE.map((x, i) => (i === JUG ? { ...x, most: true } : x)));
+    const most = grad(ISPREKIDANE.map((x, i) => (i === JUG ? { ...x, most: true } : x)));
     const x = vozi_(most.G, { put, brzina: 4 });
     expect(x.vrste).toEqual(["polukruzno"]);
     expect(x.prekrsaji[0]!.detalji.gdje).toBe("most");
   });
 
   it("na običnoj dvosmjernoj ulici je dozvoljeno", () => {
-    expect(vozi_(grad(SIROKE).G, { put, brzina: 4 }).vrste).toEqual([]);
+    expect(vozi_(grad(ISPREKIDANE).G, { put, brzina: 4 }).vrste).toEqual([]);
+  });
+
+  it("na ulici sa 2+2 trake (podrazumijevana dvostruka puna) je prelazak pune linije", () => {
+    expect(vozi_(grad(SIROKE).G, { put, brzina: 4 }).vrste).toEqual(["crossingSolidLine"]);
   });
 });
 

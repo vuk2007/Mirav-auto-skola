@@ -1534,6 +1534,14 @@ export const GRAD_TRAKE_PO_KLASI: Readonly<Record<string, number>> = {
 export const GRAD_NAJUZA_ULICA = 4.5;
 
 /**
+ * Dvosmjerna ulica sa bar ovoliko traka u svakom smjeru dobija dvostruku punu
+ * razdjelnu liniju kad je overlay ne mijenja (provjera mape, odluka korisnika
+ * 2026-10-22): pravilnik za kolovoz sa četiri i više traka. Sudi se kao svaka
+ * puna linija, a prekida se na raskrsnicama.
+ */
+export const GRAD_DVOSTRUKA_OD_TRAKA = 2;
+
+/**
  * Na kojoj udaljenosti od raskrsnice volan bira izlaz [m]. Pedeset metara na
  * pedeset na sat su tri i po sekunde — dovoljno da se izbor vidi i promijeni.
  */
@@ -1779,6 +1787,8 @@ export const GRAD_ZEBRA_VRSTE: readonly string[] = ["uncontrolled", "zebra", "ma
 /** Strelice na traci: koliko prije linija raskrsnice počinju, i dužina strelice [m]. */
 export const GRAD_STRELICA_OD_KRAJA = 6;
 export const GRAD_STRELICA_DUZINA = 5;
+/** Razmak strelice na kolovozu od zebre i od linije čekanja [m] (provjera mape). */
+export const GRAD_STRELICA_RAZMAK = 1;
 
 // ── dekor grada (faza 6, stavka 4c) ─────────────────────────────────────────
 
@@ -1881,6 +1891,12 @@ export const GRAD_SEMAFOR_ZUTO = 3;
 export const GRAD_SEMAFOR_SVE_CRVENO = 2;
 /** Krakovi čije se ose razlikuju manje od ovoga [°] dobijaju zeleno zajedno. */
 export const GRAD_SEMAFOR_ISTA_OSA = 35;
+/**
+ * Klase krakova koji na semaforisanoj raskrsnici bez svog svjetla ustupaju
+ * (prilaz iz dvorišta, parking). Ostali krakovi bez svjetla dobijaju
+ * izvedeni semafor; priključna traka (`*_link`, slobodno desno) ustupa uvijek.
+ */
+export const GRAD_SEMAFOR_BEZ_SVJETLA_USTUPA: readonly string[] = ["service", "track"];
 /** Stop-linija stoji ovoliko ispred zebre na istom kraku [m]. */
 export const GRAD_STOP_ISPRED_ZEBRE = 1;
 /**
@@ -2331,6 +2347,33 @@ export const GRAD_PJ_UZORAK = 3;
 export const GRAD_PJ_NEVAZI_UDIO = 0.25;
 /** Kraj prelaza se vezuje za trotoar bliži od ovoga [m]. */
 export const GRAD_PJ_PRISTAJE = 1.6;
+/**
+ * Koliko se prelaz smije pomjeriti duž ulice od OSM čvora [m] da bi oba kraja
+ * pristala na trotoar (provjera mape): čvor zna biti preblizu raskrsnici, pa
+ * kraj zebre pada na zaobljeni ugao ivičnjaka.
+ */
+export const GRAD_PJ_ZEBRA_POMAK = 8;
+
+/**
+ * Najmanji razmak OSM autobuskog stajališta od ivice raskrsnice [m] (provjera
+ * mape): tačka stajališta u raskrsnici se pomjeri duž ulice van nje — u
+ * raskrsnici se ne staje.
+ */
+export const GRAD_STAJALISTE_VAN_RASKRSNICE = 8;
+
+/**
+ * Klase krakova čiji znak (trougao, STOP) ne traži znak „put sa pravom
+ * prvenstva" na glavnoj ulici: prilaz iz dvorišta i parkinga ustupa svima, a
+ * glavna ulica pored svakog prilaza nema znak (provjera mape).
+ */
+export const GRAD_ZNAK_GLAVNI_BEZ: readonly string[] = ["service", "track"];
+
+/**
+ * Koliko se stub znaka na kraku smije pomjeriti unazad (od raskrsnice) duž
+ * desne strane kad je na mjestu linije asfalt — ugao susjednog ušća [m]
+ * (provjera mape). Dalje od toga stub ide na lijevu stranu.
+ */
+export const GRAD_ZNAK_UNAZAD = 15;
 /**
  * Razdjelni pojas bulevara: pješak njime ide samo kad mora — put po njemu se
  * računa kao ovoliko puta duži.

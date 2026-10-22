@@ -10,6 +10,7 @@ import {
   GRAD_ZEBRA_DUBINA,
   GRAD_PJ_PRELAZ_UZ_RASKRSNICU,
   GRAD_PJ_PRISTAJE,
+  GRAD_PJ_ZEBRA_POMAK,
   GRAD_PJ_REZERVA,
   GRAD_PJ_SEMAFOR_ZAVRSI,
   GRAD_PJ_SREDNJA_CIJENA,
@@ -94,12 +95,23 @@ export interface Prelaz {
    * (dvosmjerna), ili cijela ivica (jednosmjerna) — vidi `polovinaUlice`.
    */
   pojasevi: { ivica: number; w0: number; w1: number; wOsa: number; dvosmjerna: boolean }[];
+  /** OSM objekat prelaza od kojeg je napravljen (indeks u paketu) — prelaz zna biti pomjeren od njega. */
+  objekat: number;
 }
 
 /**
  * Polovina ulice na prelazu `p` u kojoj je vozilo koje ga siječe u tački
  * `w` (od `a` ka `b`): `[od, do]` duž prelaza. Van svih kolovoza — cijeli prelaz.
  */
+/** Da li se duži `a`–`b` i `c`–`d` sijeku (ne računajući samo dodir krajeva). */
+function sijeku(a: Point, b: Point, c: Point, d: Point): boolean {
+  const det = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x);
+  if (Math.abs(det) < 1e-9) return false;
+  const t = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / det;
+  const u = ((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x)) / det;
+  return t > 0.02 && t < 0.98 && u > 0.02 && u < 0.98;
+}
+
 export function polovinaUlice(p: Prelaz, w: number): [number, number] {
   let naj: Prelaz["pojasevi"][number] | null = null;
   for (const x of p.pojasevi) {
@@ -664,62 +676,66 @@ export function napraviMrezuPjesaka(sv: SvijetGrada): MrezaPjesaka {
   };
   for (let o = 0; o < n.obVrsta.length; o++) {
     if (n.obVrsta[o] !== vrstaPrelaza || !kodovi.has(n.obPodatak[o]!)) continue;
-    const osa = najblizaOsa(povrsina, n.obXY[2 * o]!, n.obXY[2 * o + 1]!, GRAD_ZEBRA_DO_ULICE);
-    if (!osa) continue;
-    if (GRAD_PJ_KLASE_BEZ.includes(ivice[osa.ivica]!.klasa)) continue;
-    const c = osa.tacka;
-    const h = osa.pravac;
-    const nn = { x: -h.y, y: h.x };
-    // Od sredine na obje strane do kraja asfalta — i preko uskog razdjelnog
-    // pojasa (asfalt se nastavlja na manje od širine trotoara).
-    // Asfalt u tački: 0 nema ga, 1 kolovoz ulice zebre ili njoj paralelne
-    // (druga kolovozna traka bulevara), 2 nešto drugo (ulica koja se tu
-    // priključuje, ugao raskrsnice) — tu prelaz staje: ne ide uzduž druge ulice.
-    const asfalt = (x: number, y: number): 0 | 1 | 2 => {
-      let ima = false;
-      for (const ob of oseBlizu(povrsina, x, y, 15)) {
-        if (ob.d > ob.pola || bezTrotoara(ob.ivica)) continue;
-        if (Math.abs(ob.pravac.x * h.x + ob.pravac.y * h.y) > GRAD_PJ_PRELAZ_PARALELNO) return 1;
-        ima = true;
-      }
-      return ima || kolovoz(x, y) ? 2 : 0;
-    };
-    const doIvice = (znak: 1 | -1) => {
-      let w = 0;
-      for (let k = 0; k < 200; k++) {
-        const x = c.x + nn.x * znak * (w + 0.2);
-        const y = c.y + nn.y * znak * (w + 0.2);
-        const a0 = asfalt(x, y);
-        if (a0 === 1) {
-          w += 0.2;
-          continue;
+    const osa0 = najblizaOsa(povrsina, n.obXY[2 * o]!, n.obXY[2 * o + 1]!, GRAD_ZEBRA_DO_ULICE);
+    if (!osa0) continue;
+    if (GRAD_PJ_KLASE_BEZ.includes(ivice[osa0.ivica]!.klasa)) continue;
+    // Prelaz okomit na ulicu kroz tačku `c` njene osovine: od sredine na obje
+    // strane do kraja asfalta — i preko uskog razdjelnog pojasa (asfalt se
+    // nastavlja na manje od širine trotoara).
+    const okomit = (c: Point, h: Point) => {
+      const nn = { x: -h.y, y: h.x };
+      // Asfalt u tački: 0 nema ga, 1 kolovoz ulice zebre ili njoj paralelne
+      // (druga kolovozna traka bulevara), 2 nešto drugo (ulica koja se tu
+      // priključuje, ugao raskrsnice) — tu prelaz staje: ne ide uzduž druge ulice.
+      const asfalt = (x: number, y: number): 0 | 1 | 2 => {
+        let ima = false;
+        for (const ob of oseBlizu(povrsina, x, y, 15)) {
+          if (ob.d > ob.pola || bezTrotoara(ob.ivica)) continue;
+          if (Math.abs(ob.pravac.x * h.x + ob.pravac.y * h.y) > GRAD_PJ_PRELAZ_PARALELNO) return 1;
+          ima = true;
         }
-        if (a0 === 2) break;
-        // Asfalt paralelne kolovozne trake opet u širini trotoara: uzak
-        // razdjelni pojas, prelazi se dalje.
-        let dalje = -1;
-        for (let e = 0.2; e <= GRAD_TROTOAR + 0.2; e += 0.2) {
-          const a1 = asfalt(c.x + nn.x * znak * (w + 0.2 + e), c.y + nn.y * znak * (w + 0.2 + e));
-          if (a1 === 2) break;
-          if (a1 === 1) {
-            dalje = e;
-            break;
+        return ima || kolovoz(x, y) ? 2 : 0;
+      };
+      const doIvice = (znak: 1 | -1) => {
+        let w = 0;
+        for (let k = 0; k < 200; k++) {
+          const x = c.x + nn.x * znak * (w + 0.2);
+          const y = c.y + nn.y * znak * (w + 0.2);
+          const a0 = asfalt(x, y);
+          if (a0 === 1) {
+            w += 0.2;
+            continue;
           }
+          if (a0 === 2) break;
+          // Asfalt paralelne kolovozne trake opet u širini trotoara: uzak
+          // razdjelni pojas, prelazi se dalje.
+          let dalje = -1;
+          for (let e = 0.2; e <= GRAD_TROTOAR + 0.2; e += 0.2) {
+            const a1 = asfalt(c.x + nn.x * znak * (w + 0.2 + e), c.y + nn.y * znak * (w + 0.2 + e));
+            if (a1 === 2) break;
+            if (a1 === 1) {
+              dalje = e;
+              break;
+            }
+          }
+          if (dalje < 0) break;
+          w += 0.2 + dalje;
         }
-        if (dalje < 0) break;
-        w += 0.2 + dalje;
-      }
-      return w;
+        return w;
+      };
+      const wP = doIvice(1);
+      const wM = doIvice(-1);
+      const a = { x: c.x - nn.x * (wM + T), y: c.y - nn.y * (wM + T) };
+      const b = { x: c.x + nn.x * (wP + T), y: c.y + nn.y * (wP + T) };
+      return { a, b, nn, duzina: Math.hypot(b.x - a.x, b.y - a.y) };
     };
-    const wP = doIvice(1);
-    const wM = doIvice(-1);
-    const a = { x: c.x - nn.x * (wM + T), y: c.y - nn.y * (wM + T) };
-    const b = { x: c.x + nn.x * (wP + T), y: c.y + nn.y * (wP + T) };
-    const duzina = Math.hypot(b.x - a.x, b.y - a.y);
     // Isti prelaz preko obje kolovozne trake (OSM ga ima na svakoj).
-    const centar = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-    if (
-      prelazi.some((q) => {
+    const vecIma = (a: Point, b: Point, h: Point, nn: Point, duzina: number) => {
+      const centar = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      return prelazi.some((q) => {
+        // Zebra koja bi presjekla postojeću (dva OSM čvora prelaza na istom
+        // ušću, pod uglom): jedna je dovoljna (provjera mape).
+        if (sijeku(a, b, q.a, q.b)) return true;
         if (Math.abs(q.pravac.x * h.x + q.pravac.y * h.y) < 0.9) return false;
         const qc = { x: (q.a.x + q.b.x) / 2, y: (q.a.y + q.b.y) / 2 };
         if (Math.hypot(qc.x - centar.x, qc.y - centar.y) < 4 + Math.abs(q.duzina - duzina) / 2) return true;
@@ -729,12 +745,48 @@ export function napraviMrezuPjesaka(sv: SvijetGrada): MrezaPjesaka {
         const duz = Math.abs((qc.x - centar.x) * h.x + (qc.y - centar.y) * h.y);
         const preko = Math.abs((qc.x - centar.x) * nn.x + (qc.y - centar.y) * nn.y);
         return duz < 2 * GRAD_ZEBRA_DUBINA && preko < (q.duzina + duzina) / 2;
-      })
-    )
-      continue;
-    const sa = najblizaStaza(a.x, a.y, GRAD_PJ_PRISTAJE);
-    const sb = najblizaStaza(b.x, b.y, GRAD_PJ_PRISTAJE);
-    if (!sa || !sb || sa.staza === sb.staza) continue;
+      });
+    };
+    const prvi = okomit(osa0.tacka, osa0.pravac);
+    if (vecIma(prvi.a, prvi.b, osa0.pravac, prvi.nn, prvi.duzina)) continue;
+    // OSM čvor prelaza zna biti metar-dva preblizu raskrsnici: kraj zebre tada
+    // pada na zaobljeni ugao ivičnjaka, ne na trotoar. Zebra se pomjera duž
+    // ulice (najbliže prvo, do `GRAD_PJ_ZEBRA_POMAK` m) dok oba kraja ne
+    // pristanu na trotoar — i dalje okomita na ulicu (provjera mape).
+    let izbor: {
+      osa: NonNullable<ReturnType<typeof najblizaOsa>>;
+      a: Point;
+      b: Point;
+      sa: { staza: number; u: number; d: number };
+      sb: { staza: number; u: number; d: number };
+    } | null = null;
+    for (let pomak = 0; pomak <= GRAD_PJ_ZEBRA_POMAK && !izbor; pomak++) {
+      for (const znak of pomak === 0 ? [1] : [1, -1]) {
+        const t = pomak * znak;
+        const osa = t === 0 ? osa0 : najblizaOsa(povrsina, osa0.tacka.x + osa0.pravac.x * t, osa0.tacka.y + osa0.pravac.y * t, GRAD_ZEBRA_DO_ULICE);
+        if (!osa || Math.abs(osa.pravac.x * osa0.pravac.x + osa.pravac.y * osa0.pravac.y) < 0.95) continue;
+        if (ivice[osa.ivica]!.klasa !== ivice[osa0.ivica]!.klasa) continue;
+        // Pomak ne uvodi zebru u raskrsnicu (između njenog kraja i odsjeka).
+        if (t !== 0) {
+          const iv = ivice[osa.ivica]!;
+          const pola = GRAD_ZEBRA_DUBINA / 2;
+          if (raskrsnice.uCvoru[iv.a]! >= 0 && osa.s < odsjeci[2 * iv.i]! + pola) continue;
+          if (raskrsnice.uCvoru[iv.b]! >= 0 && iv.duzina - osa.s < odsjeci[2 * iv.i + 1]! + pola) continue;
+        }
+        const g = t === 0 ? prvi : okomit(osa.tacka, osa.pravac);
+        const sa = najblizaStaza(g.a.x, g.a.y, GRAD_PJ_PRISTAJE);
+        const sb = najblizaStaza(g.b.x, g.b.y, GRAD_PJ_PRISTAJE);
+        if (!sa || !sb || sa.staza === sb.staza) continue;
+        if (t !== 0 && vecIma(g.a, g.b, osa.pravac, g.nn, g.duzina)) continue;
+        izbor = { osa, a: g.a, b: g.b, sa, sb };
+        break;
+      }
+    }
+    if (!izbor) continue;
+    const { osa, a, b, sa, sb } = izbor;
+    const c = osa.tacka;
+    const h = osa.pravac;
+    const duzina = Math.hypot(b.x - a.x, b.y - a.y);
     // Ivice preko kojih ide.
     const preko: { ivica: number; s: number }[] = [];
     for (let w = 0; w <= duzina; w += 0.5) {
@@ -793,6 +845,7 @@ export function napraviMrezuPjesaka(sv: SvijetGrada): MrezaPjesaka {
       duzina: 0,
       semafor,
       pojasevi: [],
+      objekat: o,
     });
     const p = prelazi[id]!;
     p.duzina = Math.hypot(p.b.x - p.a.x, p.b.y - p.a.y);

@@ -1,7 +1,19 @@
 import { GRAD_ZEBRA_VRSTE } from "../sim/config";
 import type { Point } from "../sim/types";
 import { napraviMrezu, type Mreza } from "./mreza";
-import { BEZ, IVICA_KRUZNI, IVICA_MOST, IVICA_VOZNA, prazniNizovi, type Paket } from "./paket";
+import {
+  BEZ,
+  IVICA_KRUZNI,
+  IVICA_MOST,
+  IVICA_VOZNA,
+  LINIJA_BEZ,
+  LINIJA_DVOSTRUKA,
+  LINIJA_ISPREKIDANA,
+  LINIJA_PODRAZUMIJEVANA,
+  LINIJA_PUNA,
+  prazniNizovi,
+  type Paket,
+} from "./paket";
 
 /**
  * Mala mreža za testove: čvorovi i ivice kao prave linije između njih. Sve
@@ -60,6 +72,8 @@ export interface TestIvica {
   trake?: number;
   kruzni?: boolean;
   most?: boolean;
+  /** Razdjelna linija kao iz overlay-a; bez nje podrazumijevana (vidi `Ivica.linija`). */
+  linija?: "isprekidana" | "puna" | "dvostruka" | "bez";
 }
 
 export interface TestObjekat {
@@ -108,6 +122,13 @@ export function testPaket(
   n.ivTrakeSkretanja = new Uint16Array(ivice.length);
   n.ivTrakeSkretanjaNazad = new Uint16Array(ivice.length);
   n.ivOsm = new Uint32Array(ivice.length);
+  n.ivLinija = new Uint8Array(
+    ivice.map((e) =>
+      e.linija === undefined
+        ? LINIJA_PODRAZUMIJEVANA
+        : { isprekidana: LINIJA_ISPREKIDANA, puna: LINIJA_PUNA, dvostruka: LINIJA_DVOSTRUKA, bez: LINIJA_BEZ }[e.linija],
+    ),
+  );
   n.obVrsta = new Uint8Array(objekti.map((o) => vrsteObjekata.indexOf(o.vrsta)));
   n.obPodatak = new Uint16Array(objekti.map((o) => stringovi.indexOf(o.podatak ?? "")));
   n.obIvica = new Uint32Array(objekti.map((o) => o.ivica ?? BEZ));

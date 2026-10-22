@@ -86,6 +86,31 @@ describe("raskrsnica: prednost", () => {
     expect(r.kraci.map((k) => k.kontrola)).toEqual(["desna", "desna", "desna"]);
   });
 
+  it("sporedna na tercijarnu bez znaka: sporedna ustupa, izvedeno (provjera mape, odluka 2026-10-22)", () => {
+    const { cvorovi, ivice } = zvijezda([0, 90, 180], ["tertiary", "residential", "tertiary"]);
+    const r = raskrsnice(cvorovi, ivice).lista[0]!;
+    expect(kontrole(r)).toEqual([
+      "tertiary:glavni:izvedeno",
+      "residential:ustupi:izvedeno",
+      "tertiary:glavni:izvedeno",
+    ]);
+    expect(r.inferredPriority).toBe(true);
+  });
+
+  it("STOP iz OSM-a na jednoj sporednoj: sporedna naspram nje bez znaka ustupa, izvedeno (nije glavni put)", () => {
+    const { cvorovi, ivice } = zvijezda([0, 90, 180, 270], ["primary", "residential", "primary", "residential"]);
+    // Ivica 1 (jug) ide ka centru: STOP u smjeru ulaska. Sjever (ivica 3) nema znak.
+    const r = raskrsnice(cvorovi, ivice, [{ vrsta: "stop", podatak: "forward", ivica: 1, s: 92 }]).lista[0]!;
+    // Krakovi po uglu: sjever (270°, ugao −90°) je prvi.
+    expect(kontrole(r)).toEqual([
+      "residential:ustupi:izvedeno",
+      "primary:glavni:osm",
+      "residential:stop:osm",
+      "primary:glavni:osm",
+    ]);
+    expect(r.inferredPriority).toBe(true);
+  });
+
   it("STOP iz OSM-a na kraku, u smjeru ka raskrsnici: taj krak staje, ostali su glavni", () => {
     const { cvorovi, ivice } = zvijezda([0, 90, 180]);
     // Ivica 1 (krak na jugu) ide ka centru, pa je smjer ulaska `forward`.
@@ -156,14 +181,26 @@ describe("raskrsnica: semafori", () => {
     for (const f of x.plan!.faze) expect(f.kraci).toHaveLength(2);
   });
 
-  it("semafor samo na nekim krakovima: krak bez semafora ustupa, izvedeno", () => {
+  it("semafor samo na nekim krakovima: prilaz iz dvorišta i priključna traka bez semafora ustupaju, izvedeno", () => {
+    for (const klasa of ["service", "secondary_link"]) {
+      const s = zvijezda([0, 90, 180], ["secondary", klasa, "secondary"]);
+      const x = raskrsnice(s.cvorovi, s.ivice, [
+        { vrsta: "traffic_signals", ivica: 0, s: 90 },
+        { vrsta: "traffic_signals", ivica: 2, s: 90 },
+      ]).lista[0]!;
+      expect(x.kraci.map((k) => k.kontrola)).toEqual(["semafor", "ustupi", "semafor"]);
+      expect(x.inferredPriority).toBe(true);
+    }
+  });
+
+  it("semafor samo na nekim krakovima: ulica bez svog semafora je i ona pod semaforom, izvedeno (provjera mape)", () => {
     const s = zvijezda([0, 90, 180]);
     const x = raskrsnice(s.cvorovi, s.ivice, [
       { vrsta: "traffic_signals", ivica: 0, s: 90 },
       { vrsta: "traffic_signals", ivica: 2, s: 90 },
     ]).lista[0]!;
-    expect(x.kraci.map((k) => k.kontrola)).toEqual(["semafor", "ustupi", "semafor"]);
-    expect(x.inferredPriority).toBe(true);
+    expect(x.kraci.map((k) => `${k.kontrola}:${k.izvor}`)).toEqual(["semafor:osm", "semafor:izvedeno", "semafor:osm"]);
+    expect(x.plan!.faze).toHaveLength(2);
   });
 });
 

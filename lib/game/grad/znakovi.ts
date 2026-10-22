@@ -2,7 +2,9 @@ import {
   GRAD_LINIJA_STOP,
   GRAD_LINIJA_USTUPI_CRTICA,
   GRAD_TROTOAR,
+  GRAD_ZNAK_GLAVNI_BEZ,
   GRAD_ZNAK_ISTI_STUB,
+  GRAD_ZNAK_UNAZAD,
 } from "../sim/config";
 import type { Point } from "../sim/types";
 import type { Ivica, Manevar } from "./mreza";
@@ -197,8 +199,18 @@ export function crtezPravila(
     const q = naPovrsini(povrsina, p.x, p.y) ? odmakniOdUlice(povrsina, p) : p;
     return naPovrsini(povrsina, q.x, q.y) ? null : q;
   };
-  const desnoOdUlaza = (iv: Ivica, kraj: 0 | 1, s: number) =>
-    naTlu(desnoUz(iv, kraj, s)) ?? naTlu(desnoUz(iv, kraj === 1 ? 0 : 1, s)) ?? desnoUz(iv, kraj, s);
+  // Desno od ulaza na `s`; kad je tu asfalt (ugao susjednog ušća), stub ide
+  // unazad duž iste strane, korak po korak do `GRAD_ZNAK_UNAZAD` m — znak
+  // ostaje sa desne strane (provjera mape). Tek onda lijeva strana.
+  const desnoOdUlaza = (iv: Ivica, kraj: 0 | 1, s: number) => {
+    for (let d = 0; d <= GRAD_ZNAK_UNAZAD; d += 1) {
+      const su = kraj === 1 ? s - d : s + d;
+      if (su < 0 || su > iv.duzina) break;
+      const q = naTlu(desnoUz(iv, kraj, su));
+      if (q) return q;
+    }
+    return naTlu(desnoUz(iv, kraj === 1 ? 0 : 1, s)) ?? desnoUz(iv, kraj, s);
+  };
   for (const rs of r.lista) {
     rs.kraci.forEach((k, j) => {
       const iv = m.ivice[k.ivica]!;
@@ -237,10 +249,16 @@ export function crtezPravila(
           glave.forEach((x, pomak) => izlaz.semafori.push({ raskrsnica: rs.id, krak: j, ...stub, ...x, pomak }));
         }
       }
-      // Glavni put postavljen u editoru: znak na prilazu, gdje bi bila linija.
-      if (k.ulaz && k.kontrola === "glavni" && k.izvor === "overlay") {
+      // Glavni put: znak na prilazu, gdje bi bila linija — postavljen u
+      // editoru, ili na kraku koji ima prednost nad sporednom ulicom sa
+      // znakom (trougao ili STOP, ne prilaz iz dvorišta): vozač na glavnoj
+      // mora vidjeti da je na njoj (provjera mape). Ne na prstenu kružnog toka.
+      const nadSporednom =
+        !rs.kruzni &&
+        rs.kraci.some((x, i) => i !== j && x.ulaz && (x.kontrola === "ustupi" || x.kontrola === "stop") && !GRAD_ZNAK_GLAVNI_BEZ.includes(x.klasa));
+      if (k.ulaz && k.kontrola === "glavni" && (k.izvor === "overlay" || nadSporednom)) {
         const s = odKraja(iv, k.kraj, Math.min(odsjeci[2 * k.ivica + k.kraj]! + 1, iv.duzina / 2));
-        izlaz.znakovi.push({ vrsta: "glavni", ...desnoOdUlaza(iv, k.kraj, s), izveden: false, nivo: 0 });
+        izlaz.znakovi.push({ vrsta: "glavni", ...desnoOdUlaza(iv, k.kraj, s), izveden: k.izvor !== "overlay", nivo: 0 });
       }
       // Zabrana ulaska iz editora (ulica koja nije jednosmjerna, a u nju se
       // iz ove raskrsnice ne smije) — kao izvedena kod jednosmjerne.
@@ -342,16 +360,44 @@ export function crtezPravila(
       izlaz.semafori.push({ raskrsnica: -1, krak: -1, pjesacki: i, ...desnoOdUlaza(iv, kraj, s), manevri: null, dopunska: false, pomak: 0 });
     }
   });
-  // Znakovi na (skoro) istom mjestu dijele stub, jedan iznad drugog.
-  const stubovi: { x: number; y: number; znakova: number }[] = [];
+  // Znakovi na (skoro) istom mjestu dijele stub, jedan iznad drugog — osim
+  // protivrječnih: glavni put i trougao/STOP su znakovi dva različita
+  // prilaza, i ne stoje na jednom stubu (provjera mape). Izveden znak
+  // glavnog puta tada dobija svoj stub malo dalje, ili se izostavlja kad bi
+  // tamo pao na asfalt.
+  const prednost = (v: VrstaZnaka) => v === "ustupi" || v === "stop";
+  const stubovi: { x: number; y: number; znakova: number; vrste: VrstaZnaka[] }[] = [];
+  const zadrzani: Znak[] = [];
   for (const z of izlaz.znakovi) {
-    const stub = stubovi.find((x) => Math.hypot(x.x - z.x, x.y - z.y) < GRAD_ZNAK_ISTI_STUB);
+    let stub = stubovi.find((x) => Math.hypot(x.x - z.x, x.y - z.y) < GRAD_ZNAK_ISTI_STUB);
+    const sukob =
+      stub && ((z.vrsta === "glavni" && stub.vrste.some(prednost)) || (prednost(z.vrsta) && stub.vrste.includes("glavni")));
+    if (stub && sukob) {
+      if (z.vrsta !== "glavni" || !z.izveden) {
+        // Pravi znak (OSM, editor) ostaje gdje jeste, na svom stubu.
+        stub = undefined;
+      } else {
+        const dx = z.x - stub.x;
+        const dy = z.y - stub.y;
+        const l = Math.hypot(dx, dy);
+        // Pravac od stuba ka znaku; na samom stubu — bilo koji (istok).
+        const [ux, uy] = l > 1e-6 ? [dx / l, dy / l] : [1, 0];
+        const q = { x: stub.x + ux * GRAD_ZNAK_ISTI_STUB * 1.5, y: stub.y + uy * GRAD_ZNAK_ISTI_STUB * 1.5 };
+        if (naPovrsini(povrsina, q.x, q.y)) continue;
+        z.x = q.x;
+        z.y = q.y;
+        stub = undefined;
+      }
+    }
     if (stub) {
       z.x = stub.x;
       z.y = stub.y;
       z.nivo = stub.znakova;
       stub.znakova += 1;
-    } else stubovi.push({ x: z.x, y: z.y, znakova: 1 });
+      stub.vrste.push(z.vrsta);
+    } else stubovi.push({ x: z.x, y: z.y, znakova: 1, vrste: [z.vrsta] });
+    zadrzani.push(z);
   }
+  izlaz.znakovi = zadrzani;
   return izlaz;
 }

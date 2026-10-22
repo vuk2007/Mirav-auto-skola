@@ -47,7 +47,10 @@ describe("crtanje pravila", () => {
     expect(Math.min(...xs)).toBeCloseTo(0, 4);
     expect(Math.max(...xs)).toBeCloseTo(GRAD_SIRINA_TRAKE, 4);
     for (const p of c.pune[0]!) expect(Math.abs(p.y - 8)).toBeLessThanOrEqual(0.26);
-    expect(c.znakovi).toEqual([{ vrsta: "stop", x: GRAD_SIRINA_TRAKE + GRAD_TROTOAR / 2, y: 8, izveden: false, nivo: 0 }]);
+    expect(c.znakovi.filter((z) => z.vrsta === "stop")).toEqual([{ vrsta: "stop", x: GRAD_SIRINA_TRAKE + GRAD_TROTOAR / 2, y: 8, izveden: false, nivo: 0 }]);
+    // Ostala tri kraka imaju prednost nad krakom sa STOP-om: znak glavnog
+    // puta na svakom, izveden (provjera mape).
+    expect(c.znakovi.filter((z) => z.vrsta === "glavni").map((z) => z.izveden)).toEqual([true, true, true]);
   });
 
   it("ustupi (izvedeno): isprekidana linija i izveden znak, crta se isto kao pravi", () => {
@@ -55,10 +58,17 @@ describe("crtanje pravila", () => {
     expect(c.pune).toHaveLength(0);
     // Dva sporedna kraka × crtice preko po jedne trake.
     expect(c.isprekidane.length).toBe(2 * Math.floor((GRAD_SIRINA_TRAKE + GRAD_LINIJA_USTUPI_CRTICA) / (2 * GRAD_LINIJA_USTUPI_CRTICA)));
-    expect(c.znakovi.map((z) => [z.vrsta, z.izveden])).toEqual([
+    expect(c.znakovi.filter((z) => z.vrsta === "ustupi").map((z) => [z.vrsta, z.izveden])).toEqual([
       ["ustupi", true],
       ["ustupi", true],
     ]);
+    // Glavna ulica (dva kraka) dobija znak glavnog puta, izveden.
+    expect(c.znakovi.filter((z) => z.vrsta === "glavni").map((z) => z.izveden)).toEqual([true, true]);
+  });
+
+  it("prilaz iz dvorišta sa trouglom ne traži znak glavnog puta", () => {
+    const { c } = crtez(krst([{ klasa: "primary" }, { klasa: "service" }, { klasa: "primary" }, { klasa: "service" }]));
+    expect(c.znakovi.filter((z) => z.vrsta === "glavni")).toHaveLength(0);
   });
 
   it("semafor: puna linija i glava semafora desno od ulaza", () => {

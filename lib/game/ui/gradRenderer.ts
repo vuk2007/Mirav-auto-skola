@@ -45,7 +45,7 @@ import {
   GRAD_ZNAK_VISINA,
 } from "../sim/config";
 import type { Point } from "../sim/types";
-import type { Paket } from "../grad/paket";
+import { BEZ, type Paket } from "../grad/paket";
 import { geometrijaDekora, type BojeDekora } from "../grad/dekor";
 import { svjetlo, zelenaStrelica, type Raskrsnice } from "../grad/raskrsnica";
 import { svjetloZaVozila, type PjesackiSemafor } from "../grad/pjesackiSemafor";
@@ -54,7 +54,17 @@ import type { Temena } from "../grad/temena";
 import type { CrtezPravila, Semafor, Znak } from "../grad/znakovi";
 import { tekstureZnakova } from "./tekstureZnakova";
 import { zmigavacSvijetli } from "./zmigavac";
-import { krajeviLinija, linijeIvice, natpisiBusa, ogradaZatvorene, streliceIvice, zebra, zebraPrelaza, type Poligon } from "../grad/oznake";
+import {
+  krajeviLinija,
+  linijeIvice,
+  natpisiBusa,
+  ogradaZatvorene,
+  streliceIvice,
+  zauzetoZaStrelice,
+  zebra,
+  zebraPrelaza,
+  type Poligon,
+} from "../grad/oznake";
 import type { Prelaz } from "../grad/trotoari";
 import type { Povrsina } from "../grad/povrsina";
 import {
@@ -521,6 +531,8 @@ export async function createGradRenderer(
     // OSM čvorovi zebri koje već crta prelaz (čvor blizu linije prelaza).
     pokriveneZebre = new Set();
     if (pravila.prelazi) {
+      // Čvor od kojeg je prelaz napravljen — i kad je prelaz pomjeren od njega.
+      for (const p of pravila.prelazi) pokriveneZebre.add(p.objekat);
       const vrsta = z.vrsteObjekata.indexOf("crossing");
       for (let o = 0; o < n.obVrsta.length; o++) {
         if (n.obVrsta[o] !== vrsta) continue;
@@ -552,12 +564,21 @@ export async function createGradRenderer(
     odsjeci = krajeviLinija(mreza);
     vrstaPrelaza = z.vrsteObjekata.indexOf("crossing");
     zebraKodovi = new Set(GRAD_ZEBRA_VRSTE.map((v) => z.stringovi.indexOf(v)).filter((k) => k >= 0));
+    // Strelice na kolovozu ne idu preko zebre ni pred liniju čekanja: zebre
+    // mreže pješaka, a bez nje (editor) OSM prelazi na ivicama.
+    const zebre = pravila.prelazi
+      ? pravila.prelazi.flatMap((p) => p.ivice)
+      : Array.from({ length: n.obVrsta.length }, (_, o) => o)
+          .filter((o) => n.obVrsta[o] === vrstaPrelaza && zebraKodovi.has(n.obPodatak[o]!) && n.obIvica[o] !== BEZ)
+          .map((o) => ({ ivica: n.obIvica[o]!, s: n.obS[o]! }));
+    zauzetoStrelica = zauzetoZaStrelice(mreza, pravila.raskrsnice, zebre);
   };
   // Oznake na kolovozu: linije staju pred raskrsnicom; prelazi su objekti paketa.
   let odsjeci: Float32Array = new Float32Array(0);
   let vrstaPrelaza = -1;
   let zebraKodovi = new Set<number>();
   let pokriveneZebre = new Set<number>();
+  let zauzetoStrelica = new Map<number, [number, number][]>();
   indeksiraj();
 
   // ── slojevi ───────────────────────────────────────────────────────────────
@@ -729,7 +750,7 @@ export async function createGradRenderer(
       }
       if (!iv.vozna) continue;
       oboji(linijeIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!, pravila.produzeci));
-      oboji(streliceIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
+      oboji(streliceIvice(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!, zauzetoStrelica.get(i)));
       oboji(natpisiBusa(iv, odsjeci[2 * i]!, odsjeci[2 * i + 1]!));
     }
 

@@ -118,6 +118,26 @@ describe("oznake: strelice", () => {
     expect(Math.max(...s[7]!.map((t) => t.x))).toBeGreaterThan(TRAKA / 2 + 1);
   });
 
+  it("strelica ne staje na zebru ni ispred linije čekanja: pomjera se unazad (provjera mape)", () => {
+    const odB = TRAKA + GRAD_LINIJE_OD_RASKRSNICE;
+    const slobodno = streliceIvice(dvije, 0, odB);
+    // Ivica ide od y = 100 ka centru (0, 0); `s` raste ka centru, y opada.
+    const yVrha = (p: Point[][]) => Math.min(...p.flat().map((t) => t.y));
+    const yRepa = (p: Point[][]) => Math.max(...p.flat().map((t) => t.y));
+    // Zebra tačno ispod strelice: [s 84, 88] — strelica mora biti cijela iza nje.
+    const zebra_: [number, number][] = [[84, 88]];
+    const pomjerene = streliceIvice(dvije, 0, odB, zebra_);
+    expect(pomjerene).toHaveLength(slobodno.length);
+    expect(yVrha(pomjerene)).toBeGreaterThanOrEqual(100 - 84 - 1e-6);
+    // Dva zauzeta dijela jedan iza drugog (linija čekanja, pa zebra iza nje).
+    const dva = streliceIvice(dvije, 0, odB, [
+      [80, 100],
+      [72, 76],
+    ]);
+    expect(yVrha(dva)).toBeGreaterThanOrEqual(100 - 72 - 1e-6);
+    expect(yRepa(dva)).toBeLessThanOrEqual(100);
+  });
+
   it("kad OSM navede drugačiji broj traka od ulice — nema strelica", () => {
     expect(streliceIvice(sa({ ...dvije, skretanjaNaprijed: "left|through|right" }), 0, 0)).toEqual([]);
   });

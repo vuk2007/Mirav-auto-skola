@@ -19,6 +19,7 @@ import {
   INDICATOR_OFF_AFTER,
   LINE_CROSS_TOL,
   GRAD_STAJANJE_TRAJE,
+  GRAD_STAJALISTE_VAN_RASKRSNICE,
   GRAD_SUDIJA_DO_ULICE,
   GRAD_SUPROTNO_BRZINA,
   GRAD_SUPROTNO_TRAJE,
@@ -182,8 +183,14 @@ export function gradZaSudiju(
       // najbližu ulicu, na strani na kojoj je tačka.
       const osa = najblizaOsa(povrsina, n.obXY[2 * o]!, n.obXY[2 * o + 1]!, GRAD_SUDIJA_DO_ULICE + 6);
       if (!osa) continue;
+      // OSM tačka stajališta zna biti u samoj raskrsnici (u njoj se ne staje):
+      // stajalište se pomjeri duž ulice van nje (provjera mape).
+      const iv = povrsina.mreza.ivice[osa.ivica]!;
+      const odA = raskrsnice.uCvoru[iv.a]! >= 0 ? odsjeci[2 * iv.i]! + GRAD_STAJALISTE_VAN_RASKRSNICE : 0;
+      const odB = raskrsnice.uCvoru[iv.b]! >= 0 ? iv.duzina - odsjeci[2 * iv.i + 1]! - GRAD_STAJALISTE_VAN_RASKRSNICE : iv.duzina;
+      if (odA > odB) continue;
       const l = stajalista.get(osa.ivica) ?? [];
-      l.push({ s: osa.s, strana: osa.bok >= 0 ? 1 : -1 });
+      l.push({ s: Math.max(odA, Math.min(odB, osa.s)), strana: osa.bok >= 0 ? 1 : -1 });
       stajalista.set(osa.ivica, l);
     }
   }

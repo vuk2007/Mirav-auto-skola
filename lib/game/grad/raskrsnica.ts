@@ -9,6 +9,7 @@ import {
   GRAD_KLASTER_PRECNIK_PREKLOP,
   GRAD_PJESACKI_SEMAFOR_OD,
   GRAD_PJESACKI_SEMAFOR_PRELAZ,
+  GRAD_SEMAFOR_BEZ_SVJETLA_USTUPA,
   GRAD_SEMAFOR_ISTA_OSA,
   GRAD_SEMAFOR_KRAKA_DO,
   GRAD_SEMAFOR_SVE_CRVENO,
@@ -173,6 +174,12 @@ function pravacKraka(iv: Ivica, kraj: 0 | 1): number {
 const smije = (iv: Ivica, naprijed: boolean) => iv.smjer === 0 || (iv.smjer === 1) === naprijed;
 
 const rang = (klasa: string) => (GRAD_KLASE_GLAVNE.includes(klasa) ? 2 : GRAD_KLASE_SPOREDNE.includes(klasa) ? 0 : 1);
+
+/**
+ * Rang za izvedenu prednost na raskrsnici sa znakovima: kao `rang`, ali
+ * servisni put (prilaz, parking) je ispod stambene ulice.
+ */
+const rangIzvedeni = (klasa: string) => (klasa === "service" || klasa === "track" ? -1 : rang(klasa));
 
 /** Deterministički broj iz cijelog broja — pomak semafora, da nisu svi u taktu. */
 function hes(x: number): number {
@@ -534,27 +541,47 @@ function odrediKontrolu(
     plan.faze.forEach((f, i) => f.kraci.forEach((j) => (r.kraci[j]!.faza ??= i)));
     r.plan = plan;
   } else if (semaforUCvoru || semaforNaKraku.some(Boolean)) {
-    // Semaforisana raskrsnica. Krak bez svog semafora (desni odvojak, prilaz
-    // iz dvorišta) kad je semafor samo na krakovima: ustupa, izvedeno.
+    // Semaforisana raskrsnica. Krak bez svog semafora kad je semafor samo na
+    // krakovima: prilaz iz dvorišta i priključna traka (slobodno desno)
+    // ustupaju; ulica je pod semaforom i ona — OSM zna ucrtati semafor samo na
+    // dio krakova, a ulica koja ustupa usred semaforisane raskrsnice ne postoji
+    // (provjera mape). Oboje izvedeno.
     for (const j of ulazi) {
       const k = r.kraci[j]!;
       if (semaforUCvoru || semaforNaKraku[j]) {
         k.kontrola = "semafor";
         k.izvor = "osm";
-      } else {
+      } else if (GRAD_SEMAFOR_BEZ_SVJETLA_USTUPA.includes(k.klasa) || k.klasa.endsWith("_link")) {
         k.kontrola = "ustupi";
         k.izvor = "izvedeno";
         r.inferredPriority = true;
+      } else {
+        k.kontrola = "semafor";
+        k.izvor = "izvedeno";
       }
     }
     r.plan = planSemafora(r);
     r.inferredPhases = true;
   } else if (znakNaKraku.some(Boolean)) {
+    // Krak bez znaka je glavni put — osim kad je niže klase od najviše među
+    // krakovima bez znaka: OSM je znak ucrtao samo na neke sporedne krakove,
+    // a sporedna ulica naspram one sa znakom nije glavni put (provjera mape).
+    // Takav krak ustupa, izvedeno.
+    const bezZnaka = ulazi.filter((j) => !znakNaKraku[j]).map((j) => rangIzvedeni(r.kraci[j]!.klasa));
+    const vrh = bezZnaka.length ? Math.max(...bezZnaka) : 0;
     for (const j of ulazi) {
       const k = r.kraci[j]!;
       const znak = znakNaKraku[j];
-      k.kontrola = znak ? (znak.vrsta === "stop" ? "stop" : "ustupi") : "glavni";
-      k.izvor = "osm";
+      if (znak) {
+        k.kontrola = znak.vrsta === "stop" ? "stop" : "ustupi";
+        k.izvor = "osm";
+      } else if (rangIzvedeni(k.klasa) < vrh) {
+        k.kontrola = "ustupi";
+        k.izvor = "izvedeno";
+      } else {
+        k.kontrola = "glavni";
+        k.izvor = "osm";
+      }
     }
   } else if (uCvoru.includes("stop") || uCvoru.includes("give_way")) {
     // Znak u samom čvoru (bez kraka): važi za krakove najniže klase — izvedeno.
@@ -577,12 +604,13 @@ function odrediKontrolu(
     }
     r.inferredPriority = true;
   } else {
-    const glavnih = ulazi.filter((j) => rang(r.kraci[j]!.klasa) === 2).length;
+    const glavnih = ulazi.filter((j) => rang(r.kraci[j]!.klasa) >= 1).length;
     const sporednih = ulazi.filter((j) => rang(r.kraci[j]!.klasa) === 0).length;
     if (glavnih > 0 && sporednih > 0) {
-      // Sporedna na glavnu bez znaka: sporedna ustupa (zadatak, odjeljak 5).
-      // Ostale (npr. `tertiary`) ne ustupaju — među njima i glavnom važi
-      // pravilo desne strane, kao među dvije glavne.
+      // Sporedna na glavnu ili tercijarnu bez znaka: sporedna ustupa (zadatak,
+      // odjeljak 5; tercijarna od provjere mape, odluka korisnika 2026-10-22).
+      // Između glavne i tercijarne ne ustupa niko — tu važi pravilo desne
+      // strane, kao među dvije glavne.
       for (const j of ulazi) {
         const k = r.kraci[j]!;
         k.kontrola = rang(k.klasa) === 0 ? "ustupi" : "glavni";

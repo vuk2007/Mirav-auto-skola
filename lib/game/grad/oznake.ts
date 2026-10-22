@@ -5,6 +5,7 @@ import {
   GRAD_LINIJE_OD_RASKRSNICE,
   GRAD_STRELICA_DUZINA,
   GRAD_STRELICA_OD_KRAJA,
+  GRAD_STRELICA_RAZMAK,
   GRAD_ZEBRA_DO_ULICE,
   GRAD_ZEBRA_DUBINA,
   GRAD_ZEBRA_PRUGA,
@@ -12,6 +13,7 @@ import {
 import type { Point } from "../sim/types";
 import { linijeSaVrstom, pojasBusa, puniDijelovi, uzBus, type Produzeci } from "./linije";
 import type { Ivica, Mreza } from "./mreza";
+import type { Raskrsnice } from "./raskrsnica";
 import { najblizaOsa, type Povrsina } from "./povrsina";
 import type { Prelaz } from "./trotoari";
 
@@ -321,11 +323,46 @@ const STRELICE: Record<string, readonly (readonly [number, number])[][]> = (() =
 })();
 
 /**
+ * Dijelovi ivice [s od–do, m od `a`] na kojima strelica na kolovozu ne smije
+ * stajati (provjera mape): zebre, i sve od linije čekanja (stop-linija, ili
+ * mjesto čekanja ispred zebre) do raskrsnice — strelica je uvijek iza linije
+ * i nikad preko zebre. Po ivici; `zebre` su prelazi mreže pješaka, ili (bez
+ * njih, u editoru) mjesta OSM prelaza na ivicama.
+ */
+export function zauzetoZaStrelice(m: Mreza, raskrsnice: Raskrsnice, zebre: readonly { ivica: number; s: number }[]): Map<number, [number, number][]> {
+  const izlaz = new Map<number, [number, number][]>();
+  const dodaj = (i: number, a: number, b: number) => {
+    const l = izlaz.get(i) ?? [];
+    l.push([Math.min(a, b), Math.max(a, b)]);
+    izlaz.set(i, l);
+  };
+  const r0 = GRAD_ZEBRA_DUBINA / 2 + GRAD_STRELICA_RAZMAK;
+  for (const z of zebre) dodaj(z.ivica, z.s - r0, z.s + r0);
+  for (const r of raskrsnice.lista) {
+    for (const k of r.kraci) {
+      if (!k.ulaz) continue;
+      const d = Math.max(k.stopD ?? 0, k.cekaD);
+      if (d <= 0) continue;
+      // Od linije čekanja do raskrsnice, po svakoj ivici puta kraka.
+      for (const x of k.lanac) {
+        const iv = m.ivice[x.ivica]!;
+        if (x.od >= d) break;
+        const doKraja = Math.min(iv.duzina, d - x.od + GRAD_STRELICA_RAZMAK);
+        if (x.kraj === 1) dodaj(iv.i, iv.duzina - doKraja, iv.duzina);
+        else dodaj(iv.i, 0, doKraja);
+      }
+    }
+  }
+  return izlaz;
+}
+
+/**
  * Strelice iz `turn:lanes` na kraju ivice, u svakoj traci koja ih ima. Kad OSM
  * navede drugačiji broj traka nego što ulica ima, strelica nema — ne pogađa se
- * koja traka je koja.
+ * koja traka je koja. Strelica koja bi pala na `zauzeto` (vidi
+ * `zauzetoZaStrelice`) pomjera se unazad, iza zauzetog dijela.
  */
-export function streliceIvice(iv: Ivica, odA: number, odB: number): Poligon[] {
+export function streliceIvice(iv: Ivica, odA: number, odB: number, zauzeto: readonly [number, number][] = []): Poligon[] {
   const izlaz: Poligon[] = [];
   const n = iv.trakeNaprijed + iv.trakeNazad;
   if (n === 0 || iv.sirina < n * iv.sirinaTrake - 1e-6) return izlaz;
@@ -336,8 +373,19 @@ export function streliceIvice(iv: Ivica, odA: number, odB: number): Poligon[] {
     if (!opis) continue;
     const po = opis.split("|");
     if (po.length !== trake) continue;
-    // Vrh strelice je `GRAD_STRELICA_OD_KRAJA` prije kraja linija, u smjeru vožnje.
-    const vrh = naprijed ? iv.duzina - odB - GRAD_STRELICA_OD_KRAJA : odA + GRAD_STRELICA_OD_KRAJA;
+    // Vrh strelice je `GRAD_STRELICA_OD_KRAJA` prije kraja linija, u smjeru
+    // vožnje — ili prije zauzetog dijela (zebra, linija čekanja) koji pokriva.
+    let vrh = naprijed ? iv.duzina - odB - GRAD_STRELICA_OD_KRAJA : odA + GRAD_STRELICA_OD_KRAJA;
+    for (let pomjeri = true; pomjeri; ) {
+      pomjeri = false;
+      const lo = naprijed ? vrh - GRAD_STRELICA_DUZINA : vrh;
+      const hi = naprijed ? vrh : vrh + GRAD_STRELICA_DUZINA;
+      for (const [z0, z1] of zauzeto) {
+        if (z1 <= lo || z0 >= hi) continue;
+        vrh = naprijed ? z0 : z1;
+        pomjeri = true;
+      }
+    }
     const rep = naprijed ? vrh - GRAD_STRELICA_DUZINA : vrh + GRAD_STRELICA_DUZINA;
     if (Math.min(vrh, rep) < odA + 1 || Math.max(vrh, rep) > iv.duzina - odB - 1) continue;
     const { k, t } = naSegmentu(iv, rep);

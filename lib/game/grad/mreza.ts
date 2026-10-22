@@ -1,5 +1,6 @@
 import {
   CAR_WIDTH,
+  GRAD_DVOSTRUKA_OD_TRAKA,
   GRAD_NAJUZA_ULICA,
   GRAD_POLUKRUZNO_UGAO,
   GRAD_PREKLOP_KORAK,
@@ -25,6 +26,7 @@ import {
   IVICA_ZATVORENA,
   LINIJA_BEZ,
   LINIJA_DVOSTRUKA,
+  LINIJA_PODRAZUMIJEVANA,
   LINIJA_PUNA,
   type Paket,
 } from "./paket";
@@ -91,7 +93,11 @@ export interface Ivica {
   /** Krajnja desna traka u smjeru `a → b` (`naprijed`) / `b → a` je autobuska (overlay). */
   busNaprijed: boolean;
   busNazad: boolean;
-  /** Razdjelna linija smjerova: iz overlay-a, inače isprekidana. */
+  /**
+   * Razdjelna linija smjerova: iz overlay-a; bez izmjene dvostruka puna na
+   * dvosmjernoj ulici sa bar `GRAD_DVOSTRUKA_OD_TRAKA` traka u svakom smjeru
+   * (pravilnik: kolovoz sa četiri i više traka), inače isprekidana.
+   */
   linija: "isprekidana" | "puna" | "dvostruka" | "bez";
   /** Metara pune razdjelne linije, i punih linija između traka, pred svakim krajem u raskrsnici (overlay). */
   punaPrije: number;
@@ -168,7 +174,15 @@ export function napraviMrezu(p: Paket): Mreza {
       uklonjena: (zastavice & IVICA_UKLONJENA) !== 0,
       busNaprijed: (zastavice & IVICA_BUS_NAPRIJED) !== 0,
       busNazad: (zastavice & IVICA_BUS_NAZAD) !== 0,
-      linija: linija === LINIJA_PUNA ? "puna" : linija === LINIJA_DVOSTRUKA ? "dvostruka" : linija === LINIJA_BEZ ? "bez" : "isprekidana",
+      linija: linija === LINIJA_PUNA
+        ? "puna"
+        : linija === LINIJA_DVOSTRUKA
+          ? "dvostruka"
+          : linija === LINIJA_BEZ
+            ? "bez"
+            : linija === LINIJA_PODRAZUMIJEVANA && smjer === 0 && naprijed >= GRAD_DVOSTRUKA_OD_TRAKA && nazad >= GRAD_DVOSTRUKA_OD_TRAKA
+              ? "dvostruka"
+              : "isprekidana",
       punaPrije: n.ivPunaPrije[i] ?? 0,
       trakePrije: n.ivTrakePrije[i] ?? 0,
     });
