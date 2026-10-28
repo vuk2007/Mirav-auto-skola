@@ -85,10 +85,10 @@ function KaznaKartica({
         className="flex min-h-11 w-full items-center gap-3 text-left"
       >
         <Scale aria-hidden="true" strokeWidth={1.5} className="h-5 w-5 flex-none text-accent-2" />
-        <span className="font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-accent-2 uppercase">
+        <span className="min-w-0 flex-1 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-accent-2 uppercase">
           {t.penaltyTitle}
         </span>
-        <span className="tabular ml-auto font-display text-sm font-bold">{sankcije[0]}</span>
+        <span className="tabular font-display text-sm font-bold whitespace-nowrap">{sankcije[0]}</span>
         <ChevronDown
           aria-hidden="true"
           strokeWidth={1.5}
@@ -100,7 +100,10 @@ function KaznaKartica({
         <div className="pt-2 pb-1 pl-8">
           <p className="font-semibold">{kazna.naslov}</p>
 
-          <p className="tabular mt-1 font-display text-xl font-bold">{sankcije.join(" · ")}</p>
+          <p className="tabular mt-1 font-display text-xl font-bold">{sankcije[0]}</p>
+          {sankcije.length > 1 && (
+            <p className="mt-0.5 text-sm font-semibold text-text-muted">{sankcije.slice(1).join(" · ")}</p>
+          )}
 
           {kazna.objasnjenje && <p className="mt-2 text-sm leading-relaxed">{kazna.objasnjenje}</p>}
 

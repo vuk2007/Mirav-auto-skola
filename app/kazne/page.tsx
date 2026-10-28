@@ -32,7 +32,6 @@ export default function KaznePage() {
   return (
     <AppProvider>
       <BrandHeader />
-      <div className="road-line" aria-hidden="true" />
       <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
         <SpisakKazni />
       </main>
