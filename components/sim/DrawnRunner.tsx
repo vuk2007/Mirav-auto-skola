@@ -5,8 +5,12 @@ import type { Dict } from "@/lib/i18n";
 import { shuffle } from "@/lib/questions";
 import { isOrderCorrect, type DrawnScenario, type Family } from "@/lib/simRules";
 import ProgressBar from "../ProgressBar";
+import Badge from "../ui/Badge";
+import Button from "../ui/Button";
+import GlassPanel from "../ui/GlassPanel";
 import IntersectionSvg from "./IntersectionSvg";
 import RoundaboutSvg from "./RoundaboutSvg";
+import { OZNAKA, SimDetalj, SimKraj, SimNiz, SimPoruka, SimPovratna, SimRedoslijed, SimSkor } from "./SimUi";
 
 interface DrawnRunnerProps {
   scenarios: readonly DrawnScenario[];
@@ -152,60 +156,16 @@ export default function DrawnRunner({
     setStats({ correct: 0, answered: 0, streak: 0, bestStreak: 0 });
   }, [scenarios, reset]);
 
-  if (scenarios.length === 0) {
-    return (
-      <div className="panel p-5">
-        <p className="text-sm text-muted">{t.simEmpty}</p>
-      </div>
-    );
-  }
+  if (scenarios.length === 0) return <SimPoruka>{t.simEmpty}</SimPoruka>;
 
   // Miješanje se dešava u efektu; do tada nema šta da se prikaže.
-  if (order.length === 0) {
-    return (
-      <div className="panel p-5" aria-busy="true">
-        <p className="tag text-muted">{t.loading}</p>
-      </div>
-    );
-  }
+  if (order.length === 0) return <SimPoruka busy>{t.loading}</SimPoruka>;
 
-  if (!scenario) {
-    return (
-      <div className="panel border-t-4 border-t-green p-5 sm:p-6" aria-live="polite">
-        <p className="tag mb-2 text-muted">{familyLabel}</p>
-        <p className="mb-3 text-lg font-bold">{t.simFinished}</p>
-        <p className="mb-4">
-          <span className="tag text-muted">{t.correctLabel}</span>{" "}
-          <strong className="font-display text-2xl text-green">{stats.correct}</strong>
-          <span className="mx-1 text-muted">/</span>
-          <strong className="font-display text-2xl">{stats.answered}</strong>
-          <span className="tag ml-3 text-muted">{t.simStreak}</span>{" "}
-          <strong className="font-display text-2xl">{stats.bestStreak}</strong>
-        </p>
-        <button
-          type="button"
-          onClick={restart}
-          className="font-display rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
-        >
-          {t.simRestart}
-        </button>
-      </div>
-    );
-  }
+  if (!scenario) return <SimKraj label={familyLabel} stats={stats} onRestart={restart} t={t} />;
 
   return (
-    <div className="space-y-4">
-      <section className="panel flex flex-wrap items-center gap-x-5 gap-y-2 p-4">
-        <p className="text-sm text-muted">
-          {t.correctLabel}:{" "}
-          <strong className="font-display text-lg text-green">{stats.correct}</strong>
-          <span className="mx-1">/</span>
-          <strong className="font-display text-lg text-ink">{stats.answered}</strong>
-        </p>
-        <p className="text-sm text-muted">
-          {t.simStreak}: <strong className="font-display text-lg text-blue">{stats.streak}</strong>
-        </p>
-      </section>
+    <div className="space-y-5">
+      <SimSkor stats={stats} t={t} />
 
       <ProgressBar
         current={index + 1}
@@ -214,15 +174,15 @@ export default function DrawnRunner({
         ariaLabel={t.progress}
       />
 
-      <article className="panel p-4 sm:p-6">
-        <header className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-          <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-          <span className="tag text-blue">{familyLabel}</span>
+      <GlassPanel as="article">
+        <header className="mb-3">
+          <Badge tone="accent">{familyLabel}</Badge>
         </header>
 
-        <p className="mb-4 text-sm text-muted">{sceneNote(family, t)}</p>
+        <p className="mb-5 text-sm text-text-muted">{sceneNote(family, t)}</p>
 
-        <div className="mb-4 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
+        {/* Scena je crtana na svijetlom, pa ostaje na bijeloj podlozi. */}
+        <div className="mb-5 flex justify-center overflow-hidden rounded-lg border border-glass-line bg-white p-2 sm:p-3">
           {/* Kružni tok ima svoju geometriju — ne crta se kao krstasta raskrsnica. */}
           {scenario.layout === "roundabout" ? (
             <RoundaboutSvg
@@ -251,123 +211,78 @@ export default function DrawnRunner({
 
         {isDecision ? (
           <>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-text-muted">
               {t.simDecisionTask}{" "}
-              <span className="text-ink">
+              <span className="text-text">
                 ({t.simVehicle} {scenario.decision?.vehicleId} — {t.simYourVehicle})
               </span>
             </p>
             {!checked && (
-              <div className="mt-3 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => decide("go")}
-                  className="font-display flex-1 rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark sm:flex-none"
-                >
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Button onClick={() => decide("go")} className="flex-1 sm:flex-none">
                   {t.simGo}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => decide("yield")}
-                  className="font-display flex-1 rounded border-2 border-blue px-6 py-3 text-lg font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white sm:flex-none"
-                >
+                </Button>
+                <Button variant="secondary" onClick={() => decide("yield")} className="flex-1 sm:flex-none">
                   {t.simYield}
-                </button>
+                </Button>
               </div>
             )}
           </>
         ) : (
           <>
-            <p className="text-sm text-muted">{t.simTapInScene}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-line pt-4">
-              <p className="text-sm">
-                <span className="tag text-muted">{t.simYourOrder}</span>{" "}
-                <span className="font-display text-xl tracking-[0.2em]">
-                  {picked.length > 0 ? picked.join("-") : "—"}
-                </span>
-              </p>
-              {!checked && picked.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setPicked([])}
-                  className="font-display rounded border-2 border-line px-3.5 py-1.5 text-base font-semibold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
-                >
-                  {t.simClear}
-                </button>
-              )}
-            </div>
+            <p className="text-sm text-text-muted">{t.simTapInScene}</p>
+            <SimRedoslijed
+              picked={picked}
+              canClear={!checked && picked.length > 0}
+              onClear={() => setPicked([])}
+              t={t}
+            />
             {!checked && (
-              <button
-                type="button"
-                onClick={check}
-                disabled={picked.length === 0}
-                className="font-display mt-4 w-full rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue sm:w-auto"
-              >
+              <Button onClick={check} disabled={picked.length === 0} arrow={false} className="mt-4 w-full sm:w-auto">
                 {t.check}
-              </button>
+              </Button>
             )}
           </>
         )}
 
         {checked && (
-          <div
-            className={`mt-4 rounded border-l-4 p-3 ${
-              correct ? "border-green bg-green-soft" : "border-red bg-red-soft"
-            }`}
-            role="status"
-          >
-            <p className={`font-display text-lg font-bold ${correct ? "text-green" : "text-red"}`}>
-              {correct ? t.correctFeedback : t.wrongFeedback}
-            </p>
+          <SimPovratna correct={correct} t={t}>
             {!correct && scenario.answer && (
-              <p className="mt-1 text-sm">
-                <span className="tag text-muted">{t.simCorrectOrder}</span>{" "}
-                <span className="font-display text-lg tracking-[0.2em]">
-                  {scenario.answer.join("-")}
-                </span>
-              </p>
+              <SimDetalj label={t.simCorrectOrder}>
+                <SimNiz>{scenario.answer.join("-")}</SimNiz>
+              </SimDetalj>
             )}
             {!correct && scenario.decision && (
-              <p className="mt-1 text-sm">
-                <span className="tag text-muted">{t.correctAnswerLabel}</span>{" "}
-                <strong>{scenario.decision.answer === "go" ? t.simGo : t.simYield}</strong>
+              <SimDetalj label={t.correctAnswerLabel}>
+                <strong className="text-text">{scenario.decision.answer === "go" ? t.simGo : t.simYield}</strong>
                 {choice && (
-                  <span className="text-muted">
-                    {" "}
+                  <span className="text-text-muted">
                     ({t.yourAnswerLabel}: {choice === "go" ? t.simGo : t.simYield})
                   </span>
                 )}
-              </p>
+              </SimDetalj>
             )}
-            <div className="mt-2 border-t border-line/60 pt-2">
-              <p className="tag mb-1 text-blue">{t.ruleTitle}</p>
-              <ul className="space-y-1 text-sm leading-relaxed">
+            <div className="mt-4 border-t border-glass-line pt-3">
+              <p className={`mb-1.5 ${OZNAKA} text-accent-2`}>{t.ruleTitle}</p>
+              <ul className="space-y-1 text-sm leading-relaxed text-text">
                 {scenario.rules.map((key) => (
                   <li key={key}>{t[key]}</li>
                 ))}
               </ul>
             </div>
-          </div>
+          </SimPovratna>
         )}
-      </article>
+      </GlassPanel>
 
       {checked && (
         <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={next}
-            className="font-display rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
-          >
+          <Button onClick={next} className="w-full sm:w-auto">
             {index + 1 < order.length ? t.simNextScene : t.simFinished}
-          </button>
+          </Button>
           {!correct && !isDecision && (
-            <button
-              type="button"
-              onClick={reset}
-              className="font-display rounded border-2 border-line px-5 py-3 text-base font-bold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
-            >
+            <Button variant="secondary" onClick={reset} className="w-full sm:w-auto">
               {t.simClear}
-            </button>
+            </Button>
           )}
         </div>
       )}

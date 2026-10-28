@@ -1,5 +1,6 @@
 "use client";
 
+import { Info } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Dict, Lang } from "@/lib/i18n";
@@ -7,6 +8,10 @@ import { imageSize } from "@/lib/imageSizes";
 import { localizedText, shuffle } from "@/lib/questions";
 import { isOrderCorrect, type SimScenario } from "@/lib/simulator";
 import ProgressBar from "../ProgressBar";
+import Badge from "../ui/Badge";
+import Button from "../ui/Button";
+import GlassPanel from "../ui/GlassPanel";
+import { OZNAKA, SimDetalj, SimKraj, SimNiz, SimPoruka, SimPovratna, SimRedoslijed, SimSkor } from "./SimUi";
 
 interface PhotoRunnerProps {
   scenarios: SimScenario[];
@@ -74,65 +79,21 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
     setStats({ correct: 0, answered: 0, streak: 0, bestStreak: 0 });
   }, [scenarios]);
 
-  if (scenarios.length === 0) {
-    return (
-      <div className="panel p-5">
-        <p className="text-sm text-muted">{t.simEmpty}</p>
-      </div>
-    );
-  }
+  if (scenarios.length === 0) return <SimPoruka>{t.simEmpty}</SimPoruka>;
 
   // Miješanje se dešava u efektu; do tada nema šta da se prikaže.
-  if (order.length === 0) {
-    return (
-      <div className="panel p-5" aria-busy="true">
-        <p className="tag text-muted">{t.loading}</p>
-      </div>
-    );
-  }
+  if (order.length === 0) return <SimPoruka busy>{t.loading}</SimPoruka>;
 
   // Prošli su sve scene — prikaži zbir i ponudi novi krug.
-  if (!scenario) {
-    return (
-      <div className="panel border-t-4 border-t-green p-5 sm:p-6" aria-live="polite">
-        <p className="tag mb-2 text-muted">{t.simTitle}</p>
-        <p className="mb-3 text-lg font-bold">{t.simFinished}</p>
-        <p className="mb-4">
-          <span className="tag text-muted">{t.correctLabel}</span>{" "}
-          <strong className="font-display text-2xl text-green">{stats.correct}</strong>
-          <span className="mx-1 text-muted">/</span>
-          <strong className="font-display text-2xl">{stats.answered}</strong>
-          <span className="ml-3 tag text-muted">{t.simStreak}</span>{" "}
-          <strong className="font-display text-2xl">{stats.bestStreak}</strong>
-        </p>
-        <button
-          type="button"
-          onClick={restart}
-          className="font-display rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
-        >
-          {t.simRestart}
-        </button>
-      </div>
-    );
-  }
+  if (!scenario) return <SimKraj label={t.simTitle} stats={stats} onRestart={restart} t={t} />;
 
   const { question, vehicleCount, allPass } = scenario;
   const [w, h] = imageSize(question.image);
   const vehicles = Array.from({ length: vehicleCount }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-4">
-      {/* Skor */}
-      <section className="panel flex flex-wrap items-center gap-x-5 gap-y-2 p-4">
-        <p className="text-sm text-muted">
-          {t.correctLabel}: <strong className="font-display text-lg text-green">{stats.correct}</strong>
-          <span className="mx-1">/</span>
-          <strong className="font-display text-lg text-ink">{stats.answered}</strong>
-        </p>
-        <p className="text-sm text-muted">
-          {t.simStreak}: <strong className="font-display text-lg text-blue">{stats.streak}</strong>
-        </p>
-      </section>
+    <div className="space-y-5">
+      <SimSkor stats={stats} t={t} />
 
       <ProgressBar
         current={index + 1}
@@ -141,17 +102,16 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
         ariaLabel={t.progress}
       />
 
-      <article className="panel p-4 sm:p-6">
-        <header className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-          <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-          <span className="tag text-blue">{t.simTitle}</span>
+      <GlassPanel as="article">
+        <header className="mb-4">
+          <Badge tone="accent">{t.simTitle}</Badge>
         </header>
 
-        <h2 className="mb-4 text-lg leading-snug font-bold sm:text-xl">
+        <h2 className="mb-5 font-display text-lg leading-snug font-semibold sm:text-xl">
           {localizedText(question, lang)}
         </h2>
 
-        <div className="mb-4 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
+        <div className="mb-5 flex justify-center overflow-hidden rounded-lg border border-glass-line bg-white p-2 sm:p-3">
           <Image
             src={`/web_images/${question.image}`}
             alt=""
@@ -164,31 +124,32 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
           />
         </div>
 
-        <p className="mb-1 text-sm text-muted">{t.simTask}</p>
+        <p className="text-sm text-text-muted">{t.simTask}</p>
         {/* Kod scena sa policajcem dio vozila ne prolazi — reci to unaprijed. */}
         {!allPass && !checked && (
-          <p className="mb-3 border-l-2 border-yellow pl-3 text-sm text-muted">
+          <p className="mt-3 flex items-start gap-2.5 text-sm text-text-muted">
+            <Info aria-hidden="true" strokeWidth={1.5} className="mt-0.5 h-4 w-4 flex-none text-accent-2" />
             {t.simNotAllPass}
           </p>
         )}
 
         {/* Vozila — tapkaju se redom kojim prolaze */}
-        <div className="mt-3 flex flex-wrap gap-2.5" role="group" aria-label={t.simTask}>
+        <div className="mt-4 flex flex-wrap gap-3" role="group" aria-label={t.simTask}>
           {vehicles.map((v) => {
             const pos = picked.indexOf(v);
             const isPicked = pos !== -1;
             const inAnswer = question.answer_sequence.includes(String(v));
 
-            let tone = "border-line bg-panel text-ink hover:border-blue hover:bg-blue-soft";
+            let tone = "border-glass-line-strong bg-glass text-text hover:border-accent-2 hover:bg-accent-soft";
             if (checked) {
               // Poslije provjere: zeleno = trebalo je da prođe, crveno = nije.
               tone = inAnswer
-                ? "border-green bg-green-soft text-ink"
+                ? "border-ok-line bg-ok-soft text-text"
                 : isPicked
-                  ? "border-red bg-red-soft text-ink"
-                  : "border-line bg-panel text-muted opacity-60";
+                  ? "border-err-line bg-err-soft text-text"
+                  : "border-glass-line text-text-muted";
             } else if (isPicked) {
-              tone = "border-blue bg-blue text-white";
+              tone = "border-accent bg-accent text-white";
             }
 
             return (
@@ -199,7 +160,7 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
                 disabled={checked}
                 aria-pressed={isPicked}
                 aria-label={`${t.simVehicle} ${v}${isPicked ? ` — ${pos + 1}.` : ""}`}
-                className={`font-display relative h-14 w-14 rounded-full border-2 text-2xl font-bold transition-colors ${tone} ${
+                className={`tabular relative h-14 w-14 rounded-full border font-display text-2xl font-bold transition-colors duration-200 ${tone} ${
                   checked ? "cursor-default" : ""
                 }`}
               >
@@ -207,7 +168,7 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
                 {isPicked && (
                   <span
                     aria-hidden="true"
-                    className="font-display absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-glass-line-strong bg-yellow text-sm font-bold text-ink"
+                    className="tabular absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-text font-display text-xs font-bold text-bg"
                   >
                     {pos + 1}
                   </span>
@@ -217,72 +178,35 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
           })}
         </div>
 
-        {/* Izabrani redoslijed */}
-        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-4">
-          <p className="text-sm">
-            <span className="tag text-muted">{t.simYourOrder}</span>{" "}
-            <span className="font-display text-xl tracking-[0.2em]">
-              {picked.length > 0 ? picked.join("-") : "—"}
-            </span>
-          </p>
-          {!checked && picked.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setPicked([])}
-              className="font-display rounded border-2 border-line px-3.5 py-1.5 text-base font-semibold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
-            >
-              {t.simClear}
-            </button>
-          )}
-        </div>
+        <SimRedoslijed picked={picked} canClear={!checked && picked.length > 0} onClear={() => setPicked([])} t={t} />
 
         {/* Provjera i povratna informacija */}
         {!checked ? (
-          <button
-            type="button"
-            onClick={check}
-            disabled={picked.length === 0}
-            className="font-display mt-4 w-full rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue sm:w-auto"
-          >
+          <Button onClick={check} disabled={picked.length === 0} arrow={false} className="mt-4 w-full sm:w-auto">
             {t.check}
-          </button>
+          </Button>
         ) : (
-          <div
-            className={`mt-4 rounded border-l-4 p-3 ${
-              correct ? "border-green bg-green-soft" : "border-red bg-red-soft"
-            }`}
-            role="status"
-          >
-            <p className={`font-display text-lg font-bold ${correct ? "text-green" : "text-red"}`}>
-              {correct ? t.correctFeedback : t.wrongFeedback}
-            </p>
+          <SimPovratna correct={correct} t={t}>
             {!correct && (
-              <p className="mt-1 text-sm">
-                <span className="tag text-muted">{t.simCorrectOrder}</span>{" "}
-                <span className="font-display text-lg tracking-[0.2em]">
-                  {question.answer_sequence.join("-")}
-                </span>
-              </p>
+              <SimDetalj label={t.simCorrectOrder}>
+                <SimNiz>{question.answer_sequence.join("-")}</SimNiz>
+              </SimDetalj>
             )}
             {/* Objašnjenje se prikazuje samo ako postoji u bazi — ne izmišlja se. */}
             {question.explanation && (
-              <p className="mt-2 text-sm leading-relaxed">
-                <span className="tag mr-1 text-blue">{t.explanationTitle}</span>
-                {question.explanation}
-              </p>
+              <div className="mt-4 border-t border-glass-line pt-3">
+                <p className={`mb-1.5 ${OZNAKA} text-accent-2`}>{t.explanationTitle}</p>
+                <p className="text-sm leading-relaxed text-text">{question.explanation}</p>
+              </div>
             )}
-          </div>
+          </SimPovratna>
         )}
-      </article>
+      </GlassPanel>
 
       {checked && (
-        <button
-          type="button"
-          onClick={next}
-          className="font-display w-full rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark sm:w-auto"
-        >
+        <Button onClick={next} className="w-full sm:w-auto">
           {index + 1 < order.length ? t.simNextScene : t.simFinished}
-        </button>
+        </Button>
       )}
     </div>
   );

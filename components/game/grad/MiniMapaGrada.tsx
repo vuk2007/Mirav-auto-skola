@@ -54,7 +54,7 @@ export default function MiniMapaGrada({ ulice, auto, ruta, cilj, t }: MiniMapaGr
     <figure
       aria-label={t.gradMiniMap}
       // Na niskom ekranu (telefon položen) manja, da ne pokrije HUD.
-      className="relative h-[150px] w-[150px] overflow-hidden rounded-full border-2 border-line bg-panel/90 shadow [@media(max-height:500px)]:h-24 [@media(max-height:500px)]:w-24"
+      className="relative h-[150px] w-[150px] overflow-hidden rounded-full border-2 border-glass-line bg-surface/85 backdrop-blur-md shadow-soft [@media(max-height:500px)]:h-24 [@media(max-height:500px)]:w-24"
     >
       <svg
         viewBox={`${-R} ${-R} ${2 * R} ${2 * R}`}
@@ -74,7 +74,7 @@ export default function MiniMapaGrada({ ulice, auto, ruta, cilj, t }: MiniMapaGr
         {/* Auto: strelica u središtu, uvijek nagore. */}
         <path d="M0 -20 L13 14 L0 7 L-13 14 Z" fill="#1d3c8f" stroke="#fff" strokeWidth={4} strokeLinejoin="round" />
       </svg>
-      <figcaption className="absolute bottom-1 left-0 right-0 text-center text-[8px] text-muted">{t.gradOsmAttribution}</figcaption>
+      <figcaption className="absolute bottom-1 left-0 right-0 text-center text-[8px] text-text-muted">{t.gradOsmAttribution}</figcaption>
     </figure>
   );
 }

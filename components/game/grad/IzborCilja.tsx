@@ -49,15 +49,15 @@ export default function IzborCilja({
     return KATEGORIJE_ODREDISTA.map((k) => [k, nadjena.filter((o) => o.kategorija === k)] as const).filter(([, l]) => l.length > 0);
   }, [odredista, upit]);
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="izbor-cilja-naslov" className="absolute inset-0 z-10 flex flex-col bg-paper/95 p-3">
+    <div role="dialog" aria-modal="true" aria-labelledby="izbor-cilja-naslov" className="absolute inset-0 z-10 flex flex-col bg-bg/95 p-3">
       <div className="flex items-center gap-2">
         <h2 id="izbor-cilja-naslov" className="font-display text-lg font-bold">
           {t.gradNavChoose}
         </h2>
-        <button type="button" onClick={nasumicno} className="ml-auto rounded border border-blue bg-blue px-2 py-1 text-sm font-semibold text-white">
+        <button type="button" onClick={nasumicno} className="ml-auto rounded-md border border-accent-2 bg-accent px-2 py-1 text-sm font-semibold text-white">
           {t.gradNavRandom}
         </button>
-        <button type="button" onClick={zatvori} className="rounded border border-line bg-panel px-2 py-1 text-sm font-semibold">
+        <button type="button" onClick={zatvori} className="rounded-md border border-glass-line bg-surface px-2 py-1 text-sm font-semibold">
           {t.gradNavClose}
         </button>
       </div>
@@ -67,16 +67,16 @@ export default function IzborCilja({
         onChange={(e) => setUpit(e.target.value)}
         placeholder={t.gradNavSearch}
         aria-label={t.gradNavSearch}
-        className="mt-2 rounded border border-line bg-panel px-2 py-1 text-sm"
+        className="mt-2 rounded-md border border-glass-line bg-surface px-2 py-1 text-sm"
       />
       <div className="mt-2 min-h-0 flex-1 overflow-y-auto pr-1">
         {grupe.map(([k, lista]) => (
           <section key={k} className="mb-3">
-            <h3 className="text-xs font-bold uppercase tracking-wide text-muted">{t[NAZIV_KATEGORIJE[k]] as string}</h3>
+            <h3 className="text-xs font-bold uppercase tracking-[var(--tracking-caps)] text-text-muted">{t[NAZIV_KATEGORIJE[k]] as string}</h3>
             <ul className="mt-1 space-y-1">
               {lista.map((o) => (
                 <li key={o.id}>
-                  <button type="button" onClick={() => izaberi(o)} className="w-full rounded border border-line bg-panel px-2 py-1 text-left text-sm hover:border-blue">
+                  <button type="button" onClick={() => izaberi(o)} className="w-full rounded-md border border-glass-line bg-surface px-2 py-1 text-left text-sm hover:border-accent-2">
                     {o.ime}
                   </button>
                 </li>

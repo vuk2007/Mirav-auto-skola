@@ -46,6 +46,13 @@
   --color-err-soft: rgb(239 122 127 / 0.1);
   --color-err-line: rgb(239 122 127 / 0.45);
 
+  /* Prikaz stvarnog svijeta u HUD-u igre (semafor, žmigavac): nisu boje
+     interfejsa, nego isti tonovi kojima renderer crta svjetla na sceni
+     (lib/game/ui/draw.ts, PALETTE), da lampica u HUD-u liči na onu na putu. */
+  --color-signal-red: #c8232c;
+  --color-signal-yellow: #f4c300;
+  --color-signal-green: #2f7d33;
+
   /* Radijusi */
   --radius-sm: 8px;
   --radius-md: 12px;

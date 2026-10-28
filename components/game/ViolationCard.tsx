@@ -51,25 +51,25 @@ export default function ViolationCard({
 
   return (
     <li
-      className={`rounded border border-line p-3 ${
-        violation.severity === "minor" ? "bg-paper" : "bg-red-soft"
+      className={`rounded-md border border-glass-line p-3 ${
+        violation.severity === "minor" ? "bg-bg" : "bg-err-soft"
       }`}
     >
       <p
         className={`font-display font-bold ${
-          violation.severity === "minor" ? "text-muted" : "text-red"
+          violation.severity === "minor" ? "text-text-muted" : "text-err"
         }`}
       >
         {t[VIOLATION_LABEL[violation.type]]}
         {violation.severity === "minor" && (
-          <span className="font-body ml-2 rounded border border-line px-1.5 py-0.5 text-[10px] font-normal normal-case">
+          <span className="font-body ml-2 rounded-md border border-glass-line px-1.5 py-0.5 text-[10px] font-normal normal-case">
             {t.gameMinor}
           </span>
         )}
       </p>
       <p className="mt-1 text-sm">{violation.details}</p>
 
-      <p className="mt-2 text-xs font-semibold tracking-wide text-muted uppercase">
+      <p className="mt-2 text-xs font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">
         {t.gameRuleTitle}
       </p>
       <p className="text-sm">{t[ruleKey]}</p>

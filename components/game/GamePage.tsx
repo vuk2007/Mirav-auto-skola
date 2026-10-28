@@ -1,10 +1,14 @@
 "use client";
 
+import { Building2, Map as MapIcon, Repeat, Route, type LucideIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { useApp } from "@/components/AppProvider";
+import LangSwitch from "@/components/LangSwitch";
+import Button from "@/components/ui/Button";
+import GlassPanel from "@/components/ui/GlassPanel";
+import IconCircle from "@/components/ui/IconCircle";
 import { SCENARIOS, scenarioById } from "@/lib/game/scenarios";
-import { LANG_LABELS, LANGS } from "@/lib/i18n";
 import { loadGameProgress, saveGameAttempt, type GameProgressMap } from "@/lib/storage";
 import GameScreen from "./GameScreen";
 import ScenarioPicker from "./ScenarioPicker";
@@ -42,7 +46,7 @@ const PRIKAZI_PUTOVANJE_I_RUTU = process.env.NODE_ENV !== "production";
  * prazan ekran na svakom otvaranju, zbog podatka koji je čista dekoracija.
  */
 export default function GamePage({ showLanguage = true }: { showLanguage?: boolean }) {
-  const { lang, setLang, t } = useApp();
+  const { lang, t } = useApp();
   const [progress, setProgress] = useState<GameProgressMap>({});
   const [activeId, setActiveId] = useState<string | null>(null);
   const [shift, setShift] = useState(false);
@@ -72,30 +76,12 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Unutar kviza prebacivač jezika već stoji u gornjoj traci, pa se ovdje
           izostavlja — dva ista prebacivača jedan iznad drugog samo zbunjuju. */}
       {showLanguage && (
         <div className="flex justify-end">
-          <div
-            className="flex overflow-hidden rounded border border-line"
-            role="group"
-            aria-label={t.langLabel}
-          >
-            {LANGS.map((l) => (
-              <button
-                key={l}
-                type="button"
-                onClick={() => setLang(l)}
-                aria-pressed={lang === l}
-                className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
-                  lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
-                }`}
-              >
-                {LANG_LABELS[l]}
-              </button>
-            ))}
-          </div>
+          <LangSwitch />
         </div>
       )}
 
@@ -129,88 +115,45 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
             onPick={setActiveId}
           />
 
-          {PRIKAZI_PUTOVANJE_I_RUTU && (
-            <>
-          {/* Putovanje stoji ispod spiska, uz smjenu: obje su vožnje bez
-              ocjene po situaciji, samo se jedna vozi u mjestu, a druga kroz
-              zemlju. */}
-          <section className="panel flex flex-col gap-3 border-t-4 border-t-blue p-4 sm:flex-row sm:items-center">
-            <div className="flex-1">
-              <h2 className="text-lg font-bold">{t.tripTitle}</h2>
-              <p className="mt-1 text-sm text-muted">{t.tripDesc}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setTrip(true)}
-              className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
-            >
-              {t.tripStart}
-            </button>
-          </section>
-
-          {/* Ruta stoji uz putovanje: isti putevi, ali bez ijednog zastajanja
-              između dionica — cijela vožnja je jedan svijet. */}
-          <section className="panel flex flex-col gap-3 border-t-4 border-t-yellow p-4 sm:flex-row sm:items-center">
-            <div className="flex-1">
-              <h2 className="text-lg font-bold">{t.rutaTitle}</h2>
-              <p className="mt-1 text-sm text-muted">{t.rutaDesc}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setRuta(true)}
-              className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
-            >
-              {t.rutaStart}
-            </button>
-          </section>
-            </>
-          )}
-
-          {/* Grad u razmjeri 1:1 (faza 6) — za sada probna vožnja bez pravila,
-              da se Podgorica pogleda dok se gradi. */}
-          <section className="panel flex flex-col gap-3 border-t-4 border-t-green p-4 sm:flex-row sm:items-center">
-            <div className="flex-1">
-              <h2 className="text-lg font-bold">{t.gradTitle}</h2>
-              <p className="mt-1 text-sm text-muted">{t.gradDesc}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setGrad(true)}
-              className="font-display rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
-            >
-              {t.gradStart}
-            </button>
-          </section>
-
-          {/* Smjena stoji ispod spiska: prvo se uče situacije, pa se onda vozi
-              bez kraja. */}
-          <section className="panel flex flex-col gap-3 border-t-4 border-t-red p-4 sm:flex-row sm:items-center">
-            <div className="flex-1">
-              <h2 className="text-lg font-bold">{t.shiftTitle}</h2>
-              <p className="mt-1 text-sm text-muted">{t.shiftDesc}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShift(true)}
-              className="font-display rounded border-2 border-red px-5 py-2.5 text-base font-bold tracking-wide text-red uppercase transition-colors hover:bg-red hover:text-white"
-            >
-              {t.shiftStart}
-            </button>
-          </section>
+          {/* Ostali načini vožnje: jedna lista sa razdjelnicima, ne kartica po
+              načinu. Putovanje i ruta postoje samo uz `npm run dev`. */}
+          <GlassPanel as="section" padding="none" aria-label={t.gameTitle}>
+            <ul className="divide-y divide-glass-line">
+              {PRIKAZI_PUTOVANJE_I_RUTU && (
+                <>
+                  {/* Putovanje stoji ispod spiska, uz smjenu: obje su vožnje bez
+                      ocjene po situaciji, samo se jedna vozi u mjestu, a druga kroz
+                      zemlju. */}
+                  <NacinVoznje ikona={MapIcon} naslov={t.tripTitle} opis={t.tripDesc} dugme={t.tripStart} onClick={() => setTrip(true)} />
+                  {/* Ruta stoji uz putovanje: isti putevi, ali bez ijednog zastajanja
+                      između dionica — cijela vožnja je jedan svijet. */}
+                  <NacinVoznje ikona={Route} naslov={t.rutaTitle} opis={t.rutaDesc} dugme={t.rutaStart} onClick={() => setRuta(true)} />
+                </>
+              )}
+              {/* Grad u razmjeri 1:1 (faza 6) — za sada probna vožnja bez pravila,
+                  da se Podgorica pogleda dok se gradi. */}
+              <NacinVoznje ikona={Building2} naslov={t.gradTitle} opis={t.gradDesc} dugme={t.gradStart} onClick={() => setGrad(true)} />
+              {/* Smjena stoji ispod spiska: prvo se uče situacije, pa se onda vozi
+                  bez kraja. */}
+              <NacinVoznje ikona={Repeat} naslov={t.shiftTitle} opis={t.shiftDesc} dugme={t.shiftStart} onClick={() => setShift(true)} />
+            </ul>
+          </GlassPanel>
 
           {/* „O igri" nosi ono što se nigdje drugo ne vidi, a mora se reći:
               odakle su podaci o putevima i pod kojom licencom. OpenStreetMap
               traži da autorstvo bude vidljivo tamo gdje se podaci koriste. */}
-          <section className="panel border-t-4 border-t-line p-4">
-            <h2 className="text-lg font-bold">{t.oIgriTitle}</h2>
-            <p className="mt-1 text-sm text-muted">{t.oIgriDesc}</p>
-            <p className="mt-2 text-sm text-muted">
+          <section className="border-t border-glass-line pt-5 text-sm leading-relaxed text-text-muted">
+            <h2 className="mb-2 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] uppercase">
+              {t.oIgriTitle}
+            </h2>
+            <p>{t.oIgriDesc}</p>
+            <p className="mt-2">
               {t.osmPuno}{" "}
               <a
                 href="https://www.openstreetmap.org/copyright"
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue underline"
+                className="text-accent-2 underline underline-offset-4 hover:text-text"
               >
                 openstreetmap.org/copyright
               </a>
@@ -219,5 +162,35 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
         </>
       )}
     </div>
+  );
+}
+
+/** Jedan način vožnje u listi ispod spiska situacija. */
+function NacinVoznje({
+  ikona,
+  naslov,
+  opis,
+  dugme,
+  onClick,
+}: {
+  ikona: LucideIcon;
+  naslov: string;
+  opis: string;
+  dugme: string;
+  onClick: () => void;
+}) {
+  return (
+    <li className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
+      <div className="flex min-w-0 flex-1 items-start gap-4">
+        <IconCircle icon={ikona} />
+        <div className="min-w-0">
+          <h2 className="font-display text-base font-bold">{naslov}</h2>
+          <p className="mt-1 text-sm leading-relaxed text-text-muted">{opis}</p>
+        </div>
+      </div>
+      <Button variant="secondary" size="md" onClick={onClick} className="w-full flex-none sm:w-auto">
+        {dugme}
+      </Button>
+    </li>
   );
 }

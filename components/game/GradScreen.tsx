@@ -848,7 +848,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               prekiniIspit();
               zatvori();
             }}
-            className="rounded border border-line bg-panel px-2 py-1 font-semibold">
+            className="rounded-md border border-glass-line bg-surface px-2 py-1 font-semibold">
             {t.gradExamCancel}
           </button>
         ) : (
@@ -861,7 +861,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
                 setIzborIspita(true);
               }}
               disabled={faza !== "voznja"}
-              className="rounded border border-blue bg-panel px-3 py-1 font-semibold text-blue disabled:opacity-40"
+              className="rounded-md border border-accent-2 bg-surface px-3 py-1 font-semibold text-accent-2 disabled:opacity-40"
             >
               {t.gradExam}
             </button>
@@ -875,7 +875,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
             setIzborCilja(true);
           }}
           disabled={faza !== "voznja" || ispit !== null}
-          className="rounded border border-blue bg-blue px-3 py-1 font-semibold text-white disabled:opacity-40"
+          className="rounded-md border border-accent-2 bg-accent px-3 py-1 font-semibold text-white disabled:opacity-40"
         >
           {cilj ? `${t.gradNavDestination}: ${cilj.ime}` : t.gradNavChoose}
         </button>
@@ -886,7 +886,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               izaberiCilj(null);
               zatvori();
             }}
-            className="rounded border border-line bg-panel px-2 py-1 font-semibold">
+            className="rounded-md border border-glass-line bg-surface px-2 py-1 font-semibold">
             {odDo ? t.gradOdDoCancel : t.gradNavClear}
           </button>
         )}
@@ -899,12 +899,12 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               setOdDoIzbor(true);
             }}
             disabled={faza !== "voznja" || ispit !== null}
-            className="rounded border border-blue bg-panel px-3 py-1 font-semibold text-blue disabled:opacity-40"
+            className="rounded-md border border-accent-2 bg-surface px-3 py-1 font-semibold text-accent-2 disabled:opacity-40"
           >
             {t.gradOdDo}
           </button>
         )}
-        <span className="text-muted">
+        <span className="text-text-muted">
           {t.gradStatToday
             .replace("{km}", dan.km.toFixed(1))
             .replace("{cisto}", String(dan.cisteMinute))
@@ -914,7 +914,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
         <fieldset className="flex items-center gap-1">
           <legend className="sr-only">{t.gradTimeOfDay}</legend>
-          <span className="mr-1 text-muted" aria-hidden>
+          <span className="mr-1 text-text-muted" aria-hidden>
             {t.gradTimeOfDay}:
           </span>
           {/* Dan teče sam (stavka 8d); dugmad pomjere sat na to doba. */}
@@ -931,7 +931,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               type="button"
               onClick={() => pomjeriSat(GRAD_SAT_PRECICE[d])}
               aria-label={`${ime} (${satTekst(GRAD_SAT_PRECICE[d])})`}
-              className="rounded border border-line bg-panel px-2 py-1 font-semibold"
+              className="rounded-md border border-glass-line bg-surface px-2 py-1 font-semibold"
             >
               {ime}
             </button>
@@ -939,7 +939,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         </fieldset>
         <fieldset className="flex items-center gap-1">
           <legend className="sr-only">{t.gradLevel}</legend>
-          <span className="mr-1 text-muted" aria-hidden>
+          <span className="mr-1 text-text-muted" aria-hidden>
             {t.gradLevel}:
           </span>
           {([1, 2, 3, 4, 5] as const).map((n) => (
@@ -950,7 +950,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               onClick={() => setNivo(n)}
               // Za vožnju od–do nivo je dio težine.
               disabled={odDo !== null || ispit !== null}
-              className={`h-8 w-8 rounded border font-semibold disabled:opacity-40 ${nivo === n ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+              className={`h-8 w-8 rounded-md border font-semibold disabled:opacity-40 ${nivo === n ? "border-accent-2 bg-accent text-white" : "border-glass-line bg-surface"}`}
             >
               {n}
             </button>
@@ -958,7 +958,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         </fieldset>
         <fieldset className="flex items-center gap-1">
           <legend className="sr-only">{t.gradWeather}</legend>
-          <span className="mr-1 text-muted" aria-hidden>
+          <span className="mr-1 text-text-muted" aria-hidden>
             {t.gradWeather}:
           </span>
           {(
@@ -972,14 +972,14 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               type="button"
               aria-pressed={kisa === k}
               onClick={() => setKisa(k)}
-              className={`rounded border px-2 py-1 font-semibold ${kisa === k ? "border-blue bg-blue text-white" : "border-line bg-panel"}`}
+              className={`rounded-md border px-2 py-1 font-semibold ${kisa === k ? "border-accent-2 bg-accent text-white" : "border-glass-line bg-surface"}`}
             >
               {ime}
             </button>
           ))}
         </fieldset>
       </div>
-      <p className="text-sm text-muted">{t.gradHint}</p>
+      <p className="text-sm text-text-muted">{t.gradHint}</p>
     </>
   );
 
@@ -1025,19 +1025,19 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         />
         {faza !== "voznja" && (
           <div className="absolute inset-0 flex items-center justify-center p-4 text-center">
-            <p className="rounded border border-line bg-panel px-3 py-2 text-sm font-semibold">
+            <p className="rounded-md border border-glass-line bg-surface px-3 py-2 text-sm font-semibold">
               {faza === "ucitavam" ? t.gradLoading : faza === "bezWebgl" ? t.gradNoWebgl : t.gradFailed}
             </p>
           </div>
         )}
         {faza === "voznja" && udaren && (
           <div className="absolute inset-0 flex items-center justify-center bg-bg/40 p-4">
-            <div role="alertdialog" aria-labelledby="udaren-naslov" className="max-w-sm rounded border border-red bg-paper p-4 text-center shadow-lg">
-              <p id="udaren-naslov" className="font-display text-lg font-bold text-red">
+            <div role="alertdialog" aria-labelledby="udaren-naslov" className="max-w-sm rounded-md border border-err-line bg-bg p-4 text-center shadow-soft">
+              <p id="udaren-naslov" className="font-display text-lg font-bold text-err">
                 {t.gradHitTitle}
               </p>
               <p className="mt-2 text-sm">{t.gradHitText}</p>
-              <p className="mt-2 text-sm text-muted">{praviloPrekrsaja(udaren, t)}</p>
+              <p className="mt-2 text-sm text-text-muted">{praviloPrekrsaja(udaren, t)}</p>
               <button
                 type="button"
                 onClick={() => {
@@ -1047,7 +1047,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
                   setFaza("ucitavam");
                   setPokusaj((x) => x + 1);
                 }}
-                className="mt-4 rounded border border-blue bg-blue px-4 py-2 font-semibold text-white"
+                className="mt-4 rounded-md border border-accent-2 bg-accent px-4 py-2 font-semibold text-white"
               >
                 {t.gradHitAgain}
               </button>
@@ -1057,11 +1057,11 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
         {faza === "voznja" && kartica && !udaren && !zapisnik && !rezultat && (
           <div
             role="alert"
-            className={`absolute top-2 right-2 max-w-[18rem] rounded border p-2 text-xs shadow ${
-              kartica.ozbiljnost === "fail" ? "border-red bg-red-soft" : "border-line bg-paper"
+            className={`absolute top-2 right-2 max-w-[18rem] rounded-md border p-2 text-xs shadow-soft ${
+              kartica.ozbiljnost === "fail" ? "border-err-line bg-err-soft" : "border-glass-line bg-bg"
             }`}
           >
-            <p className={`font-display font-bold ${kartica.ozbiljnost === "fail" ? "text-red" : "text-muted"}`}>
+            <p className={`font-display font-bold ${kartica.ozbiljnost === "fail" ? "text-err" : "text-text-muted"}`}>
               {naslovPrekrsaja(kartica, t)}
             </p>
             <p className="mt-1">{praviloPrekrsaja(kartica, t)}</p>
@@ -1074,7 +1074,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               onClick={() => setZum((z) => Math.min(GRAD_ZUM.length - 1, z + 1))}
               disabled={zum === GRAD_ZUM.length - 1}
               aria-label={t.gradZoomOut}
-              className="h-9 w-9 rounded border border-line bg-panel text-lg font-bold disabled:opacity-40"
+              className="h-9 w-9 rounded-md border border-glass-line bg-surface text-lg font-bold disabled:opacity-40"
             >
               −
             </button>
@@ -1083,7 +1083,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               onClick={() => setZum((z) => Math.max(0, z - 1))}
               disabled={zum === 0}
               aria-label={t.gradZoomIn}
-              className="h-9 w-9 rounded border border-line bg-panel text-lg font-bold disabled:opacity-40"
+              className="h-9 w-9 rounded-md border border-glass-line bg-surface text-lg font-bold disabled:opacity-40"
             >
               +
             </button>
@@ -1096,14 +1096,14 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               <Brzinomjer brzina={hud.kmh} ogranicenje={ogranicenje} t={t} />
               {hud.rikverc && (
                 <p
-                  className="rounded border border-line bg-panel/90 px-2 py-1 text-xs font-bold"
+                  className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-bold"
                   aria-live="polite"
                 >
                   R · {t.gradReverse}
                 </p>
               )}
             </div>
-            <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
+            <p className="max-w-[16rem] rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-semibold">
               <span aria-label={t.gradClock}>{hud.sat}</span> · {t.gradStreet}: {hud.ulica || t.gradUnnamed}
               {hud.fps !== null ? ` · ${hud.fps.toFixed(0)} fps` : ""}
               {hud.vozila !== null ? ` · ${hud.vozila} vozila` : ""}
@@ -1112,15 +1112,15 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               {hud.korakMs !== null ? ` · korak ${hud.korakMs.toFixed(2)} ms` : ""}
             </p>
             {kisa && (
-              <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
+              <p className="max-w-[16rem] rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-semibold">
                 {t.gradRainNote}
               </p>
             )}
-            <p className="rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold" aria-live="polite">
+            <p className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-semibold" aria-live="polite">
               {t.gradViolations}: {prekrsaji.length} · {t.gradStatClean.replace("{n}", String(hud.cisto))}
             </p>
             {hud.ispit && (
-              <p className="rounded border border-blue bg-blue px-2 py-1 text-xs font-bold text-white tabular-nums">
+              <p className="rounded-md border border-accent-2 bg-accent px-2 py-1 text-xs font-bold text-white tabular-nums">
                 {t.gradExamHud
                   .replace("{k}", String(hud.ispit.tacka))
                   .replace("{n}", String(hud.ispit.od))
@@ -1128,7 +1128,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
               </p>
             )}
             {hud.odDo !== null && (
-              <p className="rounded border border-blue bg-blue px-2 py-1 text-xs font-bold text-white tabular-nums">
+              <p className="rounded-md border border-accent-2 bg-accent px-2 py-1 text-xs font-bold text-white tabular-nums">
                 {t.gradOdDoTimer.replace("{vrijeme}", minSek(hud.odDo))}
               </p>
             )}
@@ -1141,7 +1141,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           </div>
         )}
         {faza === "voznja" && poruka && !kartica && (
-          <p role="status" className="absolute top-2 right-2 max-w-[18rem] rounded border border-blue bg-paper px-2 py-1 text-xs font-semibold shadow">
+          <p role="status" className="absolute top-2 right-2 max-w-[18rem] rounded-md border border-accent-2 bg-bg px-2 py-1 text-xs font-semibold shadow-soft">
             {poruka}
           </p>
         )}

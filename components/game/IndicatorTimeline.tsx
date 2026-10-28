@@ -17,9 +17,9 @@ interface IndicatorTimelineProps {
 const UZORAKA = 180;
 
 const BOJA: Record<string, string> = {
-  left: "#2f6fd0",
-  right: "#2f7d33",
-  off: "#d8d4c8",
+  left: "var(--color-accent-2)",
+  right: "var(--color-ok)",
+  off: "var(--color-glass-line-strong)",
 };
 
 /** Stanje pokazivača na mjestu `s` — posljednja promjena prije tog mjesta. */
@@ -67,10 +67,10 @@ export default function IndicatorTimeline({
 
   const traka = (koje: "trazeno" | "stvarno", label: string) => (
     <div>
-      <div className="mb-0.5 text-[10px] font-semibold tracking-wide text-muted uppercase">
+      <div className="mb-0.5 text-[10px] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">
         {label}
       </div>
-      <div className="flex h-4 w-full overflow-hidden rounded border border-line">
+      <div className="flex h-4 w-full overflow-hidden rounded-md border border-glass-line">
         {uzorci.map((u, i) => {
           const v = u[koje];
           return (
@@ -92,7 +92,7 @@ export default function IndicatorTimeline({
 
   return (
     <div className="mt-3">
-      <p className="text-xs font-semibold tracking-wide text-muted uppercase">
+      <p className="text-xs font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">
         {t.gameTimelineTitle}
       </p>
 
@@ -105,14 +105,14 @@ export default function IndicatorTimeline({
           {razlike.map((u, i) => (
             <span
               key={i}
-              className="absolute top-0 h-full w-[2px] bg-red opacity-70"
+              className="absolute top-0 h-full w-[2px] bg-err opacity-70"
               style={{ left: `${x(u.s)}%` }}
             />
           ))}
         </div>
       </div>
 
-      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted">
+      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-text-muted">
         <Legenda boja={BOJA.left!} tekst={t.gameIndicatorLeft} />
         <Legenda boja={BOJA.right!} tekst={t.gameIndicatorRight} />
         <Legenda boja={BOJA.off!} tekst={t.gameTimelineOff} />
@@ -126,7 +126,7 @@ function Legenda({ boja, tekst }: { boja: string; tekst: string }) {
     <span className="flex items-center gap-1">
       <span
         aria-hidden="true"
-        className="inline-block h-2.5 w-2.5 rounded-sm border border-line"
+        className="inline-block h-2.5 w-2.5 rounded-sm border border-glass-line"
         style={{ backgroundColor: boja }}
       />
       {tekst}

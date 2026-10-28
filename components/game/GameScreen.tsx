@@ -1,5 +1,6 @@
 "use client";
 
+import { CircleCheck, CircleX, Play, RotateCcw, TriangleAlert } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import { idealTime } from "@/lib/game/sim/bots";
@@ -10,19 +11,21 @@ import { createSound } from "@/lib/game/ui/sound";
 import { playerControl } from "@/lib/game/ui/draw";
 import { CONTROL_LABEL, taskTextFor, zonesForLevel } from "@/lib/game/ui/labels";
 import { createPlayback, createRunner, type Playback } from "@/lib/game/ui/runner";
+import Button from "@/components/ui/Button";
 import GameCanvas, { type HudState } from "./GameCanvas";
 import IgraOkvir from "./IgraOkvir";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
 import IndicatorTimeline from "./IndicatorTimeline";
 import ViolationCard from "./ViolationCard";
+import { NazadDugme, ZvukDugme } from "./IgraDugmad";
 
 type Phase = "brief" | "play" | "over";
 
 const LIGHT_COLOR: Record<string, string> = {
-  red: "bg-red",
-  yellow: "bg-yellow",
-  green: "bg-green",
+  red: "bg-signal-red",
+  yellow: "bg-signal-yellow",
+  green: "bg-signal-green",
 };
 
 const LIGHT_LABEL: Record<string, "gameLightRed" | "gameLightYellow" | "gameLightGreen"> = {
@@ -140,12 +143,12 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
   const replaying = playback !== null && !replayDone;
 
   const oznakaKontrole = (
-    <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+    <span className="inline-block rounded-md border border-glass-line bg-surface/85 px-2 py-1 font-display text-[0.6875rem] leading-snug font-semibold tracking-[var(--tracking-caps)] uppercase backdrop-blur-md sm:text-xs">
           {control.kind === "officer" ? (
             <span className="flex items-center gap-1.5">
               <span
                 className={`inline-block h-2.5 w-2.5 rounded-full ${
-                  control.officerAllows ? "bg-green" : "bg-red"
+                  control.officerAllows ? "bg-signal-green" : "bg-signal-red"
                 }`}
                 aria-hidden="true"
               />
@@ -158,7 +161,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
             <span className="flex items-center gap-1.5">
               <span
                 className={`inline-block h-2.5 w-2.5 rounded-full ${
-                  LIGHT_COLOR[control.light ?? "red"] ?? "bg-red"
+                  LIGHT_COLOR[control.light ?? "red"] ?? "bg-signal-red"
                 }`}
                 aria-hidden="true"
               />
@@ -189,15 +192,8 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
         podesavanja={
           <>
             <p>{zadatak}</p>
-            <button
-              type="button"
-              onClick={() => setMuted((m) => !m)}
-              aria-pressed={muted}
-              className="rounded border border-line bg-panel px-3 py-1 font-semibold"
-            >
-              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
-            </button>
-            <p className="text-xs text-muted">
+            <ZvukDugme muted={muted} onToggle={() => setMuted((m) => !m)} t={t} />
+            <p className="text-xs text-text-muted">
               {t.gameKeyHint} {t.gameKeyHintIndicator}
               {autoput ? ` ${t.gameKeyHintLane}` : ""}
             </p>
@@ -232,14 +228,16 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
             label={`${title} — ${zadatak}`}
             ispuni
           />
-          <div className="pointer-events-none absolute top-2 left-2 flex max-w-[60%] flex-col items-start gap-2">
+          {/* Lijevo brzina i zadatak, desno kontrola raskrsnice: na uskom ekranu
+              svaka strana ima svoju polovinu, da se ne preklapaju. */}
+          <div className="pointer-events-none absolute top-2 left-2 flex max-w-[50%] flex-col items-start gap-2">
             <div className="flex gap-2">
               <Hud label={t.gameSpeed} value={`${Math.round(hud.speedKmh)} km/h`} />
               <Hud label={t.gameTime} value={`${hud.t.toFixed(1)} s`} />
             </div>
-            <p className="rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">{zadatak}</p>
+            <p className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-semibold">{zadatak}</p>
           </div>
-          <div className="pointer-events-none absolute top-2 right-2">{oznakaKontrole}</div>
+          <div className="pointer-events-none absolute top-2 right-2 max-w-[calc(50%-1rem)] text-right">{oznakaKontrole}</div>
         </div>
       </IgraOkvir>
     );
@@ -248,28 +246,14 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-        >
-          ← {t.gameBack}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          aria-pressed={muted}
-          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
-          className="ml-auto rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
-        >
-          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
-        </button>
+        <NazadDugme onClick={onBack}>{t.gameBack}</NazadDugme>
+        <ZvukDugme muted={muted} onToggle={() => setMuted((m) => !m)} t={t} samoIkona className="ml-auto" />
         {oznakaKontrole}
       </div>
 
       <div>
-        <h1 className="text-xl font-bold sm:text-2xl">{title}</h1>
-        <p className="mt-0.5 text-sm text-muted">{zadatak}</p>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
+        <p className="mt-2 text-sm text-text-muted">{zadatak}</p>
       </div>
 
       {/* Platno je kvadrat, ali ne smije da bude više od ekrana: na 1440×900
@@ -305,7 +289,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
         )}
 
         {replaying && (
-          <div className="font-display pointer-events-none absolute top-2 right-2 rounded bg-bg/80 px-2 py-1 text-xs font-bold tracking-wide text-white uppercase">
+          <div className="font-display pointer-events-none absolute top-2 right-2 rounded bg-bg/80 px-2 py-1 text-xs font-bold tracking-[var(--tracking-caps)] text-white uppercase">
             {t.gameReplaying}
           </div>
         )}
@@ -315,29 +299,30 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
           kojem je oduzeta prednost oboji crveno, a to se ne vidi ako ga
           poklopi tekst. Na telefonu je preklop gutao cijelu scenu. */}
       {(
-        <div className="rounded border border-line bg-panel p-4">
+        <div className="rounded-xl border border-glass-line bg-glass p-5 sm:p-6">
           {phase === "brief" ? (
             <>
-              <p className="text-sm text-muted">{t.gameLead}</p>
-              <button
-                type="button"
-                onClick={begin}
-                className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
-              >
+              <p className="text-sm text-text-muted">{t.gameLead}</p>
+              <Button onClick={begin} fullWidth className="mt-4">
                 {t.gameStart}
-              </button>
+              </Button>
             </>
           ) : (
             <>
               <p
-                className={`font-display text-lg font-bold uppercase ${
-                  outcome === "passed" ? "text-green" : "text-red"
+                className={`flex items-center gap-2.5 font-display text-xl font-extrabold uppercase ${
+                  outcome === "passed" ? "text-ok" : "text-err"
                 }`}
               >
+                {outcome === "passed" ? (
+                  <CircleCheck aria-hidden="true" strokeWidth={1.75} className="h-6 w-6" />
+                ) : (
+                  <CircleX aria-hidden="true" strokeWidth={1.75} className="h-6 w-6" />
+                )}
                 {outcome === "passed" ? t.gamePassed : t.gameFailed}
               </p>
 
-              <p className="mt-1 text-sm text-muted">
+              <p className="mt-1 text-sm text-text-muted">
                 {t.gameTime}: {runner.world.t.toFixed(1)} s
                 {ideal !== null && (
                   <>
@@ -349,7 +334,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
 
               {violations.length > 0 && (
                 <>
-                  <p className="mt-3 text-xs font-semibold tracking-wide text-muted uppercase">
+                  <p className="mt-5 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
                     {t.gameViolationsTitle}
                   </p>
                   <ul className="mt-1 space-y-2">
@@ -369,14 +354,15 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
               )}
 
               {runner.world.reaction.length > 0 && (
-                <div className="mt-3 rounded border-l-4 border-yellow bg-panel p-3">
-                  <p className="font-display text-sm font-bold tracking-wide uppercase">
+                <div className="mt-4 rounded-lg border border-glass-line bg-glass p-4">
+                  <p className="flex items-center gap-2 font-display text-xs font-semibold tracking-[var(--tracking-label)] text-accent-2 uppercase">
+                    <TriangleAlert aria-hidden="true" strokeWidth={1.5} className="h-4 w-4" />
                     {t.gameHazardTitle}
                   </p>
                   <p className="mt-1 text-sm">
                     {outcome === "passed" ? t.gameHazardYielded : t.gameHazardCollision}
                   </p>
-                  <p className="mt-2 text-sm text-muted">
+                  <p className="mt-2 text-sm text-text-muted">
                     {t.gameReaction}:{" "}
                     {runner.world.reaction
                       .map((r) =>
@@ -400,39 +386,42 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
 
               {explanation && (
                 <>
-                  <p className="mt-3 text-xs font-semibold tracking-wide text-muted uppercase">
+                  <p className="mt-5 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
                     {t.gameHowTo}
                   </p>
                   <p className="mt-1 text-sm">{explanation}</p>
                 </>
               )}
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  type="button"
+              {/* Jedno primarno dugme: sljedeća situacija kad je prođeno, inače ponovo. */}
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  arrow={false}
+                  icon={<Play aria-hidden="true" strokeWidth={1.75} />}
                   onClick={replay}
                   disabled={replaying}
-                  className="font-display flex-1 rounded border-2 border-line bg-panel px-3 py-2.5 text-base font-bold tracking-wide uppercase hover:border-blue disabled:opacity-50"
+                  className="flex-1"
                 >
                   {t.gameReplay}
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  variant={outcome === "passed" && onNext ? "secondary" : "primary"}
+                  size="md"
+                  arrow={false}
+                  icon={<RotateCcw aria-hidden="true" strokeWidth={1.75} />}
                   onClick={retry}
-                  className="font-display flex-1 rounded border-2 border-blue bg-blue px-3 py-2.5 text-base font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
+                  className="flex-1"
                 >
                   {t.gameRetry}
-                </button>
+                </Button>
               </div>
 
               {outcome === "passed" && onNext && (
-                <button
-                  type="button"
-                  onClick={onNext}
-                  className="font-display mt-2 w-full rounded border-2 border-green bg-green px-3 py-2.5 text-base font-bold tracking-wide text-white uppercase"
-                >
-                  {t.gameNextScenario} →
-                </button>
+                <Button size="md" onClick={onNext} fullWidth className="mt-3">
+                  {t.gameNextScenario}
+                </Button>
               )}
             </>
           )}
@@ -444,9 +433,9 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
 
 function Hud({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border border-line bg-panel/90 px-2 py-1 text-center">
-      <div className="text-[10px] font-semibold tracking-wide text-muted uppercase">{label}</div>
-      <div className="font-display text-lg leading-none font-bold">{value}</div>
+    <div className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-center">
+      <div className="font-display text-[0.625rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">{label}</div>
+      <div className="tabular font-display text-lg leading-none font-bold">{value}</div>
     </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { LANG_LABELS, LANGS } from "@/lib/i18n";
+import { BookOpen } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { loadQuestions } from "@/lib/questions";
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
 import { useApp } from "./AppProvider";
+import LangSwitch from "./LangSwitch";
 import LiteratureModal from "./LiteratureModal";
 import SimulatorShell from "./sim/SimulatorShell";
 
@@ -13,9 +14,13 @@ import SimulatorShell from "./sim/SimulatorShell";
  *
  * Crtane familije rade bez baze pitanja; questions.json se učitava samo zbog
  * familije „iz kataloga", i to u pozadini — simulator je upotrebljiv odmah.
+ *
+ * `showControls`: literatura i jezik iznad simulatora trebaju samo ugrađenoj
+ * verziji (`/embed/simulator`), koja nema zaglavlje sajta. Na `/simulator` ih
+ * zaglavlje već nosi, pa bi stajali dvaput.
  */
-export default function SimulatorPage() {
-  const { lang, setLang, t } = useApp();
+export default function SimulatorPage({ showControls = true }: { showControls?: boolean }) {
+  const { lang, t } = useApp();
   const [photoScenarios, setPhotoScenarios] = useState<SimScenario[]>([]);
   const [literatureOpen, setLiteratureOpen] = useState(false);
   const started = useRef(false);
@@ -32,40 +37,25 @@ export default function SimulatorPage() {
     return () => controller.abort();
   }, []);
 
-  const changeLang = useCallback((next: (typeof LANGS)[number]) => setLang(next), [setLang]);
-
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <h1 className="text-xl font-bold sm:text-2xl">{t.simTitle}</h1>
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+        <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-3xl">{t.simTitle}</h1>
 
-        <button
-          type="button"
-          onClick={() => setLiteratureOpen(true)}
-          className="ml-auto text-sm font-semibold text-blue underline-offset-4 hover:underline"
-        >
-          {t.literature}
-        </button>
-
-        <div
-          className="flex overflow-hidden rounded border border-line"
-          role="group"
-          aria-label={t.langLabel}
-        >
-          {LANGS.map((l) => (
+        {showControls && (
+          <>
             <button
-              key={l}
               type="button"
-              onClick={() => changeLang(l)}
-              aria-pressed={lang === l}
-              className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
-                lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
-              }`}
+              onClick={() => setLiteratureOpen(true)}
+              className="ml-auto inline-flex min-h-11 items-center gap-2 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase transition-colors hover:text-text"
             >
-              {LANG_LABELS[l]}
+              <BookOpen aria-hidden="true" strokeWidth={1.5} className="h-4 w-4" />
+              {t.literature}
             </button>
-          ))}
-        </div>
+
+            <LangSwitch />
+          </>
+        )}
       </div>
 
       <SimulatorShell photoScenarios={photoScenarios} t={t} lang={lang} />
