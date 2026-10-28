@@ -37,7 +37,7 @@ export function OdDoIzbor({
 }) {
   const [izabrana, setIzabrana] = useState<Tezina>(pocetna);
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="od-do-naslov" className="absolute inset-0 z-10 flex items-center justify-center bg-ink/40 p-4">
+    <div role="dialog" aria-modal="true" aria-labelledby="od-do-naslov" className="absolute inset-0 z-10 flex items-center justify-center bg-bg/40 p-4">
       <div className="w-full max-w-sm rounded border border-line bg-paper p-4 shadow-lg">
         <h2 id="od-do-naslov" className="font-display text-lg font-bold">
           {t.gradOdDo}
@@ -99,7 +99,7 @@ export interface RezultatOdDo {
 export function OdDoRezultat({ r, ponovo, zatvori, t }: { r: RezultatOdDo; ponovo: () => void; zatvori: () => void; t: Dict }) {
   const o = r.ocjena;
   return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center bg-ink/40 p-4">
+    <div className="absolute inset-0 z-10 flex items-center justify-center bg-bg/40 p-4">
       <div role="alertdialog" aria-labelledby="od-do-rezultat" className="w-full max-w-sm rounded border border-blue bg-paper p-4 text-center shadow-lg">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted">
           {t.gradOdDo} · {t[NAZIV_TEZINE[r.tezina]] as string}

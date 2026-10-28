@@ -48,7 +48,7 @@ export default function LiteratureModal({ open, onClose, t }: LiteratureModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/60 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-bg/60 p-4 sm:items-center"
       role="presentation"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();

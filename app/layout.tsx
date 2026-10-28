@@ -1,18 +1,22 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Inter } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 
+/*
+  Oba fonta nose latin-ext (š č ć ž đ, albanski ë ç, turski ğ ş ı İ) i
+  ćirilicu za ruski. next/font ih preuzme pri buildu i servira sa našeg domena.
+*/
 const inter = Inter({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin", "latin-ext", "cyrillic"],
   variable: "--font-inter",
   display: "swap",
 });
 
-const barlowCondensed = Barlow_Condensed({
-  subsets: ["latin", "latin-ext"],
-  weight: ["600", "700"],
-  variable: "--font-barlow-condensed",
+const montserrat = Montserrat({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  weight: ["600", "700", "800"],
+  variable: "--font-montserrat",
   display: "swap",
 });
 
@@ -25,11 +29,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#070b14",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="sr-ME" className={`${inter.variable} ${barlowCondensed.variable}`}>
+    <html lang="sr-ME" className={`${inter.variable} ${montserrat.variable}`}>
       <body>
         {children}
         {/*

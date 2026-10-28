@@ -45,13 +45,13 @@ export default function OptionButton({
 
   // Kvadratić ostaje bijel, a ✕ se „upisuje" u njega — kao na papirnom testu.
   // Popunjen kvadratić bi izgledao kao da je odgovor već ovjeren.
-  let markerTone = "border-ink bg-white text-ink";
+  let markerTone = "border-glass-line-strong bg-surface text-ink";
   if (revealed && isCorrect) {
-    markerTone = "border-green bg-white text-green";
+    markerTone = "border-green bg-surface text-green";
   } else if (revealed && selected && !isCorrect) {
-    markerTone = "border-red bg-white text-red";
+    markerTone = "border-red bg-surface text-red";
   } else if (selected) {
-    markerTone = "border-blue bg-white text-blue";
+    markerTone = "border-blue bg-surface text-blue";
   }
 
   return (

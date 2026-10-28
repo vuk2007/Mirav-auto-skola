@@ -98,7 +98,7 @@ export default function IgraOkvir({
         {otvoren && (
           <>
             {/* Dodir van menija ga zatvara (i ne stiže do platna). */}
-            <button type="button" aria-label={t.igraZatvoriPodesavanja} onClick={zatvori} className="absolute inset-0 z-20 cursor-default bg-ink/20" />
+            <button type="button" aria-label={t.igraZatvoriPodesavanja} onClick={zatvori} className="absolute inset-0 z-20 cursor-default bg-bg/20" />
             <div
               id="igra-podesavanja"
               ref={meni}

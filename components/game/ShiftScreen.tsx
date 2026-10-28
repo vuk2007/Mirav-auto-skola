@@ -177,7 +177,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
         )}
 
         {phase === "freeze" && (
-          <div className="absolute inset-0 flex items-center justify-center bg-ink/55 p-4">
+          <div className="absolute inset-0 flex items-center justify-center bg-bg/55 p-4">
             <div className="w-full max-w-sm rounded border border-line bg-panel p-4 text-center">
               <p className="font-display text-lg font-bold text-red uppercase">{t.shiftLostLife}</p>
               {lastFail && <p className="mt-1 text-sm">{lastFail}</p>}
@@ -208,7 +208,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
         </span>
         </div>
         {phase !== "play" && phase !== "freeze" && (
-          <div className="absolute inset-0 flex items-center justify-center overflow-y-auto bg-ink/40 p-4">
+          <div className="absolute inset-0 flex items-center justify-center overflow-y-auto bg-bg/40 p-4">
             <div className="w-full max-w-sm">
         <div className="rounded border border-line bg-panel p-4">
           {phase === "brief" ? (

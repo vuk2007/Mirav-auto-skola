@@ -36,7 +36,7 @@ export function ExamLanguageModal({ lang, onConfirm }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/60 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-bg/60 p-4 sm:items-center"
       role="presentation"
     >
       <div

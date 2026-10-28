@@ -84,7 +84,7 @@ export default function ExamBriefing({
           type="button"
           onClick={onStart}
           disabled={!confirmed || starting}
-          className="font-display mt-4 w-full rounded bg-ink px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue disabled:opacity-40 disabled:hover:bg-ink sm:w-auto"
+          className="font-display mt-4 w-full rounded bg-accent px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue disabled:opacity-40 disabled:hover:bg-accent sm:w-auto"
         >
           {starting ? t.loading : t.briefingStart}
         </button>

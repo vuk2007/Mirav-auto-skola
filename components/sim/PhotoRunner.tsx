@@ -207,7 +207,7 @@ export default function PhotoRunner({ scenarios, t, lang }: PhotoRunnerProps) {
                 {isPicked && (
                   <span
                     aria-hidden="true"
-                    className="font-display absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-ink bg-yellow text-sm font-bold text-ink"
+                    className="font-display absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-glass-line-strong bg-yellow text-sm font-bold text-ink"
                   >
                     {pos + 1}
                   </span>

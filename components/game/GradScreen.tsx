@@ -1031,7 +1031,7 @@ export default function GradScreen({ onExit }: { onExit: () => void }) {
           </div>
         )}
         {faza === "voznja" && udaren && (
-          <div className="absolute inset-0 flex items-center justify-center bg-ink/40 p-4">
+          <div className="absolute inset-0 flex items-center justify-center bg-bg/40 p-4">
             <div role="alertdialog" aria-labelledby="udaren-naslov" className="max-w-sm rounded border border-red bg-paper p-4 text-center shadow-lg">
               <p id="udaren-naslov" className="font-display text-lg font-bold text-red">
                 {t.gradHitTitle}

@@ -44,7 +44,7 @@ export default function Brzinomjer({ brzina, ogranicenje, t }: BrzinomjerProps) 
       {ogranicenje !== null && (
         <div className="relative mt-1 h-1.5 w-full min-w-[4.5rem] overflow-hidden rounded-full bg-line" aria-hidden>
           <div className={`h-full ${boja}`} style={{ width: `${udio * 100}%` }} />
-          <div className="absolute top-0 h-full w-0.5 bg-ink" style={{ left: "75%" }} />
+          <div className="absolute top-0 h-full w-0.5 bg-accent" style={{ left: "75%" }} />
         </div>
       )}
     </div>

@@ -172,8 +172,8 @@ function ExamQuestion({ slot, answers, drafts, onAnswer, onOrderingChange, t, la
                 />
                 <span
                   aria-hidden="true"
-                  className={`mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 bg-white ${
-                    checked ? "border-blue" : "border-ink"
+                  className={`mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 bg-surface ${
+                    checked ? "border-blue" : "border-glass-line-strong"
                   }`}
                 >
                   {checked && <span className="h-2.5 w-2.5 rounded-full bg-blue" />}

@@ -291,7 +291,7 @@ export default function KazneEditor() {
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {(["pregled", "pitanja", "kazne"] as const).map((t) => (
             <button key={t} type="button" onClick={() => setTab(t)}
-              className={`${dugme} ${tab === t ? "border-ink bg-ink text-white" : "border-line"}`}>
+              className={`${dugme} ${tab === t ? "border-glass-line-strong bg-accent text-white" : "border-line"}`}>
               {t === "pregled" ? "Pregled" : t === "pitanja" ? "Pitanja" : "Kazne"}
             </button>
           ))}
@@ -373,7 +373,7 @@ export default function KazneEditor() {
             </p>
 
             <button type="button" onClick={nemaKazne}
-              className="font-display w-full rounded bg-ink px-6 py-4 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue">
+              className="font-display w-full rounded bg-accent px-6 py-4 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue">
               Nema kazne za ovo pitanje
               <span className="ml-2 text-sm font-normal opacity-70">(razmaknica)</span>
             </button>
@@ -447,7 +447,7 @@ export default function KazneEditor() {
             {([["sve", "sve"], ["nepregledano", "nepregledano"], ["bez", "bez kazne"], ["sa", "sa kaznom"]] as const).map(
               ([v, ime]) => (
                 <button key={v} type="button" onClick={() => setFilterPitanja(v)}
-                  className={`${dugme} ${filterPitanja === v ? "border-ink bg-ink text-white" : "border-line"}`}>
+                  className={`${dugme} ${filterPitanja === v ? "border-glass-line-strong bg-accent text-white" : "border-line"}`}>
                   {ime}
                 </button>
               ),

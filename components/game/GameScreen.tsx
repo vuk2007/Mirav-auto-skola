@@ -305,7 +305,7 @@ export default function GameScreen({ scenario, onBack, onNext, onResult }: GameS
         )}
 
         {replaying && (
-          <div className="font-display pointer-events-none absolute top-2 right-2 rounded bg-ink/80 px-2 py-1 text-xs font-bold tracking-wide text-white uppercase">
+          <div className="font-display pointer-events-none absolute top-2 right-2 rounded bg-bg/80 px-2 py-1 text-xs font-bold tracking-wide text-white uppercase">
             {t.gameReplaying}
           </div>
         )}

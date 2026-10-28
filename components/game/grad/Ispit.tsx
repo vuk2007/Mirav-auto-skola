@@ -36,7 +36,7 @@ export function IzborIspita({
   t: Dict;
 }) {
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="ispit-naslov" className="absolute inset-0 z-10 flex items-center justify-center bg-ink/40 p-4">
+    <div role="dialog" aria-modal="true" aria-labelledby="ispit-naslov" className="absolute inset-0 z-10 flex items-center justify-center bg-bg/40 p-4">
       <div className="w-full max-w-sm rounded border border-line bg-paper p-4 shadow-lg">
         <h2 id="ispit-naslov" className="font-display text-lg font-bold">
           {t.gradExam}
@@ -82,7 +82,7 @@ export interface RezultatIspita {
 export function ZapisnikIspitaKartica({ r, ponovo, zatvori, t }: { r: RezultatIspita; ponovo: () => void; zatvori: () => void; t: Dict }) {
   const z = r.zapisnik;
   return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center bg-ink/40 p-4">
+    <div className="absolute inset-0 z-10 flex items-center justify-center bg-bg/40 p-4">
       <div
         role="alertdialog"
         aria-labelledby="ispit-rezultat"
