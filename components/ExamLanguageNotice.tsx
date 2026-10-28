@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Languages } from "lucide-react";
+import { useRef } from "react";
 import { EXAM_LANGUAGE_NOTICE } from "@/lib/examLanguage";
 import type { Lang } from "@/lib/i18n";
+import Button from "./ui/Button";
+import IconCircle from "./ui/IconCircle";
+import Modal from "./ui/Modal";
 
 interface ModalProps {
   lang: Lang;
@@ -19,53 +23,29 @@ export function ExamLanguageModal({ lang, onConfirm }: ModalProps) {
   const notice = EXAM_LANGUAGE_NOTICE[lang];
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    buttonRef.current?.focus();
-    // Jedino dugme — Tab ostaje na njemu, fokus ne bježi na stranicu iza.
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Tab") {
-        e.preventDefault();
-        buttonRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, []);
-
   if (!notice) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-bg/60 p-4 sm:items-center"
-      role="presentation"
+    <Modal
+      open
+      dismissible={false}
+      role="alertdialog"
+      labelledBy="jezik-ispita-naslov"
+      describedBy="jezik-ispita-tekst"
+      lang={lang}
+      initialFocus={buttonRef}
     >
-      <div
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="jezik-ispita-naslov"
-        aria-describedby="jezik-ispita-tekst"
-        lang={lang}
-        className="panel my-auto w-full max-w-lg border-t-4 border-t-red p-5 sm:p-6"
-      >
-        <div className="mb-3 flex items-center gap-3">
-          <span className="diamond h-3 w-3" aria-hidden="true" />
-          <h2 id="jezik-ispita-naslov" className="text-2xl font-bold">
-            {notice.title}
-          </h2>
-        </div>
-        <p id="jezik-ispita-tekst" className="mb-5 leading-relaxed">
-          {notice.body}
-        </p>
-        <button
-          ref={buttonRef}
-          type="button"
-          onClick={onConfirm}
-          className="font-display w-full rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark sm:w-auto"
-        >
-          {notice.confirm}
-        </button>
-      </div>
-    </div>
+      <IconCircle icon={Languages} className="mb-5" />
+      <h2 id="jezik-ispita-naslov" className="mb-3 font-display text-2xl leading-tight font-bold">
+        {notice.title}
+      </h2>
+      <p id="jezik-ispita-tekst" className="mb-7 leading-relaxed text-text-muted">
+        {notice.body}
+      </p>
+      <Button ref={buttonRef} onClick={onConfirm} fullWidth className="sm:w-auto">
+        {notice.confirm}
+      </Button>
+    </Modal>
   );
 }
 
@@ -76,9 +56,9 @@ export function ExamLanguageStrip({ lang }: { lang: Lang }) {
   return (
     <p
       lang={lang}
-      className="flex items-center gap-2 rounded border border-line border-l-4 border-l-red bg-panel px-3 py-1.5 text-sm text-muted"
+      className="flex items-start gap-3 rounded-lg border border-accent-line bg-accent-soft px-4 py-3 text-sm leading-snug text-text"
     >
-      <span className="diamond h-2 w-2" aria-hidden="true" />
+      <Languages aria-hidden="true" strokeWidth={1.5} className="mt-0.5 h-4 w-4 flex-none text-accent-2" />
       {notice.strip}
     </p>
   );

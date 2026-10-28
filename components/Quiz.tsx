@@ -10,7 +10,6 @@ import {
   PENALTIES_ENABLED,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
-import { LANG_LABELS, LANGS } from "@/lib/i18n";
 import {
   buildExam,
   byIds,
@@ -43,7 +42,9 @@ import type {
   Screen,
 } from "@/lib/types";
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
+import { ArrowLeft } from "lucide-react";
 import { useApp } from "./AppProvider";
+import LangSwitch from "./LangSwitch";
 import Controls from "./Controls";
 import { LinkKazne } from "./PenaltyLoader";
 import ExamBriefing from "./ExamBriefing";
@@ -52,7 +53,6 @@ import { ExamLanguageModal, ExamLanguageStrip } from "./ExamLanguageNotice";
 import SimulatorShell from "./sim/SimulatorShell";
 import { GamePage } from "./game/GameLoader";
 import Landing from "./Landing";
-import LiteratureModal from "./LiteratureModal";
 import ProgressBar from "./ProgressBar";
 import QuestionCard from "./QuestionCard";
 import QuestionNav from "./QuestionNav";
@@ -65,7 +65,7 @@ interface QuizProps {
 
 export default function Quiz({ compact = false }: QuizProps) {
   // Jezik i „nazad na početak" dolaze iz konteksta — dijeli ih zaglavlje sa logom.
-  const { lang, setLang, t, homeNonce } = useApp();
+  const { lang, t, homeNonce, setLiteratureOpen } = useApp();
 
   const [screen, setScreen] = useState<Screen>("landing");
   const [mode, setMode] = useState<Mode>("vjezba");
@@ -109,7 +109,6 @@ export default function Quiz({ compact = false }: QuizProps) {
 
   const [best, setBest] = useState<BestExam | null>(null);
   const [saved, setSaved] = useState<PracticeState | null>(null);
-  const [literatureOpen, setLiteratureOpen] = useState(false);
 
   const isPractice = mode === "vjezba";
   const isSimulator = mode === "simulator";
@@ -518,52 +517,51 @@ export default function Quiz({ compact = false }: QuizProps) {
   const answeredInPool = pool.filter((q) => answers.has(q.id)).length;
 
   return (
-    <div ref={rootRef} className={compact ? "space-y-4" : "space-y-5"}>
-      {/* Gornja traka — radi i u /embed verziji, gdje nema zaglavlja stranice. */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        {screen !== "landing" && (
-          <button
-            type="button"
-            onClick={backToLanding}
-            className="font-display rounded border-2 border-line px-3.5 py-1.5 text-base font-semibold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
-          >
-            ← {t.back}
-          </button>
-        )}
-
-        {/* Spisak kazni; link izostaje kad je prikaz isključen ili kad nema
-            nijedne potvrđene kazne. */}
-        <div className="ml-auto flex items-center gap-4">
-          {PENALTIES_ENABLED && <LinkKazne t={t} />}
-          <button
-            type="button"
-            onClick={() => setLiteratureOpen(true)}
-            className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-          >
-            {t.literature}
-          </button>
-        </div>
-
-        <div
-          className="flex overflow-hidden rounded border border-line"
-          role="group"
-          aria-label={t.langLabel}
-        >
-          {LANGS.map((l) => (
+    <div
+      ref={rootRef}
+      className={`${compact ? "space-y-4" : "space-y-5"} ${screen === "landing" ? "" : "mx-auto w-full max-w-3xl"}`}
+    >
+      {/*
+        Gornja traka. Na sajtu jezik, literatura i kazne stoje u zaglavlju, pa
+        ovdje ostaje samo „Nazad". Ugrađena verzija (/embed) nema zaglavlje, pa
+        traka tamo nosi i jezik i linkove.
+      */}
+      {(compact || screen !== "landing") && (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          {screen !== "landing" && (
             <button
-              key={l}
               type="button"
-              onClick={() => setLang(l)}
-              aria-pressed={lang === l}
-              className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
-                lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
-              }`}
+              onClick={backToLanding}
+              className="group inline-flex min-h-11 items-center gap-2 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase transition-colors hover:text-text"
             >
-              {LANG_LABELS[l]}
+              <ArrowLeft
+                aria-hidden="true"
+                strokeWidth={1.5}
+                className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
+              />
+              {t.back}
             </button>
-          ))}
+          )}
+
+          {compact && (
+            <>
+              {/* Spisak kazni; link izostaje kad je prikaz isključen ili kad nema
+                  nijedne potvrđene kazne. */}
+              <div className="ml-auto flex items-center gap-5">
+                {PENALTIES_ENABLED && <LinkKazne t={t} />}
+                <button
+                  type="button"
+                  onClick={() => setLiteratureOpen(true)}
+                  className="inline-flex min-h-11 items-center font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase transition-colors hover:text-text"
+                >
+                  {t.literature}
+                </button>
+              </div>
+              <LangSwitch />
+            </>
+          )}
         </div>
-      </div>
+      )}
 
       {loadError && (
         <div className="panel border-t-4 border-t-red p-5">
@@ -752,7 +750,6 @@ export default function Quiz({ compact = false }: QuizProps) {
         />
       )}
 
-      <LiteratureModal open={literatureOpen} onClose={() => setLiteratureOpen(false)} t={t} />
 
       {languageNotice && (
         <ExamLanguageModal

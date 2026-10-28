@@ -33,6 +33,15 @@ export interface Dict {
   // Landing
   landingTitle: string;
   landingLead: string;
+  /** Hero početne: oznaka u dva reda, dvobojni naslov, uvod, četiri riječi (razdvojene „ · "). */
+  heroLabel1: string;
+  heroLabel2: string;
+  heroTitle1: string;
+  heroTitle2: string;
+  heroLead: string;
+  heroWords: string;
+  practiceMeta: string;
+  menuLabel: string;
   practiceTitle: string;
   practiceDesc: string;
   practiceStart: string;
@@ -548,6 +557,14 @@ const me: Dict = {
   landingTitle: "Pripremite se za teorijski ispit",
   landingLead:
     "Izaberite način rada. Vježbajte bez pritiska uz odmah prikazan tačan odgovor, ili provjerite znanje pod uslovima pravog ispita.",
+  heroLabel1: "Teorijski test",
+  heroLabel2: "B kategorija",
+  heroTitle1: "Auto škola Mirav",
+  heroTitle2: "Spremni za ispit.",
+  heroLead: "Pitanja za B kategoriju na pet jezika. Vježbajte bez pritiska, pa provjerite znanje pod uslovima pravog ispita.",
+  heroWords: "Disciplina · Znanje · Sigurnost · Sloboda",
+  practiceMeta: "Bez tajmera · tačan odgovor odmah",
+  menuLabel: "Meni",
   practiceTitle: "Vježba",
   practiceDesc:
     "Birate kategoriju pitanja, odgovor se odmah provjerava i prikazuje tačno rješenje. Bez tajmera i bez ograničenja.",
@@ -1085,6 +1102,14 @@ const en: Dict = {
   landingTitle: "Prepare for the theory exam",
   landingLead:
     "Choose a mode. Practise without pressure with the correct answer shown immediately, or test yourself under real exam conditions.",
+  heroLabel1: "Theory test",
+  heroLabel2: "Category B",
+  heroTitle1: "Mirav Driving School",
+  heroTitle2: "Ready for the exam.",
+  heroLead: "Category B questions in five languages. Practise without pressure, then test yourself under real exam conditions.",
+  heroWords: "Discipline · Knowledge · Safety · Freedom",
+  practiceMeta: "No timer · answer shown instantly",
+  menuLabel: "Menu",
   practiceTitle: "Practice",
   practiceDesc:
     "Pick a question category; each answer is checked right away and the correct one is shown. No timer, no limits.",
@@ -1619,6 +1644,14 @@ const sq: Dict = {
   landingTitle: "Përgatituni për provimin teorik",
   landingLead:
     "Zgjidhni mënyrën e punës. Ushtroni pa presion, me përgjigjen e saktë të shfaqur menjëherë, ose provoni njohuritë në kushtet e provimit real.",
+  heroLabel1: "Testi teorik",
+  heroLabel2: "Kategoria B",
+  heroTitle1: "Auto shkolla Mirav",
+  heroTitle2: "Gati për provimin.",
+  heroLead: "Pyetje për kategorinë B në pesë gjuhë. Ushtrohuni pa presion, pastaj provoni njohuritë në kushtet e provimit të vërtetë.",
+  heroWords: "Disiplinë · Dije · Siguri · Liri",
+  practiceMeta: "Pa kohëmatës · përgjigjja menjëherë",
+  menuLabel: "Menyja",
   practiceTitle: "Ushtrim",
   practiceDesc:
     "Zgjidhni kategorinë e pyetjeve; çdo përgjigje kontrollohet menjëherë dhe shfaqet zgjidhja e saktë. Pa kohëmatës dhe pa kufizime.",
@@ -2160,6 +2193,14 @@ const ru: Dict = {
   landingTitle: "Подготовьтесь к теоретическому экзамену",
   landingLead:
     "Выберите режим. Тренируйтесь без спешки, сразу видя правильный ответ, или проверьте знания в условиях настоящего экзамена.",
+  heroLabel1: "Теоретический тест",
+  heroLabel2: "Категория B",
+  heroTitle1: "Автошкола Mirav",
+  heroTitle2: "Готовы к экзамену.",
+  heroLead: "Вопросы категории B на пяти языках. Тренируйтесь без спешки, затем проверьте себя в условиях настоящего экзамена.",
+  heroWords: "Дисциплина · Знание · Безопасность · Свобода",
+  practiceMeta: "Без таймера · ответ сразу",
+  menuLabel: "Меню",
   practiceTitle: "Тренировка",
   practiceDesc:
     "Вы выбираете категорию вопросов; каждый ответ проверяется сразу и показывается правильное решение. Без таймера и ограничений.",
@@ -2701,6 +2742,14 @@ const tr: Dict = {
   landingTitle: "Teori sınavına hazırlanın",
   landingLead:
     "Bir mod seçin. Doğru cevabı hemen görerek baskı olmadan çalışın ya da kendinizi gerçek sınav koşullarında deneyin.",
+  heroLabel1: "Teori sınavı",
+  heroLabel2: "B sınıfı",
+  heroTitle1: "Mirav Sürücü Kursu",
+  heroTitle2: "Sınava hazır olun.",
+  heroLead: "Beş dilde B sınıfı soruları. Baskı olmadan çalışın, ardından gerçek sınav koşullarında kendinizi deneyin.",
+  heroWords: "Disiplin · Bilgi · Güvenlik · Özgürlük",
+  practiceMeta: "Süre yok · cevap hemen",
+  menuLabel: "Menü",
   practiceTitle: "Alıştırma",
   practiceDesc:
     "Bir soru kategorisi seçin; her cevap hemen kontrol edilir ve doğrusu gösterilir. Süre ve sınır yok.",

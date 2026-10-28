@@ -26,17 +26,39 @@ async function sakrijDevAlate(p) {
   await p.addStyleTag({ content: "nextjs-portal{display:none!important}" });
 }
 
-async function snimi(p, ime) {
+/** `prozor`: samo vidljivi dio, za modale i meni (fiksni sloj se u snimku cijele strane razvuče). */
+async function snimi(p, ime, prozor = false) {
   await p.waitForTimeout(350);
   const preliv = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   if (preliv > 1) prelivi.push(`${ime}: ${preliv}px`);
-  await p.screenshot({ path: `${IZLAZ}/${ime}.png`, fullPage: true });
+  await p.screenshot({ path: `${IZLAZ}/${ime}.png`, fullPage: !prozor });
   console.log(`  ${ime}.png${preliv > 1 ? `  PRELIV ${preliv}px` : ""}`);
 }
 
-async function jezik(p, oznaka) {
-  await p.locator('[role="group"] button', { hasText: new RegExp(`^${oznaka}$`) }).first().click();
+/**
+ * Na telefonu jezik i literatura stoje u meniju zaglavlja: ako dugme nije
+ * vidljivo, prvo se otvori meni, a poslije klika se zatvori.
+ */
+async function krozMeni(p, lokator) {
+  let otvorio = false;
+  if (!(await lokator.count())) {
+    const meni = p.locator("[data-qa=meni]");
+    if (await meni.isVisible()) {
+      await meni.click();
+      otvorio = true;
+      await p.waitForTimeout(200);
+    }
+  }
+  await lokator.first().click();
   await p.waitForTimeout(250);
+  // Upozorenje o jeziku može iskočiti preko otvorenog menija; prvo njega.
+  await potvrdiUpozorenje(p);
+  const meni = p.locator("[data-qa=meni][aria-expanded=true]");
+  if (otvorio && (await meni.count())) await meni.click();
+}
+
+async function jezik(p, oznaka) {
+  await krozMeni(p, p.locator('[role="group"] button:visible', { hasText: new RegExp(`^${oznaka}$`) }));
   await potvrdiUpozorenje(p);
 }
 
@@ -66,8 +88,15 @@ for (const s of SIRINE) {
       await snimi(p, `${s.ime}-pocetna-${j}`);
     }
     await jezik(p, "ME");
-    await dugme(p, /literatura/i).click();
-    await snimi(p, `${s.ime}-literatura-ME`);
+    await krozMeni(p, p.getByRole("button", { name: /literatura/i }).locator("visible=true"));
+    await snimi(p, `${s.ime}-literatura-ME`, true);
+    await p.keyboard.press("Escape");
+    // Otvoren meni na telefonu, za snimak.
+    const meni = p.locator("[data-qa=meni]");
+    if (await meni.isVisible()) {
+      await meni.click();
+      await snimi(p, `${s.ime}-meni-ME`, true);
+    }
     await ctx.close();
   }
 
@@ -106,7 +135,7 @@ for (const s of SIRINE) {
     await p.locator("main button:not([disabled])").last().click();
     await p.waitForTimeout(400);
     if (await p.locator('[role="alertdialog"]').count()) {
-      await snimi(p, `${s.ime}-ispit-upozorenje-${j}`);
+      await snimi(p, `${s.ime}-ispit-upozorenje-${j}`, true);
       await potvrdiUpozorenje(p);
     }
     await p.waitForSelector("[role=progressbar]");

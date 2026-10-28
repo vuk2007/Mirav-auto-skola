@@ -159,7 +159,10 @@ export function PenaltyForRef({
 export function LinkKazne({ t }: { t: Dict }) {
   if (!imaPotvrdjenih()) return null;
   return (
-    <a href="/kazne" className="text-sm font-semibold text-blue underline-offset-4 hover:underline">
+    <a
+      href="/kazne"
+      className="inline-flex min-h-11 items-center font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase transition-colors hover:text-text"
+    >
       {t.penaltyListTitle}
     </a>
   );

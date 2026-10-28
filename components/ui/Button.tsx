@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
 
 /**
  * Dugme u tri varijante.
@@ -18,6 +18,7 @@ type Varijanta = "primary" | "secondary" | "ghost";
 type Velicina = "md" | "lg";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  ref?: Ref<HTMLButtonElement>;
   variant?: Varijanta;
   size?: Velicina;
   /** Strelica desno; podrazumijevano samo za primarno dugme. */
