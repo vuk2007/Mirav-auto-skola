@@ -3,6 +3,7 @@
 import type { Dict } from "@/lib/i18n";
 import type { Bilingual } from "@/lib/questions";
 import BilingualText from "./BilingualText";
+import AnswerOption from "./ui/AnswerOption";
 import type { OptionKey } from "@/lib/types";
 
 interface OptionButtonProps {
@@ -19,6 +20,11 @@ interface OptionButtonProps {
   t: Dict;
 }
 
+/**
+ * Ponuđeni odgovor: slovo u krugu, tekst sa prevodom ispod, a poslije
+ * provjere tačno/netačno (vidi ui/AnswerOption). Boje se pale tek kad je
+ * odgovor otkriven; do tada je vidljiv samo izbor.
+ */
 export default function OptionButton({
   optionKey,
   text,
@@ -29,59 +35,18 @@ export default function OptionButton({
   onSelect,
   t,
 }: OptionButtonProps) {
-  // Boje se pale tek kad je odgovor otkriven; do tada je vidljiv samo izbor.
-  let tone = "border-line bg-panel hover:border-blue hover:bg-blue-soft";
-  if (revealed && isCorrect) {
-    tone = "border-green bg-green-soft";
-  } else if (revealed && selected && !isCorrect) {
-    tone = "border-red bg-red-soft";
-  } else if (revealed) {
-    // Siva boja teksta, ne providnost: providnost bi spustila prevod ispod
-    // kontrasta 4.5:1 (vidi BilingualText).
-    tone = "border-line bg-panel text-muted";
-  } else if (selected) {
-    tone = "border-blue bg-blue-soft";
-  }
-
-  // Kvadratić ostaje bijel, a ✕ se „upisuje" u njega — kao na papirnom testu.
-  // Popunjen kvadratić bi izgledao kao da je odgovor već ovjeren.
-  let markerTone = "border-glass-line-strong bg-surface text-ink";
-  if (revealed && isCorrect) {
-    markerTone = "border-green bg-surface text-green";
-  } else if (revealed && selected && !isCorrect) {
-    markerTone = "border-red bg-surface text-red";
-  } else if (selected) {
-    markerTone = "border-blue bg-surface text-blue";
-  }
-
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(optionKey)}
+    <AnswerOption
+      letter={optionKey}
+      selected={selected}
+      revealed={revealed}
+      isCorrect={isCorrect}
       disabled={disabled}
-      aria-pressed={selected}
-      className={`flex w-full items-start gap-3 rounded border-2 p-3 text-left transition-colors sm:gap-3.5 sm:p-3.5 ${tone} ${
-        disabled ? "cursor-default" : ""
-      }`}
+      onSelect={() => onSelect(optionKey)}
+      correctLabel={t.correctAnswerLabel}
+      yourLabel={t.yourAnswerLabel}
     >
-      <span
-        aria-hidden="true"
-        className={`font-display mt-px flex h-7 w-7 flex-none items-center justify-center rounded-sm border-2 text-lg leading-none font-bold ${markerTone}`}
-      >
-        {/* ✕ samo tamo gdje je kandidat označio. Tačan odgovor koji nije
-            označen ostaje prazan — zeleni okvir kaže da je tačan, ✕ bi lagao
-            da ga je kandidat izabrao. */}
-        {selected ? "✕" : ""}
-      </span>
-      <span className="pt-0.5 text-[0.9375rem] leading-snug sm:text-base">
-        <BilingualText text={text} />
-      </span>
-      {revealed && isCorrect && (
-        <span className="tag ml-auto flex-none self-center text-green">{t.correctAnswerLabel}</span>
-      )}
-      {revealed && selected && !isCorrect && (
-        <span className="tag ml-auto flex-none self-center text-red">{t.yourAnswerLabel}</span>
-      )}
-    </button>
+      <BilingualText text={text} />
+    </AnswerOption>
   );
 }

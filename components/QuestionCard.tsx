@@ -1,5 +1,6 @@
 "use client";
 
+import { Lightbulb } from "lucide-react";
 import Image from "next/image";
 
 import { PenaltyForQuestion } from "./PenaltyLoader";
@@ -12,6 +13,8 @@ import { OPTION_KEYS, type OptionKey, type Question } from "@/lib/types";
 import BilingualText from "./BilingualText";
 import OptionButton from "./OptionButton";
 import OrderingInput from "./OrderingInput";
+import Badge from "./ui/Badge";
+import GlassPanel from "./ui/GlassPanel";
 
 interface QuestionCardProps {
   question: Question;
@@ -32,6 +35,11 @@ interface QuestionCardProps {
   lang: Lang;
 }
 
+/**
+ * Pitanje u vježbi: oznaka vrste i bodova, tekst pitanja u čistoj tipografiji,
+ * slika (ako postoji) na svijetloj podlozi — slike iz kataloga su crtane na
+ * bijelom — pa odgovori i, poslije provjere, objašnjenje i kazna.
+ */
 export default function QuestionCard({
   question,
   selected,
@@ -50,24 +58,23 @@ export default function QuestionCard({
   const text = bilingualText(question, lang);
 
   return (
-    <article className="panel p-4 sm:p-6">
-      <header className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-        <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-        <span className="tag text-blue">{t[badgeKey(question)]}</span>
-        <span className="tag ml-auto text-muted">
+    <GlassPanel as="article">
+      <header className="mb-4 flex flex-wrap items-center gap-2">
+        <Badge tone="accent">{t[badgeKey(question)]}</Badge>
+        <Badge className="ml-auto">
           {points} {pointsLabel(points, lang)}
-        </span>
+        </Badge>
       </header>
 
-      <h2 className="mb-1 text-lg leading-snug font-bold sm:text-xl">
+      <h2 className="font-display text-lg leading-snug font-semibold tracking-[-0.01em] sm:text-xl">
         <BilingualText text={text} />
       </h2>
 
       {/* Fallback na crnogorski ne smije biti tih. */}
-      {text.fallback && <p className="mb-3 text-xs text-muted">{t.translationMissing}</p>}
+      {text.fallback && <p className="mt-2 text-xs text-text-muted">{t.translationMissing}</p>}
 
       {question.image && (
-        <div className="mt-4 mb-5 flex justify-center rounded border border-line bg-white p-2 sm:p-3">
+        <div className="mt-5 flex justify-center overflow-hidden rounded-lg border border-glass-line bg-white p-3">
           <Image
             src={`/web_images/${question.image}`}
             alt=""
@@ -83,41 +90,48 @@ export default function QuestionCard({
         </div>
       )}
 
-      {question.type === "ordering" ? (
-        <OrderingInput
-          question={question}
-          value={orderingValue}
-          onChange={onOrderingChange}
-          onSubmit={onOrderingSubmit}
-          showSubmit={showOrderingSubmit}
-          revealed={revealed}
-          correct={correct}
-          disabled={revealed}
-          t={t}
-        />
-      ) : (
-        <div className="space-y-2.5">
-          {OPTION_KEYS.map((key) => (
-            <OptionButton
-              key={key}
-              optionKey={key}
-              text={bilingualOption(question, key, lang)}
-              selected={selected === key}
-              revealed={revealed}
-              isCorrect={question.correct === key}
-              disabled={revealed}
-              onSelect={onSelectOption}
-              t={t}
-            />
-          ))}
-        </div>
-      )}
+      <div className="mt-5">
+        {question.type === "ordering" ? (
+          <OrderingInput
+            question={question}
+            value={orderingValue}
+            onChange={onOrderingChange}
+            onSubmit={onOrderingSubmit}
+            showSubmit={showOrderingSubmit}
+            revealed={revealed}
+            correct={correct}
+            disabled={revealed}
+            t={t}
+          />
+        ) : (
+          <div className="space-y-3">
+            {OPTION_KEYS.map((key) => (
+              <OptionButton
+                key={key}
+                optionKey={key}
+                text={bilingualOption(question, key, lang)}
+                selected={selected === key}
+                revealed={revealed}
+                isCorrect={question.correct === key}
+                disabled={revealed}
+                onSelect={onSelectOption}
+                t={t}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Objašnjenje se prikazuje samo ako postoji u bazi — ne izmišlja se. */}
       {revealed && question.explanation && (
-        <div className="mt-4 rounded border-l-4 border-blue bg-blue-soft p-3">
-          <p className="tag mb-1 text-blue">{t.explanationTitle}</p>
-          <p className="text-sm leading-relaxed">{question.explanation}</p>
+        <div className="mt-5 flex gap-3 border-t border-glass-line pt-5">
+          <Lightbulb aria-hidden="true" strokeWidth={1.5} className="mt-0.5 h-5 w-5 flex-none text-accent-2" />
+          <div>
+            <p className="mb-1 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-accent-2 uppercase">
+              {t.explanationTitle}
+            </p>
+            <p className="text-sm leading-relaxed text-text">{question.explanation}</p>
+          </div>
         </div>
       )}
 
@@ -127,6 +141,6 @@ export default function QuestionCard({
       {revealed && !correct && PENALTIES_ENABLED && (
         <PenaltyForQuestion questionId={question.id} t={t} lang={lang} />
       )}
-    </article>
+    </GlassPanel>
   );
 }

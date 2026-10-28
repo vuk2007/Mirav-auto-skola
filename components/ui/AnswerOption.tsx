@@ -65,19 +65,22 @@ export default function AnswerOption({
       >
         {tacno ? <Check strokeWidth={2} className="h-4 w-4" /> : pogresno ? <X strokeWidth={2} className="h-4 w-4" /> : letter}
       </span>
-      <span className={`min-w-0 flex-1 pt-1 text-[0.9375rem] leading-snug sm:text-base ${ugaseno ? "text-text-muted" : "text-text"}`}>
-        {children}
+      {/* Na uskom ekranu natpis ide ispod teksta, da ne sabija odgovor u stubac. */}
+      <span className="min-w-0 flex-1 pt-1 sm:flex sm:items-start sm:gap-3">
+        <span className={`block text-[0.9375rem] leading-snug sm:flex-1 sm:text-base ${ugaseno ? "text-text-muted" : "text-text"}`}>
+          {children}
+        </span>
+        {tacno && (
+          <span className="mt-2 block font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-ok uppercase sm:mt-0.5 sm:flex-none">
+            {correctLabel}
+          </span>
+        )}
+        {pogresno && (
+          <span className="mt-2 block font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-err uppercase sm:mt-0.5 sm:flex-none">
+            {yourLabel}
+          </span>
+        )}
       </span>
-      {tacno && (
-        <span className="mt-1.5 flex-none font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-ok uppercase">
-          {correctLabel}
-        </span>
-      )}
-      {pogresno && (
-        <span className="mt-1.5 flex-none font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-err uppercase">
-          {yourLabel}
-        </span>
-      )}
     </button>
   );
 }

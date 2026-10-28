@@ -1,10 +1,12 @@
 "use client";
 
-import { CATEGORIES, type Category } from "@/lib/categories";
+import type { Category } from "@/lib/categories";
 import { EXAM_WARNING_SECONDS } from "@/lib/config";
 import type { Dict } from "@/lib/i18n";
-import { formatClock } from "@/lib/questions";
 import type { Mode } from "@/lib/types";
+import CategoryChips from "./CategoryChips";
+import GlassPanel from "./ui/GlassPanel";
+import Timer from "./ui/Timer";
 
 interface ControlsProps {
   mode: Mode;
@@ -19,6 +21,10 @@ interface ControlsProps {
   t: Dict;
 }
 
+/**
+ * Traka iznad pitanja: u vježbi izbor kategorije i rezultat, na ispitu broj
+ * odgovorenih i tajmer (crven u zadnjim minutima).
+ */
 export default function Controls({
   mode,
   category,
@@ -31,68 +37,45 @@ export default function Controls({
 }: ControlsProps) {
   const isPractice = mode === "vjezba";
   const warning = secondsLeft !== null && secondsLeft <= EXAM_WARNING_SECONDS;
+  const oznaka = "font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase";
 
   return (
-    <section className="panel p-4 sm:p-5" aria-label={t.categoryLabel}>
+    <GlassPanel as="section" padding="sm" className="sm:p-5" aria-label={t.categoryLabel}>
       {/* Filter kategorija — samo u vježbi; ispit uvijek vuče iz cijele baze. */}
       {isPractice && (
-        <div className="mb-4 flex flex-wrap items-center gap-2 border-b border-line pb-4">
-          <span className="tag mr-1 text-muted">{t.categoryLabel}</span>
-          <div className="flex flex-wrap gap-2" role="group" aria-label={t.categoryLabel}>
-            {CATEGORIES.map((c) => (
-              <button
-                key={c.value}
-                type="button"
-                onClick={() => onCategoryChange(c.value)}
-                aria-pressed={category === c.value}
-                className={`rounded border px-3 py-1.5 text-sm transition-colors ${
-                  category === c.value
-                    ? "border-blue bg-blue-soft font-semibold text-blue"
-                    : "border-line bg-panel text-ink hover:border-blue"
-                }`}
-              >
-                {t[c.key]}
-              </button>
-            ))}
-          </div>
+        <div className="mb-4 border-b border-glass-line pb-4">
+          <p className={`mb-3 ${oznaka}`}>{t.categoryLabel}</p>
+          <CategoryChips category={category} onChange={onCategoryChange} t={t} />
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-        <p className="text-sm text-muted">
-          {isPractice ? (
-            <>
-              {t.correctLabel}:{" "}
-              <strong className="font-display text-lg text-green">{correctCount}</strong>
-              <span className="mx-1">/</span>
-              <strong className="font-display text-lg text-ink">{answeredCount}</strong>
-              <span className="ml-2">
-                ({poolSize} {t.inPool})
-              </span>
-            </>
-          ) : (
-            <>
-              {t.answeredLabel}:{" "}
-              <strong className="font-display text-lg text-ink">{answeredCount}</strong>
-              <span className="mx-1">/</span>
-              <strong className="font-display text-lg text-ink">{poolSize}</strong>
-            </>
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <p className="flex items-baseline gap-3">
+          <span className={oznaka}>{isPractice ? t.correctLabel : t.answeredLabel}</span>
+          <span className="tabular font-display text-xl font-bold">
+            {isPractice ? (
+              <>
+                <span className="text-ok">{correctCount}</span>
+                <span className="mx-1 text-text-muted">/</span>
+                <span>{answeredCount}</span>
+              </>
+            ) : (
+              <>
+                <span>{answeredCount}</span>
+                <span className="mx-1 text-text-muted">/</span>
+                <span>{poolSize}</span>
+              </>
+            )}
+          </span>
+          {isPractice && (
+            <span className="text-sm text-text-muted">
+              {poolSize} {t.inPool}
+            </span>
           )}
         </p>
 
-        {secondsLeft !== null && (
-          <p
-            className={`font-display ml-auto flex items-baseline gap-2 text-2xl font-bold tabular-nums ${
-              warning ? "text-red" : "text-ink"
-            }`}
-          >
-            <span className="tag text-muted">{t.remaining}</span>
-            <span role="timer" aria-live="off">
-              {formatClock(secondsLeft)}
-            </span>
-          </p>
-        )}
+        {secondsLeft !== null && <Timer seconds={secondsLeft} label={t.remaining} warning={warning} className="ml-auto" />}
       </div>
-    </section>
+    </GlassPanel>
   );
 }

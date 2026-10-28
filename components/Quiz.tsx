@@ -42,7 +42,7 @@ import type {
   Screen,
 } from "@/lib/types";
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check, X } from "lucide-react";
 import { useApp } from "./AppProvider";
 import LangSwitch from "./LangSwitch";
 import Controls from "./Controls";
@@ -57,6 +57,8 @@ import ProgressBar from "./ProgressBar";
 import QuestionCard from "./QuestionCard";
 import QuestionNav from "./QuestionNav";
 import ResultCard from "./ResultCard";
+import Button from "./ui/Button";
+import GlassPanel from "./ui/GlassPanel";
 
 interface QuizProps {
   /** Ugrađena verzija drži razmake manjim. */
@@ -564,10 +566,10 @@ export default function Quiz({ compact = false }: QuizProps) {
       )}
 
       {loadError && (
-        <div className="panel border-t-4 border-t-red p-5">
-          <h2 className="mb-1 text-lg font-bold text-red">{t.loadErrorTitle}</h2>
-          <p className="text-sm text-muted">{loadError}</p>
-        </div>
+        <GlassPanel role="alert" className="border-err-line">
+          <h2 className="mb-1 text-lg font-bold text-err">{t.loadErrorTitle}</h2>
+          <p className="text-sm text-text-muted">{loadError}</p>
+        </GlassPanel>
       )}
 
       {screen === "landing" && (
@@ -618,9 +620,9 @@ export default function Quiz({ compact = false }: QuizProps) {
 
           {isPractice ? (
             pool.length === 0 ? (
-              <div className="panel p-5">
-                <p className="text-sm text-muted">{t.noQuestions}</p>
-              </div>
+              <GlassPanel>
+                <p className="text-sm text-text-muted">{t.noQuestions}</p>
+              </GlassPanel>
             ) : current ? (
               <>
                 <ProgressBar
@@ -647,23 +649,23 @@ export default function Quiz({ compact = false }: QuizProps) {
                   lang={lang}
                 />
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    disabled={!revealed}
-                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue"
-                  >
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <Button size="md" onClick={handleNext} disabled={!revealed}>
                     {index + 1 < pool.length ? t.next : t.newRound}
-                  </button>
+                  </Button>
 
                   {revealed && (
                     <p
-                      className={`font-display ml-auto text-lg font-bold ${
-                        currentCorrect ? "text-green" : "text-red"
+                      className={`flex items-center gap-2 font-display text-base font-bold sm:ml-auto ${
+                        currentCorrect ? "text-ok" : "text-err"
                       }`}
                       role="status"
                     >
+                      {currentCorrect ? (
+                        <Check aria-hidden="true" strokeWidth={2} className="h-5 w-5" />
+                      ) : (
+                        <X aria-hidden="true" strokeWidth={2} className="h-5 w-5" />
+                      )}
                       {currentCorrect ? t.correctFeedback : t.wrongFeedback}
                     </p>
                   )}

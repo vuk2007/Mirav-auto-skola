@@ -1,10 +1,11 @@
 "use client";
 
 import { BookOpen, ClipboardCheck, Gamepad2, Signpost } from "lucide-react";
-import { CATEGORIES, type Category } from "@/lib/categories";
+import type { Category } from "@/lib/categories";
 import { EXAM_MINUTES, EXAM_PASS_POINTS, EXAM_QUESTION_COUNT, EXAM_TOTAL_POINTS } from "@/lib/config";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import type { BestExam, PracticeState } from "@/lib/storage";
+import CategoryChips from "./CategoryChips";
 import HeroFoto from "./HeroFoto";
 import Button from "./ui/Button";
 import HexBadge from "./ui/HexBadge";
@@ -75,23 +76,7 @@ export default function Landing({
             <p className="mb-3 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
               {t.categoryLabel}
             </p>
-            <div className="flex flex-wrap gap-2" role="group" aria-label={t.categoryLabel}>
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c.value}
-                  type="button"
-                  onClick={() => onCategoryChange(c.value)}
-                  aria-pressed={category === c.value}
-                  className={`min-h-9 rounded-full border px-4 font-display text-[0.6875rem] font-semibold tracking-[0.08em] uppercase transition-colors duration-200 ${
-                    category === c.value
-                      ? "border-accent-2 bg-accent-soft text-text"
-                      : "border-glass-line text-text-muted hover:border-glass-line-strong hover:text-text"
-                  }`}
-                >
-                  {t[c.key]}
-                </button>
-              ))}
-            </div>
+            <CategoryChips category={category} onChange={onCategoryChange} t={t} />
           </div>
 
           <div className="mt-8 flex flex-col gap-3 @md:flex-row @md:flex-wrap">

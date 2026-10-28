@@ -17,6 +17,7 @@
 
 "use client";
 
+import { ChevronDown, Scale } from "lucide-react";
 import { useState } from "react";
 import biblioteka from "@/data/javno/kazne.json";
 import vezaPodaci from "@/data/javno/pitanje-kazna.json";
@@ -74,37 +75,42 @@ function KaznaKartica({
   ].filter((x): x is string => Boolean(x) && x !== "—");
 
   return (
-    <aside className="mt-4 rounded border-l-4 border-blue bg-panel">
+    // Razdjelnik, a ne kartica u kartici: kazna uvijek stoji unutar panela
+    // pitanja ili prekršaja.
+    <aside className="mt-5 border-t border-glass-line pt-2">
       <button
         type="button"
         onClick={() => setOtvoreno((x) => !x)}
         aria-expanded={otvoreno}
-        className="flex w-full items-center gap-2 p-3 text-left sm:p-4"
+        className="flex min-h-11 w-full items-center gap-3 text-left"
       >
-        <span className="font-display text-xs font-bold tracking-wide text-blue uppercase">
+        <Scale aria-hidden="true" strokeWidth={1.5} className="h-5 w-5 flex-none text-accent-2" />
+        <span className="font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-accent-2 uppercase">
           {t.penaltyTitle}
         </span>
-        <span className="font-display ml-auto text-sm font-bold">{sankcije[0]}</span>
-        <span aria-hidden="true" className="text-muted">
-          {otvoreno ? "−" : "+"}
-        </span>
+        <span className="tabular ml-auto font-display text-sm font-bold">{sankcije[0]}</span>
+        <ChevronDown
+          aria-hidden="true"
+          strokeWidth={1.5}
+          className={`h-4 w-4 flex-none text-text-muted transition-transform duration-200 ease-[var(--ease-izlaz)] ${otvoreno ? "rotate-180" : ""}`}
+        />
       </button>
 
       {otvoreno && (
-        <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+        <div className="pt-2 pb-1 pl-8">
           <p className="font-semibold">{kazna.naslov}</p>
 
-          <p className="font-display mt-1 text-xl font-bold">{sankcije.join(" · ")}</p>
+          <p className="tabular mt-1 font-display text-xl font-bold">{sankcije.join(" · ")}</p>
 
-          {kazna.objasnjenje && <p className="mt-2 text-sm">{kazna.objasnjenje}</p>}
+          {kazna.objasnjenje && <p className="mt-2 text-sm leading-relaxed">{kazna.objasnjenje}</p>}
 
-          <p className="mt-2 text-xs text-muted">
+          <p className="mt-3 text-xs text-text-muted">
             {kazna.clan}
             {kazna.izvor && ` · ${kazna.izvor}`}
           </p>
-          <p className="mt-1 text-xs text-muted">{t.penaltyNote}</p>
+          <p className="mt-1 text-xs text-text-muted">{t.penaltyNote}</p>
 
-          {lang !== "me" && <p className="mt-1 text-xs text-muted">{t.penaltyLanguageNote}</p>}
+          {lang !== "me" && <p className="mt-1 text-xs text-text-muted">{t.penaltyLanguageNote}</p>}
         </div>
       )}
     </aside>

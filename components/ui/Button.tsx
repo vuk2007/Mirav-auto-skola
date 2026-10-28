@@ -36,7 +36,7 @@ const OSNOVA =
 const VARIJANTE: Record<Varijanta, string> = {
   primary:
     "rounded-md bg-gradient-to-b from-accent to-accent-deep text-white shadow-glow " +
-    "hover:to-accent active:translate-y-px",
+    "hover:to-accent active:translate-y-px disabled:shadow-none",
   secondary:
     "rounded-md border border-glass-line-strong bg-glass text-text " +
     "hover:border-accent-line hover:bg-glass-strong",
