@@ -9,6 +9,8 @@ import { bilingualOption, bilingualText, type ExamSlot } from "@/lib/questions";
 import { OPTION_KEYS, type Answer, type Question } from "@/lib/types";
 import BilingualText from "./BilingualText";
 import OrderingInput from "./OrderingInput";
+import Badge from "./ui/Badge";
+import GlassPanel from "./ui/GlassPanel";
 
 interface ExamPageProps {
   /** Kartice stranice — vidi `examCards`. */
@@ -80,10 +82,9 @@ function ExamCard({ slots, ...rest }: ExamCardProps) {
       : "grid gap-5 sm:grid-cols-[220px_1fr] sm:gap-6";
 
   return (
-    <article className="panel p-4 sm:p-6">
-      <header className="mb-3 flex items-center gap-3">
-        <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-        <span className="tag text-blue">{rest.t[badgeKey(first)]}</span>
+    <GlassPanel as="article">
+      <header className="mb-4 flex items-center gap-3">
+        <Badge tone="accent">{rest.t[badgeKey(first)]}</Badge>
       </header>
 
       <div className={layout}>
@@ -92,7 +93,7 @@ function ExamCard({ slots, ...rest }: ExamCardProps) {
           <ExamQuestion key={slot.question.id} slot={slot} {...rest} />
         ))}
       </div>
-    </article>
+    </GlassPanel>
   );
 }
 
@@ -100,7 +101,7 @@ function CardImage({ image, wide }: { image: string; wide: boolean }) {
   const [width, height] = imageSize(image);
   return (
     <div
-      className={`flex items-start justify-center self-start rounded border border-line bg-white p-2 ${
+      className={`flex items-start justify-center self-start rounded-lg border border-glass-line bg-white p-3 ${
         wide ? "md:col-span-2 lg:col-span-1" : ""
       }`}
     >
@@ -128,13 +129,13 @@ function ExamQuestion({ slot, answers, drafts, onAnswer, onOrderingChange, t, la
 
   return (
     <section id={examQuestionAnchor(number)} className="min-w-0 scroll-mt-4">
-      <h3 id={headingId} className="mb-3 text-base leading-snug font-bold sm:text-lg">
-        <span className="font-display mr-1.5 text-blue">{number}.</span>
+      <h3 id={headingId} className="mb-4 font-display text-base leading-snug font-semibold sm:text-lg">
+        <span className="tabular mr-2 text-accent-2">{number}.</span>
         <BilingualText text={text} />
       </h3>
 
       {text.fallback && (
-        <p className="-mt-2 mb-3 text-xs text-muted">{t.translationMissing}</p>
+        <p className="-mt-2 mb-4 text-xs text-text-muted">{t.translationMissing}</p>
       )}
 
       {question.type === "ordering" ? (
@@ -150,16 +151,17 @@ function ExamQuestion({ slot, answers, drafts, onAnswer, onOrderingChange, t, la
           t={t}
         />
       ) : (
-        <div role="radiogroup" aria-labelledby={headingId} className="space-y-2">
+        // Isti izgled kao odgovor u vježbi, ali bez glow-a: na stranici ih je mnogo izabranih.
+        <div role="radiogroup" aria-labelledby={headingId} className="space-y-2.5">
           {OPTION_KEYS.map((key) => {
             const checked = answer?.kind === "choice" && answer.value === key;
             return (
               <label
                 key={key}
-                className={`flex cursor-pointer items-start gap-3 rounded border-2 p-3 transition-colors has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-blue ${
+                className={`flex cursor-pointer items-start gap-3.5 rounded-lg border px-4 py-3 transition-[background,border-color] duration-200 ease-[var(--ease-izlaz)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent-2 ${
                   checked
-                    ? "border-blue bg-blue-soft"
-                    : "border-line bg-panel hover:border-blue hover:bg-blue-soft"
+                    ? "border-accent-2 bg-accent-soft"
+                    : "border-glass-line bg-glass hover:border-glass-line-strong hover:bg-glass-strong"
                 }`}
               >
                 <input
@@ -172,13 +174,13 @@ function ExamQuestion({ slot, answers, drafts, onAnswer, onOrderingChange, t, la
                 />
                 <span
                   aria-hidden="true"
-                  className={`mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 bg-surface ${
-                    checked ? "border-blue" : "border-glass-line-strong"
+                  className={`flex h-7 w-7 flex-none items-center justify-center rounded-full border font-display text-xs font-bold uppercase transition-colors duration-200 ${
+                    checked ? "border-accent bg-accent text-white" : "border-glass-line-strong text-text-muted"
                   }`}
                 >
-                  {checked && <span className="h-2.5 w-2.5 rounded-full bg-blue" />}
+                  {key}
                 </span>
-                <span className="text-[0.9375rem] leading-snug">
+                <span className="min-w-0 pt-0.5 text-[0.9375rem] leading-snug">
                   <BilingualText text={bilingualOption(question, key, lang)} />
                 </span>
               </label>

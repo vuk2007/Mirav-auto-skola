@@ -49,8 +49,9 @@ export default function Controls({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        <p className="flex items-baseline gap-3">
+      {/* Na ispitu i uskom ekranu oznake idu iznad brojeva, da broj i tajmer stanu u jedan red. */}
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 sm:items-center">
+        <p className={`flex ${isPractice ? "items-baseline gap-3" : "flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-3"}`}>
           <span className={oznaka}>{isPractice ? t.correctLabel : t.answeredLabel}</span>
           <span className="tabular font-display text-xl font-bold">
             {isPractice ? (
@@ -74,7 +75,7 @@ export default function Controls({
           )}
         </p>
 
-        {secondsLeft !== null && <Timer seconds={secondsLeft} label={t.remaining} warning={warning} className="ml-auto" />}
+        {secondsLeft !== null && <Timer seconds={secondsLeft} label={t.remaining} warning={warning} stacked={!isPractice} className="ml-auto" />}
       </div>
     </GlassPanel>
   );

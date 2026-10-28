@@ -42,7 +42,7 @@ import type {
   Screen,
 } from "@/lib/types";
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
-import { ArrowLeft, Check, X } from "lucide-react";
+import { ArrowLeft, Check, Flag, X } from "lucide-react";
 import { useApp } from "./AppProvider";
 import LangSwitch from "./LangSwitch";
 import Controls from "./Controls";
@@ -517,6 +517,8 @@ export default function Quiz({ compact = false }: QuizProps) {
     [answers],
   );
   const answeredInPool = pool.filter((q) => answers.has(q.id)).length;
+  // Uputstvo i ispit izlaze iz uske kolone; „Nazad" ide sa njima, da lijeva ivica bude ista.
+  const siroko = screen === "uputstvo" || (screen === "kviz" && !isPractice && !isSimulator && !isGame);
 
   return (
     <div
@@ -529,7 +531,7 @@ export default function Quiz({ compact = false }: QuizProps) {
         traka tamo nosi i jezik i linkove.
       */}
       {(compact || screen !== "landing") && (
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className={`flex flex-wrap items-center gap-x-5 gap-y-2 ${siroko ? "exam-wide" : ""}`}>
           {screen !== "landing" && (
             <button
               type="button"
@@ -591,12 +593,14 @@ export default function Quiz({ compact = false }: QuizProps) {
 
       {/* Uputstvo se čita prije svake simulacije — i prve i svake sljedeće. */}
       {screen === "uputstvo" && (
-        <ExamBriefing
-          t={t}
-          lang={lang}
-          onStart={() => withLanguageNotice(startExam)}
-          starting={starting}
-        />
+        <div className="exam-wide">
+          <ExamBriefing
+            t={t}
+            lang={lang}
+            onStart={() => withLanguageNotice(startExam)}
+            starting={starting}
+          />
+        </div>
       )}
 
       {screen === "kviz" && isSimulator && (
@@ -606,7 +610,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       {screen === "kviz" && isGame && <GamePage showLanguage={false} />}
 
       {screen === "kviz" && !isSimulator && !isGame && (
-        <div className={`${compact ? "space-y-4" : "space-y-5"} ${isPractice ? "" : "exam-wide"}`}>
+        <div className={`${compact ? "space-y-4" : "space-y-5"} ${siroko ? "exam-wide" : ""}`}>
           <Controls
             mode={mode}
             category={category}
@@ -697,33 +701,36 @@ export default function Quiz({ compact = false }: QuizProps) {
                 lang={lang}
               />
 
+              {/* Na uskom ekranu listanje dijeli red, a predaja ide punom širinom ispod. */}
               <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
+                  size="md"
+                  icon={<ArrowLeft aria-hidden="true" strokeWidth={1.75} />}
                   onClick={() => openExamPage(examPage - 1)}
                   disabled={examPage === 1}
-                  className="font-display rounded border-2 border-line px-5 py-2.5 text-base font-semibold tracking-wide uppercase transition-colors hover:border-blue hover:text-blue disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
+                  className="flex-1 sm:flex-none"
                 >
                   {t.prevPage}
-                </button>
+                </Button>
 
                 {examPage < EXAM_PAGE_COUNT && (
-                  <button
-                    type="button"
-                    onClick={() => openExamPage(examPage + 1)}
-                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
-                  >
+                  <Button size="md" onClick={() => openExamPage(examPage + 1)} className="flex-1 sm:flex-none">
                     {t.nextPage}
-                  </button>
+                  </Button>
                 )}
 
-                <button
-                  type="button"
+                {/* Na zadnjoj stranici nema „Sljedeće", pa predaja postaje glavna radnja. */}
+                <Button
+                  variant={examPage === EXAM_PAGE_COUNT ? "primary" : "secondary"}
+                  size="md"
+                  arrow={false}
+                  icon={<Flag aria-hidden="true" strokeWidth={1.75} />}
                   onClick={() => finishExam(false)}
-                  className="font-display ml-auto rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
+                  className="basis-full sm:ml-auto sm:basis-auto"
                 >
                   {t.finishExam}
-                </button>
+                </Button>
               </div>
 
               <QuestionNav
