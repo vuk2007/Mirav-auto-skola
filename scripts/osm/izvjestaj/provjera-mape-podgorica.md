@@ -31,6 +31,8 @@ Stanje poslije ispravki: ulazi u raskrsnice desna 13000, semafor 195, glavni 138
 - Trotoari: 3 šiljka i 18 tačaka na asfaltu u cijelom gradu (od 28 000 staza).
 - Ograničenja brzine iz OSM-a: nijedna besmislena vrijednost po klasi ulice.
 - Parovi bliskih raskrsnica na bulevarima (centri < 20 m): uglavnom dvije polovine bulevara sa po jednim prilazom — razdvojene su ispravno (razdjelni pojas).
+- Dvosmjerne ulice: razdjelna linija na 6364 dionice (583 km; od toga 171 dionica, 6,7 km, dvostruka puna na 2+2), svuda tačno između traka dva smjera, i kad je broj traka nejednak (pogrešnih 0). Bez linije su samo ulice od 4,5 m u koje dvije trake ne staju: servisni i poljski putevi (323 km), 115 stambenih koje OSM vodi kao jednotračne dvosmjerne (9,7 km) i 5 kratkih priključaka.
+- Jednosmjerne ulice: nijedna nema razdjelnu liniju; svaka sa dvije i više traka ima linije između traka (1480 dionica, 98 km). Svaki od 781 prilaza jednosmjerne ulice ka raskrsnici ima znak zabrane ulaska (kod velikih ušća 25–62 m od centra, na samom ulazu u ulicu). Smjer se nigdje ne mijenja usred bloka: nema čvora u koji se samo ulazi ili iz kojeg se samo izlazi.
 
 ## Ostaje za editor ili za provjeru na terenu
 
