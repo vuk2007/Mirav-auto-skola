@@ -9,11 +9,11 @@ export default function HomePage() {
     <AppProvider>
       <BrandHeader />
 
-      {/* Potpisni element: isprekidana traka kao oznaka na kolovozu. */}
-      <div className="road-line" aria-hidden="true" />
-
-      {/* Naslov, opis režima i prebacivač jezika žive u Quiz-u. */}
-      <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+      {/*
+        Početna koristi punu širinu (podijeljen hero na desktopu); ostali
+        ekrani se u Quiz-u sami suze na kolonu za čitanje (max-w-3xl).
+      */}
+      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
         <Quiz />
       </main>
 

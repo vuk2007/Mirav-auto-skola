@@ -10,7 +10,6 @@ import {
   PENALTIES_ENABLED,
   PRACTICE_QUESTION_LIMIT,
 } from "@/lib/config";
-import { LANG_LABELS, LANGS } from "@/lib/i18n";
 import {
   buildExam,
   byIds,
@@ -43,7 +42,9 @@ import type {
   Screen,
 } from "@/lib/types";
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
+import { ArrowLeft, Check, Flag, X } from "lucide-react";
 import { useApp } from "./AppProvider";
+import LangSwitch from "./LangSwitch";
 import Controls from "./Controls";
 import { LinkKazne } from "./PenaltyLoader";
 import ExamBriefing from "./ExamBriefing";
@@ -52,11 +53,12 @@ import { ExamLanguageModal, ExamLanguageStrip } from "./ExamLanguageNotice";
 import SimulatorShell from "./sim/SimulatorShell";
 import { GamePage } from "./game/GameLoader";
 import Landing from "./Landing";
-import LiteratureModal from "./LiteratureModal";
 import ProgressBar from "./ProgressBar";
 import QuestionCard from "./QuestionCard";
 import QuestionNav from "./QuestionNav";
 import ResultCard from "./ResultCard";
+import Button from "./ui/Button";
+import GlassPanel from "./ui/GlassPanel";
 
 interface QuizProps {
   /** Ugrađena verzija drži razmake manjim. */
@@ -65,7 +67,7 @@ interface QuizProps {
 
 export default function Quiz({ compact = false }: QuizProps) {
   // Jezik i „nazad na početak" dolaze iz konteksta — dijeli ih zaglavlje sa logom.
-  const { lang, setLang, t, homeNonce } = useApp();
+  const { lang, t, homeNonce, setLiteratureOpen } = useApp();
 
   const [screen, setScreen] = useState<Screen>("landing");
   const [mode, setMode] = useState<Mode>("vjezba");
@@ -109,7 +111,6 @@ export default function Quiz({ compact = false }: QuizProps) {
 
   const [best, setBest] = useState<BestExam | null>(null);
   const [saved, setSaved] = useState<PracticeState | null>(null);
-  const [literatureOpen, setLiteratureOpen] = useState(false);
 
   const isPractice = mode === "vjezba";
   const isSimulator = mode === "simulator";
@@ -516,60 +517,61 @@ export default function Quiz({ compact = false }: QuizProps) {
     [answers],
   );
   const answeredInPool = pool.filter((q) => answers.has(q.id)).length;
+  // Uputstvo i ispit izlaze iz uske kolone; „Nazad" ide sa njima, da lijeva ivica bude ista.
+  const siroko = screen === "uputstvo" || (screen === "kviz" && !isPractice && !isSimulator && !isGame);
 
   return (
-    <div ref={rootRef} className={compact ? "space-y-4" : "space-y-5"}>
-      {/* Gornja traka — radi i u /embed verziji, gdje nema zaglavlja stranice. */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        {screen !== "landing" && (
-          <button
-            type="button"
-            onClick={backToLanding}
-            className="font-display rounded border-2 border-line px-3.5 py-1.5 text-base font-semibold tracking-wide text-muted uppercase transition-colors hover:border-blue hover:text-blue"
-          >
-            ← {t.back}
-          </button>
-        )}
-
-        {/* Spisak kazni; link izostaje kad je prikaz isključen ili kad nema
-            nijedne potvrđene kazne. */}
-        <div className="ml-auto flex items-center gap-4">
-          {PENALTIES_ENABLED && <LinkKazne t={t} />}
-          <button
-            type="button"
-            onClick={() => setLiteratureOpen(true)}
-            className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-          >
-            {t.literature}
-          </button>
-        </div>
-
-        <div
-          className="flex overflow-hidden rounded border border-line"
-          role="group"
-          aria-label={t.langLabel}
-        >
-          {LANGS.map((l) => (
+    <div
+      ref={rootRef}
+      className={`${compact ? "space-y-4" : "space-y-5"} ${screen === "landing" ? "" : "mx-auto w-full max-w-3xl"}`}
+    >
+      {/*
+        Gornja traka. Na sajtu jezik, literatura i kazne stoje u zaglavlju, pa
+        ovdje ostaje samo „Nazad". Ugrađena verzija (/embed) nema zaglavlje, pa
+        traka tamo nosi i jezik i linkove.
+      */}
+      {(compact || screen !== "landing") && (
+        <div className={`flex flex-wrap items-center gap-x-5 gap-y-2 ${siroko ? "exam-wide" : ""}`}>
+          {screen !== "landing" && (
             <button
-              key={l}
               type="button"
-              onClick={() => setLang(l)}
-              aria-pressed={lang === l}
-              className={`font-display px-2.5 py-1 text-sm font-bold uppercase transition-colors ${
-                lang === l ? "bg-blue text-white" : "bg-panel text-muted hover:text-blue"
-              }`}
+              onClick={backToLanding}
+              className="group inline-flex min-h-11 items-center gap-2 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase transition-colors hover:text-text"
             >
-              {LANG_LABELS[l]}
+              <ArrowLeft
+                aria-hidden="true"
+                strokeWidth={1.5}
+                className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
+              />
+              {t.back}
             </button>
-          ))}
+          )}
+
+          {compact && (
+            <>
+              {/* Spisak kazni; link izostaje kad je prikaz isključen ili kad nema
+                  nijedne potvrđene kazne. */}
+              <div className="ml-auto flex items-center gap-5">
+                {PENALTIES_ENABLED && <LinkKazne t={t} />}
+                <button
+                  type="button"
+                  onClick={() => setLiteratureOpen(true)}
+                  className="inline-flex min-h-11 items-center font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase transition-colors hover:text-text"
+                >
+                  {t.literature}
+                </button>
+              </div>
+              <LangSwitch />
+            </>
+          )}
         </div>
-      </div>
+      )}
 
       {loadError && (
-        <div className="panel border-t-4 border-t-red p-5">
-          <h2 className="mb-1 text-lg font-bold text-red">{t.loadErrorTitle}</h2>
-          <p className="text-sm text-muted">{loadError}</p>
-        </div>
+        <GlassPanel role="alert" className="border-err-line">
+          <h2 className="mb-1 text-lg font-bold text-err">{t.loadErrorTitle}</h2>
+          <p className="text-sm text-text-muted">{loadError}</p>
+        </GlassPanel>
       )}
 
       {screen === "landing" && (
@@ -591,12 +593,14 @@ export default function Quiz({ compact = false }: QuizProps) {
 
       {/* Uputstvo se čita prije svake simulacije — i prve i svake sljedeće. */}
       {screen === "uputstvo" && (
-        <ExamBriefing
-          t={t}
-          lang={lang}
-          onStart={() => withLanguageNotice(startExam)}
-          starting={starting}
-        />
+        <div className="exam-wide">
+          <ExamBriefing
+            t={t}
+            lang={lang}
+            onStart={() => withLanguageNotice(startExam)}
+            starting={starting}
+          />
+        </div>
       )}
 
       {screen === "kviz" && isSimulator && (
@@ -606,7 +610,7 @@ export default function Quiz({ compact = false }: QuizProps) {
       {screen === "kviz" && isGame && <GamePage showLanguage={false} />}
 
       {screen === "kviz" && !isSimulator && !isGame && (
-        <div className={`${compact ? "space-y-4" : "space-y-5"} ${isPractice ? "" : "exam-wide"}`}>
+        <div className={`${compact ? "space-y-4" : "space-y-5"} ${siroko ? "exam-wide" : ""}`}>
           <Controls
             mode={mode}
             category={category}
@@ -620,9 +624,9 @@ export default function Quiz({ compact = false }: QuizProps) {
 
           {isPractice ? (
             pool.length === 0 ? (
-              <div className="panel p-5">
-                <p className="text-sm text-muted">{t.noQuestions}</p>
-              </div>
+              <GlassPanel>
+                <p className="text-sm text-text-muted">{t.noQuestions}</p>
+              </GlassPanel>
             ) : current ? (
               <>
                 <ProgressBar
@@ -649,23 +653,23 @@ export default function Quiz({ compact = false }: QuizProps) {
                   lang={lang}
                 />
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    disabled={!revealed}
-                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-40 disabled:hover:bg-blue"
-                  >
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <Button size="md" onClick={handleNext} disabled={!revealed}>
                     {index + 1 < pool.length ? t.next : t.newRound}
-                  </button>
+                  </Button>
 
                   {revealed && (
                     <p
-                      className={`font-display ml-auto text-lg font-bold ${
-                        currentCorrect ? "text-green" : "text-red"
+                      className={`flex items-center gap-2 font-display text-base font-bold sm:ml-auto ${
+                        currentCorrect ? "text-ok" : "text-err"
                       }`}
                       role="status"
                     >
+                      {currentCorrect ? (
+                        <Check aria-hidden="true" strokeWidth={2} className="h-5 w-5" />
+                      ) : (
+                        <X aria-hidden="true" strokeWidth={2} className="h-5 w-5" />
+                      )}
                       {currentCorrect ? t.correctFeedback : t.wrongFeedback}
                     </p>
                   )}
@@ -697,33 +701,36 @@ export default function Quiz({ compact = false }: QuizProps) {
                 lang={lang}
               />
 
+              {/* Na uskom ekranu listanje dijeli red, a predaja ide punom širinom ispod. */}
               <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
+                  size="md"
+                  icon={<ArrowLeft aria-hidden="true" strokeWidth={1.75} />}
                   onClick={() => openExamPage(examPage - 1)}
                   disabled={examPage === 1}
-                  className="font-display rounded border-2 border-line px-5 py-2.5 text-base font-semibold tracking-wide uppercase transition-colors hover:border-blue hover:text-blue disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
+                  className="flex-1 sm:flex-none"
                 >
                   {t.prevPage}
-                </button>
+                </Button>
 
                 {examPage < EXAM_PAGE_COUNT && (
-                  <button
-                    type="button"
-                    onClick={() => openExamPage(examPage + 1)}
-                    className="font-display rounded bg-blue px-6 py-2.5 text-base font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark"
-                  >
+                  <Button size="md" onClick={() => openExamPage(examPage + 1)} className="flex-1 sm:flex-none">
                     {t.nextPage}
-                  </button>
+                  </Button>
                 )}
 
-                <button
-                  type="button"
+                {/* Na zadnjoj stranici nema „Sljedeće", pa predaja postaje glavna radnja. */}
+                <Button
+                  variant={examPage === EXAM_PAGE_COUNT ? "primary" : "secondary"}
+                  size="md"
+                  arrow={false}
+                  icon={<Flag aria-hidden="true" strokeWidth={1.75} />}
                   onClick={() => finishExam(false)}
-                  className="font-display ml-auto rounded border-2 border-blue px-5 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white"
+                  className="basis-full sm:ml-auto sm:basis-auto"
                 >
                   {t.finishExam}
-                </button>
+                </Button>
               </div>
 
               <QuestionNav
@@ -752,7 +759,6 @@ export default function Quiz({ compact = false }: QuizProps) {
         />
       )}
 
-      <LiteratureModal open={literatureOpen} onClose={() => setLiteratureOpen(false)} t={t} />
 
       {languageNotice && (
         <ExamLanguageModal

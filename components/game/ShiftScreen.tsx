@@ -21,6 +21,7 @@ import GameCanvas, { type HudState } from "./GameCanvas";
 import IgraOkvir from "./IgraOkvir";
 import PedalControls from "./PedalControls";
 import { usePedals } from "./usePedals";
+import { ZvukDugme } from "./IgraDugmad";
 
 type Phase = "brief" | "play" | "freeze" | "over";
 
@@ -123,14 +124,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
       izlaz={{ label: t.shiftBack, onClick: onExit }}
       naslov={t.shiftTitle}
       podesavanja={
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          aria-pressed={muted}
-          className="rounded border border-line bg-panel px-3 py-1 font-semibold"
-        >
-          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
-        </button>
+        <ZvukDugme muted={muted} onToggle={() => setMuted((m) => !m)} t={t} />
       }
       kontrole={phase === "play" || phase === "freeze" ? (
         <PedalControls
@@ -169,7 +163,7 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
               <Hud label={t.gameTime} value={`${hud.t.toFixed(1)} s`} />
             </div>
             {zadatak && (
-              <p className="max-w-[15rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
+              <p className="max-w-[15rem] rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-semibold">
                 {zadatak}
               </p>
             )}
@@ -177,14 +171,14 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
         )}
 
         {phase === "freeze" && (
-          <div className="absolute inset-0 flex items-center justify-center bg-ink/55 p-4">
-            <div className="w-full max-w-sm rounded border border-line bg-panel p-4 text-center">
-              <p className="font-display text-lg font-bold text-red uppercase">{t.shiftLostLife}</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-bg/55 p-4">
+            <div className="w-full max-w-sm rounded-md border border-glass-line bg-surface p-4 text-center">
+              <p className="font-display text-lg font-bold text-err uppercase">{t.shiftLostLife}</p>
               {lastFail && <p className="mt-1 text-sm">{lastFail}</p>}
               <button
                 type="button"
                 onClick={() => setPhase("play")}
-                className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2 font-bold tracking-wide text-white uppercase"
+                className="font-display mt-3 w-full rounded-md border border-accent-2 bg-accent px-4 py-2 font-bold tracking-[var(--tracking-caps)] text-white uppercase"
               >
                 {t.shiftSkip}
               </button>
@@ -193,28 +187,33 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
         )}
         {/* Stanje smjene: životi, nivo i dionice — gore desno, preko platna. */}
         <div className="pointer-events-none absolute top-2 right-2 flex flex-col items-end gap-1">
-        <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.shiftLives}{" "}
-          <span aria-label={`${state.lives}/${LIVES}`}>
-            {"●".repeat(state.lives)}
-            <span className="opacity-25">{"●".repeat(LIVES - state.lives)}</span>
+          <span role="img" aria-label={`${state.lives}/${LIVES}`} className="ml-1 inline-flex items-center gap-1 align-middle">
+            {Array.from({ length: LIVES }, (_, i) => (
+              <span
+                key={i}
+                aria-hidden="true"
+                className={`h-2 w-2 rounded-full ${i < state.lives ? "bg-accent-2" : "bg-glass-line-strong"}`}
+              />
+            ))}
           </span>
         </span>
-        <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.shiftLevel} {state.level}
         </span>
-        <span className="font-display rounded border border-line bg-panel/90 px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.shiftSegments} {state.segments}
         </span>
         </div>
         {phase !== "play" && phase !== "freeze" && (
-          <div className="absolute inset-0 flex items-center justify-center overflow-y-auto bg-ink/40 p-4">
+          <div className="absolute inset-0 flex items-center justify-center overflow-y-auto bg-bg/40 p-4">
             <div className="w-full max-w-sm">
-        <div className="rounded border border-line bg-panel p-4">
+        <div className="rounded-md border border-glass-line bg-surface p-4">
           {phase === "brief" ? (
             <>
               <h1 className="text-xl font-bold">{t.shiftTitle}</h1>
-              <p className="mt-1 text-sm text-muted">{t.shiftDesc}</p>
+              <p className="mt-1 text-sm text-text-muted">{t.shiftDesc}</p>
               {best && (
                 <p className="mt-2 text-sm">
                   {t.shiftBest}: <strong>{best.segments}</strong> · {t.shiftStreak}{" "}
@@ -224,19 +223,19 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
               <button
                 type="button"
                 onClick={start}
-                className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
+                className="font-display mt-3 w-full rounded-md border border-accent-2 bg-accent px-4 py-2.5 text-lg font-bold tracking-[var(--tracking-caps)] text-white uppercase hover:bg-accent-deep"
               >
                 {t.shiftStart}
               </button>
             </>
           ) : (
             <>
-              <p className="font-display text-lg font-bold text-red uppercase">{t.shiftOver}</p>
+              <p className="font-display text-lg font-bold text-err uppercase">{t.shiftOver}</p>
               <p className="mt-2 text-sm">
                 {t.shiftSegments}: <strong>{state.segments}</strong> · {t.shiftStreak}:{" "}
                 <strong>{state.bestStreak}</strong>
               </p>
-              <p className="mt-1 text-sm text-muted">
+              <p className="mt-1 text-sm text-text-muted">
                 {t.gameReaction}:{" "}
                 {prosjek === null ? t.shiftNoReaction : `${prosjek.toFixed(2)} s`}
               </p>
@@ -250,14 +249,14 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
                 </ul>
               )}
               {best && (
-                <p className="mt-2 text-sm text-muted">
+                <p className="mt-2 text-sm text-text-muted">
                   {t.shiftBest}: {best.segments}
                 </p>
               )}
               <button
                 type="button"
                 onClick={restart}
-                className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
+                className="font-display mt-3 w-full rounded-md border border-accent-2 bg-accent px-4 py-2.5 text-lg font-bold tracking-[var(--tracking-caps)] text-white uppercase hover:bg-accent-deep"
               >
                 {t.shiftAgain}
               </button>
@@ -274,8 +273,8 @@ export default function ShiftScreen({ onExit }: { onExit: () => void }) {
 
 function Hud({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border border-line bg-panel/90 px-2 py-1 text-center">
-      <div className="text-[10px] font-semibold tracking-wide text-muted uppercase">{label}</div>
+    <div className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-center">
+      <div className="text-[10px] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">{label}</div>
       <div className="font-display text-lg leading-none font-bold">{value}</div>
     </div>
   );

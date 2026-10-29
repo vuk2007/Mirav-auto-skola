@@ -24,15 +24,15 @@ export default function PokazivaciIzbor({ vrijednost, promijeni, t }: Pokazivaci
 
   return (
     <fieldset className="mt-4">
-      <legend className="font-display text-sm font-bold tracking-wide uppercase">
+      <legend className="font-display text-sm font-bold tracking-[var(--tracking-caps)] uppercase">
         {t.gameIndicatorMode}
       </legend>
-      <div className="mt-2 grid grid-cols-2 overflow-hidden rounded border border-line">
+      <div className="mt-2 grid grid-cols-2 overflow-hidden rounded-md border border-glass-line">
         {opcije.map((o) => (
           <label
             key={o.rezim}
-            className={`font-display cursor-pointer px-3 py-2 text-center text-sm font-bold tracking-wide uppercase transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-4 has-[:focus-visible]:outline-blue ${
-              vrijednost === o.rezim ? "bg-blue text-white" : "bg-bg text-muted hover:text-blue"
+            className={`font-display cursor-pointer px-3 py-2 text-center text-sm font-bold tracking-[var(--tracking-caps)] uppercase transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-4 has-[:focus-visible]:outline-accent-2 ${
+              vrijednost === o.rezim ? "bg-accent text-white" : "bg-bg text-text-muted hover:text-accent-2"
             }`}
           >
             <input
@@ -47,7 +47,7 @@ export default function PokazivaciIzbor({ vrijednost, promijeni, t }: Pokazivaci
           </label>
         ))}
       </div>
-      <p className="mt-1.5 text-sm text-muted">
+      <p className="mt-1.5 text-sm text-text-muted">
         {vrijednost === "auto" ? t.gameIndicatorAutoHint : t.gameIndicatorManualHint}
       </p>
     </fieldset>

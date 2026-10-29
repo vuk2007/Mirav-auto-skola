@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { HAPTIKA_DODIR, HAPTIKA_PRELAZ, STEER_DEAD_ZONE } from "@/lib/game/sim/config";
 import type { PokazivaciRezim } from "@/lib/game/sim/types";
 import { haptika } from "@/lib/game/ui/haptika";
@@ -149,17 +150,17 @@ export default function DriveControls({
 
   // Pokazivač je PREKIDAČ, ne klizač: pritisak ga pali i ostavlja upaljenim.
   // Zato ide na `onClick`, a ne na `pointerdown` kao volan i gas.
-  const zmigavac = (side: "left" | "right", label: string, znak: string) => (
+  const zmigavac = (side: "left" | "right", label: string, znak: ReactNode) => (
     <button
       type="button"
       disabled={disabled}
       aria-pressed={volan.indicator === side}
       aria-label={`${indicator?.label ?? ""}: ${label}`}
       onClick={() => volan.toggleIndicator(side)}
-      className={`font-display flex-1 touch-none rounded border-2 text-2xl font-bold transition-colors select-none disabled:opacity-40 ${
+      className={`font-display flex flex-1 touch-none items-center justify-center rounded-md border text-2xl font-bold transition-colors select-none disabled:opacity-40 ${
         volan.indicator === side
-          ? "border-yellow bg-yellow text-ink"
-          : "border-line bg-panel text-muted"
+          ? "border-signal-yellow bg-signal-yellow text-bg"
+          : "border-glass-line bg-surface text-text-muted"
       }`}
     >
       {znak}
@@ -171,8 +172,8 @@ export default function DriveControls({
     <div className={`${className} flex h-32 items-stretch gap-3 [@media(max-height:500px)]:h-24`}>
       {indicator?.rezim === "rucni" && (
         <div className="flex w-20 flex-col gap-2">
-          {zmigavac("left", indicator.leftLabel, "◄")}
-          {zmigavac("right", indicator.rightLabel, "►")}
+          {zmigavac("left", indicator.leftLabel, <ChevronLeft aria-hidden="true" strokeWidth={2.25} className="h-6 w-6" />)}
+          {zmigavac("right", indicator.rightLabel, <ChevronRight aria-hidden="true" strokeWidth={2.25} className="h-6 w-6" />)}
         </div>
       )}
       {indicator?.rezim === "auto" && (
@@ -189,12 +190,16 @@ export default function DriveControls({
               ref={strana === "left" ? lijevaLampa : desnaLampa}
               data-svijetli="ne"
               aria-hidden="true"
-              className="font-display flex flex-1 items-center justify-center rounded border-2 border-line bg-panel text-2xl font-bold text-muted select-none data-[svijetli=da]:border-yellow data-[svijetli=da]:bg-yellow data-[svijetli=da]:text-ink"
+              className="font-display flex flex-1 items-center justify-center rounded-md border border-glass-line bg-surface text-2xl font-bold text-text-muted select-none data-[svijetli=da]:border-signal-yellow data-[svijetli=da]:bg-signal-yellow data-[svijetli=da]:text-bg"
             >
-              {strana === "left" ? "◄" : "►"}
+              {strana === "left" ? (
+                <ChevronLeft strokeWidth={2.25} className="h-6 w-6" />
+              ) : (
+                <ChevronRight strokeWidth={2.25} className="h-6 w-6" />
+              )}
             </div>
           ))}
-          <span className="font-display text-center text-[10px] leading-none font-bold tracking-wider text-muted uppercase">
+          <span className="font-display text-center text-[10px] leading-none font-bold tracking-[var(--tracking-caps)] text-text-muted uppercase">
             {indicator.autoShort}
           </span>
         </div>
@@ -202,7 +207,7 @@ export default function DriveControls({
 
       {/* Volan: puna širina, jer se drži palcem u pokretu. */}
       <div
-        className="relative flex-1 touch-none overflow-hidden rounded border-2 border-line bg-panel select-none"
+        className="relative flex-1 touch-none overflow-hidden rounded-md border border-glass-line bg-surface select-none"
         role="slider"
         aria-label={steerLabel}
         aria-valuemin={-100}
@@ -211,22 +216,22 @@ export default function DriveControls({
         tabIndex={0}
         {...staza(false, "steer")}
       >
-        <div className="pointer-events-none absolute inset-y-4 left-1/2 w-0.5 -translate-x-1/2 bg-line" />
+        <div className="pointer-events-none absolute inset-y-4 left-1/2 w-0.5 -translate-x-1/2 bg-glass-line-strong" />
         <div
           ref={volanKvaka}
           data-kvaka="volan"
-          className="pointer-events-none absolute top-1/2 left-1/2 flex h-20 w-16 items-center justify-center rounded bg-blue"
+          className="pointer-events-none absolute top-1/2 left-1/2 flex h-20 w-16 items-center justify-center rounded bg-accent"
         >
           <span className="h-8 w-0.5 rounded bg-white/70" />
         </div>
-        <span className="font-display pointer-events-none absolute top-1.5 left-2 text-xs font-bold tracking-wider text-muted uppercase">
+        <span className="font-display pointer-events-none absolute top-1.5 left-2 text-xs font-bold tracking-[var(--tracking-caps)] text-text-muted uppercase">
           {steerLabel}
         </span>
       </div>
 
       {/* Gas: uspravno, gore je gas a dolje kočnica — kao i pedale u autu. */}
       <div
-        className="relative w-24 touch-none overflow-hidden rounded border-2 border-line bg-panel select-none"
+        className="relative w-24 touch-none overflow-hidden rounded-md border border-glass-line bg-surface select-none"
         role="slider"
         aria-label={`${throttleLabel} / ${brakeLabel}`}
         aria-valuemin={-100}
@@ -235,18 +240,18 @@ export default function DriveControls({
         tabIndex={0}
         {...staza(true, "gas")}
       >
-        <div className="pointer-events-none absolute inset-x-4 top-1/2 h-0.5 -translate-y-1/2 bg-line" />
+        <div className="pointer-events-none absolute inset-x-4 top-1/2 h-0.5 -translate-y-1/2 bg-glass-line-strong" />
         <div
           ref={gasKvaka}
           data-kvaka="gas"
-          className="pointer-events-none absolute top-1/2 left-1/2 flex h-12 w-16 items-center justify-center rounded bg-green"
+          className="pointer-events-none absolute top-1/2 left-1/2 flex h-12 w-16 items-center justify-center rounded bg-ok"
         >
           <span className="h-0.5 w-8 rounded bg-white/70" />
         </div>
-        <span className="font-display pointer-events-none absolute top-1 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wider text-muted uppercase">
+        <span className="font-display pointer-events-none absolute top-1 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[var(--tracking-caps)] text-text-muted uppercase">
           {throttleLabel}
         </span>
-        <span className="font-display pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wider text-muted uppercase">
+        <span className="font-display pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[var(--tracking-caps)] text-text-muted uppercase">
           {brakeLabel}
         </span>
       </div>

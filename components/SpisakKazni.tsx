@@ -1,11 +1,16 @@
 "use client";
 
+import { Scale, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import biblioteka from "@/data/javno/kazne.json";
 import { formatIznos, type BibliotekaKazni, type Kazna } from "@/lib/kazne";
 import { useApp } from "./AppProvider";
+import GlassPanel from "./ui/GlassPanel";
+import SectionLabel from "./ui/SectionLabel";
 
 const BIBLIOTEKA = biblioteka as BibliotekaKazni;
+
+const OZNAKA = "font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] uppercase";
 
 /**
  * Spisak kazni — pravi se sam iz biblioteke.
@@ -47,33 +52,41 @@ export default function SpisakKazni() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="mb-1 text-2xl font-bold sm:text-3xl">{t.penaltyListTitle}</h1>
-        <p className="text-muted">{t.penaltyListLead}</p>
+      <div className="mb-8">
+        <SectionLabel className="mb-4">{t.penaltyTitle}</SectionLabel>
+        <h1 className="font-display text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl">
+          {t.penaltyListTitle}
+        </h1>
+        <p className="mt-3 max-w-xl text-text-muted">{t.penaltyListLead}</p>
       </div>
 
-      <div className="panel p-4">
-        <label className="tag mb-1.5 block text-muted" htmlFor="trazi-kaznu">
+      <GlassPanel padding="sm" className="sm:p-5">
+        <label className={`mb-2 block ${OZNAKA} text-text-muted`} htmlFor="trazi-kaznu">
           {t.penaltyListSearch}
         </label>
-        <input
-          id="trazi-kaznu"
-          type="search"
-          value={pretraga}
-          onChange={(e) => setPretraga(e.target.value)}
-          className="w-full rounded border-2 border-line bg-paper px-3 py-2.5 focus:border-blue focus:outline-none"
-        />
-        <p className="mt-2 text-sm text-muted">
+        <div className="relative">
+          <Search
+            aria-hidden="true"
+            strokeWidth={1.5}
+            className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-text-muted"
+          />
+          <input
+            id="trazi-kaznu"
+            type="search"
+            value={pretraga}
+            onChange={(e) => setPretraga(e.target.value)}
+            className="min-h-12 w-full rounded-md border border-glass-line-strong bg-glass py-2.5 pr-4 pl-12 text-text transition-[border-color,box-shadow] duration-200 ease-[var(--ease-izlaz)] focus:border-accent-2 focus:shadow-glow-sm focus:outline-none"
+          />
+        </div>
+        <p className="tabular mt-3 text-sm text-text-muted">
           {nadjeno} / {potvrdjene.length}
         </p>
-      </div>
+      </GlassPanel>
 
       {poKategoriji.map(([kategorija, kazne]) => (
-        <section key={kategorija} className="panel p-4 sm:p-5">
-          <h2 className="font-display mb-3 text-lg font-bold tracking-wide uppercase">
-            {kategorija}
-          </h2>
-          <ul className="space-y-4">
+        <GlassPanel as="section" key={kategorija}>
+          <SectionLabel as="h2">{kategorija}</SectionLabel>
+          <ul className="mt-2 divide-y divide-glass-line">
             {kazne.map((k) => {
               const sankcije = [
                 formatIznos(k.iznos_min, k.iznos_max),
@@ -81,28 +94,35 @@ export default function SpisakKazni() {
                 k.zabrana_upravljanja,
               ].filter((x): x is string => Boolean(x) && x !== "—");
               return (
-                <li key={k.id} className="border-t border-line pt-4 first:border-t-0 first:pt-0">
-                  <p className="font-semibold">{k.naslov}</p>
-                  <p className="font-display mt-0.5 text-xl font-bold text-blue">
-                    {sankcije.join(" · ")}
-                  </p>
-                  {k.objasnjenje && <p className="mt-1.5 text-sm">{k.objasnjenje}</p>}
-                  <p className="mt-1.5 text-xs text-muted">
-                    {k.clan}
-                    {k.izvor && ` · ${k.izvor}`}
-                  </p>
+                <li key={k.id} className="flex gap-4 py-4 last:pb-0">
+                  <Scale aria-hidden="true" strokeWidth={1.5} className="mt-0.5 h-5 w-5 flex-none text-accent-2" />
+                  <div className="min-w-0">
+                    <p className="font-semibold">{k.naslov}</p>
+                    {/* Iznos krupno; poeni i zabrana manje, ispod — inače red postaje predug. */}
+                    <p className="tabular mt-1 font-display text-xl font-bold">{sankcije[0]}</p>
+                    {sankcije.length > 1 && (
+                      <p className="mt-0.5 text-sm font-semibold text-text-muted">{sankcije.slice(1).join(" · ")}</p>
+                    )}
+                    {k.objasnjenje && <p className="mt-2 text-sm leading-relaxed">{k.objasnjenje}</p>}
+                    <p className="mt-2 text-xs text-text-muted">
+                      {k.clan}
+                      {k.izvor && ` · ${k.izvor}`}
+                    </p>
+                  </div>
                 </li>
               );
             })}
           </ul>
-        </section>
+        </GlassPanel>
       ))}
 
       {nadjeno === 0 && (
-        <p className="panel p-4 text-muted">{t.penaltyListEmpty}</p>
+        <GlassPanel>
+          <p className="text-text-muted">{t.penaltyListEmpty}</p>
+        </GlassPanel>
       )}
 
-      <footer className="panel p-4 text-sm text-muted">
+      <footer className="border-t border-glass-line pt-5 text-sm leading-relaxed text-text-muted">
         <p>{t.penaltyNote}</p>
         {posljednja && (
           <p className="mt-1.5">

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowLeft, ChevronDown, Settings2 } from "lucide-react";
 import { useApp } from "@/components/AppProvider";
-import { LANGS, LANG_LABELS } from "@/lib/i18n";
+import LangSwitch from "@/components/LangSwitch";
 
 /**
  * Okvir vožnje (redizajn za telefon): igra preko cijelog ekrana — gore uska
@@ -29,7 +30,7 @@ export default function IgraOkvir({
   naOtvaranje?: () => void;
   children: ReactNode;
 }) {
-  const { lang, setLang, t } = useApp();
+  const { t } = useApp();
   const [otvoren, setOtvoren] = useState(false);
   const meni = useRef<HTMLDivElement | null>(null);
   const dugme = useRef<HTMLButtonElement | null>(null);
@@ -57,17 +58,17 @@ export default function IgraOkvir({
   }, [otvoren]);
 
   return (
-    <div className="fixed inset-0 z-40 flex h-[100dvh] flex-col overscroll-none bg-paper" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-      <div className="relative z-20 flex h-11 shrink-0 items-center gap-2 border-b border-line bg-panel px-2">
+    <div className="fixed inset-0 z-40 flex h-[100dvh] flex-col overscroll-none bg-bg" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+      <div className="relative z-20 flex h-12 shrink-0 items-center gap-2 border-b border-glass-line bg-surface px-2 sm:px-3">
         <button
           type="button"
           onClick={izlaz.onClick}
-          className="flex h-9 shrink-0 items-center gap-1 rounded px-2 text-sm font-semibold text-blue hover:bg-blue-soft"
+          className="group flex h-10 shrink-0 items-center gap-2 rounded-md px-2 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase transition-colors hover:text-text"
         >
-          <span aria-hidden>←</span>
+          <ArrowLeft aria-hidden="true" strokeWidth={1.5} className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
           <span className="max-w-[9rem] truncate">{izlaz.label}</span>
         </button>
-        <div className="min-w-0 flex-1 truncate text-center text-sm font-bold">{naslov}</div>
+        <div className="min-w-0 flex-1 truncate text-center font-display text-sm font-semibold">{naslov}</div>
         {podesavanja !== undefined && (
           <button
             ref={dugme}
@@ -78,17 +79,19 @@ export default function IgraOkvir({
               if (!otvoren) naOtvaranje?.();
               setOtvoren((x) => !x);
             }}
-            className={`flex h-9 shrink-0 items-center gap-1.5 rounded border px-2.5 text-sm font-semibold ${
-              otvoren ? "border-blue bg-blue text-white" : "border-line bg-panel text-ink"
+            className={`flex h-10 shrink-0 items-center gap-2 rounded-md border px-3 font-display text-[0.6875rem] font-semibold tracking-[0.08em] uppercase transition-colors duration-200 ${
+              otvoren
+                ? "border-accent-2 bg-accent-soft text-text"
+                : "border-glass-line text-text-muted hover:border-glass-line-strong hover:text-text"
             }`}
           >
-            <span aria-hidden className="text-base leading-none">
-              ⚙
-            </span>
+            <Settings2 aria-hidden="true" strokeWidth={1.5} className="h-4 w-4" />
             <span>{t.igraPodesavanja}</span>
-            <span aria-hidden className={`text-xs transition-transform ${otvoren ? "rotate-180" : ""}`}>
-              ▾
-            </span>
+            <ChevronDown
+              aria-hidden="true"
+              strokeWidth={1.5}
+              className={`h-3.5 w-3.5 transition-transform duration-200 ${otvoren ? "rotate-180" : ""}`}
+            />
           </button>
         )}
       </div>
@@ -98,31 +101,21 @@ export default function IgraOkvir({
         {otvoren && (
           <>
             {/* Dodir van menija ga zatvara (i ne stiže do platna). */}
-            <button type="button" aria-label={t.igraZatvoriPodesavanja} onClick={zatvori} className="absolute inset-0 z-20 cursor-default bg-ink/20" />
+            <button type="button" aria-label={t.igraZatvoriPodesavanja} onClick={zatvori} className="absolute inset-0 z-20 cursor-default bg-bg/40" />
             <div
               id="igra-podesavanja"
               ref={meni}
               role="region"
               aria-label={t.igraPodesavanja}
-              className="absolute inset-x-0 top-0 z-30 max-h-full overflow-y-auto border-b border-line bg-paper p-3 shadow-lg sm:left-auto sm:w-[26rem] sm:border-l"
+              className="absolute inset-x-0 top-0 z-30 max-h-full overflow-y-auto border-b border-glass-line bg-surface p-4 shadow-soft motion-safe:animate-[pojava_200ms_var(--ease-izlaz)] sm:left-auto sm:w-[26rem] sm:rounded-bl-xl sm:border-l"
             >
               <div className="space-y-3 text-sm">
                 {typeof podesavanja === "function" ? podesavanja(zatvori) : podesavanja}
-                <div className="flex items-center gap-2">
-                  <span className="text-muted">{t.langLabel}:</span>
-                  <div className="flex overflow-hidden rounded border border-line" role="group" aria-label={t.langLabel}>
-                    {LANGS.map((l) => (
-                      <button
-                        key={l}
-                        type="button"
-                        onClick={() => setLang(l)}
-                        aria-pressed={lang === l}
-                        className={`font-display px-2.5 py-1 text-sm font-bold uppercase ${lang === l ? "bg-blue text-white" : "bg-panel text-muted"}`}
-                      >
-                        {LANG_LABELS[l]}
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex items-center justify-between gap-3 border-t border-glass-line pt-3">
+                  <span className="font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
+                    {t.langLabel}
+                  </span>
+                  <LangSwitch />
                 </div>
               </div>
             </div>
@@ -131,7 +124,7 @@ export default function IgraOkvir({
       </div>
 
       {kontrole && (
-        <div className="shrink-0 border-t border-line bg-paper px-2 pt-1" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
+        <div className="shrink-0 border-t border-glass-line bg-surface px-2 pt-1" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
           {/* Na širokom ekranu kontrole ostaju veličine kao na telefonu (volan
               preko cijele širine monitora se ne drži palcem). */}
           <div className="mx-auto w-full max-w-2xl">{kontrole}</div>

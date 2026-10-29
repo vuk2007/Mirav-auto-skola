@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowLeftToLine, ArrowRightToLine, ChevronLeft, ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
 import type { Pedals } from "./usePedals";
 
 interface PedalControlsProps {
@@ -41,8 +43,8 @@ export default function PedalControls({
         pedals.pressPointer(pedal, e.pointerId);
       }}
       onContextMenu={(e) => e.preventDefault()}
-      className={`font-display flex-1 touch-none rounded border-2 py-5 text-2xl font-bold tracking-wide uppercase transition-colors select-none disabled:opacity-40 ${
-        pedals.active[pedal] ? tone : "border-line bg-panel text-ink"
+      className={`font-display flex-1 touch-none rounded-md border py-5 text-2xl font-bold tracking-[var(--tracking-caps)] uppercase transition-colors select-none disabled:opacity-40 ${
+        pedals.active[pedal] ? tone : "border-glass-line bg-surface text-text"
       }`}
     >
       {label}
@@ -51,51 +53,53 @@ export default function PedalControls({
 
   // Pokazivač je PREKIDAČ, ne pedala: pritisak ga pali i ostavlja upaljenim.
   // Zato ide na `onClick`, a ne na `pointerdown` kao gas i kočnica.
-  const zmigavac = (side: "left" | "right", label: string, znak: string) => (
+  const zmigavac = (side: "left" | "right", label: string, znak: ReactNode) => (
     <button
       type="button"
       disabled={disabled}
       aria-pressed={pedals.indicator === side}
       aria-label={`${indicatorLabel}: ${label}`}
       onClick={() => pedals.toggleIndicator(side)}
-      className={`font-display flex-1 rounded border-2 py-2.5 text-lg font-bold tracking-wide uppercase transition-colors select-none disabled:opacity-40 ${
+      className={`font-display flex flex-1 items-center justify-center gap-2 rounded-md border py-2.5 text-base font-bold tracking-[var(--tracking-caps)] uppercase transition-colors select-none disabled:opacity-40 ${
         pedals.indicator === side
-          ? "border-yellow bg-yellow text-ink"
-          : "border-line bg-panel text-muted"
+          ? "border-signal-yellow bg-signal-yellow text-bg"
+          : "border-glass-line bg-surface text-text-muted"
       }`}
     >
-      <span aria-hidden="true">{znak}</span> {label}
+      {znak}
+      {label}
     </button>
   );
 
   // Promjena trake je jedan zahtjev, ne stanje — zato `onClick` i bez
   // `aria-pressed`: dugme se ne „drži" upaljeno.
-  const traka = (side: "left" | "right", label: string, znak: string) => (
+  const traka = (side: "left" | "right", label: string, znak: ReactNode) => (
     <button
       type="button"
       disabled={disabled}
       onClick={() => pedals.requestLane(side)}
-      className="font-display flex-1 rounded border-2 border-blue bg-panel py-2.5 text-lg font-bold tracking-wide text-blue uppercase transition-colors select-none hover:bg-blue hover:text-white disabled:opacity-40"
+      className="font-display flex flex-1 items-center justify-center gap-2 rounded-md border border-accent-2 bg-surface py-2.5 text-base font-bold tracking-[var(--tracking-caps)] text-accent-2 uppercase transition-colors select-none hover:bg-accent hover:text-white disabled:opacity-40"
     >
-      <span aria-hidden="true">{znak}</span> {label}
+      {znak}
+      {label}
     </button>
   );
 
   return (
     <div className="space-y-2">
       <div className="flex gap-3">
-        {zmigavac("left", leftLabel, "◀")}
-        {zmigavac("right", rightLabel, "▶")}
+        {zmigavac("left", leftLabel, <ChevronLeft aria-hidden="true" strokeWidth={2} className="h-5 w-5" />)}
+        {zmigavac("right", rightLabel, <ChevronRight aria-hidden="true" strokeWidth={2} className="h-5 w-5" />)}
       </div>
       {lanes && (
         <div className="flex gap-3">
-          {traka("left", lanes.leftLabel, "⇤")}
-          {traka("right", lanes.rightLabel, "⇥")}
+          {traka("left", lanes.leftLabel, <ArrowLeftToLine aria-hidden="true" strokeWidth={1.75} className="h-5 w-5" />)}
+          {traka("right", lanes.rightLabel, <ArrowRightToLine aria-hidden="true" strokeWidth={1.75} className="h-5 w-5" />)}
         </div>
       )}
       <div className="flex gap-3">
-        {button("brake", brakeLabel, "border-red bg-red text-white")}
-        {button("throttle", throttleLabel, "border-green bg-green text-white")}
+        {button("brake", brakeLabel, "border-err-line bg-err text-bg")}
+        {button("throttle", throttleLabel, "border-ok-line bg-ok text-bg")}
       </div>
     </div>
   );

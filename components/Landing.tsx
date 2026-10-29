@@ -1,9 +1,17 @@
 "use client";
 
-import { CATEGORIES, type Category } from "@/lib/categories";
+import { BookOpen, ClipboardCheck, Gamepad2, Signpost } from "lucide-react";
+import type { Category } from "@/lib/categories";
 import { EXAM_MINUTES, EXAM_PASS_POINTS, EXAM_QUESTION_COUNT, EXAM_TOTAL_POINTS } from "@/lib/config";
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import type { BestExam, PracticeState } from "@/lib/storage";
+import CategoryChips from "./CategoryChips";
+import HeroFoto from "./HeroFoto";
+import Button from "./ui/Button";
+import HexBadge from "./ui/HexBadge";
+import IconCircle from "./ui/IconCircle";
+import ListRow, { DividedList } from "./ui/ListRow";
+import SectionLabel from "./ui/SectionLabel";
 
 interface LandingProps {
   t: Dict;
@@ -22,6 +30,18 @@ interface LandingProps {
   starting: boolean;
 }
 
+/**
+ * Početna po referenci: oznaka u dva reda, dvobojni naslov, uvod, izbor
+ * kategorije i dva dugmeta (vježba, ispit), pa šestougaoni bedž sa ključnim
+ * brojem ispita i lista režima sa tankim razdjelnicima.
+ *
+ * Raspored prati širinu samog bloka (container queries), ne prozora: u
+ * ugrađenoj verziji na mirav.me blok je uži od prozora, i tada ostaje u
+ * jednoj koloni. Od @4xl (56 rem) hero se dijeli na tekst i fotografiju.
+ *
+ * Brojevi dolaze iz lib/config.ts, da tekst ne odluta od stvarnih
+ * parametara ispita.
+ */
 export default function Landing({
   t,
   lang,
@@ -36,156 +56,94 @@ export default function Landing({
   best,
   starting,
 }: LandingProps) {
+  const ispitMeta = `${EXAM_QUESTION_COUNT} ${t.metaQuestions} · ${EXAM_MINUTES} ${t.metaMinutes} · ${t.metaPass} ${EXAM_PASS_POINTS}/${EXAM_TOTAL_POINTS}`;
+
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="mb-2 text-2xl leading-tight font-bold sm:text-3xl">{t.landingTitle}</h1>
-        <p className="max-w-prose text-[0.9375rem] text-muted">{t.landingLead}</p>
-      </div>
+    <div className="@container">
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <section className="grid gap-10 @4xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] @4xl:items-center @4xl:gap-14">
+        <div>
+          <SectionLabel second={t.heroLabel2}>{t.heroLabel1}</SectionLabel>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* ── Vježba ─────────────────────────────────────────────── */}
-        <section className="panel flex flex-col border-t-4 border-t-blue p-5">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-            <h2 className="text-xl font-bold">{t.practiceTitle}</h2>
-          </div>
-          <p className="mb-4 text-sm text-muted">{t.practiceDesc}</p>
+          <h1 className="mt-6 font-display text-[2.125rem] leading-[1.05] font-extrabold tracking-[var(--tracking-tight-display)] @md:text-[2.75rem] @5xl:text-[3.25rem]">
+            <span className="block text-text">{t.heroTitle1}</span>
+            <span className="block text-accent-2">{t.heroTitle2}</span>
+          </h1>
 
-          <div className="mb-4">
-            <p className="tag mb-2 text-muted">{t.categoryLabel}</p>
-            <div className="flex flex-wrap gap-2" role="group" aria-label={t.categoryLabel}>
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c.value}
-                  type="button"
-                  onClick={() => onCategoryChange(c.value)}
-                  aria-pressed={category === c.value}
-                  className={`rounded border px-3 py-1.5 text-sm transition-colors ${
-                    category === c.value
-                      ? "border-blue bg-blue-soft font-semibold text-blue"
-                      : "border-line bg-panel text-ink hover:border-blue"
-                  }`}
-                >
-                  {t[c.key]}
-                </button>
-              ))}
-            </div>
-          </div>
+          <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-text-muted">{t.heroLead}</p>
 
-          <div className="mt-auto space-y-2">
-            <button
-              type="button"
-              onClick={onStartPractice}
-              disabled={starting}
-              className="font-display w-full rounded bg-blue px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue-dark disabled:opacity-50"
-            >
-              {t.practiceStart}
-            </button>
-
-            {saved && (
-              <button
-                type="button"
-                onClick={onResumePractice}
-                disabled={starting}
-                className="font-display w-full rounded border-2 border-blue px-6 py-2.5 text-base font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue-soft disabled:opacity-50"
-              >
-                {t.practiceResume}
-                <span className="ml-2 font-body text-xs font-normal normal-case">
-                  ({saved.index + 1}/{saved.ids.length})
-                </span>
-              </button>
-            )}
-          </div>
-        </section>
-
-        {/* ── Simulacija ispita ──────────────────────────────────── */}
-        <section className="panel flex flex-col border-t-4 border-t-yellow p-5">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-            <h2 className="text-xl font-bold">{t.examTitle}</h2>
-          </div>
-          <p className="mb-3 text-sm text-muted">{t.examDesc}</p>
-
-          {/*
-            Brojevi dolaze iz lib/config.ts da tekst ne bi odlutao od stvarnih
-            parametara: test uvijek nosi 80 bodova, prolaz je od 68.
-          */}
-          <p className="tag mb-3 text-blue">
-            {EXAM_QUESTION_COUNT} {t.metaQuestions} · {EXAM_MINUTES} {t.metaMinutes} ·{" "}
-            {t.metaPass} {EXAM_PASS_POINTS}/{EXAM_TOTAL_POINTS}
-          </p>
-
-          {best && (
-            <p className="mb-3 rounded border border-line bg-paper px-3 py-2 text-sm">
-              <span className="tag text-muted">{t.bestResult}</span>{" "}
-              <strong className={`font-display text-lg ${best.passed ? "text-green" : "text-red"}`}>
-                {best.scored} / {best.max}
-              </strong>
-              <span className="text-muted"> {pointsLabel(best.max, lang)}</span>
+          <div className="mt-8">
+            <p className="mb-3 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
+              {t.categoryLabel}
             </p>
+            <CategoryChips category={category} onChange={onCategoryChange} t={t} />
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 @md:flex-row @md:flex-wrap">
+            <Button onClick={onStartPractice} disabled={starting} className="@md:min-w-64">
+              {t.practiceStart}
+            </Button>
+            <Button variant="secondary" onClick={onStartExam} disabled={starting} arrow={false}>
+              {t.examStart}
+            </Button>
+          </div>
+
+          {saved && (
+            <Button variant="ghost" onClick={onResumePractice} disabled={starting} arrow className="mt-3 -ml-2">
+              {t.practiceResume}{" "}
+              <span className="tabular font-body text-xs font-normal tracking-normal normal-case">
+                ({saved.index + 1}/{saved.ids.length})
+              </span>
+            </Button>
           )}
 
-          <p className="mb-4 border-l-2 border-yellow pl-3 text-xs leading-relaxed text-muted">
-            {t.examLimitationNote}
-          </p>
-
-          <button
-            type="button"
-            onClick={onStartExam}
-            disabled={starting}
-            className="font-display mt-auto w-full rounded bg-ink px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue disabled:opacity-50"
-          >
-            {t.examStart}
-          </button>
-        </section>
-      </div>
-
-      {/* ── Simulator raskrsnica ─────────────────────────────────── */}
-      <section className="panel flex flex-col gap-4 border-t-4 border-t-blue-accent p-5 sm:flex-row sm:items-center">
-        <div className="flex-1">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-            <h2 className="text-xl font-bold">{t.simTitle}</h2>
-            <span className="tag ml-1 text-muted">{t.simMeta}</span>
-          </div>
-          <p className="text-sm text-muted">{t.simDesc}</p>
+          {starting && (
+            <p className="mt-4 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase" aria-live="polite">
+              {t.loading}
+            </p>
+          )}
         </div>
-        <button
-          type="button"
-          onClick={onStartSimulator}
-          disabled={starting}
-          className="font-display rounded border-2 border-blue px-6 py-3 text-lg font-bold tracking-wide text-blue uppercase transition-colors hover:bg-blue hover:text-white disabled:opacity-50 sm:flex-none"
-        >
-          {t.simStart}
-        </button>
+
+        <HeroFoto words={t.heroWords} />
       </section>
 
-      {/* ── Igra „Prođi raskrsnicu" ──────────────────────────────── */}
-      <section className="panel flex flex-col gap-4 border-t-4 border-t-green p-5 sm:flex-row sm:items-center">
-        <div className="flex-1">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="diamond h-2.5 w-2.5" aria-hidden="true" />
-            <h2 className="text-xl font-bold">{t.gameTitle}</h2>
-            <span className="tag ml-1 text-muted">{t.gameMeta}</span>
+      {/* ── Ključni broj i režimi ──────────────────────────────────────── */}
+      <section className="mt-16 grid gap-10 @3xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] @3xl:gap-14">
+        <div>
+          <SectionLabel>{t.examTitle}</SectionLabel>
+          <div className="mt-6">
+            {best ? (
+              <HexBadge size="lg" tone={best.passed ? "ok" : "err"} caption={`${t.bestResult} · ${pointsLabel(best.max, lang)}`}>
+                {best.scored}/{best.max}
+              </HexBadge>
+            ) : (
+              <HexBadge size="lg" caption={`${t.metaPoints} · ${t.metaPass} ${EXAM_PASS_POINTS}`}>{EXAM_TOTAL_POINTS}</HexBadge>
+            )}
           </div>
-          <p className="text-sm text-muted">{t.gameDesc}</p>
+          <p className="mt-6 max-w-xs text-xs leading-relaxed text-text-muted">{t.examLimitationNote}</p>
         </div>
-        <button
-          type="button"
-          onClick={onStartGame}
-          disabled={starting}
-          className="font-display rounded border-2 border-green px-6 py-3 text-lg font-bold tracking-wide text-green uppercase transition-colors hover:bg-green hover:text-white disabled:opacity-50 sm:flex-none"
-        >
-          {t.gameOpen}
-        </button>
-      </section>
 
-      {starting && (
-        <p className="tag text-center text-muted" aria-live="polite">
-          {t.loading}
-        </p>
-      )}
+        <DividedList className="border-t border-glass-line">
+          <ListRow leading={<IconCircle icon={BookOpen} />} title={t.practiceTitle} subtitle={t.practiceMeta}>
+            <p className="mt-2 max-w-prose text-sm leading-relaxed text-text-muted">{t.practiceDesc}</p>
+          </ListRow>
+          <ListRow leading={<IconCircle icon={ClipboardCheck} />} title={t.examTitle} subtitle={ispitMeta}>
+            <p className="mt-2 max-w-prose text-sm leading-relaxed text-text-muted">{t.examDesc}</p>
+          </ListRow>
+          <ListRow leading={<IconCircle icon={Signpost} />} title={t.simTitle} subtitle={t.simMeta}>
+            <p className="mt-2 max-w-prose text-sm leading-relaxed text-text-muted">{t.simDesc}</p>
+            <Button variant="secondary" size="md" onClick={onStartSimulator} disabled={starting} arrow className="mt-4">
+              {t.simStart}
+            </Button>
+          </ListRow>
+          <ListRow leading={<IconCircle icon={Gamepad2} />} title={t.gameTitle} subtitle={t.gameMeta}>
+            <p className="mt-2 max-w-prose text-sm leading-relaxed text-text-muted">{t.gameDesc}</p>
+            <Button variant="secondary" size="md" onClick={onStartGame} disabled={starting} arrow className="mt-4">
+              {t.gameOpen}
+            </Button>
+          </ListRow>
+        </DividedList>
+      </section>
     </div>
   );
 }

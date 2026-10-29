@@ -155,7 +155,7 @@ export default function AuditBoard() {
                 type="button"
                 onClick={() => setFilter(f.value)}
                 className={`rounded border-2 px-3 py-1 text-sm font-semibold transition-colors ${
-                  filter === f.value ? "border-ink bg-ink text-white" : "border-line hover:border-ink"
+                  filter === f.value ? "border-glass-line-strong bg-accent text-white" : "border-line hover:border-glass-line-strong"
                 }`}
               >
                 {f.label}
@@ -219,7 +219,7 @@ export default function AuditBoard() {
                     type="button"
                     onClick={() => setFlag(q.id, f)}
                     className={`rounded border-2 px-2 py-1 text-xs font-bold transition-colors ${
-                      entry?.flag === f ? FLAG_TONE[f] : "border-line hover:border-ink"
+                      entry?.flag === f ? FLAG_TONE[f] : "border-line hover:border-glass-line-strong"
                     }`}
                   >
                     {FLAG_LABEL[f]}

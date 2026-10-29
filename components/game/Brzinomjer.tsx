@@ -27,24 +27,24 @@ export default function Brzinomjer({ brzina, ogranicenje, t }: BrzinomjerProps) 
   const udio = ogranicenje ? Math.min(1, brzina / opseg) : 0;
   const boja =
     !ogranicenje || brzina <= ogranicenje
-      ? "bg-blue"
+      ? "bg-accent"
       : brzina <= ogranicenje * SPEEDING_FACTOR
-        ? "bg-yellow"
-        : "bg-red";
+        ? "bg-signal-yellow"
+        : "bg-err";
   return (
     <div
-      className="rounded border border-line bg-panel/90 px-2 py-1 text-center"
+      className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-center"
       role="group"
       aria-label={
         ogranicenje ? `${t.gameSpeed} ${kmh} km/h, ${t.gameSpeedLimit} ${Math.round(ogranicenje)} km/h` : undefined
       }
     >
-      <div className="text-[10px] font-semibold tracking-wide text-muted uppercase">{t.gameSpeed}</div>
-      <div className="font-display text-lg leading-none font-bold">{kmh} km/h</div>
+      <div className="font-display text-[0.625rem] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">{t.gameSpeed}</div>
+      <div className="tabular font-display text-lg leading-none font-bold">{kmh} km/h</div>
       {ogranicenje !== null && (
-        <div className="relative mt-1 h-1.5 w-full min-w-[4.5rem] overflow-hidden rounded-full bg-line" aria-hidden>
+        <div className="relative mt-1 h-1.5 w-full min-w-[4.5rem] overflow-hidden rounded-full bg-glass-line-strong" aria-hidden>
           <div className={`h-full ${boja}`} style={{ width: `${udio * 100}%` }} />
-          <div className="absolute top-0 h-full w-0.5 bg-ink" style={{ left: "75%" }} />
+          <div className="absolute top-0 h-full w-0.5 bg-text" style={{ left: "75%" }} />
         </div>
       )}
     </div>

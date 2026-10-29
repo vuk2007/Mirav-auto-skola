@@ -3,6 +3,7 @@
 import { EXAM_PAGE_COUNT } from "@/lib/config";
 import type { Dict } from "@/lib/i18n";
 import type { ExamSlot } from "@/lib/questions";
+import GlassPanel from "./ui/GlassPanel";
 
 interface QuestionNavProps {
   /** Sastav ispita — brojevi 1–40 sa stranicom svakog pitanja. */
@@ -18,7 +19,8 @@ interface QuestionNavProps {
 
 /**
  * Mreža brojeva pitanja 1–40, grupisana po stranicama testa, uz oznaku
- * odgovoreno/bez odgovora. Brojevi otvorene stranice su uokvireni.
+ * odgovoreno/bez odgovora. Odgovorena su puna plava, a brojevi otvorene
+ * stranice imaju svijetli prsten.
  */
 export default function QuestionNav({ slots, answeredIds, currentPage, onJump, t }: QuestionNavProps) {
   const answeredCount = slots.filter((s) => answeredIds.has(s.question.id)).length;
@@ -26,21 +28,22 @@ export default function QuestionNav({ slots, answeredIds, currentPage, onJump, t
     slots.filter((s) => s.page === i + 1),
   );
 
-  const cell = (slot: ExamSlot) => {
+  /** `kraj`: zadnje pitanje stranice — od `sm` naviše dobija razmak do sljedeće. */
+  const cell = (slot: ExamSlot, kraj: boolean) => {
     const answered = answeredIds.has(slot.question.id);
     const current = slot.page === currentPage;
 
-    let tone = "border-line bg-panel text-muted hover:border-blue hover:text-blue";
-    if (answered) tone = "border-blue bg-blue text-white hover:bg-blue-dark";
-    if (current) tone += " ring-2 ring-ink ring-offset-1";
+    let tone = "border-glass-line text-text-muted hover:border-glass-line-strong hover:text-text";
+    if (answered) tone = "border-accent bg-accent text-white hover:bg-accent-deep";
+    if (current) tone += " ring-1 ring-accent-2 ring-offset-2 ring-offset-bg";
 
     return (
-      <li key={slot.question.id}>
+      <li key={slot.question.id} className={kraj ? "sm:mr-3.5" : ""}>
         <button
           type="button"
           onClick={() => onJump(slot)}
           aria-label={`${t.navJump} ${slot.number} — ${answered ? t.navAnswered : t.navUnanswered}`}
-          className={`font-display h-8 min-w-8 rounded border-2 px-1 text-sm font-bold transition-colors ${tone}`}
+          className={`tabular h-9 min-w-9 rounded-sm border px-1 font-display text-[0.8125rem] font-semibold transition-colors duration-150 ${tone}`}
         >
           {slot.number}
         </button>
@@ -49,31 +52,33 @@ export default function QuestionNav({ slots, answeredIds, currentPage, onJump, t
   };
 
   return (
-    <section className="panel p-4" aria-label={t.navTitle}>
-      <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1">
-        <span className="tag text-muted">{t.navTitle}</span>
-        <span className="ml-auto flex items-center gap-3 text-xs text-muted">
-          <span className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded-sm border-2 border-blue bg-blue" aria-hidden="true" />
-            {t.navAnswered} ({answeredCount})
+    <GlassPanel as="section" padding="sm" className="sm:p-5" aria-label={t.navTitle}>
+      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <span className="font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
+          {t.navTitle}
+        </span>
+        <span className="flex items-center gap-4 text-xs text-text-muted sm:ml-auto">
+          <span className="flex items-center gap-2">
+            <span className="h-3 w-3 rounded-[3px] border border-accent bg-accent" aria-hidden="true" />
+            {t.navAnswered} <span className="tabular">({answeredCount})</span>
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded-sm border-2 border-line bg-panel" aria-hidden="true" />
-            {t.navUnanswered} ({slots.length - answeredCount})
+          <span className="flex items-center gap-2">
+            <span className="h-3 w-3 rounded-[3px] border border-glass-line-strong" aria-hidden="true" />
+            {t.navUnanswered} <span className="tabular">({slots.length - answeredCount})</span>
           </span>
         </span>
       </div>
 
-      <div className="flex flex-wrap items-start gap-x-4 gap-y-3">
-        {pages.map((pageSlots, i) => (
-          <div key={i} className="flex items-center gap-4">
-            {i > 0 && <span className="hidden h-6 w-px bg-line sm:block" aria-hidden="true" />}
-            <ol className="flex flex-wrap gap-1.5" aria-label={`${t.pageLabel} ${i + 1}`}>
-              {pageSlots.map(cell)}
-            </ol>
-          </div>
-        ))}
-      </div>
-    </section>
+      {/*
+        Jedna lista koja teče redom. Stranice razdvaja veći razmak (samo od sm
+        naviše), ne linija ni zasebna lista: na uskom ekranu bi se svaka
+        stranica lomila za sebe i ostavljala redove sa po dva broja.
+      */}
+      <ol className="flex flex-wrap gap-1.5">
+        {pages.flatMap((pageSlots, i) =>
+          pageSlots.map((slot, j) => cell(slot, j === pageSlots.length - 1 && i < pages.length - 1)),
+        )}
+      </ol>
+    </GlassPanel>
   );
 }

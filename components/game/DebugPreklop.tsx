@@ -85,7 +85,7 @@ export default function DebugPreklop({ svijet, template, inputRef, dionica }: De
   return (
     <div
       data-debug-preklop
-      className="pointer-events-none absolute bottom-2 left-2 min-w-[11rem] rounded bg-ink/80 px-2 py-1 font-mono text-[11px] leading-tight text-white"
+      className="pointer-events-none absolute bottom-2 left-2 min-w-[11rem] rounded bg-bg/80 px-2 py-1 font-mono text-[11px] leading-tight text-white"
     >
       {red("laneId", stanje.put)}
       {red("traka", stanje.traka)}

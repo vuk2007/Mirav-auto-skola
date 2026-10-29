@@ -25,6 +25,7 @@ import { dovuciGeometriju, dovuciKicme, iviceRute } from "./rutaPodaci";
 import PokazivaciIzbor from "./PokazivaciIzbor";
 import SaobracajIzbor from "./SaobracajIzbor";
 import { useVolan } from "./useVolan";
+import { NazadDugme, ZvukDugme } from "./IgraDugmad";
 
 /**
  * Vožnja cijele rute u jednom potezu.
@@ -182,17 +183,10 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
         naOtvaranje={() => volan.release()}
         podesavanja={
           <>
-            <p className="text-muted">
+            <p className="text-text-muted">
               {ruta.cvorovi.map((c) => nodeById(c)?.name ?? c).join(" — ")} · {kilometraza(ruta)} km · {ruta.dionice.length} {t.rutaLegs.toLowerCase()}
             </p>
-            <button
-              type="button"
-              onClick={() => setMuted((m) => !m)}
-              aria-pressed={muted}
-              className="rounded border border-line bg-panel px-3 py-1 font-semibold"
-            >
-              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
-            </button>
+            <ZvukDugme muted={muted} onToggle={() => setMuted((m) => !m)} t={t} />
           </>
         }
         kontrole={
@@ -250,7 +244,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
                 <Hud label={t.rutaSurroundings} value={`${okolinaGotova}%`} />
               )}
             </div>
-            <p className="max-w-[16rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
+            <p className="max-w-[16rem] rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-semibold">
               {!dionica
                 ? ""
                 : dionica.vrsta === "grad"
@@ -278,24 +272,24 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
 
   return (
     <Okvir t={t} onExit={onExit} muted={muted} setMuted={setMuted}>
-      <div className="rounded border border-line bg-panel p-4">
+      <div className="rounded-md border border-glass-line bg-surface p-4">
         <h1 className="text-xl font-bold">{t.rutaTitle}</h1>
-        <p className="mt-1 text-sm text-muted">{t.rutaDesc}</p>
+        <p className="mt-1 text-sm text-text-muted">{t.rutaDesc}</p>
 
         {faza === "kraj" && (
-          <p className="font-display mt-3 text-lg font-bold text-blue uppercase">{t.rutaDone}</p>
+          <p className="font-display mt-3 text-lg font-bold text-accent-2 uppercase">{t.rutaDone}</p>
         )}
         {faza === "sudar" && (
-          <p className="font-display mt-3 text-lg font-bold text-red uppercase">{t.rutaCrash}</p>
+          <p className="font-display mt-3 text-lg font-bold text-err uppercase">{t.rutaCrash}</p>
         )}
         {faza === "greska" && (
-          <p className="font-display mt-3 text-lg font-bold text-red">{greska ?? t.rutaFailed}</p>
+          <p className="font-display mt-3 text-lg font-bold text-err">{greska ?? t.rutaFailed}</p>
         )}
 
         {(faza === "kraj" || faza === "sudar") && zabiljezeno.length > 0 && (
-          <div className="mt-3 rounded border-l-4 border-l-yellow bg-bg p-3">
-            <p className="font-display text-sm font-bold tracking-wide uppercase">{t.tripNoted}</p>
-            <ul className="mt-1 space-y-0.5 text-sm text-muted">
+          <div className="mt-3 rounded-md border-l-4 border-l-signal-yellow bg-bg p-3">
+            <p className="font-display text-sm font-bold tracking-[var(--tracking-caps)] uppercase">{t.tripNoted}</p>
+            <ul className="mt-1 space-y-0.5 text-sm text-text-muted">
               {zabiljezeno.map((v) => (
                 <li key={v}>{t[VIOLATION_LABEL[v]]}</li>
               ))}
@@ -312,7 +306,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
         <SaobracajIzbor vrijednost={saobracaj} promijeni={promijeniSaobracaj} t={t} />
 
         {ruta && faza !== "priprema" && (
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-3 text-sm text-text-muted">
             {ruta.cvorovi.map((c) => nodeById(c)?.name ?? c).join(" — ")} ·{" "}
             {kilometraza(ruta)} km · {ruta.dionice.length} {t.rutaLegs.toLowerCase()}
           </p>
@@ -322,7 +316,7 @@ export default function RouteScreen({ onExit }: { onExit: () => void }) {
           type="button"
           onClick={kreni}
           disabled={faza === "priprema" || od === doK}
-          className="font-display mt-4 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark disabled:opacity-50"
+          className="font-display mt-4 w-full rounded-md border border-accent-2 bg-accent px-4 py-2.5 text-lg font-bold tracking-[var(--tracking-caps)] text-white uppercase hover:bg-accent-deep disabled:opacity-50"
         >
           {faza === "priprema" ? t.rutaPrepare : t.rutaGo}
         </button>
@@ -342,11 +336,11 @@ function Izbor({
 }) {
   return (
     <label className="block text-sm">
-      <span className="font-display block font-bold tracking-wide uppercase">{labela}</span>
+      <span className="font-display block font-bold tracking-[var(--tracking-caps)] uppercase">{labela}</span>
       <select
         value={vrijednost}
         onChange={(e) => promijeni(e.target.value)}
-        className="mt-1 w-full rounded border border-line bg-bg px-2 py-2 text-base"
+        className="mt-1 w-full rounded-md border border-glass-line bg-bg px-2 py-2 text-base"
       >
         {MJESTA.map((n) => (
           <option key={n.id} value={n.id}>
@@ -374,22 +368,8 @@ function Okvir({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onExit}
-          className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-        >
-          ← {t.tripBack}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          aria-pressed={muted}
-          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
-          className="rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
-        >
-          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
-        </button>
+        <NazadDugme onClick={onExit}>{t.tripBack}</NazadDugme>
+        <ZvukDugme muted={muted} onToggle={() => setMuted((m) => !m)} t={t} samoIkona />
       </div>
       {children}
     </div>
@@ -398,8 +378,8 @@ function Okvir({
 
 function Hud({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border border-line bg-panel/90 px-2 py-1 text-center">
-      <div className="text-[10px] font-semibold tracking-wide text-muted uppercase">{label}</div>
+    <div className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-center">
+      <div className="text-[10px] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">{label}</div>
       <div className="font-display text-lg leading-none font-bold">{value}</div>
     </div>
   );

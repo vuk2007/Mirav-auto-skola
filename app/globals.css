@@ -1,49 +1,134 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Dizajn tokeni — saobraćajna signalizacija.
-   Plava je primarna (uskladiti sa brendom mirav.me), žuta je akcenat
-   preuzet sa znaka „prvenstvo prolaza" (romb).
+   Dizajn tokeni — tamni brend MIRAV (redizajn po referenci).
+
+   Jedna akcentna boja: električno plava. Zelena i crvena postoje samo kao
+   semantika tačno/netačno, i prigušene su. Sve boje u komponentama dolaze
+   odavde; komponente ne pišu heks vrijednosti.
+
+   Kontrast (WCAG AA) se provjerava skriptom qa/kontrast.mjs nad ovim
+   vrijednostima, pa svaka promjena ovdje mora proći i tamo.
 --------------------------------------------------------------------------- */
 @theme {
-  --color-ink: #191b20;
-  --color-paper: #faf8f3;
-  --color-panel: #ffffff;
-  --color-line: #e6e1d5;
-  /* Usklađeno sa logotipom (azur #4080F0). Za tekst i dugmad koristi se tamnija
-     nijansa iste porodice, jer #4080F0 na bijelom ima kontrast ~3:1 — premalo za
-     tekst. #2f6fd0 daje ~4,9:1, što prolazi WCAG AA. */
-  --color-blue: #2f6fd0;
-  --color-blue-dark: #2559a8;
-  --color-blue-soft: #eaf2fe;
-  /* Svijetli akcenat iz logotipa — za hover i dekoraciju, ne za sitan tekst. */
-  --color-blue-accent: #4080f0;
-  --color-yellow: #f4c300;
-  --color-red: #c8232c;
-  --color-red-soft: #fbeaeb;
-  --color-green: #2f7d33;
-  --color-green-soft: #e9f3e9;
-  --color-muted: #726b5c;
+  /* Pozadina: tamno-teget, ne crna. bg-2 je svjetliji ton za vinjetu i površine. */
+  --color-bg: #070b14;
+  --color-bg-2: #0b1222;
 
-  --font-display: var(--font-barlow-condensed), "Arial Narrow", ui-sans-serif, sans-serif;
+  /* Pune površine (meniji, modali) — za mjesta gdje se staklo ne bi čitalo. */
+  --color-surface: #0f1729;
+  --color-surface-2: #141e35;
+
+  /* Staklo: providna površina i tanka ivica. Štedljivo. */
+  --color-glass: rgb(255 255 255 / 0.04);
+  --color-glass-strong: rgb(255 255 255 / 0.07);
+  --color-glass-line: rgb(255 255 255 / 0.1);
+  --color-glass-line-strong: rgb(255 255 255 / 0.18);
+
+  /* Tekst */
+  --color-text: #f2f5fa;
+  --color-text-muted: #9aa6b8;
+
+  /* Akcenat. accent je za pune površine (dugme, traka), accent-2 za tekst i
+     ikone na tamnom, jer #2f6bff kao sitan tekst na teget pozadini ne prolazi AA. */
+  /* #2d68fa umjesto #2f6bff: bijeli tekst dugmeta tako prelazi 4,5:1 sa rezervom. */
+  --color-accent: #2d68fa;
+  --color-accent-2: #5b8cff;
+  --color-accent-deep: #1f55e0;
+  --color-accent-soft: rgb(47 107 255 / 0.14);
+  --color-accent-line: rgb(91 140 255 / 0.45);
+
+  /* Semantika: prigušeno, nikad neon. */
+  --color-ok: #5fc58f;
+  --color-ok-soft: rgb(95 197 143 / 0.1);
+  --color-ok-line: rgb(95 197 143 / 0.45);
+  --color-err: #ef7a7f;
+  --color-err-soft: rgb(239 122 127 / 0.1);
+  --color-err-line: rgb(239 122 127 / 0.45);
+
+  /* Prikaz stvarnog svijeta u HUD-u igre (semafor, žmigavac): nisu boje
+     interfejsa, nego isti tonovi kojima renderer crta svjetla na sceni
+     (lib/game/ui/draw.ts, PALETTE), da lampica u HUD-u liči na onu na putu. */
+  --color-signal-red: #c8232c;
+  --color-signal-yellow: #f4c300;
+  --color-signal-green: #2f7d33;
+
+  /* Radijusi */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Sjenke: glow samo na primarnom CTA i jednom-dva ključna elementa po ekranu. */
+  --shadow-glow: 0 10px 30px -10px rgb(47 107 255 / 0.65), 0 0 0 1px rgb(91 140 255 / 0.35) inset;
+  --shadow-glow-sm: 0 0 0 1px rgb(91 140 255 / 0.55), 0 0 18px -4px rgb(47 107 255 / 0.55);
+  --shadow-soft: 0 20px 50px -24px rgb(0 0 0 / 0.7);
+
+  /* Tipografija */
+  --font-display: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --tracking-label: 0.3em;
+  --tracking-caps: 0.14em;
+  --tracking-tight-display: -0.02em;
+
+  /* Pokret: kratko i bez odskakanja. */
+  --ease-izlaz: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* --- Prelazni aliasi starih imena -------------------------------------
+     Postoje samo dok se ekrani ne prebace na komponente iz components/ui.
+     Brišu se u posljednjoj fazi redizajna. */
+  --color-ink: var(--color-text);
+  --color-paper: var(--color-bg);
+  --color-panel: var(--color-surface);
+  --color-line: var(--color-glass-line);
+  --color-muted: var(--color-text-muted);
+  --color-blue: var(--color-accent);
+  --color-blue-dark: var(--color-accent-deep);
+  --color-blue-soft: var(--color-accent-soft);
+  --color-blue-accent: var(--color-accent-2);
+  --color-yellow: var(--color-accent-2);
+  --color-red: var(--color-err);
+  --color-red-soft: var(--color-err-soft);
+  --color-green: var(--color-ok);
+  --color-green-soft: var(--color-ok-soft);
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    color-scheme: dark;
+    /* Ispod kratke strane (i pri gumenom skrolu na iOS-u) ne smije da proviri bijela. */
+    background-color: var(--color-bg);
   }
 
   body {
-    background-color: var(--color-paper);
-    color: var(--color-ink);
+    position: relative;
+    isolation: isolate;
+    min-height: 100svh;
+    background-color: var(--color-bg);
+    color: var(--color-text);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Ugrađena verzija ne crta svoju pozadinu — nasljeđuje je od roditeljske stranice. */
-  body[data-embed="true"] {
-    background-color: transparent;
+  /*
+    Vinjeta preko cijele strane (ne samo prozora): plavičast sjaj fiksne
+    veličine gore desno, slabiji dolje lijevo, i tamnije bočne ivice. Sjaj
+    ima veličinu u pikselima, pa na dugoj strani (rezultat ispita) ne raste
+    sa njom. Embed ima istu pozadinu: na mirav.me stoji kao zaseban tamni blok.
+  */
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(1000px 620px at 88% -120px, rgb(47 107 255 / 0.17), transparent 70%),
+      radial-gradient(800px 600px at -10% 100%, rgb(47 107 255 / 0.06), transparent 70%),
+      linear-gradient(90deg, rgb(0 0 0 / 0.3), transparent 18%, transparent 82%, rgb(0 0 0 / 0.3)),
+      linear-gradient(180deg, var(--color-bg-2), var(--color-bg) 900px);
   }
 
   h1,
@@ -51,14 +136,19 @@
   h3 {
     font-family: var(--font-display);
     font-weight: 700;
-    letter-spacing: 0.01em;
+    letter-spacing: var(--tracking-tight-display);
+  }
+
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-text);
   }
 
   /* Fokus mora ostati jasno vidljiv na tastaturi. */
   :focus-visible {
-    outline: 3px solid var(--color-blue);
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline: 2px solid var(--color-accent-2);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 
   button {
@@ -68,56 +158,62 @@
   button:disabled {
     cursor: default;
   }
+
+  /* Brojevi koji se mijenjaju (tajmer, bodovi) ne smiju da „plešu". */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 @layer components {
-  /* Isprekidana „road-line" traka ispod zaglavlja. */
-  .road-line {
-    height: 6px;
-    background-image: repeating-linear-gradient(
-      to right,
-      var(--color-ink) 0 34px,
-      transparent 34px 62px
-    );
-    opacity: 0.85;
-  }
-
-  /* Žuti romb prvenstva puta — potpisni element brenda. */
+  /*
+    Prelazne klase starog izgleda. .diamond i .road-line više se ne crtaju,
+    .panel i .tag su prevedeni na nove tokene dok se ekrani ne prebace na
+    komponente. Brišu se u posljednjoj fazi.
+  */
+  .road-line,
   .diamond {
-    display: inline-block;
-    width: 0.85em;
-    height: 0.85em;
-    background-color: var(--color-yellow);
-    border: 2px solid var(--color-ink);
-    transform: rotate(45deg);
-    flex: none;
+    display: none;
   }
 
   .tag {
     font-family: var(--font-display);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 0.8125rem;
-    line-height: 1;
+    letter-spacing: var(--tracking-caps);
+    font-size: 0.75rem;
+    line-height: 1.2;
   }
 
   .panel {
-    background-color: var(--color-panel);
-    border: 1px solid var(--color-line);
-    border-radius: 4px;
+    background-color: var(--color-glass);
+    border: 1px solid var(--color-glass-line);
+    border-radius: var(--radius-lg);
   }
 
   /*
    * Simulacija ispita na širokom ekranu izlazi iz uske kolone sajta (max-w-3xl)
-   * do najviše 72rem, centrirano: kartica sa slikom i dva pitanja u tri kolone
+   * do najviše 69rem, centrirano, poravnato sa zaglavljem i podnožjem
+   * (max-w-6xl minus px-6): kartica sa slikom i dva pitanja u tri kolone
    * inače ostavlja odgovorima ~190px. Negativna margina, a ne 100vw širina —
    * 100vw uključuje scrollbar i dao bi horizontalni skrol.
    */
   @media (min-width: 64rem) {
     .exam-wide {
-      margin-inline: calc(50% - min(36rem, 50vw - 1.5rem));
+      margin-inline: calc(50% - min(34.5rem, 50vw - 1.5rem));
     }
+  }
+}
+
+/* Pojava modala: kratko podizanje i prelaz iz providnog. */
+@keyframes pojava {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import type { Landmark } from "@/lib/game/road/landmarks";
@@ -49,6 +50,7 @@ import PokazivaciIzbor from "./PokazivaciIzbor";
 import SaobracajIzbor from "./SaobracajIzbor";
 import TripMap from "./TripMap";
 import { useVolan } from "./useVolan";
+import { NazadDugme, ZvukDugme } from "./IgraDugmad";
 
 type Phase = "polazak" | "putokaz" | "voznja" | "grad" | "stigao" | "sudar";
 
@@ -246,9 +248,9 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
   if (!trip || phase === "polazak") {
     return (
       <Okvir t={t} onExit={onExit} muted={muted} setMuted={setMuted}>
-        <div className="rounded border border-line bg-panel p-4">
+        <div className="rounded-md border border-glass-line bg-surface p-4">
           <h1 className="text-xl font-bold">{t.tripTitle}</h1>
-          <p className="mt-1 text-sm text-muted">{t.tripDesc}</p>
+          <p className="mt-1 text-sm text-text-muted">{t.tripDesc}</p>
 
           {sacuvano && (
             <button
@@ -257,7 +259,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
                 setTrip(sacuvano);
                 setPhase("putokaz");
               }}
-              className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
+              className="font-display mt-3 w-full rounded-md border border-accent-2 bg-accent px-4 py-2.5 text-lg font-bold tracking-[var(--tracking-caps)] text-white uppercase hover:bg-accent-deep"
             >
               {t.tripResume} — {gdjeSam(sacuvano)?.name}
             </button>
@@ -272,14 +274,14 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
             />
             <span>
               <strong>{t.tripSummer}</strong>
-              <span className="block text-muted">{t.tripSummerHint}</span>
+              <span className="block text-text-muted">{t.tripSummerHint}</span>
             </span>
           </label>
 
           <PokazivaciIzbor vrijednost={pokazivaci} promijeni={promijeniPokazivace} t={t} />
           <SaobracajIzbor vrijednost={saobracaj} promijeni={promijeniSaobracaj} t={t} />
 
-          <h2 className="font-display mt-4 text-sm font-bold tracking-wide uppercase">
+          <h2 className="font-display mt-4 text-sm font-bold tracking-[var(--tracking-caps)] uppercase">
             {t.tripPickStart}
           </h2>
           <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
@@ -292,7 +294,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
                   setTrip(startTrip(n.id, Math.floor(Math.random() * 1e9), ljeto));
                   setPhase("putokaz");
                 }}
-                className="rounded border border-line bg-bg px-2 py-1.5 text-sm hover:border-blue hover:text-blue"
+                className="rounded-md border border-glass-line bg-bg px-2 py-1.5 text-sm hover:border-accent-2 hover:text-accent-2"
               >
                 {n.name}
               </button>
@@ -312,27 +314,20 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
         podesavanja={
           <>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripKm} {trip.km} km
         </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripLegs} {trip.legs}
         </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripTowns} {opstina(trip)}/25
         </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripCollected} {trip.seen.length}
         </span>
       </div>
-            <button
-              type="button"
-              onClick={() => setMuted((m) => !m)}
-              aria-pressed={muted}
-              className="rounded border border-line bg-panel px-3 py-1 font-semibold"
-            >
-              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span> {muted ? t.gameSoundOff : t.gameSoundOn}
-            </button>
+            <ZvukDugme muted={muted} onToggle={() => setMuted((m) => !m)} t={t} />
           </>
         }
         kontrole={
@@ -401,7 +396,7 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
                 />
                 <Hud label={t.gameTime} value={`${hud.t.toFixed(0)} s`} />
               </div>
-              <p className="max-w-[15rem] rounded border border-line bg-panel/90 px-2 py-1 text-xs font-semibold">
+              <p className="max-w-[15rem] rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-xs font-semibold">
                 {grad
                   ? `${t.tripCity} ${grad.index + 1}/${grad.count} — ${gradUlica?.name ?? ""}`
                   : scenario.title.me}
@@ -415,23 +410,23 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
   return (
     <Okvir t={t} onExit={onExit} muted={muted} setMuted={setMuted}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripKm} {trip.km} km
         </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripLegs} {trip.legs}
         </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripTowns} {opstina(trip)}/25
         </span>
-        <span className="font-display rounded border border-line bg-panel px-2 py-0.5 text-sm font-semibold tracking-wide uppercase">
+        <span className="font-display rounded-md border border-glass-line bg-surface px-2 py-0.5 text-sm font-semibold tracking-[var(--tracking-caps)] uppercase">
           {t.tripCollected} {trip.seen.length}
         </span>
       </div>
 
       {phase === "sudar" ? (
-        <div className="rounded border border-line bg-panel p-4">
-          <p className="font-display text-lg font-bold text-red uppercase">
+        <div className="rounded-md border border-glass-line bg-surface p-4">
+          <p className="font-display text-lg font-bold text-err uppercase">
             {grad ? t.tripCrashJunction : t.tripCrash}
           </p>
           <button
@@ -441,22 +436,22 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               setPokusaj((n) => n + 1);
               setPhase(grad ? "grad" : "voznja");
             }}
-            className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
+            className="font-display mt-3 w-full rounded-md border border-accent-2 bg-accent px-4 py-2.5 text-lg font-bold tracking-[var(--tracking-caps)] text-white uppercase hover:bg-accent-deep"
           >
             {t.tripRetry}
           </button>
         </div>
       ) : phase === "stigao" ? (
-        <div className="rounded border border-line bg-panel p-4">
-          <p className="text-sm text-muted">{t.tripArrived}</p>
+        <div className="rounded-md border border-glass-line bg-surface p-4">
+          <p className="text-sm text-text-muted">{t.tripArrived}</p>
           <h2 className="font-display text-2xl font-bold">{mjesto?.name}</h2>
 
           {zabiljezeno.length > 0 && (
-            <div className="mt-3 rounded border-l-4 border-l-yellow bg-bg p-3">
-              <p className="font-display text-sm font-bold tracking-wide uppercase">
+            <div className="mt-3 rounded-md border-l-4 border-l-signal-yellow bg-bg p-3">
+              <p className="font-display text-sm font-bold tracking-[var(--tracking-caps)] uppercase">
                 {t.tripNoted}
               </p>
-              <ul className="mt-1 space-y-0.5 text-sm text-muted">
+              <ul className="mt-1 space-y-0.5 text-sm text-text-muted">
                 {zabiljezeno.map((v) => (
                   <li key={v}>{t[VIOLATION_LABEL[v]]}</li>
                 ))}
@@ -464,15 +459,15 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
             </div>
           )}
 
-          <h3 className="font-display mt-3 text-sm font-bold tracking-wide uppercase">
+          <h3 className="font-display mt-3 text-sm font-bold tracking-[var(--tracking-caps)] uppercase">
             {t.tripSeenHere}
           </h3>
           {vidjeno.length === 0 ? (
-            <p className="mt-1 text-sm text-muted">{t.tripNothingSeen}</p>
+            <p className="mt-1 text-sm text-text-muted">{t.tripNothingSeen}</p>
           ) : (
             <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
               {vidjeno.map((l) => (
-                <li key={l.id} className="flex items-center gap-2 rounded border border-line bg-bg px-2 py-1.5">
+                <li key={l.id} className="flex items-center gap-2 rounded-md border border-glass-line bg-bg px-2 py-1.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={l.icon} alt="" width={28} height={28} aria-hidden="true" />
                   <span className="text-sm">{l.name}</span>
@@ -484,48 +479,48 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
           <button
             type="button"
             onClick={() => setPhase("putokaz")}
-            className="font-display mt-3 w-full rounded border-2 border-blue bg-blue px-4 py-2.5 text-lg font-bold tracking-wide text-white uppercase hover:bg-blue-dark"
+            className="font-display mt-3 w-full rounded-md border border-accent-2 bg-accent px-4 py-2.5 text-lg font-bold tracking-[var(--tracking-caps)] text-white uppercase hover:bg-accent-deep"
           >
             {t.tripContinue}
           </button>
         </div>
       ) : (
         putokaz && (
-          <div className="rounded border border-line bg-panel p-4">
+          <div className="rounded-md border border-glass-line bg-surface p-4">
             <div className="flex items-start justify-between gap-3">
               <h2 className="font-display text-2xl font-bold">{mjesto?.name}</h2>
               <button
                 type="button"
                 onClick={() => setKarta((k) => !k)}
                 aria-pressed={karta}
-                className="font-display rounded border border-line px-3 py-1 text-sm font-bold tracking-wide uppercase text-muted hover:border-blue hover:text-blue"
+                className="font-display rounded-md border border-glass-line px-3 py-1 text-sm font-bold tracking-[var(--tracking-caps)] uppercase text-text-muted hover:border-accent-2 hover:text-accent-2"
               >
                 {karta ? t.tripMapHide : t.tripMap}
               </button>
             </div>
 
             {karta && (
-              <div className="mt-3 rounded border border-line bg-bg p-2">
+              <div className="mt-3 rounded-md border border-glass-line bg-bg p-2">
                 <TripMap trip={trip} susjedi={putokaz.smjerovi.map((s) => s.to.id)} />
               </div>
             )}
 
             {putokaz.granica && (
-              <div className="mt-2 rounded border-l-4 border-l-red bg-bg p-3">
+              <div className="mt-2 rounded-md border-l-4 border-l-err-line bg-bg p-3">
                 <p className="font-display font-bold uppercase">{t.tripBorderTitle}</p>
-                <p className="mt-1 text-sm text-muted">{t.tripBorderDesc}</p>
+                <p className="mt-1 text-sm text-text-muted">{t.tripBorderDesc}</p>
               </div>
             )}
             {putokaz.slijepiKraj && (
-              <div className="mt-2 rounded border-l-4 border-l-yellow bg-bg p-3">
+              <div className="mt-2 rounded-md border-l-4 border-l-signal-yellow bg-bg p-3">
                 <p className="font-display font-bold uppercase">{t.tripDeadEndTitle}</p>
-                <p className="mt-1 text-sm text-muted">{t.tripDeadEndDesc}</p>
+                <p className="mt-1 text-sm text-text-muted">{t.tripDeadEndDesc}</p>
               </div>
             )}
 
             {putokaz.smjerovi.length > 0 && (
               <>
-                <h3 className="font-display mt-3 text-sm font-bold tracking-wide uppercase">
+                <h3 className="font-display mt-3 text-sm font-bold tracking-[var(--tracking-caps)] uppercase">
                   {t.tripWhereTo}
                 </h3>
                 <ul className="mt-2 space-y-1.5">
@@ -542,10 +537,10 @@ export default function TripScreen({ onExit }: { onExit: () => void }) {
               <button
                 type="button"
                 onClick={() => putokaz.nazad && kreni(putokaz.nazad)}
-                className={`font-display mt-3 w-full rounded border-2 px-4 py-2 font-bold tracking-wide uppercase ${
+                className={`font-display mt-3 w-full rounded-md border px-4 py-2 font-bold tracking-[var(--tracking-caps)] uppercase ${
                   putokaz.krajPuta
-                    ? "border-blue bg-blue text-white hover:bg-blue-dark"
-                    : "border-line text-muted hover:border-blue hover:text-blue"
+                    ? "border-accent-2 bg-accent text-white hover:bg-accent-deep"
+                    : "border-glass-line text-text-muted hover:border-accent-2 hover:text-accent-2"
                 }`}
               >
                 {t.tripTurnAround} — {putokaz.nazad.to.name}
@@ -579,16 +574,19 @@ function SmjerDugme({
     <button
       type="button"
       onClick={() => onPick(smjer)}
-      className="flex w-full items-center gap-3 rounded border border-line bg-bg px-3 py-2 text-left hover:border-blue"
+      className="flex w-full items-center gap-3 rounded-md border border-glass-line bg-bg px-3 py-2 text-left hover:border-accent-2"
     >
       <span className="flex-1">
         <span className="font-display block text-lg font-bold">{smjer.to.name}</span>
-        <span className="block text-xs text-muted">
+        <span className="block text-xs text-text-muted">
           {t[ROAD_LABEL[e.kind]]} · {e.km} km · {e.speedLimit} km/h
           {oznake.length > 0 && ` · ${oznake.join(" · ")}`}
         </span>
       </span>
-      <span className="font-display text-sm font-bold text-blue uppercase">{t.tripGo} →</span>
+      <span className="inline-flex items-center gap-1.5 font-display text-xs font-bold tracking-[var(--tracking-caps)] text-accent-2 uppercase">
+        {t.tripGo}
+        <ArrowRight aria-hidden="true" strokeWidth={1.75} className="h-4 w-4" />
+      </span>
     </button>
   );
 }
@@ -609,22 +607,8 @@ function Okvir({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onExit}
-          className="text-sm font-semibold text-blue underline-offset-4 hover:underline"
-        >
-          ← {t.tripBack}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          aria-pressed={muted}
-          aria-label={muted ? t.gameSoundOff : t.gameSoundOn}
-          className="rounded border border-line bg-panel px-2 py-0.5 text-sm text-muted hover:text-blue"
-        >
-          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
-        </button>
+        <NazadDugme onClick={onExit}>{t.tripBack}</NazadDugme>
+        <ZvukDugme muted={muted} onToggle={() => setMuted((m) => !m)} t={t} samoIkona />
       </div>
       {children}
     </div>
@@ -633,8 +617,8 @@ function Okvir({
 
 function Hud({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border border-line bg-panel/90 px-2 py-1 text-center">
-      <div className="text-[10px] font-semibold tracking-wide text-muted uppercase">{label}</div>
+    <div className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md px-2 py-1 text-center">
+      <div className="text-[10px] font-semibold tracking-[var(--tracking-caps)] text-text-muted uppercase">{label}</div>
       <div className="font-display text-lg leading-none font-bold">{value}</div>
     </div>
   );

@@ -39,7 +39,8 @@ export default function SimulatorShell({ photoScenarios, t, lang }: SimulatorShe
   const activeLabel = tabs.find((x) => x.value === tab)?.label ?? "";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      {/* Isti chipovi kao kategorije u vježbi; broj scena stoji uz naziv. */}
       <div className="flex flex-wrap gap-2" role="group" aria-label={t.simTitle}>
         {tabs.map((item) => (
           <button
@@ -47,16 +48,14 @@ export default function SimulatorShell({ photoScenarios, t, lang }: SimulatorShe
             type="button"
             onClick={() => setTab(item.value)}
             aria-pressed={tab === item.value}
-            className={`font-display rounded border-2 px-3.5 py-1.5 text-base font-semibold tracking-wide uppercase transition-colors ${
+            className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-4 font-display text-[0.6875rem] font-semibold tracking-[0.08em] uppercase transition-colors duration-200 ${
               tab === item.value
-                ? "border-blue bg-blue text-white"
-                : "border-line bg-panel text-ink hover:border-blue"
+                ? "border-accent-2 bg-accent-soft text-text"
+                : "border-glass-line text-text-muted hover:border-glass-line-strong hover:text-text"
             }`}
           >
             {item.label}
-            <span className="ml-1.5 font-body text-xs font-normal normal-case opacity-80">
-              {item.count}
-            </span>
+            <span className="tabular font-body text-xs font-normal tracking-normal text-text-muted">{item.count}</span>
           </button>
         ))}
       </div>

@@ -8,13 +8,13 @@ function htmlLang(lang: Lang): string {
 
 /**
  * Tekst pitanja ili odgovora: glavni tekst u stilu roditelja, a ispod njega
- * prevod — manji, sivi, kurziv, bez bolda. Vidi `Bilingual` u lib/questions.ts.
+ * prevod — manji, izbijeđen, kurziv, bez bolda. Vidi `Bilingual` u lib/questions.ts.
  *
- * Prevod je `text-muted` (#726b5c), a NE providan: ta boja drži kontrast od
- * najmanje 4.5:1 i na bijeloj (5.3) i na obojenim pozadinama odgovora (4.55–5.0).
- * Providnost bi ga spustila ispod granice.
+ * „Izbijeđen" je boja `text-muted` (#9aa6b8), a NE providnost: ta boja drži
+ * kontrast iznad 4,5:1 i na pozadini i na obojenim podlogama odgovora (vidi
+ * qa/kontrast.mjs). Providnost bi ga spustila ispod granice.
  *
- * Prevod je uvijek u fontu teksta, i kad stoji u naslovu pitanja: uski naslovni
+ * Prevod je uvijek u fontu teksta, i kad stoji u naslovu pitanja: naslovni
  * font u kurzivu i manjoj veličini se teško čita.
  */
 export default function BilingualText({ text }: { text: Bilingual }) {
@@ -24,7 +24,7 @@ export default function BilingualText({ text }: { text: Bilingual }) {
       {text.secondary && text.secondaryLang && (
         <span
           lang={htmlLang(text.secondaryLang)}
-          className="font-body mt-1 block text-[0.88em] leading-snug font-normal tracking-normal text-muted normal-case italic"
+          className="mt-1.5 block font-body text-[0.88em] leading-snug font-normal tracking-normal text-text-muted normal-case italic"
         >
           {text.secondary}
         </span>

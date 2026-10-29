@@ -95,7 +95,7 @@ export default function MiniMapa({ ruta, s, granica, t }: MiniMapaProps) {
   const tacka = gdje ? okvir.na(gdje.p.x, gdje.p.y) : null;
 
   return (
-    <div className="rounded border border-line bg-panel/90 p-1">
+    <div className="rounded-md border border-glass-line bg-surface/85 backdrop-blur-md p-1">
       <svg
         // Na telefonu manja (do 30 % širine), da ne pokrije put u kadru.
         style={{ width: `min(${SIROKO}px, 30vw)`, height: "auto" }}
@@ -108,7 +108,7 @@ export default function MiniMapa({ ruta, s, granica, t }: MiniMapaProps) {
         <path d={obris} className="fill-paper stroke-muted" strokeWidth={1} opacity={0.75} />
         <path
           d={put}
-          className="stroke-ink"
+          className="stroke-text"
           strokeWidth={2}
           strokeLinejoin="round"
           strokeLinecap="round"
@@ -125,14 +125,14 @@ export default function MiniMapa({ ruta, s, granica, t }: MiniMapaProps) {
         />
         {tacka && (
           <>
-            <circle cx={tacka[0]} cy={tacka[1]} r={5} className="fill-panel stroke-ink" strokeWidth={1} />
+            <circle cx={tacka[0]} cy={tacka[1]} r={5} className="fill-surface stroke-text" strokeWidth={1} />
             <circle cx={tacka[0]} cy={tacka[1]} r={3} className="fill-red" />
           </>
         )}
       </svg>
       {/* Licenca stoji na samoj mapi — podaci su tuđi i to se vidi tamo gdje se
           i koriste, a ne samo u nekom spisku. */}
-      <p className="mt-0.5 text-center text-[8px] leading-tight text-muted">{t.osmKratko}</p>
+      <p className="mt-0.5 text-center text-[8px] leading-tight text-text-muted">{t.osmKratko}</p>
     </div>
   );
 }

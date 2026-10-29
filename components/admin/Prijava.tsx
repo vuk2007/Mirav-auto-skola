@@ -67,7 +67,7 @@ export default function Prijava({ imaLozinku }: { imaLozinku: boolean }) {
         <button
           type="submit"
           disabled={!imaLozinku || salje || lozinka.length === 0}
-          className="font-display mt-5 w-full rounded bg-ink px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue disabled:opacity-40 disabled:hover:bg-ink"
+          className="font-display mt-5 w-full rounded bg-accent px-6 py-3 text-lg font-bold tracking-wide text-white uppercase transition-colors hover:bg-blue disabled:opacity-40 disabled:hover:bg-accent"
         >
           {salje ? "Provjera…" : "Uđi"}
         </button>
