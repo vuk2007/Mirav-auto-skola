@@ -9,9 +9,12 @@
 import { readFileSync } from "node:fs";
 
 const css = readFileSync("app/globals.css", "utf8");
-const tema = css.slice(css.indexOf("@theme"), css.indexOf("@layer base"));
-const tokeni = {};
-for (const m of tema.matchAll(/--color-([a-z0-9-]+):\s*([^;]+);/g)) tokeni[m[1]] = m[2].trim();
+const procitaj = (blok) => Object.fromEntries([...blok.matchAll(/--color-([a-z0-9-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
+// Tamna tema je @theme; svijetla mijenja dio tokena u :root[data-tema="svijetla"].
+const tamna = procitaj(css.slice(css.indexOf("@theme"), css.indexOf("@custom-variant")));
+const svjetliBlok = css.slice(css.indexOf(':root[data-tema="svijetla"]'));
+const svijetla = { ...tamna, ...procitaj(svjetliBlok.slice(0, svjetliBlok.indexOf("}"))) };
+let tokeni = tamna;
 
 function boja(ime) {
   let v = tokeni[ime];
@@ -71,27 +74,33 @@ const PAROVI = [
   ["err", "err-soft", 4.5, "crveni tekst na crvenoj podlozi"],
   ["bg", "ok", 4.5, "kvačica u zelenom krugu"],
   ["bg", "err", 4.5, "iksić u crvenom krugu; natpis na pritisnutoj kočnici"],
-  ["bg", "signal-yellow", 4.5, "strelica na upaljenom žmigavcu (igra)"],
+  ["signal-ink", "signal-yellow", 4.5, "strelica na upaljenom žmigavcu (igra)"],
   ["glass-line-strong", "bg-2", 1.5, "ivica stakla (dekorativna)"],
   ["accent-2", "bg-2", 3, "plava ivica izabranog odgovora (WCAG 1.4.11)"],
   ["accent-line", "bg-2", 1.5, "plava ivica ikonica i oznaka (dekorativna)"],
 ];
 
 let palo = 0;
-for (const [t, p, prag, opis] of PAROVI) {
-  const r = odnos(podloga(t), podloga(p));
-  const ok = r >= prag;
-  if (!ok) palo++;
-  console.log(`${ok ? "PASS" : "FAIL"}  ${r.toFixed(2).padStart(5)}:1  (≥ ${prag})  ${t} na ${p}  — ${opis}`);
+for (const [ime, t] of [["tamna", tamna], ["svijetla", svijetla]]) {
+  tokeni = t;
+  console.log(`
+— tema: ${ime}`);
+  for (const [t, p, prag, opis] of PAROVI) {
+    const r = odnos(podloga(t), podloga(p));
+    const ok = r >= prag;
+    if (!ok) palo++;
+    console.log(`${ok ? "PASS" : "FAIL"}  ${r.toFixed(2).padStart(5)}:1  (≥ ${prag})  ${t} na ${p}  — ${opis}`);
+  }
+
+  /* Bijeli tekst na primarnom dugmetu: oba kraja gradijenta (accent → accent-deep). */
+  for (const p of ["accent", "accent-deep"]) {
+    const r = odnos(BIJELA, boja(p));
+    const ok = r >= 4.5;
+    if (!ok) palo++;
+    console.log(`${ok ? "PASS" : "FAIL"}  ${r.toFixed(2).padStart(5)}:1  (≥ 4.5)  bijela na ${p}  — tekst primarnog dugmeta`);
+  }
 }
 
-/* Bijeli tekst na primarnom dugmetu: oba kraja gradijenta (accent → accent-deep). */
-for (const p of ["accent", "accent-deep"]) {
-  const r = odnos(BIJELA, boja(p));
-  const ok = r >= 4.5;
-  if (!ok) palo++;
-  console.log(`${ok ? "PASS" : "FAIL"}  ${r.toFixed(2).padStart(5)}:1  (≥ 4.5)  bijela na ${p}  — tekst primarnog dugmeta`);
-}
-
-console.log(`\nKontrast: ${PAROVI.length + 2} parova, ${palo} ispod praga`);
+console.log(`
+Kontrast: 2 teme × ${PAROVI.length + 2} parova, ${palo} ispod praga`);
 process.exit(palo ? 1 : 0);

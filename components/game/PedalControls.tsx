@@ -62,7 +62,7 @@ export default function PedalControls({
       onClick={() => pedals.toggleIndicator(side)}
       className={`font-display flex flex-1 items-center justify-center gap-2 rounded-md border py-2.5 text-base font-bold tracking-[var(--tracking-caps)] uppercase transition-colors select-none disabled:opacity-40 ${
         pedals.indicator === side
-          ? "border-signal-yellow bg-signal-yellow text-bg"
+          ? "border-signal-yellow bg-signal-yellow text-signal-ink"
           : "border-glass-line bg-surface text-text-muted"
       }`}
     >

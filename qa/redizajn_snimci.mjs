@@ -1,6 +1,9 @@
 // Redizajn — snimci svih glavnih ekrana na telefonu i desktopu.
 //
-//   node qa/redizajn_snimci.mjs <izlazni-folder> [osnova]
+//   node qa/redizajn_snimci.mjs <izlazni-folder> [osnova] [tamna|svijetla]
+//
+// Tema se bira kao podešavanje uređaja (prefers-color-scheme), pa se snima
+// baš ono što korisnik vidi pri prvoj posjeti (lib/tema.ts).
 //
 // Prolazi kroz ekrane na crnogorskom (natpisi dugmadi su poznati), a jezik se
 // prebacuje dugmetom na samom ekranu, pa skript ne zavisi od prevoda. Osim snimka,
@@ -10,6 +13,7 @@ import { chromium } from "playwright";
 
 const IZLAZ = process.argv[2] ?? "qa/snimci-redizajn";
 const OSNOVA = process.argv[3] ?? "http://localhost:3000";
+const SEMA = process.argv[4] === "svijetla" ? "light" : "dark";
 const SIRINE = [
   { w: 390, h: 844, ime: "390" },
   { w: 1440, h: 900, ime: "1440" },
@@ -69,7 +73,7 @@ async function potvrdiUpozorenje(p) {
 }
 
 async function nova(s) {
-  const ctx = await b.newContext({ viewport: { width: s.w, height: s.h }, deviceScaleFactor: 1 });
+  const ctx = await b.newContext({ colorScheme: SEMA, viewport: { width: s.w, height: s.h }, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
   p.on("dialog", (d) => d.accept());
   await p.goto(OSNOVA + "/", { waitUntil: "networkidle" });
@@ -171,7 +175,7 @@ for (const s of SIRINE) {
     ["/kazne", "kazne"],
     ["/embed", "embed"],
   ]) {
-    const ctx = await b.newContext({ viewport: { width: s.w, height: s.h } });
+    const ctx = await b.newContext({ colorScheme: SEMA, viewport: { width: s.w, height: s.h } });
     const p = await ctx.newPage();
     await p.goto(OSNOVA + ruta, { waitUntil: "networkidle" });
     await sakrijDevAlate(p);

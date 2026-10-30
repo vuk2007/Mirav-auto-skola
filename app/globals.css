@@ -52,6 +52,8 @@
   --color-signal-red: #c8232c;
   --color-signal-yellow: #f4c300;
   --color-signal-green: #2f7d33;
+  /* Znak na upaljenom žmigavcu: taman u oba režima, kao na pravom vozilu. */
+  --color-signal-ink: #070b14;
 
   /* Radijusi */
   --radius-sm: 8px;
@@ -93,6 +95,62 @@
   --color-green-soft: var(--color-ok-soft);
 }
 
+/* ---------------------------------------------------------------------------
+   Svijetli režim: iste uloge, svijetle vrijednosti. Tema se bira na <html>
+   (`data-tema`), prije prvog crtanja — skripta u app/layout.tsx čita
+   ?tema=, zapamćen izbor, pa podešavanje uređaja (lib/tema.ts).
+
+   Akcenat ostaje ista električno plava; plavi, zeleni i crveni tekst su
+   tamniji, jer na svijetloj podlozi svijetli tonovi ne prolaze AA. I ovaj
+   blok provjerava qa/kontrast.mjs.
+--------------------------------------------------------------------------- */
+@custom-variant svijetla (&:where([data-tema="svijetla"], [data-tema="svijetla"] *));
+
+:root {
+  /* Vinjeta pozadine (body::before): plavi sjaj i zatamnjene bočne ivice. */
+  --vinjeta-sjaj: rgb(47 107 255 / 0.17);
+  --vinjeta-sjaj-2: rgb(47 107 255 / 0.06);
+  --vinjeta-ivica: rgb(0 0 0 / 0.3);
+}
+
+:root[data-tema="svijetla"] {
+  color-scheme: light;
+
+  --color-bg: #f2f5fb;
+  --color-bg-2: #e6edf9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f5f8fd;
+
+  --color-glass: rgb(255 255 255 / 0.62);
+  --color-glass-strong: rgb(255 255 255 / 0.92);
+  --color-glass-line: rgb(15 35 80 / 0.12);
+  --color-glass-line-strong: rgb(15 35 80 / 0.24);
+
+  --color-text: #0a1428;
+  --color-text-muted: #4c5a70;
+
+  --color-accent: #2d68fa;
+  --color-accent-2: #1a4dd2;
+  --color-accent-deep: #1f55e0;
+  --color-accent-soft: rgb(45 104 250 / 0.1);
+  --color-accent-line: rgb(45 104 250 / 0.4);
+
+  --color-ok: #136840;
+  --color-ok-soft: rgb(19 104 64 / 0.09);
+  --color-ok-line: rgb(19 104 64 / 0.4);
+  --color-err: #b3242f;
+  --color-err-soft: rgb(179 36 47 / 0.07);
+  --color-err-line: rgb(179 36 47 / 0.4);
+
+  --shadow-glow: 0 10px 28px -12px rgb(45 104 250 / 0.55), 0 0 0 1px rgb(91 140 255 / 0.35) inset;
+  --shadow-glow-sm: 0 0 0 1px rgb(45 104 250 / 0.45), 0 0 16px -6px rgb(45 104 250 / 0.45);
+  --shadow-soft: 0 20px 45px -24px rgb(16 36 84 / 0.28);
+
+  --vinjeta-sjaj: rgb(45 104 250 / 0.14);
+  --vinjeta-sjaj-2: rgb(45 104 250 / 0.06);
+  --vinjeta-ivica: rgb(15 35 80 / 0.035);
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
@@ -116,7 +174,7 @@
     Vinjeta preko cijele strane (ne samo prozora): plavičast sjaj fiksne
     veličine gore desno, slabiji dolje lijevo, i tamnije bočne ivice. Sjaj
     ima veličinu u pikselima, pa na dugoj strani (rezultat ispita) ne raste
-    sa njom. Embed ima istu pozadinu: na mirav.me stoji kao zaseban tamni blok.
+    sa njom. Embed ima istu pozadinu, u temi koju prati i glavni sajt (vidi lib/tema.ts).
   */
   body::before {
     content: "";
@@ -125,9 +183,9 @@
     z-index: -1;
     pointer-events: none;
     background:
-      radial-gradient(1000px 620px at 88% -120px, rgb(47 107 255 / 0.17), transparent 70%),
-      radial-gradient(800px 600px at -10% 100%, rgb(47 107 255 / 0.06), transparent 70%),
-      linear-gradient(90deg, rgb(0 0 0 / 0.3), transparent 18%, transparent 82%, rgb(0 0 0 / 0.3)),
+      radial-gradient(1000px 620px at 88% -120px, var(--vinjeta-sjaj), transparent 70%),
+      radial-gradient(800px 600px at -10% 100%, var(--vinjeta-sjaj-2), transparent 70%),
+      linear-gradient(90deg, var(--vinjeta-ivica), transparent 18%, transparent 82%, var(--vinjeta-ivica)),
       linear-gradient(180deg, var(--color-bg-2), var(--color-bg) 900px);
   }
 

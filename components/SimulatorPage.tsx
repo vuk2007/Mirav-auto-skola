@@ -6,6 +6,7 @@ import { loadQuestions } from "@/lib/questions";
 import { buildScenarios, type SimScenario } from "@/lib/simulator";
 import { useApp } from "./AppProvider";
 import LangSwitch from "./LangSwitch";
+import TemaSwitch from "./TemaSwitch";
 import LiteratureModal from "./LiteratureModal";
 import SimulatorShell from "./sim/SimulatorShell";
 
@@ -54,6 +55,7 @@ export default function SimulatorPage({ showControls = true }: { showControls?: 
             </button>
 
             <LangSwitch />
+            <TemaSwitch />
           </>
         )}
       </div>

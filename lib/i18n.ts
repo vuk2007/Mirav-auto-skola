@@ -26,6 +26,10 @@ export interface Dict {
   close: string;
   literature: string;
   langLabel: string;
+  /** Izgled sajta: naslov u meniju i natpisi prekidača teme (lib/tema.ts). */
+  temaLabel: string;
+  temaSvijetla: string;
+  temaTamna: string;
   igraPodesavanja: string;
   igraZatvoriPodesavanja: string;
   footerNote: string;
@@ -549,6 +553,9 @@ const me: Dict = {
   close: "Zatvori",
   literature: "Literatura",
   langLabel: "Jezik",
+  temaLabel: "Izgled",
+  temaSvijetla: "Svijetli režim",
+  temaTamna: "Tamni režim",
   igraPodesavanja: "Podešavanja",
   igraZatvoriPodesavanja: "Zatvori podešavanja",
   footerNote:
@@ -1094,6 +1101,9 @@ const en: Dict = {
   close: "Close",
   literature: "Sources",
   langLabel: "Language",
+  temaLabel: "Appearance",
+  temaSvijetla: "Light mode",
+  temaTamna: "Dark mode",
   igraPodesavanja: "Settings",
   igraZatvoriPodesavanja: "Close settings",
   footerNote:
@@ -1636,6 +1646,9 @@ const sq: Dict = {
   close: "Mbyll",
   literature: "Literatura",
   langLabel: "Gjuha",
+  temaLabel: "Pamja",
+  temaSvijetla: "Modaliteti i ndritshëm",
+  temaTamna: "Modaliteti i errët",
   igraPodesavanja: "Cilësimet",
   igraZatvoriPodesavanja: "Mbyll cilësimet",
   footerNote:
@@ -2185,6 +2198,9 @@ const ru: Dict = {
   close: "Закрыть",
   literature: "Источники",
   langLabel: "Язык",
+  temaLabel: "Оформление",
+  temaSvijetla: "Светлая тема",
+  temaTamna: "Тёмная тема",
   igraPodesavanja: "Настройки",
   igraZatvoriPodesavanja: "Закрыть настройки",
   footerNote:
@@ -2734,6 +2750,9 @@ const tr: Dict = {
   close: "Kapat",
   literature: "Kaynaklar",
   langLabel: "Dil",
+  temaLabel: "Görünüm",
+  temaSvijetla: "Açık mod",
+  temaTamna: "Koyu mod",
   igraPodesavanja: "Ayarlar",
   igraZatvoriPodesavanja: "Ayarları kapat",
   footerNote:

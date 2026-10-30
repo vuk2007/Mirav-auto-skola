@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { useApp } from "@/components/AppProvider";
 import LangSwitch from "@/components/LangSwitch";
+import TemaSwitch from "@/components/TemaSwitch";
 import Button from "@/components/ui/Button";
 import GlassPanel from "@/components/ui/GlassPanel";
 import IconCircle from "@/components/ui/IconCircle";
@@ -80,8 +81,9 @@ export default function GamePage({ showLanguage = true }: { showLanguage?: boole
       {/* Unutar kviza prebacivač jezika već stoji u gornjoj traci, pa se ovdje
           izostavlja — dva ista prebacivača jedan iznad drugog samo zbunjuju. */}
       {showLanguage && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <LangSwitch />
+          <TemaSwitch />
         </div>
       )}
 

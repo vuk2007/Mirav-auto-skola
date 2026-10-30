@@ -45,6 +45,7 @@ import { buildScenarios, type SimScenario } from "@/lib/simulator";
 import { ArrowLeft, Check, Flag, X } from "lucide-react";
 import { useApp } from "./AppProvider";
 import LangSwitch from "./LangSwitch";
+import TemaSwitch from "./TemaSwitch";
 import Controls from "./Controls";
 import { LinkKazne } from "./PenaltyLoader";
 import ExamBriefing from "./ExamBriefing";
@@ -531,7 +532,7 @@ export default function Quiz({ compact = false }: QuizProps) {
         traka tamo nosi i jezik i linkove.
       */}
       {(compact || screen !== "landing") && (
-        <div className={`flex flex-wrap items-center gap-x-5 gap-y-2 ${siroko ? "exam-wide" : ""}`}>
+        <div className={`flex flex-wrap items-center gap-y-2 ${compact ? "gap-x-3" : "gap-x-5"} ${siroko ? "exam-wide" : ""}`}>
           {screen !== "landing" && (
             <button
               type="button"
@@ -561,7 +562,11 @@ export default function Quiz({ compact = false }: QuizProps) {
                   {t.literature}
                 </button>
               </div>
-              <LangSwitch />
+              {/* Jezik i tema zajedno: kad ne stanu u red, prelaze zajedno. */}
+              <div className="flex flex-none items-center gap-2">
+                <LangSwitch />
+                <TemaSwitch />
+              </div>
             </>
           )}
         </div>

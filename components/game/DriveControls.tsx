@@ -159,7 +159,7 @@ export default function DriveControls({
       onClick={() => volan.toggleIndicator(side)}
       className={`font-display flex flex-1 touch-none items-center justify-center rounded-md border text-2xl font-bold transition-colors select-none disabled:opacity-40 ${
         volan.indicator === side
-          ? "border-signal-yellow bg-signal-yellow text-bg"
+          ? "border-signal-yellow bg-signal-yellow text-signal-ink"
           : "border-glass-line bg-surface text-text-muted"
       }`}
     >
@@ -190,7 +190,7 @@ export default function DriveControls({
               ref={strana === "left" ? lijevaLampa : desnaLampa}
               data-svijetli="ne"
               aria-hidden="true"
-              className="font-display flex flex-1 items-center justify-center rounded-md border border-glass-line bg-surface text-2xl font-bold text-text-muted select-none data-[svijetli=da]:border-signal-yellow data-[svijetli=da]:bg-signal-yellow data-[svijetli=da]:text-bg"
+              className="font-display flex flex-1 items-center justify-center rounded-md border border-glass-line bg-surface text-2xl font-bold text-text-muted select-none data-[svijetli=da]:border-signal-yellow data-[svijetli=da]:bg-signal-yellow data-[svijetli=da]:text-signal-ink"
             >
               {strana === "left" ? (
                 <ChevronLeft strokeWidth={2.25} className="h-6 w-6" />

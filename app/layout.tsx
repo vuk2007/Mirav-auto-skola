@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Inter, Montserrat } from "next/font/google";
+import { SKRIPTA_TEME } from "@/lib/tema";
 import "./globals.css";
 
 /*
@@ -29,12 +30,21 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#070b14",
+  // Traka preglednika na telefonu: boja pozadine teme koju uređaj traži.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f2f5fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#070b14" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="sr-ME" className={`${inter.variable} ${montserrat.variable}`}>
+    // `data-tema` postavlja skripta ispod prije prvog crtanja (lib/tema.ts),
+    // pa se atribut na serveru i klijentu namjerno razlikuje.
+    <html lang="sr-ME" className={`${inter.variable} ${montserrat.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: SKRIPTA_TEME }} />
+      </head>
       <body>
         {children}
         {/*

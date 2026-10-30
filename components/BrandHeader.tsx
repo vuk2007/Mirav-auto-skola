@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { PENALTIES_ENABLED } from "@/lib/config";
 import { useApp } from "./AppProvider";
 import LangSwitch from "./LangSwitch";
+import TemaSwitch from "./TemaSwitch";
 import { LinkKazne } from "./PenaltyLoader";
 
 /**
@@ -15,9 +16,11 @@ import { LinkKazne } from "./PenaltyLoader";
  * izbor jezika, literaturu i spisak kazni. Od širine `sm` sve to stoji u
  * traci, bez menija.
  *
- * Logo je tamna dvobojna varijanta (`public/mirav-logo-tamni.png`, pravi je
- * scripts/gen-logo-tamni.mjs iz originala). Ako MIRAV pošalje SVG, dovoljno
- * je zamijeniti taj fajl.
+ * U tamnoj temi logo je dvobojna varijanta (`public/mirav-logo-tamni.png`,
+ * pravi je scripts/gen-logo-tamni.mjs iz originala), u svijetloj original
+ * škole (`public/mirav-logo.png`). Oba su u stranici, a CSS pokazuje jedan,
+ * pa nema treptaja pri učitavanju. Ako MIRAV pošalje SVG, dovoljno je
+ * zamijeniti te fajlove.
  */
 export default function BrandHeader() {
   const { goHome, t, setLiteratureOpen } = useApp();
@@ -74,7 +77,15 @@ export default function BrandHeader() {
             width={2400}
             height={686}
             priority
-            className="h-10 w-auto sm:h-11"
+            className="h-10 w-auto sm:h-11 svijetla:hidden"
+          />
+          <Image
+            src="/mirav-logo.png"
+            alt="Auto-škola MIRAV"
+            width={2400}
+            height={686}
+            priority
+            className="hidden h-10 w-auto sm:h-11 svijetla:block"
           />
         </button>
 
@@ -82,6 +93,7 @@ export default function BrandHeader() {
           {PENALTIES_ENABLED && <LinkKazne t={t} />}
           {literatura}
           <LangSwitch />
+          <TemaSwitch />
         </nav>
 
         <button
@@ -108,6 +120,10 @@ export default function BrandHeader() {
             {t.langLabel}
           </p>
           <LangSwitch />
+          <p className="mt-4 mb-3 font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
+            {t.temaLabel}
+          </p>
+          <TemaSwitch />
           <div className="mt-4 flex flex-col border-t border-glass-line pt-2">
             {literatura}
             {PENALTIES_ENABLED && <LinkKazne t={t} />}

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ChevronDown, Settings2 } from "lucide-react";
 import { useApp } from "@/components/AppProvider";
 import LangSwitch from "@/components/LangSwitch";
+import TemaSwitch from "@/components/TemaSwitch";
 
 /**
  * Okvir vožnje (redizajn za telefon): igra preko cijelog ekrana — gore uska
@@ -116,6 +117,12 @@ export default function IgraOkvir({
                     {t.langLabel}
                   </span>
                   <LangSwitch />
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-display text-[0.6875rem] font-semibold tracking-[var(--tracking-label)] text-text-muted uppercase">
+                    {t.temaLabel}
+                  </span>
+                  <TemaSwitch />
                 </div>
               </div>
             </div>
