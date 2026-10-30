@@ -43,7 +43,6 @@ export interface Dict {
   heroTitle1: string;
   heroTitle2: string;
   heroLead: string;
-  heroWords: string;
   practiceMeta: string;
   menuLabel: string;
   practiceTitle: string;
@@ -569,7 +568,6 @@ const me: Dict = {
   heroTitle1: "Auto škola Mirav",
   heroTitle2: "Spremni za ispit.",
   heroLead: "Pitanja za B kategoriju na pet jezika. Vježbajte bez pritiska, pa provjerite znanje pod uslovima pravog ispita.",
-  heroWords: "Disciplina · Znanje · Sigurnost · Sloboda",
   practiceMeta: "Bez tajmera · tačan odgovor odmah",
   menuLabel: "Meni",
   practiceTitle: "Vježba",
@@ -1117,7 +1115,6 @@ const en: Dict = {
   heroTitle1: "Mirav Driving School",
   heroTitle2: "Ready for the exam.",
   heroLead: "Category B questions in five languages. Practise without pressure, then test yourself under real exam conditions.",
-  heroWords: "Discipline · Knowledge · Safety · Freedom",
   practiceMeta: "No timer · answer shown instantly",
   menuLabel: "Menu",
   practiceTitle: "Practice",
@@ -1662,7 +1659,6 @@ const sq: Dict = {
   heroTitle1: "Auto shkolla Mirav",
   heroTitle2: "Gati për provimin.",
   heroLead: "Pyetje për kategorinë B në pesë gjuhë. Ushtrohuni pa presion, pastaj provoni njohuritë në kushtet e provimit të vërtetë.",
-  heroWords: "Disiplinë · Dije · Siguri · Liri",
   practiceMeta: "Pa kohëmatës · përgjigjja menjëherë",
   menuLabel: "Menyja",
   practiceTitle: "Ushtrim",
@@ -2214,7 +2210,6 @@ const ru: Dict = {
   heroTitle1: "Автошкола Mirav",
   heroTitle2: "Готовы к экзамену.",
   heroLead: "Вопросы категории B на пяти языках. Тренируйтесь без спешки, затем проверьте себя в условиях настоящего экзамена.",
-  heroWords: "Дисциплина · Знание · Безопасность · Свобода",
   practiceMeta: "Без таймера · ответ сразу",
   menuLabel: "Меню",
   practiceTitle: "Тренировка",
@@ -2766,7 +2761,6 @@ const tr: Dict = {
   heroTitle1: "Mirav Sürücü Kursu",
   heroTitle2: "Sınava hazır olun.",
   heroLead: "Beş dilde B sınıfı soruları. Baskı olmadan çalışın, ardından gerçek sınav koşullarında kendinizi deneyin.",
-  heroWords: "Disiplin · Bilgi · Güvenlik · Özgürlük",
   practiceMeta: "Süre yok · cevap hemen",
   menuLabel: "Menü",
   practiceTitle: "Alıştırma",

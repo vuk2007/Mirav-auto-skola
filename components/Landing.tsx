@@ -6,7 +6,6 @@ import { EXAM_MINUTES, EXAM_PASS_POINTS, EXAM_QUESTION_COUNT, EXAM_TOTAL_POINTS 
 import { pointsLabel, type Dict, type Lang } from "@/lib/i18n";
 import type { BestExam, PracticeState } from "@/lib/storage";
 import CategoryChips from "./CategoryChips";
-import HeroFoto from "./HeroFoto";
 import Button from "./ui/Button";
 import HexBadge from "./ui/HexBadge";
 import IconCircle from "./ui/IconCircle";
@@ -37,7 +36,8 @@ interface LandingProps {
  *
  * Raspored prati širinu samog bloka (container queries), ne prozora: u
  * ugrađenoj verziji na mirav.me blok je uži od prozora, i tada ostaje u
- * jednoj koloni. Od @4xl (56 rem) hero se dijeli na tekst i fotografiju.
+ * jednoj koloni. Hero je samo tekst i dugmad (kartica sa ilustracijom auta
+ * je uklonjena na zahtjev korisnika 2026-10-30).
  *
  * Brojevi dolaze iz lib/config.ts, da tekst ne odluta od stvarnih
  * parametara ispita.
@@ -61,7 +61,7 @@ export default function Landing({
   return (
     <div className="@container">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="grid gap-10 @4xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] @4xl:items-center @4xl:gap-14">
+      <section>
         <div>
           <SectionLabel second={t.heroLabel2}>{t.heroLabel1}</SectionLabel>
 
@@ -104,7 +104,6 @@ export default function Landing({
           )}
         </div>
 
-        <HeroFoto words={t.heroWords} />
       </section>
 
       {/* ── Ključni broj i režimi ──────────────────────────────────────── */}
