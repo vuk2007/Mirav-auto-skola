@@ -69,7 +69,7 @@ export default function UiPregled() {
             <Badge tone="accent">3 boda</Badge>
             <Badge tone="ok">Tačno</Badge>
             <Badge tone="err">Netačno</Badge>
-            <Badge icon={<TimerIkona strokeWidth={1.5} />}>45 min</Badge>
+            <Badge icon={<TimerIkona strokeWidth={1.5} />}>60 min</Badge>
           </div>
           <div className="flex flex-wrap items-center gap-8">
             <Timer seconds={2700} label="Preostalo" />

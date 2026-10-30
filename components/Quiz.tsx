@@ -333,7 +333,7 @@ export default function Quiz({ compact = false }: QuizProps) {
   /**
    * Preostalo vrijeme se računa iz apsolutnog roka, a NE oduzimanjem po otkucaju
    * intervala: browseri prigušuju setInterval u pozadinskim tabovima (i do jednom
-   * u minutu), pa bi brojanje otkucaja dalo kandidatu znatno više od 45 minuta.
+   * u minutu), pa bi brojanje otkucaja dalo kandidatu znatno više od zadatog vremena.
    * Ovako sat ostaje tačan i sam se ispravi kad se tab vrati u prvi plan.
    */
   useEffect(() => {

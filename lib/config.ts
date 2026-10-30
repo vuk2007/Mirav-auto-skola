@@ -153,7 +153,7 @@ export function assertExamStructure(): void {
 assertExamStructure();
 
 /** Trajanje ispita u minutima. */
-export const EXAM_MINUTES = 45; // 45 minuta
+export const EXAM_MINUTES = 60; // 60 minuta (odluka korisnika 2026-10-30; ranije 45)
 
 /**
  * Bodovi za `ordering` pitanja u VJEŽBI — u katalogu nemaju bod
