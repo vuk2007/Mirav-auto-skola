@@ -9,6 +9,7 @@ import { bilingualOption, bilingualText, type ExamSlot } from "@/lib/questions";
 import { OPTION_KEYS, type Answer, type Question } from "@/lib/types";
 import BilingualText from "./BilingualText";
 import OrderingInput from "./OrderingInput";
+import PrijavaGreske from "./PrijavaGreske";
 import Badge from "./ui/Badge";
 import GlassPanel from "./ui/GlassPanel";
 
@@ -188,6 +189,8 @@ function ExamQuestion({ slot, answers, drafts, onAnswer, onOrderingChange, t, la
           })}
         </div>
       )}
+
+      <PrijavaGreske t={t} lang={lang} pitanje={question} rezim="ispit" className="mt-1" />
     </section>
   );
 }

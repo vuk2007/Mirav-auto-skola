@@ -17,6 +17,7 @@ import {
 } from "@/lib/questions";
 import { OPTION_KEYS, type AnswerRecord, type Question } from "@/lib/types";
 import BilingualText from "./BilingualText";
+import PrijavaGreske from "./PrijavaGreske";
 import Badge from "./ui/Badge";
 import Button from "./ui/Button";
 import GlassPanel from "./ui/GlassPanel";
@@ -287,6 +288,8 @@ export default function ResultCard({
                         </div>
                       </div>
                     )}
+
+                    <PrijavaGreske t={t} lang={lang} pitanje={q} rezim="rezultat" className="mt-3" />
                   </li>
                 );
               })}

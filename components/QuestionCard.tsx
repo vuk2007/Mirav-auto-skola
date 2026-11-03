@@ -13,6 +13,7 @@ import { OPTION_KEYS, type OptionKey, type Question } from "@/lib/types";
 import BilingualText from "./BilingualText";
 import OptionButton from "./OptionButton";
 import OrderingInput from "./OrderingInput";
+import PrijavaGreske from "./PrijavaGreske";
 import Badge from "./ui/Badge";
 import GlassPanel from "./ui/GlassPanel";
 
@@ -141,6 +142,8 @@ export default function QuestionCard({
       {revealed && !correct && PENALTIES_ENABLED && (
         <PenaltyForQuestion questionId={question.id} t={t} lang={lang} />
       )}
+
+      <PrijavaGreske t={t} lang={lang} pitanje={question} rezim="vjezba" className="mt-3" />
     </GlassPanel>
   );
 }

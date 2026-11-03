@@ -30,6 +30,25 @@ export interface Dict {
   temaLabel: string;
   temaSvijetla: string;
   temaTamna: string;
+  /** Prijava greške (components/PrijavaGreske.tsx, lib/prijava.ts). */
+  prijavaDugme: string;
+  prijavaVrsta: string;
+  prijavaVrstaOdgovor: string;
+  prijavaVrstaTekst: string;
+  prijavaVrstaSlika: string;
+  prijavaVrstaSajt: string;
+  prijavaVrstaDrugo: string;
+  prijavaOpis: string;
+  prijavaOpisPomoc: string;
+  prijavaKontakt: string;
+  prijavaKontaktPomoc: string;
+  prijavaPosalji: string;
+  prijavaSalje: string;
+  prijavaHvala: string;
+  prijavaGreska: string;
+  prijavaPrevise: string;
+  prijavaKratko: string;
+  prijavaIspitVrijeme: string;
   igraPodesavanja: string;
   igraZatvoriPodesavanja: string;
   footerNote: string;
@@ -555,6 +574,24 @@ const me: Dict = {
   temaLabel: "Izgled",
   temaSvijetla: "Svijetli režim",
   temaTamna: "Tamni režim",
+  prijavaDugme: "Prijavi grešku",
+  prijavaVrsta: "Vrsta greške",
+  prijavaVrstaOdgovor: "Netačan odgovor",
+  prijavaVrstaTekst: "Greška u tekstu ili prevodu",
+  prijavaVrstaSlika: "Problem sa slikom",
+  prijavaVrstaSajt: "Sajt ne radi kako treba",
+  prijavaVrstaDrugo: "Nešto drugo",
+  prijavaOpis: "Opis",
+  prijavaOpisPomoc: "Šta nije u redu?",
+  prijavaKontakt: "Email ili telefon (nije obavezno)",
+  prijavaKontaktPomoc: "Samo ako želite da vam se javimo.",
+  prijavaPosalji: "Pošalji prijavu",
+  prijavaSalje: "Šaljem…",
+  prijavaHvala: "Hvala! Prijava je poslata.",
+  prijavaGreska: "Slanje nije uspjelo. Pokušajte ponovo.",
+  prijavaPrevise: "Poslato je previše prijava. Pokušajte ponovo kasnije.",
+  prijavaKratko: "Ukratko opišite grešku.",
+  prijavaIspitVrijeme: "Vrijeme ispita teče dok pišete prijavu.",
   igraPodesavanja: "Podešavanja",
   igraZatvoriPodesavanja: "Zatvori podešavanja",
   footerNote:
@@ -1102,6 +1139,24 @@ const en: Dict = {
   temaLabel: "Appearance",
   temaSvijetla: "Light mode",
   temaTamna: "Dark mode",
+  prijavaDugme: "Report a mistake",
+  prijavaVrsta: "Type of problem",
+  prijavaVrstaOdgovor: "Wrong answer",
+  prijavaVrstaTekst: "Error in the text or translation",
+  prijavaVrstaSlika: "Problem with the image",
+  prijavaVrstaSajt: "The site isn't working properly",
+  prijavaVrstaDrugo: "Something else",
+  prijavaOpis: "Description",
+  prijavaOpisPomoc: "What's wrong?",
+  prijavaKontakt: "Email or phone (optional)",
+  prijavaKontaktPomoc: "Only if you'd like us to get back to you.",
+  prijavaPosalji: "Send report",
+  prijavaSalje: "Sending…",
+  prijavaHvala: "Thank you! Your report has been sent.",
+  prijavaGreska: "Sending failed. Please try again.",
+  prijavaPrevise: "Too many reports were sent. Please try again later.",
+  prijavaKratko: "Please briefly describe the problem.",
+  prijavaIspitVrijeme: "The exam timer keeps running while you write.",
   igraPodesavanja: "Settings",
   igraZatvoriPodesavanja: "Close settings",
   footerNote:
@@ -1646,6 +1701,24 @@ const sq: Dict = {
   temaLabel: "Pamja",
   temaSvijetla: "Modaliteti i ndritshëm",
   temaTamna: "Modaliteti i errët",
+  prijavaDugme: "Raporto një gabim",
+  prijavaVrsta: "Lloji i gabimit",
+  prijavaVrstaOdgovor: "Përgjigje e pasaktë",
+  prijavaVrstaTekst: "Gabim në tekst ose në përkthim",
+  prijavaVrstaSlika: "Problem me imazhin",
+  prijavaVrstaSajt: "Faqja nuk funksionon si duhet",
+  prijavaVrstaDrugo: "Diçka tjetër",
+  prijavaOpis: "Përshkrimi",
+  prijavaOpisPomoc: "Çfarë nuk shkon?",
+  prijavaKontakt: "Email ose telefon (jo i detyrueshëm)",
+  prijavaKontaktPomoc: "Vetëm nëse dëshironi t'ju kontaktojmë.",
+  prijavaPosalji: "Dërgo raportin",
+  prijavaSalje: "Po dërgohet…",
+  prijavaHvala: "Faleminderit! Raporti u dërgua.",
+  prijavaGreska: "Dërgimi dështoi. Provoni përsëri.",
+  prijavaPrevise: "Janë dërguar shumë raporte. Provoni përsëri më vonë.",
+  prijavaKratko: "Përshkruani shkurtimisht gabimin.",
+  prijavaIspitVrijeme: "Koha e provimit vazhdon të ecë ndërsa shkruani.",
   igraPodesavanja: "Cilësimet",
   igraZatvoriPodesavanja: "Mbyll cilësimet",
   footerNote:
@@ -2197,6 +2270,24 @@ const ru: Dict = {
   temaLabel: "Оформление",
   temaSvijetla: "Светлая тема",
   temaTamna: "Тёмная тема",
+  prijavaDugme: "Сообщить об ошибке",
+  prijavaVrsta: "Тип ошибки",
+  prijavaVrstaOdgovor: "Неверный ответ",
+  prijavaVrstaTekst: "Ошибка в тексте или переводе",
+  prijavaVrstaSlika: "Проблема с изображением",
+  prijavaVrstaSajt: "Сайт работает неправильно",
+  prijavaVrstaDrugo: "Другое",
+  prijavaOpis: "Описание",
+  prijavaOpisPomoc: "Что не так?",
+  prijavaKontakt: "Эл. почта или телефон (необязательно)",
+  prijavaKontaktPomoc: "Только если хотите, чтобы мы с вами связались.",
+  prijavaPosalji: "Отправить",
+  prijavaSalje: "Отправка…",
+  prijavaHvala: "Спасибо! Сообщение отправлено.",
+  prijavaGreska: "Не удалось отправить. Попробуйте ещё раз.",
+  prijavaPrevise: "Отправлено слишком много сообщений. Попробуйте позже.",
+  prijavaKratko: "Кратко опишите ошибку.",
+  prijavaIspitVrijeme: "Время экзамена идёт, пока вы пишете.",
   igraPodesavanja: "Настройки",
   igraZatvoriPodesavanja: "Закрыть настройки",
   footerNote:
@@ -2748,6 +2839,24 @@ const tr: Dict = {
   temaLabel: "Görünüm",
   temaSvijetla: "Açık mod",
   temaTamna: "Koyu mod",
+  prijavaDugme: "Hata bildir",
+  prijavaVrsta: "Hata türü",
+  prijavaVrstaOdgovor: "Yanlış cevap",
+  prijavaVrstaTekst: "Metinde veya çeviride hata",
+  prijavaVrstaSlika: "Görselle ilgili sorun",
+  prijavaVrstaSajt: "Site düzgün çalışmıyor",
+  prijavaVrstaDrugo: "Başka bir şey",
+  prijavaOpis: "Açıklama",
+  prijavaOpisPomoc: "Sorun nedir?",
+  prijavaKontakt: "E-posta veya telefon (isteğe bağlı)",
+  prijavaKontaktPomoc: "Yalnızca size dönüş yapmamızı istiyorsanız.",
+  prijavaPosalji: "Bildirimi gönder",
+  prijavaSalje: "Gönderiliyor…",
+  prijavaHvala: "Teşekkürler! Bildiriminiz gönderildi.",
+  prijavaGreska: "Gönderilemedi. Lütfen tekrar deneyin.",
+  prijavaPrevise: "Çok fazla bildirim gönderildi. Lütfen daha sonra tekrar deneyin.",
+  prijavaKratko: "Lütfen hatayı kısaca açıklayın.",
+  prijavaIspitVrijeme: "Siz yazarken sınav süresi işlemeye devam eder.",
   igraPodesavanja: "Ayarlar",
   igraZatvoriPodesavanja: "Ayarları kapat",
   footerNote:
