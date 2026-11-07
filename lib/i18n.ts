@@ -622,7 +622,7 @@ const me: Dict = {
   metaMinutes: "minuta",
   metaPass: "prag",
   examLimitationNote:
-    "Napomena: naša baza sadrži samo pitanja sa jednim tačnim odgovorom. Zvanični ispit ima i pitanja sa više tačnih odgovora, gdje se priznaje samo potpuno tačan odgovor.",
+    "Napomena: naša baza sadrži samo pitanja sa jednim tačnim odgovorom.",
   bestResult: "Najbolji rezultat",
 
   simTitle: "Simulator raskrsnica",
@@ -1187,7 +1187,7 @@ const en: Dict = {
   metaMinutes: "minutes",
   metaPass: "pass at",
   examLimitationNote:
-    "Note: our question bank contains only single-answer questions. The official exam also includes multiple-answer questions, where only a fully correct answer counts.",
+    "Note: our question bank contains only single-answer questions.",
   bestResult: "Best result",
 
   simTitle: "Intersection simulator",
@@ -1749,7 +1749,7 @@ const sq: Dict = {
   metaMinutes: "minuta",
   metaPass: "pragu",
   examLimitationNote:
-    "Shënim: baza jonë përmban vetëm pyetje me një përgjigje të saktë. Provimi zyrtar ka edhe pyetje me disa përgjigje të sakta, ku pranohet vetëm përgjigjja plotësisht e saktë.",
+    "Shënim: baza jonë përmban vetëm pyetje me një përgjigje të saktë.",
   bestResult: "Rezultati më i mirë",
 
   simTitle: "Simulator i kryqëzimeve",
@@ -2318,7 +2318,7 @@ const ru: Dict = {
   metaMinutes: "минут",
   metaPass: "порог",
   examLimitationNote:
-    "Примечание: наша база содержит только вопросы с одним правильным ответом. На официальном экзамене есть и вопросы с несколькими правильными ответами, где зачитывается только полностью верный ответ.",
+    "Примечание: наша база содержит только вопросы с одним правильным ответом.",
   bestResult: "Лучший результат",
 
   simTitle: "Симулятор перекрёстков",
@@ -2887,7 +2887,7 @@ const tr: Dict = {
   metaMinutes: "dakika",
   metaPass: "geçme sınırı",
   examLimitationNote:
-    "Not: Soru bankamızda yalnızca tek doğru cevaplı sorular var. Resmî sınavda birden fazla doğru cevaplı sorular da bulunur; bunlarda yalnızca tamamen doğru cevap sayılır.",
+    "Not: Soru bankamızda yalnızca tek doğru cevaplı sorular var.",
   bestResult: "En iyi sonuç",
 
   simTitle: "Kavşak simülatörü",
